@@ -33,6 +33,7 @@ The route below will read the file contents and call a groovy script
 
 [tabs]
 ====
+
 Java::
 +
 [source,java]
@@ -54,9 +55,9 @@ XML::
   <to uri="bean:myServiceBean.processLine"/>
 </route>
 ----
-
++
 Mind that you can use _CDATA_ if the script uses `< >` etc:
-
++
 [source,xml]
 ----
 <route>
@@ -66,6 +67,25 @@ Mind that you can use _CDATA_ if the script uses `< >` etc:
   </script>
   <to uri="bean:myServiceBean.processLine"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - script:
+            expression:
+              groovy:
+                expression: >
+                 some groovy code goes here
+                 that can be in multiple
+                 lines and have a lot of code
+        - to:
+            uri: bean:myServiceBean.processLine
 ----
 ====
 
@@ -78,6 +98,20 @@ The scripting context has access to the current `Exchange` and can essentially c
 You can refer to external script files instead of inlining the script.
 For example, to load a groovy script from the classpath, you need to prefix the value with `resource:` as shown:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .script().groovy("resource:classpath:com/foo/myscript.groovy")
+  .to("bean:myServiceBean.processLine");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -88,6 +122,23 @@ For example, to load a groovy script from the classpath, you need to prefix the 
   <to uri="bean:myServiceBean.processLine"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - script:
+            expression:
+              groovy:
+                expression: resource:classpath:com/foo/myscript.groovy
+        - to:
+            uri: bean:myServiceBean.processLine
+----
+====
 
 You can also refer to the script from the file system with `file:` instead of `classpath:`
 such as `file:/var/myscript.groovy`

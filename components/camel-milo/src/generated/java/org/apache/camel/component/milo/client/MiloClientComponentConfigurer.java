@@ -69,6 +69,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "miloClientConnectionManager": target.setMiloClientConnectionManager(property(camelContext, org.apache.camel.component.milo.client.MiloClientConnectionManager.class, value)); return true;
         case "overridehost":
         case "overrideHost": getOrCreateConfiguration(target).setOverrideHost(property(camelContext, boolean.class, value)); return true;
+        case "overrideport":
+        case "overridePort": getOrCreateConfiguration(target).setOverridePort(property(camelContext, boolean.class, value)); return true;
         case "producturi":
         case "productUri": getOrCreateConfiguration(target).setProductUri(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
@@ -130,6 +132,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "miloClientConnectionManager": return org.apache.camel.component.milo.client.MiloClientConnectionManager.class;
         case "overridehost":
         case "overrideHost": return boolean.class;
+        case "overrideport":
+        case "overridePort": return boolean.class;
         case "producturi":
         case "productUri": return java.lang.String.class;
         case "requesttimeout":
@@ -187,6 +191,8 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
         case "miloClientConnectionManager": return target.getMiloClientConnectionManager();
         case "overridehost":
         case "overrideHost": return getOrCreateConfiguration(target).isOverrideHost();
+        case "overrideport":
+        case "overridePort": return getOrCreateConfiguration(target).isOverridePort();
         case "producturi":
         case "productUri": return getOrCreateConfiguration(target).getProductUri();
         case "requesttimeout":

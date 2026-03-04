@@ -39,17 +39,6 @@
 		serviceClass="org.apache.camel.itest.customerrelations.CustomerServiceV1"
 		wsdlLocation="./src/test/resources/wsdl/CustomerService_noSoapAction.wsdl"
 		address="camel://direct:clientOutbound">
-		<!-- properties>
-			<entry xmlns="http://www.springframework.org/schema/beans"
-				key="mtom-enabled" value="true" />
-		</properties-->
-		<features>
-			<!-- Enable logging of SOAP messages. -->
-			<logging xmlns="http://cxf.apache.org/core" />
-			<!-- Enable WS-Addressing -->
-			<addressing xmlns="http://cxf.apache.org/ws/addressing" />
-		</features>
-
 	</client>
 
 	<conduit xmlns="http://cxf.apache.org/transports/camel"

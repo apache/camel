@@ -40,6 +40,8 @@ import org.snakeyaml.engine.v2.nodes.Node;
                   @YamlProperty(name = "routeTemplateRef",
                                 type = "string",
                                 required = true),
+                  @YamlProperty(name = "group",
+                                type = "string"),
                   @YamlProperty(name = "parameters",
                                 type = "array:org.apache.camel.model.TemplatedRouteParameterDefinition"),
                   @YamlProperty(name = "beans",
@@ -72,6 +74,10 @@ public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<T
             }
             case "routeTemplateRef": {
                 target.setRouteTemplateRef(asText(node));
+                break;
+            }
+            case "group": {
+                target.setGroup(asText(node));
                 break;
             }
             case "parameters": {

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iso8583",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "modelName": "iso8583",
     "modelJavaType": "org.apache.camel.model.dataformat.Iso8583DataFormat"
   },

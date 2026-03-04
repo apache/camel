@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.qdrant.transform.QdrantEmbeddingsDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-qdrant",
-    "version": "4.18.0-SNAPSHOT"
+    "version": "4.19.0-SNAPSHOT"
   }
 }
 

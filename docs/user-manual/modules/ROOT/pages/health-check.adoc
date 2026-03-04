@@ -44,7 +44,7 @@ is named foo, then the ID is `consumer:foo`.
 Readiness and Liveness probes serve distinct purposes. Readiness indicates whether the application is ready to serve requests or traffic.
 Liveness probes indicates whether the application is alive and functioning. A health check is by default usable for both readiness and liveness checks.
 
-To check wether a health check is usable for readiness or livesness:
+To check weather a health check is usable for readiness or liveness:
 
 [source,java]
 ----
@@ -67,14 +67,18 @@ public boolean isReadiness() {
 
 == Configuring health-check
 
-Camel supports via `camel-main` to configure health-checks from configuration files. This is possible for runtimes that leverage `camel-main`
-such as Camel on Spring Boot, or Camel K.
+Camel supports to configure health checks from configuration files.
 
 Camel will automatically enable `context`, `routes`, `consumers`, `producers` and `registry` health-checks if `camel-health` is detected on the classpath.
 They are all enabled by default (except for `producers` which is disabled).
 
 However, you can configure them, for example to turn them off:
 
+[tabs]
+====
+
+Application Properties::
++
 [source,properties]
 ----
 # global option to turn health-check off (will not install health-check)
@@ -86,8 +90,9 @@ camel.health.routesEnabled=false
 camel.health.consumersEnabled=false
 camel.health.registryEnabled=false
 ----
+====
 
-The same can also be done programmatically using the Camel health api:
+The same can also be done programmatically in Java using the Camel health API:
 
 [source,java]
 ----
@@ -102,22 +107,24 @@ if (consumersHealthCheckRepository != null) {
 
 Once you have the health check exposed as a service and the application is up and running, you can check it by accessing the related endpoint:
 
-[source, console]
+[source,bash]
 ----
 $ curl http://localhost:9876/observe/health
 {
-    "status": "UP"
-,
+    "status": "UP",
     "checks": [
         {
             "name": "context",
-            "status": "UP"        },
+            "status": "UP"
+        },
         {
             "name": "route:route1",
-            "status": "UP"        },
+            "status": "UP"
+        },
         {
             "name": "consumer:route1",
-            "status": "UP"        }
+            "status": "UP"
+        }
     ]
 }
 ----
@@ -126,12 +133,11 @@ NOTE: the port and the path can change depending on the runtime used and the con
 
 When you're running on certain runtimes you will get more information by default. This is also possible in the `camel-main` runtime provider. However, you'll need to specify that as a request parameter:
 
-[source, console]
+[source,bash]
 ----
 $ curl http://localhost:9876/observe/health?data=true
 {
-    "status": "UP"
-,
+    "status": "UP",
     "checks": [
         {
             "name": "context",
@@ -143,7 +149,7 @@ $ curl http://localhost:9876/observe/health?data=true
                  "context.name": "camel-1",
                  "context.phase": "5",
                  "context.status": "Started",
-                 "context.version": "4.18.0-SNAPSHOT",
+                 "context.version": "4.19.0-SNAPSHOT",
                  "failure.count": "0",
                  "invocation.count": "2",
                  "invocation.time": "2025-03-20T09:43:01.870896479+01:00[Europe/Madrid]",
@@ -155,83 +161,101 @@ $ curl http://localhost:9876/observe/health?data=true
 ...
 ----
 
-=== Configuring initial state
+=== Configuring Initial State
 
-The initial state of health-checks (readiness). There are the following states: UP, DOWN, UNKNOWN.
+The initial state of health checks (readiness). There are the following states: UP, DOWN, UNKNOWN.
 
 By default, the state is DOWN, is regarded as being pessimistic/careful. This means that the overall health
 checks may report as DOWN during startup and then only if everything is up and running flip to being UP.
 
 Setting the initial state to UP, is regarded as being optimistic. This means that the overall health checks may
-report as UP during startup and then if a consumer or other service is in fact un-healthy, then the health-checks
+report as UP during startup and then if a consumer or other service is in fact unhealthy, then the health checks
 can flip being DOWN.
 
-Setting the state to UNKNOWN means that some health-check would be reported in unknown state, especially during
+Setting the state to UNKNOWN means that some health check would be reported in unknown state, especially during
 early bootstrap where a consumer may not be fully initialized or validated a connection to a remote system.
 
 This option allows to pre-configure the state for different modes.
 
 === Excluding health-checks
 
-By default, all enabled health-checks are invoked by Camel when check the health status.
+By default, all enabled health checks are invoked by Camel when check the health status.
 
 It is possible to specify checks that should be excluded, for example a specific route by the route-id.
 
+[tabs]
+====
+
+Application Properties::
++
 [source,properties]
 ----
 camel.health.exclude-pattern = myroute
 ----
-
++
 You can specify multiple patterns (and use wildcards) such as:
-
++
 [source,properties]
 ----
 camel.health.exclude-pattern = myroute,foo,bar*
 ----
+====
 
 ==== Routes that are not automatically started
 
 If a route is configured to not to automatically start (`autoStartup=false`),
 then the route and its corresponding consumer health checks is always up as it is externally managed.
 
-=== Turning off consumer level health-checks
+=== Turning off consumer level Health Checks
 
-If routes health check is enabled then they will execute consumer health-checks as well
+If routes health check is enabled then they will execute consumer health checks as well
 as part of an aggregated response.
 
 The consumer checks can be turned off, to only use the route level checks (status of the route)
 
+[tabs]
+====
+
+Application Properties::
++
 [source,properties]
 ----
 camel.health.consumersEnabled=false
 ----
-
++
 You can also turn off individual consumers by prefixing the ID with `consumer:` and the route id:
-
++
 [source,properties]
 ----
 camel.health.exclude-pattern = consumer:myroute*
 ----
+====
 
 which will turn off checks for all consumers on routes that starts with `myroute` in the route ID.
 
 Or you can turn off producer based health checks by their component name:
 
+[tabs]
+====
+
+Application Properties::
++
 [source,properties]
 ----
 camel.health.exclude-pattern = producer:kafka*
 ----
-
++
 Or all AWS producer health-checks
-
++
 [source,properties]
 ----
 camel.health.exclude-pattern = producer:aws*
 ----
+====
 
-=== Turning on producer level health-checks
+=== Turning on producer level Health Checks
 
-Only consumer based health-checks is enabled by default.
+Only consumer based health checks is enabled by default.
 
 Some components (in particular AWS) provides also health checks for producers.
 These health checks can be enabled via:
@@ -243,7 +267,7 @@ camel.health.producersEnabled=true
 
 === Turning off health checks from components
 
-Some Camel components comes with health-checks.
+Some Camel components comes with health checks.
 
 For example to turn off both consumer and producer health checks from Kafka:
 
@@ -260,7 +284,7 @@ TIP: You can turn of either consumer, producer or both.
 The health check is manageable via JMX (requires `camel-management` JAR on the classpath).
 You can find the `DefaultHealthCheck` MBean under the `health` node in the Camel JMX tree.
 
-This MBean allows at runtime to manage health-checks where you can enable and disable checks based on their IDs.
+This MBean allows at runtime to manage health checks where you can enable and disable checks based on their IDs.
 As well have the latest status whether the overall health check is healthy or not.
 The MBean also allows invoking health checks based on IDs (or all of them).
 
@@ -308,7 +332,7 @@ There are a limited number of health checks provided by Camel out of the box,
 so you may need to write your own check which you can do by implementing the _HealthCheck_ interface
 or by extending _AbstractHealthCheck_ which provides some useful methods.
 
-To make the health-check discoverable you should annotate the class with `@HealthCheck` and
+To make the health check discoverable you should annotate the class with `@HealthCheck` and
 the _name_-check syntax.
 
 [source,java]
@@ -352,36 +376,35 @@ Then the xref:camel-component-maven-plugin.adoc[camel-component-maven-plugin] ca
 used to automatic generated service loader file in `META-INF/services/org/apache/camel/health-checks` that Camel uses
 to discover the custom health checks.
 
-You must also enable loading custom health check by setting (Camel Main, Camel K, or Camel Quarkus):
+You must also enable loading custom health check by setting:
 
+[tabs]
+====
+
+Application Properties::
++
 [source,properties]
 ----
 camel.main.load-health-checks = true
 ----
 
-And in Spring Boot:
-
-[source,properties]
+Java::
++
+[source,java]
 ----
-camel.springboot.load-health-checks = true
+CamelContext context = ...
+context.setLoadHealthChecks(true);
 ----
 
-And if you use the classic Spring XML, you can enable this on `<camelContext>` as shown:
-
+Spring XML::
++
 [source,xml]
 ----
 <camelContext loadHealthChecks="true">
     ...
 </camelContext>
 ----
-
-And of course you can also enable loading health checks from Java via `CamelContext`:
-
-[source,java]
-----
-CamelContext context = ...
-context.setLoadHealthChecks(true);
-----
+====
 
 TIP: The example `main-health` has a custom health check which is loadable.
 
@@ -398,7 +421,7 @@ or something else.
 
 == Writing custom Health Check for Camel components
 
-You can implement custom health checks in Camel components (currently only for consumers).
+You can implement custom health checks in Camel components .
 
 To do this, you implement the interface `HealthCheckAware` on your consumer class, which should
 return the custom health check in the getter method.

@@ -60,6 +60,20 @@ should be started when Camel starts. By default, a route is auto started.
 
 In XML DSL, you disable auto startup as follows:
 
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("activemq:queue:special").autoStartup(false)
+  .to("file://backup");
+----
+
+XML::
++
 [source,xml]
 ----
 <route autoStartup="false">
@@ -68,8 +82,35 @@ In XML DSL, you disable auto startup as follows:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    autoStartup: "false"
+    from:
+      uri: activemq:queue:special
+      steps:
+        - to:
+            uri: file://backup
+----
+====
+
 And to explicit state it should be started:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("activemq:queue:special").autoStartup(true)
+  .to("file://backup");
+----
+
+XML::
++
 [source,xml]
 ----
 <route autoStartup="true">
@@ -78,6 +119,21 @@ And to explicit state it should be started:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    autoStartup: "true"
+    from:
+      uri: activemq:queue:special
+      steps:
+        - to:
+            uri: file://backup
+----
+====
+
+
 And in Java DSL you can configure auto startup on `CamelContext` as follows:
 
 [source,java]
@@ -85,12 +141,11 @@ And in Java DSL you can configure auto startup on `CamelContext` as follows:
 camelContext.setAutoStartup(false);
 ----
 
-And on route level you can disable it via `noAutoStartup`:
+Or in `application.properties`:
 
-[source,java]
+[source,properties]
 ----
-from("activemq:queue:special").noAutoStartup()
-    .to("file://backup");
+camel.main.auto-startup = false
 ----
 
 To startup based on a boolean, String or
@@ -156,6 +211,11 @@ Let's try a couple of examples.
 
 === Startup ordering example
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("seda:foo").startupOrder(1)
@@ -165,22 +225,41 @@ from("direct:start").startupOrder(2)
     .to("seda:foo");
 ----
 
-And the same example with XML DSL:
-
+XML::
++
 [source,xml]
 ----
-<routes>
-    <route startupOrder="1">
-        <from uri="seda:foo"/>
-        <to uri="mock:result"/>
-    </route>
+<route startupOrder="1">
+    <from uri="seda:foo"/>
+    <to uri="mock:result"/>
+</route>
 
-    <route startupOrder="2">
-        <from uri="direct:start"/>
-        <to uri="seda:foo"/>
-    </route>
-</routes>
+<route startupOrder="2">
+    <from uri="direct:start"/>
+    <to uri="seda:foo"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    startupOrder: 1
+    from:
+      uri: seda:foo
+      steps:
+        - to:
+            uri: mock:result
+- route:
+    startupOrder: 2
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: seda:foo
+----
+====
 
 In this example, we have two routes in which we have started that the
 direct:start route should be started *after* the seda:foo route.
@@ -192,6 +271,11 @@ route to be up and running beforehand.
 You can also mix and match routes with and without `startupOrder` defined.
 The first two routes below have start order defined, and the last route has not.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("seda:foo").startupOrder(1)
@@ -204,27 +288,52 @@ from("direct:bar")
     .to("seda:bar");
 ----
 
-And the same example with XML DSL:
-
+XML::
++
 [source,xml]
 ----
-<routes>
-    <route startupOrder="1">
-        <from uri="seda:foo"/>
-        <to uri="mock:result"/>
-    </route>
+<route startupOrder="1">
+    <from uri="seda:foo"/>
+    <to uri="mock:result"/>
+</route>
 
-    <route startupOrder="2">
-        <from uri="direct:start"/>
-        <to uri="seda:foo"/>
-    </route>
+<route startupOrder="2">
+    <from uri="direct:start"/>
+    <to uri="seda:foo"/>
+</route>
 
-    <route>
-        <from uri="direct:bar"/>
-        <to uri="seda:bar"/>
-    </route>
-</routes>
+<route>
+    <from uri="direct:bar"/>
+    <to uri="seda:bar"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    startupOrder: 1
+    from:
+      uri: seda:foo
+      steps:
+        - to:
+            uri: mock:result
+- route:
+    startupOrder: 2
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: seda:foo
+- route:
+    from:
+      uri: direct:bar
+      steps:
+        - to:
+            uri: seda:bar
+----
+====
 
 In the route above we have *not* defined a `startupOrder` on the last
 route direct:bar in which Camel will auto assign a number for it, in
@@ -238,6 +347,11 @@ the routes which really needs it.
 
 You can use a high number in `startupOrder` to have a specific route startup last as shown below:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 // use auto assigned startup ordering
@@ -252,6 +366,64 @@ from("direct:bar").startupOrder(12345).to("seda:bar");
 // use auto assigned startup ordering
 from("seda:bar").to("mock:other");
 ----
+
+XML::
++
+[source,xml]
+----
+    <route>
+        <from uri="direct:start"/>
+        <to uri="seda:foo"/>
+    </route>
+
+    <route startupOrder="1">
+        <from uri="seda:foo"/>
+        <to uri="mock:result"/>
+    </route>
+
+    <route startupOrder="12345">
+        <from uri="direct:bar"/>
+        <to uri="seda:bar"/>
+    </route>
+
+    <route>
+        <from uri="seda:bar"/>
+        <to uri="mock:other"/>
+    </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: seda:foo
+- route:
+    startupOrder: 1
+    from:
+      uri: seda:foo
+      steps:
+        - to:
+            uri: mock:result
+- route:
+    startupOrder: 12345
+    from:
+      uri: direct:bar
+      steps:
+        - to:
+            uri: seda:bar
+- route:
+    from:
+      uri: seda:bar
+      steps:
+        - to:
+            uri: mock:other
+----
+====
 
 In the example above, the order of route startups should be:
 

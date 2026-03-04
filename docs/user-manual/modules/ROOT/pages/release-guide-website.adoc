@@ -67,7 +67,7 @@ These represent the other camel subprojects this one depends on.
 It will look something like this:
 +
 --
-[source,yml]
+[source,yaml]
 ----
     - require: '@djencks/antora-source-map'
 #      log_level: trace

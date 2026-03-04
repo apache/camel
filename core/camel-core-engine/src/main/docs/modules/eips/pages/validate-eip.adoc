@@ -49,9 +49,9 @@ XML::
 <route>
   <from uri="file:inbox"/>
   <validate>
-    <simple>${body} regex ^\\w{10}\\,\\d{2}\\,\\w{24}$</simple>
+    <simple>${body} regex '^\\w{10}\\,\\d{2}\\,\\w{24}$'</simple>
   </validate>
-  <to uri="bean:myServiceBean" method="processLine"/>
+  <to uri="bean:myServiceBean?method=processLine"/>
 </route>
 ----
 
@@ -59,16 +59,16 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: file:inbox
-    steps:
-      - validate:
-          expression:
-            simple: ${body} regex "^\\w{10}\\,\\d{2}\\,\\w{24}$"
-      - to:
-          uri: bean:myServiceBean
-          parameters:
-            method: processLine
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - validate:
+            expression:
+              simple:
+                expression: "${body} regex '^\\w{10}\\,\\d{2}\\,\\w{24}$'"
+        - to:
+            uri: bean:myServiceBean?method=processLine
 ----
 ====
 
@@ -111,15 +111,15 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: file:inbox
-    steps:
-      - validate:
-          expression:
-            simple: ${header.bar} > 100
-      - to:
-          uri: bean:myServiceBean
-          parameters:
-            method: processLine
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - validate:
+            expression:
+              simple:
+                expression: "${header.bar} > 100"
+        - to:
+            uri: bean:myServiceBean.processLine
 ----
 ====

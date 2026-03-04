@@ -59,9 +59,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  * A KafkaContainer that supports JAAS+SASL based authentication
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka3-container",
-                                 disabledReason = "Requires Kafka 3.x"),
-        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka-container",
+                                 disabledReason = "Requires Kafka container"),
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka container")
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerAuthIT {

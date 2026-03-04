@@ -4,6 +4,8 @@ Validator performs declarative validation of the message according to the declar
 _Input Type_ and/or _Output Type_ on a route definition which declares the expected
 message type.
 
+NOTE: Currently, validators is only supported in Java DSL and the classic Spring XML.
+
 
 == Data type format
 
@@ -25,8 +27,8 @@ data type name.
 | Custom Validator | Validate with using custom validator class. Validator must be a subclass of `org.apache.camel.spi.Validator`
 |===
 
-
 == Common Options
+
 All validators have following common options to specify which data type is supported by the validator.
 `type` must be specified.
 
@@ -35,7 +37,6 @@ All validators have following common options to specify which data type is suppo
 | Name | Description
 | type | Data type to validate
 |===
-
 
 == Predicate Validator Options
 
@@ -47,8 +48,12 @@ All validators have following common options to specify which data type is suppo
 
 Here is an example to specify a validation predicate:
 
-Java DSL:
+[tabs]
+====
 
+
+Java::
++
 [source,java]
 ----
 validator()
@@ -56,14 +61,15 @@ validator()
     .withExpression(bodyAs(String.class).contains("{name:XOrder}"));
 ----
 
-XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <predicateValidator Type="csv:CSVOrder">
     <simple>${body} contains '{name:XOrder}'</simple>
 </predicateValidator>
 ----
+====
 
 == Endpoint Validator Options
 
@@ -76,6 +82,11 @@ XML DSL:
 
 Here is an example to specify endpoint URI in Java DSL:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 validator()
@@ -83,12 +94,13 @@ validator()
     .withUri("validator:xsd/schema.xsd");
 ----
 
-And here is an example to specify endpoint ref in XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <endpointValidator uri="validator:xsd/schema.xsd" type="xml"/>
 ----
+====
 
 Note that the Endpoint Validator just forwards the message to the specified endpoint. In above example,
 camel forwards the message to the `validator:` endpoint, which actually is a
@@ -108,8 +120,11 @@ The validator must be an implementation of `org.apache.camel.spi.Validator`
 
 Here is an example to specify custom Validator class:
 
-Java DSL:
+[tabs]
+====
 
+Java::
++
 [source,java]
 ----
 validator()
@@ -117,20 +132,24 @@ validator()
     .withJava(com.example.MyCustomValidator.class);
 ----
 
-XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <customTransformer className="com.example.MyCustomValidator" type="json"/>
 ----
+====
 
 == Examples
 
 For example to declare the Endpoint Validator which uses
 validator component to validate `xml:ABCOrder`, we can do as follows:
 
-Java DSL:
+[tabs]
+====
 
+Java::
++
 [source,java]
 ----
 validator()
@@ -138,8 +157,8 @@ validator()
     .withUri("validator:xsd/schema.xsd");
 ----
 
-And in XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -148,13 +167,17 @@ And in XML DSL:
     </validators>
 </camelContext>
 ----
+====
 
-If you have following route definition, above validator will be applied when `direct:abc` endpoint
+If you have the following route definition, above validator will be applied when `direct:abc` endpoint
 receives the message. Note that `inputTypeWithValidate` is used instead of `inputType` in Java DSL,
 and the `validate` attribute on the inputType declaration is set to `true` in XML DSL:
 
-Java DSL:
+[tabs]
+====
 
+Java::
++
 [source,java]
 ----
 from("direct:abc")
@@ -162,8 +185,8 @@ from("direct:abc")
     .log("${body}");
 ----
 
-XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -174,6 +197,7 @@ XML DSL:
     </route>
 </camelContext>
 ----
+====
 
 == See Also
 

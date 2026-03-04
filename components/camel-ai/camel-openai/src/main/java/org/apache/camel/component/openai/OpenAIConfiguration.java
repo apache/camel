@@ -33,6 +33,14 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", secret = true)
     private String apiKey;
 
+    @UriParam(label = "security")
+    @Metadata(description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
+                            + "When set, the token is acquired from the configured identity provider and used instead of apiKey. "
+                            + "Requires camel-oauth on the classpath. The profile properties are resolved from "
+                            + "camel.oauth.<profileName>.client-id, camel.oauth.<profileName>.client-secret, "
+                            + "and camel.oauth.<profileName>.token-endpoint.")
+    private String oauthProfile;
+
     @UriParam
     @Metadata(description = "Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers.",
               defaultValue = ClientOptions.PRODUCTION_URL)
@@ -96,6 +104,39 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
     private Map<String, Object> additionalBodyProperty;
 
+    @UriParam(prefix = "mcpServer.", multiValue = true)
+    @Metadata(description = "MCP (Model Context Protocol) server configurations. "
+                            + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, "
+                            + "mcpServer.<name>.command=<cmd> (stdio), mcpServer.<name>.args=<comma-separated> (stdio), "
+                            + "mcpServer.<name>.url=<url> (sse/streamableHttp), "
+                            + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth)")
+    private Map<String, Object> mcpServer;
+
+    @UriParam(defaultValue = "50")
+    @Metadata(description = "Maximum number of tool call loop iterations to prevent infinite loops")
+    private int maxToolIterations = 50;
+
+    @UriParam(defaultValue = "true")
+    @Metadata(description = "When true and MCP servers are configured, automatically execute tool calls "
+                            + "and loop back to the model. When false, tool calls are returned as the message body for manual handling.")
+    private boolean autoToolExecution = true;
+
+    @UriParam
+    @Metadata(description = "Comma-separated list of MCP protocol versions to advertise when connecting to MCP servers "
+                            + "using Streamable HTTP transport. When not set, the SDK default is used. "
+                            + "Example: 2024-11-05,2025-03-26,2025-06-18")
+    private String mcpProtocolVersions;
+
+    @UriParam(defaultValue = "20")
+    @Metadata(description = "Timeout in seconds for MCP tool call requests. Applies to all MCP operations including "
+                            + "tool execution and initialization.")
+    private int mcpTimeout = 20;
+
+    @UriParam(defaultValue = "true")
+    @Metadata(description = "Automatically reconnect to MCP servers when a tool call fails due to a transport error, "
+                            + "and retry the call once.")
+    private boolean mcpReconnect = true;
+
     // ========== EMBEDDINGS CONFIGURATION ==========
 
     @UriParam
@@ -107,9 +148,9 @@ public class OpenAIConfiguration implements Cloneable {
                             "Reducing dimensions can lower costs and improve performance without significant quality loss.")
     private Integer dimensions;
 
-    @UriParam(enums = "float,base64", defaultValue = "float")
+    @UriParam(enums = "float,base64", defaultValue = "base64")
     @Metadata(description = "The format for embedding output: 'float' for list of floats, 'base64' for compressed format")
-    private String encodingFormat = "float";
+    private String encodingFormat = "base64";
 
     public String getApiKey() {
         return apiKey;
@@ -117,6 +158,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
     }
 
     public String getBaseUrl() {
@@ -261,6 +310,54 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setEncodingFormat(String encodingFormat) {
         this.encodingFormat = encodingFormat;
+    }
+
+    public Map<String, Object> getMcpServer() {
+        return mcpServer;
+    }
+
+    public void setMcpServer(Map<String, Object> mcpServer) {
+        this.mcpServer = mcpServer;
+    }
+
+    public int getMaxToolIterations() {
+        return maxToolIterations;
+    }
+
+    public void setMaxToolIterations(int maxToolIterations) {
+        this.maxToolIterations = maxToolIterations;
+    }
+
+    public boolean isAutoToolExecution() {
+        return autoToolExecution;
+    }
+
+    public void setAutoToolExecution(boolean autoToolExecution) {
+        this.autoToolExecution = autoToolExecution;
+    }
+
+    public String getMcpProtocolVersions() {
+        return mcpProtocolVersions;
+    }
+
+    public void setMcpProtocolVersions(String mcpProtocolVersions) {
+        this.mcpProtocolVersions = mcpProtocolVersions;
+    }
+
+    public int getMcpTimeout() {
+        return mcpTimeout;
+    }
+
+    public void setMcpTimeout(int mcpTimeout) {
+        this.mcpTimeout = mcpTimeout;
+    }
+
+    public boolean isMcpReconnect() {
+        return mcpReconnect;
+    }
+
+    public void setMcpReconnect(boolean mcpReconnect) {
+        this.mcpReconnect = mcpReconnect;
     }
 
     public OpenAIConfiguration copy() {

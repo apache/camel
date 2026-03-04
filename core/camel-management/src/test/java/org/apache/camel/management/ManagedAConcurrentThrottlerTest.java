@@ -24,6 +24,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.ThrottlingMode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -63,7 +64,7 @@ public class ManagedAConcurrentThrottlerTest extends AbstractManagedThrottlerTes
             public void configure() {
                 from("direct:start").id("route1")
                         .to("log:foo")
-                        .throttle(10).mode("ConcurrentRequests").id("mythrottler")
+                        .throttle(10).mode(ThrottlingMode.ConcurrentRequests).id("mythrottler")
                         .delay(100)
                         .to("mock:result");
 

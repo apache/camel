@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.langchain4j.agent;
 
+import java.util.List;
+import java.util.Map;
+
+import dev.langchain4j.mcp.client.McpClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentFactory;
@@ -38,6 +42,20 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     @UriParam(description = "Tags for discovering and calling Camel route tools")
     private String tags;
+
+    @UriParam(description = "Pre-built MCP (Model Context Protocol) client instances for external tool integration."
+                            + " Reference beans from the registry, e.g., #myMcpClient1,#myMcpClient2",
+              label = "advanced")
+    private List<McpClient> mcpClients;
+
+    @UriParam(description = "MCP server definitions in the form of mcpServer.<name>.<property>=<value>."
+                            + " Supported properties: transportType (stdio, http, streamableHttp, or sse, default: stdio),"
+                            + " command (comma-separated, for stdio), url (for http/sse),"
+                            + " environment.<key>=<value> (for stdio), timeout (in seconds, default: 60),"
+                            + " logRequests, logResponses,"
+                            + " oauthProfile (OAuth profile for HTTP auth, requires camel-oauth).",
+              prefix = "mcpServer.", multiValue = true, label = "advanced")
+    private Map<String, Object> mcpServer;
 
     public LangChain4jAgentConfiguration() {
     }
@@ -87,5 +105,41 @@ public class LangChain4jAgentConfiguration implements Cloneable {
 
     public void setAgentFactory(AgentFactory agentFactory) {
         this.agentFactory = agentFactory;
+    }
+
+    /**
+     * Pre-built MCP client instances for external tool integration
+     *
+     * @return the list of MCP clients
+     */
+    public List<McpClient> getMcpClients() {
+        return mcpClients;
+    }
+
+    public void setMcpClients(List<McpClient> mcpClients) {
+        this.mcpClients = mcpClients;
+    }
+
+    /**
+     * MCP server definitions for inline URI configuration.
+     *
+     * <p>
+     * The map keys are in the form {@code <serverName>.<property>} and are collected from URI parameters with the
+     * {@code mcpServer.} prefix. For example:
+     * </p>
+     *
+     * <pre>
+     * mcpServer.weather.transportType=http&amp;mcpServer.weather.url=http://localhost:8080
+     * mcpServer.fs.transportType=stdio&amp;mcpServer.fs.command=npx,-y,@modelcontextprotocol/server-filesystem
+     * </pre>
+     *
+     * @return the map of MCP server properties
+     */
+    public Map<String, Object> getMcpServer() {
+        return mcpServer;
+    }
+
+    public void setMcpServer(Map<String, Object> mcpServer) {
+        this.mcpServer = mcpServer;
     }
 }

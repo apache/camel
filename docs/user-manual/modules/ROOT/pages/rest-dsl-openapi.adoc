@@ -148,6 +148,31 @@ camel.component.rest-openapi.base-path = /cheese
 
 Or configure this in the _rest configuration_ such as:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().contextPath("/cheese").clientRequestValidation(true);
+
+rest().openApi().specification("petstore-v3.json");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration contextPath="/cheese" clientRequestValidation="true"/>
+
+<rest>
+  <openApi specification="petstore-v3.json"/>
+</rest>
+----
+
+YAML::
++
 [source,yaml]
 ----
 - restConfiguration:
@@ -157,6 +182,8 @@ Or configure this in the _rest configuration_ such as:
     openApi:
       specification: petstore-v3.json
 ----
+====
+
 
 === Ignoring missing API operations
 
@@ -165,10 +192,35 @@ for every API service. If some operations are missing, then Camel will fail on s
 
 During development, you can use `missingOperation` to ignore this as shown:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
     rest().openApi("petstore-v3.json").missingOperation("ignore");
 ----
+
+XML::
++
+[source,xml]
+----
+<rest>
+  <openApi specification="petstore-v3.json" missingOperation="ignore"/>
+</rest>
+----
+
+YAML::
++
+[source,yaml]
+----
+- rest:
+    openApi:
+      specification: petstore-v3.json
+      missingOperation: ignore
+----
+====
 
 This allows you to implement the APIs one by one over time.
 
@@ -176,10 +228,35 @@ This allows you to implement the APIs one by one over time.
 
 This is similar to ignoring missing API operations, as you can tell Camel to mock instead, as shown:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
     rest().openApi("petstore-v3.json").missingOperation("mock");
 ----
+
+XML::
++
+[source,xml]
+----
+<rest>
+  <openApi specification="petstore-v3.json" missingOperation="mock"/>
+</rest>
+----
+
+YAML::
++
+[source,yaml]
+----
+- rest:
+    openApi:
+      specification: petstore-v3.json
+      missingOperation: mock
+----
+====
 
 When using _mock_, then Camel will (for missing operations) simulate a successful response:
 
@@ -204,6 +281,31 @@ petstore.camel.yaml
 
 And the Camel route:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().clientRequestValidation(true);
+
+rest().openApi("petstore-v3.json").missingOperation("mock");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration clientRequestValidation="true"/>
+
+<rest>
+  <openApi specification="petstore-v3.json" missingOperation="mock"/>
+</rest>
+----
+
+YAML::
++
 [source,yaml]
 ----
 - restConfiguration:
@@ -213,6 +315,7 @@ And the Camel route:
       missingOperation: mock
       specification: petstore-v3.json
 ----
+====
 
 When running this example, you can call the APIs and have an empty successful response. However, for the url `pet/123` the
 file `camel-mock/pet/123.json` will be loaded as the response as shown below:
@@ -272,6 +375,11 @@ However, we have added the `bindingPackageScan` configuration to make it possibl
 
 When using Spring Boot or Quarkus, then you must configure the package names (base) such as follows:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 // turn on json binding and scan for POJO classes in the model package
@@ -279,13 +387,32 @@ restConfiguration().bindingMode(RestBindingMode.json)
         .bindingPackageScan("sample.petstore.model");
 ----
 
-You can also configure this in `application.properties`:
+XML::
++
+[source,xml]
+----
+<restConfiguration bindingMode="true" bindingPackageScan="sample.petstore.model"/>
+----
 
+YAML::
++
+[source,yaml]
+----
+- restConfiguration:
+    bindingMode: true
+    bindingPackageScan: sample.petstore.model
+----
+
+Application Properties::
++
+You can also configure this in `application.properties`:
++
 [source,properties]
 ----
 camel.rest.bindingMode = json
 camel.rest.bindingPackageScan = sample.petstore.model
 ----
+====
 
 Then Camel will automatically for every OpenAPI operation detect the specified schemas for incoming and outgoing responses,
 and map that to Java POJO classes by class name.
@@ -349,36 +476,96 @@ For more details, see this https://github.com/apache/camel-spring-boot-examples/
 
 The OpenAPI specification is by default not exposed on the HTTP endpoint. You can make this happen by setting the rest-configuration as follows:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().apiContextPath("/api-doc");
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration apiContextPath="/api-doc"/>
+----
+
+YAML::
++
 [source,yaml]
 ----
 - restConfiguration:
     apiContextPath: /api-doc
 ----
+====
 
 Then the specification is accessible on `/api-doc` on the embedded HTTP server, so typically that would be `http://localhost:8080/api-doc`.
 
 In the returned API specification the `server` section has been modified to return the IP of the current server. This can be controlled via:
 
+[tabs]
+====
 
+Java::
++
+[source,java]
+----
+restConfiguration().apiContextPath("/api-doc").hostNameResolver(RestHostNameResolver.localIp);
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration apiContextPath="/api-doc" hostNameResolver="localIp"/>
+----
+
+YAML::
++
 [source,yaml]
 ----
 - restConfiguration:
     apiContextPath: /api-doc
     hostNameResolver: localIp
 ----
+====
 
 And you can turn this off by setting the value to `none` so the server part is taken verbatim from the specification file.
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+restConfiguration().apiContextPath("/api-doc").hostNameResolver(RestHostNameResolver.none);
+----
+
+XML::
++
+[source,xml]
+----
+<restConfiguration apiContextPath="/api-doc" hostNameResolver="none"/>
+----
+
+YAML::
++
 [source,yaml]
 ----
 - restConfiguration:
     apiContextPath: /api-doc
     hostNameResolver: none
 ----
+====
 
 == Examples
 
 You can find a few examples such as:
 
-- https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api-contract-first
-- https://github.com/apache/camel-spring-boot-examples/tree/main/openapi-contract-first
+- https://github.com/apache/camel-spring-boot-examples/tree/main/openapi-contract-first[Spring Boot OpenAPI Contract First]
+- https://github.com/apache/camel-jbang-examples/tree/main/openapi[JBang OpenAPI]
+- https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-api-contract-first[JBang OpenAPI (Old Example)]

@@ -38,8 +38,21 @@ public class YamlValidatorTest {
     }
 
     @Test
+    public void testValidateOkPlaceholder() throws Exception {
+        Assertions.assertTrue(validator.validate(new File("src/test/resources/foo2.yaml")).isEmpty());
+    }
+
+    @Test
     public void testValidateBad() throws Exception {
         var report = validator.validate(new File("src/test/resources/bad.yaml"));
+        Assertions.assertFalse(report.isEmpty());
+        Assertions.assertEquals(1, report.size());
+        Assertions.assertTrue(report.get(0).getMessage().contains("setCheese"));
+    }
+
+    @Test
+    public void testValidateBadPlaceholder() throws Exception {
+        var report = validator.validate(new File("src/test/resources/bad2.yaml"));
         Assertions.assertFalse(report.isEmpty());
         Assertions.assertEquals(1, report.size());
         Assertions.assertTrue(report.get(0).getMessage().contains("setCheese"));

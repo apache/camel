@@ -4,22 +4,21 @@ The Apache Camel project loves your help with improving the documentation, wheth
 a tiny typo fix, or adding more details to an existing component, etc.
 
 NOTE: This page only describes working with the 'documentation' portion of the website.
-Other portions are written in markdown and built using Hugo.
+Other portions are written in Markdown and built using Hugo.
 
 == Simple changes
 
-If there's an `edit this page` button at the top right of the page and you wish to propose a simple change such as fixing a typo or rewording something, use this xref:faq:how-do-i-edit-the-website.adoc[very simple process].
+If there's an `edit this page` button at the top right of the page, and you wish to propose a simple change such as fixing a typo or rewording something, use this xref:faq:how-do-i-edit-the-website.adoc[very simple process].
 For more complicated changes, including changing xrefs, adding, removing or renaming pages, and significant organizational changes, please use the process described on this page.
 
 == Where to find the documentation
 
-All of the documentation accessible in the left-hand navigation panel in the documentation portion of the website is managed in the link:https://asciidoc.org/[AsciiDoc format] and built with the https://antora.org[Antora] static site generator.
-As of November 2021, by far the most capable Asciidoc editor is the Intellij Asciidoc plugin, which works with  all Intellij editor products including the free IDEA Community Edition.
-The plugin preview is more capable than viewing a local Asciidoc file with a browser plugin as it has some understanding of Antora structure.
+All the documentation accessible in the left-hand navigation panel in the documentation portion of the website is managed in the link:https://asciidoc.org/[AsciiDoc format] and built with the https://antora.org[Antora] static site generator.
+As of November 2021, by far the most capable AsciiDoc editor is the Intellij AsciiDoc plugin, which works with  all Intellij editor products including the free IDEA Community Edition.
+The plugin preview is more capable than viewing a local AsciiDoc file with a browser plugin as it has some understanding of Antora structure.
 Note that the only reliable way to preview your changes is with a full build of the Antora portion of the website.
 
-The files have the extension `.adoc` and are managed in the Camel repositories.
-General documentation is usually directly editable.
+The files have the extension `.adoc` and are managed in the Camel repositories. General documentation is usually directly editable.
 Component specific documentation is partially or entirely generated from other metadata sources which are in turn generated from the code, often from javadoc.
 Altering generated documentation requires finding the original source, which varies by project.
 Editable pages are found in several different places in the repositories:
@@ -69,7 +68,8 @@ git clone https://github.com/apache/camel-website.git
 === Quick partial build
 
 In your project, run
-[source,sh]
+
+[source,bash]
 ----
 ./local-build.sh quick
 ----
@@ -87,7 +87,8 @@ There is no obvious way to get back to your local pages.
 You only have to do this once, and again whenever there are significant changes to the website.
 
 In your project, run
-[source,sh]
+
+[source,bash]
 ----
 ./local-build.sh full
 ----
@@ -97,10 +98,12 @@ This full build will also check that all xrefs into your subproject branch are v
 === Subsequent partial continuous builds
 
 After this full build completes, you can work on documentation with live updates in your browser by running
-[source,sh]
+
+[source,bash]
 ----
 ./local-build.sh
 ----
+
 This will do an initial build of just the current branch in the current subproject, incorporating it into the full site built in the full build, start a web server to serve the site, set up browser-sync on pages you are looking at in your browser, and rebuild the (partial) site as it detects changes.
 Depending on the amount of content generation Antora is doing, this may take up to a minute or so.
 
@@ -112,6 +115,7 @@ If you rename or remove a page please do a full build or check the PR build care
 If you do a full build (`yarn build-all` or `yarn build` rather than `yarn build:antora` or use of the `local-build.sh` script in a subproject) and have Docker available locally you can view your build served with httpd by running `local-httpd-in-docker.sh`.
 This is especially valuable to check redirects set up with `page-aliases`.
 
+[#_creating_a_documentation_pull_request]
 == Creating a documentation pull request.
 
 NOTE: Simple changes such as typo fixes or rewording can usually be done directly at GitHub after pressing the `edit this page` button at the top left of each page.
@@ -143,8 +147,7 @@ The following process will work for any number of doc PRs against any number of 
 . Locate the `- url` of the project(s) you are working with in the `antora-playbook.yml` under `sources`, and locate the branch(es) you have altered under that `- url`.
 . Add something like this to the end of the  `antora-playbook.yml`:
 +
---
-[source,yml]
+[source,yaml]
 ----
     - require: '@djencks/antora-source-map'
 #      log_level: trace #<1>
@@ -166,7 +169,7 @@ The following process will work for any number of doc PRs against any number of 
 <5> List of modified branches: probably only one.
 <6> Name of the branch your PR will merge into.
 <7> Name of your PR branch.
---
++
 . At this point you can test your playbook changes locally by running `yarn build:antora` or `yarn build`.
 . Commit the playbook changes, push to your fork of the `camel-website` repository, and open a PR.
 . If all goes well you will get an email telling you where the Netlify preview is; this is also shown on the PR page.
@@ -201,24 +204,28 @@ In this section the word `component` means an Antora component.
 
 IMPORTANT: Antora components may be `distributed` which means that the content comes from more than one place, possibly from different repositories.
 For instance, the `components` component has content from the main camel repository under the start_paths `docs/components` and `core/camel-core-engine/src/main/docs` and from the `camel-spring-boot` repository under `components-starter` and `docs/components`.
-Furthermore the content may not appear in the normal Antora structure but may be collected from a more maven-project-friendly arrangement with an Antora extension.
+Furthermore, the content may not appear in the normal Antora structure but may be collected from a more maven-project-friendly arrangement with an Antora extension.
 
 === xrefs within an (Antora) component
 
 Generally there will never be a reason to refer from one version of a component to another version.
 To assure this happens without maintenance issues, leave out the version and component segments from the xref, e.g. in the `components` component
 
-[source,adoc,subs=+attributes]
+[source,text]
+----
 xref{blank}:eips:enterprise-integration-patterns.adoc[]
+----
 
-NOT
+*NOT*
 
-[source,adoc,subs=+attributes]
+[source,text]
+----
 xref{blank}:next@components:eips:enterprise-integration-patterns.adoc[]
+----
 
 Do this no matter how many locations the component is distributed over.
 
-An xref within the same module can leave out the module segment, although it does no harm.
+A xref within the same module can leave out the module segment, although it does no harm.
 
 Do not specify the component name: if you do, the link will be to the `latest` (non-prerelease, i.e., non-`next`) version, not the current version.
 
@@ -228,8 +235,10 @@ The user-manual component is https://docs.antora.org/antora/3.0/component-with-n
 Leave out the version segment.
 For example, this will link to this page from anywhere in the documentation:
 
-[source,adoc]
+[source,text]
+----
 xref:manual::improving-the-documentation.adoc[]
+----
 
 === Links between subprojects
 
@@ -261,7 +270,9 @@ NOTE: Setting these up is WIP
 
 Use these attributes to refer to documentation for the related subproject, e.g.
 
-[source,adoc]
+[source,text]
+----
 xref{blank}:{camel-version}@components:eips:enterprise-integration-patterns.adoc[]
+----
 
 If there's a missing attribute, please raise an issue rather than using a concrete version.

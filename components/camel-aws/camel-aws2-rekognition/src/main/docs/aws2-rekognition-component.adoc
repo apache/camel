@@ -4,7 +4,7 @@
 :artifactid: camel-aws2-rekognition
 :description: Manage and invoke AWS Rekognition.
 :since: 4.17
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -148,6 +148,3 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
-
-
-

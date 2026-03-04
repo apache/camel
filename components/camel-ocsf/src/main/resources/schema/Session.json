@@ -29,8 +29,8 @@
     },
     "created_time": {
       "type": "integer",
-      "title": "Created Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Created Time"
     },
     "credential_uid": {
       "type": "string",
@@ -42,8 +42,8 @@
     },
     "expiration_time": {
       "type": "integer",
-      "title": "Expiration Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Expiration Time"
     },
     "is_mfa": {
       "type": "boolean",

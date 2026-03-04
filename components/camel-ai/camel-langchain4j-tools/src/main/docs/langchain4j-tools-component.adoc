@@ -103,6 +103,13 @@ or via the endpoint option `camelToolParameter` for a programmatic approach.
 The parameters can be found as headers in the consumer route, in particular, if you define `parameter.userId=5`,
 in the consumer route `${header.userId}` can be used.
 
+Parameters support optional metadata:
+
+* `parameter.<name>=<type>` — defines the parameter type (`string`, `integer`, `number`, `boolean`)
+* `parameter.<name>.description=<text>` — defines a description passed to the LLM
+* `parameter.<name>.required=<true|false>` — marks the parameter as required (default: `false`)
+* `parameter.<name>.enum=<value1,value2>` — restricts the parameter to a set of allowed values (comma-separated)
+
 .Producer and consumer example:
 [source, java]
 ----
@@ -111,6 +118,40 @@ from("direct:test")
 
 from("langchain4j-tools:test1?tags=users&description=Query user database by user ID&parameter.userId=integer")
     .to("sql:SELECT name FROM users WHERE id = :#userId");
+----
+
+.Example with required parameters and descriptions:
+[source, java]
+----
+from("langchain4j-tools:weather?tags=weather&description=Get weather forecast"
+    + "&parameter.location=string"
+    + "&parameter.location.description=The city and state"
+    + "&parameter.location.required=true"
+    + "&parameter.unit=string"
+    + "&parameter.unit.description=Temperature unit"
+    + "&parameter.unit.enum=celsius,fahrenheit")
+    .process(exchange -> {
+        String location = exchange.getIn().getHeader("location", String.class);
+        // ...
+    });
+----
+
+When using the programmatic `CamelSimpleToolParameter` approach, required parameters can be specified as a list of parameter names.
+The full constructor also accepts `additionalProperties` (to restrict extra fields) and `definitions` (for recursive schemas using `JsonReferenceSchema`):
+
+[source, java]
+----
+CamelSimpleToolParameter toolParameter = new CamelSimpleToolParameter(
+    "Get weather forecast",
+    List.of(
+        new NamedJsonSchemaProperty("location",
+            JsonStringSchema.builder().description("The city and state").build()),
+        new NamedJsonSchemaProperty("unit",
+            JsonEnumSchema.builder().enumValues("celsius", "fahrenheit")
+                .description("Temperature unit").build())),
+    List.of("location"),  // required parameter names
+    false,                // additionalProperties
+    null);                // definitions (for recursive schemas)
 ----
 
 .Usage example:

@@ -17,7 +17,7 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

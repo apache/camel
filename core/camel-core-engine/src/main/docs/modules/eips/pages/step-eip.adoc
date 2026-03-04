@@ -44,8 +44,13 @@ include::partial$eip-exchangeProperties.adoc[]
 
 == Using Step EIP
 
-In Java, you use `step` to group together sub nodes as shown:
+[tabs]
+====
 
+Java::
++
+In Java, you use `step` to group together sub nodes as shown:
++
 [source,java]
 ----
 from("activemq:SomeQueue")
@@ -55,12 +60,14 @@ from("activemq:SomeQueue")
     .end()
     .to("direct:bar");
 ----
-
++
 As you can see this groups together `.bean("foo")` and `.to("activemq:OutputQueue")`
 into a logical unit with the name foo.
 
+XML::
++
 In XML, you use the `<step>` tag:
-
++
 [source,xml]
 ----
 <route>
@@ -72,6 +79,29 @@ In XML, you use the `<step>` tag:
   <to uri="direct:bar"/>
 </route>
 ----
+
+YAML::
++
+In YAML, you use the `step:` node, **not** `steps:`.
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:SomeQueue
+      steps:
+        - step:
+            id: foo
+            steps:
+              - bean:
+                  ref: foo
+              - to:
+                  uri: activemq:OutputQueue
+        - to:
+            uri: direct:bar
+----
+
+====
 
 You can have multiple steps:
 
@@ -89,7 +119,7 @@ from("activemq:SomeQueue")
     .step("bar")
       .bean("something")
       .to("log:Something")
-    .end()
+    .end();
 ----
 
 XML::
@@ -132,7 +162,6 @@ YAML::
               - to:
                   uri: log:Something
 ----
-
 ====
 
 === JMX Management of Step EIP

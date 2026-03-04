@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.18.0-SNAPSHOT</version>
+        <version>4.19.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ai-parent</artifactId>
@@ -37,6 +37,7 @@
         <module>camel-chatscript</module>
         <module>camel-djl</module>
         <module>camel-docling</module>
+        <module>camel-huggingface</module>
         <module>camel-kserve</module>
         <module>camel-langchain4j-agent-api</module>
         <module>camel-langchain4j-agent</module>

@@ -19,7 +19,6 @@ check the code for additional details.
 
 === Writing A New Test Infrastructure Module
 
-
 [NOTE]
 ====
 This section is aimed at Camel maintainers that need to write new test infra components. End users can skip this section.
@@ -60,9 +59,8 @@ NOTE: support for embeddable components may be removed in future versions.
 
 ==== Recommended Structure for Test Infrastructure Modules
 
-The actual Service interface and implementation should be added under `src/main`, while the actual integration with JUnit 
-can be added to `src/test`, in this way the classes needed to run the service (most of them, with testcontainers) are decoupled
-by JUnit and can be run separately.
+All classes (service interfaces, container implementations, JUnit extensions, and service factories) are placed under `src/main`.
+This allows the modules to be consumed as regular JAR dependencies without requiring `test-jar` packaging.
 
 ===== Main Sources
 
@@ -73,7 +71,7 @@ interface.
 Ideally, there should be two concrete implementations of the services: one of the remote service (if applicable) and
 another for the container service: 
 
-[source, bash]
+[source,text]
 ----
               MyService
                  / \
@@ -91,19 +89,15 @@ service to choose between running as a local container or as remote instance, a 
 as `<name>.<parameter>`. More complex services may use the builder available through the factory classes to compose 
 the service accordingly.
 
-===== Test Sources
-
-Once the main sources are implemented, https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-common/src/test/java/org/apache/camel/test/infra/common/services/TestService.java[TestService]
+The https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-common/src/main/java/org/apache/camel/test/infra/common/services/TestService.java[TestService]
 interface can be used to integrate the actual Service implementation with JUnit and its lifecycle.
-The services should try to minimize the test execution time and resource usage when running. As such,
-the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/BeforeAllCallback.html[BeforeAllCallback]
-and https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/AfterAllCallback.html[AfterAllCallback]
+The services should try to minimize the test execution time and resource usage when running. As such the JUnit `@BeforeAllCallback` and `@AfterAllCallback`
 should be the preferred extensions whenever possible because they allow the instance of the infrastructure to be static
 throughout the test execution.
 
 [NOTE]
 ====
-Bear in mind that, according to the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/RegisterExtension.html[JUnit 5 extension]
+Bear in mind that, according to the https://docs.junit.org/6.0.3/extensions/registering-extensions.html#registration-programmatic[JUnit 6 Extension]
 model, the time of service initialization may differ depending on whether the service instance is declared as
 static or not in the test class. As such, the code should make no assumptions as to its time of initialization.
 ====
@@ -111,7 +105,7 @@ static or not in the test class. As such, the code should make no assumptions as
 ==== Registering Properties
 
 All services should register the properties, via `System.setProperty` that allow access to the services. This is required
- to resolve those properties when running tests using the Spring framework. This registration allows the properties
+to resolve those properties when running tests using the Spring framework. This registration allows the properties
 to be resolved in Spring's XML files. 
 
 This registration is done in the `registerProperties` methods during the service initialization. 
@@ -148,13 +142,13 @@ Then, when referring these properties in Camel routes or Spring XML properties, 
 
 ==== Packaging Recommendations
 
-This is infrastructure code for testing, therefore, it should be package as test type artifacts. The
+The test infrastructure modules are packaged as regular JAR artifacts. The
 https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-parent[parent pom] should provide all the necessary bits for packaging the test infrastructure.
 
 === Using The Test Infrastructure in Tests
 
 Using the test infra in a new component test is rather straightforward, similar to using any other reusable component.
-You start by declaring the test infra dependencies in your pom file. 
+You start by declaring the test infra dependencies in your pom file.
 
 This should be similar to:
 
@@ -165,7 +159,6 @@ This should be similar to:
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-test-infra-myservice</artifactId>
     <version>${project.version}</version>
-    <type>test-jar</type>
     <scope>test</scope>
 </dependency>
 ----
@@ -176,8 +169,7 @@ On the dependencies above, the dependency version is set to `${project.version}`
 Camel version when used outside the Camel Core project.
 ====
 
-On the test class, add a member variable for the service and annotate it with the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/RegisterExtension.html[@RegisterExtension],
- to let JUnit 5 manage its lifecycle.
+On the test class, add a member variable for the service and annotate it with the `@RegisterExtension` to let JUnit manage its lifecycle.
 
 [source,java]
 ----
@@ -255,7 +247,7 @@ Assuming Podman is properly installed and configured to behave like docker (i.e.
 
 On most systems that should be similar to the following command: 
 
-[source, console]
+[source,bash]
 ----
 export DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
 ----

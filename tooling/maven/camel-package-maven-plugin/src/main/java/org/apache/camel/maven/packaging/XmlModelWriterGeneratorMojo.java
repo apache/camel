@@ -61,8 +61,9 @@ public class XmlModelWriterGeneratorMojo extends ModelWriterGeneratorMojo {
             return;
         }
         Path javaDir = sourcesOutputDir.toPath();
-        String parser = generateWriter();
-        updateResource(javaDir, (getWriterPackage() + ".ModelWriter").replace('.', '/') + ".java", parser);
+        String writer = generateWriter();
+        writer = postGenerateWriter(writer);
+        updateResource(javaDir, (getWriterPackage() + ".ModelWriter").replace('.', '/') + ".java", writer);
     }
 
     @Override

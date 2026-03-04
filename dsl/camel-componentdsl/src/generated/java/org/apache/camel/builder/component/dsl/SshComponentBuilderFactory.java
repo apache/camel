@@ -261,6 +261,23 @@ public interface SshComponentBuilderFactory {
         }
     
         /**
+         * Sets the timeout in milliseconds to wait before the SSH session is
+         * closed due to inactivity. The default value is 0, which means no idle
+         * timeout is applied.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder idleTimeout(long idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+    
+        /**
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
          * 
@@ -528,6 +545,7 @@ public interface SshComponentBuilderFactory {
             case "clientBuilder": getOrCreateConfiguration((SshComponent) component).setClientBuilder((org.apache.sshd.client.ClientBuilder) value); return true;
             case "compressions": getOrCreateConfiguration((SshComponent) component).setCompressions((java.lang.String) value); return true;
             case "configuration": ((SshComponent) component).setConfiguration((org.apache.camel.component.ssh.SshConfiguration) value); return true;
+            case "idleTimeout": getOrCreateConfiguration((SshComponent) component).setIdleTimeout((long) value); return true;
             case "shellPrompt": getOrCreateConfiguration((SshComponent) component).setShellPrompt((java.lang.String) value); return true;
             case "sleepForShellPrompt": getOrCreateConfiguration((SshComponent) component).setSleepForShellPrompt((long) value); return true;
             case "healthCheckConsumerEnabled": ((SshComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;

@@ -1,5 +1,5 @@
-= PGP DataFormat
-:doctitle: PGP
+= PGP (Pretty Good Privacy Cryptographic) DataFormat
+:doctitle: PGP (Pretty Good Privacy Cryptographic)
 :shortname: pgp
 :artifactid: camel-crypto-pgp
 :description: Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.

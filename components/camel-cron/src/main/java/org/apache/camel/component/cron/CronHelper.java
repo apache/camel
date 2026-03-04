@@ -18,13 +18,13 @@ package org.apache.camel.component.cron;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cron.api.CamelCronService;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public final class CronHelper {
-    private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cron/";
-    private static final String FACTORY_KEY = "cron-service";
+
+    private static final String FACTORY_KEY = "cron/cron-service";
 
     private CronHelper() {
     }
@@ -45,8 +45,7 @@ public final class CronHelper {
         }
 
         // Fallback to factory finder
-        FactoryFinder finder = context.getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
-        return finder.newInstance(FACTORY_KEY, CamelCronService.class).orElse(null);
+        return ResolverHelper.resolveBootstrapService(context, FACTORY_KEY, CamelCronService.class).orElse(null);
     }
 
 }

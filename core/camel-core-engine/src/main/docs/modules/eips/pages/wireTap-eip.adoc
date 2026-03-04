@@ -85,18 +85,30 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:start
-    steps:
-      - wireTap:
-         uri: direct:tap
-      - to: 
-          uri: log:result
-- from:
-    uri: direct:tap
-    steps:
-      - to:
-          uri: log:log
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: log:foo
+        - wireTap:
+            uri: direct:tap
+        - to:
+            uri: log:result
+- route:
+    from:
+      uri: direct:tap
+      steps:
+        - delay:
+            expression:
+              constant:
+                expression: 1000
+        - setBody:
+            expression:
+              constant:
+                expression: Tapped
+        - to:
+            uri: log:tap
 ----
 ====
 
@@ -134,13 +146,14 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:start
-    steps:
-      - wireTap:
-          uri: jms:queue:backup-${header.id}
-      - to:
-          uri: bean:doSomething
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - wireTap:
+            uri: "jms:queue:backup-${header.id}"
+        - to:
+            uri: bean:doSomething
 ----
 ====
 

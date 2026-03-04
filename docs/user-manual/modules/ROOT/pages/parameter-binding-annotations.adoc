@@ -2,46 +2,26 @@
 
 The bean parameter binding annotations from Camel are as follows:
 
-[width="100%",cols="34%,33%,33%",options="header",]
-|=======================================================================
-|Annotation |Meaning |Parameter
-|`org.apache.camel.Body`
-|To bind to an inbound message body | 
-
-|`org.apache.camel.Header`
-|To bind to a message header |String name of the header
-
-|`org.apache.camel.Headers`
-|To bind to the Map of the message headers |
-
-|`org.apache.camel.Variable`
-|To bind to a named variable |String name of the
-variable
-
-|`org.apache.camel.Variables`
-|To bind to the variables map |
-
-|`org.apache.camel.ExchangeProperty`
-|To bind to a named property on the exchange |String name of the
-property
-
-|`org.apache.camel.ExchangeProperties`
-|To bind to the exchange property map on the exchange |
-
-|`org.apache.camel.ExchangeException`
-|To bind to an Exception set on the exchange |
-
-|=======================================================================
+[width="100%",cols="1m,2",options="header",]
+|===
+|Annotation                                                        | Meaning
+|`org.apache.camel.Body` | To bind to an inbound message body
+|`org.apache.camel.Header` | To bind to a message header by the given name
+|`org.apache.camel.Headers` | To bind to the Map of the message headers
+|`org.apache.camel.Variable` | To bind to a named variable the given name
+|`org.apache.camel.Variables` | To bind to the variables map
+|`org.apache.camel.ExchangeProperty` | To bind to a named property on the exchange the given name
+|`org.apache.camel.ExchangeProperties` | To bind to the exchange property map on the exchange
+|`org.apache.camel.ExchangeException` | To bind to an Exception set on the exchange
+|===
 
 These annotations can be used with the xref:components::bean-component.adoc[Bean]
 component or when invoking beans in the xref:dsl.adoc[DSL]
 
 Annotations can be used to define an xref:expression.adoc[Expression] or
 to extract various headers, properties or payloads from a
-xref:components:eips:message.adoc[Message] when invoking a bean method (see
-xref:bean-integration.adoc[Bean Integration] for more detail of how to
-invoke bean methods) together with being useful to help disambiguate
-which method to invoke.
+xref:components:eips:message.adoc[Message] when invoking a bean method. See
+xref:bean-integration.adoc[Bean Integration] for more in depth details on invoking beans.
 
 If no annotations are used then Camel assumes that a single parameter is
 the body of the message. Camel will then use the
@@ -78,11 +58,11 @@ TIP: You don't necessarily need to use the `@Consume` annotation if you don't
 want to as you could also make use of the Camel xref:dsl.adoc[DSL] to
 route to the bean's method as well.
 
-=== Using the DSL to invoke the bean method
+=== Calling bean from Camel routes
 
 Here is another example which does not use xref:pojo-consuming.adoc[POJO
 Consuming] annotations but instead uses the xref:dsl.adoc[DSL] to route
-messages to the bean method
+messages to the bean method.
 
 [source,java]
 ----
@@ -97,22 +77,78 @@ public class MyBean {
 
 The routing DSL then looks like this
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("activemq:someQueue").
   to("bean:myBean");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:someQueue"/>
+    <to uri="bean:myBean"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:someQueue
+      steps:
+        - to:
+            uri: bean:myBean
+----
+====
+
 Here *myBean* would be looked up in the xref:registry.adoc[Registry]
 then the body of the message would be used to try figure out what method to call.
 
 If you want to be explicit you can use:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("activemq:someQueue").
-  to("bean:myBean?methodName=doSomething");
+  to("bean:myBean?method=doSomething");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:someQueue"/>
+    <to uri="bean:myBean?method=doSomething"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:someQueue
+      steps:
+        - to:
+            uri: bean:myBean?method=doSomething
+----
+====
 
 And here we have a nifty example for you to show some great power in
 Camel. You can mix and match the annotations with the normal parameters,
@@ -136,28 +172,16 @@ Camel to bind expressions to method parameters when using
 xref:bean-integration.adoc[Bean Integration]. For example, you can use
 any of these annotations:
 
-[width="100%",cols="50%,50%",options="header",]
-|=======================================================================
+[width="100%",cols="1m,2",options="header",]
+|===
 |Annotation |Description
-|`@Bean`
-|Inject a xref:components:languages:bean-language.adoc[Bean] expression
-
-|`@Constant`
-|Inject a xref:components:languages:constant-language.adoc[Constant] expression
-
-|`@Groovy`
-|Inject a  xref:components:languages:groovy-language.adoc[Groovy] expression
-
-|`@Header`
-|Inject a xref:components:languages:header-language.adoc[Header] expression
-
-|`@Simple`
-|Inject an xref:components:languages:simple-language.adoc[Simple] expression
-
-|`@XPath`
-|Inject an xref:components:languages:xpath-language.adoc[XPath] expression
-
-|=======================================================================
+|`@Bean`|Inject a xref:components:languages:bean-language.adoc[Bean] expression
+|`@Constant`|Inject a xref:components:languages:constant-language.adoc[Constant] expression
+|`@Groovy`|Inject a  xref:components:languages:groovy-language.adoc[Groovy] expression
+|`@Header`|Inject a xref:components:languages:header-language.adoc[Header] expression
+|`@Simple`|Inject an xref:components:languages:simple-language.adoc[Simple] expression
+|`@XPath`|Inject an xref:components:languages:xpath-language.adoc[XPath] expression
+|===
 
 The table above only list some of the commonly used languages. You can find
 a list of all supported xref:components:languages:index.adoc[Languages]
@@ -182,7 +206,7 @@ public class Foo {
 
 ==== Advanced example using @Bean
 
-And an example of using the the `@Bean` binding annotation,
+And an example of using the `@Bean` binding annotation,
 where you can call a xref:components::bean-component.adoc[POJO] to supply
 the parameter value:
 
@@ -210,8 +234,7 @@ public class MyIdGenerator {
     public String generate(@Header(name = "user") String user, @Body String payload) throws Exception {
        User user = userManager.lookupUser(user);
        String userId = user.getPrimaryId();
-       String id = userId + generateHashCodeForPayload(payload);
-       return id;
+       return userId + generateHashCodeForPayload(payload);
    }
 }
 ----
@@ -250,7 +273,7 @@ For example in Spring XML:
 In this example we have an Exchange that has a User object stored in the
 in header. This User object has methods to get some user information. We
 want to use xref:components:languages:groovy-language.adoc[Groovy] to inject an expression that
-extracts and concats the fullname of the user into the fullName parameter.
+extracts and concat the names of the user into the fullName parameter.
 
 [source,java]
 ----

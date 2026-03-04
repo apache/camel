@@ -7,7 +7,6 @@ to the project using the standard GitHub way.
 
 https://github.com/apache/camel/
 
-[[HowcanIgetthesourcecode-Buildingthecode]]
 == Building the code
 
 To then build the code see xref:ROOT:building.adoc[Building].

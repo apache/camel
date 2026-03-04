@@ -39,17 +39,17 @@ Typically, you just derive from `DefaultEndpoint`
 == Annotating your Endpoint
 
 If you want to benefit from the automatic generation
-of HTML documentation for all the parameters on your endpoint as part of
-the maven site reports, you need to
-xref:endpoint-annotations.adoc[annotate your Endpoint's parameters].
+of metadata documentation for all the parameters on your endpoint as part of
+you need toxref:endpoint-annotations.adoc[annotate your Endpoint's parameters].
+This metadata allows tooling such as IDE plugins, JBang and others to better understand
+your custom component and provide code assistance.
 
 So this means you add a `@UriEndpoint` annotation to your Endpoint class
 and then annotate each parameter you wish to be configured via the URI
 configuration mechanism with `@UriParam` (or `@UriParams` for nested
 configuration objects).
 
-Refer to the xref:endpoint-annotations.adoc[Endpoint Annotations guide
-for details].
+Refer to the xref:endpoint-annotations.adoc[Endpoint Annotations guide for details].
 
 
 == Options
@@ -89,3 +89,5 @@ parameter:
     }
 ----
 
+TIP: To learn how to build a custom component its recommended to take a look at any of the existing components
+from the source code. For a beginner component then look at the log or timer component.

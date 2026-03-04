@@ -4,13 +4,10 @@
   "title": "DatastoreActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.DatastoreActivity",
-  "additionalProperties": true,
   "description": "DatastoreActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"

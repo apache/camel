@@ -23,53 +23,53 @@ public class SimpleInitBlockFunctionTest extends LanguageTestSupport {
 
     private static final String INIT1 = """
             $init{
-              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
             }init$
             You said: $clean()
             """;
 
     private static final String INIT2 = """
             $init{
-              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
-              $count ~:= ${function(clean)} ~> ${split(' ')} ~> ${size()}
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
+              $count ~:= ${function(clean)} ~> ${split(' ')} ~> ${size()};
             }init$
             You said: $clean() in $count() words
             """;
 
     private static final String INIT3 = """
             $init{
-              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
             }init$
             You said: ${clean('  Clean this text  please ...    ')} and then do something else
             """;
 
     private static final String INIT4 = """
             $init{
-              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
-              $count ~:= ${quote()} ~> ${function(clean)} ~> ${unquote()} ~> ${trim()} ~> ${split(' ')} ~> ${size()}
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
+              $count ~:= ${quote()} ~> ${function(clean)} ~> ${unquote()} ~> ${trim()} ~> ${split(' ')} ~> ${size()};
             }init$
             You said: $clean() in $count() words
             """;
 
     private static final String INIT5 = """
             $init{
-              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
-              $count ~:= $clean() ~> ${split(' ')} ~> ${size()}
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
+              $count ~:= ${clean()} ~> ${split(' ')} ~> ${size()};
             }init$
             You said: $clean() in $count() words
             """;
 
     private static final String INIT6 = """
             $init{
-              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
-              $count ~:= ${quote()} ~> ${clean()} ~> ${unquote()} ~> ${trim()} ~> ${split(' ')} ~> ${size()}
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
+              $count ~:= ${quote()} ~> ${clean()} ~> ${unquote()} ~> ${trim()} ~> ${split(' ')} ~> ${size()};
             }init$
             You said: $clean() in $count() words
             """;
 
     private static final String INIT7 = """
             $init{
-              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
             }init$
             You said: ${clean()}
             """;

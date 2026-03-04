@@ -121,8 +121,13 @@ public interface LangChain4jToolsEndpointBuilderFactory {
             return this;
         }
         /**
-         * List of Tool parameters in the form of parameter.=. This is a
-         * multi-value option with prefix: parameter.
+         * List of Tool parameters with optional metadata. Format: parameter.=,
+         * parameter..description=, parameter..required=, parameter..enum=.
+         * Example: parameter.location=string,
+         * parameter.location.description=The city and state,
+         * parameter.location.required=true,
+         * parameter.unit.enum=celsius,fahrenheit. This is a multi-value option
+         * with prefix: parameter.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
@@ -141,8 +146,13 @@ public interface LangChain4jToolsEndpointBuilderFactory {
             return this;
         }
         /**
-         * List of Tool parameters in the form of parameter.=. This is a
-         * multi-value option with prefix: parameter.
+         * List of Tool parameters with optional metadata. Format: parameter.=,
+         * parameter..description=, parameter..required=, parameter..enum=.
+         * Example: parameter.location=string,
+         * parameter.location.description=The city and state,
+         * parameter.location.required=true,
+         * parameter.unit.enum=celsius,fahrenheit. This is a multi-value option
+         * with prefix: parameter.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.

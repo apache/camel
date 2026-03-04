@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.18.0-SNAPSHOT</version>
+        <version>4.19.0-SNAPSHOT</version>
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -29,16 +29,11 @@
     <artifactId>camel-test-infra-couchbase</artifactId>
     <name>Camel :: Test Infra :: Couchbase</name>
 
-    <properties>
-        <assembly.skipAssembly>false</assembly.skipAssembly>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-common</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>com.couchbase.client</groupId>
@@ -48,16 +43,9 @@
 
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <version>${testcontainers-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-couchbase</artifactId>
             <version>${testcontainers-version}</version>
         </dependency>
     </dependencies>
-
 
 </project>

@@ -2,9 +2,13 @@
 
 The
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
-interface is used to implement consumers of message exchanges or to
+interface is used to implement consumers of message exchanges, or to
 implement a xref:components:eips:message-translator.adoc[Message Translator],
 and other use-cases.
+
+The `Processor` is a central API both internally and externally with Camel. The `Processor` has
+a single method `processor` (see below) that for example every
+xref:components:eips:enterprise-integration-patterns.adoc[EIPs] implements.
 
 == Using a processor in a route
 
@@ -21,30 +25,24 @@ public class MyProcessor implements Processor {
 }
 ----
 
-Then you can easily call this processor from a Java such as:
+Then you can easily call this processor from Camel routes:
 
-[source,java]
-----
-from("activemq:myQueue").process(new MyProcessor());
-----
+[tabs]
+====
 
+Java::
++
 Notice that the processor is referred to by the class type `MyProcessor.class` in the route.
 Camel will during startup automatic create one new instance of the processor using xref:injector.adoc[Injector]
 to be used during routing messages.
-
-In XML DSL however the `<process`> tag requires, referring to an existing processor instance
-which can be done:
-
-You can then easily use this inside a route by declaring the bean in
-Spring, say via the XML:
-
-[source,xml]
++
+[source,java]
 ----
-<bean id="myProcessor" class="com.acme.MyProcessor"/>
+from("activemq:myQueue").process(MyProcessor.class);
 ----
 
-And then use the bean id in the Camel route:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -53,17 +51,44 @@ And then use the bean id in the Camel route:
 </route>
 ----
 
-And in Java DSL:
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:myQueue
+      steps:
+        - process:
+            ref: myProcessor
+----
+====
 
-[source,java]
-----
-from("activemq:myQueue").process("myProcessor");
-----
 
 === Referring to beans using #class syntax
 
-In XML DSL you can also refer to the processor by its class name using `#class:` as prefix as shown:
+In all the Camel DSL you can also refer to the processor by its class name using `#class:` as prefix as shown:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("activemq:myQueue")
+  .process("#class:com.acme.MyProcessor");
+----
++
+However, in Java DSL you would often use the type safe way and create the Processor directly:
++
+[source,java]
+----
+from("activemq:myQueue").process(new MyProcessor());
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -72,21 +97,20 @@ In XML DSL you can also refer to the processor by its class name using `#class:`
 </route>
 ----
 
-This also works in Java DSL:
-
-[source,java]
+YAML::
++
+[source,yaml]
 ----
-from("activemq:myQueue").process("#class:com.acme.MyProcessor");
+- route:
+    from:
+      uri: activemq:myQueue
+      steps:
+        - process:
+            ref: "#class:com.acme.MyProcessor"
 ----
+====
 
 NOTE: For more details about the `#class:` prefix (and others) then see xref:property-binding.adoc[Property Binding].
-
-However in Java DSL you would often use the type safe way and instantiate the Processor directly as previously shown:
-
-[source,java]
-----
-from("activemq:myQueue").process(new MyProcessor());
-----
 
 
 == Why use process when you can use to instead?
@@ -109,7 +133,3 @@ inner class gets a bit more complicated it is of course advised to
 refactor it into a separate class. This approach is better if you do not want to use this processor again.
 From reusability perspective, it is not recommended to use this approach with anonymous inner classes.
 
-== See Also
-
-** xref:manual::consumertemplate.adoc[Consumer Template]: to learn how to consume data (including within processors)
-** xref:manual::producertemplate.adoc[Producer Template]: to learn how to produce data (including within processors)

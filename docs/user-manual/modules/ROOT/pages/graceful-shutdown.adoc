@@ -1,9 +1,9 @@
 = Graceful Shutdown
 
 Camel supports a pluggable shutdown strategy using
-`org.apache.camel.spi.ShutdownStrategy`. Its responsible for shutting
+`org.apache.camel.spi.ShutdownStrategy`. It's responsible for shutting
 down routes in a graceful manner. The other resources will still be
-handled by xref:camelcontext.adoc[CamelContext] to shutdown. This leaves
+handled by xref:camelcontext.adoc[CamelContext] to shut down. This leaves
 the problem at hand with properly shutting down all the routes reliably
 to the `ShutdownStrategy`.
 
@@ -13,12 +13,11 @@ doing that.
 
 == Default Shutdown Strategy
 
-The default strategy (`DefaultShutdownStrategy`) will gracefully shutdown routes:
+The default strategy (`DefaultShutdownStrategy`) will gracefully shut down routes:
 
 * in the reverse order they were started
-* let pending and current in flight exchanges run to completion before
-shutting down
-* using a timeout of 45 seconds which then forces a _hard_ shutdown
+* let pending and current in flight exchanges run to completion before shutting down
+* using a timeout of 45 seconds (can be configured) which then forces a _hard_ shutdown
 
 The settings are configurable, so you can change the timeout, and
 whether in case of timeout to force a _hard_ shutdown or ignore.
@@ -40,24 +39,40 @@ When shutting down the strategy will output to log the progress:
 ---------------------------------
 
 Notice how the strategy waits while there are inflight exchanges still being
-processed before it shutdown the routes and after that Camel itself.
+processed before it shut down the routes and after that Camel itself.
 
 === Suppressing logging due to timeout not allowing all inflight messages to complete
 
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown (hard) by
 forcing routes and thread pools etc to shut down, and the routing
-engine will reject continue processing xref:exchange.adoc[Exchange]s. If
-this happens you may see WARN logs about xref:exchange.adoc[Exchange]s
+engine will reject continue processing xref:exchange.adoc[Exchange](s). If
+this happens you may see WARN logs about xref:exchange.adoc[Exchange](s)
 being rejected and other failures due the forced shutdown.
 
 If you do not want to see these logs, you can suppress this by setting
-the option suppressLoggingOnTimeout to true.
+the option `suppressLoggingOnTimeout` to true.
 
+
+[tabs]
+====
+
+Java::
++
 [source,java]
----------------------------------
+----
 context.getShutdownStrategy().setSuppressLoggingOnTimeout(true);
----------------------------------
+----
+
+Application Properties::
++
+Or in `application.properties`:
++
+[source,properties]
+----
+camel.main.shutdownSuppressLoggingOnTimeout = true
+----
+====
 
 Notice that suppression is _a best effort_ attempt and there may still be some
 logging from 3rd party libraries, which Camel cannot control.
@@ -66,7 +81,7 @@ logging from 3rd party libraries, which Camel cannot control.
 
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown by
-forcing routes and thread pools etc to shut down. When the timeout
+forcing routes and thread pools etc. to shut down. When the timeout
 happens, then Camel logs information about the current inflight
 exchanges, which shows from which route the exchange origins, and where
 it currently is being routed. For example the logging below, shows that
@@ -91,10 +106,25 @@ duration=2017]
 If you do not want to see these logs, you can turn this off by setting
 the option logInflightExchangesOnTimeout to false.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ---------------------------------
 context.getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
 ---------------------------------
+
+Application Properties::
++
+Or in `application.properties`:
++
+[source,properties]
+----
+camel.main.logInflightExchangesOnTimeout = false
+----
+====
 
 === JMX managed
 
@@ -161,7 +191,7 @@ It is possible to stop (will do a gracefully shut down) an individual route usin
 camelContext.getRouteController().stopRoute(routeId);
 ----
 
-Routes can also be stopped via JMX.
+TIP: Routes can also be stopped via JMX or external tools such as https://hawt.io/[Hawtio].
 
 === Stopping and marking routes as failed due to an exception
 
@@ -180,7 +210,7 @@ NOTE: The Camel xref:health-check.adoc[Health Check] detect the route as failed 
 If the route is manually stopped, then the route is not marked as failed,
 and the xref:health-check.adoc[Health Check] will report the status as UNKNOWN.
 
-Routes can also be stopped and failed via JMX.
+TIP: Routes can also be stopped and failed via JMX or external tools such as https://hawt.io/[Hawtio].
 
 == Implementing custom component or ShutdownStrategy
 
@@ -196,7 +226,7 @@ on the `CamelContext` using the `setShutdownStrategy` method.
 === ShutdownAware
 
 The interface `org.apache.camel.spi.ShutdownAware` is an optional
-interface consumers can implement to have fine grained control during
+interface consumers can implement to have fine-grained control during
 shutdown. The `ShutdownStrategy` must be able to deal with consumers
 which implement this interface. This interface was introduced to cater
 for in memory consumers such as xref:components::seda-component.adoc[SEDA] which potentially

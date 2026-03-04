@@ -19,7 +19,7 @@ package org.apache.camel.component.pinecone;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.pinecone.services.PineconeService;
 import org.apache.camel.test.infra.pinecone.services.PineconeServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

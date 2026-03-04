@@ -19,8 +19,7 @@ camel dependency copy [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
-| `--build-property` | Maven/Gradle build properties, ex. --build-property=prop1=foo |  | List
-| `--build-tool` _(deprecated)_ | DEPRECATED: Build tool to use (maven or gradle) (gradle is deprecated) | maven | String
+| `--build-property` | Maven build properties, ex. --build-property=prop1=foo |  | List
 | `--camel-spring-boot-version` | Camel version to use with Spring Boot |  | String
 | `--camel-version` | To export using a different Camel version than the default version. |  | String
 | `--clean-dir` | If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care) | false | boolean
@@ -30,7 +29,6 @@ camel dependency copy [options]
 | `--exclude` | Exclude files by name or pattern |  | List
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--gav` | The Maven group:artifact:version |  | String
-| `--gradle-wrapper` _(deprecated)_ | DEPRECATED: Include Gradle Wrapper files in exported project | true | boolean
 | `--groovy-pre-compiled` | Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main) | false | boolean
 | `--hawtio` | Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus) | false | boolean
 | `--hawtio-version` | Version of the Hawtio web console | HawtioVersion.HAWTIO_VERSION | String

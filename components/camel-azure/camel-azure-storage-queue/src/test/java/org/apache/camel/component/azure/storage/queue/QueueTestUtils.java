@@ -19,7 +19,7 @@ package org.apache.camel.component.azure.storage.queue;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 
 import static org.junit.jupiter.api.Assertions.fail;
 

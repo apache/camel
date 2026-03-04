@@ -4,13 +4,10 @@
   "title": "SmbActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.SmbActivity",
-  "additionalProperties": true,
   "description": "SmbActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "client_dialects": {
       "type": "array",

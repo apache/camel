@@ -44,4 +44,16 @@ XML::
   <to uri="bean:myService"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:invokeMyService
+      steps:
+        - to:
+            uri: bean:myService
+----
 ====

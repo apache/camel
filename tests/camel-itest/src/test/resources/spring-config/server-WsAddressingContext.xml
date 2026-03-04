@@ -42,11 +42,8 @@
 				key="mtom-enabled" value="true" />
 		</properties -->
 		<features>
-			<!-- Enables logging of SOAP messages. -->
-			<logging xmlns="http://cxf.apache.org/core" />
 			<!-- Enables WS-Addressing. -->
 			<addressing xmlns="http://cxf.apache.org/ws/addressing" />
-			<!--  policies xmlns="http://cxf.apache.org/policy" ignoreUnknownAssertions="true" /-->
 		</features>
 
 	</endpoint>

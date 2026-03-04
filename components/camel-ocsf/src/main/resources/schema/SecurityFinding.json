@@ -4,13 +4,10 @@
   "title": "SecurityFinding",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.SecurityFinding",
-  "additionalProperties": true,
   "description": "SecurityFinding event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "impact": {
       "type": "string",

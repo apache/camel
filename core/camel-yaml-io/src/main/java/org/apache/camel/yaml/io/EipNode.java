@@ -162,6 +162,18 @@ class EipNode {
                 EipNode o = outputs.get(0);
                 JsonObject jo = o.asJsonObject();
                 answer.put(o.getName(), jo);
+            } else if ("setHeaders".equals(name)) {
+                JsonArray arr = new JsonArray();
+                for (EipNode o : outputs) {
+                    arr.add(o.asJsonObject());
+                }
+                answer.put("headers", arr);
+            } else if ("setVariables".equals(name)) {
+                JsonArray arr = new JsonArray();
+                for (EipNode o : outputs) {
+                    arr.add(o.asJsonObject());
+                }
+                answer.put("variables", arr);
             } else if ("choice".equals(name)) {
                 // special for choice
                 JsonArray arr = new JsonArray();

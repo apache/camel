@@ -39,6 +39,7 @@ public final class MojoHelper {
         switch (dir.getFileName().toString()) {
             case "camel-ai":
                 return Arrays.asList(dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
+                        dir.resolve("camel-huggingface"),
                         dir.resolve("camel-langchain4j-agent"), dir.resolve("camel-langchain4j-chat"),
                         dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-embeddingstore"),
                         dir.resolve("camel-langchain4j-tokenizer"), dir.resolve("camel-langchain4j-tools"),
@@ -78,8 +79,9 @@ public final class MojoHelper {
                         dir.resolve("camel-azure-schema-registry"), dir.resolve("camel-azure-functions"));
             case "camel-google":
                 return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
-                        dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
-                        dir.resolve("camel-google-pubsub-lite"), dir.resolve("camel-google-sheets"),
+                        dir.resolve("camel-google-drive"), dir.resolve("camel-google-firestore"),
+                        dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
+                        dir.resolve("camel-google-sheets"),
                         dir.resolve("camel-google-storage"), dir.resolve("camel-google-functions"),
                         dir.resolve("camel-google-secret-manager"), dir.resolve("camel-google-vertexai"));
             case "camel-debezium":
@@ -113,11 +115,14 @@ public final class MojoHelper {
                 return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-comprehend"),
                         dir.resolve("camel-aws2-cw"),
                         dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),
-                        dir.resolve("camel-aws2-ecs"), dir.resolve("camel-aws2-eks"), dir.resolve("camel-aws2-eventbridge"),
+                        dir.resolve("camel-aws2-ecs"), dir.resolve("camel-aws2-eks"),
+                        dir.resolve("camel-aws2-eventbridge"),
                         dir.resolve("camel-aws2-iam"),
-                        dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"), dir.resolve("camel-aws2-lambda"),
+                        dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"),
+                        dir.resolve("camel-aws2-lambda"),
                         dir.resolve("camel-aws2-mq"),
-                        dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-polly"), dir.resolve("camel-aws2-redshift"),
+                        dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-polly"),
+                        dir.resolve("camel-aws2-redshift"),
                         dir.resolve("camel-aws2-rekognition"),
                         dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
                         dir.resolve("camel-aws2-sns"),
@@ -125,7 +130,8 @@ public final class MojoHelper {
                         dir.resolve("camel-aws2-sts"),
                         dir.resolve("camel-aws2-timestream"), dir.resolve("camel-aws2-translate"),
                         dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"),
-                        dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"), dir.resolve("camel-aws-bedrock"),
+                        dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"),
+                        dir.resolve("camel-aws-bedrock"),
                         dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"),
                         dir.resolve("camel-aws2-s3-vectors"), dir.resolve("camel-aws-security-hub"));
             case "camel-vertx":

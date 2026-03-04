@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -30,7 +31,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleCalendar stream component.
  */
 @UriParams
-public class GoogleCalendarStreamConfiguration implements Cloneable {
+public class GoogleCalendarStreamConfiguration implements Cloneable, GoogleCommonConfiguration {
     private static final String DEFAULT_SCOPES = CalendarScopes.CALENDAR;
 
     @UriPath
@@ -72,6 +73,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     @UriParam
     private String delegate;
 
+    @Override
     public String getClientId() {
         return clientId;
     }
@@ -94,6 +96,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
         this.emailAddress = emailAddress;
     }
 
+    @Override
     public String getClientSecret() {
         return clientSecret;
     }
@@ -105,6 +108,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
         this.clientSecret = clientSecret;
     }
 
+    @Override
     public String getAccessToken() {
         return accessToken;
     }
@@ -116,6 +120,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
         this.accessToken = accessToken;
     }
 
+    @Override
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -154,6 +159,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
         this.scopes = scopes;
     }
 
+    @Override
     public Collection<String> getScopesAsList() {
         if (scopes != null) {
             return List.of(scopes.split(","));
@@ -263,6 +269,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
         this.considerLastUpdate = considerLastUpdate;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
@@ -277,6 +284,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
         this.serviceAccountKey = serviceAccountKey;
     }
 
+    @Override
     public String getDelegate() {
         return delegate;
     }

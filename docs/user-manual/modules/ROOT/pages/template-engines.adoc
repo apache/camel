@@ -1,28 +1,32 @@
 = Template engines
 
-A template engine is a tool that generates text output, such as emails, XML, or code, by combining templates with dynamic data. 
-In Apache Camel, templates are primarily used to create layouts while dynamically using exchange data.
+A template engine is a tool that generates text output, such as emails, XML, JSon or code, by combining templates with dynamic data.
+In Camel, templates are primarily used to create layouts while dynamically using data from the current xref:exchange.adoc[].
 
-Below is a list of the template engines that are provided by Apache Camel.
+Below is a list of some of the template engines that are provided by Camel:
 
-[cols="1,1,1,3", options="header"]
+[cols="1,1,3", options="header"]
 |===
-|Template engine |Artifact               |Since |Website
-
-|Chunk           |camel-chunk            |2.10  |https://github.com/tomj74/chunk-templates[github.com/tomj74/chunk-templates]
-|Freemarker      |camel-freemarker       |2.10  |https://freemarker.apache.org/[freemarker.apache.org]
-|JTE             |camel-jte              |4.4   |https://jte.gg/[jte.gg/]
-|MVEL            |camel-mvel             |2.12  |http://mvel.documentnode.com/[mvel.documentnode.com]
-|Mustache        |camel-mustache         |2.12  |https://mustache.github.io/[mustache.github.io]
-|String Template |camel-stringtemplate   |1.2   |https://www.stringtemplate.org/[www.stringtemplate.org]
-|Thymeleaf       |camel-thymeleaf        |4.1   |https://www.thymeleaf.org/[www.thymeleaf.org]
-|Velocity        |camel-velocity         |1.2   |https://velocity.apache.org/[velocity.apache.org]
+|Template |Artifact               |Description
+|xref:components::chunk-component.adoc[]  |camel-chunk  |  Transform messages using Chunk templating engine.
+|xref:components::freemarker-component.adoc[]  |camel-freemarker  |  Transform messages using FreeMarker templates.
+|xref:components::jte-component.adoc[]  |camel-jte  |  Transform messages using a Java based template engine (JTE).
+|xref:components::mustache-component.adoc[] | camel-mustache | Transform messages using a Mustache template.
+|xref:components::mvel-component.adoc[] | camel-mvel | Transform messages using an MVEL template.
+|xref:components::string-template-component.adoc[] | camel-stringtemplate | Transform messages using StringTemplate engine.
+|xref:components::thymeleaf-component.adoc[] | camel-thymeleaf | Transform messages using a Thymeleaf template.
+|xref:components::velocity-component.adoc[] | camel-velocity | Transform messages using a Velocity template.
+|xref:components::xslt-component.adoc[] | camel-xslt | Transforms XML payload using an XSLT template.
+|xref:components::xslt-saxon-component.adoc[] | camel-xslt-saxon | Transform XML payloads using an XSLT template using Saxon.
 |===
+
+TIP: To see a wider list try Camel JBang to execute: `camel catalog component --filter=transform` from the CLI.
 
 == Which template engine to choose
 
 Velocity is a mature template engine with long-term support from Camel. It can be used for text generation, such as emails. 
-Mustache can be used for similar purposes and is cross-platform. 
+Mustache can be used for similar purposes and is cross-platform.
+
 For templates that require more conditional logic and XML or HTML output, Freemarker, MVEL, and Thymeleaf are good choices. JTE is known to be fast due to its compile-time template processing.
 
 NOTE: These template engines perform directly on the Exchange, if you want to template routes, look at xref:manual::route-template.adoc[Route Templates].

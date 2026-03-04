@@ -319,13 +319,17 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
         for (String name : list) {
             try {
-                Class<? extends Throwable> type = camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
+                Class<? extends Throwable> type = resolveExceptionClass(name);
                 answer.add(type);
             } catch (ClassNotFoundException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         return answer;
+    }
+
+    protected Class<? extends Throwable> resolveExceptionClass(String name) throws ClassNotFoundException {
+        return camelContext.getClassResolver().resolveMandatoryClass(name, Throwable.class);
     }
 
     /**

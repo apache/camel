@@ -1,14 +1,14 @@
 = RouteBuilder
 
-The `RouteBuilder` is a base class which is derived from to create routing rules using the DSL.
+The `RouteBuilder` is a base class which is derived from to create routing rules using the Java DSL.
 Instances of `RouteBuilder` are then added to the `CamelContext`.
 
 == RouteBuilder example
 
-The following shows an example of a `RouteBuilder`:
+The following shows an example of a `RouteBuilder` in Java DSL:
 
 [source,java]
--------------------------------------------------------------------------
+----
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -33,7 +33,7 @@ public class MyRouteBuilder extends RouteBuilder {
     }
 
 }
--------------------------------------------------------------------------
+----
 
 In the `configure` method we can define Camel xref:routes.adoc[Routes].
 

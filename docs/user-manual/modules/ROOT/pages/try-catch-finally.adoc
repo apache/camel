@@ -11,16 +11,25 @@ So we have:
 - `doFinally`
 - `end` to end the block in Java DSL
 
+[IMPORTANT]
+====
 When using `doTry ... doCatch ... doFinally` then the regular Camel
 xref:error-handler.adoc[Error Handler] is not in use; meaning any
 `onException` or the likes does not trigger.
+
 The reason is that
 `doTry ... doCatch ... doFinally` is in fact its own error handler and mimics how try/catch/finally works in Java.
+====
 
 == Using doTry ... doCatch ... doFinally
 
 In the route below we have all of them in action:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -34,8 +43,9 @@ from("direct:start")
     .end();
 ----
 
-And in XML DSL
 
+XML::
++
 [source,xml]
 ----
 <route>
@@ -55,11 +65,43 @@ And in XML DSL
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - doTry:
+            steps:
+              - process:
+                  ref: processorFail
+              - to:
+                  uri: mock:result
+              - doCatch:
+                  exception:
+                    - java.io.IOException
+                    - java.lang.IllegalStateException
+                  steps:
+                    - to:
+                        uri: mock:catch
+              - doFinally:
+                  steps:
+                    - to:
+                        uri: mock:finally
+----
+====
+
 === Using onWhen with doCatch
 
 You can use xref:predicate.adoc[Predicate]s with `doCatch` to make it runtime determine if the block should be triggered or not.
 In our case, we only want to trigger if the caused exception message contains the *damn* word.
 
+[tabs]
+====
++
+Java::
 [source,java]
 ----
 from("direct:start")
@@ -75,8 +117,8 @@ from("direct:start")
     .end();
 ----
 
-And in XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -102,6 +144,44 @@ And in XML DSL
   </doTry>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - doTry:
+            steps:
+              - process:
+                  ref: processorFail
+              - to:
+                  uri: mock:result
+              - doCatch:
+                  exception:
+                    - java.io.IOException
+                    - java.lang.IllegalStateException
+                  steps:
+                    - onWhen:
+                        expression:
+                          simple:
+                            expression: "${exception.message} contains 'Damn'"
+                    - to:
+                        uri: mock:catch
+              - doCatch:
+                  exception:
+                    - org.apache.camel.CamelExchangeException
+                  steps:
+                    - to:
+                        uri: mock:catchCamel
+              - doFinally:
+                  steps:
+                    - to:
+                        uri: mock:finally
+----
+====
 
 === Use end() to end the block
 
@@ -145,7 +225,7 @@ So what you must do is to end the doCatch block correct (notice how we use `endD
 
 [source,java]
 ----
-from("direct:test").routeId("myroute")
+from("direct:test")
     .doTry().
         doTry().
             throwException(new IllegalArgumentException("Forced by me"))
@@ -159,23 +239,63 @@ from("direct:test").routeId("myroute")
     .end();
 ----
 
-And by using the `endDoTry()` we can end the block correctly, and an XML representation of the route would be as follows:
+And by using the `endDoTry()` we can end the block correctly, and an XML or YAML representation of the route would be as follows:
 
+[tabs]
+====
+
+XML::
++
 [source,xml]
 ----
 <route>
     <from uri="direct:test"/>
     <doTry>
         <doTry>
-            <throwException id="throwException1"/>
-            <doCatch id="doCatch1">
-                <log id="log1" message="docatch 1"/>
-                <throwException id="throwException2"/>
+            <throwException exceptionType="java.lang.IllegalArgumentException" message="Forced by me"/>
+            <doCatch>
+                <exception>java.lang.Exception</exception>
+                <log message="docatch 1"/>
+                <throwException exceptionType="java.lang.IllegalArgumentException" message="Second forced by me"/>
             </doCatch>
         </doTry>
-        <doCatch id="doCatch2">
-            <log id="log2" message="docatch 2"/>
+        <doCatch>
+            <exception>java.lang.Exception</exception>
+            <log message="docatch 2"/>
         </doCatch>
     </doTry>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:test
+      steps:
+        - doTry:
+            steps:
+              - doTry:
+                  steps:
+                    - throwException:
+                        message: Forced by me
+                        exceptionType: java.lang.IllegalArgumentException
+                    - doCatch:
+                        exception:
+                          - java.lang.Exception
+                        steps:
+                          - log:
+                              message: docatch 1
+                          - throwException:
+                              message: Second forced by me
+                              exceptionType: java.lang.IllegalArgumentException
+              - doCatch:
+                  exception:
+                    - java.lang.Exception
+                  steps:
+                    - log:
+                        message: docatch 2
+----
+====

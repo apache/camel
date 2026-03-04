@@ -5,10 +5,10 @@ The reference to entity "..." must end with the ';' delimiter.
 ----
 
 In the URIs used for specifying Camel endpoints, the `&` is used to
-separate the parameters. However, `&` also is a reserved character in
-XML.
+separate the parameters. However, `&` also is a reserved character in XML.
+
 Because of this, you have to replace all & in your URIs by `+&amp;+` when
-using the Spring XML syntax to configure Camel routes.
+using the XML DSL to configure Camel routes.
 
 An example: this snippet of code in the xref:ROOT:dsl.adoc[DSL]...
 
@@ -17,9 +17,9 @@ An example: this snippet of code in the xref:ROOT:dsl.adoc[DSL]...
 from("timer://myTimer?fixedRate=true&delay=0&period=2000")
 ----
 
-...matches this example in the Spring XML syntax:
+... matches this example in the XML syntax where `&` has been replaced with `+&amp;+`
 
-[source,java]
+[source,xml]
 ----
-<from>timer://myTimer?fixedRate=true&amp;delay=0&amp;period=2000</from>
+<from uri="timer://myTimer?fixedRate=true&amp;delay=0&amp;period=2000"/>
 ----

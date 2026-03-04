@@ -4,7 +4,7 @@
 :artifactid: camel-once
 :description: Trigger a single message only once at startup (useful for development and testing purposes).
 :since: 4.17
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
 :core:

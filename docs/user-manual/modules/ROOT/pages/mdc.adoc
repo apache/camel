@@ -2,15 +2,47 @@
 
 The Mapped Diagnostic Context is a technology used in Java to provide a set of customized information into each log trace. The major logging frameworks implements it, and, although it may have certain limitations, this technology is used to enhance the logging and monitoring of a Java application (Camel applications included).
 
-NOTE: you're invited to try the new ref:components::mdc-component.adoc[camel-mdc] component for an improved user experience.
+TIP: You're invited to try the new xref:components:others:mdc.adoc[camel-mdc] component for an improved user experience.
 
 The main limitation of this technology is the fact that it stores values on a context that is available at thread level. Since Camel is an application that manages multiple thread, when it deals with asynchronous calls, the context propagation may not work correctly.
 
-NOTE: the framework should generally handle MDC correctly. However, there could be components (eg, tracing components) and other asynchronous parts of the system that still require the implementation of the context propagation: please report if you notice anything wrong.
+NOTE: The framework should generally handle MDC correctly. However, there could be components (eg, tracing components) and other asynchronous parts of the system that still require the implementation of the context propagation: please report if you notice anything wrong.
 
-== How to configure in Camel application
+== Enabling MDC
 
-The first thing you need to do is to enable the `camel.main.useMdcLogging=true`. This flag will automatically include in the MDC context the following Exchange information:
+NOTE: Using the new xref:components:others:mdc.adoc[camel-mdc] will automatic enabled MDC logging in Camel.
+
+The first thing you need to do is to enable MDC logging in Camel.
+
+[tabs]
+====
+
+Application Properties::
++
+[source,properties]
+----
+camel.main.useMdcLogging = true
+----
+
+Java::
++
+[source,java]
+----
+CamelContext context = ...
+context.setUseMDCLogging(true);
+----
+
+Spring XML::
++
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring" useMDCLogging="true">
+...
+</camelContext>
+----
+====
+
+When enabled then the following Camel information will be included in the MDC context:
 
 * camel.breadcrumbId
 * camel.exchangeId
@@ -27,9 +59,9 @@ You can use the above variables for MDC depending on the logging framework you'r
 
 If you're using Java DSL you can include any customized information by adding that using low level MDC API:
 
-[source, java]
+[source,java]
 ----
-        org.slf4j.MDC.put("myKey", "myValue");
+org.slf4j.MDC.put("myKey", "myValue");
 ----
 
 Each MDC should be now able to include that information.

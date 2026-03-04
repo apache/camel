@@ -54,13 +54,13 @@
     },
     "logged_time": {
       "type": "integer",
-      "title": "Logged Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Logged Time"
     },
     "transmit_time": {
       "type": "integer",
-      "title": "Transmission Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Transmission Time"
     },
     "untruncated_size": {
       "type": "integer",

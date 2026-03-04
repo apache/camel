@@ -25,10 +25,10 @@ Authentication and Authorization Services
 Camel offers xref:route-policy.adoc[Route Policy] driven security capabilities that may be wired into
 routes or route segments. A route policy in Camel utilizes a strategy pattern
 for applying interceptors on Camel Processors. It's offering the ability
-to apply cross-cutting concerns (for example. security, transactions etc) of a Camel route.
+to apply cross-cutting concerns (for example. security, transactions etc.) of a Camel route.
 
 The components offering authentication and authorization services
-utilizing xref:route-policy.adoc[Route Policy] are:
+utilizing xref:route-policy.adoc[Route Policy] based on `org.apache.camel.spi.AuthorizationPolicy` are:
 
 * xref:components:others:shiro.adoc[Shiro Security]
 * xref:components:others:spring-security.adoc[Spring Security]
@@ -39,17 +39,18 @@ Camel offers encryption/decryption services to secure payloads or
 selectively apply encryption/decryption capabilities on
 portions/sections of a payload.
 
-The dataformats offering encryption/decryption of payloads
+The data-formats offering encryption/decryption of payloads
 utilizing xref:components:eips:marshal-eip.adoc[Marshal] are:
 
 * xref:components:dataformats:crypto-dataformat.adoc[Crypto]
 * xref:components:dataformats:pgp-dataformat.adoc[PGP]
-* xref:components:dataformats:xmlSecurity-dataformat.adoc[XML security]
+* xref:components:dataformats:pqc-dataformat.adoc[Post Quantum Cryptography]
+* xref:components:dataformats:xmlSecurity-dataformat.adoc[XML Security]
 
 == Endpoint Security
 
 Some components in Camel offer an ability to secure their endpoints
-(using interceptors etc) and therefore ensure that they offer the
+(using interceptors etc.) and therefore ensure that they offer the
 ability to secure payloads as well as provide
 authentication/authorization capabilities at endpoints created using the
 components.
@@ -71,10 +72,11 @@ Camel also supports accessing the secured configuration from an external vault s
 The following _Vaults_ are supported by Camel:
 
 * xref:components::aws-secrets-manager-component.adoc[AWS Secrets Manager]
-* xref:components::google-secret-manager-component.adoc[Google Secret Manager]
 * xref:components::azure-key-vault-component.adoc[Azure Key Vault]
+* xref:components::cyberark-vault-component.adoc[CyberArk Conjur Vault]
+* xref:components::google-secret-manager-component.adoc[Google Secret Manager]
 * xref:components::hashicorp-vault-component.adoc[Hashicorp Vault]
-* CyberArk Conjur
+* xref:components::ibm-secrets-manager-component.adoc[IBM Secrets Manager]
 
 ==== Using AWS Vault
 
@@ -133,31 +135,79 @@ camel.vault.aws.region = region
 
 At this point you'll be able to reference a property in the following way by using `aws:` as prefix in the `{{ }}` syntax:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{aws:route}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{aws:route}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{aws:route}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{aws:route}}"
+----
+====
 
 Where `route` will be the name of the secret stored in the AWS Secrets Manager Service.
 
-You could specify a default value in case the secret is not present on AWS Secret Manager:
+You could specify a default value (`aws:key:default-value`) in case the secret is not present on AWS Secret Manager:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{aws:route:myDefault}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{aws:route:default}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{aws:route:myDefault}}"/>
+</route>
 ----
 
-In this case, if the secret doesn't exist, the property will fallback to "default" as value.
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{aws:route:myDefault}}"
+----
+====
+
+In this case, if the secret doesn't exist, the property will fallback to "myDefault" as value.
 
 Also, you are able to get a particular field of the secret, if you have, for example, a secret named database of this form:
 
@@ -175,29 +225,78 @@ Also, you are able to get a particular field of the secret, if you have, for exa
 
 You're able to do get single secret value in your route, like for example:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{aws:database#username}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{aws:database#username}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{aws:database#username}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{aws2:database#username}}"
+----
+====
 
 Or re-use the property as part of an endpoint.
 
 You could specify a default value in case the particular field of secret is not present on AWS Secret Manager:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{aws:database#username:admin}}");
+----
+
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{aws:database#username:admin}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{aws:database#username:admin}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{aws:database#username:admin}}"
+----
+====
 
 In this case, if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fall back to "admin" as value.
 
@@ -242,31 +341,79 @@ camel.vault.aws.projectId = region
 
 At this point you'll be able to reference a property in the following way by using `gcp:` as prefix in the `{{ }}` syntax:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{gcp:route}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
     <route>
         <from uri="direct:start"/>
         <to uri="{{gcp:route}}"/>
     </route>
-</camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{gcp:route}}"
+----
+====
 
 Where `route` will be the name of the secret stored in the GCP Secret Manager Service.
 
-You could specify a default value in case the secret is not present on GCP Secret Manager:
+You could specify a default value (`gcp:key:default-value`) in case the secret is not present GCP Secret Manager:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{gcp:route:myDefault}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{gcp:route:default}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{gcp:route:myDefault}}"/>
+</route>
 ----
 
-In this case, if the secret doesn't exist, the property will fallback to "default" as value.
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{gcp:route:myDefault}}"
+----
+====
+
+In this case, if the secret doesn't exist, the property will fallback to "myDefault" as value.
 
 Also, you are able to get a particular field of the secret, if you have, for example, a secret named database of this form:
 
@@ -284,29 +431,78 @@ Also, you are able to get a particular field of the secret, if you have, for exa
 
 You're able to do get single secret value in your route, like for example:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{gcp:database#username}}");
+----
+
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{gcp:database#username}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{gcp:database#username}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{gcp:database#username}}"
+----
+====
 
 Or re-use the property as part of an endpoint.
 
 You could specify a default value in case the particular field of secret is not present on GCP Secret Manager:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{gcp:database#username:admin}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{gcp:database#username:admin}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{gcp:database#username:admin}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{gcp:database#username:admin}}"
+----
+====
 
 In this case, if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
 
@@ -356,31 +552,79 @@ camel.vault.azure.vaultName = vaultName
 
 At this point, you'll be able to reference a property in the following way:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{azure:route}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{azure:route}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{azure:route}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{azure:route}}"
+----
+====
 
 Where route will be the name of the secret stored in the Azure Key Vault Service.
 
-You could specify a default value in case the secret is not present on Azure Key Vault Service:
+You could specify a default value (`azure:key:default-value`) in case the secret is not present on Azure Key Value Service:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{azure:route:myDefault}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{azure:route:default}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{azure:route:myDefault}}"/>
+</route>
 ----
 
-In this case, if the secret doesn't exist, the property will fallback to "default" as value.
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{azure:route:myDefault}}"
+----
+====
+
+In this case, if the secret doesn't exist, the property will fallback to "myDefault" as value.
 
 Also you are able to get a particular field of the secret if you have, for example, a secret named database of this form:
 
@@ -398,29 +642,78 @@ Also you are able to get a particular field of the secret if you have, for examp
 
 You're able to do get single secret value in your route, like for example:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{azure:database#username}}");
+----
+
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{azure:database#username}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{azure:database#username}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{azure:database#username}}"
+----
+====
 
 Or re-use the property as part of an endpoint.
 
 You could specify a default value in case the particular field of secret is not present on Azure Key Vault:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{azure:database#username:admin}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{azure:database#username:admin}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{azure:database#username:admin}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{azure:database#username:admin}}"
+----
+====
 
 In this case, if the secret doesn't exist or the secret exists, but the username field is not part of the secret, the property will fallback to "admin" as value.
 
@@ -476,31 +769,81 @@ camel.vault.hashicorp.namespace = namespace
 
 At this point, you'll be able to reference a property in the following way:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{hashicorp:route}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{hashicorp:secret:route}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{hashicorp:route}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:route}}"
+----
+====
 
 Where route will be the name of the secret stored in the Hashicorp Vault instance, in the 'secret' engine.
 
 You could specify a default value in case the secret is not present on Hashicorp Vault instance:
 
-[source,xml]
+You could specify a default value (`azure:key:default-value`) in case the secret is not present on Azure Key Value Service:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{hashicorp:secret:route:default}}"/>
-    </route>
-</camelContext>
+from("direct:start")
+  .to("{{hashicorp:route:myDefault}}");
 ----
 
-In this case, if the secret doesn't exist in the 'secret' engine, the property will fall back to "default" as value.
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{hashicorp:route:myDefault}}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:route:myDefault}}"
+----
+====
+
+In this case, if the secret doesn't exist, the property will fallback to "myDefault" as value.
 
 Also, you are able to get a particular field of the secret, if you have, for example, a secret named database of this form:
 
@@ -518,67 +861,190 @@ Also, you are able to get a particular field of the secret, if you have, for exa
 
 You're able to do get single secret value in your route, in the 'secret' engine, like, for example:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{hashicorp:database#username}}");
+----
+
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{hashicorp:secret:database#username}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{hashicorp:database#username}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{hashicorp:database#username}}"
+----
+====
 
 Or re-use the property as part of an endpoint.
 
 You could specify a default value in case the particular field of secret is not present on Hashicorp Vault instance, in the 'secret' engine:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{hashicorp:database#username:admin}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{hashicorp:secret:database#username:admin}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{hashicorp:database#username:admin}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{hashicorp:database#username:admin}}"
+----
+====
 
 In this case, if the secret doesn't exist or the secret exists (in the 'secret' engine) but the username field is not part of the secret, the property will fall back to "admin" as value.
 
 There is also the syntax to get a particular version of the secret for both the approach, with field/default value specified or only with secret:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{hashicorp:secret:route@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{hashicorp:secret:route@2}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{hashicorp:secret:route@2}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:secret:route@2}}"
+----
+====
 
 This approach will return the RAW route secret with version '2', in the 'secret' engine.
 
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{hashicorp:route:default@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{hashicorp:route:default@2}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{hashicorp:route:default@2}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{hashicorp:route:default@2}}"
+----
+====
+
 
 This approach will return the route secret value with version '2' or default value in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{hashicorp:secret:database#username:admin@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{hashicorp:secret:database#username:admin@2}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{hashicorp:secret:database#username:admin@2}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{hashicorp:secret:database#username:admin@2}}"
+----
+====
 
 This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist (in the 'secret' engine).
 
@@ -607,29 +1073,77 @@ When using the `operation` option to create, get, list secrets etc., you should 
 
 At this point, you'll be able to reference a property in the following way:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{ibm:route}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{ibm:default:route}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{ibm:route}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{ibm:route}}"
+----
+====
 
 Where route will be the name of the secret stored in the IBM Secrets Manager Vault instance, in the 'default' secret group.
 
 You could specify a default value in case the secret is not present on IBM Secrets Manager Vault instance:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{ibm:default:route:default}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{ibm:default:route:default}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{ibm:default:route:default}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{ibm:default:route:default}}"
+----
+====
 
 In this case, if the secret doesn't exist in the 'default' secret group, the property will fall back to "default" as value.
 
@@ -649,71 +1163,195 @@ Also, you are able to get a particular field of the secret, if you have, for exa
 
 You're able to do get single secret value in your route, in the 'default' secret group, like for example:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{ibm:default:database#username}}");
+----
+
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{ibm:default:database#username}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{ibm:default:database#username}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{ibm:default:database#username}}"
+----
+====
 
 Or re-use the property as part of an endpoint.
 
 You could specify a default value in case the particular field of secret is not present on IBM Secrets Manager Vault instance, in the 'secret' engine:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{ibm:default:database#username:admin}}");
+----
+
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{ibm:default:database#username:admin}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{ibm:default:database#username:admin}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{ibm:default:database#username:admin}}"
+----
+====
 
 In this case, if the secret doesn't exist or the secret exists (in the 'default' secret group) but the username field is not part of the secret, the property will fall back to "admin" as value.
 
 There is also the syntax to get a particular version of the secret for both the approaches, with field/default value specified or only with secret:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{ibm:default:route@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{ibm:default:route@2}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{ibm:default:route@2}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{ibm:default:route@2}}"
+----
+====
 
 This approach will return the RAW route secret with version '2', in the 'default' secret group.
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{ibm:default:route:default@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{ibm:default:route:default@2}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{ibm:default:route:default@2}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{ibm:default:route:default@2}}"
+----
+====
 
 This approach will return the route secret value with version '2' or default value in case the secret doesn't exist or the version doesn't exist (in the 'default' secret group).
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{ibm:default:database#username:admin@2}}");
+----
+
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{ibm:default:database#username:admin@2}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{ibm:default:database#username:admin@2}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{ibm:default:database#username:admin@2}}"
+----
+====
 
 This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist (in the 'default' secret group).
 
-The only requirement is adding the camel-ibm-secrets-manager jar to your Camel application.
+The only requirement is adding the `camel-ibm-secrets-manager` JAR to your Camel application.
+
 
 ==== Using CyberArk Conjur Vault
 
@@ -761,29 +1399,77 @@ NOTE: If you're running the application on a Kubernetes based cloud platform, yo
 
 At this point, you'll be able to reference a property in the following way:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{cyberark:route}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{cyberark:route}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{cyberark:route}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{cyberark:route}}"
+----
+====
 
 Where `route` will be the name of the secret (variable) stored in the CyberArk Conjur Vault instance.
 
 You could specify a default value in case the secret is not present on CyberArk Conjur:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{cyberark:route:default}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{cyberark:route:default}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{cyberark:route:default}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{cyberark:route:default}}"
+----
+====
 
 In this case, if the secret doesn't exist, the property will fall back to "default" as value.
 
@@ -803,73 +1489,196 @@ Also, you are able to get a particular field of the secret, if you have, for exa
 
 You're able to get single secret value in your route, like for example:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{cyberark:database#username}}");
+----
+
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{cyberark:database#username}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{cyberark:database#username}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{cyberark:database#username}}"
+----
+====
 
 Or re-use the property as part of an endpoint.
 
 You could specify a default value in case the particular field of secret is not present on CyberArk Conjur:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{cyberark:database#username:admin}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{cyberark:database#username:admin}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{cyberark:database#username:admin}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{cyberark:database#username:admin}}"
+----
+====
 
 In this case, if the secret doesn't exist or the secret exists but the username field is not part of the secret, the property will fall back to "admin" as value.
 
 There is also the syntax to get a particular version of the secret for both the approaches, with field/default value specified or only with secret:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{cyberark:route@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{cyberark:route@2}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{cyberark:route@2}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{cyberark:route@2}}"
+----
+====
 
 This approach will return the RAW route secret with version '2'.
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .to("{{cyberark:route:default@2}}");
+----
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <to uri="{{cyberark:route:default@2}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="{{cyberark:route:default@2}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: "{{cyberark:route:default@2}}"
+----
+====
 
 This approach will return the route secret value with version '2' or default value in case the secret doesn't exist or the version doesn't exist.
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .log("Username is {{cyberark:database#username:admin@2}}");
+----
+
+
+XML::
++
 [source,xml]
 ----
-<camelContext>
-    <route>
-        <from uri="direct:start"/>
-        <log message="Username is {{cyberark:database#username:admin@2}}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:start"/>
+    <log message="Username is {{cyberark:database#username:admin@2}}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Username is {{cyberark:database#username:admin@2}}"
+----
+====
 
 This approach will return the username field of the database secret with version '2' or admin in case the secret doesn't exist or the version doesn't exist.
 
 NOTE: CyberArk Conjur requires secrets (variables) to be defined in a policy file before they can be set.
 
-The only requirement is adding the camel-cyberark-vault jar to your Camel application.
+The only requirement is adding the `camel-cyberark-vault` JAR to your Camel application.
+
 
 ==== Automatic Camel context reloading on Secret Refresh while using AWS Secrets Manager
 
@@ -907,9 +1716,10 @@ where `camel.vault.aws.refreshEnabled` will enable the automatic context reload,
 
 Note that `camel.vault.aws.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `aws:` prefix.
 
-The only requirement is adding the camel-aws-secrets-manager jar to your Camel application.
+The only requirement is adding the `camel-aws-secrets-manager` JAR to your Camel application.
 
-==== Automatic Camel context reloading on Secret Refresh while using AWS Secrets Manager with Eventbridge and AWS SQS Services
+
+==== Automatic Camel context reloading on Secret Refresh while using AWS Secrets Manager with EventBridge and AWS SQS Services
 
 Another option is to use AWS EventBridge in conjunction with the AWS SQS service.
 
@@ -932,9 +1742,9 @@ On the AWS side, the following resources need to be created:
 
 This rule will make the event related to AWS Secrets Manager filtered
 
-- You need to set the a Rule target to the AWS SQS Queue for Eventbridge rule
+- You need to set the Rule target to the AWS SQS Queue for EventBridge rule
 
-- You need to give permission to the Eventbrige rule, to write on the above SQS Queue. For doing this you'll need to define a json file like this:
+- You need to give permission to the EventBrige rule, to write on the above SQS Queue. For doing this you'll need to define a json file like this:
 
 [source,json]
 ----
@@ -967,6 +1777,7 @@ camel.vault.aws.sqsQueueUrl=<queue_url>
 where queue_url is the AWS SQS Queue URL of the just created Queue.
 
 Whenever an event of PutSecretValue for the Secret named 'Secret' will happen, a message will be enqueued in the AWS SQS Queue and consumed on the Camel side and a context reload will be triggered.
+
 
 ==== Automatic Camel context reloading on Secret Refresh while using Google Secret Manager
 
@@ -1014,6 +1825,7 @@ events related to the life cycle of the secret.
 There are only two requirements: 
 - Adding `camel-google-secret-manager` JAR to your Camel application.
 - Give the service account used permissions to do operation at secret management level (for example, accessing the secret payload, or being admin of secret manager service and also have permission over the Pubsub service)
+
 
 ==== Automatic Camel context reloading on Secret Refresh while using Azure Key Vault
 
@@ -1075,7 +1887,8 @@ where `camel.vault.azure.eventhubConnectionString` is the eventhub connection st
 
 Note that `camel.vault.azure.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `azure:` prefix.
 
-The only requirement is adding the camel-azure-key-vault jar to your Camel application.
+The only requirement is adding the `camel-azure-key-vault` JAR to your Camel application.
+
 
 ==== Automatic Camel context reloading on Secret Refresh while using IBM Secrets Manager
 
@@ -1124,7 +1937,8 @@ where `camel.vault.ibm.eventStreamBootstrapServers` is the comma-separated list 
 
 Note that `camel.vault.ibm.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into accounts or the properties with an `ibm:` prefix.
 
-The only requirement is adding the camel-ibm-secrets-manager jar to your Camel application.
+The only requirement is adding the `camel-ibm-secrets-manager` JAR to your Camel application.
+
 
 ==== Automatic Camel context reloading on Secret Refresh while using Hashicorp Vault
 
@@ -1177,6 +1991,8 @@ camel.vault.hashicorp.secrets=omsecret/test,kv:myapp/credentials
 
 Note that `camel.vault.hashicorp.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into account all the properties with a `hashicorp:` prefix.
 
+The only requirement is adding the `camel-hashicorp-vault` JAR to your Camel application.
+
 ===== How the Refresh Mechanism Works
 
 Unlike cloud-based secret managers (AWS, GCP, Azure) that provide event-driven notifications, Hashicorp Vault does not have a native event notification system for secret changes. Therefore, this implementation uses a *polling-based approach*:
@@ -1194,4 +2010,3 @@ For example, if a secret named `database` is updated in Vault:
 
 This polling approach works with all Hashicorp Vault deployments (on-premise, cloud, enterprise, and open-source) without requiring additional infrastructure.
 
-The only requirement is adding the camel-hashicorp-vault jar to your Camel application.

@@ -22,7 +22,7 @@ $ mvn -U org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifact
 
 or use camel-jbang xref:camel-jbang.adoc#_update[update] action:
 
-[source,bas]
+[source,bash]
 ----
 $ camel update run $VERSION
 ----

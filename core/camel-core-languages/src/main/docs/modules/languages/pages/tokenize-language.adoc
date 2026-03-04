@@ -37,6 +37,23 @@ The following example shows how to take a request from the direct:a endpoint
 then split it into pieces using an xref:manual::expression.adoc[Expression],
 then forward each piece to direct:b:
 
+IMPORTANT: When using new-line (`\n`) as tokenizer, then XML and YAML DSL must use the `token` option\
+as done in the following example.
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:a")
+    .split(body().tokenize("\n"))
+        .to("direct:b");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -48,14 +65,23 @@ then forward each piece to direct:b:
 </route>
 ----
 
-And in Java DSL:
-
-[source,java]
+YAML::
++
+[source,yaml]
 ----
-from("direct:a")
-    .split(body().tokenize("\n"))
-        .to("direct:b");
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - split:
+            expression:
+              tokenize:
+                token: "\n"
+            steps:
+              - to:
+                  uri: direct:b
 ----
+====
 
 == See Also
 

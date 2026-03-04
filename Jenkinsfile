@@ -49,7 +49,7 @@ pipeline {
     parameters {
         booleanParam(name: 'VIRTUAL_THREAD', defaultValue: false, description: 'Perform the build using virtual threads')
         choice(name: 'PLATFORM_FILTER', choices: ['all', 'ppc64le', 's390x', 'ubuntu-avx'], description: 'Run on specific platform')
-        choice(name: 'JDK_FILTER', choices: ['all', 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'], description: 'Run on specific jdk')
+        choice(name: 'JDK_FILTER', choices: ['all', 'jdk_21_latest', 'jdk_25_latest'], description: 'Run on specific jdk')
     }
     agent none
     stages {
@@ -70,7 +70,7 @@ pipeline {
                 axes {
                     axis {
                         name 'JDK_NAME'
-                        values 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'
+                        values 'jdk_21_latest', 'jdk_25_latest'
                     }
                     axis {
                         name 'PLATFORM'
@@ -78,26 +78,6 @@ pipeline {
                     }
                 }
                 excludes {
-                    exclude {
-                        axis {
-                            name 'JDK_NAME'
-                            values 'jdk_21_latest'
-                        }
-                        axis {
-                            name 'PLATFORM'
-                            values 'ppc64le'
-                        }
-                    }
-                    exclude {
-                        axis {
-                            name 'JDK_NAME'
-                            values 'jdk_21_latest'
-                        }
-                        axis {
-                            name 'PLATFORM'
-                            values 's390x'
-                        }
-                    }
                     exclude {
                         axis {
                             name 'JDK_NAME'
@@ -139,11 +119,8 @@ pipeline {
                                 script {
                                     if ("${PLATFORM}" == "ubuntu-avx") {
                                         if ("${JDK_NAME}" == "jdk_21_latest") {
-                                            // Enable virtual threads
-                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD}"
-                                        } else if ("${JDK_NAME}" == "jdk_17_latest") {
-                                            // Enable coverage required later by Sonar check
-                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Pcoverage"
+                                            // Enable virtual threads and coverage required later by Sonar check
+                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD} -Pcoverage"
                                         } else {
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install"
                                         }
@@ -168,7 +145,7 @@ pipeline {
                             script {
                                 echo "Do Static code analysis for ${PLATFORM}-${JDK_NAME}"
                                 // We only execute this on the main PLATFORM/JDK target
-                                if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_17_latest") {
+                                if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_21_latest") {
                                     withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
                                         echo "Code quality review ENABLED for ${PLATFORM} with ${JDK_NAME}"
                                         sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"

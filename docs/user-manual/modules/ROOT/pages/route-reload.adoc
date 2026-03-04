@@ -16,6 +16,11 @@ for file changes in the file system (i.e., using `file` and not `classpath`).
 
 The route reloading can be configured in Java or with Spring Boot, Quarkus in the following way:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 CamelContext context = ...
@@ -27,8 +32,10 @@ reload.setPattern("*.xml");
 context.addService(reload);
 ----
 
-And with Camel Quarkus / Camel Main you can configure this in `application.properties:`
-
+Application Properties::
++
+And with Spring Boot, Quarkus, Standalone you can configure this in `application.properties:`
++
 [source,properties]
 ----
 # turn on route reloading on file changes
@@ -38,18 +45,7 @@ camel.main.routes-reload-directory = myfolder/routes
 # pattern(s) for files to watch
 camel.main.routes-reload-pattern = *.xml
 ----
-
-And in Spring Boot:
-
-[source,properties]
-----
-# turn on route reloading on file changes
-camel.springboot.routes-reload-enabled = true
-# the base directory to watch
-camel.springboot.routes-reload-directory = myfolder/routes
-# pattern(s) for files to watch
-camel.springboot.routes-reload-pattern = *.xml
-----
+====
 
 === Route Reload Options
 
@@ -80,5 +76,5 @@ See related xref:context-reload.adoc[].
 
 See the following examples that come with live reloading enabled:
 
-- https://github.com/apache/camel-examples/tree/main/main-xml[camel-examples/examples/main-xml]
-- https://github.com/apache/camel-examples/tree/main/main-yaml[camel-examples/examples/main-yaml]
+- https://github.com/apache/camel-examples/tree/main/main-xml[Standalone XML DSL]
+- https://github.com/apache/camel-examples/tree/main/main-yaml[Standalone YAML DSL]

@@ -61,6 +61,16 @@ public final class OpenAIConstants {
     @Metadata(description = "The total number of tokens used (prompt + completion)", javaType = "Integer")
     public static final String TOTAL_TOKENS = "CamelOpenAITotalTokens";
 
+    // MCP Tool Call Headers
+    @Metadata(description = "Number of tool call iterations performed in the agentic loop", javaType = "Integer")
+    public static final String TOOL_ITERATIONS = "CamelOpenAIToolIterations";
+    @Metadata(description = "List of tool names called during the agentic loop", javaType = "java.util.List<String>")
+    public static final String MCP_TOOL_CALLS = "CamelOpenAIMcpToolCalls";
+    @Metadata(description = "Whether the response came directly from a tool with returnDirect=true, "
+                            + "rather than from the LLM",
+              javaType = "Boolean")
+    public static final String MCP_RETURN_DIRECT = "CamelOpenAIMcpReturnDirect";
+
     // Output Exchange Properties
     @Metadata(description = "The complete OpenAI response object", javaType = "com.openai.models.ChatCompletion")
     public static final String RESPONSE = "CamelOpenAIResponse";

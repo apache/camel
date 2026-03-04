@@ -13,7 +13,301 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.18 to 4.19
 
+=== camel-bom
+
+The `camel-test` module has been removed from `camel-bom`. This module was included by mistake, as since Camel 4, this is
+not a JAR but a pom.xml file. Camel end users should use the `camel-test-junit5` / `camel-test-junit6` JARs and the others directly.
+
+=== camel-cloud (Removal)
+
+The `camel-cloud` module and the `serviceCall` EIP have been removed. These were deprecated in Camel 3.19 and 4.7.
+The `camel-service` component has also been removed.
+
+The cloud integration from the following components has been removed: `camel-consul`, `camel-dns`, `camel-http`, `camel-jetty`, `camel-kubernetes`, `camel-netty-http`, and `camel-zookeeper`.
+
 === camel-core
 
 The WireTap EIP has removed the `pattern` option from its model (not in use) as wiretap always
 uses `InOnly` pattern.
+
+Removed 2 deprecated methods in Java DSL for `throttler` EIP.
+
+==== Saga EIP
+
+The Saga EIP has _fixed_ the model for how to configure completion and compensation URIs.
+
+For Java DSL there is no changes, but XML and YAML DSL is affected. Here the `<compensation>` and `<completion>` tags
+has been changed to be an attribute on `<saga>` instead as shown below:
+
+Before:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <saga sagaService="mySagaService">
+        <compensation uri="mock:compensation"/>
+        <completion uri="mock:completion"/>
+        <option key="myOptionKey">
+            <constant>myOptionValue</constant>
+        </option>
+        <option key="myOptionKey2">
+            <constant>myOptionValue2</constant>
+        </option>
+    </saga>
+    <choice>
+        <when>
+            <simple>${body} == 'fail'</simple>
+            <throwException exceptionType="java.lang.RuntimeException" message="fail"/>
+        </when>
+    </choice>
+    <to uri="mock:end"/>
+</route>
+----
+
+In YAML DSL the changes are even simpler as the endpoint is moved from `uri` to the value of `completion` or `compensation`.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - saga:
+            sagaService: mySagaService
+            compensation:
+              uri: mock:compensation
+            completion:
+              uri: mock:completion
+            key: myOptionKey2
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == 'fail'"
+                steps:
+                  - throwException:
+                      message: fail
+                      exceptionType: java.lang.RuntimeException
+        - to:
+            uri: mock:end
+
+----
+
+After:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <saga sagaService="mySagaService" compensation="mock:compensation" completion="mock:completion">
+        <option key="myOptionKey">
+            <constant>myOptionValue</constant>
+        </option>
+        <option key="myOptionKey2">
+            <constant>myOptionValue2</constant>
+        </option>
+    </saga>
+    <choice>
+        <when>
+            <simple>${body} == 'fail'</simple>
+            <throwException exceptionType="java.lang.RuntimeException" message="fail"/>
+        </when>
+    </choice>
+    <to uri="mock:end"/>
+</route>
+----
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - saga:
+            sagaService: mySagaService
+            compensation: mock:compensation
+            completion: mock:completion
+            key: myOptionKey2
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == 'fail'"
+                steps:
+                  - throwException:
+                      message: fail
+                      exceptionType: java.lang.RuntimeException
+        - to:
+            uri: mock:end
+----
+
+=== camel-simple
+
+In the simple language then init blocks syntax has changed to require that each variable ends with a semicolon and new line (no trailing comments etc is allowed)
+
+For example
+
+[source,yaml]
+----
+    - setBody:
+        simple:
+          expression: |-
+            $init{
+              // this is a java like comment
+              $sum := ${sum(${header.lines},100)}
+
+              $sku := ${iif(${body} contains 'Camel',123,999)}
+            }init$
+            orderId=$sku,total=$sum
+----
+
+Should be changed to have semicolons as shown below:
+
+[source,yaml]
+----
+    - setBody:
+        simple:
+          expression: |-
+            $init{
+              // this is a java like comment
+              $sum := ${sum(${header.lines},100)};
+
+              $sku := ${iif(${body} contains 'Camel',123,999)};
+            }init$
+            orderId=$sku,total=$sum
+----
+
+=== camel-test-infra
+
+The test infrastructure modules no longer produce `test-jar` artifacts. All classes (service interfaces,
+container implementations, JUnit extensions, and service factories) are now packaged in the regular JAR artifact.
+
+If your project depends on `camel-test-infra-*` modules with `<type>test-jar</type>`, remove the `<type>` element:
+
+Before:
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-infra-kafka</artifactId>
+    <version>${camel.version}</version>
+    <type>test-jar</type>
+    <scope>test</scope>
+</dependency>
+----
+
+After:
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-infra-kafka</artifactId>
+    <version>${camel.version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+This applies to all `camel-test-infra-*` artifacts, including `camel-test-infra-common`.
+
+=== camel-yaml-io / camel-xml-io
+
+In the YAML DSL we have renamed `routePolicy` to `routePolicyRef` on the `route` node,
+as that is the correct name.
+
+When dumping routes in YAML or XML format via `camel-yaml-io` or `camel-xml-io` then the structure of routes
+and all the EIP options now respect the intended order in the model.
+
+For example `id` is always first, and the following attributes are ordered so the most
+commonly used at in the top. EIPs such as `circuitBreaker` now has `onFallback` last.
+
+This order is also the same order that UI builders like Camel Karavan and Kaoto do as well.
+
+=== camel-jbang
+
+Support for exporting to use Gradle as build tool has been removed (it was deprecated and not working well)
+The deprecated options `buildToool` and `gradleWrapper` has been removed.
+
+=== camel-kafka
+
+The Kafka client library has been upgraded from 3.9.1 to 4.2.0. This is a major version upgrade of Apache Kafka with several notable changes:
+
+* The default value of `lingerMs` (producer `linger.ms`) has been changed from `0` to `5` to align with the Kafka 4.x default. This improves batching efficiency as larger batches typically result in similar or lower producer latency.
+
+* Two new consumer configuration options have been added:
+** `groupProtocol` -- Controls which consumer group protocol to use. Valid values are `classic` (default) and `consumer`. Setting this to `consumer` enables the new KIP-848 consumer rebalance protocol which provides faster and more efficient rebalancing.
+** `groupRemoteAssignor` -- The name of the server-side assignor to use when `groupProtocol` is set to `consumer`. If not specified, the group coordinator will use the default assignor configured on the broker.
+
+* If you had explicitly configured the `partitioner` option to use `org.apache.kafka.clients.producer.internals.DefaultPartitioner` or `org.apache.kafka.clients.producer.UniformStickyPartitioner`, you must remove that configuration as these classes have been removed in Kafka 4.0. The built-in default partitioner (used when no partitioner is set) continues to work.
+
+=== camel-google-pubsub-lite
+
+The `camel-google-pubsub-lite` component has been removed. The component was deprecated in Camel 4.10 following Google Cloud Platform's deprecation of the underlying Pub/Sub Lite service.
+
+Google recommends migrating your Pub/Sub Lite workloads to either:
+
+* **Google Cloud Pub/Sub** → use the `camel-google-pubsub` component
+* **Google Cloud Managed Service for Apache Kafka** → use the `camel-kafka` component
+
+=== camel-kafka
+
+The Kafka client library has been upgraded from 3.9.x to 4.2.0. This is a major upgrade with the following notable changes:
+
+* The `lingerMs` option default value has changed from `0` to `5` to align with the Kafka 4.x client default for `linger.ms`.
+* Two new consumer options have been added: `groupProtocol` (default `classic`, enums: `classic`, `consumer`) and `groupRemoteAssignor`. These support the KIP-848 consumer rebalance protocol introduced in Kafka 4.0. When `groupProtocol` is set to `consumer`, the classic-only properties (`heartbeatIntervalMs`, `sessionTimeoutMs`, `partitionAssignor`) are automatically excluded from the consumer configuration.
+* The removed `DefaultPartitioner` and `UniformStickyPartitioner` classes are no longer available. If you were explicitly setting `partitioner` to one of these classes, remove the configuration as Kafka 4.x uses the default partitioner automatically.
+
+The test infrastructure for Kafka has been updated:
+
+* The `local-kafka3-container` mapping has been renamed to `local-kafka-container`. If you were using `-Dkafka.instance.type=local-kafka3-container`, update to `-Dkafka.instance.type=local-kafka-container`.
+* The Strimzi test service now runs in KRaft mode (no ZooKeeper). The `ZookeeperContainer` class has been removed.
+
+=== camel-json-patch
+
+The `camel-json-patch` is now deprecated - the library it uses is not active maintained and this module does not work with Jackon 3.
+
+=== camel-mail
+
+When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
+the bean which is similar to what `camel-file` do as well.
+
+=== camel-openapi-java
+
+When using _code first_ Rest DSL and have configured `base.path` then this will now be exclusively used
+for the returned server url in the API specification.
+
+For example here we set `base.path=cheese`:
+
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost").port(getPort())
+        .contextPath("myapp")
+        .apiContextPath("/api-doc")
+        .apiProperty("cors", "true").apiProperty("base.path", "cheese")
+        .apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3");
+----
+
+Then the generated API specification now returns:
+
+[source,json]
+----
+  "servers" : [ {
+    "url" : "http://localhost:58678/cheese"
+  } ],
+----
+
+Previously the context-path would always be used:
+
+[source,json]
+----
+  "servers" : [ {
+    "url" : "http://localhost:58678/myapp"
+  } ],
+----
+
+The intention is to allow to configure the `base.path` _as is_ in the return API specification.
+
+=== camel-nitrite (Removal)
+
+The camel-nitrite is removed in this version. It was deprecated in 4.10.
+

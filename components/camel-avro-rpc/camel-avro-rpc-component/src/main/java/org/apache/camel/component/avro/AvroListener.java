@@ -30,8 +30,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.avro.spi.AvroRpcHttpServerFactory;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,12 +82,8 @@ public class AvroListener {
     private static Server createServer(AvroConfiguration configuration, CamelContext camelContext, SpecificResponder responder)
             throws Exception {
         if (AVRO_HTTP_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
-            AvroRpcHttpServerFactory factory = camelContext
-                    .getCamelContextExtension()
-                    .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
-                    .newInstance("avro-rpc-http-server-factory", AvroRpcHttpServerFactory.class)
-                    .orElseThrow(() -> new IllegalStateException(
-                            "AvroRpcHttpServerFactory is neither set on this endpoint neither found in Camel Registry or FactoryFinder."));
+            AvroRpcHttpServerFactory factory = ResolverHelper.resolveMandatoryService(camelContext,
+                    "avro-rpc-http-server-factory", AvroRpcHttpServerFactory.class, "camel-avro-rpc");
             return factory.create(responder, configuration.getPort());
         } else if (AVRO_NETTY_TRANSPORT.equalsIgnoreCase(configuration.getTransport().name())) {
             return new NettyServer(responder, new InetSocketAddress(configuration.getHost(), configuration.getPort()));

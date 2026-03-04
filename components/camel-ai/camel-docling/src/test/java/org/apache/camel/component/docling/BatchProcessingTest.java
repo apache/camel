@@ -19,7 +19,7 @@ package org.apache.camel.component.docling;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -139,6 +139,16 @@ public class BatchProcessingTest extends CamelTestSupport {
         assertEquals(600000, config.getBatchTimeout());
         assertEquals(false, config.isBatchFailOnFirstError());
         assertTrue(config.isSplitBatchResults());
+    }
+
+    @Test
+    public void testBatchSizeParsedFromEndpointUri() throws Exception {
+        DoclingEndpoint endpoint = (DoclingEndpoint) context.getEndpoint(
+                "docling:convert?useDoclingServe=true&batchSize=5&batchParallelism=2");
+        DoclingConfiguration config = endpoint.getConfiguration();
+
+        assertEquals(5, config.getBatchSize());
+        assertEquals(2, config.getBatchParallelism());
     }
 
     @Test

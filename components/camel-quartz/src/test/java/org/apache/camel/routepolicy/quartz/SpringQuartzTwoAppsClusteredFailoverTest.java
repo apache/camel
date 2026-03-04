@@ -19,7 +19,7 @@ package org.apache.camel.routepolicy.quartz;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;

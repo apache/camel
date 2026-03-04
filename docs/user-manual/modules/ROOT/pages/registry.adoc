@@ -1,9 +1,9 @@
 = Registry
 
 The `org.apache.camel.spi.Registry` API is a common API to lookup beans in any kind of runtime platform,
-whether you run Camel on Spring Boot, Quarkus, Standalone, Kafka or something else.
+whether you run Camel on Spring Boot, Quarkus, Standalone, Camel JBang or something else.
 
-Camel uses the `DefaultRegistry` that based on which runtime used (Spring Boot, Quarkus, etc.) will
+Camel uses the `DefaultRegistry` that based on which runtime used will
 first look up beans from the runtime platform, and fallback to Camel's own `SimpleRegistry`.
 
 == Registry API
@@ -26,7 +26,7 @@ public interface Registry extends BeanRepository {
 
     /**
      * Binds the bean to the repository (if possible).
-     * If the bean is CamelContextAware then the registry will automatic inject the context if possible.
+     * If the bean is CamelContextAware then the registry will automatically inject the context if possible.
      *
      * @param  id    the id of the bean
      * @param  bean  the bean
@@ -36,7 +36,7 @@ public interface Registry extends BeanRepository {
     /**
      * Binds the bean to the repository (if possible).
      * Binding by id and type allows to bind multiple entries with the same id but with different type.
-     * If the bean is CamelContextAware then the registry will automatic inject the context if possible.
+     * If the bean is CamelContextAware then the registry will automatically inject the context if possible.
      *
      * @param  id    the id of the bean
      * @param  type  the type of the bean to associate the binding
@@ -46,6 +46,8 @@ public interface Registry extends BeanRepository {
 
 }
 ----
+
+IMPORTANT: The binding API will bind the bean to Camels internal registry, and not in the runtime (Spring Boot etc).
 
 If you, for example, need to add a bean to the `Registry` then you can easily do this from Java as follows:
 
@@ -103,7 +105,7 @@ public MyFoo foo() {
 
 == Lookup API
 
-Registry is mostly used for looking up beans by their IDs, or by type. This is heavily used
+Registry is mostly used for looking up beans by their IDs, or by type. This is frequently used
 during startup of Camel where Camel is wiring up all components, endpoints, routes, processors, beans and so forth.
 
 The lookup API is the following methods:
@@ -172,7 +174,7 @@ be used when running Camel standalone.
 
 NOTE: You can also use `@BeanInject` from Camel in Spring Boot or Quarkus;
 but this requires the class with the bean injection is _managed_ by Camel (such as a `RouteBuilder` class);
-which may not always be the case. Therefore, it is best to only use the Spring Boot or Quarkus annotations.
+which may not always be the case. Therefore, it is recommended to use the Spring Boot or Quarkus annotations.
 
 ==== Lookup in Spring Boot
 

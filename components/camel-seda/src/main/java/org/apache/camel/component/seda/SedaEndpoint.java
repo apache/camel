@@ -80,7 +80,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private int browseLimit = 100;
 
     @UriParam(label = "consumer", defaultValue = "1",
-              description = "Number of concurrent threads processing exchanges.")
+              description = "Number of concurrent threads processing exchanges."
+                            + " When virtualThreadPerTask is enabled, this becomes a concurrency limit"
+                            + " (0 = unlimited) and defaults to 0 instead of 1.")
     private int concurrentConsumers = 1;
     @UriParam(label = "consumer,advanced", defaultValue = "true",
               description = "Whether to limit the number of concurrentConsumers to the maximum of 500. By default, an exception will be thrown"
@@ -99,6 +101,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
               description = "The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is"
                             + " allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.")
     private int pollTimeout = 1000;
+    @UriParam(label = "consumer,advanced",
+              description = "If enabled, spawns a new virtual thread for each message instead of using a fixed pool of consumer threads. "
+                            + "This model is optimized for virtual threads (JDK 21+) and I/O-bound workloads where creating threads is cheap. "
+                            + "The concurrentConsumers option becomes a limit on max concurrent tasks (0 = unlimited). "
+                            + "Requires virtual threads to be enabled via camel.threads.virtual.enabled=true.")
+    private boolean virtualThreadPerTask;
 
     @UriParam(label = "producer", defaultValue = "IfReplyExpected",
               description = "Option to specify whether the caller should wait for the async task to complete or not before continuing. The"
@@ -203,6 +211,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     protected SedaConsumer createNewConsumer(Processor processor) {
+        if (virtualThreadPerTask) {
+            return new ThreadPerTaskSedaConsumer(this, processor);
+        }
         return new SedaConsumer(this, processor);
     }
 
@@ -404,7 +415,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Number of concurrent threads processing exchanges.
+     * Number of concurrent threads processing exchanges. When virtualThreadPerTask is enabled, this becomes a
+     * concurrency limit (0 = unlimited) and defaults to 0 instead of 1.
      */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
@@ -527,6 +539,21 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     @ManagedAttribute
+    public boolean isVirtualThreadPerTask() {
+        return virtualThreadPerTask;
+    }
+
+    /**
+     * If enabled, spawns a new virtual thread for each message instead of using a fixed pool of consumer threads. This
+     * model is optimized for virtual threads (JDK 21+) and I/O-bound workloads where creating threads is cheap. The
+     * concurrentConsumers option becomes a limit on max concurrent tasks (0 = unlimited). Requires virtual threads to
+     * be enabled via camel.threads.virtual.enabled=true.
+     */
+    public void setVirtualThreadPerTask(boolean virtualThreadPerTask) {
+        this.virtualThreadPerTask = virtualThreadPerTask;
+    }
+
+    @ManagedAttribute
     public boolean isPurgeWhenStopping() {
         return purgeWhenStopping;
     }
@@ -605,6 +632,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        // When virtualThreadPerTask is enabled, default concurrentConsumers to 0 (unlimited)
+        // since the traditional default of 1 defeats the purpose of thread-per-task mode
+        if (virtualThreadPerTask && concurrentConsumers == 1) {
+            concurrentConsumers = 0;
+        }
 
         if (discardWhenFull && blockWhenFull) {
             throw new IllegalArgumentException(

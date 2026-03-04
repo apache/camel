@@ -4,13 +4,10 @@
   "title": "Authentication",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.Authentication",
-  "additionalProperties": true,
   "description": "Authentication event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "account_switch_type_id": {
       "type": "integer",

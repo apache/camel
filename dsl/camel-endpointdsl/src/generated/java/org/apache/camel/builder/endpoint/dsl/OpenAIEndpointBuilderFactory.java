@@ -101,6 +101,40 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true and MCP servers are configured, automatically execute tool
+         * calls and loop back to the model. When false, tool calls are returned
+         * as the message body for manual handling.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param autoToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder autoToolExecution(boolean autoToolExecution) {
+            doSetProperty("autoToolExecution", autoToolExecution);
+            return this;
+        }
+        /**
+         * When true and MCP servers are configured, automatically execute tool
+         * calls and loop back to the model. When false, tool calls are returned
+         * as the message body for manual handling.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param autoToolExecution the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder autoToolExecution(String autoToolExecution) {
+            doSetProperty("autoToolExecution", autoToolExecution);
+            return this;
+        }
+        /**
          * Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can
          * be used for local or third-party providers.
          * 
@@ -228,7 +262,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: float
+         * Default: base64
          * Group: producer
          * 
          * @param encodingFormat the value to set
@@ -282,6 +316,168 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder maxTokens(String maxTokens) {
             doSetProperty("maxTokens", maxTokens);
+            return this;
+        }
+        /**
+         * Maximum number of tool call loop iterations to prevent infinite
+         * loops.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: producer
+         * 
+         * @param maxToolIterations the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxToolIterations(int maxToolIterations) {
+            doSetProperty("maxToolIterations", maxToolIterations);
+            return this;
+        }
+        /**
+         * Maximum number of tool call loop iterations to prevent infinite
+         * loops.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 50
+         * Group: producer
+         * 
+         * @param maxToolIterations the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder maxToolIterations(String maxToolIterations) {
+            doSetProperty("maxToolIterations", maxToolIterations);
+            return this;
+        }
+        /**
+         * Comma-separated list of MCP protocol versions to advertise when
+         * connecting to MCP servers using Streamable HTTP transport. When not
+         * set, the SDK default is used. Example:
+         * 2024-11-05,2025-03-26,2025-06-18.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param mcpProtocolVersions the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder mcpProtocolVersions(String mcpProtocolVersions) {
+            doSetProperty("mcpProtocolVersions", mcpProtocolVersions);
+            return this;
+        }
+        /**
+         * Automatically reconnect to MCP servers when a tool call fails due to
+         * a transport error, and retry the call once.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param mcpReconnect the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder mcpReconnect(boolean mcpReconnect) {
+            doSetProperty("mcpReconnect", mcpReconnect);
+            return this;
+        }
+        /**
+         * Automatically reconnect to MCP servers when a tool call fails due to
+         * a transport error, and retry the call once.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param mcpReconnect the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder mcpReconnect(String mcpReconnect) {
+            doSetProperty("mcpReconnect", mcpReconnect);
+            return this;
+        }
+        /**
+         * MCP (Model Context Protocol) server configurations. Define servers
+         * using prefix notation:
+         * mcpServer..transportType=stdiossestreamableHttp, mcpServer..command=
+         * (stdio), mcpServer..args= (stdio), mcpServer..url=
+         * (sse/streamableHttp), mcpServer..oauthProfile= (OAuth profile for
+         * HTTP auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the mcpServer(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: producer
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder mcpServer(String key, Object value) {
+            doSetMultiValueProperty("mcpServer", "mcpServer." + key, value);
+            return this;
+        }
+        /**
+         * MCP (Model Context Protocol) server configurations. Define servers
+         * using prefix notation:
+         * mcpServer..transportType=stdiossestreamableHttp, mcpServer..command=
+         * (stdio), mcpServer..args= (stdio), mcpServer..url=
+         * (sse/streamableHttp), mcpServer..oauthProfile= (OAuth profile for
+         * HTTP auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the mcpServer(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: producer
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder mcpServer(Map values) {
+            doSetMultiValueProperties("mcpServer", "mcpServer.", values);
+            return this;
+        }
+        /**
+         * Timeout in seconds for MCP tool call requests. Applies to all MCP
+         * operations including tool execution and initialization.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: producer
+         * 
+         * @param mcpTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder mcpTimeout(int mcpTimeout) {
+            doSetProperty("mcpTimeout", mcpTimeout);
+            return this;
+        }
+        /**
+         * Timeout in seconds for MCP tool call requests. Applies to all MCP
+         * operations including tool execution and initialization.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: producer
+         * 
+         * @param mcpTimeout the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder mcpTimeout(String mcpTimeout) {
+            doSetProperty("mcpTimeout", mcpTimeout);
             return this;
         }
         /**
@@ -460,6 +656,25 @@ public interface OpenAIEndpointBuilderFactory {
             doSetProperty("userMessage", userMessage);
             return this;
         }
+        /**
+         * OAuth profile name for obtaining an access token via the OAuth 2.0
+         * Client Credentials grant. When set, the token is acquired from the
+         * configured identity provider and used instead of apiKey. Requires
+         * camel-oauth on the classpath. The profile properties are resolved
+         * from camel.oauth..client-id, camel.oauth..client-secret, and
+         * camel.oauth..token-endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
     }
 
     /**
@@ -545,7 +760,8 @@ public interface OpenAIEndpointBuilderFactory {
          * Syntax: <code>openai:operation</code>
          * 
          * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion' or 'embeddings'
+         * The operation to perform: 'chat-completion', 'embeddings', or
+         * 'tool-execution'
          * 
          * @param path operation
          * @return the dsl builder
@@ -564,7 +780,8 @@ public interface OpenAIEndpointBuilderFactory {
          * Syntax: <code>openai:operation</code>
          * 
          * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion' or 'embeddings'
+         * The operation to perform: 'chat-completion', 'embeddings', or
+         * 'tool-execution'
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
@@ -783,6 +1000,43 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAITotalTokens() {
             return "CamelOpenAITotalTokens";
+        }
+        /**
+         * Number of tool call iterations performed in the agentic loop.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIToolIterations}.
+         */
+        public String openAIToolIterations() {
+            return "CamelOpenAIToolIterations";
+        }
+        /**
+         * List of tool names called during the agentic loop.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIMcpToolCalls}.
+         */
+        public String openAIMcpToolCalls() {
+            return "CamelOpenAIMcpToolCalls";
+        }
+        /**
+         * Whether the response came directly from a tool with
+         * returnDirect=true, rather than from the LLM.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIMcpReturnDirect}.
+         */
+        public String openAIMcpReturnDirect() {
+            return "CamelOpenAIMcpReturnDirect";
         }
         /**
          * The complete OpenAI response object.

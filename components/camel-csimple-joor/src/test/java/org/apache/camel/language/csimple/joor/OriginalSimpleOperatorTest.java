@@ -19,7 +19,7 @@ package org.apache.camel.language.csimple.joor;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
-import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.apache.camel.test.junit6.LanguageTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -804,6 +804,24 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${body} ?: 'World'", "World");
         exchange.getIn().setBody(1);
         assertExpression("${body} ?: 'World'", 1);
+    }
+
+    @Test
+    public void testTernaryLog() {
+        exchange.getIn().setBody("Hello World");
+        assertExpression(">>> Message received from WebSocket Client : ${body}",
+                ">>> Message received from WebSocket Client : Hello World");
+
+        exchange.getMessage().setHeader(Exchange.FILE_NAME, "foo.txt");
+        assertExpression("This is a test bug ${header.CamelFileName}",
+                "This is a test bug foo.txt");
+
+        assertExpression("This is a test bug : ${header.CamelFileName}",
+                "This is a test bug : foo.txt");
+
+        assertExpression("This is a test bug ? ${header.CamelFileName}",
+                "This is a test bug ? foo.txt");
+
     }
 
     @Override

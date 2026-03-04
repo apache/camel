@@ -66,10 +66,10 @@ public class OpenApiRestApiProcessorFactory implements RestApiProcessorFactory {
                 options.put("schemes", scheme);
             }
         }
-        // and context path is the base.path
-        String path = configuration.getContextPath();
-        if (path != null) {
-            options.put("base.path", path);
+
+        // and context path is the base.path if option not present
+        if (!options.containsKey("base.path") && configuration.getContextPath() != null) {
+            options.put("base.path", configuration.getContextPath());
         }
 
         // is cors enabled?

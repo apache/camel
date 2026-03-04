@@ -4,13 +4,10 @@
   "title": "NetworkFileActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.NetworkFileActivity",
-  "additionalProperties": true,
   "description": "NetworkFileActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "cumulative_traffic": {
       "type": "object",
@@ -63,8 +60,8 @@
     },
     "expiration_time": {
       "type": "integer",
-      "title": "Expiration Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Expiration Time"
     },
     "observation_point_id": {
       "type": "integer",

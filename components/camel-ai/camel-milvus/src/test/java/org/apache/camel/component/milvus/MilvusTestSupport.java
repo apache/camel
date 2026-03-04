@@ -19,7 +19,7 @@ package org.apache.camel.component.milvus;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.milvus.services.MilvusService;
 import org.apache.camel.test.infra.milvus.services.MilvusServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

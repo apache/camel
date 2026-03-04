@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.component.pinecone.transform.PineconeReverseEmbeddingsDataTypeTransformer",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pinecone",
-    "version": "4.18.0-SNAPSHOT"
+    "version": "4.19.0-SNAPSHOT"
   }
 }
 

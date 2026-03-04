@@ -9,7 +9,7 @@
     "javaType": "org.apache.camel.catalog.console.CatalogConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-catalog-console",
-    "version": "4.18.0-SNAPSHOT"
+    "version": "4.19.0-SNAPSHOT"
   }
 }
 

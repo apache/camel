@@ -105,6 +105,15 @@ public final class DoclingHeaders {
     @Metadata(description = "Raw metadata fields as a Map", javaType = "Map<String, Object>")
     public static final String METADATA_RAW = "CamelDoclingMetadataRaw";
 
+    @Metadata(description = "Tokenizer for hybrid chunking (e.g. sentence-transformers/all-MiniLM-L6-v2)", javaType = "String")
+    public static final String CHUNKING_TOKENIZER = "CamelDoclingChunkingTokenizer";
+
+    @Metadata(description = "Maximum tokens per chunk for hybrid chunking", javaType = "Integer")
+    public static final String CHUNKING_MAX_TOKENS = "CamelDoclingChunkingMaxTokens";
+
+    @Metadata(description = "Whether to merge peer chunks in hybrid chunking", javaType = "Boolean")
+    public static final String CHUNKING_MERGE_PEERS = "CamelDoclingChunkingMergePeers";
+
     private DoclingHeaders() {
     }
 

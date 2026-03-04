@@ -60,7 +60,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit5</artifactId>
+            <artifactId>camel-test-spring-junit6</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -94,7 +94,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.8.1</version>
+                        <version>3.10.0</version>
                         <executions>
                             <execution>
                                 <id>copy</id>
@@ -107,7 +107,7 @@
                                       <artifactItem>
                                         <groupId>org.jolokia</groupId>
                                         <artifactId>jolokia-agent-jvm</artifactId>
-                                        <version>2.3.0</version>
+                                        <version>2.5.1</version>
                                         <type>jar</type>
                                         <classifier>javaagent</classifier>
                                       </artifactItem>

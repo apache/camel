@@ -51,6 +51,264 @@ public interface NatsComponentBuilderFactory {
     interface NatsComponentBuilder extends ComponentBuilder<NatsComponent> {
     
         /**
+         * To use a shared configuration.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.nats.NatsConfiguration&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder configuration(org.apache.camel.component.nats.NatsConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        
+        /**
+         * Timeout for connection attempts. (in milliseconds).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2000
+         * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder connectionTimeout(int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Define if we want to flush connection when stopping or not.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param flushConnection the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder flushConnection(boolean flushConnection) {
+            doSetProperty("flushConnection", flushConnection);
+            return this;
+        }
+    
+        
+        /**
+         * Set the flush timeout (in milliseconds).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: common
+         * 
+         * @param flushTimeout the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder flushTimeout(int flushTimeout) {
+            doSetProperty("flushTimeout", flushTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Sets whether to enable JetStream support for this endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param jetstreamEnabled the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder jetstreamEnabled(boolean jetstreamEnabled) {
+            doSetProperty("jetstreamEnabled", jetstreamEnabled);
+            return this;
+        }
+    
+        /**
+         * Sets the name of the JetStream stream to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param jetstreamName the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder jetstreamName(java.lang.String jetstreamName) {
+            doSetProperty("jetstreamName", jetstreamName);
+            return this;
+        }
+    
+        
+        /**
+         * maximum number of pings have not received a response allowed by the
+         * client.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: common
+         * 
+         * @param maxPingsOut the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder maxPingsOut(int maxPingsOut) {
+            doSetProperty("maxPingsOut", maxPingsOut);
+            return this;
+        }
+    
+        
+        /**
+         * Max reconnection attempts.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param maxReconnectAttempts the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder maxReconnectAttempts(int maxReconnectAttempts) {
+            doSetProperty("maxReconnectAttempts", maxReconnectAttempts);
+            return this;
+        }
+    
+        
+        /**
+         * Turn off echo. If supported by the gnatsd version you are connecting
+         * to this flag will prevent the server from echoing messages back to
+         * the connection if it has subscriptions on the subject being published
+         * to.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param noEcho the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder noEcho(boolean noEcho) {
+            doSetProperty("noEcho", noEcho);
+            return this;
+        }
+    
+        
+        /**
+         * Whether or not randomizing the order of servers for the connection
+         * attempts.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param noRandomizeServers the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder noRandomizeServers(boolean noRandomizeServers) {
+            doSetProperty("noRandomizeServers", noRandomizeServers);
+            return this;
+        }
+    
+        
+        /**
+         * Whether or not running in pedantic mode (this affects performance).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param pedantic the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder pedantic(boolean pedantic) {
+            doSetProperty("pedantic", pedantic);
+            return this;
+        }
+    
+        
+        /**
+         * Ping interval to be aware if connection is still alive (in
+         * milliseconds).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 120000
+         * Group: common
+         * 
+         * @param pingInterval the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder pingInterval(int pingInterval) {
+            doSetProperty("pingInterval", pingInterval);
+            return this;
+        }
+    
+        
+        /**
+         * Whether or not using reconnection feature.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param reconnect the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder reconnect(boolean reconnect) {
+            doSetProperty("reconnect", reconnect);
+            return this;
+        }
+    
+        
+        /**
+         * Waiting time before attempts reconnection (in milliseconds).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2000
+         * Group: common
+         * 
+         * @param reconnectTimeWait the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder reconnectTimeWait(int reconnectTimeWait) {
+            doSetProperty("reconnectTimeWait", reconnectTimeWait);
+            return this;
+        }
+    
+        
+        /**
+         * Interval to clean up cancelled/timed out requests.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: common
+         * 
+         * @param requestCleanupInterval the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder requestCleanupInterval(int requestCleanupInterval) {
+            doSetProperty("requestCleanupInterval", requestCleanupInterval);
+            return this;
+        }
+    
+        /**
          * URLs to one or more NAT servers. Use comma to separate URLs when
          * specifying multiple servers.
          * 
@@ -85,6 +343,53 @@ public interface NatsComponentBuilderFactory {
     
         
         /**
+         * Acknowledgement mode. none = Messages are acknowledged as soon as the
+         * server sends them (danger: messages that Camel failed to process is
+         * also ack). Clients do not need to ack. all = All messages with a
+         * sequence number less than the message acked are also acknowledged.
+         * E.g. reading a batch of messages 1..100. Ack on message 100 will
+         * acknowledge 1..99 as well. explicit (default) = Each message is
+         * acknowledged individually by Camel after the message has been
+         * processed, this ensures the message is only ack if success and nack
+         * if processing failed due to an exception during routing. Message can
+         * be acked out of sequence and create gaps of unacknowledged messages
+         * in the consumer.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.nats.client.api.AckPolicy&lt;/code&gt; type.
+         * 
+         * Default: Explicit
+         * Group: consumer
+         * 
+         * @param ackPolicy the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder ackPolicy(io.nats.client.api.AckPolicy ackPolicy) {
+            doSetProperty("ackPolicy", ackPolicy);
+            return this;
+        }
+    
+        
+        /**
+         * After a message is delivered to a consumer, the server waits 30
+         * seconds (default) for an acknowledgement. If none arrives (timeout),
+         * the message becomes eligible for redelivery.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: consumer
+         * 
+         * @param ackWait the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder ackWait(long ackWait) {
+            doSetProperty("ackWait", ackWait);
+            return this;
+        }
+    
+        
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -108,6 +413,171 @@ public interface NatsComponentBuilderFactory {
          */
         default NatsComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+    
+        /**
+         * Sets the name to assign to the JetStream durable consumer. Setting
+         * this value makes the consumer durable. The value is used to set the
+         * durable() field in the underlying NATS ConsumerConfiguration.Builder.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param durableName the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder durableName(java.lang.String durableName) {
+            doSetProperty("durableName", durableName);
+            return this;
+        }
+    
+        /**
+         * Maximum number of attempts to deliver a message from Nats to a
+         * consumer. Once MaxDeliver is reached, the NATS server stops
+         * attempting to deliver that specific message. The message is not
+         * deleted, it remains in the stream but is simply skipped. It is
+         * recommended to set this option to a sensible value in case a message
+         * is poison and can not successfully be processed and would always keep
+         * failing.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param maxDeliver the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder maxDeliver(long maxDeliver) {
+            doSetProperty("maxDeliver", maxDeliver);
+            return this;
+        }
+    
+        /**
+         * Stop receiving messages from a topic we are subscribing to after
+         * maxMessages.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param maxMessages the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder maxMessages(java.lang.String maxMessages) {
+            doSetProperty("maxMessages", maxMessages);
+            return this;
+        }
+    
+        
+        /**
+         * For negative acknowledgements (NAK), redelivery is delayed by 5
+         * seconds (default). Setting this to 0 or negative makes the redelivery
+         * immediately. Be careful as this can cause the consumer to keep
+         * re-processing the same message over and over again due to
+         * intermediate error that last a while.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param nackWait the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder nackWait(long nackWait) {
+            doSetProperty("nackWait", nackWait);
+            return this;
+        }
+    
+        
+        /**
+         * Consumer thread pool size (default is 10).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder poolSize(int poolSize) {
+            doSetProperty("poolSize", poolSize);
+            return this;
+        }
+    
+        
+        /**
+         * Sets the consumer subscription type for JetStream. Set to true to use
+         * a Pull Subscription (consumer explicitly requests messages). Set to
+         * false to use a Push Subscription (messages are automatically
+         * delivered).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param pullSubscription the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder pullSubscription(boolean pullSubscription) {
+            doSetProperty("pullSubscription", pullSubscription);
+            return this;
+        }
+    
+        /**
+         * The Queue name if we are using nats for a queue configuration.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param queueName the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder queueName(java.lang.String queueName) {
+            doSetProperty("queueName", queueName);
+            return this;
+        }
+    
+        
+        /**
+         * Can be used to turn off sending back reply message in the consumer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param replyToDisabled the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder replyToDisabled(boolean replyToDisabled) {
+            doSetProperty("replyToDisabled", replyToDisabled);
+            return this;
+        }
+    
+        /**
+         * Sets a custom ConsumerConfiguration object for the JetStream
+         * consumer. This is an advanced option typically used when you need to
+         * configure properties not exposed as simple Camel URI parameters. When
+         * set, this object will be used to build the final consumer
+         * subscription options.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.nats.client.api.ConsumerConfiguration&lt;/code&gt;
+         * type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param consumerConfiguration the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder consumerConfiguration(io.nats.client.api.ConsumerConfiguration consumerConfiguration) {
+            doSetProperty("consumerConfiguration", consumerConfiguration);
             return this;
         }
     
@@ -136,6 +606,38 @@ public interface NatsComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * the subject to which subscribers should send response.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param replySubject the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder replySubject(java.lang.String replySubject) {
+            doSetProperty("replySubject", replySubject);
+            return this;
+        }
+    
+        
+        /**
+         * Request timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 20000
+         * Group: producer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+    
         
         /**
          * Whether autowiring is enabled. This is used for automatic autowiring
@@ -159,20 +661,121 @@ public interface NatsComponentBuilderFactory {
         }
     
         /**
-         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-         * header to and from Camel message.
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option is a: &lt;code&gt;io.nats.client.Connection&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param connection the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder connection(io.nats.client.Connection connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+    
+        /**
+         * To use a custom header filter strategy.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
          * type.
          * 
-         * Group: filter
+         * Group: advanced
          * 
          * @param headerFilterStrategy the value to set
          * @return the dsl builder
          */
         default NatsComponentBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+    
+        
+        /**
+         * Sets whether to operate JetStream requests asynchronously.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param jetstreamAsync the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder jetstreamAsync(boolean jetstreamAsync) {
+            doSetProperty("jetstreamAsync", jetstreamAsync);
+            return this;
+        }
+    
+        
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param traceConnection the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder traceConnection(boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+    
+        /**
+         * If we use useCredentialsFile to true we'll need to set the
+         * credentialsFilePath option. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param credentialsFilePath the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder credentialsFilePath(java.lang.String credentialsFilePath) {
+            doSetProperty("credentialsFilePath", credentialsFilePath);
+            return this;
+        }
+    
+        
+        /**
+         * Set secure option indicating TLS is required.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+    
+        /**
+         * To configure security using SSLContextParameters.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     
@@ -201,18 +804,58 @@ public interface NatsComponentBuilderFactory {
         protected NatsComponent buildConcreteComponent() {
             return new NatsComponent();
         }
+        private org.apache.camel.component.nats.NatsConfiguration getOrCreateConfiguration(NatsComponent component) {
+            if (component.getConfiguration() == null) {
+                component.setConfiguration(new org.apache.camel.component.nats.NatsConfiguration());
+            }
+            return component.getConfiguration();
+        }
         @Override
         protected boolean setPropertyOnComponent(
                 Component component,
                 String name,
                 Object value) {
             switch (name) {
-            case "servers": ((NatsComponent) component).setServers((java.lang.String) value); return true;
-            case "verbose": ((NatsComponent) component).setVerbose((boolean) value); return true;
+            case "configuration": ((NatsComponent) component).setConfiguration((org.apache.camel.component.nats.NatsConfiguration) value); return true;
+            case "connectionTimeout": getOrCreateConfiguration((NatsComponent) component).setConnectionTimeout((int) value); return true;
+            case "flushConnection": getOrCreateConfiguration((NatsComponent) component).setFlushConnection((boolean) value); return true;
+            case "flushTimeout": getOrCreateConfiguration((NatsComponent) component).setFlushTimeout((int) value); return true;
+            case "jetstreamEnabled": getOrCreateConfiguration((NatsComponent) component).setJetstreamEnabled((boolean) value); return true;
+            case "jetstreamName": getOrCreateConfiguration((NatsComponent) component).setJetstreamName((java.lang.String) value); return true;
+            case "maxPingsOut": getOrCreateConfiguration((NatsComponent) component).setMaxPingsOut((int) value); return true;
+            case "maxReconnectAttempts": getOrCreateConfiguration((NatsComponent) component).setMaxReconnectAttempts((int) value); return true;
+            case "noEcho": getOrCreateConfiguration((NatsComponent) component).setNoEcho((boolean) value); return true;
+            case "noRandomizeServers": getOrCreateConfiguration((NatsComponent) component).setNoRandomizeServers((boolean) value); return true;
+            case "pedantic": getOrCreateConfiguration((NatsComponent) component).setPedantic((boolean) value); return true;
+            case "pingInterval": getOrCreateConfiguration((NatsComponent) component).setPingInterval((int) value); return true;
+            case "reconnect": getOrCreateConfiguration((NatsComponent) component).setReconnect((boolean) value); return true;
+            case "reconnectTimeWait": getOrCreateConfiguration((NatsComponent) component).setReconnectTimeWait((int) value); return true;
+            case "requestCleanupInterval": getOrCreateConfiguration((NatsComponent) component).setRequestCleanupInterval((int) value); return true;
+            case "servers": getOrCreateConfiguration((NatsComponent) component).setServers((java.lang.String) value); return true;
+            case "verbose": getOrCreateConfiguration((NatsComponent) component).setVerbose((boolean) value); return true;
+            case "ackPolicy": getOrCreateConfiguration((NatsComponent) component).setAckPolicy((io.nats.client.api.AckPolicy) value); return true;
+            case "ackWait": getOrCreateConfiguration((NatsComponent) component).setAckWait((long) value); return true;
             case "bridgeErrorHandler": ((NatsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "durableName": getOrCreateConfiguration((NatsComponent) component).setDurableName((java.lang.String) value); return true;
+            case "maxDeliver": getOrCreateConfiguration((NatsComponent) component).setMaxDeliver((long) value); return true;
+            case "maxMessages": getOrCreateConfiguration((NatsComponent) component).setMaxMessages((java.lang.String) value); return true;
+            case "nackWait": getOrCreateConfiguration((NatsComponent) component).setNackWait((long) value); return true;
+            case "poolSize": getOrCreateConfiguration((NatsComponent) component).setPoolSize((int) value); return true;
+            case "pullSubscription": getOrCreateConfiguration((NatsComponent) component).setPullSubscription((boolean) value); return true;
+            case "queueName": getOrCreateConfiguration((NatsComponent) component).setQueueName((java.lang.String) value); return true;
+            case "replyToDisabled": getOrCreateConfiguration((NatsComponent) component).setReplyToDisabled((boolean) value); return true;
+            case "consumerConfiguration": getOrCreateConfiguration((NatsComponent) component).setConsumerConfiguration((io.nats.client.api.ConsumerConfiguration) value); return true;
             case "lazyStartProducer": ((NatsComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "replySubject": getOrCreateConfiguration((NatsComponent) component).setReplySubject((java.lang.String) value); return true;
+            case "requestTimeout": getOrCreateConfiguration((NatsComponent) component).setRequestTimeout((long) value); return true;
             case "autowiredEnabled": ((NatsComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "headerFilterStrategy": ((NatsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "connection": getOrCreateConfiguration((NatsComponent) component).setConnection((io.nats.client.Connection) value); return true;
+            case "headerFilterStrategy": getOrCreateConfiguration((NatsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "jetstreamAsync": getOrCreateConfiguration((NatsComponent) component).setJetstreamAsync((boolean) value); return true;
+            case "traceConnection": getOrCreateConfiguration((NatsComponent) component).setTraceConnection((boolean) value); return true;
+            case "credentialsFilePath": getOrCreateConfiguration((NatsComponent) component).setCredentialsFilePath((java.lang.String) value); return true;
+            case "secure": getOrCreateConfiguration((NatsComponent) component).setSecure((boolean) value); return true;
+            case "sslContextParameters": getOrCreateConfiguration((NatsComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((NatsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }

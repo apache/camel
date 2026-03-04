@@ -11,7 +11,7 @@ The `CamelContext` provides access to many features and services, the most notab
 The following table lists the most common services provided by the `CamelContext`:
 
 [width="100%",cols="50%,50%",options="header",]
-|=======================================================================
+|===
 |Service |Description
 |xref:component.adoc[Components] | Contains the components used.
 |xref:endpoint.adoc[Endpoints] | Contains the endpoints that have been used.
@@ -20,7 +20,7 @@ The following table lists the most common services provided by the `CamelContext
 |xref:languages.adoc[Languages] | Contains the loaded languages.
 |xref:type-converter.adoc[Type converters] | Contains the loaded type converters. Camel has a mechanism that allows you to manually or automatically convert from one type to another.
 |xref:registry.adoc[Registry] | Contains a registry that allows you to look up beans.
-|=======================================================================
+|===
 
 == CamelContext 101
 
@@ -50,9 +50,16 @@ Routes have one and only one input source for messages. They are effectively tie
 To wire processors and endpoints together to form routes, Camel defines a xref:dsl.adoc[DSL].
 
 In Camel with Java, DSL means a fluent Java API that contains methods named for EIP terms.
+Camel provides multiple DSL languages. You could define the same route using the XML and YAML DSL as well.
 
-Consider this example:
+Here, in a single Java statement, you define a route that consumes files from a xref:components::file-component.adoc[file] endpoint.
+Camel uses the xref:components:eips:filter-eip.adoc[Filter EIP] to route the messages using an XPath predicate to test whether the message is not a test order. If a message passes the test, Camel forwards it to the xref:components::jms-component.adoc[JMS] endpoint. Messages failing the filter test are skipped.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("file:data/inbox")
@@ -60,11 +67,8 @@ from("file:data/inbox")
         .to("jms:queue:order");
 ----
 
-Here, in a single Java statement, you define a route that consumes files from a xref:components::file-component.adoc[file] endpoint.
-Camel uses the xref:components:eips:filter-eip.adoc[Filter EIP] to route the messages using an XPath predicate to test whether the message is not a test order. If a message passes the test, Camel forwards it to the xref:components::jms-component.adoc[JMS] endpoint. Messages failing the filter test are skipped.
-
-Camel provides multiple DSL languages. You could define the same route using the XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -76,18 +80,23 @@ Camel provides multiple DSL languages. You could define the same route using the
 </route>
 ----
 
-And in YAML:
-
+YAML::
++
 [source,yaml]
 ----
-- from:
-    uri: "file:data/inbox"
-    steps:
-      - filter:
-          xpath: "/order[not(@test)]"
-          steps:
-            - to: "jms:queue:order"
+- route:
+    from:
+      uri: file:data/inbox
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/order[not(@test)]"
+            steps:
+              - to:
+                  uri: jms:queue:order
 ----
+====
 
 The DSLs provide a nice abstraction for Camel users to build applications. Under the hood, though, a route is composed of a graph of processors.
 

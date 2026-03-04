@@ -721,12 +721,10 @@ class PipeLoaderTest extends YamlTestSupport {
             input.lineNumber == 7
             outputs.size() == 3
             with (outputs[0], TransformDataTypeDefinition) {
-                fromType == 'camel:any'
                 toType == 'application/octet-stream'
                 lineNumber == -1
             }
             with (outputs[1], TransformDataTypeDefinition) {
-                fromType == 'camel:any'
                 toType == 'text/plain'
                 lineNumber == -1
             }
@@ -775,12 +773,10 @@ class PipeLoaderTest extends YamlTestSupport {
             input.lineNumber == 7
             outputs.size() == 3
             with (outputs[0], TransformDataTypeDefinition) {
-                fromType == 'camel:any'
                 toType == 'camel:application/octet-stream'
                 lineNumber == -1
             }
             with (outputs[1], TransformDataTypeDefinition) {
-                fromType == 'camel:any'
                 toType == 'camel:text/plain'
                 lineNumber == -1
             }

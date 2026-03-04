@@ -65,14 +65,46 @@ XML::
   </choice>
 </route>
 ----
+
+YAML::
++
+In YAML you use an empty `stop: {}` node as shown:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - choice:
+            when:
+              - steps:
+                  - to:
+                      uri: mock:hello
+              - steps:
+                  - to:
+                      uri: mock:bye
+                  - stop: {}
+            otherwise:
+              steps:
+                - to:
+                    uri: mock:other
+        - to:
+            uri: mock:result
+----
 ====
 
-=== Calling stop from Java
+=== Stopping Exchange from Java code
 
-You can also mark an `Exchange` to stop being routed from Java with the following code:
+You can also mark an `Exchange` to stop being routed using the `setRouteStop(true)` method
+using Java code:
 
 [source,java]
 ----
 Exchange exchange = ...
 exchange.setRouteStop(true);
 ----
+
+== See Also
+
+See also the related xref:throwException-eip.adoc[Throw Exception] EIP.

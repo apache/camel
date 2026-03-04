@@ -19,7 +19,7 @@ package org.apache.camel.language.csimple.joor;
 import org.apache.camel.Exchange;
 import org.apache.camel.language.csimple.CSimpleExpression;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

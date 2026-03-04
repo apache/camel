@@ -130,6 +130,11 @@ public final class VersionHelper {
         return s.compareTo(t);
     }
 
+    public static String getMajorMinorVersion(String version) {
+        String[] parts = version.split("\\.");
+        return parts[0] + "." + parts[1];
+    }
+
     public static String extractCamelVersion() {
         return org.apache.camel.main.util.VersionHelper.extractCamelVersion();
     }

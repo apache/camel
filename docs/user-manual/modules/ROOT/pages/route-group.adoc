@@ -4,7 +4,8 @@ A group is an identifier for multiple routes that belong together. For example, 
 
 == Examples
 
-In the route below, we use the group name to identify two routes:
+In the route below, we use the `group` option to give the 2 first routes the same group name `order` to identify that these two routes
+are grouped together. The last route has no group assigned.
 
 [tabs]
 ====
@@ -23,6 +24,9 @@ from("direct:processOrder")
     .group("order")
     .to("bean:orderService?method=process")
     .to("activemq:queue:order.out");
+
+from("timer:tick")
+    .to("bean:wakeup");
 ----
 
 XML::
@@ -30,22 +34,62 @@ XML::
 [source,xml]
 ----
 <route id="validate" group="order">
- <from uri="activemq:queue:order.in"/>
- <to uri="bean:orderService?method=validate"/>
- <to uri="direct:processOrder"/>
+  <from uri="activemq:queue:order.in"/>
+  <to uri="bean:orderService?method=validate"/>
+  <to uri="direct:processOrder"/>
 </route>
 
 <route id="process" group="order">
- <from uri="direct:processOrder"/>
- <to uri="bean:orderService?method=process"/>
- <to uri="activemq:queue:order.out"/>
+  <from uri="direct:processOrder"/>
+  <to uri="bean:orderService?method=process"/>
+  <to uri="activemq:queue:order.out"/>
 </route>
+
+<route>
+  <from uri="timer:tick"/>
+  <to uri="bean:wakeUp"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: validate
+    group: order
+    from:
+      uri: activemq:queue:order.in
+      steps:
+        - to:
+            uri: bean:orderServer?method=validate
+        - to:
+            uri: direct:processOrder
+- route:
+    id: process
+    group: order
+    from:
+      uri: direct:processOrder
+      steps:
+        - to:
+            uri: bean:orderService?method=process
+        - to:
+            uri: activemq:queue:order.out
+- route:
+    from:
+      uri: timer:tick
+      steps:
+        - to:
+            uri: bean:wakeUp
 ----
 ====
 
 == Creating a route from a route template
 
-It's also possible to call a route template and add the created route to a group.
+When creating new routes from xref:route-template.adoc[] then you can also assign a group name to the created route.
+
+In the example below we are creating 2 new route from the template `myTemplate` with the given set of parameters,
+and assign `greetings` as the group name to the created routes.
 
 [tabs]
 ====
@@ -68,7 +112,7 @@ XML::
 +
 [source,xml]
 ----
-<templatedRoutes xmlns="http://camel.apache.org/schema/spring">
+<templatedRoutes>
   <templatedRoute routeTemplateRef="myTemplate" group="greetings">
     <parameter name="name" value="one"/>
     <parameter name="greeting" value="Hello"/>
@@ -80,51 +124,63 @@ XML::
   </templatedRoute>
 </templatedRoutes>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- templatedRoute:
+    routeTemplateRef: "myTemplate"
+    group: "greetings"
+    parameters:
+      - name: "name"
+        value: "one"
+      - name: "greeting"
+        value: "Hello"
+- templatedRoute:
+    routeTemplateRef: "myTemplate"
+    group: "greetings"
+    parameters:
+      - name: "name"
+        value: "two"
+      - name: "greeting"
+        value: "Bonjour"
+      - name: "myPeriod"
+        value: "5s"
+----
 ====
 
-== Performing Tasks
+== Managing route group in Java
 
-The camel API allows to retrieve all routes of a group and then perform various tasks. 
+The Java API allows to retrieve all routes for a group and perform various tasks.
 
-Here is an example to suspend all routes of a group:
+Here is an example to suspend all routes:
 
-[source, java]
+[source,java]
 ----
-java
 List<Route> routes = context.getRoutesByGroup("order");
 
 for (Route route : routes) {
-    System.out.println("Suspend routeId=" + route.getId() + " for group=" + route.getGroup());
+    System.out.println("Suspending routeId=" + route.getId() + " for group=" + route.getGroup());
     route.getRouteController().suspendRoute(route.getId());
 }
 ----
 
-
-== Monitoring
+== Monitoring Route Groups
 
 Camel has optional support for xref:jmx.adoc[JMX management]. This includes management of groups.
 
-To get all failed changes for a group:
+The following code will get the JMX MBean `ManagedRouteGroupMBean` for the route group with name `order`.
+Using this MBean you can get metrics, and also operations to start and stop all routes in this group.
 
-[source, java]
+For example to get the total number of `Exchange`(s) that has failed within this group:
+
+[source,java]
 ----
 ManagedCamelContext managedContext = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 ManagedRouteGroupMBean managedRouteGroup = managedContext.getManagedRouteGroup("order");
 
-if(managedRouteGroup!=null){
+if (managedRouteGroup != null) {
     System.out.println("Group order has " + managedRouteGroup.getExchangesFailed() + " failed exchanges");
-}
-----
-
-To get all failed changes for every route in a group:
-
-[source, java]
-----
-ManagedCamelContext managedContext = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
-
-List<ManagedRouteMBean> routes = managedContext.getManagedRoutesByGroup(flowId);
-
-for (ManagedRouteMBean route : routes) {
-	System.out.println("RouteId=" + route.getRouteId() + " has " + route.getExchangesFailed() + " failed exchanges");
 }
 ----

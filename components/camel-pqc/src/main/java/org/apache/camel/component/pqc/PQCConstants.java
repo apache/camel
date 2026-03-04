@@ -68,4 +68,29 @@ public interface PQCConstants {
 
     @Metadata(description = "Revocation reason", javaType = "String")
     String REVOCATION_REASON = "CamelPQCRevocationReason";
+
+    // Hybrid cryptography headers
+    @Metadata(description = "The hybrid signature combining both classical and PQC signatures", javaType = "byte[]")
+    String HYBRID_SIGNATURE = "CamelPQCHybridSignature";
+
+    @Metadata(description = "The classical signature component of a hybrid signature", javaType = "byte[]")
+    String CLASSICAL_SIGNATURE = "CamelPQCClassicalSignature";
+
+    @Metadata(description = "The PQC signature component of a hybrid signature", javaType = "byte[]")
+    String PQC_SIGNATURE = "CamelPQCPqcSignature";
+
+    @Metadata(description = "The classical encapsulation component of a hybrid KEM", javaType = "byte[]")
+    String CLASSICAL_ENCAPSULATION = "CamelPQCClassicalEncapsulation";
+
+    @Metadata(description = "The PQC encapsulation component of a hybrid KEM", javaType = "byte[]")
+    String PQC_ENCAPSULATION = "CamelPQCPqcEncapsulation";
+
+    @Metadata(description = "The combined secret key from hybrid KEM operation", javaType = "javax.crypto.SecretKey")
+    String HYBRID_SECRET_KEY = "CamelPQCHybridSecretKey";
+
+    @Metadata(description = "The hybrid encapsulation combining both classical and PQC encapsulations", javaType = "byte[]")
+    String HYBRID_ENCAPSULATION = "CamelPQCHybridEncapsulation";
+
+    @Metadata(description = "The verification result of hybrid signature (both must pass)", javaType = "Boolean")
+    String HYBRID_VERIFY = "CamelPQCHybridVerification";
 }

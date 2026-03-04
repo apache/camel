@@ -678,8 +678,11 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
-         * Maximum number of documents to process in a single batch (batch
-         * operations only).
+         * Number of documents to submit per sub-batch. Documents are
+         * partitioned into sub-batches of this size and each sub-batch is
+         * processed before starting the next one. Within each sub-batch, up to
+         * batchParallelism threads are used concurrently. This controls memory
+         * usage and back-pressure when processing large document sets.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -726,6 +729,88 @@ public interface DoclingComponentBuilderFactory {
          */
         default DoclingComponentBuilder splitBatchResults(boolean splitBatchResults) {
             doSetProperty("splitBatchResults", splitBatchResults);
+            return this;
+        }
+    
+        
+        /**
+         * Include raw text in chunk output.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingIncludeRawText the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder chunkingIncludeRawText(java.lang.Boolean chunkingIncludeRawText) {
+            doSetProperty("chunkingIncludeRawText", chunkingIncludeRawText);
+            return this;
+        }
+    
+        /**
+         * Maximum number of tokens per chunk for hybrid chunking.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingMaxTokens the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder chunkingMaxTokens(java.lang.Integer chunkingMaxTokens) {
+            doSetProperty("chunkingMaxTokens", chunkingMaxTokens);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to merge peer chunks in hybrid chunking.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: chunking
+         * 
+         * @param chunkingMergePeers the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder chunkingMergePeers(java.lang.Boolean chunkingMergePeers) {
+            doSetProperty("chunkingMergePeers", chunkingMergePeers);
+            return this;
+        }
+    
+        /**
+         * Tokenizer model for hybrid chunking (e.g.
+         * sentence-transformers/all-MiniLM-L6-v2).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingTokenizer the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder chunkingTokenizer(java.lang.String chunkingTokenizer) {
+            doSetProperty("chunkingTokenizer", chunkingTokenizer);
+            return this;
+        }
+    
+        
+        /**
+         * Use markdown format for tables in chunk output.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingUseMarkdownTables the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder chunkingUseMarkdownTables(java.lang.Boolean chunkingUseMarkdownTables) {
+            doSetProperty("chunkingUseMarkdownTables", chunkingUseMarkdownTables);
             return this;
         }
     
@@ -829,6 +914,24 @@ public interface DoclingComponentBuilderFactory {
             doSetProperty("maxFileSize", maxFileSize);
             return this;
         }
+    
+        /**
+         * OAuth profile name for obtaining an access token via the OAuth 2.0
+         * Client Credentials grant. When set, the token is acquired from the
+         * configured identity provider and used as authenticationToken.
+         * Requires camel-oauth on the classpath.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder oauthProfile(java.lang.String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
     }
 
     class DoclingComponentBuilderImpl
@@ -890,12 +993,18 @@ public interface DoclingComponentBuilderFactory {
             case "batchSize": getOrCreateConfiguration((DoclingComponent) component).setBatchSize((int) value); return true;
             case "batchTimeout": getOrCreateConfiguration((DoclingComponent) component).setBatchTimeout((long) value); return true;
             case "splitBatchResults": getOrCreateConfiguration((DoclingComponent) component).setSplitBatchResults((boolean) value); return true;
+            case "chunkingIncludeRawText": getOrCreateConfiguration((DoclingComponent) component).setChunkingIncludeRawText((java.lang.Boolean) value); return true;
+            case "chunkingMaxTokens": getOrCreateConfiguration((DoclingComponent) component).setChunkingMaxTokens((java.lang.Integer) value); return true;
+            case "chunkingMergePeers": getOrCreateConfiguration((DoclingComponent) component).setChunkingMergePeers((java.lang.Boolean) value); return true;
+            case "chunkingTokenizer": getOrCreateConfiguration((DoclingComponent) component).setChunkingTokenizer((java.lang.String) value); return true;
+            case "chunkingUseMarkdownTables": getOrCreateConfiguration((DoclingComponent) component).setChunkingUseMarkdownTables((java.lang.Boolean) value); return true;
             case "includeMetadataInHeaders": getOrCreateConfiguration((DoclingComponent) component).setIncludeMetadataInHeaders((boolean) value); return true;
             case "includeRawMetadata": getOrCreateConfiguration((DoclingComponent) component).setIncludeRawMetadata((boolean) value); return true;
             case "apiKeyHeader": getOrCreateConfiguration((DoclingComponent) component).setApiKeyHeader((java.lang.String) value); return true;
             case "authenticationScheme": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationScheme((org.apache.camel.component.docling.AuthenticationScheme) value); return true;
             case "authenticationToken": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationToken((java.lang.String) value); return true;
             case "maxFileSize": getOrCreateConfiguration((DoclingComponent) component).setMaxFileSize((long) value); return true;
+            case "oauthProfile": getOrCreateConfiguration((DoclingComponent) component).setOauthProfile((java.lang.String) value); return true;
             default: return false;
             }
         }

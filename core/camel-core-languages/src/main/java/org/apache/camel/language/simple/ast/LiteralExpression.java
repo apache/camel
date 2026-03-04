@@ -43,7 +43,7 @@ public class LiteralExpression extends BaseSimpleNode implements LiteralNode {
         this.text.append(text);
     }
 
-    void replaceText(String text) {
+    public void replaceText(String text) {
         this.text.setLength(0);
         addText(text);
     }

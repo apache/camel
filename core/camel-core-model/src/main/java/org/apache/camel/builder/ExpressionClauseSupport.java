@@ -902,7 +902,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     public T tokenize(String token, boolean regex) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
-        expression.setRegex(Boolean.toString(regex));
+        if (regex) {
+            expression.setRegex("true");
+        }
         expression(expression);
         return result;
     }
@@ -918,7 +920,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     public T tokenize(String token, boolean regex, int group) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
-        expression.setRegex(Boolean.toString(regex));
+        if (regex) {
+            expression.setRegex("true");
+        }
         expression.setGroup(Integer.toString(group));
         expression(expression);
         return result;
@@ -936,7 +940,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     public T tokenize(String token, boolean regex, int group, boolean skipFirst) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
-        expression.setRegex(Boolean.toString(regex));
+        if (regex) {
+            expression.setRegex("true");
+        }
         expression.setSkipFirst(Boolean.toString(skipFirst));
         expression.setGroup(Integer.toString(group));
         expression.setSkipFirst(Boolean.toString(skipFirst));
@@ -956,7 +962,9 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     public T tokenize(String token, boolean regex, String group, boolean skipFirst) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(token);
-        expression.setRegex(Boolean.toString(regex));
+        if (regex) {
+            expression.setRegex("true");
+        }
         expression.setSkipFirst(Boolean.toString(skipFirst));
         expression.setGroup(group);
         expression.setSkipFirst(Boolean.toString(skipFirst));

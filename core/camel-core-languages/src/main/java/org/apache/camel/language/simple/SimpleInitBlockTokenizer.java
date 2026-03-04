@@ -28,7 +28,7 @@ import org.apache.camel.language.simple.types.TokenType;
 public class SimpleInitBlockTokenizer extends SimpleTokenizer {
 
     // keep this number in sync with tokens list
-    private static final int NUMBER_OF_TOKENS = 3;
+    private static final int NUMBER_OF_TOKENS = 4;
 
     private static final SimpleTokenType[] INIT_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
@@ -42,6 +42,7 @@ public class SimpleInitBlockTokenizer extends SimpleTokenizer {
         INIT_TOKENS[0] = new SimpleTokenType(TokenType.initVariable, "$");
         INIT_TOKENS[1] = new SimpleTokenType(TokenType.initOperator, ":=");
         INIT_TOKENS[2] = new SimpleTokenType(TokenType.initOperator, "~:=");
+        INIT_TOKENS[3] = new SimpleTokenType(TokenType.initFunctionEnd, ";\n");
     }
 
     private boolean acceptInitTokens = true; // flag to turn on|off

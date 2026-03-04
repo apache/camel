@@ -19,13 +19,14 @@ package org.apache.camel.component.google.storage;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageClass;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class GoogleCloudStorageConfiguration implements Cloneable {
+public class GoogleCloudStorageConfiguration implements Cloneable, GoogleCommonConfiguration {
 
     @UriPath(label = "common", description = "Bucket name or ARN")
     @Metadata(required = true)
@@ -94,6 +95,7 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
         this.bucketName = bucketName;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }

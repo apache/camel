@@ -18,7 +18,7 @@ package org.apache.camel.component.github2.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.github2.GitHub2Component;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 
 /**

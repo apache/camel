@@ -76,10 +76,11 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: file:messages/foo
-    steps:
-      - to:
-          uri: jms:queue:foo
+- route:
+    from:
+      uri: file:messages/foo
+      steps:
+        - to:
+            uri: jms:queue:foo
 ----
 ====

@@ -37,3 +37,24 @@ public class MyRoute extends RouteBuilder {
 }
 ----
 
+You can also use xref:components:others:java-xml-io-dsl.adoc[XML DSL] to _code_ the xref:routes.adoc[routes].
+
+[source,xml]
+----
+<route>
+    <from uri="ftp:myserver/folder"/>
+    <to uri="activemq:queue:cheese"/>
+</route>
+----
+
+For low-code users then xref:components:others:yaml-dsl.adoc[YAML DSL] is also possible:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftp:myserver/folder
+      steps:
+        - to:
+            uri: activemq:queue:cheese
+----

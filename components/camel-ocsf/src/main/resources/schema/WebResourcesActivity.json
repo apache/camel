@@ -4,13 +4,10 @@
   "title": "WebResourcesActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.WebResourcesActivity",
-  "additionalProperties": true,
   "description": "WebResourcesActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "raw_data_size": {
       "type": "integer",

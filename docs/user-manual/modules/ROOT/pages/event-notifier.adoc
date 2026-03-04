@@ -9,7 +9,7 @@ to execute this work from another thread, so the current thread can continue and
 
 == Type of Events
 
-The following CamelEvents are available:
+The following CamelEvents are available (but not limited to):
 
 * CamelEvent
 ** CamelContextEvent

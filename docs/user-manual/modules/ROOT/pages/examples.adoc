@@ -13,13 +13,12 @@ podcasts, presentations, and so forth.
 
 If you have written a Camel-related article, then we are happy to
 provide a link to it. You can contact the Camel link:/community/team/[Team] via
-our link:/community/mailing-list/[Mailing Lists], or simply post a tweet with
-the words "Apache Camel".
+our link:/community/mailing-list/[Mailing Lists], or https://camel.zulipchat.com/[Zulip Chat].
 ====
 
 == Examples
 
 Browse the https://github.com/apache/camel-examples/tree/main#welcome-to-the-apache-camel-examples[camel-examples]
-from github where each example is documented with instructions how to run, and are up-to-date.
+from GitHub where each example is documented with instructions how to run, and are up-to-date.
 
 

@@ -44,6 +44,10 @@ public final class KnownDependenciesResolver {
         doLoadKnownDependencies("camel-component-known-dependencies.properties");
     }
 
+    public void loadKnownFactoryFinderDependencies() {
+        doLoadKnownDependencies("camel-factoryfinder-known-dependencies.properties");
+    }
+
     private void doLoadKnownDependencies(String name) {
         try {
             Enumeration<URL> resources = getClass().getClassLoader().getResources(name);

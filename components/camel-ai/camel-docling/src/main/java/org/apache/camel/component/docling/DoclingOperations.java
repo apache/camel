@@ -87,6 +87,16 @@ public enum DoclingOperations {
     /**
      * Extract document metadata (author, title, page count, creation date, etc.)
      */
-    EXTRACT_METADATA
+    EXTRACT_METADATA,
+
+    /**
+     * Chunk document using HybridChunker (token-aware, structure-aware) (docling-serve only)
+     */
+    CHUNK_HYBRID,
+
+    /**
+     * Chunk document using HierarchicalChunker (structure-aware) (docling-serve only)
+     */
+    CHUNK_HIERARCHICAL
 
 }

@@ -4,13 +4,10 @@
   "title": "ScanActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.ScanActivity",
-  "additionalProperties": true,
   "description": "ScanActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "schedule_uid": {
       "type": "string",

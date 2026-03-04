@@ -47,9 +47,26 @@ XML::
     <to uri="direct:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setVariable:
+            name: myVar
+            expression:
+              constant:
+                expression: test
+        - to:
+            uri: direct:b
+----
 ====
 
-=== Setting an variable from a message header
+=== Setting a variable from a message header
 
 You can also set a variable with the value from a message header.
 
@@ -76,12 +93,31 @@ XML::
     <to uri="direct:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setVariable:
+            name: foo
+            expression:
+              header:
+                expression: bar
+        - to:
+            uri: direct:b
+----
 ====
 
 === Setting variable with the current message body
 
 It is of course also possible to set a variable with a value
-from anything on the `Exchange` such as the message body:
+from anything on the `Exchange` such as the message body,
+where we use the xref:components:languages:simple-language.adoc[Simple] language
+to refer to the message body:
 
 [tabs]
 ====
@@ -90,14 +126,11 @@ Java::
 [source,java]
 ----
 from("direct:a")
-    .setVariable("myBody", body())
+    .setVariable("myBody", simple("${body}"))
     .to("direct:b");
 ----
 
 XML::
-+
-We use the xref:components:languages:simple-language.adoc[Simple] language
-to refer to the message body:
 +
 [source,xml]
 ----
@@ -108,5 +141,22 @@ to refer to the message body:
     </setVariable>
     <to uri="direct:b"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setVariable:
+            name: myBody
+            expression:
+              simple:
+                expression: "${body}"
+        - to:
+            uri: direct:b
 ----
 ====

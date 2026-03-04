@@ -26,7 +26,8 @@ The method should be annotated with `@BindToRegistry` in standalone mode with `c
 public class MyConfiguration {
     @BindToRegistry
     public LambdaRouteBuilder myRoute() {
-        return rb -> rb.from("kafka:cheese").to("jms:queue:foo");
+        return rb -> rb.from("kafka:cheese?clientId=myClient&batching=true")
+                            .to("jms:queue:foo");
     }
 }
 ----
@@ -41,7 +42,8 @@ The xref:Endpoint-dsl.adoc[Endpoint DSL] can also be used as a lambda route buil
 public class MyConfiguration {
     @BindToRegistry
     public LambdaEndpointRouteBuilder myRoute() {
-        return rb -> rb.from(rb.kafka("cheese")).to(rb.jms("queue:foo"));
+        return rb -> rb.from(rb.kafka("cheese").clientId("myClient").batching(true))
+                            .to(rb.jms("queue:foo"));
     }
 }
 ----
@@ -60,3 +62,6 @@ With the regular `LambdaRouteBuilder` it's just a `String` type, so the `rb` pre
 ----
 rb.from("kafka:cheese")
 ----
+
+On the other hand then the _type safe_ endpoint DSL allows your Java IDE to show available options which can be configured.
+In this example we have configured the clientId and batching options. This is of great help, as the Kafka component has 100+ options.

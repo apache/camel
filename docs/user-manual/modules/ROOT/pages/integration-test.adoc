@@ -6,10 +6,11 @@ A typical integration test scenario verifies the collaboration of services and t
 
 NOTE: Both unit testing and integration testing are essential in software development to ensure the functionality and the compatibility with integrated services. The combination of both results in a successful quality assurance of your Camel application.
 
-== Citrus test framework
+== Citrus Test Framework
 
 As an example of writing integration tests for Camel applications you can use the
 https://citfrusframework.org[Citrus] test framework.
+
 Citrus is an Open Source Java testing framework with focus on integration testing and messaging.
 
 The framework provides a very good integration with Apache Camel.

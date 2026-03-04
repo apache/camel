@@ -39,7 +39,7 @@ public class AdviceWithInterceptSendToEndpointRemoveTest extends ContextTestSupp
         getMockEndpoint("mock:d").expectedMessageCount(0);
         getMockEndpoint("mock:intercept").expectedMessageCount(0);
 
-        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("foo", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 weaveById("myIntercept").remove();
@@ -64,7 +64,7 @@ public class AdviceWithInterceptSendToEndpointRemoveTest extends ContextTestSupp
         getMockEndpoint("mock:intercept").expectedMessageCount(0);
         getMockEndpoint("mock:intercept2").expectedMessageCount(1);
 
-        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("foo", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 weaveById("myIntercept").replace().to("mock:intercept2");

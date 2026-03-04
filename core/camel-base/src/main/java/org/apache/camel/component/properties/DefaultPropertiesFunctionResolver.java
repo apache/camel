@@ -43,13 +43,6 @@ public class DefaultPropertiesFunctionResolver extends ServiceSupport
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
 
     public DefaultPropertiesFunctionResolver() {
-        // include out of the box functions
-        addPropertiesFunction(new EnvPropertiesFunction());
-        addPropertiesFunction(new SysPropertiesFunction());
-        addPropertiesFunction(new ServicePropertiesFunction());
-        addPropertiesFunction(new ServiceHostPropertiesFunction());
-        addPropertiesFunction(new ServicePortPropertiesFunction());
-        addPropertiesFunction(new BooleanPropertiesFunction());
     }
 
     @Override
@@ -124,6 +117,14 @@ public class DefaultPropertiesFunctionResolver extends ServiceSupport
 
     @Override
     protected void doInit() throws Exception {
+        // include out of the box functions
+        addPropertiesFunction(new EnvPropertiesFunction());
+        addPropertiesFunction(new SysPropertiesFunction());
+        addPropertiesFunction(new ServicePropertiesFunction());
+        addPropertiesFunction(new ServiceHostPropertiesFunction());
+        addPropertiesFunction(new ServicePortPropertiesFunction());
+        addPropertiesFunction(new BooleanPropertiesFunction());
+
         functions.values().forEach(f -> CamelContextAware.trySetCamelContext(f, camelContext));
         ServiceHelper.initService(functions.values());
     }

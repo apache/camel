@@ -16,26 +16,26 @@
  */
 package org.apache.camel.component.google.bigquery;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.google.api.client.util.Strings;
 import com.google.api.services.bigquery.BigqueryScopes;
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.Credentials;
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.BigQueryOptions;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
-import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
+import org.apache.camel.component.google.common.GoogleCredentialsHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GoogleBigQueryConnectionFactory {
+
+    private static final Collection<String> BIGQUERY_SCOPES = Collections.singletonList(BigqueryScopes.BIGQUERY);
 
     private final Logger logger = LoggerFactory.getLogger(GoogleBigQueryConnectionFactory.class);
 
@@ -66,22 +66,24 @@ public class GoogleBigQueryConnectionFactory {
     }
 
     private BigQuery buildClient() throws Exception {
+        Credentials credentials = null;
 
-        GoogleCredentials credentials = null;
-
-        if (!Strings.isNullOrEmpty(serviceAccountKeyFile)) {
+        if (ObjectHelper.isNotEmpty(serviceAccountKeyFile)) {
             logger.debug("Key File Name has been set explicitly. Initialising BigQuery using Key File {}",
                     // limit the output as the value could be a long base64 string, we don't want to show it whole
                     StringHelper.limitLength(serviceAccountKeyFile, 70));
 
-            credentials = createFromFile();
+            // Create a simple configuration adapter to use GoogleCredentialsHelper
+            GoogleCommonConfiguration config = createConfigAdapter();
+            credentials = GoogleCredentialsHelper.getCredentials(camelContext, config, BIGQUERY_SCOPES);
         }
 
         if (credentials == null) {
             logger.debug(
                     "No explicit Service Account or Key File Name have been provided. Initialising BigQuery using defaults");
 
-            credentials = createDefault();
+            // Use GoogleCredentialsHelper with null config to get ADC
+            credentials = GoogleCredentialsHelper.getCredentials(camelContext, createEmptyConfigAdapter(), BIGQUERY_SCOPES);
         }
 
         BigQueryOptions.Builder builder = BigQueryOptions.newBuilder()
@@ -98,32 +100,29 @@ public class GoogleBigQueryConnectionFactory {
         return builder.build().getService();
     }
 
-    private GoogleCredentials createFromFile() throws Exception {
-        if (camelContext == null) {
-            throw new CamelException("CamelContext is null, but must be set when creating GoogleBigQueryConnectionFactory.");
-        }
-        try (InputStream is
-                = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKeyFile);) {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(is);
-
-            if (credentials.createScopedRequired()) {
-                credentials = credentials.createScoped(BigqueryScopes.all());
+    /**
+     * Creates a configuration adapter for GoogleCredentialsHelper using the factory's serviceAccountKeyFile.
+     */
+    private GoogleCommonConfiguration createConfigAdapter() {
+        final String keyFile = this.serviceAccountKeyFile;
+        return new GoogleCommonConfiguration() {
+            @Override
+            public String getServiceAccountKey() {
+                return keyFile;
             }
-
-            return credentials;
-        }
+        };
     }
 
-    private GoogleCredentials createDefault() throws Exception {
-        GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
-
-        Collection<String> scopes = Collections.singletonList(BigqueryScopes.BIGQUERY);
-
-        if (credentials.createScopedRequired()) {
-            credentials = credentials.createScoped(scopes);
-        }
-
-        return credentials;
+    /**
+     * Creates an empty configuration adapter (no service account key) for ADC fallback.
+     */
+    private GoogleCommonConfiguration createEmptyConfigAdapter() {
+        return new GoogleCommonConfiguration() {
+            @Override
+            public String getServiceAccountKey() {
+                return null;
+            }
+        };
     }
 
     public String getServiceAccountKeyFile() {

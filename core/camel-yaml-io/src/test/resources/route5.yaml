@@ -21,8 +21,8 @@
       uri: direct:start
       steps:
         - log:
-            logName: myLogger
             loggingLevel: WARN
+            logName: myLogger
         - setBody:
             expression:
               simple:

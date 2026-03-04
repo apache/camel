@@ -32,7 +32,7 @@ import org.apache.camel.component.sql.stored.template.ast.Template;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

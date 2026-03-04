@@ -4,7 +4,7 @@
 :artifactid: camel-iggy
 :description: Send and receive message to Apache Iggy streaming platform.
 :since: 4.17
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

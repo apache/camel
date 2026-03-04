@@ -30,7 +30,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -51,7 +50,6 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
     private final String query;
     private String resolvedQuery;
-    private final ExchangeFactory exchangeFactory;
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
     private final SqlParameterSource parameterSource;
@@ -86,7 +84,6 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         this.parameterSource = null;
         this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
         this.sqlProcessingStrategy = sqlProcessingStrategy;
-        this.exchangeFactory = endpoint.getCamelContext().getCamelContextExtension().getExchangeFactory();
     }
 
     public SqlConsumer(DefaultSqlEndpoint endpoint, Processor processor, NamedParameterJdbcTemplate namedJdbcTemplate,
@@ -99,7 +96,6 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         this.parameterSource = parameterSource;
         this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
         this.sqlProcessingStrategy = sqlProcessingStrategy;
-        this.exchangeFactory = endpoint.getCamelContext().getCamelContextExtension().getExchangeFactory();
     }
 
     @Override
@@ -133,7 +129,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        final Exchange dummy = exchangeFactory.create(getEndpoint(), true);
+        final Exchange dummy = createExchange(false);
         final String preparedQuery
                 = sqlPrepareStatementStrategy.prepareQuery(resolvedQuery, getEndpoint().isAllowNamedParameters(), dummy);
 
@@ -184,6 +180,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                     if (closeEager) {
                         closeResultSet(rs);
                     }
+                    releaseExchange(dummy, false);
                 }
 
                 // okay we have some response from SQL so lets mark the consumer as ready

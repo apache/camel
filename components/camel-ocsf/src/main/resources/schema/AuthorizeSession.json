@@ -4,13 +4,10 @@
   "title": "AuthorizeSession",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.AuthorizeSession",
-  "additionalProperties": true,
   "description": "AuthorizeSession event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "privileges": {
       "type": "array",

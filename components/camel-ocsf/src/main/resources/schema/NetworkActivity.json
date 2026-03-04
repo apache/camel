@@ -4,13 +4,10 @@
   "title": "NetworkActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.NetworkActivity",
-  "additionalProperties": true,
   "description": "NetworkActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "cumulative_traffic": {
       "type": "object",

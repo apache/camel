@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.18.0-SNAPSHOT</version>
+        <version>4.19.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -106,6 +106,36 @@
             <artifactId>camel-yaml-dsl</artifactId>
         </dependency>
 
+        <!-- Swagger/OpenAPI parser for contract-first OpenAPI tools -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core-jakarta</artifactId>
+            <version>${swagger-openapi3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-models-jakarta</artifactId>
+            <version>${swagger-openapi3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.parser.v3</groupId>
+            <artifactId>swagger-parser-v3</artifactId>
+            <version>${swagger-openapi3-java-parser-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Apache Commons Text for fuzzy string matching (Levenshtein distance) -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text-version}</version>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -133,6 +163,59 @@
                             <goal>generate-code</goal>
                             <goal>generate-code-tests</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Copy migration guide .adoc files into the uber-JAR for runtime search -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-migration-guides</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/migration-guides</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../../../docs/user-manual/modules/ROOT/pages</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>camel-3-migration-guide.adoc</include>
+                                        <include>camel-4-migration-guide.adoc</include>
+                                        <include>camel-3x-upgrade-guide-3_*.adoc</include>
+                                        <include>camel-4x-upgrade-guide-4_*.adoc</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Generate index.txt listing all copied migration guide filenames -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-migration-guide-index</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <fileset id="guide-files" dir="${project.build.outputDirectory}/migration-guides">
+                                    <include name="*.adoc"/>
+                                </fileset>
+                                <pathconvert property="guide-list" refid="guide-files" pathsep="${line.separator}">
+                                    <flattenmapper/>
+                                </pathconvert>
+                                <echo file="${project.build.outputDirectory}/migration-guides/index.txt"
+                                      message="${guide-list}"/>
+                            </target>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

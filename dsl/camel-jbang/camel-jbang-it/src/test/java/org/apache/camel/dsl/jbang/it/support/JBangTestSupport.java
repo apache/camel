@@ -29,6 +29,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.apache.camel.test.infra.cli.services.CliService;
 import org.apache.camel.test.infra.cli.services.CliServiceFactory;
-import org.apache.commons.io.FileUtils;
+import org.apache.camel.util.FileUtil;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -66,6 +67,7 @@ public abstract class JBangTestSupport {
     protected static final int ASSERTION_WAIT_SECONDS
             = Integer.parseInt(System.getProperty("jbang.it.assert.wait.timeout", "60"));
 
+    //to use only in case of container execution, so mark with the tag @Tag("container-only") the test
     protected static final String DEFAULT_ROUTE_FOLDER = "/home/jbang";
 
     public static final String DEFAULT_MSG = "Hello Camel from";
@@ -76,7 +78,9 @@ public abstract class JBangTestSupport {
     protected void beforeEach(TestInfo testInfo) throws IOException {
         Assertions.assertThat(DATA_FOLDER).as("%s need to be set", CliProperties.DATA_FOLDER).isNotBlank();
         containerDataFolder = Files.createDirectory(Paths.get(DATA_FOLDER, containerService.id())).toAbsolutePath().toString();
-        Files.setPosixFilePermissions(Paths.get(containerDataFolder), EnumSet.allOf(PosixFilePermission.class));
+        if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
+            Files.setPosixFilePermissions(Paths.get(containerDataFolder), EnumSet.allOf(PosixFilePermission.class));
+        }
         logger.debug("running {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
     }
 
@@ -86,12 +90,8 @@ public abstract class JBangTestSupport {
         assertNoErrors();
         logger.debug("clean up data folder");
         if (containerDataFolder != null) {
-            FileUtils.deleteQuietly(new File(containerDataFolder));
+            FileUtil.removeDir(new File(containerDataFolder));
         }
-    }
-
-    protected void stopAllRoutes() {
-        execute("stop --all");
     }
 
     protected enum TestResources {
@@ -100,10 +100,10 @@ public abstract class JBangTestSupport {
         HELLO_NAME("helloName.xml", "/jbang/it/helloName.xml"),
         JOKE("joke.yaml", "/jbang/it/joke.yaml"),
         MQQT_CONSUMER("mqttConsumer.yaml", "/jbang/it/mqttConsumer.yaml"),
-        BUILD_GRADLE("build.gradle", "/jbang/it/maven-gradle/build.gradle"),
         DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java"),
         SERVER_ROUTE("server.yaml", "/jbang/it/server.yaml"),
         CIRCUIT_BREAKER("CircuitBreakerRoute.java", "/jbang/it/CircuitBreakerRoute.java"),
+        CUSTOM_JAR("CustomJar.java", "/jbang/it/CustomJar.java"),
         SRC_MAPPING_DATA("data.json", "/jbang/it/data-mapping/src/data.json"),
         SRC_MAPPING_TEMPLATE("transform.yaml", "/jbang/it/data-mapping/src/transform.yaml"),
         COMP_MAPPING_DATA("data.xml", "/jbang/it/data-mapping/components/data.xml"),
@@ -146,7 +146,7 @@ public abstract class JBangTestSupport {
     }
 
     protected String mountPoint() {
-        return String.format("%s/%s", containerService.getMountPoint(), containerService.id());
+        return Paths.get(containerService.getMountPoint(), containerService.id()).toString();
     }
 
     protected void initAndRunInBackground(String file) {
@@ -222,13 +222,6 @@ public abstract class JBangTestSupport {
                         .contains(contains)));
     }
 
-    protected void checkContainerLogContainsAllOf(int waitForSeconds, String... contains) {
-        Assertions.assertThatNoException().isThrownBy(() -> Awaitility.await()
-                .atMost(waitForSeconds, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assertions.assertThat(getContainerLogs())
-                        .contains(contains)));
-    }
-
     protected void checkLogContains(String contains) {
         checkLogContains(contains, ASSERTION_WAIT_SECONDS);
     }
@@ -293,14 +286,6 @@ public abstract class JBangTestSupport {
         return getLogs(null);
     }
 
-    protected String getPID(String startupMessage) {
-        return startupMessage.split("PID:")[1].split(" ")[1].replaceAll("[^0-9]", "");
-    }
-
-    protected String getContainerLogs() {
-        return containerService.getContainerLogs();
-    }
-
     protected String getLogs(String route) {
         return execute(Optional.ofNullable(route)
                 .map(r -> String.format("log %s --follow=false", r))
@@ -352,7 +337,10 @@ public abstract class JBangTestSupport {
 
     protected String execInHost(String command) {
         try {
-            ProcessBuilder builder = new ProcessBuilder("/bin/bash", "-c", command);
+            boolean isWindows = System.getProperty("os.name", "").toLowerCase().startsWith("win");
+            ProcessBuilder builder = isWindows
+                    ? new ProcessBuilder("cmd.exe", "/c", command)
+                    : new ProcessBuilder("/bin/bash", "-c", command);
             builder.redirectErrorStream(true);
             final Process process = builder.start();
             Awaitility.await("process is running")
@@ -419,9 +407,11 @@ public abstract class JBangTestSupport {
     }
 
     protected void assertFileInContainerExists(String fileAbsolutePath) {
-        String fileName = Path.of(fileAbsolutePath).getFileName().toFile().getName();
-        Assertions.assertThat(containerService.listDirectory(Path.of(fileAbsolutePath).getParent().toAbsolutePath().toString())
-                .anyMatch(child -> fileName.equals(child)))
+        Path path = Path.of(fileAbsolutePath);
+        String fileName = path.getFileName().toString();
+        String parentDir = path.getParent().toString();
+        Assertions.assertThat(containerService.listDirectory(parentDir)
+                .anyMatch(fileName::equals))
                 .as("check if file " + fileAbsolutePath + " exists")
                 .isTrue();
     }

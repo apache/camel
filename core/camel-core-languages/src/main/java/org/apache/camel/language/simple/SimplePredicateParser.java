@@ -175,19 +175,19 @@ public class SimplePredicateParser extends BaseSimpleParser {
         // turn the tokens into the ast model
         parseTokensAndCreateNodes();
         // compact and stack blocks (eg function start/end, quotes start/end, etc.)
-        prepareBlocks();
+        prepareBlocks(nodes);
         // compact and stack unary expressions
-        prepareUnaryExpressions();
+        prepareUnaryExpressions(nodes);
         // compact and stack chain expressions
-        prepareChainExpression();
+        prepareChainExpression(nodes);
         // compact and stack binary expressions
-        prepareBinaryExpressions();
+        prepareBinaryExpressions(nodes);
         // compact and stack ternary expressions
-        prepareTernaryExpressions();
+        prepareTernaryExpressions(nodes);
         // compact and stack other expressions
-        prepareOtherExpressions();
+        prepareOtherExpressions(nodes);
         // compact and stack logical expressions
-        prepareLogicalExpressions();
+        prepareLogicalExpressions(nodes);
 
         return nodes;
     }
@@ -459,7 +459,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * So when the AST node is later used to create the {@link Predicate}s to be used by Camel then the AST graph has a
      * linked and prepared graph of nodes which represent the input expression.
      */
-    private void prepareBinaryExpressions() {
+    private void prepareBinaryExpressions(List<SimpleNode> nodes) {
         Deque<SimpleNode> stack = new ArrayDeque<>();
 
         SimpleNode left = null;
@@ -522,7 +522,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * So when the AST node is later used to create the {@link Predicate}s to be used by Camel then the AST graph has a
      * linked and prepared graph of nodes which represent the input expression.
      */
-    private void prepareLogicalExpressions() {
+    private void prepareLogicalExpressions(List<SimpleNode> nodes) {
         Deque<SimpleNode> stack = new ArrayDeque<>();
 
         SimpleNode left = null;

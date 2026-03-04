@@ -23,7 +23,11 @@ import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
+
+@DisabledOnOs(WINDOWS)
 public class JolokiaITCase extends JBangTestSupport {
 
     @Test
@@ -37,7 +41,7 @@ public class JolokiaITCase extends JBangTestSupport {
                 .contains("\"agentContext\":\"/jolokia\"");
         Assertions.assertThat(execute("jolokia FromDirectoryRoute --stop"))
                 .as("Jolokia should stop")
-                .contains("Stopped Jolokia for PID " + getPID(process));
+                .contains("Stopped Jolokia for PID " + process);
     }
 
     @Test

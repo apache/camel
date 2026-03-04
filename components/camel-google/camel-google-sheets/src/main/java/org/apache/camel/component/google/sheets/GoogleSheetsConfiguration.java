@@ -19,6 +19,7 @@ package org.apache.camel.component.google.sheets;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -32,7 +33,7 @@ import org.apache.camel.support.component.AbstractApiConfiguration;
  */
 @UriParams
 @Configurer(extended = true)
-public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
+public class GoogleSheetsConfiguration extends AbstractApiConfiguration implements GoogleCommonConfiguration {
 
     @UriPath
     @Metadata(required = true)
@@ -80,6 +81,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
         this.methodName = methodName;
     }
 
+    @Override
     public String getClientId() {
         return clientId;
     }
@@ -91,6 +93,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
         this.clientId = clientId;
     }
 
+    @Override
     public String getClientSecret() {
         return clientSecret;
     }
@@ -102,6 +105,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
         this.clientSecret = clientSecret;
     }
 
+    @Override
     public String getAccessToken() {
         return accessToken;
     }
@@ -113,6 +117,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
         this.accessToken = accessToken;
     }
 
+    @Override
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -140,6 +145,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
         return scopes;
     }
 
+    @Override
     public Collection<String> getScopesAsList() {
         if (scopes != null) {
             return List.of(scopes.split(","));
@@ -159,6 +165,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
         this.scopes = scopes;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
@@ -172,6 +179,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
         this.serviceAccountKey = serviceAccountKey;
     }
 
+    @Override
     public String getDelegate() {
         return delegate;
     }

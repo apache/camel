@@ -5,18 +5,12 @@ annotation to mark a particular method of a bean as being a consumer
 method. The value of the annotation defines the Camel
 xref:endpoint.adoc[Endpoint] to consume from.
 
-IMPORTANT: The `@Consume` POJO annotations are not part of any Camel routes, and you cannot use errorHandler or onException with that.
-
-[NOTE]
-====
-The following steps use the ActiveMQ component which is not yet supported on Camel 4.
-====
+IMPORTANT: The `@Consume` POJO annotations are not part of any Camel routes, and you cannot use xref:error-handler.adoc[errorHandler] or xref:exception-clause.adoc[onException] with this.
 
 For example lets invoke the `onCheese()` method with the String body of the
 inbound JMS message from ActiveMQ on the cheese
 queue; this will use the xref:type-converter.adoc[Type Converter] to
-convert the JMS ObjectMessage or BytesMessage to a String - or just use
-a TextMessage from JMS
+convert the JMS payload to `String` as declared in the method signature.
 
 [source,java]
 ----
@@ -31,19 +25,19 @@ public class Foo {
 
 The xref:bean-binding.adoc[Bean Binding] is then used to convert the
 inbound xref:components:eips:message.adoc[Message] to the parameter list used to invoke
-the method .
+the method.
 
-This basically creates a route that looks kinda like this:
+This basically creates a route that looks kinda like this (based on the example above):
 
 [source,java]
 ----
-from(uri).bean(theBean, "methodName");
+from("activemq:cheese").bean(Foo.class, "onCheese");
 ----
 
 == Using a property to define the endpoint
 
-The following annotations `@Consume`, `@Produce`, `@EndpointInject`, now
-offers a `property` attribute you can use to define the endpoint as a
+The following annotations `@Consume`, `@Produce`, `@EndpointInject`, provides
+a `property` attribute you can use to define the endpoint uri as a
 property on the bean. Then Camel will use the getter method to access
 the property.
 
@@ -52,22 +46,25 @@ For example:
 [source,java]
 ----
 public class MyService {
+
   private String serviceEndpoint;
   
   public void setServiceEndpoint(String uri) {
      this.serviceEndpoint = uri;
   }
 
-  public String getServiceEndpoint() {
+  public String getServiceEndpoint() { // <2>
      return serviceEndpoint;
   }
 
-  @Consume(property = "serviceEndpoint")
+  @Consume(property = "serviceEndpoint") // <1>
   public void onService(String input) {
      // do something
   }
 }
 ----
+<1> the getter for the property
+<2> refers to the name of the property
 
 The bean `MyService` has a property named `serviceEndpoint` which has
 getter/setter for the property. Now we want to use the bean for
@@ -76,14 +73,32 @@ in the `onService` method. Notice how we use the
 `property = "serviceEndpoint` to configure the property that has the
 endpoint url.
 
-If you define the bean in Spring XML, then you can configure the property as follows:
 
+[tabs]
+====
+
+Spring XML::
++
+If you define the bean in Spring XML, then you can configure the property as follows:
++
 [source,xml]
 ----
 <bean id="myService" class="com.foo.MyService">
   <property name="serviceEndpoint" value="activemq:queue:foo"/>
 </bean>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: foo
+      type: com.foo.MyService
+      properties:
+        serviceEndpoint: activemq:queue:foo
+----
+====
 
 This allows you to configure the bean without with any dependency injection style.
 
@@ -95,8 +110,8 @@ The method must be a `getXXX` method.
 
 . Use the property name if explicit given
 . If no property name was configured, then use the method name
-. Try to get the property with name**Endpoint** (eg with Endpoint as postfix)
-. Try to get the property with the name as is (eg no postfix or postfix)
+. Try to get the property with name**Endpoint** (e.g. with Endpoint as postfix)
+. Try to get the property with the name as is (e.g. no postfix or postfix)
 . If the property name starts with **on** then omit that, and try step 3 and 4 again.
 
 So in the example above, we could have defined the `@Consume` annotation as:
@@ -110,7 +125,7 @@ So in the example above, we could have defined the `@Consume` annotation as:
 Now the property is named "service" which then would match step 3 from
 the algorithm, and have Camel invoke the `getServiceEndpoint` method.
 
-We could also have omitted the property attribute, to make it implicit
+We could also have omitted the property attribute, to make it implicit:
 
 [source,java]
 ----
@@ -122,3 +137,6 @@ Now Camel matches step 5, and loses the prefix *on* in the name, and
 looks for 'service' as the property. And because there is a
 `getServiceEndpoint` method, Camel will use this method.
 
+== See Also
+
+- xref:pojo-producing.adoc[]

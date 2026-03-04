@@ -28,7 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.telemetry.Op;
 import org.apache.camel.telemetry.TagConstants;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.apache.camel.test.junit6.ExchangeTestSupport;
 
 /**
  * This test is special as it requires a different setting to inherit the Opentelemetry propagation mechanism.

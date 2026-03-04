@@ -31,14 +31,15 @@ import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.condition.OS.LINUX;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 public class RunCommandITCase extends JBangTestSupport {
 
@@ -80,6 +81,7 @@ public class RunCommandITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("container-only")
     public void runRoutesFromMultipleFilesUsingWildcardTest() {
         execute("init one.yaml --directory=/tmp/one");
         execute("init two.xml --directory=/tmp/two");
@@ -126,6 +128,7 @@ public class RunCommandITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("container-only")
     public void runDownloadedFromGithubTest() {
         execute("init https://github.com/apache/camel-kamelets-examples/tree/main/jbang/dependency-injection");
         Assertions.assertThat(containerService.listDirectory(DEFAULT_ROUTE_FOLDER))
@@ -156,7 +159,7 @@ public class RunCommandITCase extends JBangTestSupport {
         final String process = executeBackground(String.format("run %s/cheese.xml --camel-version=%s", mountPoint(), version));
         checkLogContainsPattern(String.format(" Apache Camel %s .* started", version));
         checkLogContains(DEFAULT_MSG);
-        execute("stop " + getPID(process));
+        execute("stop " + process);
     }
 
     @Test
@@ -168,7 +171,8 @@ public class RunCommandITCase extends JBangTestSupport {
     }
 
     @Test
-    @EnabledOnOs(LINUX)
+    @DisabledOnOs(WINDOWS)
+    @Tag("container-only")
     @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless")
     public void runFromClipboardTest() throws IOException {
         Assumptions.assumeTrue(execInHost("command -v ssh").contains("ssh"));

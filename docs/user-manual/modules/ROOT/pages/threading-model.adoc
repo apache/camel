@@ -10,8 +10,8 @@ Camel leverages thread pools in several places such as:
 concurrency
 * xref:components::seda-component.adoc[SEDA] component for asynchronous connectivity
 * xref:components:eips:threads-eip.adoc[Threads] EIP in Camel routes
-* Some components use thread pools out of the box, such as
-xref:components::jms-component.adoc[JMS] or xref:components::jetty-component.adoc[Jetty]
+* Several components use thread pools out of the box, such as
+xref:components::jms-component.adoc[JMS], xref:components::kafka-component.adoc[Kafka], xref:components::netty-component.adoc[Netty] or xref:components::jetty-component.adoc[Jetty]
 
 == Thread pool profiles
 
@@ -46,6 +46,20 @@ profile.
 
 In Spring XML you can configure thread pool profile with `threadPoolProfile` as shown:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+ThreadPoolProfile profile = camelContext.getExecutorServiceManager().getDefaultThreadPoolProfile();
+profile.setPoolSize(5);
+profile.setMaxPoolSize(10);
+----
+
+Spring XML::
++
 [source,xml]
 ----
 <threadPoolProfile id="defaultThreadPoolProfile"
@@ -54,24 +68,17 @@ In Spring XML you can configure thread pool profile with `threadPoolProfile` as 
     maxPoolSize="10"/>
 ----
 
-And in Java DSL
-
-[source,java]
-----
-ThreadPoolProfile profile = camelContext.getExecutorServiceManager().getDefaultThreadPoolProfile();
-profile.setPoolSize(5);
-profile.setMaxPoolSize(10);
-----
-
-And with camel-main, Spring Boot or Quarkus you can configure this in the `application.properties|yaml` file:
-
+Application Properties::
++
+You can also configure the thread pools in `application.properties`. The default pool can easily be configured as follows:
++
 [source,properties]
 ----
 ## configure default thread pool profile
 camel.threadpool.pool-size = 5
 camel.threadpool.max-pool-size = 5
 ----
-
+====
 
 === Using thread pool profiles
 
@@ -79,8 +86,31 @@ Suppose you want to use a custom thread pool profile for a Multicast EIP
 pattern in a Camel route you can do it using the `executorServiceRef`
 attribute as shown in Spring XML:
 
+[tabs]
+====
+
+Java::
++
+In Java DSL you can use `ThreadPoolProfileBuilder` to create a profile and then register the profile:
++
+[source,java]
+----
+// setup thread pool profile
+ThreadPoolProfileBuilder builder = new ThreadPoolProfileBuilder("fooProfile");
+builder.poolSize(20).maxPoolSize(50).maxQueueSize(-1);
+
+// add profile to camel
+camelContext.getExecutorServiceManager().registerThreadPoolProfile(builder.build());
+
+// camel routes can now refer to the thread pool via its id
+from("direct:start")
+  .multicast().aggregationStrategy("myStrategy").executorService("fooProfile").to("xxx");
+----
+
+Spring XML::
++
 [source,xml]
----------------------------------------------------------------------------
+----
 <camelContext>
 
     <threadPoolProfile id="fooProfile"
@@ -92,7 +122,36 @@ attribute as shown in Spring XML:
        </multicast>
     </route>
 </camelContext>
----------------------------------------------------------------------------
+----
+
+YAML::
++
+To create a new profile, then use `camel.threadpool.config[profileId]` syntax as shown below:
++
+[source,properties]
+----
+camel.threadpool.config[fooProfile].id = fooProfile
+camel.threadpool.config[fooProfile].pool-size = 20
+camel.threadpool.config[fooProfile].max-pool-size = 50
+camel.threadpool.config[fooProfile].max-queue-size = -1
+----
++
+And then you can refer to the thread pool in the Camel route:
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - multicast:
+            aggregationStrategy: myStrategy
+            executorService: fooProfile
+            steps:
+              - to:
+                  uri: log:hello
+----
+====
 
 What Camel will do at runtime is to lookup in the
 xref:registry.adoc[Registry] for a `ExecutorService` with the id `fooProfile`.
@@ -102,24 +161,37 @@ so the profile is used as base settings for creating a new `ExecutorService` whi
 handed back to the xref:components:eips:multicast-eip.adoc[Multicast] EIP to use in the
 Camel route.
 
-In Java DSL you can use `ThreadPoolProfileBuilder` to create a profile and then register the profile:
-
-[source,java]
-----
-ThreadPoolProfileBuilder builder = new ThreadPoolProfileBuilder("fooProfile");
-builder.poolSize(20).maxPoolSize(50).maxQueueSize(-1);
-
-camelContext.getExecutorServiceManager().registerThreadPoolProfile(builder.build());
-----
-
 == Creating custom thread pools
 
 You can also use the `<threadPool>` tag in Spring XML to create a
-specific thread pool (`ExecutorService`). Notice that any options you
+Java thread pool (`ExecutorService`). Notice that any options you
 do not explicit define, will have Camel to use the default thread pool
 profile as fallback. For example if you omit setting the `maxQueueSize`
 then Camel will fallback and use the value from the default thread pool
 profiles, which by default is `1000`.
+
+Spring XML::
++
+[source,xml]
+----
+<camelContext>
+
+    <threadPool id="nyPool" poolSize="20" maxPoolSize="50"/>
+
+    <route>
+       <multicast aggregationStrategy="myStrategy" executorServiceRef="myPool">
+          ...
+       </multicast>
+    </route>
+</camelContext>
+----
+
+== What is the difference between thread-pool and thread-pool-profile?
+
+A thread pool profile is a recipe for creating 1 or more actual thread pools (ie `ExecutorService`).
+A thread pool is a concrete `ExecutorService` object.
+
+The purpose is to use profiles to make it easy to create many thread pools using the same settings.
 
 == Customizing thread names
 
@@ -142,8 +214,23 @@ In the pattern you can use the following placeholders
 * `\#name#` - The thread name
 * `\#longName#` - The long thread name which can include endpoint parameters etc.
 
-In Spring XML the pattern can be set with `threadNamePattern` attribute as shown:
+[tabs]
+====
 
+Java::
++
+In Javayou set the pattern on the `ExecutorServiceMananger` as shown:
++
+[source,java]
+----
+CamelContext camel = ...
+camel.getExecutorServiceManager().setThreadNamePattern("Riding the thread #counter#")
+----
+
+Spring XML::
++
+In Spring XML the pattern can be set with `threadNamePattern` attribute as shown:
++
 [source,xml]
 ----
 <camelContext threadNamePattern="Riding the thread #counter#">
@@ -155,24 +242,16 @@ In Spring XML the pattern can be set with `threadNamePattern` attribute as shown
 </camelContext>
 ----
 
-In Java DSL you can set the pattern as follows:
-
-[source,java]
-----
-CamelContext camel = ...
-camel.getExecutorServiceManager().setThreadNamePattern("Riding the thread #counter#")
-----
-
+Application Properties::
++
 And with camel-main, Spring Boot or Quarkus you can configure this in the `application.properties|yaml` file:
-
++
 [source,properties]
 ----
-## camel-main or quarkus
 camel.main.thread-name-pattern = Riding the thread #counter#
-
-## spring boot
-camel.springboot.thread-name-pattern = Riding the thread #counter#
 ----
+====
+
 
 == Shutting down thread pools
 
@@ -202,43 +281,32 @@ thread pool is as follows:
 [width="100%",cols="25%,75%",options="header"]
 |===
 |Method |Description
-|shutdown |Marks the thread pool as shutdown
-(like calling the `ExecutorService.shutdown()` method).
-|shutdownNow |Forces the thread pool to shut down now
-(like calling the `ExecutorService.shutdownNow()` method).
-|shutdownGraceful |Marks the thread pool as shutdown, and graceful shutdown
-the pool, by waiting for tasks to complete. A default timeout value of
-10 sec is used, before shutdown becomes aggressive using `shutdownNow`,
-forcing threads to shut down quicker.
+|shutdown |Marks the thread pool as shutdown(like calling the `ExecutorService.shutdown()` method).
+|shutdownNow |Forces the thread pool to shut down now(like calling the `ExecutorService.shutdownNow()` method).
+|shutdownGraceful |Marks the thread pool as shutdown, and graceful shutdown the pool, by waiting for tasks to complete. A default timeout value of 10 sec is used, before shutdown becomes aggressive using `shutdownNow`, forcing threads to shut down quicker.
 |shutdownGraceful(timeout) |As shutdownGraceful but with custom timeout value
-|awaitTermination |To wait graceful for the termination of a thread pool (eg
-to wait for its tasks to complete). Will wait until all tasks are completed or timed out.
+|awaitTermination |To wait graceful for the termination of a thread pool (e.g. to wait for its tasks to complete). Will wait until all tasks are completed or timed out.
 |===
 
 == JMX Management
 
-All the thread pools that Camel creates are managed and thus you can see
-them in JMX under the `threadpools` tree.
+All the thread pools that Camel creates are managed, and thus you can see them in JMX under the `threadpools` tree.
 
 NOTE: This requires to enabled JMX by including `camel-management` JAR in the classpath.
 
 == Component developers
 
-If you develop your own Camel component and are in need of a thread
-pool, then it is advised to use the
-`ExecutorServiceStrategy`/`ExecutorServiceManager` to create the thread
-pool you need.
+If you develop your own Camel component and are in need of a thread pool,
+then it is advised to use the `ExecutorServiceStrategy`/`ExecutorServiceManager`
+to create the thread pool you need.
 
-=== ExecutorServiceStrategy
+=== ExecutorServiceStrategy and ExecutorServiceManager
 
 Camel provides a pluggable strategy to hook in your own thread pool
-provider, for example from a WorkManager in a J2EE server etc. +
-See the `org.apache.camel.spi.ExecutorServiceStrategy` interface which
+provider.See the `org.apache.camel.spi.ExecutorServiceStrategy` interface which
 you should implement and hook into the WorkManager.
 
-=== ExecutorServiceManager
-
-To hook in custom thread pool providers (e.g. for J2EE servers) a
+To hook in custom thread pool providers a
 `ThreadPoolFactory` interface can be implemented. The implementation can
 be set in the `ExecutorServiceManager`.
 
@@ -246,6 +314,7 @@ be set in the `ExecutorServiceManager`.
 
 Starting from Java 21, the default `ThreadPoolFactory` can build `ExecutorService` and `ScheduledExecutorService` that
 use https://openjdk.org/jeps/425[virtual threads] instead of platform threads.
+
 But as it is an experimental feature, it is not enabled by default, you need to set the System property `camel.threads.virtual.enabled`
 to `true` and run Camel using Java 21 or above to enable it.
 

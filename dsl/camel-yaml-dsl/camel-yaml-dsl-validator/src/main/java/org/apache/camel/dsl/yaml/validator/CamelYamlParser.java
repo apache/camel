@@ -23,6 +23,8 @@ import java.util.List;
 
 import com.networknt.schema.ValidationMessage;
 import org.apache.camel.CamelContext;
+import org.apache.camel.TypeConverterExists;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoader;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -42,7 +44,7 @@ import org.apache.camel.support.ResourceHelper;
  * Camel YAML parser that parses YAML DSL routes and also checks the routes can be loaded by Camel. This parser does not
  * start any routes, and will stub every component, dataformat, language which would require to have all dependencies on
  * classpath and 3rd party JARs may trigger some initialization that can distort this parser.
- *
+ * <p>
  * This is a faster and lighter parser than the {@link YamlValidator} which uses a similar concept as in camel-jbang.
  */
 public class CamelYamlParser {
@@ -63,6 +65,24 @@ public class CamelYamlParser {
                     (name, context) -> new StubLanguage());
             camelContext.getCamelContextExtension().addContextPlugin(TransformerResolver.class,
                     (name, context) -> new StubTransformer());
+
+            // when exporting we should ignore some errors and keep attempting to export as far as we can
+            PropertiesComponent pc = (PropertiesComponent) camelContext.getPropertiesComponent();
+            pc.addInitialProperty("camel.component.properties.ignore-missing-property", "true");
+            pc.addInitialProperty("camel.component.properties.ignore-missing-location", "true");
+            pc.setPropertiesParser(new DummyPropertiesParser(camelContext));
+
+            // override default type converters with our export converter that is more flexible during exporting
+            DummyTypeConverter ec = new DummyTypeConverter();
+            camelContext.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Override);
+            camelContext.getTypeConverterRegistry().addTypeConverter(Integer.class, String.class, ec);
+            camelContext.getTypeConverterRegistry().addTypeConverter(Long.class, String.class, ec);
+            camelContext.getTypeConverterRegistry().addTypeConverter(Double.class, String.class, ec);
+            camelContext.getTypeConverterRegistry().addTypeConverter(Float.class, String.class, ec);
+            camelContext.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
+            camelContext.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
+            camelContext.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
+
             // stub EIPs
             StubEipReifier.registerStubEipReifiers(camelContext);
 

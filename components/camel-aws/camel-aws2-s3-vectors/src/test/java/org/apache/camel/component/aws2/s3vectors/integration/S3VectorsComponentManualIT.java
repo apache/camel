@@ -32,7 +32,7 @@ import org.apache.camel.component.aws2.s3vectors.AWS2S3VectorsConstants;
 import org.apache.camel.component.aws2.s3vectors.AWS2S3VectorsEndpoint;
 import org.apache.camel.component.aws2.s3vectors.AWS2S3VectorsOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;

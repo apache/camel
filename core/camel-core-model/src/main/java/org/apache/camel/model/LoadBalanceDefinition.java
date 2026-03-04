@@ -155,7 +155,9 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
         FailoverLoadBalancerDefinition def = new FailoverLoadBalancerDefinition();
         def.setExceptionTypes(Arrays.asList(exceptions));
         def.setMaximumFailoverAttempts(Integer.toString(maximumFailoverAttempts));
-        def.setRoundRobin(Boolean.toString(roundRobin));
+        if (roundRobin) {
+            def.setRoundRobin(Boolean.toString(roundRobin));
+        }
         def.setInheritErrorHandler(inheritErrorHandler);
         setLoadBalancerType(def);
         return this;
@@ -180,11 +182,25 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
         FailoverLoadBalancerDefinition def = new FailoverLoadBalancerDefinition();
         def.setExceptionTypes(Arrays.asList(exceptions));
         def.setMaximumFailoverAttempts(Integer.toString(maximumFailoverAttempts));
-        def.setRoundRobin(Boolean.toString(roundRobin));
-        def.setSticky(Boolean.toString(sticky));
+        if (roundRobin) {
+            def.setRoundRobin(Boolean.toString(roundRobin));
+        }
+        if (sticky) {
+            def.setSticky(Boolean.toString(sticky));
+        }
         def.setInheritErrorHandler(inheritErrorHandler);
         setLoadBalancerType(def);
         return this;
+    }
+
+    /**
+     * Uses weighted load balancer
+     *
+     * @param  distributionRatio String of weighted ratios for distribution of messages.
+     * @return                   the builder
+     */
+    public LoadBalanceDefinition weighted(String distributionRatio) {
+        return weighted(false, distributionRatio, ",");
     }
 
     /**
@@ -208,7 +224,9 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
      */
     public LoadBalanceDefinition weighted(boolean roundRobin, String distributionRatio, String distributionRatioDelimiter) {
         WeightedLoadBalancerDefinition def = new WeightedLoadBalancerDefinition();
-        def.setRoundRobin(Boolean.toString(roundRobin));
+        if (roundRobin) {
+            def.setRoundRobin(Boolean.toString(roundRobin));
+        }
         def.setDistributionRatio(distributionRatio);
         def.setDistributionRatioDelimiter(distributionRatioDelimiter);
         setLoadBalancerType(def);

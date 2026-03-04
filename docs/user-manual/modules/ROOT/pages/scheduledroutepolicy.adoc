@@ -21,7 +21,7 @@ route resumption and client requests will be accepted by the route
 consumer to be forwarded along the route.
 
 Camel offers two such concrete policies that offer scheduled route policy
-support:
+support in the `camel-quartz` component:
 
 * xref:simplescheduledroutepolicy.adoc[SimpleScheduledRoutePolicy] - An
 ability to offer route scheduling services using a Simple xref:components::quartz-component.adoc[Quartz] trigger.
@@ -31,4 +31,4 @@ trigger.
 
 == More Information
 
-See xref:route-policy.adoc[Route Policy]
+See xref:route-policy.adoc[Route Policy] and xref:components::quartz-component.adoc[Quartz] component.

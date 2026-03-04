@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
               serviceAlias = "ignite")
 public class IgniteEmbeddedInfraService implements IgniteInfraService {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteEmbeddedInfraService.class);
+    private static int nodeCounter = 0;
 
     private static final TcpDiscoveryIpFinder LOCAL_IP_FINDER = new TcpDiscoveryVmIpFinder(false) {
         {
@@ -67,6 +68,8 @@ public class IgniteEmbeddedInfraService implements IgniteInfraService {
         System.setProperty("IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED", "true");
         System.setProperty("IGNITE_NO_ASCII", "true");
         System.setProperty("IGNITE_CONSOLE_APPENDER", "true");
+        // workaround to https://github.com/apache/ignite/issues/10648
+        System.setProperty("IGNITE_OVERRIDE_CONSISTENT_ID", "node" + nodeCounter++);
 
         IgniteConfiguration config = new IgniteConfiguration();
         config.setIgniteInstanceName(UUID.randomUUID().toString());

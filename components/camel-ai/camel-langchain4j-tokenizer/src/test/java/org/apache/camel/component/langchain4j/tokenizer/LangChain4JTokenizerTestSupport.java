@@ -20,7 +20,7 @@ package org.apache.camel.component.langchain4j.tokenizer;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 public class LangChain4JTokenizerTestSupport extends CamelTestSupport {
     protected static final String TEXT;

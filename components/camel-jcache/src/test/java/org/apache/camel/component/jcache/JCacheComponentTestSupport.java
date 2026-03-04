@@ -23,7 +23,7 @@ import java.util.UUID;
 import javax.cache.Cache;
 
 import org.apache.camel.component.jcache.support.HazelcastTest;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

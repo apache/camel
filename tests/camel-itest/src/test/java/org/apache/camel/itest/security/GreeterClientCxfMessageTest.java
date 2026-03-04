@@ -16,7 +16,7 @@
  */
 package org.apache.camel.itest.security;
 
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.test.context.ContextConfiguration;
 

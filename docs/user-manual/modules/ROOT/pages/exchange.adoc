@@ -11,10 +11,5 @@ Thanks to this, Apache Camel can support different integration patterns such as:
 == Learn More About Exchanges
 
 * xref:manual::exchange-pooling.adoc[Exchange Pooling]
-* xref:manual::using-exchange-pattern-annotations.adoc[Using Exchange Pattern Annotations]
-
-== Implementation Details
-
-There are concrete classes that implement the `Exchange` interface for each Camel-supported communications technology. For example, the `JmsExchange` class provides a JMS-specific implementation of the `Exchange` interface. The public API of the `Exchange` interface is limited intentionally: we expect that each class that implements this interface will provide its own technology-specific operations.
-
-Application-level programmers rarely access the `Exchange` interface (or classes that implement it) directly. However, many classes in Camel are generic types that are instantiated on (a class that implements) `Exchange`. Because of this, the `Exchange` interface appears a lot in the generic signatures of classes and methods.
+* xref:manual::exchange-pattern.adoc[Message Exchange Pattern]
+* xref:manual::using-exchange-pattern-annotations.adoc[Using Message Exchange Pattern Annotations]

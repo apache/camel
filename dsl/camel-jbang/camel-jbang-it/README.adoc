@@ -13,6 +13,17 @@ To run tests use the dedicated Maven profile `jbang-it-test` activated by the sa
 mvn verify -Djbang-it-test
 ----
 
+== Run tests locally
+
+To run tests using a local Camel CLI process instead of a container, activate the `local-camel-cli-process` profile:
+
+[source,bash]
+----
+mvn verify -Djbang-it-test -Dcamel-cli.instance.type=local-camel-cli-process
+----
+
+Tests tagged with `container-only` will be automatically excluded when this profile is active.
+
 == Configuration
 
 Camel CLI infra configuration is defined in link:../../../test-infra/camel-test-infra-cli/README.adoc[README.adoc]

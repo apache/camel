@@ -43,6 +43,16 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "batchSize": target.getConfiguration().setBatchSize(property(camelContext, int.class, value)); return true;
         case "batchtimeout":
         case "batchTimeout": target.getConfiguration().setBatchTimeout(property(camelContext, long.class, value)); return true;
+        case "chunkingincluderawtext":
+        case "chunkingIncludeRawText": target.getConfiguration().setChunkingIncludeRawText(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "chunkingmaxtokens":
+        case "chunkingMaxTokens": target.getConfiguration().setChunkingMaxTokens(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "chunkingmergepeers":
+        case "chunkingMergePeers": target.getConfiguration().setChunkingMergePeers(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "chunkingtokenizer":
+        case "chunkingTokenizer": target.getConfiguration().setChunkingTokenizer(property(camelContext, java.lang.String.class, value)); return true;
+        case "chunkingusemarkdowntables":
+        case "chunkingUseMarkdownTables": target.getConfiguration().setChunkingUseMarkdownTables(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "contentinbody":
         case "contentInBody": target.getConfiguration().setContentInBody(property(camelContext, boolean.class, value)); return true;
         case "docodeenrichment":
@@ -85,6 +95,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "maxFileSize": target.getConfiguration().setMaxFileSize(property(camelContext, long.class, value)); return true;
         case "mdpagebreakplaceholder":
         case "mdPageBreakPlaceholder": target.getConfiguration().setMdPageBreakPlaceholder(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "ocrengine":
         case "ocrEngine": target.getConfiguration().setOcrEngine(property(camelContext, java.lang.String.class, value)); return true;
         case "ocrlanguage":
@@ -136,6 +148,16 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "batchSize": return int.class;
         case "batchtimeout":
         case "batchTimeout": return long.class;
+        case "chunkingincluderawtext":
+        case "chunkingIncludeRawText": return java.lang.Boolean.class;
+        case "chunkingmaxtokens":
+        case "chunkingMaxTokens": return java.lang.Integer.class;
+        case "chunkingmergepeers":
+        case "chunkingMergePeers": return java.lang.Boolean.class;
+        case "chunkingtokenizer":
+        case "chunkingTokenizer": return java.lang.String.class;
+        case "chunkingusemarkdowntables":
+        case "chunkingUseMarkdownTables": return java.lang.Boolean.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
         case "docodeenrichment":
@@ -178,6 +200,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "maxFileSize": return long.class;
         case "mdpagebreakplaceholder":
         case "mdPageBreakPlaceholder": return java.lang.String.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "ocrengine":
         case "ocrEngine": return java.lang.String.class;
         case "ocrlanguage":
@@ -230,6 +254,16 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "batchSize": return target.getConfiguration().getBatchSize();
         case "batchtimeout":
         case "batchTimeout": return target.getConfiguration().getBatchTimeout();
+        case "chunkingincluderawtext":
+        case "chunkingIncludeRawText": return target.getConfiguration().getChunkingIncludeRawText();
+        case "chunkingmaxtokens":
+        case "chunkingMaxTokens": return target.getConfiguration().getChunkingMaxTokens();
+        case "chunkingmergepeers":
+        case "chunkingMergePeers": return target.getConfiguration().getChunkingMergePeers();
+        case "chunkingtokenizer":
+        case "chunkingTokenizer": return target.getConfiguration().getChunkingTokenizer();
+        case "chunkingusemarkdowntables":
+        case "chunkingUseMarkdownTables": return target.getConfiguration().getChunkingUseMarkdownTables();
         case "contentinbody":
         case "contentInBody": return target.getConfiguration().isContentInBody();
         case "docodeenrichment":
@@ -272,6 +306,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "maxFileSize": return target.getConfiguration().getMaxFileSize();
         case "mdpagebreakplaceholder":
         case "mdPageBreakPlaceholder": return target.getConfiguration().getMdPageBreakPlaceholder();
+        case "oauthprofile":
+        case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "ocrengine":
         case "ocrEngine": return target.getConfiguration().getOcrEngine();
         case "ocrlanguage":

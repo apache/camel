@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>4.18.0-SNAPSHOT</version>
+        <version>4.19.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xml-io</artifactId>
@@ -185,6 +185,7 @@
                                         <include name="org/apache/camel/model/**/*.java" />
                                         <include name="org/apache/camel/package-info.java" />
                                         <exclude name="org/apache/camel/model/console/**" />
+                                        <exclude name="org/apache/camel/model/cloud/**" />
                                     </fileset>
                                     <fileset dir="${project.basedir}/../camel-util/src/main/java">
                                         <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />

@@ -37,6 +37,8 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.concurrent.RejectableScheduledThreadPoolExecutor;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
+import org.apache.camel.util.concurrent.ThreadFactoryTypeAware;
+import org.apache.camel.util.concurrent.ThreadType;
 
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
@@ -57,7 +59,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
 
     @Override
     public ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
-        return Executors.newCachedThreadPool(threadFactory);
+        return ThreadPoolFactoryType.from(threadFactory, Integer.MAX_VALUE).newCachedThreadPool(threadFactory);
     }
 
     @Override
@@ -79,7 +81,6 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             boolean allowCoreThreadTimeOut,
             RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
             throws IllegalArgumentException {
-
         // the core pool size must be 0 or higher
         if (corePoolSize < 0) {
             throw new IllegalArgumentException("CorePoolSize must be >= 0, was " + corePoolSize);
@@ -90,52 +91,121 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             throw new IllegalArgumentException(
                     "MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
         }
-
-        BlockingQueue<Runnable> workQueue;
-        if (corePoolSize == 0 && maxQueueSize <= 0) {
-            // use a synchronous queue for direct-handover (no tasks stored on the queue)
-            workQueue = new SynchronousQueue<>();
-            // and force 1 as pool size to be able to create the thread pool by the JDK
-            corePoolSize = 1;
-            maxPoolSize = 1;
-        } else if (maxQueueSize <= 0) {
-            // use a synchronous queue for direct-handover (no tasks stored on the queue)
-            workQueue = new SynchronousQueue<>();
-        } else {
-            // bounded task queue to store tasks on the queue
-            workQueue = new LinkedBlockingQueue<>(maxQueueSize);
-        }
-
-        ThreadPoolExecutor answer
-                = new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
-        answer.setThreadFactory(threadFactory);
-        answer.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
-        if (rejectedExecutionHandler == null) {
-            rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
-        }
-        answer.setRejectedExecutionHandler(rejectedExecutionHandler);
-        return answer;
+        return ThreadPoolFactoryType.from(threadFactory, corePoolSize, maxPoolSize, maxQueueSize).newThreadPool(
+                corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
+                rejectedExecutionHandler, threadFactory);
     }
 
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-        RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
-        if (rejectedExecutionHandler == null) {
-            rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
-        }
-
-        ScheduledThreadPoolExecutor answer
-                = new RejectableScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
-        answer.setRemoveOnCancelPolicy(true);
-
-        // need to wrap the thread pool in a sized to guard against the problem that the
-        // JDK created thread pool has an unbounded queue (see class javadoc), which mean
-        // we could potentially keep adding tasks, and run out of memory.
-        if (profile.getMaxPoolSize() > 0) {
-            return new SizedScheduledExecutorService(answer, profile.getMaxQueueSize());
-        } else {
-            return answer;
-        }
+        return ThreadPoolFactoryType.from(threadFactory, profile).newScheduledThreadPool(profile, threadFactory);
     }
 
+    private enum ThreadPoolFactoryType {
+        PLATFORM {
+            ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
+                return Executors.newCachedThreadPool(threadFactory);
+            }
+
+            ExecutorService newThreadPool(
+                    int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+                    boolean allowCoreThreadTimeOut,
+                    RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+                    throws IllegalArgumentException {
+
+                BlockingQueue<Runnable> workQueue;
+                if (corePoolSize == 0 && maxQueueSize <= 0) {
+                    // use a synchronous queue for direct-handover (no tasks stored on the queue)
+                    workQueue = new SynchronousQueue<>();
+                    // and force 1 as pool size to be able to create the thread pool by the JDK
+                    corePoolSize = 1;
+                    maxPoolSize = 1;
+                } else if (maxQueueSize <= 0) {
+                    // use a synchronous queue for direct-handover (no tasks stored on the queue)
+                    workQueue = new SynchronousQueue<>();
+                } else {
+                    // bounded task queue to store tasks on the queue
+                    workQueue = new LinkedBlockingQueue<>(maxQueueSize);
+                }
+
+                ThreadPoolExecutor answer
+                        = new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
+                answer.setThreadFactory(threadFactory);
+                answer.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
+                if (rejectedExecutionHandler == null) {
+                    rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+                }
+                answer.setRejectedExecutionHandler(rejectedExecutionHandler);
+                return answer;
+            }
+
+            ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
+                RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
+                if (rejectedExecutionHandler == null) {
+                    rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+                }
+
+                ScheduledThreadPoolExecutor answer
+                        = new RejectableScheduledThreadPoolExecutor(
+                                profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+                answer.setRemoveOnCancelPolicy(true);
+
+                // need to wrap the thread pool in a sized to guard against the problem that the
+                // JDK created thread pool has an unbounded queue (see class javadoc), which mean
+                // we could potentially keep adding tasks, and run out of memory.
+                if (profile.getMaxPoolSize() > 0) {
+                    return new SizedScheduledExecutorService(answer, profile.getMaxQueueSize());
+                } else {
+                    return answer;
+                }
+            }
+        },
+        VIRTUAL {
+            @Override
+            ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
+                return Executors.newThreadPerTaskExecutor(threadFactory);
+            }
+
+            @Override
+            ExecutorService newThreadPool(
+                    int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit,
+                    int maxQueueSize, boolean allowCoreThreadTimeOut,
+                    RejectedExecutionHandler rejectedExecutionHandler,
+                    ThreadFactory threadFactory)
+                    throws IllegalArgumentException {
+                return Executors.newThreadPerTaskExecutor(threadFactory);
+            }
+
+            @Override
+            ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
+                return Executors.newScheduledThreadPool(0, threadFactory);
+            }
+        };
+
+        static ThreadPoolFactoryType from(ThreadFactory threadFactory, ThreadPoolProfile profile) {
+            return from(threadFactory, profile.getPoolSize(), profile.getMaxPoolSize(), profile.getMaxQueueSize());
+        }
+
+        static ThreadPoolFactoryType from(ThreadFactory threadFactory, int corePoolSize, int maxPoolSize, int maxQueueSize) {
+            return from(threadFactory, corePoolSize == 0 && maxQueueSize <= 0 ? 1 : maxPoolSize);
+        }
+
+        static ThreadPoolFactoryType from(ThreadFactory threadFactory, int maxPoolSize) {
+            if (ThreadType.current() == ThreadType.PLATFORM) {
+                return ThreadPoolFactoryType.PLATFORM;
+            }
+            return maxPoolSize > 1 && threadFactory instanceof ThreadFactoryTypeAware factoryTypeAware
+                    && factoryTypeAware.isVirtual() ? ThreadPoolFactoryType.VIRTUAL : ThreadPoolFactoryType.PLATFORM;
+        }
+
+        abstract ExecutorService newCachedThreadPool(ThreadFactory threadFactory);
+
+        abstract ExecutorService newThreadPool(
+                int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+                boolean allowCoreThreadTimeOut,
+                RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+                throws IllegalArgumentException;
+
+        abstract ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory);
+    }
 }

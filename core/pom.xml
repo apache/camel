@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.18.0-SNAPSHOT</version>
+        <version>4.19.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -56,7 +56,6 @@
         <module>camel-yaml-io</module>
         <module>camel-core</module>
         <module>camel-core-xml</module>
-        <module>camel-cloud</module>
         <module>camel-health</module>
         <module>camel-console</module>
         <module>camel-main</module>

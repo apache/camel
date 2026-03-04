@@ -36,7 +36,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .loadBalance().weighted(false, "4,2,1")
+    .loadBalance().weighted("4,2,1")
         .to("seda:x")
         .to("seda:y")
         .to("seda:z")
@@ -56,5 +56,25 @@ XML::
         <to uri="seda:z"/>
       </loadBalance>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loadBalance:
+            steps:
+              - weightedLoadBalancer:
+                  distributionRatio: "4,2,1"
+              - to:
+                  uri: seda:x
+              - to:
+                  uri: seda:y
+              - to:
+                  uri: seda:z
 ----
 ====

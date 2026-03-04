@@ -84,7 +84,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     public ThrottleDefinition(Expression maximumRequestsPerPeriod) {
         super(maximumRequestsPerPeriod);
-
         totalRequestsMode();
     }
 
@@ -94,11 +93,9 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     private ThrottleDefinition(ExpressionDefinition maximumRequestsPerPeriod, Expression correlationExpression) {
         super(maximumRequestsPerPeriod);
-
         ExpressionSubElementDefinition cor = new ExpressionSubElementDefinition();
         cor.setExpressionType(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
         setCorrelationExpression(cor);
-
         totalRequestsMode();
     }
 
@@ -187,43 +184,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         setExpression(
                 ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.constantExpression(maximumConcurrentRequests)));
         return this;
-    }
-
-    /**
-     * Sets the time period during which the maximum request count per period
-     *
-     * @param      maximumRequestsPerPeriod the maximum request count number per time period
-     * @deprecated                          Use {@link #maximumRequests(long)}
-     * @return                              the builder
-     */
-    @Deprecated(since = "4.4.0")
-    public ThrottleDefinition maximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
-        if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
-            setExpression(
-                    ExpressionNodeHelper.toExpressionDefinition(
-                            ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
-            return this;
-        } else {
-            throw new IllegalArgumentException("Maximum requests per period can only be set when using total requests mode");
-        }
-    }
-
-    /**
-     * Sets the time period during which the maximum request count per period
-     *
-     * @param      maximumRequestsPerPeriod the maximum request count number per time period
-     * @deprecated                          Use {@link #maximumRequests(long)}
-     * @return                              the builder
-     */
-    @Deprecated(since = "4.4.0")
-    public ThrottleDefinition maximumRequestsPerPeriod(String maximumRequestsPerPeriod) {
-        if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
-            setExpression(
-                    ExpressionNodeHelper.toExpressionDefinition(ExpressionBuilder.simpleExpression(maximumRequestsPerPeriod)));
-            return this;
-        } else {
-            throw new IllegalArgumentException("Maximum requests per period can only be set when using total requests mode");
-        }
     }
 
     /**
@@ -365,8 +325,19 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
      */
     public ThrottleDefinition mode(String mode) {
         setMode(mode);
-
         return this;
+    }
+
+    /**
+     * Sets the throttling mode to one of the available modes enumerated in ThrottlingMode
+     *
+     * @param  mode The throttling mode as a string parameter. It currently accepts one of 'TotalRequests' or
+     *              `ConcurrentRequests`
+     * @see         ThrottlingMode
+     * @return      the builder
+     */
+    public ThrottleDefinition mode(ThrottlingMode mode) {
+        return mode(mode.name());
     }
 
     // Properties
@@ -392,19 +363,11 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
 
     public String getTimePeriodMillis() {
-        if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
-            return timePeriodMillis;
-        }
-
-        throw new IllegalArgumentException("Time period in millis can only be obtained when using total requests mode");
+        return timePeriodMillis;
     }
 
     public void setTimePeriodMillis(String timePeriodMillis) {
-        if (ThrottlingMode.toMode(mode) == ThrottlingMode.TotalRequests) {
-            this.timePeriodMillis = timePeriodMillis;
-        } else {
-            throw new IllegalArgumentException("Time period in millis can only be set when using total requests mode");
-        }
+        this.timePeriodMillis = timePeriodMillis;
     }
 
     public String getAsyncDelayed() {

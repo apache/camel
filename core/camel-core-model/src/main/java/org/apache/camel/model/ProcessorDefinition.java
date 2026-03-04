@@ -47,10 +47,8 @@ import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.EnrichClause;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessClause;
-import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -77,7 +75,8 @@ import org.slf4j.Logger;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("rawtypes")
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type>
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>>
+        extends OptionalIdentifiedDefinition<Type>
         implements Block, CopyableDefinition<ProcessorDefinition>, DisabledAwareDefinition {
     @XmlTransient
     private static final AtomicInteger COUNTER = new AtomicInteger();
@@ -178,7 +177,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        // grab camel context depends on if this is a regular route or a route configuration
+        // grab camel context depends on if this is a regular route or a route
+        // configuration
         CamelContext context = this.getCamelContext();
         if (context == null) {
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
@@ -215,7 +215,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         boolean parentIsAlreadyTop = this.isTopLevelOnly();
         if (output.isTopLevelOnly() && !parentIsRoute && !parentIsAlreadyTop) {
             throw new IllegalArgumentException(
-                    "The output must be added as top-level on the route. Try moving " + output + " to the top of route.");
+                    "The output must be added as top-level on the route. Try moving " + output
+                                               + " to the top of route.");
         }
 
         output.setParent(this);
@@ -225,7 +226,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         if (context != null && (context.isSourceLocationEnabled()
                 || context.isDebugging() || context.isDebugStandby()
                 || context.isTracing() || context.isTracingStandby())) {
-            // we want to capture source location:line for every output (also when debugging or tracing enabled/standby)
+            // we want to capture source location:line for every output (also when debugging
+            // or tracing enabled/standby)
             Resource resource = ProcessorDefinitionHelper.getResource(this);
             ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
         }
@@ -344,7 +346,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                         the builder
      */
     public Type toD(
-            @AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, String variableSend, String variableReceive) {
+            @AsEndpointUri EndpointProducerBuilder endpointProducerBuilder, String variableSend,
+            String variableReceive) {
         ToDynamicDefinition answer = new ToDynamicDefinition();
         answer.setEndpointProducerBuilder(endpointProducerBuilder);
         answer.setVariableSend(variableSend);
@@ -426,48 +429,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type toF(@AsEndpointUri String uri, Object... args) {
         addOutput(new ToDefinition(String.format(uri, args)));
-        return asType();
-    }
-
-    /**
-     * Calls the service
-     *
-     * @return the builder
-     */
-    @Deprecated(since = "3.19.0")
-    public ServiceCallDefinition serviceCall() {
-        ServiceCallDefinition answer = new ServiceCallDefinition();
-        addOutput(answer);
-        return answer;
-    }
-
-    /**
-     * Calls the service
-     *
-     * @param  name the service name
-     * @return      the builder
-     */
-    @Deprecated(since = "3.19.0")
-    public Type serviceCall(String name) {
-        ServiceCallDefinition answer = new ServiceCallDefinition();
-        answer.setName(name);
-        addOutput(answer);
-        return asType();
-    }
-
-    /**
-     * Calls the service
-     *
-     * @param  name the service name
-     * @param  uri  the endpoint uri to use for calling the service
-     * @return      the builder
-     */
-    @Deprecated(since = "3.19.0")
-    public Type serviceCall(String name, @AsEndpointUri String uri) {
-        ServiceCallDefinition answer = new ServiceCallDefinition();
-        answer.setName(name);
-        answer.setUri(uri);
-        addOutput(answer);
         return asType();
     }
 
@@ -1094,7 +1055,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
+     * <a href= "https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
      * {@link org.apache.camel.processor.Pipeline} so that the message will get processed by each endpoint in turn and
      * for request/response the output of one endpoint will be the input of the next endpoint
      *
@@ -1107,7 +1068,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
+     * <a href= "https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
      * {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message will get processed by
      * each endpoint in turn and for request/response the output of one endpoint will be the input of the next endpoint
      *
@@ -1122,7 +1083,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
+     * <a href= "https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
      * {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message will get processed by
      * each endpoint in turn and for request/response the output of one endpoint will be the input of the next endpoint
      *
@@ -1364,7 +1325,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public IdempotentConsumerDefinition idempotentConsumer(
             Expression messageIdExpression, IdempotentRepository idempotentRepository) {
-        IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition(messageIdExpression, idempotentRepository);
+        IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition(
+                messageIdExpression,
+                idempotentRepository);
         addOutput(answer);
         return answer;
     }
@@ -1424,10 +1387,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Creates a validation expression which only if it is <tt>true</tt> then the exchange is forwarded to the
      * destination. Otherwise a {@link org.apache.camel.support.processor.PredicateValidationException} is thrown.
      *
-     * @param  expression the expression
+     * @param  expression the predicate
      * @return            the builder
      */
-    public Type validate(@AsPredicate Expression expression) {
+    public Type validate(@AsPredicate ExpressionDefinition expression) {
         ValidateDefinition answer = new ValidateDefinition(expression);
         addOutput(answer);
         return asType();
@@ -2064,7 +2027,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return       the builder
      */
     public DelayDefinition delay(long delay) {
-        return delay(ExpressionBuilder.constantExpression(delay));
+        return delay(new ConstantExpression(Long.toString(delay)));
     }
 
     /**
@@ -2090,7 +2053,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                           the builder
      */
     public ThrottleDefinition throttle(long maximumConcurrentRequests) {
-        return throttle(ExpressionBuilder.constantExpression(maximumConcurrentRequests));
+        return throttle(new ConstantExpression(Long.toString(maximumConcurrentRequests)));
     }
 
     /**
@@ -2126,9 +2089,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return                           the builder
      */
     public ThrottleDefinition throttle(Expression maximumConcurrentRequests, long correlationExpressionKey) {
-        ThrottleDefinition answer
-                = new ThrottleDefinition(
-                        maximumConcurrentRequests, ExpressionBuilder.constantExpression(correlationExpressionKey));
+        ThrottleDefinition answer = new ThrottleDefinition(maximumConcurrentRequests, maximumConcurrentRequests);
         addOutput(answer);
         return answer;
     }
@@ -2483,7 +2444,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             // this is part of route configuration
             return this.getRouteConfiguration().onException(exceptionType1, exceptionType2, exceptionType2);
         }
-        OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptionType1, exceptionType2, exceptionType3));
+        OnExceptionDefinition answer = new OnExceptionDefinition(
+                Arrays.asList(exceptionType1, exceptionType2, exceptionType3));
         addOutput(answer);
         return answer;
     }
@@ -2901,7 +2863,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return        the builder
      */
     public Type transformDataType(DataType toType) {
-        TransformDataTypeDefinition answer = new TransformDataTypeDefinition(DataType.ANY, toType);
+        TransformDataTypeDefinition answer = new TransformDataTypeDefinition(null, toType);
         addOutput(answer);
         return asType();
     }
@@ -3492,7 +3454,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * additional data obtained from a <code>resourceUri</code> and with an aggregation strategy created using a fluent
      * builder.
      */
-    public EnrichClause<ProcessorDefinition<Type>> enrichWith(@AsEndpointUri String resourceUri, boolean aggregateOnException) {
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(
+            @AsEndpointUri String resourceUri,
+            boolean aggregateOnException) {
         EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
         enrich(resourceUri, clause, aggregateOnException, false);
         return clause;
@@ -3934,7 +3898,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+            @AsEndpointUri String resourceUri, long timeout, String aggregationStrategyRef,
+            boolean aggregateOnException) {
         return pollEnrich(new ConstantExpression(resourceUri), timeout, aggregationStrategyRef, aggregateOnException);
     }
 
@@ -4056,7 +4021,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                           org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(
-            @AsEndpointUri Expression expression, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+            @AsEndpointUri Expression expression, long timeout, String aggregationStrategyRef,
+            boolean aggregateOnException) {
         PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
         pollEnrich.setExpression(expression);
         pollEnrich.setTimeout(Long.toString(timeout));
@@ -4229,7 +4195,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public OnCompletionDefinition onCompletion() {
         OnCompletionDefinition answer = new OnCompletionDefinition();
 
-        // remove all on completions if they are global scoped and we add a route scoped which
+        // remove all on completions if they are global scoped and we add a route scoped
+        // which
         // should override the global
         answer.removeAllOnCompletionDefinition(this);
 

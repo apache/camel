@@ -57,13 +57,13 @@ import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageHelper;
-import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.apache.camel.test.junit6.LanguageTestSupport;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -2868,6 +2868,24 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testVal() {
+        exchange.getMessage().setBody(123);
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${val(abc)}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("abc", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${val(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("123", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${val(${body})}");
+        Object obj = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, obj);
+        assertEquals(123, obj);
+    }
+
+    @Test
     public void testSetHeader() {
         exchange.getMessage().setBody("Hello World");
 
@@ -2938,10 +2956,10 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         // Test with body
         exchange.getIn().setBody("Hello World");
         exchange.getIn().setHeader("foo", 44);
-        assertExpression("${header.foo > 0 ? ${body} : 'Bye World'}", "Hello World");
+        assertExpression("${header.foo > 0 ? body : 'Bye World'}", "Hello World");
         exchange.getIn().setHeader("foo", -123);
-        assertExpression("${header.foo > 0 ? ${body} : 'Bye World'}", "Bye World");
-        assertExpression("${header.foo > 0 ? ${body} : ${null}}", null);
+        assertExpression("${header.foo > 0 ? body : 'Bye World'}", "Bye World");
+        assertExpression("${header.foo > 0 ? body : null}", null);
 
         // Test with file name
         exchange.getIn().setHeader("CamelFileName", "testfile.txt");
@@ -2979,15 +2997,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${header.value == null ? 'empty' : 'full'}", "full");
     }
 
-    @Test
+    @Disabled("Nested Ternary operator is not supported with csimple")
     public void testTernaryOperatorNested() {
-        // Nested ternary operators
-        exchange.getIn().setHeader("score", 95);
-        assertExpression("${header.score >= 90 ? 'A' : ${header.score} >= 80 ? 'B' : 'C'}", "A");
-        exchange.getIn().setHeader("score", 85);
-        assertExpression("${header.score >= 90 ? 'A' : ${header.score} >= 80 ? 'B' : 'C'}", "B");
-        exchange.getIn().setHeader("score", 75);
-        assertExpression("${header.score >= 90 ? 'A' : ${header.score} >= 80 ? 'B' : 'C'}", "C");
+        // not supported in csimple
     }
 
     @Test

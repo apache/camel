@@ -184,10 +184,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * service is stopped when the CamelContext stops.
      * <p/>
      * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}. The service will also
-     * be enlisted in JMX for management (if JMX is enabled). The service will be started, if its not already started.
+     * be enlisted in JMX for management (if JMX is enabled).
+     * <p/>
+     * The service will also be deferred to be started together with other services are being started, as part of the
+     * Camel startup process. If Camel has already been started, then the service is started immediately.
      *
      * @param  object    the service
      * @throws Exception can be thrown when starting the service
+     * @see              #deferStartService(Object, boolean)
      */
     void addService(Object object) throws Exception;
 
@@ -195,7 +199,10 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Adds a service to this CamelContext.
      * <p/>
      * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}. The service will also
-     * be enlisted in JMX for management (if JMX is enabled). The service will be started, if its not already started.
+     * be enlisted in JMX for management (if JMX is enabled).
+     * <p/>
+     * The service will also be deferred to be started together with other services are being started, as part of the
+     * Camel startup process. If Camel has already been started, then the service is started immediately.
      * <p/>
      * If the option <tt>closeOnShutdown</tt> is <tt>true</tt> then this CamelContext will control the lifecycle,
      * ensuring the service is stopped when the CamelContext stops. If the option <tt>closeOnShutdown</tt> is
@@ -204,6 +211,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  object         the service
      * @param  stopOnShutdown whether to stop the service when this CamelContext shutdown.
      * @throws Exception      can be thrown when starting the service
+     * @see                   #deferStartService(Object, boolean)
      */
     void addService(Object object, boolean stopOnShutdown) throws Exception;
 
@@ -212,6 +220,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * <p/>
      * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}. The service will also
      * be enlisted in JMX for management (if JMX is enabled). The service will be started, if its not already started.
+     * <p/>
+     * The service will also be deferred to be started together with other services are being started, as part of the
+     * Camel startup process. If Camel has already been started, then the service is started immediately.
      * <p/>
      * If the option <tt>closeOnShutdown</tt> is <tt>true</tt> then this CamelContext will control the lifecycle,
      * ensuring the service is stopped when the CamelContext stops. If the option <tt>closeOnShutdown</tt> is
@@ -222,6 +233,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  forceStart     whether to force starting the service right now, as otherwise the service may be deferred
      *                        being started to later using {@link #deferStartService(Object, boolean)}
      * @throws Exception      can be thrown when starting the service
+     * @see                   #deferStartService(Object, boolean)
      */
     void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception;
 
@@ -284,7 +296,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Defers starting the service until {@link CamelContext} is (almost started) or started and has initialized all its
      * prior services and routes.
      * <p/>
-     * If {@link CamelContext} is already started then the service is started immediately.
+     * The service is deferred to be started together with other services are being started, as part of the Camel
+     * startup process. If Camel has already been started, then the service is started immediately.
      *
      * @param  object         the service
      * @param  stopOnShutdown whether to stop the service when this CamelContext shutdown. Setting this to <tt>true</tt>

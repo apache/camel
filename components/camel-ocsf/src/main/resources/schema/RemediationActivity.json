@@ -4,13 +4,10 @@
   "title": "RemediationActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.RemediationActivity",
-  "additionalProperties": true,
   "description": "RemediationActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "raw_data_size": {
       "type": "integer",

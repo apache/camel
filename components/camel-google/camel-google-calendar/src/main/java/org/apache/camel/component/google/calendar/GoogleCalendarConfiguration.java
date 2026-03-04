@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -32,7 +33,7 @@ import org.apache.camel.spi.UriPath;
  */
 @UriParams
 @Configurer(extended = true)
-public class GoogleCalendarConfiguration {
+public class GoogleCalendarConfiguration implements GoogleCommonConfiguration {
 
     @UriPath
     @Metadata(required = true)
@@ -86,6 +87,7 @@ public class GoogleCalendarConfiguration {
         this.methodName = methodName;
     }
 
+    @Override
     public String getClientId() {
         return clientId;
     }
@@ -108,6 +110,7 @@ public class GoogleCalendarConfiguration {
         this.emailAddress = emailAddress;
     }
 
+    @Override
     public String getClientSecret() {
         return clientSecret;
     }
@@ -119,6 +122,7 @@ public class GoogleCalendarConfiguration {
         this.clientSecret = clientSecret;
     }
 
+    @Override
     public String getAccessToken() {
         return accessToken;
     }
@@ -130,6 +134,7 @@ public class GoogleCalendarConfiguration {
         this.accessToken = accessToken;
     }
 
+    @Override
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -157,6 +162,7 @@ public class GoogleCalendarConfiguration {
         return scopes;
     }
 
+    @Override
     public Collection<String> getScopesAsList() {
         if (scopes != null) {
             return List.of(scopes.split(","));
@@ -198,6 +204,7 @@ public class GoogleCalendarConfiguration {
         this.user = user;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
@@ -212,6 +219,7 @@ public class GoogleCalendarConfiguration {
         this.serviceAccountKey = serviceAccountKey;
     }
 
+    @Override
     public String getDelegate() {
         return delegate;
     }

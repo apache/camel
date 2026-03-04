@@ -4,13 +4,10 @@
   "title": "DnsActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.DnsActivity",
-  "additionalProperties": true,
   "description": "DnsActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "cumulative_traffic": {
       "type": "object",
@@ -62,8 +59,8 @@
     },
     "response_time": {
       "type": "integer",
-      "title": "Response Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Response Time"
     },
     "rcode": {
       "type": "string",
@@ -85,8 +82,8 @@
     },
     "query_time": {
       "type": "integer",
-      "title": "Query Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Query Time"
     },
     "proxy": {
       "type": "object",

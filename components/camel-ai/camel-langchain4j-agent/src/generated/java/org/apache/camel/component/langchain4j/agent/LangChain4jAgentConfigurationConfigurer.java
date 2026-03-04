@@ -26,6 +26,10 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agent": target.setAgent(property(camelContext, org.apache.camel.component.langchain4j.agent.api.Agent.class, value)); return true;
         case "agentfactory":
         case "agentFactory": target.setAgentFactory(property(camelContext, org.apache.camel.component.langchain4j.agent.api.AgentFactory.class, value)); return true;
+        case "mcpclients":
+        case "mcpClients": target.setMcpClients(property(camelContext, java.util.List.class, value)); return true;
+        case "mcpserver":
+        case "mcpServer": target.setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
         case "tags": target.setTags(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -37,6 +41,10 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agent": return org.apache.camel.component.langchain4j.agent.api.Agent.class;
         case "agentfactory":
         case "agentFactory": return org.apache.camel.component.langchain4j.agent.api.AgentFactory.class;
+        case "mcpclients":
+        case "mcpClients": return java.util.List.class;
+        case "mcpserver":
+        case "mcpServer": return java.util.Map.class;
         case "tags": return java.lang.String.class;
         default: return null;
         }
@@ -49,7 +57,22 @@ public class LangChain4jAgentConfigurationConfigurer extends org.apache.camel.su
         case "agent": return target.getAgent();
         case "agentfactory":
         case "agentFactory": return target.getAgentFactory();
+        case "mcpclients":
+        case "mcpClients": return target.getMcpClients();
+        case "mcpserver":
+        case "mcpServer": return target.getMcpServer();
         case "tags": return target.getTags();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "mcpclients":
+        case "mcpClients": return dev.langchain4j.mcp.client.McpClient.class;
+        case "mcpserver":
+        case "mcpServer": return java.lang.Object.class;
         default: return null;
         }
     }

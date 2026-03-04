@@ -367,6 +367,24 @@ public interface MiloBrowseComponentBuilderFactory {
     
         
         /**
+         * Override the server reported endpoint port with the port from the
+         * endpoint URI.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: client
+         * 
+         * @param overridePort the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseComponentBuilder overridePort(boolean overridePort) {
+            doSetProperty("overridePort", overridePort);
+            return this;
+        }
+    
+        
+        /**
          * The product URI.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -483,6 +501,7 @@ public interface MiloBrowseComponentBuilderFactory {
             case "maxResponseMessageSize": getOrCreateConfiguration((MiloBrowseComponent) component).setMaxResponseMessageSize((java.lang.Long) value); return true;
             case "miloClientConnectionManager": ((MiloBrowseComponent) component).setMiloClientConnectionManager((org.apache.camel.component.milo.client.MiloClientConnectionManager) value); return true;
             case "overrideHost": getOrCreateConfiguration((MiloBrowseComponent) component).setOverrideHost((boolean) value); return true;
+            case "overridePort": getOrCreateConfiguration((MiloBrowseComponent) component).setOverridePort((boolean) value); return true;
             case "productUri": getOrCreateConfiguration((MiloBrowseComponent) component).setProductUri((java.lang.String) value); return true;
             case "requestedPublishingInterval": getOrCreateConfiguration((MiloBrowseComponent) component).setRequestedPublishingInterval((java.lang.Double) value); return true;
             case "requestTimeout": getOrCreateConfiguration((MiloBrowseComponent) component).setRequestTimeout((java.lang.Long) value); return true;

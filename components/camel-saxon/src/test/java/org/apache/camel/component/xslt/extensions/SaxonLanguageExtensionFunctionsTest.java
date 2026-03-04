@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.xquery.XQueryWithExtensionTest;
 import org.apache.camel.language.xquery.XQueryLanguage;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class SaxonLanguageExtensionFunctionsTest extends CamelTestSupport {

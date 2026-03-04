@@ -31,7 +31,12 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_ATO
 
 /**
  * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
+ *
+ * @deprecated Since Hazelcast 5.5, IAtomicLong requires the CP Subsystem which is only available in Hazelcast
+ *             Enterprise Edition. This component will throw UnsupportedOperationException at runtime when used with
+ *             Hazelcast Community Edition 5.5+.
  */
+@Deprecated(since = "4.19.0", forRemoval = true)
 @UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_ATOMIC_VALUE, title = "Hazelcast Atomic Number",
              syntax = "hazelcast-atomicvalue:cacheName", producerOnly = true,
              category = { Category.CACHE, Category.CLUSTERING },

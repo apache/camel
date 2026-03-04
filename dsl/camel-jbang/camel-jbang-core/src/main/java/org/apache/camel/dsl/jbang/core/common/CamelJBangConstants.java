@@ -64,8 +64,8 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String GAV = "camel.jbang.gav";
 
-    @Metadata(description = "Java version (17 or 21)",
-              javaType = "String", enums = "17,21", defaultValue = "21")
+    @Metadata(description = "Java version",
+              javaType = "String", enums = "21", defaultValue = "21")
     public static final String JAVA_VERSION = "camel.jbang.javaVersion";
 
     @Metadata(description = "Apache Camel Kamelets version. By default the Kamelets are the same version as Camel.",
@@ -91,14 +91,6 @@ public final class CamelJBangConstants {
     @Metadata(description = "Include Maven Wrapper files in the exported project",
               javaType = "boolean", defaultValue = "true")
     public static final String MAVEN_WRAPPER = "camel.jbang.mavenWrapper";
-
-    @Metadata(description = "Include Gradle Wrapper files in the exported project",
-              javaType = "boolean", defaultValue = "true")
-    public static final String GRADLE_WRAPPER = "camel.jbang.gradleWrapper";
-
-    @Metadata(description = "Build tool to use (Maven or Gradle)",
-              javaType = "String", defaultValue = "Maven")
-    public static final String BUILD_TOOL = "camel.jbang.buildTool";
 
     @Metadata(description = "Directory where the project will be exported",
               javaType = "String", defaultValue = ".")

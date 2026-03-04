@@ -13,7 +13,6 @@ And some more alternative methods:
 - Using Maven Archetypes
 - Cloning an existing example to modify
 
-
 == Using online Project generators
 
 You can use https://start.spring.io/[Spring Boot Initializer] which is the Spring Boot
@@ -36,7 +35,7 @@ Once JBang is installed, you should be able to make sure it works by calling the
 [source,bash]
 ----
 $ jbang version
-0.132.1
+0.137.0
 ----
 
 After this then install Camel into JBang as follows:
@@ -51,8 +50,8 @@ Then you can check that Camel is installed and working by executing:
 [source,bash]
 ----
 $ camel version
-JBang version: 0.132.1
-Camel JBang version: 4.16.0
+JBang version: 0.137.0
+Camel JBang version: 4.18.0
 ----
 
 *Step 2*
@@ -96,6 +95,7 @@ Make sure to check out the xref:camel-jbang.adoc[Camel JBang] documentation, for
 of the Camel CLI. You will also find information how you can _export_ what you have built
 with the Camel CLI into a vanilla Camel Spring Boot or Camel Quarkus project.
 
+
 == Alternative ways of getting started with Camel
 
 === Adding Camel to an existing project
@@ -118,6 +118,8 @@ Among others the following are open source and provide support for official Apac
 - https://github.com/apache/camel-karavan[Apache Camel Karavan] - Has an https://karavan.space/[online UI designer] that runs in a web browser.
 - https://kaoto.io/[Kaoto] - Has also an https://kaotoio.github.io/kaoto/[online UI designer] that runs in a web browser.
 
+Both Camel Karavan and Kaoto can be installed as Visual Studio plugins directly in this IDE.
+
 === Using Maven Archetypes
 
 Apache Camel comes with a set of xref:camel-maven-archetypes.adoc[Camel Maven Archetypes],
@@ -127,4 +129,9 @@ you can use to create a new Camel project.
 
 There are tons of Camel examples hosted on GitHub that you can clone and modify,
 such as https://github.com/apache/camel-spring-boot-examples[Camel Spring Boot examples].
+
+== See Also
+
+To get familiar and learn the basic concepts of Apache Camel, then its recommend to check out xref:architecture.adoc[Architecture]
+and follow the links from that page.
 

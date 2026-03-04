@@ -34,6 +34,7 @@ And finally, the message is routed to a xref:ROOT:jms-component.adoc[JMS] queue.
 
 [tabs]
 ====
+
 Java::
 +
 [source,java]
@@ -62,56 +63,64 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: file:inbox/xml
-    steps:
-      - unmarshal:
-          jaxb: {}
-      - to:
-          uri: bean:validateOrder
-      - marshal:
-          jaxb: {}
-      - to:
-          uri: jms:queue:order 
+- route:
+    from:
+      uri: file:inbox/xml
+      steps:
+        - unmarshal:
+            jaxb: {}
+        - to:
+            uri: bean:validateOrder
+        - marshal:
+            jaxb: {}
+        - to:
+            uri: jms:queue:order
 ----
 ====
 
 == Allow Null Body
 
-Sometimes,
-there are situations where `null` can be a normal value for the body of a message but `null` by default is not an accepted value to unmarshal.
-To work around that,
-it is possible to allow `null` as value to a body to unmarshall
+Sometimes, there are situations where `null` can be a normal value for the body of a message but `null` by default is not an accepted value to unmarshal.
+To work around that, it is possible to allow `null` as value to a body to unmarshall
 using the option `allowNullBody` as shown in the next code snippets:
 
 [tabs]
 ====
+
 Java::
 +
 [source,java]
 ----
-// Beginning of the route
+from("file:inbox/xml")
   .unmarshal().allowNullBody().jaxb()
-// End of the route
+  .to("bean:validateOrder");
 ----
 
 XML::
 +
 [source,xml]
 ----
-<!-- Beginning of the route -->
-  <unmarshal allowNullBody="true"><jaxb/></unmarshal>
-<!-- End of the route -->
+<route>
+    <from uri="file:inbox/xml"/>
+    <unmarshal allowNullBody="true">
+        <jaxb/>
+    </unmarshal>
+    <to uri="bean:validateOrder"/>
+</route>
 ----
 
 YAML::
 +
 [source,yaml]
 ----
-# Beginning of the route
-unmarshal:
-  allowNullBody: true
-  jaxb: {}
-# End of the route
+- route:
+    from:
+      uri: file:inbox/xml
+      steps:
+        - unmarshal:
+            allowNullBody: "true"
+            jaxb: {}
+        - to:
+            uri: bean:validateOrder
 ----
 ====

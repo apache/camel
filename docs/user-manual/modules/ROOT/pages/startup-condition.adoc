@@ -37,4 +37,3 @@ Or to use a custom condition by its class name:
 camel.startupcondition.enabled = true
 camel.startupcondition.customClassNames = com.foo.MyStartupCondition
 ----
-

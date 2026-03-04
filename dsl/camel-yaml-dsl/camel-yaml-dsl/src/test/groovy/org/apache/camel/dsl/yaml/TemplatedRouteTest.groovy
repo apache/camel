@@ -38,6 +38,7 @@ class TemplatedRouteTest extends YamlTestSupport {
                 - templatedRoute:
                     routeId: "myRoute"
                     routeTemplateRef: "myTemplate"
+                    group: "myGroup"
                     parameters:
                       - name: "directName"
                         value: "foo"
@@ -50,6 +51,7 @@ class TemplatedRouteTest extends YamlTestSupport {
                 - templatedRoute:
                     routeId: "myRoute2"
                     routeTemplateRef: "myTemplate"
+                    group: "myGroup"
                     parameters:
                       - name: "directName"
                         value: "foo2"
@@ -75,9 +77,11 @@ class TemplatedRouteTest extends YamlTestSupport {
 
         with(context.routeDefinitions[0], RouteDefinition) {
             routeId == 'myRoute'
+            group == 'myGroup'
         }
         with(context.routeDefinitions[1], RouteDefinition) {
             routeId == 'myRoute2'
+            group == 'myGroup'
         }
         MockEndpoint.assertIsSatisfied(context)
     }

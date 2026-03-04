@@ -3,19 +3,26 @@
 Camel's tracer is used for logging message details during routing, where
 you can see the route path of each message as they happen. Details of the message is also logged such as the message body, and headers.
 
-TIP: There is an alternative tracer that captures the messages in a xref:backlog-tracer.adoc[Backlog Tracer].
+TIP: There is an alternative tracer that captures the messages in a xref:backlog-tracer.adoc[Backlog Tracer] for on-demand tracing. For example tools, Camel JBang, Hawtio and others are using this.
 
 == Enabling Tracing
 
-In Java you set tracing on `CamelContext`:
+The logging tracing is easily enabled by setting a single flag.
 
+[tabs]
+====
+
+Java::
++
+You enable tracing on the `CamelContext`:
++
 [source,java]
 ----
 context.setTracing(true);
 ----
 
-And in XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <camelContext trace="true" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -23,27 +30,35 @@ And in XML DSL:
 </camelContext>
 ----
 
-And in Spring Boot
-
-[source,text]
+Application Properties::
++
+For example when using Spring Boot or Quarkus
++
+[source,properties]
 ----
 camel.main.tracing = true
 ----
+====
 
 === Setting Tracing in Standby mode
 
-By default Camel optimizes and opt-out tracing. Therefore, you would either have to enable tracing from the startup,
+By default, Camel optimizes and opt-out tracing. Therefore, you would either have to enable tracing from the startup,
 or turn on standby mode, to allow tracing to be enabled later during runtime.
 
 To set tracing in standby mode you can do:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 context.setTracingStandby(true);
 ----
 
-And in XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <camelContext trace="standby" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -51,15 +66,20 @@ And in XML DSL:
 </camelContext>
 ----
 
-And in Spring Boot
-
-[source,text]
+Application Properties::
++
+For example when using Spring Boot or Quarkus
++
+[source,properties]
 ----
 camel.main.tracing-standby = true
 ----
+====
 
-If tracer is in standby mode, then tracing is made available, and can be enabled during runtime.
-This requires to either use JMX or enable via Java code:
+If tracer is in standby mode, then tracing is made available, and can be enabled later during runtime.
+This requires to either use JMX or Java to turn on the tracing:
+
+For example in Java:
 
 [source,java]
 ----
@@ -83,17 +103,25 @@ The tracer outputs the logging with a prefix with the following information:
 
 This output is assembled using the following default format:
 
-- %-4.4s [%-12.12s] [%-33.33s]
+[source,text]
+----
+%-4.4s [%-12.12s] [%-33.33s]
+----
 
-The default format can be customized using, for exameple to use wider columns:
+The default format can be customized using, for example to use wider columns:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 context.setTracingLoggingFormat("%-4.4s [%-30.30s] [%-50.50s]");
 ----
 
-And in XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <camelContext trace="true" traceLoggingFormat="%-4.4s [%-30.30s] [%-50.50s]">
@@ -101,16 +129,16 @@ And in XML DSL:
 </camelContext>
 ----
 
-And in Spring Boot
-
+Application Properties::
++
 [source,properties]
 ----
 camel.main.tracing-logging-format = %-4.4s [%-30.30s] [%-50.50s]
 ----
+====
 
-And in Camel Main / Quarkus
+== See Also
 
-[source,properties]
-----
-camel.main.tracing-logging-format = %-4.4s [%-30.30s] [%-50.50s]
-----
+- xref:backlog-tracer.adoc[Backlog Tracer]
+- xref:debugger.adoc[]
+- xref:backlog-debugger.adoc[Backlog Debugger]

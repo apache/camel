@@ -3193,6 +3193,10 @@ public class SimpleTest extends LanguageTestSupport {
         s = expression.evaluate(exchange, String.class);
         assertEquals("Hello World", s);
 
+        expression = context.resolveLanguage("simple").createExpression("${concat('a','b')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("ab", s);
+
         expression = context.resolveLanguage("simple").createExpression("${concat(${body}, 'World', '_')}");
         s = expression.evaluate(exchange, String.class);
         assertEquals("Hello_World", s);
@@ -3299,6 +3303,24 @@ public class SimpleTest extends LanguageTestSupport {
         expression = sl.createExpression("  Hi ${body}", Object.class, false, true, false);
         out = expression.evaluate(exchange, String.class);
         assertEquals("Hi Camel", out);
+    }
+
+    @Test
+    public void testVal() {
+        exchange.getMessage().setBody(123);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${val(abc)}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("abc", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${val(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("123", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${val(${body})}");
+        Object obj = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, obj);
+        assertEquals(123, obj);
     }
 
     @Test

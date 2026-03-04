@@ -22,7 +22,7 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 class InterceptTest extends YamlTestSupport {
     def "intercept"() {
         setup:
-            loadRoutes """
+        loadRoutes """
                 - intercept:
                     steps:
                       - to: "mock:intercepted"  
@@ -36,17 +36,49 @@ class InterceptTest extends YamlTestSupport {
                       - to: "mock:result"
             """
 
-            withMock('mock:intercepted') {
-                expectedBodiesReceived("hello", "hello", "Hello Bar", "Hello Bar")
-            }
+        withMock('mock:intercepted') {
+            expectedBodiesReceived("hello", "hello", "Hello Bar", "Hello Bar")
+        }
 
         when:
-            context.start()
+        context.start()
 
-            withTemplate {
-                to('direct:start').withBody('hello').send()
-            }
+        withTemplate {
+            to('direct:start').withBody('hello').send()
+        }
         then:
-            MockEndpoint.assertIsSatisfied(context)
+        MockEndpoint.assertIsSatisfied(context)
     }
+
+    def "interceptOnWhen"() {
+        setup:
+        loadRoutes """
+                - intercept:
+                    onWhen:
+                      simple: "\${body} contains 'Camel'"
+                    steps:
+                      - to: "mock:intercepted"  
+                - from:
+                    uri: "direct:start"
+                    steps:
+                      - to: "mock:foo"
+                      - to: "mock:bar"
+                      - to: "mock:result"
+            """
+
+        withMock('mock:intercepted') {
+            expectedBodiesReceived("Hello Camel", "Hello Camel", "Hello Camel")
+        }
+
+        when:
+        context.start()
+
+        withTemplate {
+            to('direct:start').withBody('Hello World').send()
+            to('direct:start').withBody('Hello Camel').send()
+        }
+        then:
+        MockEndpoint.assertIsSatisfied(context)
+    }
+
 }

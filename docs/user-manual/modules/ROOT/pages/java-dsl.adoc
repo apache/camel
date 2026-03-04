@@ -13,7 +13,7 @@ In the code below we create a new class called `MyRouteBuilder` that extends the
 In the `configure` method the Java DSL is at our disposal.
 
 [source,java]
--------------------------------------------------------------------------
+----
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -38,28 +38,28 @@ public class MyRouteBuilder extends RouteBuilder {
     }
 
 }
--------------------------------------------------------------------------
+----
 
 In the `configure` method we can define Camel xref:routes.adoc[Routes].
 
 In the example above we have a single route, which pickup files (the `from`).
 
 [source,java]
----------------------------------------
+----
 from("file:src/data?noop=true")
----------------------------------------
+----
 
 Then we use the xref:components:eips:choice-eip.adoc[Content-Based Router] EIP
 (the `choice`) to route the message whether the person is from London or not.
 
 [source,java]
--------------------------------------------------------
+----
 .choice()
     .when(xpath("/person/city = 'London'"))
         .to("file:target/messages/uk")
     .otherwise()
         .to("file:target/messages/others");
--------------------------------------------------------
+----
 
 === Using Text Blocks for long URIs
 
@@ -94,11 +94,6 @@ rb -> rb.from("kafka:cheese").to("jms:queue:foo");
 There is a bit more to this as the lambda route must be coded in a Java method that returns an instance of `LambdaRouteBuilder`.
 See more at the xref:lambda-route-builder.adoc[LambdaRouteBuilder] documentation.
 
-
-== More Details
-
-For more details see xref:dsl.adoc[DSL], xref:routes.adoc[Routes], and xref:processor.adoc[Processor].
-
 === The Java DSL under the hood
 
 As mentioned in the Getting Started guide, you can use Camel's Java DSL in a way that almost looks like a DSL. For instance:
@@ -110,14 +105,17 @@ As mentioned in the Getting Started guide, you can use Camel's Java DSL in a way
 ----
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
-        from("queue:a").filter(header("foo").isEqualTo("bar")).to("queue:b");
+        from("queue:a")
+            .filter(header("foo").isEqualTo("bar")).to("queue:b");
 
-        from("queue:c").choice()
+        from("queue:c")
+            .choice()
                 .when(header("foo").isEqualTo("bar")).to("queue:d")
                 .when(header("foo").isEqualTo("cheese")).to("queue:e")
                 .otherwise().to("queue:f");
     }
 };
+
 CamelContext myCamelContext = new DefaultCamelContext();
 myCamelContext.addRoutes(builder);
 ----
@@ -131,4 +129,9 @@ The `RouteBuilder.from(String uri)` method invokes `getEndpoint(uri)` on the `Ca
 
 == More Information
 
-See xref:lambda-route-builder.adoc[Lambda Route Builder] for creating a routing rule using the DSL, using Java lambda style.
+For more details see:
+
+- xref:dsl.adoc[DSL]
+- xref:routes.adoc[Routes],
+- xref:processor.adoc[Processor]
+- xref:lambda-route-builder.adoc[Lambda Route Builder]

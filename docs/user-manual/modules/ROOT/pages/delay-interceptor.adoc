@@ -14,10 +14,11 @@ The delayer can be configured on two levels:
 - Camel context: _Globally_
 - Route: _Individually per route_
 
-=== Configuring using XML DSL
+=== Configuring using Spring XML
 
 Set the `delayer` attribute of the `<camelContext>` tag as shown below:
 
+.Spring XML
 [source,xml]
 --------------------------------------------------------------------------------------------------
 <camelContext id="camel" delayer="500" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -44,24 +45,41 @@ as you like. Per route will override the camel context setting.
 
 For example, the route below is only the first route that has a delayer with 200 milliseconds.
 
-[source,xml]
-----
-<camelContext>
-   <route delayer="200">
-     ...
-   </route>
+[tabs]
+====
 
-   <route>
-     ...
-   </route>
-</camelContext>
-----
-
-And in Java DSL:
-
+Java::
++
 [source,java]
 ----
 from("direct:start").delayer(200)
     .to("mock:result")
 ----
+
+XML::
++
+[source,xml]
+----
+<route delayer="200">
+ ...
+</route>
+
+<route>
+ ...
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    delayer: 200
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mock:result
+----
+====
 

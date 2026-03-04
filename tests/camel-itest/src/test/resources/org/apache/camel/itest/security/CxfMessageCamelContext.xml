@@ -62,8 +62,7 @@
     	endpointName="s:SoapOverHttp"
     	serviceName="s:SOAPService"
     	xmlns:s="http://apache.org/hello_world_soap_http"
-        address="http://localhost:9000/SoapContext/SoapPort"
-        loggingFeatureEnabled="true">
+        address="http://localhost:9000/SoapContext/SoapPort">
         <cxf:inInterceptors>
             <ref bean="UsernameToken_Request"/>
         </cxf:inInterceptors>

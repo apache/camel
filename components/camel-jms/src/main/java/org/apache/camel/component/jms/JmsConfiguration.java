@@ -357,9 +357,10 @@ public class JmsConfiguration implements Cloneable {
                             + " consume from. This prevents an endless loop by consuming and sending back the same message to itself.")
     private boolean replyToSameDestinationAllowed;
     @UriParam(enums = "Bytes,Map,Object,Stream,Text",
-              description = "Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages."
+              description = "Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages from Camel to the broker (also when Camel is used for request/reply)."
+                            + " This is not in use when Camel receives messages as the message is locked to the type from the client that sent the message to the broker."
                             + " Possible values are: Bytes, Map, Object, Stream, Text."
-                            + " By default, Camel would determine which JMS message type to use from the In body type. This option allows you to specify it.")
+                            + " By default, Camel would determine which JMS message type to use from the message body type. This option allows you to specify it.")
     private JmsMessageType jmsMessageType;
     @UriParam(label = "advanced", enums = "default,passthrough",
               description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."

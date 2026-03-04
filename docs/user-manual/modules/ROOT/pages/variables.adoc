@@ -7,7 +7,7 @@ In Camel 4.4, we have introduced the concept of _variables_.
 A variable is a key/value that can hold a value that can either be private per `Exchange`,
 or shared per route, or per `CamelContext`.
 
-NOTE: You can also use _exchange properties_ as variables, but the exchange properties are also used internally by Camel,
+IMPORTANT: You can also use _exchange properties_ as variables, but the exchange properties are also used internally by Camel,
 and some EIPs and components. With the newly introduced _variables_ then these are exclusively for end users.
 
 == Variable Repository
@@ -95,8 +95,11 @@ String str = context.getVariable("route:myRouteId:myRouteKey", String.class);
 
 == Setting and getting variables from DSL
 
-It is also possible to use variables in Camel xref:routes.adoc[routes] using the
-setVariable, removeVariable, and convertVariableTo EIPs.
+It is also possible to use variables in Camel xref:routes.adoc[routes] using the:
+
+- xref:components:eips:setVariable-eip.adoc[setVariable] EIP
+- xref:components:eips:removeVariable-eip.adoc[removeVariable] EIP
+- xref:components:eips:convertVariableTo-eip.adoc[convertVariableTo] EIP
 
 These EIPs make it possible to set and remove variables from routes. And you can also access variables from the xref:components:languages:simple-language.adoc[Simple] language.
 
@@ -164,6 +167,7 @@ Then the second route can get hold of the variable without having to specify its
 
 [tabs]
 ====
+
 Java::
 +
 [source,java]
@@ -176,6 +180,53 @@ from("direct:start").routeId("first")
 from("direct:second").routeId("second")
     // use variable from this route
     .setBody().variable("route:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route id="first">
+    <from uri="direct:start"/>
+    <setVariable name="route:second:foo">
+        <constant>Hello World</constant>
+    </setVariable>
+    <to uri="mock:end"/>
+</route>
+
+<route id="second">
+    <from uri="direct:second"/>
+    <setBody>
+        <variable>route:foo</variable>
+    </setBody>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: first
+    from:
+      uri: direct:start
+      steps:
+        - setVariable:
+            name: route:second:foo
+            expression:
+              constant:
+                expression: Hello World
+        - to:
+            uri: mock:end
+- route:
+    id: second
+    from:
+      uri: direct:second
+      steps:
+        - setBody:
+            expression:
+              variable:
+                expression: route:foo
 ----
 ====
 
@@ -315,6 +366,7 @@ And a remote service is called via the route below, and this service returns a n
 
 [tabs]
 ====
+
 Java::
 +
 [source,java]
@@ -323,6 +375,7 @@ from("direct:service")
   .to("http:myservice")
   .to("log:after");
 ----
+
 XML::
 +
 [source,xml]
@@ -333,15 +386,17 @@ XML::
   <to uri="log:after"/>
 </route>
 ----
+
 YAML::
 +
 [source,yaml]
 ----
-from:
-  uri: "direct:service"
-  steps:
-    - to: "http:myservice"
-    - to: "log:after"
+- route:
+    from:
+      uri: direct:service
+      steps:
+        - to: http:myservice
+        - to: log:after
 ----
 ====
 
@@ -360,6 +415,7 @@ the result changes as follows:
 
 [tabs]
 ====
+
 Java::
 +
 [source,java]
@@ -368,6 +424,7 @@ from("direct:service")
   .toV("http:myservice", null, "myVar")
   .to("log:after");
 ----
+
 XML::
 +
 [source,xml]
@@ -378,17 +435,19 @@ XML::
   <to uri="log:after"/>
 </route>
 ----
+
 YAML::
 +
 [source,yaml]
 ----
-from:
-  uri: "direct:service"
-  steps:
-    - to:
-        uri: http:myservice
-        variableReceive: myVar
-    - to: "log:after"
+- route:
+    from:
+      uri: "direct:service"
+      steps:
+        - to:
+            uri: http:myservice
+            variableReceive: myVar
+        - to: "log:after"
 ----
 ====
 
@@ -423,6 +482,7 @@ the name of the variable. In XML and YAML DSL you specify this using the `variab
 
 [tabs]
 ====
+
 Java::
 +
 [source,java]
@@ -433,6 +493,7 @@ fromV("direct:start", "myKey")
     .setBody(variable("myKey"))
     .to("mock:result");
 ----
+
 XML::
 +
 [source,xml]
@@ -449,20 +510,22 @@ XML::
   <to uri="mock:result"/>
 </route>
 ----
+
 YAML::
 +
 [source,yaml]
 ----
-from:
-  uri: "direct:start"
-  variableReceive: "myKey"
-  steps:
-    - transform:
-        simple: "Bye ${body}"
-    - to: "mock:foo"
-    - setBody:
-        variable: "myKey"
-    - to: "mock:result"
+- route:
+    from:
+      uri: "direct:start"
+      variableReceive: "myKey"
+      steps:
+        - transform:
+            simple: "Bye ${body}"
+        - to: "mock:foo"
+        - setBody:
+            variable: "myKey"
+        - to: "mock:result"
 ----
 ====
 

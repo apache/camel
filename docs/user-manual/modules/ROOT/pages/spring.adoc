@@ -23,7 +23,7 @@ To use Camel with Spring XML files see the xref:spring-xml-extensions.adoc[Sprin
 
 == Using Spring dependency injection
 
-Spring dependency injection is integrated first-class when using Spring and Spring together.
+Spring dependency injection is integrated first-class when using Camel and Spring together.
 
 For example when using Camel on Spring Boot, then you can use any kind of Spring dependency and
 be able to inject Camel resources such as 'CamelContext', xref:endpoint.adoc[Endpoint] and many more.
@@ -38,5 +38,5 @@ See xref:components:eips:transactional-client.adoc[Transactional Client] EIP.
 
 == Using Camel with Spring testing
 
-See xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5] documentation.
+See xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5] and xref:components:others:test-spring-junit6.adoc[camel-test-spring-junit6] documentation.
 

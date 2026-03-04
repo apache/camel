@@ -21,8 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.sshd.client.SshClient;
 
-import static org.apache.camel.component.ssh.SshUtils.*;
-
 public class SshConsumer extends ScheduledPollConsumer {
     private final SshEndpoint endpoint;
 
@@ -35,15 +33,7 @@ public class SshConsumer extends ScheduledPollConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        if (this.endpoint.getConfiguration() == null || this.endpoint.getConfiguration().getClientBuilder() == null) {
-            client = SshClient.setUpDefaultClient();
-        } else {
-            client = this.endpoint.getConfiguration().getClientBuilder().build(true);
-        }
-        SshConfiguration configuration = endpoint.getConfiguration();
-        configureAlgorithms(configuration, client);
-
-        client.start();
+        client = SshUtils.createAndStartClient(endpoint.getConfiguration());
 
         super.doStart();
     }

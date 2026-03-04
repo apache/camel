@@ -4,7 +4,7 @@ Camel is distributed with the following archetypes for Maven end users.
 
 == Archetype Supported
 
-[width="100%",cols="50%,50%",options="header",]
+[width="100%",cols="1,2",options="header",]
 |=======================================================================
 |Archetype |Description
 
@@ -15,10 +15,6 @@ there is an API component missing in Camel that you want to create yourself.
 |camel-archetype-component |This archetype is used for creating a new
 Maven project for Camel xref:components::index.adoc[Components]. Use this if
 there is a component missing in Camel that you want to create yourself.
-
-|camel-archetype-cdi |This archetype is used to create a
-new Maven project for Camel routes in the Java Container using CDI to
-configure components, endpoints and beans.
 
 |camel-archetype-dataformat |This archetype is used for
 creating a new Maven project for Camel xref:data-format.adoc[Data
@@ -36,9 +32,6 @@ create a new Maven project for XML DSL routes using Spring.
 
 |camel-archetype-spring-boot |This archetype is used to
 create a new Maven project for Camel routes using Spring Boot.
-
-|camel-archetype-endpointdsl |This archetype is used to
-create a new Maven project for Camel routes using Endpoint DSL.
 
 |=======================================================================
 
@@ -58,14 +51,14 @@ The maven coordinates for these archetypes is the following:
 If you would like to use an archetype from an unreleased version of
 Camel, you just need to let the maven-archetype-plugin know where to
 look for it. For example, say someone wanted to create a Java based
-project based on Camel 3.21.0-SNAPSHOT. He'd need to use the following command
+project based on Camel 4.19.0-SNAPSHOT. He'd need to use the following command
 
 [source,bash]
 ----
 mvn archetype:generate \
   -DarchetypeGroupId=org.apache.camel.archetypes \
   -DarchetypeArtifactId=camel-archetype-java \
-  -DarchetypeVersion=3.21.0-SNAPSHOT
+  -DarchetypeVersion=4.19.0-SNAPSHOT
 ----
 
 When the project is created, you may need to add another repository to

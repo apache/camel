@@ -96,6 +96,8 @@ public class TransformRoute extends CamelCommand {
                 main.addInitialProperty("camel.main.dumpRoutesResolvePlaceholders", Boolean.toString(resolvePlaceholders));
                 main.addInitialProperty("camel.main.dumpRoutesUriAsParameters", Boolean.toString(uriAsParameters));
                 main.addInitialProperty("camel.main.dumpRoutesOutput", target);
+                // turn debug off as this can otherwise include source location in dump
+                main.addInitialProperty("camel.debug.enabled", "false");
                 main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
                 main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
                 if (ignoreLoadingError) {

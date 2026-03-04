@@ -51,7 +51,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
     public void testSimpleMultipleAdvice() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        AdviceWith.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("RouteA", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
@@ -62,7 +62,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
             }
         });
 
-        AdviceWith.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("RouteB", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
             }
@@ -79,7 +79,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
     public void testMultipleAdviceWithExceptionThrown() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        AdviceWith.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("RouteA", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
@@ -102,7 +102,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
     public void testMultipleAdvice() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        AdviceWith.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("RouteA", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
@@ -114,7 +114,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
             }
         });
 
-        AdviceWith.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("RouteB", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
             }

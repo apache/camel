@@ -5,7 +5,7 @@ Camel xref:languages.adoc[Languages].
 
 The Language DSL is exclusively available as part of the Java DSL.
 
-The DSL can be accessed directly from the `RouteBuilder` thanks to the method `expression()`.
+The DSL can be accessed directly from the `RouteBuilder` with the `expression()` method.
 
 == Using Language DSL
 
@@ -57,9 +57,8 @@ public class MyRoutes extends RouteBuilder {
                     .tokenize() // <2>
                         .token("(\\W+)\\s*") // <3>
                         .regex(true) // <3>
-                    .end() // <4>
-            )
-            .process("processEntry");
+                    .end()) // <4>
+                .process("processEntry");
     }
 }
 ----
@@ -67,3 +66,22 @@ public class MyRoutes extends RouteBuilder {
 <2> Select the `tokenize` language
 <3> Configure the expression according to the needs
 <4> Build the expression with the expected configuration
+
+Sometimes creating an expression can be a bit verbose with a number of fluent builder methods.
+What you can do is to pre create the expression before the route as shown below:
+
+[source,java]
+----
+public class MyRoutes extends RouteBuilder {
+    @Override
+    public void configure() {
+        var token = expression().tokenize().token("(\\W+)\\s*").regex(true).end(); // <1>
+
+        from("file:data")
+            .split(token) // <2>
+                .process("processEntry");
+    }
+}
+----
+<1> Pre create the expression
+<2> Use the expression in the route

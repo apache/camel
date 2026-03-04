@@ -37,7 +37,7 @@ public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
         if (freq != null) {
             answer = new SamplingThrottler(freq);
         } else {
-            long time = parseDuration(definition.getSamplePeriod(), 1);
+            long time = parseDuration(definition.getSamplePeriod(), 1000);
             answer = new SamplingThrottler(time, TimeUnit.MILLISECONDS);
         }
         answer.setDisabled(isDisabled(camelContext, definition));

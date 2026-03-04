@@ -39,7 +39,7 @@
     <shortdesc>Apache Camel is an integration framework</shortdesc>
     <description>Camel is an Open Source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data</description>
     <bug-database rdf:resource="https://issues.apache.org/jira/browse/CAMEL" />
-    <mailing-list rdf:resource="https://camel.apache.org/mailing-lists.html" />
+    <mailing-list rdf:resource="https://camel.apache.org/community/mailing-list/" />
     <download-page rdf:resource="https://camel.apache.org/download.html" />
 
     <programming-language>Java</programming-language>

@@ -19,22 +19,92 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class NatsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private org.apache.camel.component.nats.NatsConfiguration getOrCreateConfiguration(NatsComponent target) {
+        if (target.getConfiguration() == null) {
+            target.setConfiguration(new org.apache.camel.component.nats.NatsConfiguration());
+        }
+        return target.getConfiguration();
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NatsComponent target = (NatsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ackpolicy":
+        case "ackPolicy": getOrCreateConfiguration(target).setAckPolicy(property(camelContext, io.nats.client.api.AckPolicy.class, value)); return true;
+        case "ackwait":
+        case "ackWait": getOrCreateConfiguration(target).setAckWait(property(camelContext, long.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.nats.NatsConfiguration.class, value)); return true;
+        case "connection": getOrCreateConfiguration(target).setConnection(property(camelContext, io.nats.client.Connection.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": getOrCreateConfiguration(target).setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "consumerconfiguration":
+        case "consumerConfiguration": getOrCreateConfiguration(target).setConsumerConfiguration(property(camelContext, io.nats.client.api.ConsumerConfiguration.class, value)); return true;
+        case "credentialsfilepath":
+        case "credentialsFilePath": getOrCreateConfiguration(target).setCredentialsFilePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "durablename":
+        case "durableName": getOrCreateConfiguration(target).setDurableName(property(camelContext, java.lang.String.class, value)); return true;
+        case "flushconnection":
+        case "flushConnection": getOrCreateConfiguration(target).setFlushConnection(property(camelContext, boolean.class, value)); return true;
+        case "flushtimeout":
+        case "flushTimeout": getOrCreateConfiguration(target).setFlushTimeout(property(camelContext, int.class, value)); return true;
         case "headerfilterstrategy":
-        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "headerFilterStrategy": getOrCreateConfiguration(target).setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
+        case "jetstreamasync":
+        case "jetstreamAsync": getOrCreateConfiguration(target).setJetstreamAsync(property(camelContext, boolean.class, value)); return true;
+        case "jetstreamenabled":
+        case "jetstreamEnabled": getOrCreateConfiguration(target).setJetstreamEnabled(property(camelContext, boolean.class, value)); return true;
+        case "jetstreamname":
+        case "jetstreamName": getOrCreateConfiguration(target).setJetstreamName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "servers": target.setServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxdeliver":
+        case "maxDeliver": getOrCreateConfiguration(target).setMaxDeliver(property(camelContext, long.class, value)); return true;
+        case "maxmessages":
+        case "maxMessages": getOrCreateConfiguration(target).setMaxMessages(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxpingsout":
+        case "maxPingsOut": getOrCreateConfiguration(target).setMaxPingsOut(property(camelContext, int.class, value)); return true;
+        case "maxreconnectattempts":
+        case "maxReconnectAttempts": getOrCreateConfiguration(target).setMaxReconnectAttempts(property(camelContext, int.class, value)); return true;
+        case "nackwait":
+        case "nackWait": getOrCreateConfiguration(target).setNackWait(property(camelContext, long.class, value)); return true;
+        case "noecho":
+        case "noEcho": getOrCreateConfiguration(target).setNoEcho(property(camelContext, boolean.class, value)); return true;
+        case "norandomizeservers":
+        case "noRandomizeServers": getOrCreateConfiguration(target).setNoRandomizeServers(property(camelContext, boolean.class, value)); return true;
+        case "pedantic": getOrCreateConfiguration(target).setPedantic(property(camelContext, boolean.class, value)); return true;
+        case "pinginterval":
+        case "pingInterval": getOrCreateConfiguration(target).setPingInterval(property(camelContext, int.class, value)); return true;
+        case "poolsize":
+        case "poolSize": getOrCreateConfiguration(target).setPoolSize(property(camelContext, int.class, value)); return true;
+        case "pullsubscription":
+        case "pullSubscription": getOrCreateConfiguration(target).setPullSubscription(property(camelContext, boolean.class, value)); return true;
+        case "queuename":
+        case "queueName": getOrCreateConfiguration(target).setQueueName(property(camelContext, java.lang.String.class, value)); return true;
+        case "reconnect": getOrCreateConfiguration(target).setReconnect(property(camelContext, boolean.class, value)); return true;
+        case "reconnecttimewait":
+        case "reconnectTimeWait": getOrCreateConfiguration(target).setReconnectTimeWait(property(camelContext, int.class, value)); return true;
+        case "replysubject":
+        case "replySubject": getOrCreateConfiguration(target).setReplySubject(property(camelContext, java.lang.String.class, value)); return true;
+        case "replytodisabled":
+        case "replyToDisabled": getOrCreateConfiguration(target).setReplyToDisabled(property(camelContext, boolean.class, value)); return true;
+        case "requestcleanupinterval":
+        case "requestCleanupInterval": getOrCreateConfiguration(target).setRequestCleanupInterval(property(camelContext, int.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": getOrCreateConfiguration(target).setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "secure": getOrCreateConfiguration(target).setSecure(property(camelContext, boolean.class, value)); return true;
+        case "servers": getOrCreateConfiguration(target).setServers(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "traceconnection":
+        case "traceConnection": getOrCreateConfiguration(target).setTraceConnection(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
-        case "verbose": target.setVerbose(property(camelContext, boolean.class, value)); return true;
+        case "verbose": getOrCreateConfiguration(target).setVerbose(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -42,15 +112,78 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ackpolicy":
+        case "ackPolicy": return io.nats.client.api.AckPolicy.class;
+        case "ackwait":
+        case "ackWait": return long.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.nats.NatsConfiguration.class;
+        case "connection": return io.nats.client.Connection.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "consumerconfiguration":
+        case "consumerConfiguration": return io.nats.client.api.ConsumerConfiguration.class;
+        case "credentialsfilepath":
+        case "credentialsFilePath": return java.lang.String.class;
+        case "durablename":
+        case "durableName": return java.lang.String.class;
+        case "flushconnection":
+        case "flushConnection": return boolean.class;
+        case "flushtimeout":
+        case "flushTimeout": return int.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "jetstreamasync":
+        case "jetstreamAsync": return boolean.class;
+        case "jetstreamenabled":
+        case "jetstreamEnabled": return boolean.class;
+        case "jetstreamname":
+        case "jetstreamName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxdeliver":
+        case "maxDeliver": return long.class;
+        case "maxmessages":
+        case "maxMessages": return java.lang.String.class;
+        case "maxpingsout":
+        case "maxPingsOut": return int.class;
+        case "maxreconnectattempts":
+        case "maxReconnectAttempts": return int.class;
+        case "nackwait":
+        case "nackWait": return long.class;
+        case "noecho":
+        case "noEcho": return boolean.class;
+        case "norandomizeservers":
+        case "noRandomizeServers": return boolean.class;
+        case "pedantic": return boolean.class;
+        case "pinginterval":
+        case "pingInterval": return int.class;
+        case "poolsize":
+        case "poolSize": return int.class;
+        case "pullsubscription":
+        case "pullSubscription": return boolean.class;
+        case "queuename":
+        case "queueName": return java.lang.String.class;
+        case "reconnect": return boolean.class;
+        case "reconnecttimewait":
+        case "reconnectTimeWait": return int.class;
+        case "replysubject":
+        case "replySubject": return java.lang.String.class;
+        case "replytodisabled":
+        case "replyToDisabled": return boolean.class;
+        case "requestcleanupinterval":
+        case "requestCleanupInterval": return int.class;
+        case "requesttimeout":
+        case "requestTimeout": return long.class;
+        case "secure": return boolean.class;
         case "servers": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "traceconnection":
+        case "traceConnection": return boolean.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         case "verbose": return boolean.class;
@@ -62,18 +195,81 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         NatsComponent target = (NatsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ackpolicy":
+        case "ackPolicy": return getOrCreateConfiguration(target).getAckPolicy();
+        case "ackwait":
+        case "ackWait": return getOrCreateConfiguration(target).getAckWait();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "configuration": return target.getConfiguration();
+        case "connection": return getOrCreateConfiguration(target).getConnection();
+        case "connectiontimeout":
+        case "connectionTimeout": return getOrCreateConfiguration(target).getConnectionTimeout();
+        case "consumerconfiguration":
+        case "consumerConfiguration": return getOrCreateConfiguration(target).getConsumerConfiguration();
+        case "credentialsfilepath":
+        case "credentialsFilePath": return getOrCreateConfiguration(target).getCredentialsFilePath();
+        case "durablename":
+        case "durableName": return getOrCreateConfiguration(target).getDurableName();
+        case "flushconnection":
+        case "flushConnection": return getOrCreateConfiguration(target).isFlushConnection();
+        case "flushtimeout":
+        case "flushTimeout": return getOrCreateConfiguration(target).getFlushTimeout();
         case "headerfilterstrategy":
-        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
+        case "headerFilterStrategy": return getOrCreateConfiguration(target).getHeaderFilterStrategy();
+        case "jetstreamasync":
+        case "jetstreamAsync": return getOrCreateConfiguration(target).isJetstreamAsync();
+        case "jetstreamenabled":
+        case "jetstreamEnabled": return getOrCreateConfiguration(target).isJetstreamEnabled();
+        case "jetstreamname":
+        case "jetstreamName": return getOrCreateConfiguration(target).getJetstreamName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "servers": return target.getServers();
+        case "maxdeliver":
+        case "maxDeliver": return getOrCreateConfiguration(target).getMaxDeliver();
+        case "maxmessages":
+        case "maxMessages": return getOrCreateConfiguration(target).getMaxMessages();
+        case "maxpingsout":
+        case "maxPingsOut": return getOrCreateConfiguration(target).getMaxPingsOut();
+        case "maxreconnectattempts":
+        case "maxReconnectAttempts": return getOrCreateConfiguration(target).getMaxReconnectAttempts();
+        case "nackwait":
+        case "nackWait": return getOrCreateConfiguration(target).getNackWait();
+        case "noecho":
+        case "noEcho": return getOrCreateConfiguration(target).isNoEcho();
+        case "norandomizeservers":
+        case "noRandomizeServers": return getOrCreateConfiguration(target).isNoRandomizeServers();
+        case "pedantic": return getOrCreateConfiguration(target).isPedantic();
+        case "pinginterval":
+        case "pingInterval": return getOrCreateConfiguration(target).getPingInterval();
+        case "poolsize":
+        case "poolSize": return getOrCreateConfiguration(target).getPoolSize();
+        case "pullsubscription":
+        case "pullSubscription": return getOrCreateConfiguration(target).isPullSubscription();
+        case "queuename":
+        case "queueName": return getOrCreateConfiguration(target).getQueueName();
+        case "reconnect": return getOrCreateConfiguration(target).isReconnect();
+        case "reconnecttimewait":
+        case "reconnectTimeWait": return getOrCreateConfiguration(target).getReconnectTimeWait();
+        case "replysubject":
+        case "replySubject": return getOrCreateConfiguration(target).getReplySubject();
+        case "replytodisabled":
+        case "replyToDisabled": return getOrCreateConfiguration(target).isReplyToDisabled();
+        case "requestcleanupinterval":
+        case "requestCleanupInterval": return getOrCreateConfiguration(target).getRequestCleanupInterval();
+        case "requesttimeout":
+        case "requestTimeout": return getOrCreateConfiguration(target).getRequestTimeout();
+        case "secure": return getOrCreateConfiguration(target).isSecure();
+        case "servers": return getOrCreateConfiguration(target).getServers();
+        case "sslcontextparameters":
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
+        case "traceconnection":
+        case "traceConnection": return getOrCreateConfiguration(target).isTraceConnection();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
-        case "verbose": return target.isVerbose();
+        case "verbose": return getOrCreateConfiguration(target).isVerbose();
         default: return null;
         }
     }

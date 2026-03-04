@@ -13,15 +13,15 @@ The route configuration is supported by all DSLs, so usable by: Java, XML, Groov
 In the route configuration, you can set up common strategies for:
 
 - xref:error-handler.adoc[Error Handler]
-- xref:exception-clause.adoc[OnException]
-- xref:oncompletion.adoc[OnCompletion]
-- xref:components:eips:intercept.adoc[Intercept]
+- xref:exception-clause.adoc[OnException EIP]
+- xref:oncompletion.adoc[OnCompletion EIP]
+- xref:components:eips:intercept.adoc[Intercept EIP]
 
 
 == Route Configuration Builder in Java DSL
 
 With Java DSL you can use `RouteConfigurationBuilder` to specify the configuration as shown below.
-The builder is similar to `RouteBuilder` so its use is familiar.
+The builder is similar to xref:route-builder.adoc[RouteBuilder] so its usage is similar.
 
 [source,java]
 ----
@@ -38,7 +38,7 @@ public class MyJavaErrorHandler extends RouteConfigurationBuilder {
 
 NOTE: The `RouteConfigurationBuilder` uses `configuration` as the method where the configuration is coded.
 This is on purpose, so as not to use the `configure` method which the regular Java DSL `RouteBuilder`
-uses for coding Camel routes.
+uses for coding Camel routes in Java DSL.
 
 In the example above, then there is only one route configuration that has been assigned the ID `_javaError_`.
 This ID allows us to refer to this configuration later when you want to assign which routes are using the configuration.
@@ -120,15 +120,15 @@ context.addRoutes(new MyJavaRouteBuilder());
 ----
 
 If you use Spring Boot, then your Camel routes and route configurations can be auto-discovered
-by the spring boot component scanning. This requires adding the `@Component` annotation to the class.
+by the Spring Boot package scanning. This requires adding the `@Component` annotation to the class.
 
-See the example https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[camel-spring-boot-examples/routes-configuration].
+See more in this Spring Boot example https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[Routes Configuration Example].
 
 
 === Route configuration with Endpoint DSL
 
 The xref:Endpoint-dsl.adoc[Endpoint DSL] can also be used for route configurations.
-This requires adding `camel-endpointdsl` to the classpath, and then using
+This requires adding `camel-endpointdsl` JAR to the classpath, and then using
 `org.apache.camel.builder.endpoint.EndpointRouteConfigurationBuilder`,
 which offers the _type safe_ DSL for Camel endpoints.
 
@@ -241,10 +241,10 @@ When using YAML DSL, then you can code your route configurations in YAML files a
 
 [source,yaml]
 ----
-- route-configuration:
+- routeConfiguration:
     id: "yamlError"
-    on-exception:
-    - on-exception:
+    onException:
+    - onException:
         handled:
           constant: "true"
         exception:
@@ -260,19 +260,19 @@ And in the YAML routes you can assign which configurations to use:
 ----
 - route:
     # refer to the route configuration by the id to use for this route
-    route-configuration-id: "yamlError"
+    routeConfigurationId: "yamlError"
     from:
       uri: "timer:yaml?period=3s"
       steps:
-        - set-body:
+        - setBody:
             simple: "Timer fired ${header.CamelTimerCounter} times"
         - to:
             uri: "log:yaml"
             parameters:
-              show-body-type: false
-              show-exchange-pattern: false
-        - throw-exception:
-            exception-type: "java.lang.IllegalArgumentException"
+              showBodyType: false
+              showExchangePattern: false
+        - throwException:
+            exceptionType: "java.lang.IllegalArgumentException"
             message: "Error from yaml"
 ----
 
@@ -281,7 +281,7 @@ In this example, the route is assigned the `_yamlError_` route configuration by 
 == Mixing DSLs
 
 Routes and route configuration are not required to use the same language. For example, you can code
-route configurations in Java, and then use XML DSL for the routes, and they would work together.
+route configurations in Java, and then use YAML DSL for the routes, and they would work together.
 
 == Route Configuration in classic Spring XML
 
@@ -334,24 +334,25 @@ If you set `startup-summary-level=verbose` then Camel will log for each route wh
 
 This option can be configured via Java API and also in `application.properties` for Camel on Spring Boot, Quarkus, and Camel standalone via `camel-main`
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 camelContext.setStartupSummaryLevel(StartupSummaryLevel.Verbose);
 ----
 
-And with Spring Boot:
-
-[source,properties]
-----
-camel.spring-boot.startup-summary-level = verbose
-----
-
-And in Camel Main / Quarkus:
-
+Application Properties::
++
+For example with Spring Boot, Quarkus or Camel Standalone
++
 [source,properties]
 ----
 camel.main.startup-summary-level = verbose
 ----
+====
 
 == Route Precondition
 
@@ -359,6 +360,11 @@ The route configurations can be included or not according to the result of a tes
 
 In the next example, the route configuration is only included if the parameter `activate` has been set to `true`.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 routeConfiguration().precondition("{{activate}}")
@@ -367,8 +373,8 @@ routeConfiguration().precondition("{{activate}}")
     .log("WARN: ${exception.message}");
 ----
 
-And the same example using XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <routeConfiguration precondition="{{activate}}">
@@ -382,14 +388,14 @@ And the same example using XML DSL:
 </routeConfiguration>
 ----
 
-And in YAML DSL:
-
+YAML::
++
 [source,yaml]
 ----
-- route-configuration:
+- routeConfiguration:
     precondition: "{{activate}}"
-    on-exception:
-    - on-exception:
+    onException:
+    - onException:
         exception:
           - "java.lang.IllegalArgumentException"
         handled:
@@ -398,11 +404,12 @@ And in YAML DSL:
           - log:
               message: "YAML WARN ${exception.message}"
 ----
+====
 
 == More Information
 
 See these examples:
 
-- https://github.com/apache/camel-examples/tree/main/routes-configuration[camel-examples/examples/routes-configuration]
-- https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[camel-spring-boot-examples/routes-configuration/]
+- https://github.com/apache/camel-examples/tree/main/routes-configuration[Standalone Routes Configuration Example]
+- https://github.com/apache/camel-spring-boot-examples/tree/main/routes-configuration[Spring Boot Routes Configuration Example]
 

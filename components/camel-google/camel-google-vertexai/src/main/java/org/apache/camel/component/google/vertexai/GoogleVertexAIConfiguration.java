@@ -19,13 +19,14 @@ package org.apache.camel.component.google.vertexai;
 import com.google.cloud.aiplatform.v1.PredictionServiceClient;
 import com.google.genai.Client;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class GoogleVertexAIConfiguration implements Cloneable {
+public class GoogleVertexAIConfiguration implements Cloneable, GoogleCommonConfiguration {
 
     @UriPath(label = "common", description = "Google Cloud Project ID")
     @Metadata(required = true)
@@ -123,6 +124,7 @@ public class GoogleVertexAIConfiguration implements Cloneable {
         this.modelId = modelId;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }

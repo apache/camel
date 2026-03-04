@@ -4,13 +4,10 @@
   "title": "UserAccess",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.UserAccess",
-  "additionalProperties": true,
   "description": "UserAccess event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "privileges": {
       "type": "array",

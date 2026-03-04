@@ -57,7 +57,10 @@ public class CatalogTools {
             @ToolArg(description = "Filter by category label (e.g., cloud, messaging, database, file)") String label,
             @ToolArg(description = "Maximum number of results to return (default: 50)") Integer limit,
             @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Specific Camel version to query (e.g., 4.4.0). If not specified, uses the default catalog version.") String camelVersion) {
+            @ToolArg(description = "Version to query. For Main or Spring Boot: the Camel version (e.g., 4.17.0). "
+                                   + "For quarkus: the Quarkus Platform version (e.g., 3.31.3) as returned by "
+                                   + "camel_version_list quarkusVersion field. "
+                                   + "If not specified, uses the default catalog version.") String camelVersion) {
 
         int maxResults = limit != null ? limit : 50;
 
@@ -77,8 +80,13 @@ public class CatalogTools {
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
-            throw new ToolCallException(
-                    "Failed to list components (" + e.getClass().getName() + "): " + e.getMessage(), null);
+            String hint = "";
+            if ("quarkus".equalsIgnoreCase(runtime) && camelVersion != null) {
+                hint = " Note: For Quarkus runtime, the version parameter must be the Quarkus Platform version "
+                       + "(e.g., 3.31.3) as returned by camel_version_list quarkusVersion field, "
+                       + "not the Camel core version. You passed: " + camelVersion;
+            }
+            throw new ToolCallException("Failed to list components: " + e.getMessage() + hint, e);
         }
     }
 
@@ -90,7 +98,10 @@ public class CatalogTools {
     public ComponentDetailResult camel_catalog_component_doc(
             @ToolArg(description = "Component name (e.g., kafka, http, file, timer)") String component,
             @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Specific Camel version to query (e.g., 4.4.0). If not specified, uses the default catalog version.") String camelVersion) {
+            @ToolArg(description = "Version to query. For Main or Spring Boot: the Camel version (e.g., 4.17.0). "
+                                   + "For quarkus: the Quarkus Platform version (e.g., 3.31.3) as returned by "
+                                   + "camel_version_list quarkusVersion field. "
+                                   + "If not specified, uses the default catalog version.") String camelVersion) {
 
         if (component == null || component.isBlank()) {
             throw new ToolCallException("Component name is required", null);
@@ -100,7 +111,32 @@ public class CatalogTools {
             CamelCatalog cat = loadCatalog(runtime, camelVersion);
             ComponentModel model = cat.componentModel(component);
             if (model == null) {
-                throw new ToolCallException("Component not found: " + component, null);
+                // Check if it might be a data format or language instead
+                StringBuilder hint = new StringBuilder("Component not found: " + component + ".");
+                DataFormatModel dfModel = cat.dataFormatModel(component);
+                if (dfModel != null) {
+                    hint.append(" However, '").append(component).append("' exists as a DATA FORMAT. ")
+                            .append("Use camel_catalog_dataformat_doc instead.");
+                } else {
+                    // Try partial match in data formats
+                    List<String> matchingDf = cat.findDataFormatNames().stream()
+                            .filter(n -> n.contains(component) || component.contains(n))
+                            .collect(Collectors.toList());
+                    if (!matchingDf.isEmpty()) {
+                        hint.append(" Did you mean one of these DATA FORMATS? ").append(matchingDf)
+                                .append(". Use camel_catalog_dataformat_doc instead.");
+                    } else {
+                        // Try partial match in components
+                        List<String> matchingComp = findComponentNames(cat).stream()
+                                .filter(n -> n.contains(component) || component.contains(n))
+                                .limit(5)
+                                .collect(Collectors.toList());
+                        if (!matchingComp.isEmpty()) {
+                            hint.append(" Did you mean one of these components? ").append(matchingComp);
+                        }
+                    }
+                }
+                throw new ToolCallException(hint.toString(), null);
             }
 
             return toComponentDetailResult(model);

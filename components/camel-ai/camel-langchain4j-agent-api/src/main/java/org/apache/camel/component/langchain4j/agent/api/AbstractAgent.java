@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import dev.langchain4j.mcp.McpToolProvider;
@@ -77,9 +78,12 @@ public abstract class AbstractAgent<S> implements Agent {
      */
     @SuppressWarnings("unchecked")
     protected void configureBuilder(AiServices<S> builder, ToolProvider toolProvider) {
+        // Collect all tool providers to compose them into a single provider
+        List<ToolProvider> toolProviders = new ArrayList<>();
+
         // Apache Camel Tool Provider
         if (toolProvider != null) {
-            builder.toolProvider(toolProvider);
+            toolProviders.add(toolProvider);
         }
 
         // MCP Clients - create MCP ToolProvider if MCP clients are configured
@@ -92,7 +96,14 @@ public abstract class AbstractAgent<S> implements Agent {
                 mcpBuilder.filter(configuration.getMcpToolProviderFilter());
             }
 
-            builder.toolProvider(mcpBuilder.build());
+            toolProviders.add(mcpBuilder.build());
+        }
+
+        // Set the composed tool provider (single or composite)
+        if (toolProviders.size() == 1) {
+            builder.toolProvider(toolProviders.get(0));
+        } else if (toolProviders.size() > 1) {
+            builder.toolProvider(new CompositeToolProvider(toolProviders));
         }
 
         // Additional custom LangChain4j Tool Instances (objects with @Tool methods)

@@ -31,10 +31,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -222,8 +221,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @return         the builder
      */
     public OnExceptionDefinition handled(boolean handled) {
-        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
-        return handled(expression);
+        setHandled(new ExpressionSubElementDefinition(new ConstantExpression(Boolean.toString(handled))));
+        return this;
     }
 
     /**
@@ -233,7 +232,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @return         the builder
      */
     public OnExceptionDefinition handled(@AsPredicate Predicate handled) {
-        setHandledPolicy(handled);
+        setHandled(new ExpressionSubElementDefinition(handled));
         return this;
     }
 
@@ -244,7 +243,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @return         the builder
      */
     public OnExceptionDefinition handled(@AsPredicate Expression handled) {
-        setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
+        setHandled(new ExpressionSubElementDefinition(handled));
         return this;
     }
 
@@ -257,8 +256,8 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @return           the builder
      */
     public OnExceptionDefinition continued(boolean continued) {
-        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(continued));
-        return continued(expression);
+        setContinued(new ExpressionSubElementDefinition(new ConstantExpression(Boolean.toString(continued))));
+        return this;
     }
 
     /**
@@ -270,7 +269,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @return           the builder
      */
     public OnExceptionDefinition continued(@AsPredicate Predicate continued) {
-        setContinuedPolicy(continued);
+        setContinued(new ExpressionSubElementDefinition(continued));
         return this;
     }
 
@@ -283,7 +282,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @return           the builder
      */
     public OnExceptionDefinition continued(@AsPredicate Expression continued) {
-        setContinuedPolicy(ExpressionToPredicateAdapter.toPredicate(continued));
+        setContinued(new ExpressionSubElementDefinition(continued));
         return this;
     }
 
@@ -310,7 +309,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
      * @return            the builder
      */
     public OnExceptionDefinition retryWhile(@AsPredicate Predicate retryWhile) {
-        setRetryWhilePolicy(retryWhile);
+        setRetryWhile(new ExpressionSubElementDefinition(retryWhile));
         return this;
     }
 

@@ -17,8 +17,6 @@
 
 package org.apache.camel.support.resume;
 
-import java.util.Optional;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.resume.Cacheable;
@@ -27,7 +25,7 @@ import org.apache.camel.resume.ResumeAware;
 import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.resume.ResumeStrategyConfiguration;
 import org.apache.camel.resume.cache.ResumeCache;
-import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,18 +43,8 @@ public final class AdapterHelper {
         assert resumeStrategy != null;
 
         LOG.debug("Using the factory finder to search for the resume adapter");
-        final FactoryFinder factoryFinder
-                = context.getCamelContextExtension().getFactoryFinder(FactoryFinder.DEFAULT_PATH);
-
-        LOG.debug("Creating a new resume adapter");
-        Optional<ResumeAdapter> adapterOptional
-                = factoryFinder.newInstance(resumeAware.adapterFactoryService(), ResumeAdapter.class);
-
-        if (adapterOptional.isEmpty()) {
-            throw new RuntimeCamelException("Cannot find a resume adapter class in the consumer classpath or in the registry");
-        }
-
-        final ResumeAdapter resumeAdapter = adapterOptional.get();
+        ResumeAdapter resumeAdapter = ResolverHelper.resolveMandatoryBootstrapService(context,
+                resumeAware.adapterFactoryService(), ResumeAdapter.class, null);
         LOG.debug("Using the acquired resume adapter: {}", resumeAdapter.getClass().getName());
 
         if (resumeAdapter instanceof Cacheable cacheableAdapter) {

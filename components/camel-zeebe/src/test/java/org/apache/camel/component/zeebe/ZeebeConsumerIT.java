@@ -32,7 +32,7 @@ import org.apache.camel.component.zeebe.model.JobWorkerMessage;
 import org.apache.camel.component.zeebe.model.ProcessDeploymentResponse;
 import org.apache.camel.component.zeebe.model.ProcessRequest;
 import org.apache.camel.component.zeebe.model.ProcessResponse;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

@@ -16,28 +16,25 @@ and powerful as possible, so we have introduced the following features.
 The following modules are supported:
 
 [width="100%",cols="1m,4",options="header",]
-|=======================================================================
+|===
 |Component |Description
 
-|xref:components:others:test-junit5.adoc[camel-test-junit5] |*JUnit 5*: Is an older standalone Java
-library letting you easily create Camel test cases using a single Java
-class for all your configuration and routing without.
+|xref:components:others:test-junit5.adoc[camel-test-junit5] |*JUnit 5*: Used for testing Camel in standalone mode (or without Spring)
 |xref:components:others:test-main-junit5.adoc[camel-test-main-junit5] | *JUnit 5*: Used for testing Camel in Camel Main mode
-
 |xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5] | *JUnit 5*: Used for testing Camel with Spring / Spring Boot
 
+|xref:components:others:test-junit6.adoc[camel-test-junit5] |*JUnit 6*: Used for testing Camel in standalone mode (or without Spring)
+|xref:components:others:test-main-junit6.adoc[camel-test-main-junit5] | *JUnit 6*: Used for testing Camel in Camel Main mode
+|xref:components:others:test-spring-junit6.adoc[camel-test-spring-junit5] | *JUnit 6*: Used for testing Camel with Spring / Spring Boot
+
 |xref:test-infra.adoc[camel-test-infra] | *Camel Test Infra*: Camel Test Infra is a set of modules that leverage modern JUnit 5 features to abstract the provisioning and execution of test infrastructure. Among other things, it provides abstraction of the infrastructure (based on Test Containers - being the de-facto successor of the camel-testcontainers components) as well as JUnit 5 extensions for the Camel Context itself.
-
 |xref:camel-jbang-test.adoc[camel-jbang-test] | *Camel JBang Test Plugin*: A Camel JBang plugin to help writing automated tests during prototyping with JBang. The tests are able to start the Camel integration and verify its logic from the very beginning. The test plugin does not require any project setup so you can just start writing and executing automated tests.
+|===
 
-|=======================================================================
-
-NOTE: If you are using Camel Quarkus, then you can find information in
-its documentation how to do testing with Quarkus and Camel.
+NOTE: If you are using Camel Quarkus, then you can find information in the Camel Quarkus documentation how to do testing with Quarkus and Camel.
 
 In all approaches, the test classes look pretty much the same in that
-they all reuse the xref:bean-integration.adoc[Camel binding and
-injection annotations].
+they all reuse the xref:bean-integration.adoc[Camel binding and injection annotations].
 
 TIP: For more details on the different testing modules, then see their respective documentation
 from the links in the table above.
@@ -51,7 +48,7 @@ Camel provides a set of features that are common to use when writing unit or int
 Camel provides a number of xref:endpoint.adoc[endpoints] which can make testing easier.
 
 [width="100%",cols="1,3",options="header",]
-|=======================================================================
+|===
 |Name |Description
 |xref:components::mock-component.adoc[Mock] |For testing routes and mediation rules using
 mocks and allowing assertions to be added to an endpoint.
@@ -63,8 +60,7 @@ components and asserting that they are consumed correctly.
 |xref:components::dataset-test-component.adoc[DataSet Test] |Used to automatically load
 a set of expected messages from another endpoint which is then compared to the messages
 that arrive at this endpoint.
-
-|=======================================================================
+|===
 
 The main endpoint is the xref:components::mock-component.adoc[Mock] endpoint, which allows
 expectations to be added to different endpoints; you can then run your
@@ -78,7 +74,7 @@ endpoints can be useful:
 NOTE: For example, to unit test a transformation route rather than performing a full integration test
 
 [width="100%",cols="1,3",options="header",]
-|=======================================================================
+|===
 |Name |Description
 |xref:components::direct-component.adoc[Direct] |Direct invocation of the consumer from the
 producer so that single threaded (non-SEDA) in VM invocation is
@@ -89,17 +85,18 @@ a `BlockingQueue` which is good for testing asynchronous transports
 
 |xref:components::stub-component.adoc[Stub] |Works like xref:components::stub-component.adoc[SEDA] but does not
 validate the endpoint URI, which makes stubbing straightforward.
-|=======================================================================
+|===
 
 === Testing existing routes
 
 Camel provides some features to aid during testing of existing routes
 where you cannot or will not use xref:components::mock-component.adoc[Mock] etc.
+
 For example, you may have a production ready route which you want to test with some
 third party API that sends messages into this route.
 
 [width="100%",cols="1,3",options="header",]
-|=======================================================================
+|===
 |Name |Description
 |xref:notify-builder.adoc[NotifyBuilder] |Allows you to be notified when
 a certain condition has occurred. For example, when the route has
@@ -110,7 +107,7 @@ criteria when to be notified.
 an existing route using a xref:route-builder.adoc[RouteBuilder] style.
 For example, you can send (or send and skip) a message to a xref:components::mock-component.adoc[Mock]
 endpoint for validating the message send by Camel is as expected.
-|=======================================================================
+|===
 
 == Integration testing
 
@@ -142,13 +139,13 @@ Please refer to the https://citrusframework.org/citrus/reference/html/[Citrus do
 The following sections might be interesting to explore for Camel developers and testers:
 
 [width="100%",cols="1,3",options="header",]
-|=======================================================================
+|===
 |Name |Description
 | https://citrusframework.org/citrus/reference/html/#apache-camel[Citrus & Camel routes] | Start and stop Camel routes as part of the test.
 | https://citrusframework.org/citrus/reference/html/#camel-infra[Citrus & Camel test infra] | Start and stop Camel test infrastructure services as part of the Citrus test.
 | https://citrusframework.org/citrus/reference/html/#camel-processor-support[Citrus & Camel processors] | Use Camel processor, transformer and data format EIPs in Citrus tests.
 | https://citrusframework.org/citrus/reference/html/#apache-camel[Citrus & Camel JBang] | Run Camel integrations with JBang as part of a test.
-|=======================================================================
+|===
 
 TIP: Citrus provides a good integration with https://www.jbang.dev[JBang] and Camel JBang.
 This means you can use Citrus from the very beginning for writing automated tests also in the prototyping phase with Camel JBang.

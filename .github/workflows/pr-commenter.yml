@@ -1,0 +1,103 @@
+# ---------------------------------------------------------------------------
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ---------------------------------------------------------------------------
+
+name: Comment pull request
+
+on:
+  workflow_run:
+    # we use this workflow as it's the one containing the PR id number
+    workflows: ["PR id uploader"]
+    types:
+      - completed
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: 'Download coverage artifact'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "pr-id"
+            })[0];
+            var download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/pr-id.zip', Buffer.from(download.data));
+      - run: unzip pr-id.zip
+
+      - name: 'Extract PR id'
+        id: pr
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var fs = require('fs');
+            const issue_number = Number(fs.readFileSync('./id'));
+            core.setOutput('id', issue_number)
+
+      - name: 'Comment on PR'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = ${{ steps.pr.outputs.id }};
+      
+            // Get existing comments
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+      
+            // Check if the bot already posted this specific message
+            const botCommentExists = comments.some(comment =>
+              comment.user.type === "Bot" &&
+              comment.body.includes("Thank you for your contribution to the Apache Camel project!")
+            );
+      
+            if (!botCommentExists) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: `:star2: Thank you for your contribution to the Apache Camel project! :star2:
+              :robot: CI automation will test this PR automatically.
+  
+              :camel: Apache Camel Committers, please review the following items:
+  
+              * First-time contributors **require MANUAL approval** for the GitHub Actions to run
+              * You can use the command \`/component-test (camel-)component-name1 (camel-)component-name2..\` to request a test from the test bot although they are normally detected and executed by CI.
+              * You can label PRs using \`build-all\`, \`build-dependents\`, \`skip-tests\` and \`test-dependents\` to fine-tune the checks executed by this PR.
+              * Build and test logs are available in the summary page. **Only** [Apache Camel committers](https://camel.apache.org/community/team/#committers) have access to the summary.
+              
+              :warning: Be careful when sharing logs. Review their contents before sharing them publicly.`
+              })
+            }

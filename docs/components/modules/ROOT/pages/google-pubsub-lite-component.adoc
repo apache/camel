@@ -1,1 +1,0 @@
-../../../../../components/camel-google/camel-google-pubsub-lite/src/main/docs/google-pubsub-lite-component.adoc

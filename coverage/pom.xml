@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.18.0-SNAPSHOT</version>
+        <version>4.19.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -156,11 +156,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-xml</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cloud</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -954,6 +949,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-google-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-calendar</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -975,11 +975,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-pubsub</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-google-pubsub-lite</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1664,11 +1659,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-nitrite</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-oaipmh</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1987,11 +1977,7 @@
             <artifactId>camel-seda</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-service</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-servicenow</artifactId>
@@ -2227,11 +2213,6 @@
             <artifactId>camel-tensorflow-serving</artifactId>
             <version>${project.version}</version>
         </dependency>
-      <!-- dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-            <version>4.18.0-SNAPSHOT</version>
-      </dependency -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>

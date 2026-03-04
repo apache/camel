@@ -53,7 +53,7 @@ In Spring the dataformat is configured first and then used in routes
 ----------------------------------------------------------
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <dataFormats>
-    <crypto id="basic" algorithm="DES" keyRef="desKey" />
+    <crypto id="basic" algorithm="DES" key="desKey" />
   </dataFormats>
     ...
   <route>
@@ -114,7 +114,7 @@ or with spring, suppling a reference to a byte[]
 
 [source,xml]
 ----------------------------------------------------------
-<crypto id="initvector" algorithm="DES/CBC/PKCS5Padding" keyRef="desKey" initVectorRef="initializationVector" />
+<crypto id="initvector" algorithm="DES/CBC/PKCS5Padding" key="desKey" initVector="initializationVector" />
 ----------------------------------------------------------
 
 The same vector is required in both the encryption and decryption phases. As it is not necessary to keep the IV a secret, the DataFormat allows for it to be inlined into the encrypted data and subsequently read out in the decryption phase to initialize the Cipher. To inline the IV set the `Inline` flag.
@@ -147,9 +147,9 @@ Spring XML::
 +
 [source,xml]
 ----------------------------------------------------------
-<crypto id="inline" algorithm="DES/CBC/PKCS5Padding" keyRef="desKey" initVectorRef="initializationVector"
+<crypto id="inline" algorithm="DES/CBC/PKCS5Padding" key="desKey" initVector="initializationVector"
   inline="true" />
-<crypto id="inline-decrypt" algorithm="DES/CBC/PKCS5Padding" keyRef="desKey" inline="true" />
+<crypto id="inline-decrypt" algorithm="DES/CBC/PKCS5Padding" key="desKey" inline="true" />
 ----------------------------------------------------------
 
 ====
@@ -186,7 +186,7 @@ Spring XML::
 +
 [source,xml]
 ----------------------------------------------------------
-<crypto id="hmac" algorithm="DES" keyRef="desKey" shouldAppendHMAC="true" />
+<crypto id="hmac" algorithm="DES" key="desKey" shouldAppendHMAC="true" />
 ----------------------------------------------------------
 
 ====
@@ -216,7 +216,7 @@ Spring XML::
 +
 [source,xml]
 ----------------------------------------------------------
-<crypto id="hmac-algorithm" algorithm="DES" keyRef="desKey" macAlgorithm="HmacMD5" shouldAppendHMAC="true" />
+<crypto id="hmac-algorithm" algorithm="DES" key="desKey" macAlgorithm="HmacMD5" shouldAppendHMAC="true" />
 ----------------------------------------------------------
 
 ====

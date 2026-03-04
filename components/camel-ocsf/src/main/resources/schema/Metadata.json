@@ -44,8 +44,8 @@
     },
     "transmit_time": {
       "type": "integer",
-      "title": "Transmission Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Transmission Time"
     },
     "tags": {
       "type": "array",
@@ -99,8 +99,8 @@
     },
     "logged_time": {
       "type": "integer",
-      "title": "Logged Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Logged Time"
     },
     "reporter": {
       "type": "object",
@@ -116,8 +116,8 @@
     },
     "modified_time": {
       "type": "integer",
-      "title": "Modified Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Modified Time"
     },
     "original_event_uid": {
       "type": "string",
@@ -137,8 +137,8 @@
     },
     "processed_time": {
       "type": "integer",
-      "title": "Processed Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Processed Time"
     },
     "type": {
       "type": "string",

@@ -18,7 +18,7 @@ package org.apache.camel.component.solr;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpJdkSolrClient;
 import org.junit.jupiter.api.Test;

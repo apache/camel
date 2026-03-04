@@ -1,0 +1,203 @@
+= Hazelcast PN Counter Component
+:doctitle: Hazelcast PN Counter
+:shortname: hazelcast-pncounter
+:artifactid: camel-hazelcast
+:description: Increment, decrement, get, etc. operations on a Hazelcast PN Counter (CRDT counter).
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Hazelcast
+:camel-spring-boot-name: hazelcast
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The http://www.hazelcast.com/[Hazelcast] PN Counter component is one of Camel Hazelcast Components which allows you to access a Hazelcast PN Counter (CRDT counter).
+A PN Counter is a Conflict-free Replicated Data Type (CRDT) that provides a distributed counter with eventual consistency guarantees.    
+
+This component is not a direct replacement for the hazelcast-atomicvalue component that is availble in Camel 2.7 -> 4.19, but it does replicates most of the functionality (get / increment / decrement / getAndAdd / destroy) apart from the compare method.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== PN Counter producer - to("hazelcast-pncounter:foo")
+
+The operations for this producer are:
+
+* get
+* increment (+1)
+* decrement (-1)
+* getAndAdd
+* destroy
+
+NOTE: PNCounter is a CRDT (Conflict-free Replicated Data Type) that provides eventual consistency. Operations are local and fast but do not support strong consistency operations like `compareAndSet` or `set`.
+
+=== Example for *increment*:
+
+[tabs]
+====
+
+Java DSL::
++
+[source,java]
+------------------------------------------------------------------------------------------
+from("direct:increment")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.INCREMENT))
+.toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+------------------------------------------------------------------------------------------
+
+Spring XML::
++
+[source,xml]
+-----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:increment" />
+    <setHeader name="hazelcast.operation.type">
+        <constant>increment</constant>
+    </setHeader>
+    <to uri="hazelcast-pncounter:foo" />
+</route>
+-----------------------------------------------------------------------------------------------
+
+====
+
+The actual value (after increment) will be provided inside the message body.
+
+=== Example for *decrement*:
+
+[tabs]
+====
+
+Java DSL::
++
+[source,java]
+------------------------------------------------------------------------------------------
+from("direct:decrement")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DECREMENT))
+.toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+------------------------------------------------------------------------------------------
+
+Spring XML::
++
+[source,xml]
+-----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:decrement" />
+    <setHeader name="hazelcast.operation.type">
+        <constant>decrement</constant>
+    </setHeader>
+    <to uri="hazelcast-pncounter:foo" />
+</route>
+-----------------------------------------------------------------------------------------------
+
+====
+
+The actual value (after decrement) will be provided inside the message body.
+
+=== Example for *get*:
+
+[tabs]
+====
+
+Java DSL::
++
+[source,java]
+------------------------------------------------------------------------------------
+from("direct:get")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET))
+.toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+------------------------------------------------------------------------------------
+
+Spring XML::
++
+[source,xml]
+-----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:get" />
+    <setHeader name="hazelcast.operation.type">
+        <constant>get</constant>
+    </setHeader>
+    <to uri="hazelcast-pncounter:foo" />
+</route>
+-----------------------------------------------------------------------------------------------
+
+====
+
+You can get the counter value with
+`long body = template.requestBody("direct:get", null, Long.class);`.
+
+=== Example for *getAndAdd*:
+
+[tabs]
+====
+
+Java DSL::
++
+[source,java]
+------------------------------------------------------------------------------------
+from("direct:getAndAdd")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.GET_AND_ADD))
+.toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+------------------------------------------------------------------------------------
+
+Spring XML::
++
+[source,xml]
+-----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:getAndAdd" />
+    <setHeader name="hazelcast.operation.type">
+        <constant>getAndAdd</constant>
+    </setHeader>
+    <to uri="hazelcast-pncounter:foo" />
+</route>
+-----------------------------------------------------------------------------------------------
+
+====
+
+Provide the delta value in the message body (e.g., 5 to add 5 to the counter):
+`long previousValue = template.requestBody("direct:getAndAdd", 5L, Long.class);`
+
+The previous value (before the add) will be returned in the message body.
+
+=== Example for *destroy*:
+
+[tabs]
+====
+
+Java DSL::
++
+[source,java]
+------------------------------------------------------------------------------------
+from("direct:destroy")
+.setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.DESTROY))
+.toF("hazelcast-%sfoo", HazelcastConstants.PNCOUNTER_PREFIX);
+------------------------------------------------------------------------------------
+
+Spring XML::
++
+[source,xml]
+-----------------------------------------------------------------------------------------------
+<route>
+    <from uri="direct:destroy" />
+    <setHeader name="hazelcast.operation.type">
+        <constant>destroy</constant>
+    </setHeader>
+    <to uri="hazelcast-pncounter:foo" />
+</route>
+-----------------------------------------------------------------------------------------------
+
+====
+
+Destroys the PN Counter instance:
+`template.sendBody("direct:destroy", null);`
+
+include::spring-boot:partial$starter.adoc[]

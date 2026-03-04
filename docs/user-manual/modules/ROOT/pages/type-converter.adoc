@@ -33,7 +33,7 @@ interface. The interface has several methods, however the most important and com
 <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException;
 ----
 
-This API is used by Camel when it converts an object from one type to another. However if
+This API is used by Camel when it converts an object from one type to another. However, if
 you pay attention then this API only has the result type in the contract. The input type
 is inferred from the _value_ parameter.
 
@@ -72,8 +72,7 @@ and invoke these type converters at runtime via quick Java method invocations (n
 === Type converter registry utilization statistics
 
 NOTE: as of Camel 4.7.0, the statistics collector in the registry has been made immutable.
-As such, enabling collection of statistics has to be done prior to creating the type converter
-registry.
+As such, enabling collection of statistics has to be done prior to creating the type converter registry.
 
 Camel can gather utilization statistics of the runtime usage of type
 converters. These statistics are available in xref:jmx.adoc[JMX] as well as
@@ -84,20 +83,35 @@ default as there is some performance overhead under very high concurrent load.
 
 Enabling statistics in Java:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 CamelContext context = ...;
 context.setTypeConverterStatisticsEnabled(true);
 ----
 
-Enabling statistics in XML DSL:
-
+Spring XML::
++
 [source,xml]
 ----
 <camelContext typeConverterStatisticsEnabled="true">
     ...
 </camelContext>
 ----
+
+Application Properties::
++
+For example when using Spring Boot, Quarkus or Camel standalone, you can configure this in `application.properties`:
++
+[source,properties]
+----
+camel.main.typeConverterStatisticsEnabled = true
+----
+====
 
 == TypeConverter using @Converter annotation
 
@@ -173,8 +187,8 @@ public class IOConverter {
 
 There are few limitations:
 
-- fallback converters are not supported
-- the order of the `@Converter` methods matters. If you have multiple `@Converter` methods that accept as _from_ type
+- Fallback converters are not supported
+- The order of the `@Converter` methods matters. If you have multiple `@Converter` methods that accept as _from_ type
 types which are from the same class hierarchy then put the methods first that are the most concrete.
 
 For example in `camel-xml-jaxp` we have in the `XmlConverter` multiple `@Converter` methods which can convert to `DomSource`.

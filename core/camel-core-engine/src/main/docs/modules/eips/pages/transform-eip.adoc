@@ -77,14 +77,16 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:cheese
-    steps:
-      - transform:
-          expression:
-            simple: Hello ${body}
-      - to:
-          uri: log:hello
+- route:
+    from:
+      uri: direct:cheese
+      steps:
+        - transform:
+            expression:
+              simple:
+                expression: "Hello ${body}"
+        - to:
+            uri: log:hello
 ----
 ====
 

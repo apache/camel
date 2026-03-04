@@ -50,7 +50,9 @@ public class NamedCassandraAggregationRepositoryIT extends BaseCassandra {
 
     @AfterEach
     public void tearDown() {
-        aggregationRepository.stop();
+        if (aggregationRepository != null) {
+            aggregationRepository.stop();
+        }
     }
 
     private boolean exists(String key) {

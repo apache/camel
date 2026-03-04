@@ -33,7 +33,7 @@ public class TokenizerExpressionReifier extends SingleInputTypedExpressionReifie
         // special for new line tokens, if defined from XML then its 2
         // characters, so we replace that back to a single char
         String token = definition.getToken();
-        if (token.startsWith("\\n")) {
+        if (token != null && token.startsWith("\\n")) {
             token = '\n' + token.substring(2);
         }
         properties[2] = parseString(token);

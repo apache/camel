@@ -4,13 +4,10 @@
   "title": "IncidentFinding",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.IncidentFinding",
-  "additionalProperties": true,
   "description": "IncidentFinding event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "verdict_id": {
       "type": "integer",

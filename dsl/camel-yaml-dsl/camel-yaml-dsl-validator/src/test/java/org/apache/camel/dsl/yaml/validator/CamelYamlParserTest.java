@@ -37,8 +37,22 @@ public class CamelYamlParserTest {
     }
 
     @Test
+    public void testParseOkPlaceholder() throws Exception {
+        Assertions.assertTrue(parser.parse(new File("src/test/resources/foo2.yaml")).isEmpty());
+    }
+
+    @Test
     public void testParseBad() throws Exception {
         var report = parser.parse(new File("src/test/resources/bad.yaml"));
+        Assertions.assertFalse(report.isEmpty());
+        Assertions.assertEquals(1, report.size());
+        Assertions.assertTrue(report.get(0).getMessage().contains("Unknown node id: setCheese"));
+        Assertions.assertTrue(report.get(0).getMessage().contains("- setCheese:"));
+    }
+
+    @Test
+    public void testParseBadPlaceholder() throws Exception {
+        var report = parser.parse(new File("src/test/resources/bad2.yaml"));
         Assertions.assertFalse(report.isEmpty());
         Assertions.assertEquals(1, report.size());
         Assertions.assertTrue(report.get(0).getMessage().contains("Unknown node id: setCheese"));

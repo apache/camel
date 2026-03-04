@@ -1025,6 +1025,38 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the timeout in milliseconds to wait before the SSH session is
+         * closed due to inactivity. The default value is 0, which means no idle
+         * timeout is applied.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointConsumerBuilder idleTimeout(long idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+        /**
+         * Sets the timeout in milliseconds to wait before the SSH session is
+         * closed due to inactivity. The default value is 0, which means no idle
+         * timeout is applied.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointConsumerBuilder idleTimeout(String idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+        /**
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
          * 
@@ -1451,6 +1483,38 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the timeout in milliseconds to wait before the SSH session is
+         * closed due to inactivity. The default value is 0, which means no idle
+         * timeout is applied.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointProducerBuilder idleTimeout(long idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+        /**
+         * Sets the timeout in milliseconds to wait before the SSH session is
+         * closed due to inactivity. The default value is 0, which means no idle
+         * timeout is applied.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointProducerBuilder idleTimeout(String idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+        /**
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
          * 
@@ -1832,6 +1896,38 @@ public interface SshEndpointBuilderFactory {
          */
         default AdvancedSshEndpointBuilder compressions(String compressions) {
             doSetProperty("compressions", compressions);
+            return this;
+        }
+        /**
+         * Sets the timeout in milliseconds to wait before the SSH session is
+         * closed due to inactivity. The default value is 0, which means no idle
+         * timeout is applied.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointBuilder idleTimeout(long idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
+            return this;
+        }
+        /**
+         * Sets the timeout in milliseconds to wait before the SSH session is
+         * closed due to inactivity. The default value is 0, which means no idle
+         * timeout is applied.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSshEndpointBuilder idleTimeout(String idleTimeout) {
+            doSetProperty("idleTimeout", idleTimeout);
             return this;
         }
         /**

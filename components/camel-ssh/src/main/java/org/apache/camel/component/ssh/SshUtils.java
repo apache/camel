@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ import org.apache.sshd.common.mac.MacFactory;
 import org.apache.sshd.common.signature.BuiltinSignatures;
 import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.common.signature.SignatureFactory;
+import org.apache.sshd.core.CoreModuleProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -166,6 +168,21 @@ public class SshUtils {
         configureSignatureAlgorithms(configuration.getSignatures(), client);
         configureMacs(configuration.getMacs(), client);
         configureCompressions(configuration.getCompressions(), client);
+    }
+
+    public static SshClient createAndStartClient(SshConfiguration configuration) throws Exception {
+        SshClient client;
+        if (configuration == null || configuration.getClientBuilder() == null) {
+            client = SshClient.setUpDefaultClient();
+        } else {
+            client = configuration.getClientBuilder().build(true);
+        }
+        configureAlgorithms(configuration, client);
+        if (configuration.getIdleTimeout() > 0) {
+            CoreModuleProperties.IDLE_TIMEOUT.set(client, Duration.ofMillis(configuration.getIdleTimeout()));
+        }
+        client.start();
+        return client;
     }
 
 }

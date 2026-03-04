@@ -18,17 +18,17 @@ package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class JsonPathSimpleInitBlockTest extends CamelTestSupport {
 
     private final String MAPPING = """
             $init{
-              $id := ${jsonpath($.id)}
-              $type := ${header.type}
-              $price := ${jsonpath($.amount)}
-              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)}
+              $id := ${jsonpath($.id)};
+              $type := ${header.type};
+              $price := ${jsonpath($.amount)};
+              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)};
             }init$
             {
               "id": "$id",
@@ -40,10 +40,10 @@ public class JsonPathSimpleInitBlockTest extends CamelTestSupport {
 
     private final String MAPPING2 = """
             $init{
-              $id := ${jsonpath($.id)}
-              $type := ${header.type}
-              $price := ${jsonpath($.amount)}
-              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)}
+              $id := ${jsonpath($.id)};
+              $type := ${header.type};
+              $price := ${jsonpath($.amount)};
+              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)};
             }init$
             {
               "id": "$id",

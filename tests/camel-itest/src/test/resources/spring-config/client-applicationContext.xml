@@ -40,10 +40,6 @@
         <properties>
              <entry xmlns="http://www.springframework.org/schema/beans" key="mtom-enabled" value="true" />
         </properties>
-		<features>
-			<!-- Enables logging of SOAP messages. -->
-			<logging xmlns="http://cxf.apache.org/core" />
-		</features>
 	</client>
 
 	<conduit xmlns="http://cxf.apache.org/transports/camel"

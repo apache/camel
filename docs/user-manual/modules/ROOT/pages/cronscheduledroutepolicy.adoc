@@ -26,16 +26,16 @@ information must be provided.
 === Starting a route
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
-|=======================================================================
+|===
 |Parameter Name |Type |Default Value |Description
 |routeStartTime |String |  |the initial scheduled date and time as a
 Cron Expression for route start
-|=======================================================================
+|===
 
 === Stopping a route
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
-|=======================================================================
+|===
 |Parameter Name |Type |Default Value |Description
 |routeStopTime |String |  |the initial scheduled date and time as a Cron
 Expression for route stop
@@ -45,33 +45,36 @@ initiating graceful route stop
 
 |routeStopTimeUnit |long |TimeUnit.MILLISECONDS |the time unit for the
 grace period expressed as `java.util.concurrent.TimeUnit`
-|=======================================================================
+|===
 
 === Suspending a route
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
-|=======================================================================
+|===
 |Parameter Name |Type |Default Value |Description
 |routeSuspendTime |String |  |the initial scheduled date and time as a
 Cron Expression for route suspension
-|=======================================================================
+|===
 
 === Resuming a route
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
-|=======================================================================
+|===
 |Parameter Name |Type |Default Value |Description
 |routeResumeTime |String |  |the initial scheduled date and time as a
 Cron Expression for route resumption
-|=======================================================================
+|===
 
 == Configuring the route policy
 
 Once the `org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy`
 is created it can be wired into the Camel route as follows:
 
-In Java:
+[tabs]
+====
 
+Java::
++
 [source,java]
 ----
 CronScheduledRoutePolicy startPolicy = new CronScheduledRoutePolicy();
@@ -82,8 +85,8 @@ from("direct:start")
     .to("mock:success");
 ----
 
-And with Spring XML:
-
+Spring XML::
++
 [source,xml]
 ----
 <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
@@ -97,6 +100,27 @@ And with Spring XML:
     </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+  - name: startPolicy
+    type: org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy
+    properties:
+      routeStartTime: "*/3 * * * * ?"
+- route:
+    id: testRoute
+    autoStartup: "false"
+    routePolicyRef: startPolicy
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mock:success
+----
+====
 
 IMPORTANT: Notice how the route to be scheduled *MUST* be configured to not
 xref:configuring-route-startup-ordering-and-autostartup.adoc[auto-startup], to let

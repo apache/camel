@@ -38,7 +38,6 @@ class PooledExchangeSplitTest extends ContextTestSupport {
         ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
 
         ecc.setExchangeFactory(new PooledExchangeFactory());
-
         ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());
         ecc.getExchangeFactory().setStatisticsEnabled(true);
         ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
@@ -47,7 +46,7 @@ class PooledExchangeSplitTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSplitter() throws Exception {
+    public void testSplitter() throws InterruptedException {
         List<Integer> data = new ArrayList<>(Arrays.asList(1, 2, 3));
 
         getMockEndpoint("mock:result").expectedMessageCount(3);
@@ -63,7 +62,7 @@ class PooledExchangeSplitTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:processData")
-                        .split(body()).streaming().parallelProcessing()
+                        .split(body())
                         .to("mock:result");
             }
         };

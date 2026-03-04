@@ -26,6 +26,8 @@ import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.core.JsonValue;
@@ -39,10 +41,16 @@ import com.openai.models.chat.completions.ChatCompletionContentPartImage;
 import com.openai.models.chat.completions.ChatCompletionContentPartText;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import com.openai.models.chat.completions.ChatCompletionDeveloperMessageParam;
+import com.openai.models.chat.completions.ChatCompletionFunctionTool;
+import com.openai.models.chat.completions.ChatCompletionMessage;
 import com.openai.models.chat.completions.ChatCompletionMessageParam;
+import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import com.openai.models.chat.completions.ChatCompletionSystemMessageParam;
+import com.openai.models.chat.completions.ChatCompletionToolMessageParam;
 import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
 import com.openai.models.completions.CompletionUsage;
+import io.modelcontextprotocol.client.McpSyncClient;
+import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -168,9 +176,21 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
         applyAdditionalBodyProperties(paramsBuilder, config);
 
+        // Add MCP tools to the request if configured
+        List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpTools();
+        boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
+        if (hasMcpTools) {
+            for (ChatCompletionFunctionTool tool : mcpTools) {
+                paramsBuilder.addTool(tool);
+            }
+        }
+
         ChatCompletionCreateParams params = paramsBuilder.build();
 
-        if (Boolean.TRUE.equals(streaming)) {
+        if (Boolean.TRUE.equals(streaming) && hasMcpTools && config.isAutoToolExecution()) {
+            LOG.info("Streaming with MCP tools is not supported; falling back to non-streaming for the agentic loop");
+            processNonStreaming(exchange, params, config);
+        } else if (Boolean.TRUE.equals(streaming)) {
             processStreaming(exchange, params);
         } else {
             processNonStreaming(exchange, params, config);
@@ -228,7 +248,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             return;
         }
 
-        @SuppressWarnings("unchecked")
         List<ChatCompletionMessageParam> history = in.getExchange().getProperty(
                 config.getConversationHistoryProperty(),
                 List.class);
@@ -339,23 +358,180 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private void processNonStreaming(Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
             throws Exception {
+        List<ChatCompletionFunctionTool> mcpTools = getEndpoint().getMcpTools();
+        boolean hasMcpTools = mcpTools != null && !mcpTools.isEmpty();
+
+        if (!hasMcpTools || !config.isAutoToolExecution()) {
+            // Path A: No MCP tools or auto-execution disabled -- existing behavior
+            processNonStreamingSimple(exchange, params, config);
+        } else {
+            // Path B: MCP tools with agentic loop
+            processNonStreamingAgentic(exchange, params, config);
+        }
+    }
+
+    private void processNonStreamingSimple(
+            Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
+            throws Exception {
         ChatCompletion response = getEndpoint().getClient().chat().completions().create(params);
         if (config.isStoreFullResponse()) {
             exchange.setProperty(OpenAIConstants.RESPONSE, response);
         }
 
-        // if finish reason is tool_calls, set the body to the tool calls
         if (response.choices().get(0).finishReason().equals(ChatCompletion.Choice.FinishReason.TOOL_CALLS)) {
             exchange.getMessage().setBody(response.choices().get(0).message().toolCalls());
         } else {
-            // Extract response content
             String content = response.choices().get(0).message().content().orElse("");
             exchange.getMessage().setBody(content);
         }
         setResponseHeaders(exchange.getMessage(), response);
-
-        // Update conversation history if enabled
         updateConversationHistory(exchange, params, response);
+    }
+
+    private void processNonStreamingAgentic(
+            Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
+            throws Exception {
+
+        Map<String, McpSyncClient> toolClientMap = getEndpoint().getToolClientMap();
+        Set<String> returnDirectTools = getEndpoint().getReturnDirectTools();
+        int maxIterations = config.getMaxToolIterations();
+        LOG.debug("Starting agentic loop with maxToolIterations={}, available tools: {}", maxIterations,
+                toolClientMap.keySet());
+
+        // Rebuild the builder from the immutable params so we can accumulate messages
+        ChatCompletionCreateParams.Builder paramsBuilder = params.toBuilder();
+
+        List<ChatCompletionMessageParam> agenticMessages = new ArrayList<>();
+        List<String> toolCallsLog = new ArrayList<>();
+        int iteration = 0;
+
+        while (iteration < maxIterations) {
+            ChatCompletion response = getEndpoint().getClient().chat().completions().create(paramsBuilder.build());
+            ChatCompletion.Choice choice = response.choices().get(0);
+
+            if (!choice.finishReason().equals(ChatCompletion.Choice.FinishReason.TOOL_CALLS)) {
+                // Final LLM response
+                LOG.debug("Agentic loop completed after {} iterations, finish reason: {}", iteration,
+                        choice.finishReason());
+                String content = choice.message().content().orElse("");
+                exchange.getMessage().setBody(content);
+                setResponseHeaders(exchange.getMessage(), response);
+                exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
+                exchange.getMessage().setHeader(OpenAIConstants.MCP_TOOL_CALLS, toolCallsLog);
+                exchange.getMessage().setHeader(OpenAIConstants.MCP_RETURN_DIRECT, false);
+                if (config.isStoreFullResponse()) {
+                    exchange.setProperty(OpenAIConstants.RESPONSE, response);
+                }
+                updateConversationHistory(exchange, agenticMessages, response);
+                return;
+            }
+
+            iteration++;
+            LOG.debug("Iteration {}: model requested {} tool call(s)", iteration,
+                    choice.message().toolCalls().map(List::size).orElse(0));
+
+            // Add assistant message with tool_calls to conversation
+            ChatCompletionMessage assistantMsg = choice.message();
+            List<ChatCompletionMessageToolCall> toolCalls = assistantMsg.toolCalls().orElse(List.of());
+            ChatCompletionMessageParam assistantParam = ChatCompletionMessageParam.ofAssistant(
+                    ChatCompletionAssistantMessageParam.builder()
+                            .toolCalls(toolCalls)
+                            .build());
+            paramsBuilder.addMessage(assistantParam);
+            agenticMessages.add(assistantParam);
+
+            // Execute all tool calls in this batch
+            boolean allReturnDirect = true;
+            List<ToolResultEntry> batchResults = new ArrayList<>();
+
+            for (ChatCompletionMessageToolCall toolCall : toolCalls) {
+                String toolName = toolCall.asFunction().function().name();
+                String argsJson = toolCall.asFunction().function().arguments();
+                String toolCallId = toolCall.asFunction().id();
+                toolCallsLog.add(toolName);
+
+                McpSyncClient mcpClient = toolClientMap.get(toolName);
+                if (mcpClient == null) {
+                    throw new IllegalStateException(
+                            "Tool '" + toolName + "' not found in any configured MCP server");
+                }
+
+                LOG.debug("Executing MCP tool '{}' with args: {}", toolName, argsJson);
+                Map<String, Object> argsMap = OBJECT_MAPPER.readValue(argsJson, Map.class);
+                String resultContent;
+
+                try {
+                    McpSchema.CallToolResult toolResult
+                            = getEndpoint().callTool(mcpClient, toolName, argsMap);
+
+                    if (Boolean.TRUE.equals(toolResult.isError())) {
+                        resultContent = "Error: " + extractTextContent(toolResult.content());
+                        allReturnDirect = false;
+                    } else {
+                        resultContent = extractTextContent(toolResult.content());
+                        if (!returnDirectTools.contains(toolName)) {
+                            allReturnDirect = false;
+                        }
+                    }
+                } catch (Exception e) {
+                    LOG.warn("MCP tool '{}' execution failed: {}", toolName, e.getMessage(), e);
+                    resultContent = "Error: Tool execution failed: " + e.getMessage();
+                    allReturnDirect = false;
+                }
+
+                LOG.debug("Tool '{}' result: {}", toolName, resultContent);
+                batchResults.add(new ToolResultEntry(toolCallId, resultContent));
+            }
+
+            // returnDirect check: if ALL tools in this batch are returnDirect, short-circuit
+            if (allReturnDirect && !batchResults.isEmpty()) {
+                LOG.debug("All tools in batch have returnDirect=true, short-circuiting agentic loop");
+                StringBuilder directResult = new StringBuilder();
+                for (ToolResultEntry entry : batchResults) {
+                    if (!directResult.isEmpty()) {
+                        directResult.append("\n");
+                    }
+                    directResult.append(entry.content());
+                }
+
+                exchange.getMessage().setBody(directResult.toString());
+                setResponseHeaders(exchange.getMessage(), response);
+                exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
+                exchange.getMessage().setHeader(OpenAIConstants.MCP_TOOL_CALLS, toolCallsLog);
+                exchange.getMessage().setHeader(OpenAIConstants.MCP_RETURN_DIRECT, true);
+                updateConversationHistory(exchange, agenticMessages, directResult.toString());
+                return;
+            }
+
+            // Normal path: feed tool results back to LLM
+            LOG.debug("Feeding {} tool result(s) back to the model", batchResults.size());
+            for (ToolResultEntry entry : batchResults) {
+                ChatCompletionMessageParam toolMsg = ChatCompletionMessageParam.ofTool(
+                        ChatCompletionToolMessageParam.builder()
+                                .toolCallId(entry.toolCallId())
+                                .content(entry.content())
+                                .build());
+                paramsBuilder.addMessage(toolMsg);
+                agenticMessages.add(toolMsg);
+            }
+        }
+
+        throw new IllegalStateException(
+                "Max tool iterations (%d) exceeded. Tools called: %s".formatted(maxIterations, toolCallsLog));
+    }
+
+    private String extractTextContent(List<McpSchema.Content> contents) {
+        if (contents == null || contents.isEmpty()) {
+            return "";
+        }
+        return contents.stream()
+                .filter(McpSchema.TextContent.class::isInstance)
+                .map(McpSchema.TextContent.class::cast)
+                .map(McpSchema.TextContent::text)
+                .collect(Collectors.joining());
+    }
+
+    private record ToolResultEntry(String toolCallId, String content) {
     }
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {
@@ -415,7 +591,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             return;
         }
 
-        @SuppressWarnings("unchecked")
         List<ChatCompletionMessageParam> history = exchange.getProperty(
                 config.getConversationHistoryProperty(),
                 List.class);
@@ -435,8 +610,70 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         exchange.setProperty(config.getConversationHistoryProperty(), history);
     }
 
+    private void updateConversationHistory(
+            Exchange exchange, List<ChatCompletionMessageParam> agenticMessages,
+            ChatCompletion response) {
+        OpenAIConfiguration config = getEndpoint().getConfiguration();
+        if (!config.isConversationMemory()) {
+            return;
+        }
+
+        List<ChatCompletionMessageParam> history = exchange.getProperty(
+                config.getConversationHistoryProperty(),
+                List.class);
+
+        if (history == null) {
+            history = new ArrayList<>();
+        }
+
+        // Add all intermediate agentic messages (assistant+toolCalls, tool responses)
+        history.addAll(agenticMessages);
+
+        // Add final assistant response
+        String assistantContent = response.choices().get(0).message().content().orElse("");
+        ChatCompletionMessageParam assistantMessage = ChatCompletionMessageParam.ofAssistant(
+                ChatCompletionAssistantMessageParam.builder()
+                        .content(ChatCompletionAssistantMessageParam.Content.ofText(assistantContent))
+                        .build());
+        history.add(assistantMessage);
+
+        exchange.setProperty(config.getConversationHistoryProperty(), history);
+        LOG.debug("Updated conversation history with {} agentic messages + final response, total entries: {}",
+                agenticMessages.size(), history.size());
+    }
+
+    private void updateConversationHistory(
+            Exchange exchange, List<ChatCompletionMessageParam> agenticMessages,
+            String directResult) {
+        OpenAIConfiguration config = getEndpoint().getConfiguration();
+        if (!config.isConversationMemory()) {
+            return;
+        }
+
+        List<ChatCompletionMessageParam> history = exchange.getProperty(
+                config.getConversationHistoryProperty(),
+                List.class);
+
+        if (history == null) {
+            history = new ArrayList<>();
+        }
+
+        // Add all intermediate agentic messages
+        history.addAll(agenticMessages);
+
+        // Add a synthetic assistant message with the direct tool result
+        ChatCompletionMessageParam assistantMessage = ChatCompletionMessageParam.ofAssistant(
+                ChatCompletionAssistantMessageParam.builder()
+                        .content(ChatCompletionAssistantMessageParam.Content.ofText(directResult))
+                        .build());
+        history.add(assistantMessage);
+
+        exchange.setProperty(config.getConversationHistoryProperty(), history);
+        LOG.debug("Updated conversation history with {} agentic messages + returnDirect result, total entries: {}",
+                agenticMessages.size(), history.size());
+    }
+
     private ResponseFormatJsonSchema.JsonSchema.Schema buildSchemaFromJson(String jsonSchemaString) throws Exception {
-        @SuppressWarnings("unchecked")
         java.util.Map<String, Object> root = OBJECT_MAPPER.readValue(jsonSchemaString, java.util.Map.class);
         if (root == null) {
             throw new IllegalArgumentException("JSON schema string parsed to null");

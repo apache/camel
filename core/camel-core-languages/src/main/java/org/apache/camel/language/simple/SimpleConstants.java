@@ -450,6 +450,10 @@ public final class SimpleConstants {
               label = "other", javaType = "String", displayName = "Generate UUID")
     public static final String UUID = "uuid(type)";
 
+    @Metadata(description = "Returns the expression as a constant value",
+              label = "core", javaType = "Object", displayName = "Value")
+    public static final String VAL = "val(exp)";
+
     @Metadata(description = "The variable with the given name", label = "core,ognl", javaType = "Object")
     public static final String VARIABLE = "variable.name";
 

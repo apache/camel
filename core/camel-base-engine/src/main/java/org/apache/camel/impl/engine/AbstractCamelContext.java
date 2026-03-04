@@ -206,6 +206,7 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.concurrent.ContextValue;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,8 +235,8 @@ public abstract class AbstractCamelContext extends BaseService
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
     private final Map<String, DataFormat> dataformats = new ConcurrentHashMap<>();
     private final List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
-    private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
-    private final ThreadLocal<Boolean> isLockModel = new ThreadLocal<>();
+    private final ContextValue<Boolean> isStartingRoutes = ContextValue.newInstance("isStartingRoutes");
+    private final ContextValue<Boolean> isLockModel = ContextValue.newInstance("isLockModel");
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
     private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager();
@@ -1124,8 +1125,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public boolean isStartingRoutes() {
-        Boolean answer = isStartingRoutes.get();
-        return answer != null && answer;
+        return Boolean.TRUE.equals(isStartingRoutes.orElse(false));
     }
 
     public void setStartingRoutes(boolean starting) {
@@ -1137,8 +1137,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public boolean isLockModel() {
-        Boolean answer = isLockModel.get();
-        return answer != null && answer;
+        return Boolean.TRUE.equals(isLockModel.orElse(false));
     }
 
     public void setLockModel(boolean lockModel) {
@@ -2343,8 +2342,8 @@ public abstract class AbstractCamelContext extends BaseService
         StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
         // NOTE: only check the specific class, not any subclass
         if (startupStepRecorder.getClass() == DefaultStartupStepRecorder.class) { // NOSONAR
-            StartupStepRecorder fr = camelContextExtension.getBootstrapFactoryFinder()
-                    .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
+            StartupStepRecorder fr
+                    = ResolverHelper.resolveService(this, StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
             if (fr != null) {
                 LOG.debug("Discovered startup recorder: {} from classpath", fr);
                 camelContextExtension.setStartupStepRecorder(fr);
@@ -2528,8 +2527,7 @@ public abstract class AbstractCamelContext extends BaseService
         boolean debuggerDetected = false;
         if (getDebugger() == null && hasService(BacklogDebugger.class) == null) {
             // detect if camel-debug is on classpath that enables debugging
-            DebuggerFactory df = getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
+            DebuggerFactory df = ResolverHelper.resolveService(this, Debugger.FACTORY, DebuggerFactory.class).orElse(null);
             if (df != null) {
                 debuggerDetected = true;
                 LOG.info("Detected: {} JAR (Enabling Camel Debugging)", df);

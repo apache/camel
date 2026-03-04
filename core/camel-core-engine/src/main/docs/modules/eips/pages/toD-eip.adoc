@@ -69,6 +69,18 @@ XML::
   <toD uri="${header.foo}"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - toD:
+            uri: "${header.foo}"
+----
 ====
 
 You can also prefix the uri with a value because the endpoint xref:manual::uris.adoc[URI] is
@@ -92,6 +104,18 @@ XML::
   <from uri="direct:start"/>
   <toD uri="mock:${header.foo}"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - toD:
+            uri: "mock:${header.foo}"
 ----
 ====
 
@@ -125,6 +149,18 @@ XML::
   <from uri="direct:start"/>
   <toD uri="language:xpath:/order/@uri"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - toD:
+            uri: language:xpath:/order/@uri
 ----
 ====
 
@@ -164,6 +200,19 @@ XML::
   <toD uri="http:myloginserver:8080/login?userid=${header.userName}" cacheSize="10"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:login
+      steps:
+        - toD:
+            uri: "http:myloginserver:8080/login?userid=${header.userName}"
+            cacheSize: 10
+----
 ====
 
 IMPORTANT: this will only reduce the endpoint cache of the `toD` that has a chance
@@ -176,6 +225,10 @@ provide the dynamic parts in Camel message headers (if possible).
 In the example above then the parameter `userid` is dynamically computed, and would result in one instance of endpoint and producer
 for each different userid. To avoid having too dynamic endpoints, you use a single static endpoint and use headers to provide the dynamic parts:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:login")
@@ -183,6 +236,45 @@ from("direct:login")
   .setHeader(Exchange.HTTP_QUERY, simple("userid=${header.userName}"))
   .toD("http:myloginserver:8080");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:login"/>
+    <setHeader name="CamelHttpPath">
+        <constant>/login</constant>
+    </setHeader>
+    <setHeader name="CamelHttpQuery">
+        <simple>userid=${header.userName}</simple>
+    </setHeader>
+    <toD uri="http:myloginserver:8080"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:login
+      steps:
+        - setHeader:
+            name: CamelHttpPath
+            expression:
+              constant:
+                expression: /login
+        - setHeader:
+            name: CamelHttpQuery
+            expression:
+              simple:
+                expression: "userid=${header.userName}"
+        - toD:
+            uri: http:myloginserver:8080
+----
+====
 
 However, you can use optimized components for `toD` that can _solve_ this out of the box,
 as documented next.
@@ -200,7 +292,11 @@ This is with among the following components, which have been optimized for `toD`
 
 A number of non-HTTP components has been optimized as well:
 
+- camel-activemq
 - camel-amqp
+- camel-azure-files
+- camel-caffeine
+- camel-dynamic-router
 - camel-file
 - camel-ftp
 - camel-jms
@@ -209,9 +305,10 @@ A number of non-HTTP components has been optimized as well:
 - camel-paho
 - camel-sjms
 - camel-sjms2
+- camel-smb
 - camel-spring-rabbitmq
 
-For the optimisation to work, then:
+For the optimization to work, then:
 
 . The optimization is detected and activated during startup of the Camel routes with `toD`.
 . The dynamic uri in `toD` must provide the component name as either static or resolved via xref:manual::using-propertyplaceholder.adoc[property placeholders].
@@ -222,13 +319,41 @@ for context-path and query parameters will be provided as headers:
 
 For example, this route:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:login")
   .toD("http:myloginserver:8080/login?userid=${header.userName}");
 ----
 
-It will essentially be optimized to (**internally** pseudo route):
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:login"/>
+    <toD uri="http:myloginserver:8080/login?userid=${header.userName}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:login
+      steps:
+        - toD:
+            uri: "http:myloginserver:8080/login?userid=${header.userName}"
+----
+====
+
+This will essentially be optimized to (**internally** pseudo route):
 
 [source,java]
 ----

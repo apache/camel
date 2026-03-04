@@ -4,7 +4,7 @@
 :artifactid: camel-opentelemetry-metrics
 :description: Camel metrics based on the Camel Telemetry spec
 :since: 4.17
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

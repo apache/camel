@@ -203,16 +203,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Include Maven Wrapper files in exported project")
     protected boolean mavenWrapper = true;
 
-    @CommandLine.Option(names = { "--gradle-wrapper" }, defaultValue = "true",
-                        description = "DEPRECATED: Include Gradle Wrapper files in exported project")
-    @Deprecated
-    protected boolean gradleWrapper = true;
-
-    @CommandLine.Option(names = { "--build-tool" }, defaultValue = "maven",
-                        description = "DEPRECATED: Build tool to use (maven or gradle) (gradle is deprecated)")
-    @Deprecated
-    protected String buildTool = "maven";
-
     @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     protected String openapi;
 
@@ -250,7 +240,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected boolean packageScanJars;
 
     @CommandLine.Option(names = { "--build-property" },
-                        description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
+                        description = "Maven build properties, ex. --build-property=prop1=foo")
     protected List<String> buildProperties = new ArrayList<>();
 
     @CommandLine.Option(names = { "--prop", "--property" },
@@ -934,35 +924,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
         // set execute file permission on mvnw/mvnw.cmd files
         FileUtil.setPosixFilePermissions(mvnwPath, "rwxr-xr-x");
         FileUtil.setPosixFilePermissions(mvnwCmdPath, "rwxr-xr-x");
-    }
-
-    protected void copyGradleWrapper() throws Exception {
-        Path wrapperPath = Paths.get(BUILD_DIR, "gradle/wrapper");
-        Files.createDirectories(wrapperPath);
-        // copy files
-        Path gradlewPath = Paths.get(BUILD_DIR, "gradlew");
-        Path gradlewBatPath = Paths.get(BUILD_DIR, "gradlew.bat");
-        Path wrapperJarPath = wrapperPath.resolve("gradle-wrapper.jar");
-        Path wrapperPropsPath = wrapperPath.resolve("gradle-wrapper.properties");
-
-        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew")) {
-            Files.copy(is, gradlewPath, StandardCopyOption.REPLACE_EXISTING);
-        }
-        try (InputStream is = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradlew.bat")) {
-            Files.copy(is, gradlewBatPath, StandardCopyOption.REPLACE_EXISTING);
-        }
-        try (InputStream is
-                = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.jar")) {
-            Files.copy(is, wrapperJarPath, StandardCopyOption.REPLACE_EXISTING);
-        }
-        try (InputStream is
-                = ExportBaseCommand.class.getClassLoader().getResourceAsStream("gradle-wrapper/gradle-wrapper.properties")) {
-            Files.copy(is, wrapperPropsPath, StandardCopyOption.REPLACE_EXISTING);
-        }
-
-        // set execute file permission on gradlew/gradlew.bat files
-        FileUtil.setPosixFilePermissions(gradlewPath, "rwxr-xr-x");
-        FileUtil.setPosixFilePermissions(gradlewBatPath, "rwxr-xr-x");
     }
 
     protected String applicationPropertyLine(String key, String value) {

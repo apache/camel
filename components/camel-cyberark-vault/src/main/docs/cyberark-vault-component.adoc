@@ -4,7 +4,7 @@
 :artifactid: camel-cyberark-vault
 :description: Retrieve secrets from CyberArk Conjur Vault.
 :since: 4.17
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -375,4 +375,3 @@ mvn clean verify -Dit.test=CyberArkVaultProducerIT \
   -Dcamel.cyberark.username=admin \
   -Dcamel.cyberark.apiKey=YOUR_API_KEY_HERE
 ----
-

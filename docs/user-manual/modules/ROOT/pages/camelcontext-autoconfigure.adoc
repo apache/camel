@@ -30,7 +30,7 @@ The services can be anything that can be plugged into Camel (typically services 
 The following SPI services can only a single instance (singleton) be in the xref:registry.adoc[Registry].
 
 [width="100%",cols="2m,8",options="header",]
-|=======================================================================
+|===
 |SPI |Description
 | AsyncProcessorAwaitManager | To use a custom async processor await manager
 | BacklogTracer | To use a custom backlog tracer
@@ -57,12 +57,12 @@ The following SPI services can only a single instance (singleton) be in the xref
 | ThreadPoolFactory | To use a custom xref:threading-model.adoc[thread pool factory]
 | UnitOfWorkFactory | To use a custom unit of work factory
 | UuidGenerator | To use a custom xref:uuidgenerator.adoc[uuid generator]
-|=======================================================================
+|===
 
 For the following SPI services, there can be multiple (one or more) implementations in the xref:registry.adoc[Registry].
 
 [width="100%",cols="2m,8",options="header",]
-|=======================================================================
+|===
 |SPIs |Description
 | CamelClusterService | Adds all the custom xref:clustering.adoc[camel-cluster services]
 | EndpointStrategy | Adds all the custom xref:endpoint.adoc[endpoint strategies]
@@ -76,4 +76,4 @@ For the following SPI services, there can be multiple (one or more) implementati
 | ServiceRegistry | Adds all the custom camel-cloud service registries
 | ThreadPoolProfile | Adds all the xref:threading-model.adoc[thread pool profiles]
 | TypeConverters | Adds all the custom xref:type-converter.adoc[type converters]
-|=======================================================================
+|===

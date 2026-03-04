@@ -13,14 +13,19 @@ The following example route demonstrates the use of a xref:components::file-comp
 consumer endpoint and a * xref:components::jms-component.adoc[JMS] producer endpoint,
 by their xref:manual::uris.adoc[URIs]:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("file:messages/foo")
     .to("jms:queue:foo");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -28,6 +33,19 @@ And in XML:
     <to uri="jms:queue:foo"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:messages/foo
+      steps:
+        - to:
+            uri: jms:queue:foo
+----
+====
 
 == Endpoint API
 

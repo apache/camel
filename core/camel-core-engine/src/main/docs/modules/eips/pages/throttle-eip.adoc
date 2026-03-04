@@ -57,15 +57,17 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:a
-    steps:
-      - throttle:
-          expression:
-            constant: 3
-          timePeriodMillis: 10000
-      - to: 
-          uri: mock:result
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - throttle:
+            timePeriodMillis: 10000
+            expression:
+              constant:
+                expression: 3
+        - to:
+            uri: mock:result
 ----
 ====
 
@@ -103,14 +105,16 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:a
-    steps:
-      - throttle:
-          expression:
-            constant: 50
-      - to: 
-          uri: mock:result
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - throttle:
+            expression:
+              constant:
+                expression: 50
+        - to:
+            uri: seda:b
 ----
 ====
 
@@ -154,16 +158,17 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:a
-    steps:
-      - throttle:
-          expression:
-            # use a header to determine how many messages to throttle per 0.5 sec
-            header: throttleValue
-          timePeriodMillis: 500
-      - to:
-          uri: seda:b
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - throttle:
+            timePeriodMillis: 500
+            expression:
+              header:
+                expression: throttleValue
+        - to:
+            uri: seda:b
 ----
 ====
 
@@ -203,15 +208,17 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:a
-    steps:
-      - throttle:
-          expression:
-            constant: 100
-          asyncDelayed: true
-      - to:
-          uri: seda:b
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - throttle:
+            asyncDelayed: "true"
+            expression:
+              constant:
+                expression: 100
+        - to:
+            uri: seda:b
 ----
 ====
 
@@ -251,16 +258,17 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:a
-    steps:
-      - throttle:
-          expression:
-            constant: 100
-          timePeriodMillis: 100
-          rejectExecution: true
-      - to:
-          uri: seda:b
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - throttle:
+            rejectExecution: "true"
+            expression:
+              constant:
+                expression: 100
+        - to:
+            uri: seda:b
 ----
 ====
 
@@ -302,16 +310,19 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:a
-    steps:
-      - throttle:
-          expression:
-            constant: 100
-          correlationExpression:
-            header: region
-      - to:
-          uri: seda:b
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - throttle:
+            expression:
+              constant:
+                expression: 100
+            correlationExpression:
+              header:
+                expression: region
+        - to:
+            uri: seda:b
 ----
 ====
 
@@ -360,7 +371,7 @@ Java::
 [source,java]
 ----
 from("seda:a")
-  .throttle(3).mode("ConcurrentRequests")
+  .throttle(3).concurrentRequestsMode()
   .to("mock:result");
 ----
 
@@ -369,11 +380,11 @@ XML::
 [source,xml]
 ----
 <route>
-  <from uri="seda:a"/>
-  <throttle mode="ConcurrentRequests">
-    <constant>3</constant>
-  </throttle>
-  <to uri="mock:result"/>
+    <from uri="seda:a"/>
+    <throttle mode="ConcurrentRequests">
+        <constant>3</constant>
+    </throttle>
+    <to uri="mock:result"/>
 </route>
 ----
 
@@ -381,15 +392,16 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: seda:a
-    steps:
-      - throttle:
-          expression:
-            constant: 3
-          mode: ConcurrentRequests
-          timePeriodMillis: 10000
-      - to:
-          uri: mock:result
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - throttle:
+            mode: ConcurrentRequests
+            expression:
+              constant:
+                expression: 3
+        - to:
+            uri: mock:result
 ----
 ====

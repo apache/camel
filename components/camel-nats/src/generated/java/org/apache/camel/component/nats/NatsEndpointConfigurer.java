@@ -23,6 +23,10 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NatsEndpoint target = (NatsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ackpolicy":
+        case "ackPolicy": target.getConfiguration().setAckPolicy(property(camelContext, io.nats.client.api.AckPolicy.class, value)); return true;
+        case "ackwait":
+        case "ackWait": target.getConfiguration().setAckWait(property(camelContext, long.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connection": target.getConfiguration().setConnection(property(camelContext, io.nats.client.Connection.class, value)); return true;
@@ -52,12 +56,16 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jetstreamName": target.getConfiguration().setJetstreamName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxdeliver":
+        case "maxDeliver": target.getConfiguration().setMaxDeliver(property(camelContext, long.class, value)); return true;
         case "maxmessages":
         case "maxMessages": target.getConfiguration().setMaxMessages(property(camelContext, java.lang.String.class, value)); return true;
         case "maxpingsout":
         case "maxPingsOut": target.getConfiguration().setMaxPingsOut(property(camelContext, int.class, value)); return true;
         case "maxreconnectattempts":
         case "maxReconnectAttempts": target.getConfiguration().setMaxReconnectAttempts(property(camelContext, int.class, value)); return true;
+        case "nackwait":
+        case "nackWait": target.getConfiguration().setNackWait(property(camelContext, long.class, value)); return true;
         case "noecho":
         case "noEcho": target.getConfiguration().setNoEcho(property(camelContext, boolean.class, value)); return true;
         case "norandomizeservers":
@@ -96,6 +104,10 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ackpolicy":
+        case "ackPolicy": return io.nats.client.api.AckPolicy.class;
+        case "ackwait":
+        case "ackWait": return long.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "connection": return io.nats.client.Connection.class;
@@ -125,12 +137,16 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jetstreamName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxdeliver":
+        case "maxDeliver": return long.class;
         case "maxmessages":
         case "maxMessages": return java.lang.String.class;
         case "maxpingsout":
         case "maxPingsOut": return int.class;
         case "maxreconnectattempts":
         case "maxReconnectAttempts": return int.class;
+        case "nackwait":
+        case "nackWait": return long.class;
         case "noecho":
         case "noEcho": return boolean.class;
         case "norandomizeservers":
@@ -170,6 +186,10 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         NatsEndpoint target = (NatsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ackpolicy":
+        case "ackPolicy": return target.getConfiguration().getAckPolicy();
+        case "ackwait":
+        case "ackWait": return target.getConfiguration().getAckWait();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connection": return target.getConfiguration().getConnection();
@@ -199,12 +219,16 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jetstreamName": return target.getConfiguration().getJetstreamName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxdeliver":
+        case "maxDeliver": return target.getConfiguration().getMaxDeliver();
         case "maxmessages":
         case "maxMessages": return target.getConfiguration().getMaxMessages();
         case "maxpingsout":
         case "maxPingsOut": return target.getConfiguration().getMaxPingsOut();
         case "maxreconnectattempts":
         case "maxReconnectAttempts": return target.getConfiguration().getMaxReconnectAttempts();
+        case "nackwait":
+        case "nackWait": return target.getConfiguration().getNackWait();
         case "noecho":
         case "noEcho": return target.getConfiguration().isNoEcho();
         case "norandomizeservers":

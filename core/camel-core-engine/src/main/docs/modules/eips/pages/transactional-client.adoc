@@ -19,11 +19,12 @@ a third-party JTA transaction manager can be embedded and used.
 
 In Camel transactions are supported by JMS messaging components:
 
-- xref:ROOT:jms-component.adoc[JMS]
+- xref:ROOT:activemq-component.adoc[ActiveMQ 5.x] and xref:ROOT:activemq6-component.adoc[ActiveMQ 6.x]
+- xref:ROOT:jms-component.adoc[JMS] (any JMS broker such as ActiveMQ Artemis)
 - xref:ROOT:sjms-component.adoc[Simple JMS]
 - xref:ROOT:sjms2-component.adoc[Simple JMS 2.x]
 
-And all the SQL database components, such as:
+And the SQL database components, such as:
 
 - xref:ROOT:jdbc-component.adoc[JDBC]
 - xref:ROOT:jpa-component.adoc[JPA]
@@ -75,8 +76,8 @@ transactions can be simpler to orchestrate by the transaction manager. This is k
 When using local transactions with Spring Transactions, then you can use the dedicated transaction manager
 for the resource type such as:
 
-- org.springframework.jdbc.datasource.DataSourceTransactionManager
-- org.springframework.jms.connection.JmsTransactionManager
+- `org.springframework.jdbc.datasource.DataSourceTransactionManager`
+- `org.springframework.jms.connection.JmsTransactionManager`
 
 TIP: Consult the Spring documentation for more local transaction managers.
 
@@ -159,6 +160,19 @@ XML::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:cheese
+      steps:
+        - transacted: {}
+        - to:
+            uri: bean:foo
+----
+
 ====
 
 When you specify `<transacted/>` in a route, Camel uses transactions for that particular
@@ -191,8 +205,13 @@ outcomes; for example, transaction 1 can roll back, while transaction 2 commits,
 and vice versa.
 
 In Camel, you need to configure the propagations using `SpringTransactionPolicy`
-as shown in the following XML snippets:
+as shown in the following Spring XML snippets:
 
+[tabs]
+====
+
+Spring XML::
++
 [source,xml]
 ----
 <bean id="txRequired" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
@@ -209,9 +228,15 @@ as shown in the following XML snippets:
     <property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_MANDATORY"/>
 </bean>
 ----
+====
 
 Then we have routes where each of the routes uses their different policy:
 
+[tabs]
+====
+
+Spring XML::
++
 [source,xml]
 ----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
@@ -236,6 +261,7 @@ Then we have routes where each of the routes uses their different policy:
     </route>
 </camelContext>
 ----
+====
 
 Notice how the ref attribute on `<transacted>` refers to the corresponding bean id of the transaction policy.
 
@@ -250,7 +276,7 @@ control.
 These two endpoints insert data into a database.
 
 The sample is in its full as a
-https://github.com/apache/camel/tree/main/components/camel-spring-xml/src/test/java/org/apache/camel/spring/interceptor/TransactionalClientDataSourceMinimalConfigurationTest.java[unit test].
+https://github.com/apache/camel/blob/main/components/camel-spring-parent/camel-spring-xml/src/test/java/org/apache/camel/spring/interceptor/TransactionalClientDataSourceWithOnExceptionMinimalConfigurationTest.java[unit test].
 
 First, we set up the usual spring stuff in its configuration file.
 Here we have defined a DataSource to the HSQLDB and most
@@ -263,6 +289,11 @@ configure a transaction policy bean, so we do not have any
 All the beans needed to be configured are
 *standard* Spring beans only, there is no Camel specific configuration at all.
 
+[tabs]
+====
+
+Spring XML::
++
 [source,xml]
 ----
 <!-- this example uses JDBC so we define a data source -->
@@ -281,6 +312,7 @@ All the beans needed to be configured are
     <property name="dataSource" ref="dataSource"/>
 </bean>
 ----
+====
 
 Then we are ready to define our Camel routes. We have two routes: 1 for
 success conditions, and 1 for a forced rollback condition.
@@ -288,6 +320,11 @@ success conditions, and 1 for a forced rollback condition.
 This is, after all, based on a unit test. Notice that we mark each route
 as transacted using the `<transacted/>` XML tag.
 
+[tabs]
+====
+
+Spring XML::
++
 [source,xml]
 ----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
@@ -326,11 +363,10 @@ as transacted using the `<transacted/>` XML tag.
 
 </camelContext>
 ----
+====
 
 That is all that is needed to configure a Camel route as being transacted.
-Remember to use `<transacted/>`.
-The rest is standard Spring
-XML to set up the transaction manager.
+Remember to use `<transacted/>`. The rest is standard Spring XML to set up the transaction manager.
 
 == Transaction example with JMS
 
@@ -344,6 +380,11 @@ First, we configure the standard Spring XML to declare a JMS connection
 factory, a JMS transaction manager and our ActiveMQ component that we
 use in our routing.
 
+[tabs]
+====
+
+Spring XML::
++
 [source,xml]
 ----
 <!-- setup JMS connection factory -->
@@ -372,10 +413,16 @@ use in our routing.
     <property name="transactionManager" ref="jmsTransactionManager"/>
 </bean>
 ----
+====
 
 And then we configure our routes. Notice that all we have to do is mark the
 route as transacted using the `<transacted/>` XML tag.
 
+[tabs]
+====
+
+Spring XML::
++
 [source,xml]
 ----
 <camelContext xmlns="http://camel.apache.org/schema/spring">
@@ -391,4 +438,4 @@ route as transacted using the `<transacted/>` XML tag.
     </route>
 </camelContext>
 ----
-
+====

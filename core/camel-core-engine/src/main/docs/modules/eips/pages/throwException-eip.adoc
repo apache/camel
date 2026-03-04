@@ -1,0 +1,111 @@
+= Stop EIP
+:doctitle: Stop
+:shortname: stop
+:description: Stops the processing of the current message
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+How can I throw an exception
+
+image::eip/MessageExpirationIcon.gif[image]
+
+Use a special processor to throw an exception.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Using Throw Exception
+
+In a specific situation we want to fail processing the current message by throwing an exception.
+In the xref:choice-eip.adoc[Content-Based Router] below we use `throwException` in such a case.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(simple("${body} contains 'Hello'")).to("mock:hello")
+        .when(simple("${body} contains 'Bye'")).to("mock:bye").throwException(new IllegalArgumentException("Not allowed"))
+        .otherwise().to("mock:other")
+    .end()
+.to("mock:result");
+----
+
+XML::
++
+In XML you specify the FQN class name via `exceptionType` and the `message` is the caused text to include in the exception.
++
+[source,xml]
+----
+    <route>
+        <from uri="direct:start"/>
+        <choice>
+            <when>
+                <simple>${body} contains 'Hello'</simple>
+                <to uri="mock:hello"/>
+            </when>
+            <when>
+                <simple>${body} contains 'Bye'</simple>
+                <to uri="mock:bye"/>
+                <throwException exceptionType="java.lang.IllegalArgumentException" message="Not Allowed"/>
+            </when>
+            <otherwise>
+                <to uri="mock:other"/>
+            </otherwise>
+        </choice>
+        <to uri="mock:result"/>
+    </route>
+----
+
+YAML::
++
+In YML you specify the FQN class name via `exceptionType` and the `message` is the caused text to include in the exception.
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} contains 'Hello'"
+                steps:
+                  - to:
+                      uri: mock:hello
+              - expression:
+                  simple:
+                    expression: "${body} contains 'Bye'"
+                steps:
+                  - to:
+                      uri: mock:bye
+                  - throwException:
+                      exceptionType: "java.lang.IllegalArgumentException"
+                      message: "Not Allowed"
+            otherwise:
+              steps:
+                - to:
+                    uri: mock:other
+        - to:
+            uri: mock:result
+----
+====
+
+== See Also
+
+See also the related xref:stop-eip.adoc[Stop] EIP.

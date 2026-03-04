@@ -43,6 +43,16 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "batchSize": target.setBatchSize(property(camelContext, int.class, value)); return true;
         case "batchtimeout":
         case "batchTimeout": target.setBatchTimeout(property(camelContext, long.class, value)); return true;
+        case "chunkingincluderawtext":
+        case "chunkingIncludeRawText": target.setChunkingIncludeRawText(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "chunkingmaxtokens":
+        case "chunkingMaxTokens": target.setChunkingMaxTokens(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "chunkingmergepeers":
+        case "chunkingMergePeers": target.setChunkingMergePeers(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "chunkingtokenizer":
+        case "chunkingTokenizer": target.setChunkingTokenizer(property(camelContext, java.lang.String.class, value)); return true;
+        case "chunkingusemarkdowntables":
+        case "chunkingUseMarkdownTables": target.setChunkingUseMarkdownTables(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "contentinbody":
         case "contentInBody": target.setContentInBody(property(camelContext, boolean.class, value)); return true;
         case "docodeenrichment":
@@ -83,6 +93,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "maxFileSize": target.setMaxFileSize(property(camelContext, long.class, value)); return true;
         case "mdpagebreakplaceholder":
         case "mdPageBreakPlaceholder": target.setMdPageBreakPlaceholder(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": target.setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "ocrengine":
         case "ocrEngine": target.setOcrEngine(property(camelContext, java.lang.String.class, value)); return true;
         case "ocrlanguage":
@@ -134,6 +146,16 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "batchSize": return int.class;
         case "batchtimeout":
         case "batchTimeout": return long.class;
+        case "chunkingincluderawtext":
+        case "chunkingIncludeRawText": return java.lang.Boolean.class;
+        case "chunkingmaxtokens":
+        case "chunkingMaxTokens": return java.lang.Integer.class;
+        case "chunkingmergepeers":
+        case "chunkingMergePeers": return java.lang.Boolean.class;
+        case "chunkingtokenizer":
+        case "chunkingTokenizer": return java.lang.String.class;
+        case "chunkingusemarkdowntables":
+        case "chunkingUseMarkdownTables": return java.lang.Boolean.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
         case "docodeenrichment":
@@ -174,6 +196,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "maxFileSize": return long.class;
         case "mdpagebreakplaceholder":
         case "mdPageBreakPlaceholder": return java.lang.String.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "ocrengine":
         case "ocrEngine": return java.lang.String.class;
         case "ocrlanguage":
@@ -226,6 +250,16 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "batchSize": return target.getBatchSize();
         case "batchtimeout":
         case "batchTimeout": return target.getBatchTimeout();
+        case "chunkingincluderawtext":
+        case "chunkingIncludeRawText": return target.getChunkingIncludeRawText();
+        case "chunkingmaxtokens":
+        case "chunkingMaxTokens": return target.getChunkingMaxTokens();
+        case "chunkingmergepeers":
+        case "chunkingMergePeers": return target.getChunkingMergePeers();
+        case "chunkingtokenizer":
+        case "chunkingTokenizer": return target.getChunkingTokenizer();
+        case "chunkingusemarkdowntables":
+        case "chunkingUseMarkdownTables": return target.getChunkingUseMarkdownTables();
         case "contentinbody":
         case "contentInBody": return target.isContentInBody();
         case "docodeenrichment":
@@ -266,6 +300,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "maxFileSize": return target.getMaxFileSize();
         case "mdpagebreakplaceholder":
         case "mdPageBreakPlaceholder": return target.getMdPageBreakPlaceholder();
+        case "oauthprofile":
+        case "oauthProfile": return target.getOauthProfile();
         case "ocrengine":
         case "ocrEngine": return target.getOcrEngine();
         case "ocrlanguage":

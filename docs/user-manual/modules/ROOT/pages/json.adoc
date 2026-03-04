@@ -8,7 +8,7 @@ popular JSON libraries such as:
 
 - Jackson
 - Google GSon
-- Johnzon
+- JSonB
 
 How to use JSON with Camel then see the documentation (for the JSON data library of choice)
 in the list of xref:components:dataformats:index.adoc[Data Formats].

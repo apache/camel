@@ -41,6 +41,11 @@ Imagine you consume text files and before processing each file, you want to be s
 
 In the route below, it will read the file content and tokenize by line breaks so each line can be sorted.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("file:inbox")
@@ -48,41 +53,133 @@ from("file:inbox")
     .to("bean:MyServiceBean.processLine");
 ----
 
-You can pass in your own comparator as a second argument:
-
-[source,java]
-----
-from("file:inbox")
-    .sort(body().tokenize("\n"), new MyReverseComparator())
-    .to("bean:MyServiceBean.processLine");
-----
-
-In the route below, it will read the file content and tokenize by line breaks so each line can be sorted.
-In XML, you use the xref:components:languages:tokenize-language.adoc[Tokenize] language as shown:
-
+XML::
++
 [source,xml]
 ----
 <route>
   <from uri="file:inbox"/>
   <sort>
-    <tokenize>\n</tokenize>
+    <tokenize token="\n"/>
   </sort>
   <to uri="bean:myServiceBean.processLine"/>
 </route>
 ----
 
-And to use our own `Comparator` we do as follows:
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - sort:
+            expression:
+              tokenize:
+                token: "\n"
+        - to:
+            uri: bean:myServiceBean.processLine
+----
+====
 
+You can control how to sort using a custom `java.util.Comparator`:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:inbox")
+    .sort().tokenize("\n").comparator("myComparator")
+    .to("bean:MyServiceBean.processLine");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:inbox"/>
+    <sort comparator="myComparator">
+        <tokenize token="\n"/>
+    </sort>
+    <to uri="bean:MyServiceBean.processLine"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - sort:
+            comparator: myComparator
+            expression:
+              tokenize:
+                token: "\n"
+        - to:
+            uri: bean:MyServiceBean.processLine
+----
+====
+
+TIP: You can also refer to the custom comparator using `#class:` syntax as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:inbox")
+    .sort().tokenize("\n").comparator("#class:com.mycompany.MyReverseComparator")
+    .to("bean:MyServiceBean.processLine");
+----
++
+In Java DSL you can also provide the custom `Comparator` directly as the object as follows:
++
+[source,java]
+----
+from("file:inbox")
+    .sort().body().comparator(new MyReverseComparator())
+    .to("bean:MyServiceBean.processLine");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
   <from uri="file:inbox"/>
   <sort comparator="#class:com.mycompany.MyReverseComparator">
-    <simple>${body}</simple>
+    <tokenize token="\n"/>
   </sort>
-  <beanRef ref="MyServiceBean" method="processLine"/>
+  <bean ref="MyServiceBean" method="processLine"/>
 </route>
 ----
 
-Notice how we use `<simple>$\{body}</simple>` in the example above to tell Sort EIP that it should use the message body for sorting.
-This is needed when you use a custom `Comparator`.
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - sort:
+            comparator: "#class:com.mycompany.MyReverseComparator"
+            expression:
+              tokenize:
+                token: "\n"
+        - bean:
+            ref: MyServiceBean
+            method: processLine
+----
+====
+

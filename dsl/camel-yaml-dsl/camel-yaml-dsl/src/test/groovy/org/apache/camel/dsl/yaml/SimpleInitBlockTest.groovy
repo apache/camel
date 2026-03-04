@@ -33,9 +33,9 @@ class SimpleInitBlockTest extends YamlTestSupport {
                               expression: |-
                                 $init{
                                   // this is a java like comment
-                                  $sum := ${sum(${header.lines},100)}
+                                  $sum := ${sum(${header.lines},100)};
                     
-                                  $sku := ${iif(${body} contains 'Camel',123,999)}
+                                  $sku := ${iif(${body} contains 'Camel',123,999)};
                                 }init$
                                 orderId=$sku,total=$sum
                         - to:

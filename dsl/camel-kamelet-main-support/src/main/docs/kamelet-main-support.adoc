@@ -11,4 +11,4 @@
 
 *Since Camel {since}*
 
-Support module for xref:_kamelet_main_component[Kamelet Main] (aka camel-jbang).
+Support module for xref:kamelet-main.adoc[Kamelet Main] (aka camel-jbang).

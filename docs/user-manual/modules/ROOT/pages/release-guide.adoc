@@ -24,6 +24,7 @@ Here some quick notes about how to configure the GPG key (this will be required 
 
 === Create a new GPG key
 
+[source,bash]
 ----
 gpg --full-gen-key
 ----
@@ -32,12 +33,14 @@ This command will prompt a series of requests you'll need to fill. Have a look a
 
 Once you have created your key, it is convenient you add it to the `KEYS` file in root Camel github repository. IMPORTANT: always export the GPG key to the main project, even if the release concerns a Camel subproject.
 
+[source,bash]
 ----
 gpg --list-sigs "pcongiusti@apache.org" >> KEYS && gpg --armor --export "pcongiusti@apache.org" >> KEYS
 ----
 
 In order to verify you haven't introduced any change which is breaking the integrity of the file, you need to make sure that an import is working correctly. To validate that you need to run:
 
+[source,bash]
 ----
 gpg --import-options show-only --verbose --import --dry-run KEYS
 ----
@@ -48,6 +51,7 @@ Check that all the keys are listed. Just check that the latest entry you've adde
 
 Everytime there is a change in the source GPG keys on the main project you need to synchronize with the dist Camel project, in order to correctly provide the KEYS file to the expected location. You need to use `svn` tool and authenticate with your Apache credentials. Once it's done you can proceed like the following:
 
+[source,bash]
 ----
 svn checkout https://dist.apache.org/repos/dist/release/camel camel-dist
 cd camel-dist
@@ -61,6 +65,7 @@ The change will be applied to the `dist` repository and after a few minutes will
 
 You also need to recover your fingerprint and copy to the https://id.apache.org account:
 
+[source,bash]
 ----
 $ gpg --fingerprint
 
@@ -72,6 +77,7 @@ sub   rsa4096 2023-05-26 [E]
 
 Once this step is over, you will need to send your GPG key to certain serves used later when verifying the signed pushed artifacts:
 
+[source,bash]
 ----
 $ gpg -k
 
@@ -187,8 +193,8 @@ Complete the following steps to create a new Camel release:
 * Make sure to check the generated signature files:
 
 
-  $ gpg --verify core/target/core-4.18.0-SNAPSHOT.pom.asc
-  gpg: assuming signed data in 'core/target/core-4.18.0-SNAPSHOT.pom'
+  $ gpg --verify core/target/core-4.19.0-SNAPSHOT.pom.asc
+  gpg: assuming signed data in 'core/target/core-4.19.0-SNAPSHOT.pom'
   gpg: Signature made Thu 08 Jan 2026 10:07:47 AM CET
   gpg:                using EDDSA key D5A8412A12BFEBD9C7362CD8CED552456D5000FB
   gpg: Good signature from "Aurélien Pupier <apupier@apache.org>" [ultimate]

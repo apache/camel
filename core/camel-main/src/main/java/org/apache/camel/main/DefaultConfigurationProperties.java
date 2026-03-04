@@ -66,8 +66,11 @@ public abstract class DefaultConfigurationProperties<T> {
     private String streamCachingSpoolCipher;
     private long streamCachingSpoolThreshold;
     private int streamCachingSpoolUsedHeapMemoryThreshold;
+    @Metadata(defaultValue = "Max", enums = "Committed,Max")
     private String streamCachingSpoolUsedHeapMemoryLimit;
     private boolean streamCachingAnySpoolRules;
+    @Metadata(label = "advanced")
+    private String streamCachingSpoolRules;
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
@@ -582,6 +585,18 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setStreamCachingAnySpoolRules(boolean streamCachingAnySpoolRules) {
         this.streamCachingAnySpoolRules = streamCachingAnySpoolRules;
+    }
+
+    public String getStreamCachingSpoolRules() {
+        return streamCachingSpoolRules;
+    }
+
+    /**
+     * Sets custom rules (org.apache.camel.spi.StreamCachingStrategy.SpoolRule) for deciding when to spool to disk.
+     * Multiple rules can be separated by comma.
+     */
+    public void setStreamCachingSpoolRules(String streamCachingSpoolRules) {
+        this.streamCachingSpoolRules = streamCachingSpoolRules;
     }
 
     public int getStreamCachingBufferSize() {
@@ -1996,6 +2011,15 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withStreamCachingAnySpoolRules(boolean streamCachingAnySpoolRules) {
         this.streamCachingAnySpoolRules = streamCachingAnySpoolRules;
+        return (T) this;
+    }
+
+    /**
+     * Sets custom rules (org.apache.camel.spi.StreamCachingStrategy.SpoolRule) for deciding when to spool to disk.
+     * Multiple rules can be separated by comma.
+     */
+    public T withStreamCachingAnySpoolRules(String streamCachingSpoolRules) {
+        this.streamCachingSpoolRules = streamCachingSpoolRules;
         return (T) this;
     }
 

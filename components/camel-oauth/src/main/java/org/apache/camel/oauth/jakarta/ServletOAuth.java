@@ -37,6 +37,7 @@ import org.apache.camel.oauth.OAuthConfig;
 import org.apache.camel.oauth.OAuthException;
 import org.apache.camel.oauth.OAuthFlowType;
 import org.apache.camel.oauth.OAuthLogoutParams;
+import org.apache.camel.oauth.OAuthTokenRequest;
 import org.apache.camel.oauth.TokenCredentials;
 import org.apache.camel.oauth.UserCredentials;
 import org.apache.camel.oauth.UserProfile;
@@ -191,21 +192,14 @@ public class ServletOAuth extends OAuth {
         var userProfile = creds.getUserProfile();
         if (userProfile.expired() && userProfile.refreshToken().isPresent()) {
 
-            // Encode username and password in Base64 for Basic Auth
-            String auth = config.getClientId() + ":" + config.getClientSecret();
-            String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
-
             // Refreshing an Access Token
             // https://datatracker.ietf.org/doc/html/rfc6749#page-47
             var refreshToken = userProfile.refreshToken().get();
-            var content = Request.post(config.getIntrospectionPath())
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .addHeader("Authorization", "Basic " + encodedAuth)
-                    .bodyForm(new BasicNameValuePair("grant_type", "refresh_token"),
-                            new BasicNameValuePair("token", refreshToken))
-                    .execute().returnContent().asString();
-
-            var json = JsonParser.parseString(content).getAsJsonObject();
+            var json = OAuthTokenRequest.refreshTokenGrant(
+                    config.getIntrospectionPath(),
+                    config.getClientId(),
+                    config.getClientSecret(),
+                    refreshToken);
             userProfile = UserProfile.fromJson(config, json);
         }
         if (userProfile.expired()) {
@@ -226,19 +220,11 @@ public class ServletOAuth extends OAuth {
      * https://datatracker.ietf.org/doc/html/rfc6749#section-4.4
      */
     private UserProfile authenticateClientCredentials(ClientCredentials creds) throws Exception {
-
-        // Encode username and password in Base64 for Basic Auth
-        String auth = creds.getClientId() + ":" + creds.getClientSecret();
-        String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
-
-        var grantType = creds.getFlowType().getGrantType();
-        var content = Request.post(config.getTokenPath())
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .addHeader("Authorization", "Basic " + encodedAuth)
-                .bodyForm(new BasicNameValuePair("grant_type", grantType))
-                .execute().returnContent().asString();
-
-        var json = JsonParser.parseString(content).getAsJsonObject();
+        var json = OAuthTokenRequest.clientCredentialsGrant(
+                config.getTokenPath(),
+                creds.getClientId(),
+                creds.getClientSecret(),
+                null);
         return UserProfile.fromJson(config, json);
     }
 

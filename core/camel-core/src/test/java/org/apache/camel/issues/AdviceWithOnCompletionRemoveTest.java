@@ -39,7 +39,7 @@ public class AdviceWithOnCompletionRemoveTest extends ContextTestSupport {
         getMockEndpoint("mock:d").expectedMessageCount(0);
         getMockEndpoint("mock:done").expectedMessageCount(0);
 
-        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("foo", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 weaveById("myCompletion").remove();
@@ -64,7 +64,7 @@ public class AdviceWithOnCompletionRemoveTest extends ContextTestSupport {
         getMockEndpoint("mock:done").expectedMessageCount(0);
         getMockEndpoint("mock:done2").expectedMessageCount(1);
 
-        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("foo", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 weaveById("myCompletion").replace().onCompletion().to("mock:done2");

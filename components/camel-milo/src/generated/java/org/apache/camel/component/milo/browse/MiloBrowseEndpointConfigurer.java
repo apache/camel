@@ -65,6 +65,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "nodeClasses": target.setNodeClasses(property(camelContext, java.lang.String.class, value)); return true;
         case "overridehost":
         case "overrideHost": target.getConfiguration().setOverrideHost(property(camelContext, boolean.class, value)); return true;
+        case "overrideport":
+        case "overridePort": target.getConfiguration().setOverridePort(property(camelContext, boolean.class, value)); return true;
         case "producturi":
         case "productUri": target.getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
@@ -125,6 +127,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "nodeClasses": return java.lang.String.class;
         case "overridehost":
         case "overrideHost": return boolean.class;
+        case "overrideport":
+        case "overridePort": return boolean.class;
         case "producturi":
         case "productUri": return java.lang.String.class;
         case "recursive": return boolean.class;
@@ -186,6 +190,8 @@ public class MiloBrowseEndpointConfigurer extends PropertyConfigurerSupport impl
         case "nodeClasses": return target.getNodeClasses();
         case "overridehost":
         case "overrideHost": return target.getConfiguration().isOverrideHost();
+        case "overrideport":
+        case "overridePort": return target.getConfiguration().isOverridePort();
         case "producturi":
         case "productUri": return target.getConfiguration().getProductUri();
         case "recursive": return target.isRecursive();

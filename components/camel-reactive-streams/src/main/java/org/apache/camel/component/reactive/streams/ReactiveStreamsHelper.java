@@ -23,12 +23,13 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsServi
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsServiceFactory;
 import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public final class ReactiveStreamsHelper {
+
     private ReactiveStreamsHelper() {
     }
 
@@ -114,21 +115,7 @@ public final class ReactiveStreamsHelper {
     }
 
     public static CamelReactiveStreamsServiceFactory resolveServiceFactory(CamelContext context, String serviceType) {
-        try {
-            FactoryFinder finder
-                    = context.getCamelContextExtension().getFactoryFinder(ReactiveStreamsConstants.SERVICE_PATH);
-            Class<?> serviceClass = finder.findClass(serviceType).orElse(null);
-            if (serviceClass != null) {
-                return (CamelReactiveStreamsServiceFactory) context.getInjector().newInstance(serviceClass);
-            } else {
-                throw new IllegalStateException(
-                        "Class referenced in '" + ReactiveStreamsConstants.SERVICE_PATH + serviceType + "' not found");
-            }
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    "Unable to create the reactive stream service defined in '" + ReactiveStreamsConstants.SERVICE_PATH
-                                            + serviceType + "'",
-                    e);
-        }
+        return ResolverHelper.resolveMandatoryService(context, "reactive-streams/" + serviceType,
+                CamelReactiveStreamsServiceFactory.class, null);
     }
 }

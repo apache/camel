@@ -24,7 +24,7 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.wssecurity.server.CxfServer;
 import org.apache.camel.hello_world_soap_http.Greeter;
 import org.apache.camel.hello_world_soap_http.GreeterService;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;

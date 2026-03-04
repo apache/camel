@@ -30,3 +30,7 @@ A highly recommended video introducing Apache Camel and the concepts is a must t
 
 * https://www.youtube.com/watch?v=5xQKG1TSrZc[Enterprise Integration Patterns (EIP) | What is Apache Camel?]
 
+We also highly recommend taking a look at the AI powered research of Apache Camel, which
+provides good technical overview and diagrams in a single wiki page:
+
+* https://deepwiki.com/apache/camel[DeepWiki - Apache Camel]

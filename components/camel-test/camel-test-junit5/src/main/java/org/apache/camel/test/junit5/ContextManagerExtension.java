@@ -75,6 +75,7 @@ public final class ContextManagerExtension
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
         contextManager.stop();
+        contextManager.close();
     }
 
     @Override

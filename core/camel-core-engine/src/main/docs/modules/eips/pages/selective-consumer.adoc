@@ -43,6 +43,24 @@ XML::
   <to uri="bean:red"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms
+      parameters:
+        destinationType: queue
+        destinationName: hello
+        selector: color='red'
+      steps:
+        - to:
+            uri: bean
+            parameters:
+              beanName: red
+----
 ====
 
 === Selective Consumer using Filter EIP
@@ -57,8 +75,8 @@ Java::
 [source,java]
 ----
 from("seda:colors")
-    .filter(header("color").isEqualTo("red"))
-        .to("bean:red")
+    .filter(simple("${header.color} == 'red'"))
+        .to("bean:red");
 ----
 
 XML::
@@ -72,5 +90,22 @@ XML::
         <to uri="bean:red"/>
     </filter>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:colors
+      steps:
+        - filter:
+            expression:
+              simple:
+                expression: "${header.color} == 'red'"
+            steps:
+              - to:
+                  uri: bean:red
 ----
 ====

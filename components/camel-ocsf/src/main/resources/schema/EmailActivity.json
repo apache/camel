@@ -4,13 +4,10 @@
   "title": "EmailActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.EmailActivity",
-  "additionalProperties": true,
   "description": "EmailActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "email": {
       "type": "object",

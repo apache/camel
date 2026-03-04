@@ -31,7 +31,7 @@ public class DoclingConfiguration implements Cloneable {
 
     @UriParam
     @Metadata(required = true, defaultValue = "CONVERT_TO_MARKDOWN", description = "The operation to perform",
-              enums = "CONVERT_TO_MARKDOWN,CONVERT_TO_HTML,CONVERT_TO_JSON,EXTRACT_TEXT,EXTRACT_STRUCTURED_DATA,SUBMIT_ASYNC_CONVERSION,CHECK_CONVERSION_STATUS,BATCH_CONVERT_TO_MARKDOWN,BATCH_CONVERT_TO_HTML,BATCH_CONVERT_TO_JSON,BATCH_EXTRACT_TEXT,BATCH_EXTRACT_STRUCTURED_DATA,EXTRACT_METADATA")
+              enums = "CONVERT_TO_MARKDOWN,CONVERT_TO_HTML,CONVERT_TO_JSON,EXTRACT_TEXT,EXTRACT_STRUCTURED_DATA,SUBMIT_ASYNC_CONVERSION,CHECK_CONVERSION_STATUS,BATCH_CONVERT_TO_MARKDOWN,BATCH_CONVERT_TO_HTML,BATCH_CONVERT_TO_JSON,BATCH_EXTRACT_TEXT,BATCH_EXTRACT_STRUCTURED_DATA,EXTRACT_METADATA,CHUNK_HYBRID,CHUNK_HIERARCHICAL")
     private DoclingOperations operation = DoclingOperations.CONVERT_TO_MARKDOWN;
 
     @UriParam(label = "advanced")
@@ -86,6 +86,12 @@ public class DoclingConfiguration implements Cloneable {
     private String authenticationToken;
 
     @UriParam(label = "security")
+    @Metadata(description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
+                            + "When set, the token is acquired from the configured identity provider and used as authenticationToken. "
+                            + "Requires camel-oauth on the classpath.")
+    private String oauthProfile;
+
+    @UriParam(label = "security")
     @Metadata(description = "Authentication scheme (BEARER, API_KEY, NONE)", defaultValue = "NONE",
               enums = "BEARER,API_KEY,NONE")
     private AuthenticationScheme authenticationScheme = AuthenticationScheme.NONE;
@@ -107,7 +113,10 @@ public class DoclingConfiguration implements Cloneable {
     private long asyncTimeout = 300000; // 5 minutes
 
     @UriParam(label = "batch")
-    @Metadata(description = "Maximum number of documents to process in a single batch (batch operations only)",
+    @Metadata(description = "Number of documents to submit per sub-batch. Documents are partitioned into sub-batches of this size"
+                            + " and each sub-batch is processed before starting the next one. Within each sub-batch, up to"
+                            + " batchParallelism threads are used concurrently. This controls memory usage and back-pressure"
+                            + " when processing large document sets.",
               defaultValue = "10")
     private int batchSize = 10;
 
@@ -208,6 +217,26 @@ public class DoclingConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     @Metadata(description = "Placeholder string for page breaks in markdown output")
     private String mdPageBreakPlaceholder;
+
+    @UriParam(label = "chunking")
+    @Metadata(description = "Tokenizer model for hybrid chunking (e.g. sentence-transformers/all-MiniLM-L6-v2)")
+    private String chunkingTokenizer;
+
+    @UriParam(label = "chunking")
+    @Metadata(description = "Maximum number of tokens per chunk for hybrid chunking")
+    private Integer chunkingMaxTokens;
+
+    @UriParam(label = "chunking")
+    @Metadata(description = "Whether to merge peer chunks in hybrid chunking", defaultValue = "true")
+    private Boolean chunkingMergePeers;
+
+    @UriParam(label = "chunking")
+    @Metadata(description = "Include raw text in chunk output", defaultValue = "false")
+    private Boolean chunkingIncludeRawText;
+
+    @UriParam(label = "chunking")
+    @Metadata(description = "Use markdown format for tables in chunk output", defaultValue = "false")
+    private Boolean chunkingUseMarkdownTables;
 
     public DoclingOperations getOperation() {
         return operation;
@@ -311,6 +340,14 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setAuthenticationToken(String authenticationToken) {
         this.authenticationToken = authenticationToken;
+    }
+
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
     }
 
     public AuthenticationScheme getAuthenticationScheme() {
@@ -551,6 +588,46 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setMdPageBreakPlaceholder(String mdPageBreakPlaceholder) {
         this.mdPageBreakPlaceholder = mdPageBreakPlaceholder;
+    }
+
+    public String getChunkingTokenizer() {
+        return chunkingTokenizer;
+    }
+
+    public void setChunkingTokenizer(String chunkingTokenizer) {
+        this.chunkingTokenizer = chunkingTokenizer;
+    }
+
+    public Integer getChunkingMaxTokens() {
+        return chunkingMaxTokens;
+    }
+
+    public void setChunkingMaxTokens(Integer chunkingMaxTokens) {
+        this.chunkingMaxTokens = chunkingMaxTokens;
+    }
+
+    public Boolean getChunkingMergePeers() {
+        return chunkingMergePeers;
+    }
+
+    public void setChunkingMergePeers(Boolean chunkingMergePeers) {
+        this.chunkingMergePeers = chunkingMergePeers;
+    }
+
+    public Boolean getChunkingIncludeRawText() {
+        return chunkingIncludeRawText;
+    }
+
+    public void setChunkingIncludeRawText(Boolean chunkingIncludeRawText) {
+        this.chunkingIncludeRawText = chunkingIncludeRawText;
+    }
+
+    public Boolean getChunkingUseMarkdownTables() {
+        return chunkingUseMarkdownTables;
+    }
+
+    public void setChunkingUseMarkdownTables(Boolean chunkingUseMarkdownTables) {
+        this.chunkingUseMarkdownTables = chunkingUseMarkdownTables;
     }
 
     public DoclingConfiguration copy() {

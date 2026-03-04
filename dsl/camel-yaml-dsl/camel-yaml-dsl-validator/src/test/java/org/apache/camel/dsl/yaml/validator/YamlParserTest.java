@@ -34,7 +34,9 @@ public class YamlParserTest {
     @Test
     public void testParseOk() throws Exception {
         Assertions.assertTrue(parser.parse(new File("src/test/resources/foo.yaml")).isEmpty());
+        Assertions.assertTrue(parser.parse(new File("src/test/resources/foo2.yaml")).isEmpty());
         Assertions.assertTrue(parser.parse(new File("src/test/resources/bad.yaml")).isEmpty());
+        Assertions.assertTrue(parser.parse(new File("src/test/resources/bad2.yaml")).isEmpty());
     }
 
     @Test

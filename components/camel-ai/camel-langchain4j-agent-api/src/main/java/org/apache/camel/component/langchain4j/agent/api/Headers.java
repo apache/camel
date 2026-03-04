@@ -35,4 +35,12 @@ public class Headers {
     @Metadata(description = "The media type (MIME type) of the file content. Overrides auto-detection from file extension.",
               javaType = "String")
     public static final String MEDIA_TYPE = "CamelLangChain4jAgentMediaType";
+
+    @Metadata(description = "Comma-separated list of Camel tool tags to exclude from this agent invocation.",
+              javaType = "String")
+    public static final String EXCLUDE_TAGS = "CamelLangChain4jAgentExcludeTags";
+
+    @Metadata(description = "Comma-separated list of MCP server names (keys) to exclude from this agent invocation.",
+              javaType = "String")
+    public static final String EXCLUDE_MCP_SERVERS = "CamelLangChain4jAgentExcludeMcpServers";
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.main.stub;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelException;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
@@ -26,10 +27,19 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.KameletDefinition;
+import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
+import org.apache.camel.model.TransformDataTypeDefinition;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.processor.DisabledProcessor;
 import org.apache.camel.reifier.ProcessorReifier;
+import org.apache.camel.reifier.errorhandler.DeadLetterChannelReifier;
+import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerRefReifier;
+import org.apache.camel.reifier.errorhandler.NoErrorHandlerReifier;
 import org.apache.camel.reifier.language.ExpressionReifier;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.support.PluginHelper;
@@ -125,6 +135,68 @@ public class StubEipReifier {
                 }
                 return fac.createProcessor(camelContext, definitionName, args);
             }
+        });
+
+        // stub programming language scripts
+        ProcessorReifier.registerReifier(ScriptDefinition.class,
+                (route, processorDefinition) -> {
+                    if (processorDefinition instanceof ScriptDefinition sd) {
+                        return new ProcessorReifier<>(route, sd) {
+                            @Override
+                            public Processor createProcessor() throws Exception {
+                                return new DisabledProcessor();
+                            }
+                        };
+                    }
+                    return null;
+                });
+
+        ProcessorReifier.registerReifier(TransformDataTypeDefinition.class,
+                (route, processorDefinition) -> {
+                    if (processorDefinition instanceof TransformDataTypeDefinition td) {
+                        return new ProcessorReifier<>(route, td) {
+                            @Override
+                            public Processor createProcessor() throws Exception {
+                                return new DisabledProcessor();
+                            }
+                        };
+                    }
+                    return null;
+                });
+
+        // error handlers may refer to custom exceptions which we don't want to load or require being on classpath
+        ErrorHandlerRefReifier.registerReifier(DefaultErrorHandlerDefinition.class, (route, factory) -> {
+            if (factory instanceof DefaultErrorHandlerDefinition dd) {
+                return new DefaultErrorHandlerReifier(route, dd) {
+                    @Override
+                    protected Class<? extends Throwable> resolveExceptionClass(String name) throws ClassNotFoundException {
+                        return CamelException.class;
+                    }
+                };
+            }
+            return null;
+        });
+        ErrorHandlerRefReifier.registerReifier(DeadLetterChannelDefinition.class, (route, factory) -> {
+            if (factory instanceof DeadLetterChannelDefinition dd) {
+                return new DeadLetterChannelReifier(route, dd) {
+                    @Override
+                    protected Class<? extends Throwable> resolveExceptionClass(String name) throws ClassNotFoundException {
+                        return CamelException.class;
+                    }
+                };
+            }
+            return null;
+        });
+        ErrorHandlerRefReifier.registerReifier(NoErrorHandlerDefinition.class, (route, factory) -> {
+            if (factory instanceof NoErrorHandlerDefinition nd) {
+                return new NoErrorHandlerReifier(route, nd) {
+                    @Override
+                    protected Class<? extends Throwable> resolveExceptionClass(String name) throws ClassNotFoundException {
+                        return CamelException.class;
+                    }
+                };
+            }
+            return null;
         });
     }
 

@@ -30,12 +30,16 @@ import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 import io.nats.client.PullSubscribeOptions;
 import io.nats.client.PushSubscribeOptions;
+import io.nats.client.api.AckPolicy;
 import io.nats.client.api.ConsumerConfiguration;
 import io.nats.client.api.StreamConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.trait.message.MessageTrait;
+import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,7 +161,7 @@ public class NatsConsumer extends DefaultConsumer {
             String durableName = this.configuration.getDurableName();
 
             String subscriptionType = this.configuration.isPullSubscription() ? "PULL" : "PUSH";
-            LOG.debug("Setting up JetStream {}/{} consumer for stream: '{}', subject: {}",
+            LOG.debug("Setting up JetStream {}/{} consumer for stream: '{}', topic: {}",
                     subscriptionType,
                     ObjectHelper.isNotEmpty(durableName)
                             ? String.format("DURABLE, durableName: '%s'", durableName) : "EPHEMERAL",
@@ -184,6 +188,15 @@ public class NatsConsumer extends DefaultConsumer {
                 if (durableName != null) {
                     ccBuilder.durable(durableName + "-durable");
                 }
+                if (configuration.getAckPolicy() != null) {
+                    ccBuilder.ackPolicy(configuration.getAckPolicy());
+                }
+                if (configuration.getAckWait() > 0) {
+                    ccBuilder.ackWait(configuration.getAckWait());
+                }
+                if (configuration.getMaxDeliver() > 0) {
+                    ccBuilder.maxDeliver(configuration.getMaxDeliver());
+                }
                 cc = ccBuilder.build();
             }
 
@@ -206,12 +219,18 @@ public class NatsConsumer extends DefaultConsumer {
                         .deliverGroup(queueName)
                         .build();
 
+                boolean autoAck = false; // ACK is handled by Camel
+
+                LOG.info("Subscribing topic: {} queue:{} using AckPolicy: {} (ackWait:{} nackWait:{})",
+                        configuration.getTopic(), queueName, configuration.getAckPolicy(), configuration.getAckWait(),
+                        configuration.getNackWait());
+
                 NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
                         NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
                         queueName,
                         dispatcher,
                         messageHandler,
-                        true,
+                        autoAck,
                         pushOptions);
             }
 
@@ -219,7 +238,6 @@ public class NatsConsumer extends DefaultConsumer {
         }
 
         private void setupStandardNatsConsumer(String topic, String queueName, Integer maxMessages) {
-            LOG.debug("Setting up standard NATS consumer for subject: {}", topic);
             NatsConsumer.this.dispatcher = connection.createDispatcher(new CamelNatsMessageHandler());
             if (ObjectHelper.isNotEmpty(queueName)) {
                 NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher.subscribe(topic, queueName);
@@ -236,10 +254,36 @@ public class NatsConsumer extends DefaultConsumer {
 
         class CamelNatsMessageHandler implements MessageHandler {
 
+            final boolean ackPolicyNone = configuration.getAckPolicy() == AckPolicy.None;
+
             @Override
             public void onMessage(Message msg) throws InterruptedException {
                 LOG.debug("Received Message: {}", msg);
                 final Exchange exchange = NatsConsumer.this.createExchange(false);
+
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onComplete(Exchange exchange) {
+                        LOG.debug("ACK");
+                        msg.ack();
+                    }
+
+                    @Override
+                    public void onFailure(Exchange exchange) {
+                        if (ackPolicyNone) {
+                            // ACK policy is none which means that we should auto ACK even if the message processed failed in Camel
+                            LOG.debug("ACK");
+                            msg.ack();
+                        } else {
+                            LOG.debug("NACK (delay:{})", configuration.getNackWait());
+                            if (configuration.getNackWait() <= 0) {
+                                msg.nak();
+                            } else {
+                                msg.nakWithDelay(configuration.getNackWait());
+                            }
+                        }
+                    }
+                });
                 try {
                     exchange.getIn().setBody(msg.getData());
                     exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
@@ -269,6 +313,11 @@ public class NatsConsumer extends DefaultConsumer {
                             }
                         });
                     }
+
+                    // redelivery information
+                    exchange.getMessage().setPayloadForTrait(MessageTrait.REDELIVERY,
+                            evalRedeliveryMessageTrait(msg, exchange));
+
                     NatsConsumer.this.processor.process(exchange);
 
                     // is there a reply?
@@ -300,6 +349,19 @@ public class NatsConsumer extends DefaultConsumer {
             }
             throw jsae;
         }
+    }
+
+    private static RedeliveryTraitPayload evalRedeliveryMessageTrait(Message msg, Exchange exchange) {
+        long counter = 1;
+        if (msg.isJetStream()) {
+            counter = msg.metaData().deliveredCount();
+        }
+        exchange.getIn().setHeader(NatsConstants.NATS_DELIVERY_COUNTER, counter);
+
+        if (counter > 1) {
+            return RedeliveryTraitPayload.IS_REDELIVERY;
+        }
+        return RedeliveryTraitPayload.NON_REDELIVERY;
     }
 
 }

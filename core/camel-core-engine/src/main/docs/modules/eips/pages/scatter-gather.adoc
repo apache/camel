@@ -38,20 +38,48 @@ together as the Scatter-Gather EIP solution.
 In the following example, we want to call two HTTP services and gather their responses into a single message,
 as the response:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("servlet:cheese")
+    .recipientList(constant("http:server1,http:server2")).aggregationStrategy("cheeseAggregator")
+    .to("log:response");
+----
+
+XML::
++
 [source,xml]
 ----
-<routes>
-
-  <route>
+<route>
     <from uri="servlet:cheese"/>
-    <recipientList aggregationStrategy="cheeseAggregator">
-      <constant>http:server1,http:server2</header>
-    </recipientList>
+        <recipientList aggregationStrategy="cheeseAggregator">
+            <constant>http:server1,http:server2</constant>
+        </recipientList>
     <to uri="log:response"/>
-  </route>
-
-</routes>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: servlet:cheese
+      steps:
+        - recipientList:
+            aggregationStrategy: cheeseAggregator
+            expression:
+              constant:
+                expression: "http:server1,http:server2"
+        - to:
+            uri: log:response
+----
+====
 
 This is a basic example that only uses basic functionality of the xref:recipientList-eip.adoc[Recipient List].
 For more details on how the aggregation works, see the xref:recipientList-eip.adoc[Recipient List] documentation.
@@ -65,10 +93,26 @@ and an xref:aggregate-eip.adoc[Aggregate] to pick the best quote out of all the 
 
 The routes for this are defined as:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .recipientList(header("listOfVendors"));
+
+from("seda:quoteAggregator")
+     .aggregate(header("quoteRequestId"))
+        .aggregationStrategy("beerAggregator")
+        .completionTimeout(1000)
+        .to("direct:bestBeer")
+    .end();
+----
+
 [source,xml]
 ----
-<routes>
-
   <route>
     <from uri="direct:start"/>
     <recipientList>
@@ -85,9 +129,35 @@ The routes for this are defined as:
       <to uri="direct:bestBeer"/>
     </aggregate>
   </route>
-
-</routes>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - recipientList:
+            expression:
+              header:
+                expression: listOfVendors
+- route:
+    from:
+      uri: seda:quoteAggregator
+      steps:
+        - aggregate:
+            aggregationStrategy: beerAggregator
+            completionTimeout: 1000
+            correlationExpression:
+              header:
+                expression: quoteRequestId
+            steps:
+              - to:
+                  uri: direct:bestBeer
+----
+====
 
 So in the first route, you see that the xref:recipientList-eip.adoc[Recipient List] is looking at the
 listOfVendors header for the list of recipients. So, we need to send a message like:
@@ -127,7 +197,7 @@ public class MyVendor {
 }
 ----
 
-And are loaded up in XML like this:
+And are loaded up in Spring XML like this:
 
 [source,xml]
 ----

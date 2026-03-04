@@ -34,6 +34,10 @@ public interface NatsConstants {
     String NATS_STATUS_CODE = "CamelNatsStatusCode";
     @Metadata(label = "consumer", description = "Status message error message", javaType = "String", important = true)
     String NATS_STATUS_ERROR = "CamelNatsStatusError";
+    @Metadata(label = "consumer",
+              description = "Number of times this message has been delivered (1 = first, > 1 then message has been redelivered)",
+              javaType = "long", important = true)
+    String NATS_DELIVERY_COUNTER = "CamelNatsDeliveryCounter";
 
     String NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME = "CamelNatsRequestTimeoutExecutor";
 }

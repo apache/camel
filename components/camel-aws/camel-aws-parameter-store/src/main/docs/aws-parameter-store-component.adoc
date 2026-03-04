@@ -4,7 +4,7 @@
 :artifactid: camel-aws-parameter-store
 :description: Manage parameters using AWS Systems Manager (SSM) Parameter Store.
 :since: 4.17
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

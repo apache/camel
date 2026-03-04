@@ -17,31 +17,47 @@
 package org.apache.camel.component.micrometer.json;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.FunctionCounter;
+import io.micrometer.core.instrument.FunctionTimer;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.APP_INFO_METER_NAME;
 
 public class AbstractMicrometerService extends ServiceSupport {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractMicrometerService.class);
+
     private CamelContext camelContext;
     private MeterRegistry meterRegistry;
     private boolean prettyPrint = true;
     private boolean skipCamelInfo = false;
+    private boolean logMetricsOnShutdown = false;
+    private String logMetricsOnShutdownFilters[];
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private Iterable<Tag> matchingTags = Tags.empty();
     private Predicate<String> matchingNames;
@@ -78,6 +94,22 @@ public class AbstractMicrometerService extends ServiceSupport {
 
     public void setSkipCamelInfo(boolean skipCamelInfo) {
         this.skipCamelInfo = skipCamelInfo;
+    }
+
+    public boolean isLogMetricsOnShutdown() {
+        return logMetricsOnShutdown;
+    }
+
+    public void setLogMetricsOnShutdown(boolean logMetricsOnShutdown) {
+        this.logMetricsOnShutdown = logMetricsOnShutdown;
+    }
+
+    public String[] getLogMetricsOnShutdownFilters() {
+        return logMetricsOnShutdownFilters;
+    }
+
+    public void setLogMetricsOnShutdownFilters(String... logMetricsOnShutdownFilters) {
+        this.logMetricsOnShutdownFilters = logMetricsOnShutdownFilters;
     }
 
     public TimeUnit getDurationUnit() {
@@ -154,7 +186,78 @@ public class AbstractMicrometerService extends ServiceSupport {
 
     @Override
     protected void doStop() {
-        // noop
+        if (logMetricsOnShutdown) {
+            LOG.warn("Micrometer service is stopping, here a list of metrics collected so far.");
+            // Default: all metrics
+            logMetricsOnShutdown(logMetricsOnShutdownFilters == null ? new String[] { "*" } : logMetricsOnShutdownFilters);
+        }
+    }
+
+    static boolean matchesFilter(String metricName, String... filters) {
+        for (String filter : filters) {
+            if (filter.contains("*")) {
+                if (metricName.contains(filter.replace("*", ""))) {
+                    return true;
+                }
+            } else if (filter.equals(metricName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static Map<String, Object> convertMeterToMap(Meter meter) {
+        Map<String, Object> logEntry = new HashMap<>();
+        logEntry.put("name", meter.getId().getName());
+        logEntry.put("tags", meter.getId().getTags().stream()
+                .collect(Collectors.toMap(Tag::getKey, Tag::getValue)));
+
+        if (meter instanceof Gauge g) {
+            logEntry.put("type", "gauge");
+            logEntry.put("value", g.value());
+        } else if (meter instanceof Counter c) {
+            logEntry.put("type", "counter");
+            logEntry.put("value", c.count());
+        } else if (meter instanceof Timer t) {
+            logEntry.put("type", "timer");
+            logEntry.put("totalTimeMs", t.totalTime(TimeUnit.MILLISECONDS));
+            logEntry.put("count", t.count());
+            logEntry.put("maxTimeMs", t.max(TimeUnit.MILLISECONDS));
+        } else if (meter instanceof DistributionSummary ds) {
+            logEntry.put("type", "summary");
+            logEntry.put("total", ds.totalAmount());
+            logEntry.put("count", ds.count());
+            logEntry.put("max", ds.max());
+        } else if (meter instanceof FunctionCounter fc) {
+            logEntry.put("type", "functionCounter");
+            logEntry.put("value", fc.count());
+        } else if (meter instanceof FunctionTimer ft) {
+            logEntry.put("type", "functionTimer");
+            logEntry.put("count", ft.count());
+            logEntry.put("totalTimeMs", ft.totalTime(TimeUnit.MILLISECONDS));
+            logEntry.put("meanMs", ft.mean(TimeUnit.MILLISECONDS));
+        } else {
+            logEntry.put("type", meter.getId().getType().name());
+        }
+
+        return logEntry;
+    }
+
+    void logMetricsOnShutdown(String... filters) {
+        meterRegistry.getMeters().stream()
+                .filter(m -> AbstractMicrometerService.matchesFilter(m.getId().getName(), filters))
+                .map(AbstractMicrometerService::convertMeterToMap)
+                .forEach(logEntry -> {
+                    try {
+                        // We put on warn level to make sure it is printed even if the log is
+                        // at higher levels. Important: we also include a start and end tag to make sure the
+                        // scraper can more easily identify the metric content.
+                        String metric = "#METRIC-START#" + mapper.writeValueAsString(logEntry) + "#METRIC-END#";
+                        LOG.warn(metric);
+                    } catch (Exception e) {
+                        LOG.error("Error logging metric " + logEntry.get("name"), e);
+                    }
+                });
     }
 
     // This method does a best effort attempt to recover information about versioning of the runtime.

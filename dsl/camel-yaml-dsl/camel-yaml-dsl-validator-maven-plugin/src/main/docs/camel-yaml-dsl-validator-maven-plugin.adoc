@@ -66,8 +66,8 @@ the `main-yaml` from Apache Camel you can run
 
 [source,bash]
 ----
-$cd main-yaml
-$mvn org.apache.camel:camel-yaml-dsl-validator-maven-plugin:4.18.0:validate
+cd main-yaml
+mvn org.apache.camel:camel-yaml-dsl-validator-maven-plugin:4.18.0:validate
 ----
 
 Which for example outputs (with a forced error)
@@ -103,7 +103,7 @@ For example to excludes a specific file:
 
 [source,bash]
 ----
-$mvn camel-yaml-dsl-validator:validate -Dcamel.excludes=cheese.yaml
+mvn camel-yaml-dsl-validator:validate -Dcamel.excludes=cheese.yaml
 ----
 
 Notice that you must prefix the `-D` command argument with `camel.`, eg `camel.excludes` as the option name.
@@ -113,7 +113,8 @@ Notice that you must prefix the `-D` command argument with `camel.`, eg `camel.e
 If you have a Maven project then you can run the plugin to validate the endpoints in the unit test source code as well.
 You can pass in the options using `-D` style as shown:
 
+[source,bash]
 ----
-$cd myproject
-$mvn org.apache.camel:camel-yaml-dsl-validator:4.18.0:validate -Dcamel.includeTest=true
+cd myproject
+mvn org.apache.camel:camel-yaml-dsl-validator:4.18.0:validate -Dcamel.includeTest=true
 ----

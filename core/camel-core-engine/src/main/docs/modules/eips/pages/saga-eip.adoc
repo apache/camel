@@ -256,8 +256,7 @@ XML::
 ----
 <route>
     <from uri="direct:newOrder"/>
-    <saga propagation="MANDATORY">
-        <compensation uri="direct:cancelOrder"/>
+    <saga propagation="MANDATORY" compensation="direct:cancelOrder">
         <transform>
             <header>Long-Running-Action</header>
         </transform>
@@ -277,8 +276,7 @@ YAML::
       steps:
         - saga:
             propagation: MANDATORY
-            compensation:
-              uri: direct:cancelOrder
+            compensation: direct:cancelOrder
             steps:
               - transform:
                   expression:
@@ -387,11 +385,11 @@ Java::
 // action
 from("direct:reserveCredit")
   .saga()
-  .propagation(SagaPropagation.MANDATORY)
-  .compensation("direct:refundCredit")
-    .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
-    .bean("creditService", "reserveCredit")
-    .log("Credit ${header.amount} reserved in action ${body}");
+    .propagation(SagaPropagation.MANDATORY)
+    .compensation("direct:refundCredit")
+  .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
+  .bean("creditService", "reserveCredit")
+  .log("Credit ${header.amount} reserved in action ${body}");
 
 // compensation
 from("direct:refundCredit")
@@ -406,14 +404,12 @@ XML::
 ----
 <route>
     <from uri="direct:reserveCredit"/>
-    <saga propagation="MANDATORY">
-        <compensation uri="direct:refundCredit"/>
-        <transform>
-            <header>Long-Running-Action</header>
-        </transform>
-        <bean ref="creditService" method="reserveCredit"/>
-        <log message="Credit ${header.amount} reserved in action ${body}"/>
-    </saga>
+    <saga propagation="MANDATORY" compensation="direct:refundCredit"/>
+    <transform>
+        <header>Long-Running-Action</header>
+    </transform>
+    <bean ref="creditService" method="reserveCredit"/>
+    <log message="Credit ${header.amount} reserved in action ${body}"/>
 </route>
 
 <route>
@@ -436,18 +432,16 @@ YAML::
       steps:
         - saga:
             propagation: MANDATORY
-            compensation:
-              uri: direct:refundCredit
-            steps:
-              - transform:
-                  expression:
-                    header:
-                      expression: Long-Running-Action
-              - bean:
-                  ref: creditService
-                  method: reserveCredit
-              - log:
-                  message: "Credit ${header.amount} reserved in action ${body}"
+            compensation: direct:refundCredit
+        - transform:
+            expression:
+              header:
+                expression: Long-Running-Action
+        - bean:
+            ref: creditService
+            method: reserveCredit
+        - log:
+            message: "Credit ${header.amount} reserved in action ${body}"
 - route:
     from:
       uri: direct:refundCredit
@@ -493,12 +487,12 @@ The compensation route is the same as in the previous example above
 ----
 from("direct:newOrder")
   .saga()
-  .propagation(SagaPropagation.MANDATORY)
-  .compensation("direct:cancelOrder")
-  .completion("direct:completeOrder") // completion endpoint
-    .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
-    .bean("orderManagerService", "newOrder")
-    .log("Order ${body} created");
+    .propagation(SagaPropagation.MANDATORY)
+    .compensation("direct:cancelOrder")
+    .completion("direct:completeOrder") // completion endpoint
+  .transform().header(Exchange.SAGA_LONG_RUNNING_ACTION)
+  .bean("orderManagerService", "newOrder")
+  .log("Order ${body} created");
 
 // direct:cancelOrder is the same as in the previous example
 
@@ -518,15 +512,12 @@ The compensation route is the same as in the previous example above
 ----
 <route>
     <from uri="direct:newOrder"/>
-    <saga propagation="MANDATORY">
-        <completion uri="direct:completeOrder"/>
-        <compensation uri="direct:cancelOrder"/>
-        <transform>
-            <header>Long-Running-Action</header>
-        </transform>
-        <bean ref="orderManagerService" method="newOrder"/>
-        <log message="Order ${body} created"/>
-    </saga>
+    <saga propagation="MANDATORY" completion="direct:completeOrder" compensation="direct:cancelOrder"/>
+    <transform>
+        <header>Long-Running-Action</header>
+    </transform>
+    <bean ref="orderManagerService" method="newOrder"/>
+    <log message="Order ${body} created"/>
 </route>
 
 <route>
@@ -552,20 +543,17 @@ The compensation route is the same as in the previous example above
       steps:
         - saga:
             propagation: MANDATORY
-            compensation:
-              uri: direct:cancelOrder
-            completion:
-              uri: direct:completeOrder
-            steps:
-              - transform:
-                  expression:
-                    header:
-                      expression: Long-Running-Action
-              - bean:
-                  ref: orderManagerService
-                  method: newOrder
-              - log:
-                  message: "Order ${body} created"
+            compensation: direct:cancelOrder
+            completion: direct:completeOrder
+        - transform:
+            expression:
+              header:
+                expression: Long-Running-Action
+        - bean:
+            ref: orderManagerService
+            method: newOrder
+        - log:
+            message: "Order ${body} created"
 - route:
     from:
       uri: direct:completeOrder
@@ -617,11 +605,11 @@ from("direct:reserveCredit")
 // delegate action
 from("direct:creditReservation")
   .saga()
-  .propagation(SagaPropagation.SUPPORTS)
-  .option("CreditId", body()) // mark the current body as needed in the compensating action
-  .compensation("direct:creditRefund")
-    .bean("creditService", "reserveCredit")
-    .log("Credit ${header.amount} reserved. Custom Id used is ${body}");
+    .propagation(SagaPropagation.SUPPORTS)
+    .option("CreditId", body()) // mark the current body as needed in the compensating action
+    .compensation("direct:creditRefund")
+  .bean("creditService", "reserveCredit")
+  .log("Credit ${header.amount} reserved. Custom Id used is ${body}");
 
 // called only if the saga is canceled
 from("direct:creditRefund")
@@ -644,14 +632,13 @@ Notice the listing below is not using the `Long-Running-Action` header at all.
 
 <route>
     <from uri="direct:creditReservation"/>
-    <saga propagation="SUPPORTS">
+    <saga propagation="SUPPORTS" compensation="direct:creditRefund">
         <option key="CreditId">
             <simple>${body}</simple>
         </option>
-        <compensation uri="direct:creditRefund"/>
-        <bean ref="creditService" method="reserveCredit"/>
-        <log message="Credit ${header.amount} reserved. Custom Id used is ${body}"/>
     </saga>
+    <bean ref="creditService" method="reserveCredit"/>
+    <log message="Credit ${header.amount} reserved. Custom Id used is ${body}"/>
 </route>
 
 <route>
@@ -690,14 +677,12 @@ Notice the listing below is not using the `Long-Running-Action` header at all.
               expression:
                 simple:
                   expression: "${body}"
-            compensation:
-              uri: direct:creditRefund
-            steps:
-              - bean:
-                  ref: creditService
-                  method: reserveCredit
-              - log:
-                  message: "Credit ${header.amount} reserved. Custom Id used is ${body}"
+            compensation: direct:creditRefund
+        - bean:
+            ref: creditService
+            method: reserveCredit
+        - log:
+            message: "Credit ${header.amount} reserved. Custom Id used is ${body}"
 - route:
     from:
       uri: direct:creditRefund
@@ -742,12 +727,12 @@ Java::
 ----
 from("direct:newOrder")
   .saga()
-  .timeout(1, TimeUnit.MINUTES) // newOrder requires that the saga is completed within 1 minute
-  .propagation(SagaPropagation.MANDATORY)
-  .compensation("direct:cancelOrder")
-  .completion("direct:completeOrder")
+    .timeout(1, TimeUnit.MINUTES) // newOrder requires that the saga is completed within 1 minute
+    .propagation(SagaPropagation.MANDATORY)
+    .compensation("direct:cancelOrder")
+    .completion("direct:completeOrder")
     // ...
-    .log("Order ${body} created");
+  .log("Order ${body} created");
 ----
 
 XML::
@@ -756,11 +741,8 @@ XML::
 ----
 <route>
     <from uri="direct:newOrder"/>
-    <saga propagation="MANDATORY" timeout="1m">
-        <completion uri="direct:completeOrder"/>
-        <compensation uri="direct:cancelOrder"/>
-        <log message="Order ${body} created"/>
-    </saga>
+    <saga propagation="MANDATORY" timeout="1m" completion="direct:completeOrder" compensation="direct:cancelOrder"/>
+    <log message="Order ${body} created"/>
 </route>
 ----
 
@@ -775,13 +757,10 @@ YAML::
         - saga:
             propagation: MANDATORY
             timeout: 1m
-            compensation:
-              uri: direct:cancelOrder
-            completion:
-              uri: direct:completeOrder
-            steps:
-              - log:
-                  message: "Order ${body} created"
+            compensation: direct:cancelOrder
+            completion: direct:completeOrder
+        - log:
+            message: "Order ${body} created"
 ----
 ====
 
@@ -803,10 +782,9 @@ Java::
 [source,java]
 ----
 from("direct:buy")
-  .saga()
-  .timeout(5, TimeUnit.MINUTES) // timeout at saga level
-    .to("direct:newOrder")
-    .to("direct:reserveCredit");
+  .saga().timeout(5, TimeUnit.MINUTES) // timeout at saga level
+  .to("direct:newOrder")
+  .to("direct:reserveCredit");
 ----
 
 XML::
@@ -815,10 +793,9 @@ XML::
 ----
 <route>
     <from uri="direct:buy"/>
-    <saga timeout="5m">
-        <to uri="direct:newOrder"/>
-        <to uri="direct:reserveCredit"/>
-    </saga>
+    <saga timeout="5m"/>
+    <to uri="direct:newOrder"/>
+    <to uri="direct:reserveCredit"/>
 </route>
 ----
 
@@ -831,12 +808,11 @@ YAML::
       uri: direct:buy
       steps:
         - saga:
-            timeout: 5m
-            steps:
-              - to:
-                  uri: direct:newOrder
-              - to:
-                  uri: direct:reserveCredit
+            timeout: "5m"
+        - to:
+            uri: direct:newOrder
+        - to:
+            uri: direct:reserveCredit
 ----
 ====
 
@@ -876,22 +852,22 @@ Java::
 ----
 from("direct:mysaga")
   .saga()
-  .completionMode(SagaCompletionMode.MANUAL)
-  .completion("direct:finalize")
-  .timeout(2, TimeUnit.HOURS)
-    .to("seda:newOrder")
-    .to("seda:reserveCredit");
+    .completionMode(SagaCompletionMode.MANUAL)
+    .completion("direct:finalize")
+    .timeout(2, TimeUnit.HOURS)
+  .to("seda:newOrder")
+  .to("seda:reserveCredit");
 
 // Put here asynchronous processing for seda:newOrder and seda:reserveCredit
 // They will send asynchronous callbacks to seda:operationCompleted
 
 from("seda:operationCompleted") // an asynchronous callback
   .saga()
-  .propagation(SagaPropagation.MANDATORY)
-    .bean("controlService", "actionExecuted")
-    .filter(simple("${body} == 'ok'"))
-        .to("saga:complete") // complete the current saga manually (saga component)
-    .end();
+    .propagation(SagaPropagation.MANDATORY)
+  .bean("controlService", "actionExecuted")
+  .filter(simple("${body} == 'ok'"))
+      .to("saga:complete") // complete the current saga manually (saga component)
+  .end();
 
 // You can put here the direct:finalize endpoint to execute final actions
 ----
@@ -902,22 +878,19 @@ XML::
 ----
 <route>
     <from uri="direct:mysaga"/>
-    <saga completionMode="MANUAL" timeout="2h0m0s">
-        <completion uri="direct:finalize"/>
-        <to uri="seda:newOrder"/>
-        <to uri="seda:reserveCredit"/>
-    </saga>
+    <saga completionMode="MANUAL" timeout="2h0m0s" completion="direct:finalize"/>
+    <to uri="seda:newOrder"/>
+    <to uri="seda:reserveCredit"/>
 </route>
 
 <route>
     <from uri="seda:operationCompleted"/>
-    <saga propagation="MANDATORY">
-        <bean ref="controlService" method="actionExecuted"/>
-        <filter>
-            <simple>${body} == 'ok'</simple>
-            <to uri="saga:complete"/>
-        </filter>
-    </saga>
+    <saga propagation="MANDATORY"/>
+    <bean ref="controlService" method="actionExecuted"/>
+    <filter>
+        <simple>${body} == 'ok'</simple>
+        <to uri="saga:complete"/>
+    </filter>
 </route>
 ----
 
@@ -932,30 +905,27 @@ YAML::
         - saga:
             completionMode: MANUAL
             timeout: 2h
-            completion:
-              uri: direct:finalize
-            steps:
-              - to:
-                  uri: seda:newOrder
-              - to:
-                  uri: seda:reserveCredit
+            completion: direct:finalize
+        - to:
+            uri: seda:newOrder
+        - to:
+            uri: seda:reserveCredit
 - route:
     from:
       uri: seda:operationCompleted
       steps:
         - saga:
             propagation: MANDATORY
+        - bean:
+            ref: controlService
+            method: actionExecuted
+        - filter:
+            expression:
+              simple:
+                expression: "${body} == 'ok'"
             steps:
-              - bean:
-                  ref: controlService
-                  method: actionExecuted
-              - filter:
-                  expression:
-                    simple:
-                      expression: "${body} == 'ok'"
-                  steps:
-                    - to:
-                        uri: saga:complete
+              - to:
+                  uri: saga:complete
 ----
 ====
 

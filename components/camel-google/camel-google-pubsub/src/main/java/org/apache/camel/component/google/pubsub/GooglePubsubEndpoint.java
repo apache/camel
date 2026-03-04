@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.component.google.pubsub.serializer.DefaultGooglePubsubSerializer;
 import org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer;
 import org.apache.camel.spi.*;
@@ -42,7 +43,8 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub",
              syntax = "google-pubsub:projectId:destinationName", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = GooglePubsubConstants.class)
-public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointServiceLocation, HeaderFilterStrategyAware {
+public class GooglePubsubEndpoint extends DefaultEndpoint
+        implements EndpointServiceLocation, HeaderFilterStrategyAware, GoogleCommonConfiguration {
 
     private Logger log;
 
@@ -174,6 +176,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
         this.loggerId = loggerId;
     }
 
+    @Override
     public boolean isAuthenticate() {
         return authenticate;
     }
@@ -182,6 +185,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
         this.authenticate = authenticate;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }

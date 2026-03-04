@@ -32,18 +32,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import ai.docling.core.DoclingDocument;
 import ai.docling.core.DoclingDocument.DocumentOrigin;
 import ai.docling.serve.api.DoclingServeApi;
+import ai.docling.serve.api.chunk.request.HierarchicalChunkDocumentRequest;
+import ai.docling.serve.api.chunk.request.HybridChunkDocumentRequest;
+import ai.docling.serve.api.chunk.request.options.HierarchicalChunkerOptions;
+import ai.docling.serve.api.chunk.request.options.HybridChunkerOptions;
+import ai.docling.serve.api.chunk.response.ChunkDocumentResponse;
 import ai.docling.serve.api.convert.request.ConvertDocumentRequest;
 import ai.docling.serve.api.convert.request.options.ConvertDocumentOptions;
 import ai.docling.serve.api.convert.request.options.ImageRefMode;
@@ -66,6 +73,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.OAuthHelper;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +89,8 @@ public class DoclingProducer extends DefaultProducer {
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
     private ObjectMapper objectMapper;
+    private final Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks = new ConcurrentHashMap<>();
+    private final AtomicLong taskIdCounter = new AtomicLong();
 
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
@@ -89,6 +101,7 @@ public class DoclingProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        resolveOAuthToken();
         if (configuration.isUseDoclingServe()) {
             String baseUrl = configuration.getDoclingServeUrl();
             if (baseUrl.endsWith("/")) {
@@ -121,9 +134,23 @@ public class DoclingProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        // Cancel any pending async tasks
+        pendingAsyncTasks.forEach((id, future) -> future.cancel(true));
+        pendingAsyncTasks.clear();
         if (doclingServeApi != null) {
             doclingServeApi = null;
             LOG.info("DoclingServeApi reference cleared");
+        }
+    }
+
+    private void resolveOAuthToken() throws Exception {
+        if (ObjectHelper.isEmpty(configuration.getOauthProfile())) {
+            return;
+        }
+        String token = OAuthHelper.resolveOAuthToken(getEndpoint().getCamelContext(), configuration.getOauthProfile());
+        configuration.setAuthenticationToken(token);
+        if (configuration.getAuthenticationScheme() == AuthenticationScheme.NONE) {
+            configuration.setAuthenticationScheme(AuthenticationScheme.BEARER);
         }
     }
 
@@ -172,6 +199,12 @@ public class DoclingProducer extends DefaultProducer {
                 break;
             case EXTRACT_METADATA:
                 processExtractMetadata(exchange);
+                break;
+            case CHUNK_HYBRID:
+                processChunkHybrid(exchange);
+                break;
+            case CHUNK_HIERARCHICAL:
+                processChunkHierarchical(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
@@ -261,10 +294,12 @@ public class DoclingProducer extends DefaultProducer {
 
         // Start async conversion
         ConvertDocumentRequest request = buildConvertRequest(inputPath, outputFormat);
-        CompletionStage<ConvertDocumentResponse> asyncResult = doclingServeApi.convertSourceAsync(request);
+        CompletableFuture<ConvertDocumentResponse> asyncResult
+                = doclingServeApi.convertSourceAsync(request).toCompletableFuture();
 
-        // Generate a task ID for tracking
-        String taskId = "task-" + System.currentTimeMillis() + "-" + inputPath.hashCode();
+        // Generate a unique task ID and store the future for later status checks
+        String taskId = "task-" + taskIdCounter.incrementAndGet();
+        pendingAsyncTasks.put(taskId, asyncResult);
         LOG.debug("Started async conversion with task ID: {}", taskId);
 
         // Set task ID in body and header
@@ -319,6 +354,13 @@ public class DoclingProducer extends DefaultProducer {
     private ConversionStatus checkConversionStatusInternal(String taskId) {
         LOG.debug("Checking status for task: {}", taskId);
 
+        // Check the local pending tasks map first (tasks submitted via SUBMIT_ASYNC_CONVERSION)
+        CompletableFuture<ConvertDocumentResponse> future = pendingAsyncTasks.get(taskId);
+        if (future != null) {
+            return checkLocalAsyncTask(taskId, future);
+        }
+
+        // Fall back to server-side task polling
         try {
             TaskStatusPollRequest pollRequest = TaskStatusPollRequest.builder()
                     .taskId(taskId)
@@ -348,8 +390,37 @@ public class DoclingProducer extends DefaultProducer {
             return new ConversionStatus(taskId, status);
         } catch (Exception e) {
             LOG.warn("Failed to check task status for {}: {}", taskId, e.getMessage());
-            // If the task ID doesn't exist on the server, return a completed status as a fallback
-            return new ConversionStatus(taskId, ConversionStatus.Status.COMPLETED);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+            return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, errorMsg, null);
+        }
+    }
+
+    private ConversionStatus checkLocalAsyncTask(String taskId, CompletableFuture<ConvertDocumentResponse> future) {
+        if (!future.isDone()) {
+            return new ConversionStatus(taskId, ConversionStatus.Status.IN_PROGRESS);
+        }
+
+        if (future.isCompletedExceptionally() || future.isCancelled()) {
+            // Remove completed task from map
+            pendingAsyncTasks.remove(taskId);
+            String errorMessage;
+            try {
+                future.join();
+                errorMessage = "Unknown error";
+            } catch (Exception e) {
+                errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            }
+            return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, errorMessage, null);
+        }
+
+        // Completed successfully — extract the result and remove from map
+        pendingAsyncTasks.remove(taskId);
+        try {
+            ConvertDocumentResponse response = future.join();
+            String result = extractConvertedContent(response, configuration.getOutputFormat());
+            return new ConversionStatus(taskId, ConversionStatus.Status.COMPLETED, result, null, null);
+        } catch (Exception e) {
+            return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, e.getMessage(), null);
         }
     }
 
@@ -376,6 +447,130 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         LOG.debug("Metadata extraction completed for: {}", inputPath);
+    }
+
+    private void processChunkHybrid(Exchange exchange) throws Exception {
+        LOG.debug("DoclingProducer chunking with HybridChunker");
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "CHUNK_HYBRID operation requires docling-serve mode (useDoclingServe=true)");
+        }
+
+        String inputPath = getInputPath(exchange);
+
+        // Build HybridChunkerOptions from configuration and headers
+        HybridChunkerOptions.Builder chunkerOptionsBuilder = HybridChunkerOptions.builder();
+
+        String tokenizer = exchange.getIn().getHeader(DoclingHeaders.CHUNKING_TOKENIZER, String.class);
+        if (tokenizer == null) {
+            tokenizer = configuration.getChunkingTokenizer();
+        }
+        if (tokenizer != null) {
+            chunkerOptionsBuilder.tokenizer(tokenizer);
+        }
+
+        Integer maxTokens = exchange.getIn().getHeader(DoclingHeaders.CHUNKING_MAX_TOKENS, Integer.class);
+        if (maxTokens == null) {
+            maxTokens = configuration.getChunkingMaxTokens();
+        }
+        if (maxTokens != null) {
+            chunkerOptionsBuilder.maxTokens(maxTokens);
+        }
+
+        Boolean mergePeers = exchange.getIn().getHeader(DoclingHeaders.CHUNKING_MERGE_PEERS, Boolean.class);
+        if (mergePeers == null) {
+            mergePeers = configuration.getChunkingMergePeers();
+        }
+        if (mergePeers != null) {
+            chunkerOptionsBuilder.mergePeers(mergePeers);
+        }
+
+        if (configuration.getChunkingIncludeRawText() != null) {
+            chunkerOptionsBuilder.includeRawText(configuration.getChunkingIncludeRawText());
+        }
+        if (configuration.getChunkingUseMarkdownTables() != null) {
+            chunkerOptionsBuilder.useMarkdownTables(configuration.getChunkingUseMarkdownTables());
+        }
+
+        // Build the request
+        HybridChunkDocumentRequest.Builder requestBuilder = HybridChunkDocumentRequest.builder();
+        addSourceToChunkRequest(requestBuilder, inputPath);
+        requestBuilder.chunkingOptions(chunkerOptionsBuilder.build());
+
+        HybridChunkDocumentRequest request = requestBuilder.build();
+        ChunkDocumentResponse response = doclingServeApi.chunkSourceWithHybridChunker(request);
+
+        if (configuration.isContentInBody()) {
+            exchange.getIn().setBody(response.getChunks());
+        } else {
+            exchange.getIn().setBody(response);
+        }
+
+        LOG.debug("HybridChunker produced {} chunks", response.getChunks() != null ? response.getChunks().size() : 0);
+    }
+
+    private void processChunkHierarchical(Exchange exchange) throws Exception {
+        LOG.debug("DoclingProducer chunking with HierarchicalChunker");
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "CHUNK_HIERARCHICAL operation requires docling-serve mode (useDoclingServe=true)");
+        }
+
+        String inputPath = getInputPath(exchange);
+
+        // Build HierarchicalChunkerOptions from configuration
+        HierarchicalChunkerOptions.Builder chunkerOptionsBuilder = HierarchicalChunkerOptions.builder();
+
+        if (configuration.getChunkingIncludeRawText() != null) {
+            chunkerOptionsBuilder.includeRawText(configuration.getChunkingIncludeRawText());
+        }
+        if (configuration.getChunkingUseMarkdownTables() != null) {
+            chunkerOptionsBuilder.useMarkdownTables(configuration.getChunkingUseMarkdownTables());
+        }
+
+        // Build the request
+        HierarchicalChunkDocumentRequest.Builder requestBuilder = HierarchicalChunkDocumentRequest.builder();
+        addSourceToChunkRequest(requestBuilder, inputPath);
+        requestBuilder.chunkingOptions(chunkerOptionsBuilder.build());
+
+        HierarchicalChunkDocumentRequest request = requestBuilder.build();
+        ChunkDocumentResponse response = doclingServeApi.chunkSourceWithHierarchicalChunker(request);
+
+        if (configuration.isContentInBody()) {
+            exchange.getIn().setBody(response.getChunks());
+        } else {
+            exchange.getIn().setBody(response);
+        }
+
+        LOG.debug("HierarchicalChunker produced {} chunks",
+                response.getChunks() != null ? response.getChunks().size() : 0);
+    }
+
+    private void addSourceToChunkRequest(
+            ai.docling.serve.api.chunk.request.ChunkDocumentRequest.Builder requestBuilder, String inputSource)
+            throws IOException {
+        if (inputSource.startsWith("http://") || inputSource.startsWith("https://")) {
+            requestBuilder.source(
+                    HttpSource.builder()
+                            .url(URI.create(inputSource))
+                            .build());
+        } else {
+            File file = new File(inputSource);
+            if (!file.exists()) {
+                throw new IOException("File not found: " + inputSource);
+            }
+
+            byte[] fileBytes = Files.readAllBytes(file.toPath());
+            String base64Content = Base64.getEncoder().encodeToString(fileBytes);
+
+            requestBuilder.source(
+                    FileSource.builder()
+                            .filename(file.getName())
+                            .base64String(base64Content)
+                            .build());
+        }
     }
 
     private DocumentMetadata extractMetadataUsingApi(String inputPath) throws IOException {
@@ -569,8 +764,9 @@ public class DoclingProducer extends DefaultProducer {
             List<String> inputSources, String outputFormat, int batchSize, int parallelism,
             boolean failOnFirstError, boolean useAsync, long batchTimeout) {
 
-        LOG.info("Starting batch conversion of {} documents with parallelism={}, failOnFirstError={}, timeout={}ms",
-                inputSources.size(), parallelism, failOnFirstError, batchTimeout);
+        LOG.info(
+                "Starting batch conversion of {} documents with batchSize={}, parallelism={}, failOnFirstError={}, timeout={}ms",
+                inputSources.size(), batchSize, parallelism, failOnFirstError, batchTimeout);
 
         BatchProcessingResults results = new BatchProcessingResults();
         results.setStartTimeMs(System.currentTimeMillis());
@@ -581,101 +777,118 @@ public class DoclingProducer extends DefaultProducer {
         AtomicBoolean shouldCancel = new AtomicBoolean(false);
 
         try {
-            // Create CompletableFutures for all conversion tasks
-            List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
+            // Partition documents into sub-batches of batchSize
+            for (int batchStart = 0; batchStart < inputSources.size(); batchStart += batchSize) {
+                if (failOnFirstError && shouldCancel.get()) {
+                    break;
+                }
 
-            for (String inputSource : inputSources) {
-                final int currentIndex = index.getAndIncrement();
-                final String documentId = "doc-" + currentIndex;
+                int batchEnd = Math.min(batchStart + batchSize, inputSources.size());
+                List<String> subBatch = inputSources.subList(batchStart, batchEnd);
 
-                CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
-                    // Check if we should skip this task due to early termination
-                    if (failOnFirstError && shouldCancel.get()) {
-                        BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
-                        cancelledResult.setBatchIndex(currentIndex);
-                        cancelledResult.setSuccess(false);
-                        cancelledResult.setErrorMessage("Cancelled due to previous failure");
-                        return cancelledResult;
-                    }
+                LOG.debug("Processing sub-batch [{}-{}] of {} total documents",
+                        batchStart, batchEnd - 1, inputSources.size());
 
-                    BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
-                    result.setBatchIndex(currentIndex);
-                    long startTime = System.currentTimeMillis();
+                List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
 
-                    try {
-                        LOG.debug("Processing document {} (index {}): {}", documentId, currentIndex, inputSource);
+                for (String inputSource : subBatch) {
+                    final int currentIndex = index.getAndIncrement();
+                    final String documentId = "doc-" + currentIndex;
 
-                        String converted;
-                        if (useAsync) {
-                            converted = convertDocumentAsyncAndWait(inputSource, outputFormat);
-                        } else {
-                            converted = convertDocumentSync(inputSource, outputFormat);
+                    CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
+                        // Check if we should skip this task due to early termination
+                        if (failOnFirstError && shouldCancel.get()) {
+                            BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
+                            cancelledResult.setBatchIndex(currentIndex);
+                            cancelledResult.setSuccess(false);
+                            cancelledResult.setErrorMessage("Cancelled due to previous failure");
+                            return cancelledResult;
                         }
 
-                        result.setResult(converted);
-                        result.setSuccess(true);
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                        BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
+                        result.setBatchIndex(currentIndex);
+                        long startTime = System.currentTimeMillis();
 
-                        LOG.debug("Successfully processed document {} in {}ms", documentId,
-                                result.getProcessingTimeMs());
+                        try {
+                            LOG.debug("Processing document {} (index {}): {}", documentId, currentIndex, inputSource);
 
-                    } catch (Exception e) {
-                        result.setSuccess(false);
-                        result.setErrorMessage(e.getMessage());
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                            String converted;
+                            if (useAsync) {
+                                converted = convertDocumentAsyncAndWait(inputSource, outputFormat);
+                            } else {
+                                converted = convertDocumentSync(inputSource, outputFormat);
+                            }
 
-                        LOG.error("Failed to process document {} (index {}): {}", documentId, currentIndex,
-                                e.getMessage(), e);
+                            result.setResult(converted);
+                            result.setSuccess(true);
+                            result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
 
-                        // Signal other tasks to cancel if failOnFirstError is enabled
-                        if (failOnFirstError) {
-                            shouldCancel.set(true);
+                            LOG.debug("Successfully processed document {} in {}ms", documentId,
+                                    result.getProcessingTimeMs());
+
+                        } catch (Exception e) {
+                            result.setSuccess(false);
+                            result.setErrorMessage(e.getMessage());
+                            result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                            LOG.error("Failed to process document {} (index {}): {}", documentId, currentIndex,
+                                    e.getMessage(), e);
+
+                            // Signal other tasks to cancel if failOnFirstError is enabled
+                            if (failOnFirstError) {
+                                shouldCancel.set(true);
+                            }
                         }
-                    }
 
-                    return result;
-                }, executor);
+                        return result;
+                    }, executor);
 
-                futures.add(future);
-            }
+                    futures.add(future);
+                }
 
-            // Wait for all futures to complete with timeout
-            CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+                // Wait for sub-batch to complete with remaining timeout
+                long elapsed = System.currentTimeMillis() - results.getStartTimeMs();
+                long remainingTimeout = batchTimeout - elapsed;
+                if (remainingTimeout <= 0) {
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch processing timed out after " + batchTimeout + "ms");
+                }
 
-            try {
-                allOf.get(batchTimeout, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException e) {
-                LOG.error("Batch processing timed out after {}ms", batchTimeout);
-                // Cancel all incomplete futures
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch processing timed out after " + batchTimeout + "ms", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LOG.error("Batch processing interrupted", e);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch processing interrupted", e);
-            } catch (Exception e) {
-                LOG.error("Batch processing failed", e);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch processing failed", e);
-            }
+                CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
-            // Collect all results
-            for (CompletableFuture<BatchConversionResult> future : futures) {
                 try {
-                    BatchConversionResult result = future.getNow(null);
-                    if (result != null) {
-                        results.addResult(result);
-
-                        // If failOnFirstError and we hit a failure, stop adding more results
-                        if (failOnFirstError && !result.isSuccess()) {
-                            LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
-                                    result.getErrorMessage());
-                            break;
-                        }
-                    }
+                    allOf.get(remainingTimeout, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException e) {
+                    LOG.error("Batch processing timed out after {}ms", batchTimeout);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch processing timed out after " + batchTimeout + "ms", e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LOG.error("Batch processing interrupted", e);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch processing interrupted", e);
                 } catch (Exception e) {
-                    LOG.error("Error retrieving result", e);
+                    LOG.error("Batch processing failed", e);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch processing failed", e);
+                }
+
+                // Collect results from this sub-batch
+                for (CompletableFuture<BatchConversionResult> future : futures) {
+                    try {
+                        BatchConversionResult result = future.getNow(null);
+                        if (result != null) {
+                            results.addResult(result);
+
+                            if (failOnFirstError && !result.isSuccess()) {
+                                LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
+                                        result.getErrorMessage());
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOG.error("Error retrieving result", e);
+                    }
                 }
             }
 
@@ -920,8 +1133,8 @@ public class DoclingProducer extends DefaultProducer {
             boolean failOnFirstError, boolean useAsync, long batchTimeout) {
 
         LOG.info(
-                "Starting batch structured data extraction of {} documents with parallelism={}, failOnFirstError={}, timeout={}ms",
-                inputSources.size(), parallelism, failOnFirstError, batchTimeout);
+                "Starting batch structured data extraction of {} documents with batchSize={}, parallelism={}, failOnFirstError={}, timeout={}ms",
+                inputSources.size(), batchSize, parallelism, failOnFirstError, batchTimeout);
 
         BatchProcessingResults results = new BatchProcessingResults();
         results.setStartTimeMs(System.currentTimeMillis());
@@ -932,93 +1145,117 @@ public class DoclingProducer extends DefaultProducer {
         AtomicBoolean shouldCancel = new AtomicBoolean(false);
 
         try {
-            List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
+            // Partition documents into sub-batches of batchSize
+            for (int batchStart = 0; batchStart < inputSources.size(); batchStart += batchSize) {
+                if (failOnFirstError && shouldCancel.get()) {
+                    break;
+                }
 
-            for (String inputSource : inputSources) {
-                final int currentIndex = index.getAndIncrement();
-                final String documentId = "doc-" + currentIndex;
+                int batchEnd = Math.min(batchStart + batchSize, inputSources.size());
+                List<String> subBatch = inputSources.subList(batchStart, batchEnd);
 
-                CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
-                    if (failOnFirstError && shouldCancel.get()) {
-                        BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
-                        cancelledResult.setBatchIndex(currentIndex);
-                        cancelledResult.setSuccess(false);
-                        cancelledResult.setErrorMessage("Cancelled due to previous failure");
-                        return cancelledResult;
-                    }
+                LOG.debug("Processing sub-batch [{}-{}] of {} total documents",
+                        batchStart, batchEnd - 1, inputSources.size());
 
-                    BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
-                    result.setBatchIndex(currentIndex);
-                    long startTime = System.currentTimeMillis();
+                List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
 
-                    try {
-                        LOG.debug("Extracting structured data from document {} (index {}): {}", documentId, currentIndex,
-                                inputSource);
+                for (String inputSource : subBatch) {
+                    final int currentIndex = index.getAndIncrement();
+                    final String documentId = "doc-" + currentIndex;
 
-                        ConvertDocumentRequest request = buildStructuredDataRequest(inputSource);
-                        String converted;
-                        if (useAsync) {
-                            converted = convertDocumentAsyncAndWait(request);
-                        } else {
-                            converted = convertDocumentSync(request);
+                    CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
+                        if (failOnFirstError && shouldCancel.get()) {
+                            BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
+                            cancelledResult.setBatchIndex(currentIndex);
+                            cancelledResult.setSuccess(false);
+                            cancelledResult.setErrorMessage("Cancelled due to previous failure");
+                            return cancelledResult;
                         }
 
-                        result.setResult(converted);
-                        result.setSuccess(true);
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                        BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
+                        result.setBatchIndex(currentIndex);
+                        long startTime = System.currentTimeMillis();
 
-                    } catch (Exception e) {
-                        result.setSuccess(false);
-                        result.setErrorMessage(e.getMessage());
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                        try {
+                            LOG.debug("Extracting structured data from document {} (index {}): {}", documentId,
+                                    currentIndex, inputSource);
 
-                        LOG.error("Failed to extract structured data from document {} (index {}): {}", documentId,
-                                currentIndex, e.getMessage(), e);
+                            ConvertDocumentRequest request = buildStructuredDataRequest(inputSource);
+                            String converted;
+                            if (useAsync) {
+                                converted = convertDocumentAsyncAndWait(request);
+                            } else {
+                                converted = convertDocumentSync(request);
+                            }
 
-                        if (failOnFirstError) {
-                            shouldCancel.set(true);
+                            result.setResult(converted);
+                            result.setSuccess(true);
+                            result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                        } catch (Exception e) {
+                            result.setSuccess(false);
+                            result.setErrorMessage(e.getMessage());
+                            result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                            LOG.error("Failed to extract structured data from document {} (index {}): {}", documentId,
+                                    currentIndex, e.getMessage(), e);
+
+                            if (failOnFirstError) {
+                                shouldCancel.set(true);
+                            }
                         }
-                    }
 
-                    return result;
-                }, executor);
+                        return result;
+                    }, executor);
 
-                futures.add(future);
-            }
+                    futures.add(future);
+                }
 
-            CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+                // Wait for sub-batch to complete with remaining timeout
+                long elapsed = System.currentTimeMillis() - results.getStartTimeMs();
+                long remainingTimeout = batchTimeout - elapsed;
+                if (remainingTimeout <= 0) {
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException(
+                            "Batch structured data extraction timed out after " + batchTimeout + "ms");
+                }
 
-            try {
-                allOf.get(batchTimeout, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException e) {
-                LOG.error("Batch structured data extraction timed out after {}ms", batchTimeout);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch structured data extraction timed out after " + batchTimeout + "ms", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LOG.error("Batch structured data extraction interrupted", e);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch structured data extraction interrupted", e);
-            } catch (Exception e) {
-                LOG.error("Batch structured data extraction failed", e);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch structured data extraction failed", e);
-            }
+                CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
-            for (CompletableFuture<BatchConversionResult> future : futures) {
                 try {
-                    BatchConversionResult result = future.getNow(null);
-                    if (result != null) {
-                        results.addResult(result);
-
-                        if (failOnFirstError && !result.isSuccess()) {
-                            LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
-                                    result.getErrorMessage());
-                            break;
-                        }
-                    }
+                    allOf.get(remainingTimeout, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException e) {
+                    LOG.error("Batch structured data extraction timed out after {}ms", batchTimeout);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException(
+                            "Batch structured data extraction timed out after " + batchTimeout + "ms", e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LOG.error("Batch structured data extraction interrupted", e);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch structured data extraction interrupted", e);
                 } catch (Exception e) {
-                    LOG.error("Error retrieving result", e);
+                    LOG.error("Batch structured data extraction failed", e);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch structured data extraction failed", e);
+                }
+
+                // Collect results from this sub-batch
+                for (CompletableFuture<BatchConversionResult> future : futures) {
+                    try {
+                        BatchConversionResult result = future.getNow(null);
+                        if (result != null) {
+                            results.addResult(result);
+
+                            if (failOnFirstError && !result.isSuccess()) {
+                                LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
+                                        result.getErrorMessage());
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOG.error("Error retrieving result", e);
+                    }
                 }
             }
 
@@ -1357,6 +1594,7 @@ public class DoclingProducer extends DefaultProducer {
                 // Treat as content to be written to a temp file
                 Path tempFile = Files.createTempFile("docling-", ".tmp");
                 Files.write(tempFile, content.getBytes());
+                registerTempFileCleanup(exchange, tempFile);
                 validateFileSize(tempFile.toString());
                 return tempFile.toString();
             }
@@ -1366,6 +1604,7 @@ public class DoclingProducer extends DefaultProducer {
             }
             Path tempFile = Files.createTempFile("docling-", ".tmp");
             Files.write(tempFile, content);
+            registerTempFileCleanup(exchange, tempFile);
             return tempFile.toString();
         } else if (body instanceof File file) {
             validateFileSize(file.getAbsolutePath());
@@ -1373,6 +1612,20 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         throw new InvalidPayloadException(exchange, String.class);
+    }
+
+    private void registerTempFileCleanup(Exchange exchange, Path tempFile) {
+        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                    LOG.debug("Cleaned up temp file: {}", tempFile);
+                } catch (IOException e) {
+                    LOG.warn("Failed to clean up temp file: {}", tempFile, e);
+                }
+            }
+        });
     }
 
     private void validateFileSize(String filePath) throws IOException {
@@ -1407,21 +1660,34 @@ public class DoclingProducer extends DefaultProducer {
             StringBuilder output = new StringBuilder();
             StringBuilder error = new StringBuilder();
 
-            try (BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                 BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+            // Read stdout and stderr concurrently to prevent deadlock.
+            // If stderr fills the OS pipe buffer (~64KB) while we're blocked
+            // reading stdout, the process would hang waiting to write to stderr.
+            Thread stderrReader = new Thread(() -> {
+                try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = errorReader.readLine()) != null) {
+                        error.append(line).append("\n");
+                    }
+                } catch (IOException e) {
+                    LOG.debug("Error reading stderr: {}", e.getMessage());
+                }
+            }, "docling-stderr-reader");
+            stderrReader.setDaemon(true);
+            stderrReader.start();
 
+            try (BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = outputReader.readLine()) != null) {
                     LOG.debug("Docling output: {}", line);
                     output.append(line).append("\n");
                 }
-
-                while ((line = errorReader.readLine()) != null) {
-                    error.append(line).append("\n");
-                }
             }
 
             boolean finished = process.waitFor(configuration.getProcessTimeout(), TimeUnit.MILLISECONDS);
+
+            // Wait for stderr reader to finish (with a bounded wait to avoid hanging)
+            stderrReader.join(5000);
 
             if (!finished) {
                 process.destroyForcibly();
@@ -1603,8 +1869,43 @@ public class DoclingProducer extends DefaultProducer {
         @SuppressWarnings("unchecked")
         List<String> customArgs = exchange.getIn().getHeader(DoclingHeaders.CUSTOM_ARGUMENTS, List.class);
         if (customArgs != null && !customArgs.isEmpty()) {
+            validateCustomArguments(customArgs);
             LOG.debug("Adding custom Docling arguments: {}", customArgs);
             command.addAll(customArgs);
+        }
+    }
+
+    /**
+     * Validates custom CLI arguments to ensure they do not conflict with producer-managed options such as the output
+     * directory.
+     */
+    private void validateCustomArguments(List<String> customArgs) {
+        // The output directory is managed by the producer via endpoint configuration
+        // or the OUTPUT_FILE_PATH header, so it must not be overridden through custom arguments.
+        List<String> blockedFlags = List.of("--output", "-o");
+
+        for (int i = 0; i < customArgs.size(); i++) {
+            String arg = customArgs.get(i);
+
+            if (arg == null) {
+                throw new IllegalArgumentException("Custom argument at index " + i + " is null");
+            }
+
+            String argLower = arg.toLowerCase();
+            for (String blocked : blockedFlags) {
+                if (argLower.equals(blocked) || argLower.startsWith(blocked + "=")) {
+                    throw new IllegalArgumentException(
+                            "Custom argument '" + blocked
+                                                       + "' is not allowed because the output directory is managed by the producer. "
+                                                       + "Use the " + DoclingHeaders.OUTPUT_FILE_PATH
+                                                       + " header or endpoint configuration instead.");
+                }
+            }
+
+            if (arg.contains("../") || arg.contains("..\\")) {
+                throw new IllegalArgumentException(
+                        "Custom argument at index " + i + " contains a relative path traversal sequence");
+            }
         }
     }
 

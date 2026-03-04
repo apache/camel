@@ -28,6 +28,8 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,6 +65,9 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.maven.packaging.generics.JandexStore;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -75,13 +80,19 @@ import org.jboss.jandex.IndexReader;
 
 public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
+    private static final String FALLBACK = "doWriteElement(\"onFallback\"";
+
     public static final String MODEL_PACKAGE = "org.apache.camel.model";
 
     private final Map<Class<?>, List<Property>> properties = new ConcurrentHashMap<>();
     private final Map<Class<?>, List<Member>> members = new ConcurrentHashMap<>();
+    private final Map<String, EipModel> allModels = new HashMap<>();
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File sourcesOutputDir;
+
+    @Parameter(defaultValue = "${project.basedir}/../camel-core-model/src/generated/resources")
+    protected File modelDir;
 
     protected ModelWriterGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
         super(projectHelper, buildContext);
@@ -108,6 +119,23 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         } catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("DependencyResolutionRequiredException: " + e.getMessage(), e);
         }
+
+        List<Path> jsonFiles;
+        try (Stream<Path> stream = PackageHelper.findJsonFiles(modelDir.toPath())) {
+            jsonFiles = stream.toList();
+        }
+        for (Path p : jsonFiles) {
+            try {
+                String json = Files.readString(p);
+                if (json.contains("\"kind\": \"model\"")) {
+                    var m = JsonMapper.generateEipModel(json);
+                    allModels.put(m.getJavaType(), m);
+                }
+            } catch (Exception e) {
+                throw new MojoExecutionException(e);
+            }
+        }
+        getLog().debug("Loaded " + allModels.size() + " eip models");
 
         Class<?> routesDefinitionClass
                 = loadClass(classLoader, XmlModelWriterGeneratorMojo.MODEL_PACKAGE + ".RoutesDefinition");
@@ -139,6 +167,29 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         ctx.put("model", model);
         ctx.put("mojo", this);
         return velocity("velocity/model-writer.vm", ctx);
+    }
+
+    protected String postGenerateWriter(String writer) {
+        // the velocity templates are ugly to maintain so lets hack here to control the order in circuit-breaker
+        // we want onFallback to be after outputs, but because the writer is hard-coded to not be able to generate code
+        // that respect this order, then we swap the lines after the source code is generated
+        String[] lines = writer.split(System.lineSeparator());
+        int pos = -1;
+        for (int i = 0; i < lines.length; i++) {
+            String s = lines[i].trim();
+            if (s.startsWith(FALLBACK)) {
+                pos = i;
+                break;
+            }
+        }
+        if (pos != -1) {
+            // swap lines
+            String prev = lines[pos];
+            String next = lines[pos + 1];
+            lines[pos] = next;
+            lines[pos + 1] = prev;
+        }
+        return String.join(System.lineSeparator(), lines);
     }
 
     protected Class<?> loadClass(ClassLoader loader, String name) {
@@ -271,15 +322,54 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                     }
                 })
                 .filter(Objects::nonNull);
-        XmlType xmlType = clazz.getAnnotation(XmlType.class);
-        if (xmlType != null) {
-            String[] propOrder = xmlType.propOrder();
-            if (propOrder != null && propOrder.length > 0) {
-                // special for choice where whenClauses should use when in xml-io parser
-                final List<String> list = Arrays.stream(propOrder).map(o -> o.equals("whenClauses") ? "when" : o).toList();
-                properties = properties
-                        .sorted(Comparator.comparing(p -> Arrays.binarySearch(list.toArray(), p.getName())));
+
+        // special for base class as it is abstract so lets use another model
+        // as we only need this to know the order of the options for sorting
+        String modelName = clazz.getName();
+        if ("OptionalIdentifiedDefinition".equals(clazz.getSimpleName())) {
+            modelName = "org.apache.camel.model.ProcessDefinition";
+        }
+
+        EipModel m = allModels.get(modelName);
+        if (m != null) {
+            // special for DSL where XML vs YAML have different names, and we must use as-is due to JAXB @XmlType propOrder
+            final Map<String, String> alias = Map.of(
+                    "whenClauses", "when",
+                    "componentScanning", "component-scan",
+                    "beans", "bean",
+                    "dataFormats", "dataFormat",
+                    "restConfigurations", "restConfiguration",
+                    "rests", "rest",
+                    "routeConfigurations", "routeConfiguration",
+                    "routeTemplates", "routeTemplate",
+                    "templatedRoutes", "templatedRoute",
+                    "routes", "route");
+            // some EIPs have @XmlType propOrder
+            final List<String> propOrderList = new ArrayList<>();
+            XmlType xmlType = clazz.getAnnotation(XmlType.class);
+            if (xmlType != null) {
+                String[] propOrder = xmlType.propOrder();
+                if (propOrder != null && propOrder.length > 1) {
+                    propOrderList.addAll(Arrays.stream(propOrder).map(o -> alias.getOrDefault(o, o)).toList());
+                }
             }
+            // sort according to @XmlType propOrder and EIP model
+            properties = properties.sorted((o1, o2) -> {
+                String n1 = alias.getOrDefault(o1.name, o1.name);
+                String n2 = alias.getOrDefault(o2.name, o2.name);
+                // prioritize prop order
+                int idx1 = propOrderList.indexOf(n1);
+                int idx2 = propOrderList.indexOf(n2);
+                // fallback to sort after model
+                for (var o : m.getOptions()) {
+                    if (idx1 == -1 && o.getName().equals(n1)) {
+                        idx1 = o.getIndex();
+                    } else if (idx2 == -1 && o.getName().equals(n2)) {
+                        idx2 = o.getIndex();
+                    }
+                }
+                return Integer.compare(idx1, idx2);
+            });
         }
         return properties.toList();
     }

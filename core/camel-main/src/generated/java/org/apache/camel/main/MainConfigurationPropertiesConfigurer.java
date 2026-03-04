@@ -132,6 +132,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("StreamCachingSpoolCipher", java.lang.String.class);
         map.put("StreamCachingSpoolDirectory", java.lang.String.class);
         map.put("StreamCachingSpoolEnabled", boolean.class);
+        map.put("StreamCachingSpoolRules", java.lang.String.class);
         map.put("StreamCachingSpoolThreshold", long.class);
         map.put("StreamCachingSpoolUsedHeapMemoryLimit", java.lang.String.class);
         map.put("StreamCachingSpoolUsedHeapMemoryThreshold", int.class);
@@ -369,6 +370,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "streamCachingSpoolDirectory": target.setStreamCachingSpoolDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "streamcachingspoolenabled":
         case "streamCachingSpoolEnabled": target.setStreamCachingSpoolEnabled(property(camelContext, boolean.class, value)); return true;
+        case "streamcachingspoolrules":
+        case "streamCachingSpoolRules": target.setStreamCachingSpoolRules(property(camelContext, java.lang.String.class, value)); return true;
         case "streamcachingspoolthreshold":
         case "streamCachingSpoolThreshold": target.setStreamCachingSpoolThreshold(property(camelContext, long.class, value)); return true;
         case "streamcachingspoolusedheapmemorylimit":
@@ -625,6 +628,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "streamCachingSpoolDirectory": return java.lang.String.class;
         case "streamcachingspoolenabled":
         case "streamCachingSpoolEnabled": return boolean.class;
+        case "streamcachingspoolrules":
+        case "streamCachingSpoolRules": return java.lang.String.class;
         case "streamcachingspoolthreshold":
         case "streamCachingSpoolThreshold": return long.class;
         case "streamcachingspoolusedheapmemorylimit":
@@ -877,6 +882,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "streamCachingSpoolDirectory": return target.getStreamCachingSpoolDirectory();
         case "streamcachingspoolenabled":
         case "streamCachingSpoolEnabled": return target.isStreamCachingSpoolEnabled();
+        case "streamcachingspoolrules":
+        case "streamCachingSpoolRules": return target.getStreamCachingSpoolRules();
         case "streamcachingspoolthreshold":
         case "streamCachingSpoolThreshold": return target.getStreamCachingSpoolThreshold();
         case "streamcachingspoolusedheapmemorylimit":

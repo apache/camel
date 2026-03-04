@@ -19,6 +19,7 @@ package org.apache.camel;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
@@ -108,9 +109,12 @@ public interface ExtendedCamelContext {
     /**
      * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.
      *
-     * @param done <tt>false</tt> to start the process, call again with <tt>true</tt> to signal its done.
-     * @see        #isSetupRoutes()
+     * @param      done <tt>false</tt> to start the process, call again with <tt>true</tt> to signal its done.
+     * @see             #isSetupRoutes()
+     * @deprecated      use {@link #setupRoutes(Runnable)} or {@link #setupRoutes(Callable)} for ScopedValue
+     *                  compatibility
      */
+    @Deprecated(since = "4.19.0")
     void setupRoutes(boolean done);
 
     /**
@@ -128,11 +132,49 @@ public interface ExtendedCamelContext {
     boolean isSetupRoutes();
 
     /**
+     * Executes the given operation within a "setup routes" context.
+     * <p/>
+     * This is the preferred method for ScopedValue compatibility on virtual threads.
+     *
+     * @param operation the operation to execute
+     */
+    default void setupRoutes(Runnable operation) {
+        setupRoutes(false);
+        try {
+            operation.run();
+        } finally {
+            setupRoutes(true);
+        }
+    }
+
+    /**
+     * Executes the given callable within a "setup routes" context and returns its result.
+     * <p/>
+     * This is the preferred method for ScopedValue compatibility on virtual threads.
+     *
+     * @param  <T>       the return type
+     * @param  callable  the callable to execute
+     * @return           the result of the callable
+     * @throws Exception if the callable throws
+     */
+    default <T> T setupRoutes(Callable<T> callable) throws Exception {
+        setupRoutes(false);
+        try {
+            return callable.call();
+        } finally {
+            setupRoutes(true);
+        }
+    }
+
+    /**
      * Method to signal to {@link CamelContext} that the process to create routes is in progress.
      *
-     * @param routeId the current id of the route being created
-     * @see           #getCreateRoute()
+     * @param      routeId the current id of the route being created
+     * @see                #getCreateRoute()
+     * @deprecated         use {@link #createRoute(String, Runnable)} or {@link #createRoute(String, Callable)} for
+     *                     ScopedValue compatibility
      */
+    @Deprecated(since = "4.19.0")
     void createRoute(String routeId);
 
     /**
@@ -146,11 +188,51 @@ public interface ExtendedCamelContext {
     String getCreateRoute();
 
     /**
+     * Executes the given operation within a "create route" context.
+     * <p/>
+     * This is the preferred method for ScopedValue compatibility on virtual threads.
+     *
+     * @param routeId   the id of the route being created
+     * @param operation the operation to execute
+     */
+    default void createRoute(String routeId, Runnable operation) {
+        createRoute(routeId);
+        try {
+            operation.run();
+        } finally {
+            createRoute(null);
+        }
+    }
+
+    /**
+     * Executes the given callable within a "create route" context and returns its result.
+     * <p/>
+     * This is the preferred method for ScopedValue compatibility on virtual threads.
+     *
+     * @param  <T>       the return type
+     * @param  routeId   the id of the route being created
+     * @param  callable  the callable to execute
+     * @return           the result of the callable
+     * @throws Exception if the callable throws
+     */
+    default <T> T createRoute(String routeId, Callable<T> callable) throws Exception {
+        createRoute(routeId);
+        try {
+            return callable.call();
+        } finally {
+            createRoute(null);
+        }
+    }
+
+    /**
      * Method to signal to {@link CamelContext} that creation of a given processor is in progress.
      *
-     * @param processorId the current id of the processor being created
-     * @see               #getCreateProcessor()
+     * @param      processorId the current id of the processor being created
+     * @see                    #getCreateProcessor()
+     * @deprecated             use {@link #createProcessor(String, Runnable)} or
+     *                         {@link #createProcessor(String, Callable)} for ScopedValue compatibility
      */
+    @Deprecated(since = "4.19.0")
     void createProcessor(String processorId);
 
     /**
@@ -162,6 +244,43 @@ public interface ExtendedCamelContext {
      * @see    #createProcessor(String)
      */
     String getCreateProcessor();
+
+    /**
+     * Executes the given operation within a "create processor" context.
+     * <p/>
+     * This is the preferred method for ScopedValue compatibility on virtual threads.
+     *
+     * @param processorId the id of the processor being created
+     * @param operation   the operation to execute
+     */
+    default void createProcessor(String processorId, Runnable operation) {
+        createProcessor(processorId);
+        try {
+            operation.run();
+        } finally {
+            createProcessor(null);
+        }
+    }
+
+    /**
+     * Executes the given callable within a "create processor" context and returns its result.
+     * <p/>
+     * This is the preferred method for ScopedValue compatibility on virtual threads.
+     *
+     * @param  <T>         the return type
+     * @param  processorId the id of the processor being created
+     * @param  callable    the callable to execute
+     * @return             the result of the callable
+     * @throws Exception   if the callable throws
+     */
+    default <T> T createProcessor(String processorId, Callable<T> callable) throws Exception {
+        createProcessor(processorId);
+        try {
+            return callable.call();
+        } finally {
+            createProcessor(null);
+        }
+    }
 
     /**
      * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom logic when an

@@ -4,7 +4,7 @@
 :artifactid: camel-google-vertexai
 :description: Interact with Google Cloud Vertex AI generative models.
 :since: 4.17
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

@@ -71,17 +71,18 @@ YAML::
 +
 [source,yaml]
 ----
-- from:
-    uri: direct:cheese
-    steps:
-      - transformDataType:
-          toType: myDataType
-      - to:
-          uri: log:hello
+- route:
+    from:
+      uri: direct:cheese
+      steps:
+        - transformDataType:
+            toType: myDataType
+        - to:
+            uri: log:hello
 ----
 ====
 
 The example above defines the xref:transformDataType-eip.adoc[Transform DataType] EIP that uses a target data type `myDataType`.
 The given data type may reference a xref:manual::transformer.adoc[Transformer] that is able to handle the data type transformation.
 
-Users may also specify `fromType` in order to reference a very specific transformation from a given data type to a given data type.
+NOTE: Users may also specify `fromType` in order to reference a very specific transformation from a given data type to a given data type.

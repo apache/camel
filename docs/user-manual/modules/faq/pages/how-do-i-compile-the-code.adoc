@@ -1,3 +1,0 @@
-= How do I compile from the source code?
-
-See the xref:ROOT:building.adoc[Building] page.

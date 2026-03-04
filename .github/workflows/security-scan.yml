@@ -35,16 +35,16 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
           cache: 'maven'
       - name: OWASP Dependency Check
         run: ./mvnw -B -Pdependencycheck validate -DskipTests -DnvdApiKey=${{ secrets.NVD_API_KEY }} -DnvdApiDelay=5000 -l owasp-check.log
       - name: Upload OWASP Report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: owasp-dependency-check-report

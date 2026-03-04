@@ -39,6 +39,7 @@ public enum TokenType {
     logicalOperator,
     initOperator,
     initVariable,
+    initFunctionEnd,
     ternaryOperator,
     chainOperator,
     eol

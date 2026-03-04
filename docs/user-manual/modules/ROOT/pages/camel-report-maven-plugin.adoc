@@ -17,6 +17,7 @@ For validating the source code for mis-configured Camel:
 
 Then you can run the `validate` goal from the command line or from within your Java editor such as IDEA or Eclipse.
 
+[source,bash]
 ----
 mvn camel-report:validate
 ----
@@ -70,13 +71,15 @@ You can also run the validate goal on any Maven project without having to add th
 Doing so requires to specify the plugin using its fully qualified name. For example to run the goal on
 the `camel-example-cdi` from Apache Camel you can run
 
+[source,bash]
 ----
-$cd camel-example-cdi
-$mvn org.apache.camel:camel-report-maven-plugin:2.20.0:validate
+cd camel-example-cdi
+mvn org.apache.camel:camel-report-maven-plugin:2.20.0:validate
 ----
 
 which then runs and outputs the following:
 
+[source,text]
 ----
 [INFO] ------------------------------------------------------------------------
 [INFO] Building Camel :: Example :: CDI 3.0.0
@@ -107,6 +110,7 @@ is changed to include a typo error in the `period` option
 
 And when running the `validate` goal again reports the following:
 
+[source,text]
 ----
 [INFO] ------------------------------------------------------------------------
 [INFO] Building Camel :: Example :: CDI 3.0.0
@@ -158,8 +162,9 @@ The maven plugin *validate* goal supports the following options which can be con
 
 For example to turn on ignoring usage of deprecated options from the command line, you can run:
 
+[source,bash]
 ----
-$mvn camel-report:validate -Dcamel.ignoreDeprecated=true
+mvn camel-report:validate -Dcamel.ignoreDeprecated=true
 ----
 
 Notice that you must prefix the `-D` command argument with `camel.`, eg `camel.ignoreDeprecated` as the option name.
@@ -169,9 +174,10 @@ Notice that you must prefix the `-D` command argument with `camel.`, eg `camel.i
 If you have a Maven project then you can run the plugin to validate the endpoints in the unit test source code as well.
 You can pass in the options using `-D` style as shown:
 
+[source,bash]
 ----
-$cd myproject
-$mvn org.apache.camel:camel-report-maven-plugin:3.0.0:validate -Dcamel.includeTest=true
+cd myproject
+mvn org.apache.camel:camel-report-maven-plugin:3.0.0:validate -Dcamel.includeTest=true
 ----
 
 === Validate Apache Camel routes in transitive dependencies
@@ -183,7 +189,8 @@ In particular, in order to use the validate plugin with transitive dependencies,
 * The route `from("direct:out")` is declared into a dependency of your project, for example `my.company:routes-dependency:1.0`
 * If `routes-dependency` sources are released into a maven repository, the following plugin configuration can be used:
 
-```xml
+[source,xml]
+----
 <plugin>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-report-maven-plugin</artifactId>
@@ -204,7 +211,7 @@ In particular, in order to use the validate plugin with transitive dependencies,
     </execution>
   </executions>
 </plugin>
-```
+----
 
 == camel-report:route-coverage
 
@@ -257,6 +264,7 @@ This can be done either in the configuration of the `maven-surefire-plugin`:
 
 Or from the command line when running tests:
 
+[source,bash]
 ----
 mvn clean test -DCamelTestRouteCoverage=true
 ----
@@ -313,18 +321,21 @@ And in XML DSL you just assign the route id via the id attribute
 
 After unit testing with:
 
+[source,bash]
 ----
 mvn test
 ----
 
 You can then run the goal to report the route coverage
 
+[source,bash]
 ----
 mvn camel-report:route-coverage
 ----
 
 Which then reports which routes has missing route coverage with precise source code line reporting:
 
+[source,text]
 ----
 [INFO] --- camel-camel-report-plugin:3.0.0:route-coverage (default-cli) @ camel-example-spring-boot-xml ---
 [INFO] Discovered 1 routes

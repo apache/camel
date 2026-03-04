@@ -12,6 +12,7 @@ The Camel Maven Plugin supports the following goals
 The `camel:run` goal of the Camel Maven Plugin is used to run your Camel Spring configurations in a forked JVM from Maven.
 A good example application to get you started is the Spring Example.
 
+[source,bash]
 ----
 cd examples/camel-example-spring
 mvn camel:run

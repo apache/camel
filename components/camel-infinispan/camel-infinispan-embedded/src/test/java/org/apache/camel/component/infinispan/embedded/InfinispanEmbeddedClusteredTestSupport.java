@@ -21,7 +21,7 @@ import java.util.Objects;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.spi.ComponentCustomizer;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.commons.time.ControlledTimeService;

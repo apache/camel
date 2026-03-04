@@ -39,7 +39,9 @@ public class CassandraIdempotentIT extends BaseCassandra {
 
     @AfterEach
     public void tearDown() {
-        idempotentRepository.stop();
+        if (idempotentRepository != null) {
+            idempotentRepository.stop();
+        }
     }
 
     @Override

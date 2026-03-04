@@ -29,7 +29,8 @@ import org.apache.camel.spi.Metadata;
 /**
  * Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.
  */
-@Metadata(firstVersion = "2.9.0", label = "dataformat,transformation,security", title = "PGP")
+@Metadata(firstVersion = "2.9.0", label = "dataformat,transformation,security",
+          title = "PGP (Pretty Good Privacy Cryptographic)")
 @XmlRootElement(name = "pgp")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PGPDataFormat extends DataFormatDefinition {

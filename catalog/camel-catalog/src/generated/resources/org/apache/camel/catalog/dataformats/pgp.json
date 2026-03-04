@@ -2,7 +2,7 @@
   "dataformat": {
     "kind": "dataformat",
     "name": "pgp",
-    "title": "PGP",
+    "title": "PGP (Pretty Good Privacy Cryptographic)",
     "description": "Encrypt and decrypt messages using Java Cryptographic Extension (JCE) and PGP.",
     "deprecated": false,
     "firstVersion": "2.9.0",
@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-crypto-pgp",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "modelName": "pgp",
     "modelJavaType": "org.apache.camel.model.dataformat.PGPDataFormat"
   },

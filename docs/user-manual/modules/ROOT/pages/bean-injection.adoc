@@ -24,6 +24,15 @@ xref:registry.adoc[Registry] such as in a Spring XML file:
 <bean id="foo" class="com.foo.MyFooBean"/>
 ----
 
+Or in YAML DSL:
+
+[source,yaml]
+----
+- beans:
+    - name: foo
+      type: com.foo.MyFooBean
+----
+
 And then in a Java `RouteBuilder` class, you can inject the bean using
 `@BeanInject` as shown below:
 

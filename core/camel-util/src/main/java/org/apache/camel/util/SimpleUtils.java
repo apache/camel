@@ -135,6 +135,7 @@ public class SimpleUtils {
                     "unquote",
                     "uppercase",
                     "uuid",
+                    "val",
                     "variable",
                     "variableas",
                     "variables",

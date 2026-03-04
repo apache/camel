@@ -18,18 +18,18 @@ package org.apache.camel.jsonpath;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class JsonPathSimpleInitBlockFunctionTest extends CamelTestSupport {
 
     private final String MAPPING = """
             $init{
-              $id := ${jsonpath($.id)}
-              $type := ${header.type}
-              $price := ${jsonpath($.amount)}
-              $level ~:= ${body > 100 ? 'HIGH' : 'LOW'}
-              $newStatus ~:= ${sum(${body},50)}
+              $id := ${jsonpath($.id)};
+              $type := ${header.type};
+              $price := ${jsonpath($.amount)};
+              $level ~:= ${body > 100 ? 'HIGH' : 'LOW'};
+              $newStatus ~:= ${sum(${body},50)};
             }init$
             {
               "id": "$id",

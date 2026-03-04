@@ -69,6 +69,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.concurrent.SynchronousExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -870,6 +871,8 @@ public class AggregateProcessor extends BaseProcessorSupport
             // execute the task using this thread sync (similar to multicast eip in parallel mode)
             if (exchange.isTransacted()) {
                 reactiveExecutor.scheduleQueue(task);
+            } else if (executorService instanceof SynchronousExecutorService) {
+                reactiveExecutor.schedule(task);
             } else {
                 reactiveExecutor.scheduleSync(task);
             }

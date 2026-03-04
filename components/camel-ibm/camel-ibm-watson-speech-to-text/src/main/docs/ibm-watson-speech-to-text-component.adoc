@@ -4,7 +4,7 @@
 :artifactid: camel-ibm-watson-speech-to-text
 :description: Convert speech audio to text using IBM Watson Speech to Text
 :since: 4.17
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

@@ -131,12 +131,6 @@ public class PropertiesComponent extends ServiceSupport
 
     public PropertiesComponent() {
         addPropertiesLookupListener(defaultPropertiesLookupListener);
-        // include out of the box functions
-        addPropertiesFunction(new EnvPropertiesFunction());
-        addPropertiesFunction(new SysPropertiesFunction());
-        addPropertiesFunction(new ServicePropertiesFunction());
-        addPropertiesFunction(new ServiceHostPropertiesFunction());
-        addPropertiesFunction(new ServicePortPropertiesFunction());
     }
 
     /**

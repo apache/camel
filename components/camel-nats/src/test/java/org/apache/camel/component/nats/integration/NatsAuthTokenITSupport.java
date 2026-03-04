@@ -19,7 +19,7 @@ package org.apache.camel.component.nats.integration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.nats.NatsComponent;
 import org.apache.camel.test.infra.nats.services.NatsLocalContainerAuthTokenService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class NatsAuthTokenITSupport extends CamelTestSupport {
@@ -30,7 +30,7 @@ public class NatsAuthTokenITSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         NatsComponent nats = context.getComponent("nats", NatsComponent.class);
-        nats.setServers(service.getServiceAddress());
+        nats.getConfiguration().setServers(service.getServiceAddress());
         return context;
     }
 

@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>4.18.0-SNAPSHOT</version>
+    <version>4.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-elasticsearch-rest-client</artifactId>
@@ -64,7 +64,7 @@
     <!-- for testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-junit5</artifactId>
+      <artifactId>camel-test-junit6</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -80,13 +80,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
        </dependency>
-       <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-elasticsearch</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
 </project>

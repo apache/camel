@@ -54,6 +54,10 @@ public class ValidateDefinition extends ExpressionNode {
         this.predicateExceptionFactory = source.predicateExceptionFactory;
     }
 
+    public ValidateDefinition(ExpressionDefinition expression) {
+        super(expression);
+    }
+
     public ValidateDefinition(Expression expression) {
         super(expression);
     }

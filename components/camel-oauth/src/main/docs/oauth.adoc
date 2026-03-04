@@ -14,7 +14,7 @@ These processors intercept the message flow and perform the necessary authentica
 
 The idea is that a "Resource Owner" can give a "User Agent" access to some protected resources without sharing credentials directly with the agent.
 
-For example, Alice has an account with Spotify and now wishes to use a cool service from Acme which compiles a daily playlist according based on Alice's preferences. Instead of giving Acme her Spotify credentials (i.e. username/password) directly, Acme can obtain an access token from an Identity Provider that encodes the scope and duration for Acme to access Alice's Spotify account. Alice can revoke access any time - Acme never sees more information thant waht Alice has granted and is necessary to perform the the wanted service.
+For example, Alice has an account with Spotify and now wishes to use a cool service from Acme which compiles a daily playlist according based on Alice's preferences. Instead of giving Acme her Spotify credentials (i.e. username/password) directly, Acme can obtain an access token from an Identity Provider that encodes the scope and duration for Acme to access Alice's Spotify account. Alice can revoke access any time - Acme never sees more information than what Alice has granted and is necessary to perform the wanted service.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -61,7 +61,7 @@ For details see the https://openid.net/specs/openid-connect-core-1_0.html[OIDC 1
 
 A client can request an access token using only the client id and secret shared with the identity provider.
 
-This code flow suitable for fully automated authorization for example in the case of REST based service interaction.
+This flow is suitable for fully automated authorization, for example in the case of REST based service interaction.
 
 For details see the https://datatracker.ietf.org/doc/html/rfc6749#section-4.4[OAuth 2.0] spec.
 
@@ -77,6 +77,101 @@ For details see the https://datatracker.ietf.org/doc/html/rfc6749#section-4.4[OA
 
 |`camel.oauth.client-secret` |The client secret provided by the identity provider.
 |===
+
+== OAuth SPI for Component Integration
+
+The camel-oauth module provides an SPI (`OAuthClientAuthenticationFactory`) that allows other Camel components to use OAuth Client Credentials authentication without a compile-time dependency on camel-oauth. Components discover the factory at runtime via Camel's FactoryFinder mechanism. If camel-oauth is not on the classpath, a clear error message instructs the user to add it.
+
+Components that support this integration include: camel-openai, camel-huggingface, camel-docling and camel-ibm-watsonx-ai. Each of these components exposes an `oauthProfile` parameter.
+
+=== Named Profiles (Multiple Identity Providers)
+
+Named profiles allow configuring multiple identity providers in a single application. Each profile is identified by a name and has its own set of properties.
+
+==== Configuration Properties
+
+Properties are resolved from `camel.oauth.<profileName>.*`:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Name |Required |Description
+
+|`camel.oauth.<profile>.client-id` |Yes |The client identifier registered with the identity provider.
+
+|`camel.oauth.<profile>.client-secret` |Yes |The client secret provided by the identity provider.
+
+|`camel.oauth.<profile>.token-endpoint` |Yes |The OAuth 2.0 token endpoint URL.
+
+|`camel.oauth.<profile>.scope` |No |The OAuth 2.0 scope to request.
+
+|`camel.oauth.<profile>.cache-tokens` |No |Whether to cache tokens. Default: `true`.
+
+|`camel.oauth.<profile>.cached-tokens-default-expiry-seconds` |No |Default token expiry if `expires_in` is not in the response. Default: `3600`.
+
+|`camel.oauth.<profile>.cached-tokens-expiration-margin-seconds` |No |Safety margin subtracted from token expiry to refresh early. Default: `5`.
+|===
+
+==== Example: Multiple Identity Providers
+
+[source,properties]
+----
+# Keycloak for backend services
+camel.oauth.keycloak.client-id=backend-client
+camel.oauth.keycloak.client-secret=backend-secret
+camel.oauth.keycloak.token-endpoint=https://keycloak.example.com/realms/main/protocol/openid-connect/token
+
+# Azure AD for OpenAI
+camel.oauth.azure.client-id=openai-client
+camel.oauth.azure.client-secret=openai-secret
+camel.oauth.azure.token-endpoint=https://login.microsoftonline.com/tenant/oauth2/v2.0/token
+camel.oauth.azure.scope=https://cognitiveservices.azure.com/.default
+----
+
+Components reference a profile by name via the `oauthProfile` parameter:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:start"
+    steps:
+      - to:
+          uri: "openai:chat-completion"
+          parameters:
+            model: "gpt-4"
+            oauthProfile: "azure"
+----
+
+=== Using the SPI Programmatically
+
+Components and custom code can use the `OAuthHelper` utility from `camel-support`:
+
+[source,java]
+----
+import org.apache.camel.support.OAuthHelper;
+
+// Resolve a token from a named profile
+String token = OAuthHelper.resolveOAuthToken(camelContext, "keycloak");
+----
+
+For advanced use cases, the `OAuthClientAuthenticationFactory` can be used directly with an explicit `OAuthClientConfig`:
+
+[source,java]
+----
+import org.apache.camel.spi.OAuthClientAuthenticationFactory;
+import org.apache.camel.spi.OAuthClientConfig;
+import org.apache.camel.support.ResolverHelper;
+
+OAuthClientAuthenticationFactory factory = ResolverHelper.resolveMandatoryService(
+        context, OAuthClientAuthenticationFactory.FACTORY,
+        OAuthClientAuthenticationFactory.class, "camel-oauth");
+
+String token = factory.resolveToken(
+    new OAuthClientConfig()
+        .setClientId("my-client")
+        .setClientSecret("my-secret")
+        .setTokenEndpoint("https://idp.example.com/token"));
+----
 
 == Trusted Certificates
 
@@ -137,7 +232,7 @@ k8s-fetch-cert:
 
 k8s-export: k8s-fetch-cert
 	@$(CAMEL_CMD) kubernetes export platform-http-files/* tls/* \
-	--dep=org.apache.camel:camel-oauth:4.18.0-SNAPSHOT \
+	--dep=org.apache.camel:camel-oauth:4.19.0-SNAPSHOT \
 	--gav=examples:platform-http-oauth:1.0.0 \
 	--property=camel.oauth.base-uri=https://oauth.localtest.me/kc/realms/camel \
 	--property=camel.oauth.redirect-uri=http://127.0.0.1:8080/auth \

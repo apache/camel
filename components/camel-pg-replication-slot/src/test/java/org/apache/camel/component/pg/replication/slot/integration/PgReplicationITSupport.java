@@ -18,7 +18,7 @@
 package org.apache.camel.component.pg.replication.slot.integration;
 
 import org.apache.camel.test.infra.postgres.services.PostgresLocalContainerService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;

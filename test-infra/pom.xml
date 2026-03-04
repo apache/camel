@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.18.0-SNAPSHOT</version>
+        <version>4.19.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -34,7 +34,6 @@
     <properties>
         <!-- Vulnerability scan only enabled in non testing modules -->
         <dependency-check.skip>true</dependency-check.skip>
-        <assembly.skipAssembly>true</assembly.skipAssembly>
     </properties>
 
     <modules>
@@ -99,6 +98,7 @@
         <module>camel-test-infra-ibmmq</module>
         <module>camel-test-infra-docling</module>
         <module>camel-test-infra-iggy</module>
+        <module>camel-test-infra-mcp-everything</module>
         <module>camel-test-infra-all</module>
     </modules>
 
@@ -110,41 +110,5 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <!-- Include main and test classes in the test-jar -->
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <inlineDescriptors>
-                        <inlineDescriptor>
-                            <id>tests</id>
-                            <formats>
-                                <format>jar</format>
-                            </formats>
-                            <includeBaseDirectory>false</includeBaseDirectory>
-                            <fileSets>
-                                <fileSet>
-                                    <directory>${project.build.testOutputDirectory}</directory>
-                                    <outputDirectory>/</outputDirectory>
-                                </fileSet>
-                                <fileSet>
-                                    <directory>${project.build.outputDirectory}</directory>
-                                    <outputDirectory>/</outputDirectory>
-                                </fileSet>
-                            </fileSets>
-                        </inlineDescriptor>
-                    </inlineDescriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>create-archive</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 </project>

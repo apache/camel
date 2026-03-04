@@ -286,7 +286,7 @@ class RoutesTest extends YamlTestSupport {
                     streamCache: true
                     autoStartup: false
                     startupOrder: 123
-                    routePolicy: "myPolicy"
+                    routePolicyRef: "myPolicy"
                     shutdownRoute: "Defer"
                     shutdownRunningTask: "CompleteAllTasks"
                     from:

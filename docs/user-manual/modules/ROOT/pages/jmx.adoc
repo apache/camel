@@ -25,7 +25,6 @@ The high level supported types of management objects are:
 Most of these management objects also expose lifecycle operations in
 addition to performance counter-attributes.
 
-
 == Disabling or enabling Camel JMX
 
 JMX is only enabled in Camel when the `camel-management` JAR is included on the
@@ -34,19 +33,24 @@ from the classpath.
 
 It is also possible to enable or disable JMX via configuration as documented below.
 
+[tabs]
+====
+
+JVM::
++
 You can disable the JMX instrumentation agent by setting the Java VM system
 property as follows:
-
++
 [source,bash]
 ----
 -Dorg.apache.camel.jmx.disabled=true
 ----
 
-The property value is treated as `boolean`.
-
+Spring XML::
++
 Alternatively, add a `jmxAgent` element inside the `camelContext` element in
 Spring XML configuration:
-
++
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -55,71 +59,50 @@ Spring XML configuration:
 </camelContext>
 ----
 
+Java::
++
 In Java, you can disable JMX directly on the `CamelContext` as follows:
-
++
 [source,java]
 ----
 CamelContext camel = new DefaultCamelContext();
 camel.disableJMX();
 ----
 
+Application Properties::
++
+And you can also disable JMX from `application.properties` such as when using Spring Boot
++
+[source,properties]
+----
+camel.main.jmxEnabled = false
+----
+====
+
 == Camel JMX configuration options
 
 Camel JMX can be configured with the following options.
 
-[width="100%",cols="25%,25%,25%,25%",options="header",]
-|=======================================================================
-|Option |JVM System Property |Default Value |Description
-|`id` |  |  |*required* The JMX agent name
+[width="100%",cols="1,1,2",options="header",]
+|===
+|Option |Default Value |Description
+|id |   |*required* The JMX agent name
+|usePlatformMBeanServer |true |Whether to use the MBeanServer from JVM.
+|mbeanServerDefaultDomain|org.apache.camel |The default JMX domain of the MBeanServer
+|mbeanObjectDomainName |org.apache.camel |The JMX domain that all object names will use
+|mbeansLevel |Default |Configure the level for which MBeans are registered. See section _Registering MBeans for specific resources only_ for more details.
+|onlyRegisterProcessorWithCustomId |false |If this option is enabled, then only processors with a custom id set will be registered. This allows you to filer out unwanted processors in the JMX console.
+|statisticsLevel |Default |Configure the level for whether performance statistics is enabled for the MBean. See section _Configuring level of granularity for performance statistics_ for more details.
+|includeHostName | false |Whether to include the hostname in the MBean naming.
+|useHostIPAddress |false |Whether to use hostname or IP Address in the service url when creating the remote connector. By default, the hostname will be used.
+|loadStatisticsEnabled | false |Whether load statistics is enabled (gather load statistics using a background thread per CamelContext).
+|endpointRuntimeStatisticsEnabled |true |Whether endpoint runtime statistics is enabled (gather runtime usage of each incoming and outgoing endpoint).
+|mask |true |A flag that indicates whether to remove detected sensitive information (such as passwords)from MBean names and attributes.
+|updateRouteEnabled |false |Whether to allow updating routes at runtime via JMX using the ManagedRouteMBean. This is disabled by default, but can be enabled for development and troubleshooting purposes, such as updating routes in an existing running Camel via JMX and other tools.
+|===
 
-|`usePlatformMBeanServer` |`org.apache.camel.jmx.usePlatformMBeanServer` |`true`
-|Whether to use the MBeanServer from JVM.
+TIP: Every option can also be specified as a JVM system property, such as `-Dorg.apache.camel.jmx.useHostIPAddress=true`.
 
-|`mbeanServerDefaultDomain`
-|`org.apache.camel.jmx.mbeanServerDefaultDomain` |`org.apache.camel`
-|The default JMX domain of the `MBeanServer`
-
-|`mbeanObjectDomainName` |`org.apache.camel.jmx.mbeanObjectDomainName` |`org.apache.camel`
-|The JMX domain that all object names will use
-
-|`mbeansLevel` |  |`Default`
-|Configure the level for which MBeans are registered.
-See section _Registering MBeans for specific resources only_ for more details.
-
-|`onlyRegisterProcessorWithCustomId`
-|`org.apache.camel.jmx.onlyRegisterProcessorWithCustomId` |`false`
-|If this option is enabled, then only processors with a
-custom id set will be registered. This allows you to filer out unwanted
-processors in the JMX console.
-
-|`statisticsLevel` |  |`Default`
-|Configure the level for whether performance statistics is enabled for the MBean.
-See section _Configuring level of granularity for performance statistics_ for more details.
-
-|`includeHostName` |`org.apache.camel.jmx.includeHostName` | `false`
-|Whether to include the hostname in the MBean naming.
-
-|`useHostIPAddress` |`org.apache.camel.jmx.useHostIPAddress` |`false`
-|Whether to use hostname or IP Address in the service url
-when creating the remote connector. By default, the hostname will be
-used.
-
-|`loadStatisticsEnabled` |`org.apache.camel.jmx.loadStatisticsEnabled` |`false`
-|Whether load statistics is enabled (gather load statistics using a background thread per CamelContext).
-
-|`endpointRuntimeStatisticsEnabled`
-|`org.apache.camel.jmx.endpointRuntimeStatisticsEnabled` |`true`
-|Whether endpoint runtime statistics is enabled (gather runtime
-usage of each incoming and outgoing endpoint).
-
-|`mask` |`org.apache.camel.jmx.mask` |`true`
-|A flag that indicates whether to remove detected sensitive information (such as passwords)
-from MBean names and attributes.
-
-|`updateRouteEnabled` |`org.apache.camel.jmx.updateRouteEnabled` |`false`
-|Whether to allow updating routes at runtime via JMX using the ManagedRouteMBean. This is disabled by default, but can be enabled for development and troubleshooting purposes, such as updating routes in an existing running Camel via JMX and other tools.
-
-|=======================================================================
 
 === Registering MBeans for specific resources only
 
@@ -128,29 +111,21 @@ when it starts up. However, you can specify a level to control whether
 MBeans are registered at startup. The levels are:
 
 * `Default` - Camel will register MBeans for the context, all the routes and the processors.
-
 * `RoutesOnly` - Camel will register MBeans for the context and for all the routes (not for any processor).
-
 * `ContextOnly` -  Camel will register MBeans for the context (neither for any route nor for any processor).
 
 === Registering new MBeans for new routes, created by route templates, Kamelets
 
 Camel provides the following settings to control when to register mbeans.
 
-[width="100%",cols="34%,33%,33%",options="header",]
-|=======================================================================
+[width="100%",cols="1,1,2",options="header",]
+|===
 |Option |Default |Description
 |`registerAlways` |`false` |If enabled then MBeans are always registered.
-
-|`registerNewRoutes` |`true` |If enabled then adding new routes after
-CamelContext has been started will also register
-MBeans from that given route.
-
+|`registerNewRoutes` |`true` |If enabled then adding new routes after CamelContext has been started will also register MBeans from that given route.
 |`registerRoutesCreateByKamelet` |`false` |If enabled then adding routes created by Kamelet will also register MBeans from that given route.
-
 |`registerRoutesCreateByTemplate` |`true` |If enabled then adding routes created by route template (not Kamelet, see option above) will also register MBeans from that given route.
-
-|=======================================================================
+|===
 
 By default, Camel automatically registers MBeans for all routes configured at
 startup. The `registerNewRoutes` option controls whether MBeans should also be
@@ -187,9 +162,17 @@ org.apache.camel:context=camel-1,type=context,name=camel-1
 If you configure a name on the `CamelContext` then that name is part of
 the `ObjectName` as well. For example, if we have:
 
+.Spring XML
 [source,xml]
 ----
 <camelContext id="myCamel" ...>
+----
+
+Or in `application.properties`
+
+[source,properties]
+----
+camel.main.name = myCamel
 ----
 
 Then the MBean names will be as follows:
@@ -238,6 +221,13 @@ the `managementNamePattern` attribute:
 <camelContext id="myCamel" managementNamePattern="#name#">
 ----
 
+This can also be configured in `application.properties`:
+
+[source,properties]
+----
+camel.main.jmxManagementNamePattern = #name#
+----
+
 Then the MBean names will always be as follows:
 
 [source,text]
@@ -259,15 +249,11 @@ enabled or not when Camel starts up. The levels are:
 
 * `Default` - Camel will enable statistics for both routes and
 processors (fine-grained).
-
 * `Extended` - As default but with additional statistics gathered during
 runtime such as fine-grained level of usage of endpoints and more.
-
 * `RoutesOnly` - Camel will only enable statistics for routes (coarse
 grained)
-
 * `Off` - Camel will not use any statistics.
-
 
 [NOTE]
 ====
@@ -279,16 +265,19 @@ last/total/min/max/mean processing time, first/last failed time, etc.
 
 ====
 
-Using Java DSL, you set the statistics level by:
+[tabs]
+====
 
+Java::
++
 [source,java]
 ----
 // only enable routes when Camel starts
 context.getManagementStrategy().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
 ----
 
-And from XML DSL you can do:
-
+Spring XML::
++
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -297,6 +286,14 @@ And from XML DSL you can do:
 </camelContext>
 ----
 
+Application Properties::
++
+[source,properties]
+----
+camel.main.jmxManagementStatisticsLevel = RoutesOnly
+----
+====
+
 === Performance load statistics
 
 It is possible to include load statistics for CamelContext and Route MBeans.
@@ -304,7 +301,12 @@ These statistics are for average load based on the number of in-flight
 exchanges, measured over periods of 1, 5, and 15 minutes. This is similar to
 load statistics on Unix systems.
 
-You can enable this by setting `loadStatisticsEnabled=true`.
+You can enable load statistics such as from `application.properties`:
+
+[source,properties]
+----
+camel.main.loadStatisticsEnabled = true
+----
 
 == Hiding sensitive information
 
@@ -344,7 +346,7 @@ NOTE: make sure to properly secure the access to JMX services for production wor
 
 Exposing the JMX metrics with its native protocol may not always be possible (ie, for firewall limitations, security, etc). In this case you may recur to the availability of JSR 160 compatible Java Agents (for instance, https://jolokia.org/reference/html/manual/agents.html#agents-jvm[Jolokia]), which goal is to adapt the JMX interface with HTTP based protocol. With this approach you can run you application attaching a Java Agent whose goal will be to take care of exposing JMX via HTTP. As an example:
 
-[source, java]
+[source,bash]
 ----
 java -javaagent:jsr160-javaagent.jar -jar my-camel-app.jar
 ----
@@ -353,14 +355,14 @@ will expose certain endpoints (depending on the implementation) which would let 
 
 Depending on the implementation you will need to provide to a different set of agent configuration. For example, if you're running Jolokia agent, then, you will need to run this configuration to expose a plain HTTP unsecure service:
 
-[source, console]
+[source,bash]
 ----
 java -javaagent:jolokia-agent-jvm-2.1.1-javaagent.jar=protocol=http,useSslClientAuthentication=false,discoveryEnabled=false,host=*,extendedClientCheck=false -jar my-camel-app.jar
 ----
 
 From that moment onward you will be able to access the service via:
 
-[source, console]
+[source,bash]
 ----
 $ curl http://localhost:8778/jolokia/list/org.apache.camel | jq | more
 {

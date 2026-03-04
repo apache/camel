@@ -104,8 +104,6 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        marshaller = marshallerFactory.create(getActiveFormat(), this);
-        unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
 
         if (csvFormat == null && format != null) {
             csvFormat = CSVFormat.valueOf(format);
@@ -113,6 +111,9 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         if (csvFormat == null) {
             csvFormat = CSVFormat.DEFAULT;
         }
+
+        marshaller = marshallerFactory.create(getActiveFormat(), this);
+        unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
     }
 
     @Override
@@ -227,6 +228,10 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     public CSVFormat getCsvFormat() {
         return csvFormat;
+    }
+
+    public void setCsvFormat(CSVFormat csvFormat) {
+        this.csvFormat = csvFormat;
     }
 
     public String getFormat() {

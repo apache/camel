@@ -178,6 +178,89 @@ public interface LangChain4jAgentEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Pre-built MCP (Model Context Protocol) client instances for external
+         * tool integration. Reference beans from the registry, e.g.,
+         * #myMcpClient1,#myMcpClient2.
+         * 
+         * The option is a:
+         * <code>java.util.List&lt;dev.langchain4j.mcp.client.McpClient&gt;</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param mcpClients the value to set
+         * @return the dsl builder
+         */
+        default AdvancedLangChain4jAgentEndpointBuilder mcpClients(List<dev.langchain4j.mcp.client.McpClient> mcpClients) {
+            doSetProperty("mcpClients", mcpClients);
+            return this;
+        }
+        /**
+         * Pre-built MCP (Model Context Protocol) client instances for external
+         * tool integration. Reference beans from the registry, e.g.,
+         * #myMcpClient1,#myMcpClient2.
+         * 
+         * The option will be converted to a
+         * <code>java.util.List&lt;dev.langchain4j.mcp.client.McpClient&gt;</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param mcpClients the value to set
+         * @return the dsl builder
+         */
+        default AdvancedLangChain4jAgentEndpointBuilder mcpClients(String mcpClients) {
+            doSetProperty("mcpClients", mcpClients);
+            return this;
+        }
+        /**
+         * MCP server definitions in the form of mcpServer..=. Supported
+         * properties: transportType (stdio, http, streamableHttp, or sse,
+         * default: stdio), command (comma-separated, for stdio), url (for
+         * http/sse), environment.= (for stdio), timeout (in seconds, default:
+         * 60), logRequests, logResponses, oauthProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the mcpServer(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedLangChain4jAgentEndpointBuilder mcpServer(String key, Object value) {
+            doSetMultiValueProperty("mcpServer", "mcpServer." + key, value);
+            return this;
+        }
+        /**
+         * MCP server definitions in the form of mcpServer..=. Supported
+         * properties: transportType (stdio, http, streamableHttp, or sse,
+         * default: stdio), command (comma-separated, for stdio), url (for
+         * http/sse), environment.= (for stdio), timeout (in seconds, default:
+         * 60), logRequests, logResponses, oauthProfile (OAuth profile for HTTP
+         * auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the mcpServer(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedLangChain4jAgentEndpointBuilder mcpServer(Map values) {
+            doSetMultiValueProperties("mcpServer", "mcpServer.", values);
+            return this;
+        }
     }
 
     public interface LangChain4jAgentBuilders {
@@ -295,6 +378,33 @@ public interface LangChain4jAgentEndpointBuilderFactory {
          */
         public String langChain4jAgentMediaType() {
             return "CamelLangChain4jAgentMediaType";
+        }
+        /**
+         * Comma-separated list of Camel tool tags to exclude from this agent
+         * invocation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentExcludeTags}.
+         */
+        public String langChain4jAgentExcludeTags() {
+            return "CamelLangChain4jAgentExcludeTags";
+        }
+        /**
+         * Comma-separated list of MCP server names (keys) to exclude from this
+         * agent invocation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * LangChain4jAgentExcludeMcpServers}.
+         */
+        public String langChain4jAgentExcludeMcpServers() {
+            return "CamelLangChain4jAgentExcludeMcpServers";
         }
     }
     static LangChain4jAgentEndpointBuilder endpointBuilder(String componentName, String path) {

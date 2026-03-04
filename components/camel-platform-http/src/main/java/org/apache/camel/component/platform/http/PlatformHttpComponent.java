@@ -29,7 +29,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
@@ -38,6 +37,7 @@ import org.apache.camel.spi.RestOpenApiConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
@@ -338,14 +338,9 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
 
                     if (engine == null) {
                         LOG.debug("Lookup platform http engine from factory");
-
-                        engine = getCamelContext()
-                                .getCamelContextExtension()
-                                .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
-                                .newInstance(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, PlatformHttpEngine.class)
-                                .orElseThrow(() -> new IllegalStateException(
-                                        "PlatformHttpEngine is neither set on this endpoint neither found in Camel Registry or FactoryFinder."));
-
+                        engine = ResolverHelper.resolveMandatoryService(getCamelContext(),
+                                PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, PlatformHttpEngine.class,
+                                "camel-platform-http-vertx");
                         localEngine = true;
                     }
                 }

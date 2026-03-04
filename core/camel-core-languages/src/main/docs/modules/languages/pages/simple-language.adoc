@@ -186,6 +186,7 @@ to access Camel functionality and content of the message being routed.
 |`stepId` | `String` | Returns the id of the current step the `Exchange` is being routed. Returns `null` if there are no steps.
 |`throwException(type,msg)` | `Exception` | Deliberately throws an error. Uses `IllegalArgumentException` by default if no type is specified (use fully qualified classname).
 |`type:name.field` | `Object` | To refer to a type or field by its fully qualified classname. For example: `type:org.apache.camel.Exchange.FILE_NAME`.
+|`val(exp)` | `Object` | Returns the expression as a constant value.
 |`variable.key` | `Object` | To look up the variable with the given key.
 |`variable.key._OGNL_` | `Object` | To look up the variable with the given key and then invoke Camel _OGNL syntax_.
 |`variable[key]` | `Object` | *Deprecated* To look up the variable with the given key.
@@ -1178,17 +1179,21 @@ $init{
 
 Notice how the block uses the `$init{` ... `}init$` markers to indicate the start and end of the block.
 
-Inside the init block, then you can assign local variables in the syntax `$key := ...` where you can then use simple language to declare
+Inside the init block, then you can assign local variables in the syntax `$key := <statement>;` where you can then use simple language to compute
 the value of the variable.
 
-In the example below the `foo` variable is assigned a constant value of `Hello foo`, while `bar` variable is a string value with the dynamic value
-of the message body.
+IMPORTANT: Each statement must end with semicolon and new-line (`;\n`). This makes the init block more similar to Java programming language,
+and it was also necessary to make this work for the internal simple parser used by Camel.
+
+Here are a couple of examples:
 
 [source,text]
 ----
 $init{
-  $foo := 'Hello foo'
-  $bar := 'Hi from ${body}'
+  $cheese := 'Hello ${body}';
+  $minAge := 18;
+  $foo := ${upper('Hello $body}'};
+  $bar := ${header.code > 999 ? 'Gold' : 'Silver'};
 }init$
 ----
 
@@ -1197,21 +1202,14 @@ You can have Java style code comments in the init block using `// comment here` 
 [source,text]
 ----
 $init{
-  // foo is a beginner phrase
-  $foo := 'Hello foo'
+  // minimum age to drive
+  $minAge := 18;
 
-  // here we can inline functions to get the name of the user from the message body
-  $bar := 'Hi from ${body}'
-}init$
-----
+  // say hello to my friend
+  $foo := ${upper('Hello $body}'};
 
-Yes you can use the full power of the simple language and all its functions, such as:
-
-[source,text]
-----
-$init{
-  $foo := ${upper('Hello $body}'}
-  $bar := ${header.code > 999 ? 'Gold' : 'Silver'}
+  // either gold or silver
+  $bar := ${header.code > 999 ? 'Gold' : 'Silver'};
 }init$
 ----
 
@@ -1247,8 +1245,8 @@ from("direct:welcome")
   .transform().simple(
           """
             $init{
-              $greeting := ${upper('Hello $body}'}
-              $level := ${header.code > 999 ? 'Gold' : 'Silver'}
+              $greeting := ${upper('Hello $body}'};
+              $level := ${header.code > 999 ? 'Gold' : 'Silver'};
             }init$
             {
               "message": "$greeting",
@@ -1268,8 +1266,8 @@ XML::
     <transform>
         <simple>
             $init{
-              $greeting := ${upper('Hello $body}'}
-              $level := ${header.code > 999 ? 'Gold' : 'Silver'}
+              $greeting := ${upper('Hello $body}'};
+              $level := ${header.code > 999 ? 'Gold' : 'Silver'};
             }init$
             {
               "message": "$greeting",
@@ -1293,8 +1291,8 @@ YAML::
           simple:
             expression: |-
                 $init{
-                  $greeting := ${upper('Hello $body}'}
-                  $level := ${header.code > 999 ? 'Gold' : 'Silver'}
+                  $greeting := ${upper('Hello $body}'};
+                  $level := ${header.code > 999 ? 'Gold' : 'Silver'};
                 }init$
                 {
                   "message": "$greeting",
@@ -1316,7 +1314,7 @@ and then refer to the file such as `resource:classpath:mymapping.txt` where the 
 
 You can also declare custom functions using
 
-Inside the init block, it is a lso possible to define custom functions in the syntax `$nane ~:= ...` where you can then use simple language to declare
+Inside the init block, it is a lso possible to define custom functions in the syntax `$nane ~:= <statement>;` where you can then use simple language to declare
 the structure of the function. Then you can later use these custom functions in your simple language expressions.
 
 For example to create a function that can cleanup a `String` value:
@@ -1324,7 +1322,7 @@ For example to create a function that can cleanup a `String` value:
 [source,text]
 ----
 $init{
-  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
 }init$
 ----
 
@@ -1353,20 +1351,20 @@ It is also possible to reuse custom functions from other functions using `${func
 [source,text]
 ----
 $init{
-  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
-  $count ~:= ${function(cleanUp)} ~> ${split(' ')} ~> ${size()}
+  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
+  $count ~:= ${function(cleanUp)} ~> ${split(' ')} ~> ${size()};
 }init$
 ----
 
 Here the `$count` is declared as a function which calls the cleanUp function and then counts the words via split and size functions.
 
-Instead of using `${function(name)}` you can also same syntax as the built-in functions, as follows:
+Instead of using `${function(name)}` you can also same syntax as the built-in Simple functions, as follows:
 
 [source,text]
 ----
 $init{
-  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
-  $count ~:= ${cleanUp()} ~> ${split(' ')} ~> ${size()}
+  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()};
+  $count ~:= ${cleanUp()} ~> ${split(' ')} ~> ${size()};
 }init$
 ----
 

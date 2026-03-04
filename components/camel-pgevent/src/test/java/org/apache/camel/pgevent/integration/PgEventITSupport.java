@@ -19,7 +19,7 @@ package org.apache.camel.pgevent.integration;
 import org.apache.camel.test.infra.jdbc.services.JDBCLocalContainerService;
 import org.apache.camel.test.infra.jdbc.services.JDBCService;
 import org.apache.camel.test.infra.jdbc.services.JDBCServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 

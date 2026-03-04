@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.nats.NatsComponent;
 import org.apache.camel.test.infra.nats.services.NatsLocalContainerService;
 import org.apache.camel.test.infra.nats.services.NatsLocalContainerTLSAuthService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class NatsTLSAuthITSupport extends CamelTestSupport {
@@ -31,7 +31,7 @@ public class NatsTLSAuthITSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         NatsComponent nats = context.getComponent("nats", NatsComponent.class);
-        nats.setServers(service.getServiceAddress());
+        nats.getConfiguration().setServers(service.getServiceAddress());
         return context;
     }
 

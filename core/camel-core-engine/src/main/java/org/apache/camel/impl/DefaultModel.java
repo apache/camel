@@ -51,7 +51,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRouteParameterDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
@@ -82,7 +81,7 @@ public class DefaultModel implements Model {
     private List<ValidatorDefinition> validators = new ArrayList<>();
     // XML and YAML DSL allows to declare beans in the DSL
     private final List<BeanFactoryDefinition<?>> beans = new ArrayList<>();
-    private final Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
+
     private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
     private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
     private Function<RouteDefinition, Boolean> routeFilter;
@@ -119,7 +118,8 @@ public class DefaultModel implements Model {
         if (routesConfiguration == null || !includedRouteConfiguration(routesConfiguration)) {
             return;
         }
-        // only add if not already exists (route-loader may let Java DSL add route configuration twice
+        // only add if not already exists (route-loader may let Java DSL add route
+        // configuration twice
         // because it extends RouteBuilder as base class)
         if (!this.routesConfigurations.contains(routesConfiguration)) {
             // check that there is no id clash
@@ -140,7 +140,8 @@ public class DefaultModel implements Model {
         if (routesConfigurations == null || routesConfigurations.isEmpty()) {
             return;
         }
-        // only add if not already exists (route-loader may let Java DSL add route configuration twice
+        // only add if not already exists (route-loader may let Java DSL add route
+        // configuration twice
         // because it extends RouteBuilder as base class)
         for (RouteConfigurationDefinition rc : routesConfigurations) {
             addRouteConfiguration(rc);
@@ -155,7 +156,8 @@ public class DefaultModel implements Model {
     @Override
     public synchronized RouteConfigurationDefinition getRouteConfigurationDefinition(String id) {
         for (RouteConfigurationDefinition def : routesConfigurations) {
-            if (def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)).equals(id)) {
+            if (def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class))
+                    .equals(id)) {
                 return def;
             }
         }
@@ -165,7 +167,8 @@ public class DefaultModel implements Model {
 
     @Override
     public void removeRouteConfiguration(RouteConfigurationDefinition routeConfigurationDefinition) throws Exception {
-        RouteConfigurationDefinition toBeRemoved = getRouteConfigurationDefinition(routeConfigurationDefinition.getId());
+        RouteConfigurationDefinition toBeRemoved = getRouteConfigurationDefinition(
+                routeConfigurationDefinition.getId());
         this.routesConfigurations.remove(toBeRemoved);
     }
 
@@ -214,7 +217,8 @@ public class DefaultModel implements Model {
                     // only attempt to inline if not already inlined
                     String uri = from.getEndpointUri();
                     if (uri != null && uri.startsWith("rest:")) {
-                        // find first EIP in the outputs (skip abstract which are onException/intercept etc)
+                        // find first EIP in the outputs (skip abstract which are onException/intercept
+                        // etc)
                         ToDefinition to = null;
                         for (ProcessorDefinition<?> def : r.getOutputs()) {
                             if (def.isAbstract()) {
@@ -343,7 +347,8 @@ public class DefaultModel implements Model {
     @Override
     public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
-            if (route.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)).equals(id)) {
+            if (route.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class))
+                    .equals(id)) {
                 return route;
             }
         }
@@ -358,7 +363,8 @@ public class DefaultModel implements Model {
     @Override
     public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
         for (RouteTemplateDefinition route : routeTemplateDefinitions) {
-            if (route.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)).equals(id)) {
+            if (route.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class))
+                    .equals(id)) {
                 return route;
             }
         }
@@ -366,7 +372,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+    public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions)
+            throws Exception {
         if (routeTemplateDefinitions == null || routeTemplateDefinitions.isEmpty()) {
             return;
         }
@@ -385,7 +392,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+    public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions)
+            throws Exception {
         for (RouteTemplateDefinition r : routeTemplateDefinitions) {
             removeRouteTemplateDefinition(r);
         }
@@ -400,13 +408,17 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter) {
+    public void addRouteTemplateDefinitionConverter(
+            String templateIdPattern,
+            RouteTemplateDefinition.Converter converter) {
         routeTemplateConverters.put(templateIdPattern, converter);
     }
 
     @Override
     @Deprecated(since = "3.10.0")
-    public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
+    public String addRouteFromTemplate(
+            final String routeId, final String routeTemplateId,
+            final Map<String, Object> parameters)
             throws Exception {
         RouteTemplateContext rtc = new DefaultRouteTemplateContext(camelContext);
         if (parameters != null) {
@@ -426,7 +438,9 @@ public class DefaultModel implements Model {
         return addRouteFromTemplate(routeId, routeTemplateId, prefixId, group, rtc);
     }
 
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
+    public String addRouteFromTemplate(
+            String routeId, String routeTemplateId,
+            RouteTemplateContext routeTemplateContext)
             throws Exception {
         return addRouteFromTemplate(routeId, routeTemplateId, null, null, routeTemplateContext);
     }
@@ -465,12 +479,13 @@ public class DefaultModel implements Model {
             }
         }
         if (target == null) {
-            // if the route template has a location parameter, then try to load route templates from the location
+            // if the route template has a location parameter, then try to load route
+            // templates from the location
             // and look up again
             Object location = routeTemplateContext.getParameters().get(RouteTemplateParameterSource.LOCATION);
             if (location != null) {
-                RouteTemplateLoaderListener listener
-                        = CamelContextHelper.findSingleByType(getCamelContext(), RouteTemplateLoaderListener.class);
+                RouteTemplateLoaderListener listener = CamelContextHelper.findSingleByType(getCamelContext(),
+                        RouteTemplateLoaderListener.class);
                 RouteTemplateHelper.loadRouteTemplateFromLocation(getCamelContext(), listener, routeTemplateId,
                         location.toString());
             }
@@ -488,7 +503,8 @@ public class DefaultModel implements Model {
         // support both camelCase and kebab-case keys
         final Map<String, Object> prop = new HashMap<>();
         final Map<String, Object> propDefaultValues = new HashMap<>();
-        // include default values first from the template (and validate that we have inputs for all required parameters)
+        // include default values first from the template (and validate that we have
+        // inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
             StringJoiner missingParameters = new StringJoiner(", ");
 
@@ -515,7 +531,8 @@ public class DefaultModel implements Model {
         if (routeTemplateContext.getParameters() != null) {
             routeTemplateContext.getParameters().forEach((k, v) -> addProperty(prop, k, v));
         }
-        // route template context should include default template parameters from the target route template
+        // route template context should include default template parameters from the
+        // target route template
         // so it has all parameters available
         if (target.getTemplateParameters() != null) {
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
@@ -668,34 +685,6 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName) {
-        if (serviceName == null) {
-            serviceName = "";
-        }
-
-        return serviceCallConfigurations.get(serviceName);
-    }
-
-    @Override
-    public void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration) {
-        serviceCallConfigurations.put("", configuration);
-    }
-
-    @Override
-    public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations) {
-        if (configurations != null) {
-            for (ServiceCallConfigurationDefinition configuration : configurations) {
-                serviceCallConfigurations.put(configuration.getId(), configuration);
-            }
-        }
-    }
-
-    @Override
-    public void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration) {
-        serviceCallConfigurations.put(serviceName, configuration);
-    }
-
-    @Override
     public Resilience4jConfigurationDefinition getResilience4jConfiguration(String id) {
         if (id == null) {
             id = "";
@@ -765,8 +754,8 @@ public class DefaultModel implements Model {
     @Override
     public ProcessorDefinition<?> getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
-            Collection<ProcessorDefinition> col
-                    = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+            Collection<ProcessorDefinition> col = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(),
+                    ProcessorDefinition.class);
             for (ProcessorDefinition proc : col) {
                 String pid = proc.getId();
                 // match direct by ids

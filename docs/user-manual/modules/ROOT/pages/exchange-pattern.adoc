@@ -9,7 +9,7 @@ Integration Patterns] they are:
 * xref:components:eips:event-message.adoc[Event Message] (or one-way)
 * xref:components:eips:requestReply-eip.adoc[Request Reply]
 
-In Camel we have an
+In Camel, we have an
 `org.apache.camel.ExchangePattern`
 enumeration which can be configured on the *exchangePattern* property on
 the Message Exchange indicating if a message

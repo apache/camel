@@ -1,6 +1,7 @@
 = HTTP Session Handling
 
 Several Camel components can use HTTP as the underlying transport protocol.
+
 In general HTTP calls are stateless in nature, however some servers allow
 maintaining state via cookies. Cookies are often used to maintain a server
 session (e.g. via a session cookie called "JSESSIONID" with servers implementing
@@ -71,8 +72,13 @@ all invocations will share a session. For the third route the first, and the sec
 within the route share a session, but different (even parallel) invocations of the route will
 not share a session.
 
+[tabs]
+====
+
+Spring XML::
++
 [source,xml]
------------------------------------------------------------
+----
   <cxf:rsClient id="rsClientProxy" address="http://127.0.0.1:8080/CxfRsProducerSessionTest/"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.EchoService"
     loggingFeatureEnabled="true" />
@@ -100,7 +106,8 @@ not share a session.
 
   <bean id="instanceCookieHandler" class="org.apache.camel.http.common.cookie.InstanceCookieHandler"/>
   <bean id="exchangeCookieHandler" class="org.apache.camel.http.common.cookie.ExchangeCookieHandler"/>
------------------------------------------------------------
+----
+====
 
 Both `CookieHandler` implementations support setting a CookiePolicy to control the policy for storing
 cookies. Default is `CookiePolicy.ACCEPT_ORIGINAL_SERVER`.
@@ -120,8 +127,8 @@ As a workaround, you can call a `cookieHandler.getCookieStore()` e.g. by setting
 If you want to develop a HTTP based component that is supposed to participate in a session
 you have to add the following parts to your code:
 
-. Include a build reference to camel-http-common (if it is not already there)
-. Add a cookieHandler parameter to the endpoint class (together with getter and setter)
+. Include a build reference to `camel-http-base` (if it is not already there)
+. Add a `cookieHandler` parameter to the endpoint class (together with getter and setter)
 . Before your code does the HTTP call, if a cookie handler is set on the endpoint
 perform a `cookieHandler.loadCookies(exchange, uri)` call. It will return a
 `Map<String, List<String>>` containing the headers that need to be sent to the server.

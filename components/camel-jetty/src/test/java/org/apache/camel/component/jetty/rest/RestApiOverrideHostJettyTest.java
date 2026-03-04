@@ -19,13 +19,13 @@ package org.apache.camel.component.jetty.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.model.rest.RestParamType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Does not run well on CI due test uses JMX mbeans")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI due to use of JMX")
 public class RestApiOverrideHostJettyTest extends BaseJettyTest {
 
     @Override
@@ -35,12 +35,12 @@ public class RestApiOverrideHostJettyTest extends BaseJettyTest {
 
     @Test
     public void testApi() {
-        String out = template.requestBody("jetty:http://localhost:{{port}}/api-doc", null, String.class);
+        String out = template.requestBody("http://localhost:{{port}}/api-doc", null, String.class);
         assertNotNull(out);
 
         assertTrue(out.contains("\"version\" : \"1.2.3\""));
         assertTrue(out.contains("\"title\" : \"The hello rest thing\""));
-        assertTrue(out.contains("\"host\" : \"mycoolserver/myapi\""));
+        assertTrue(out.contains("\"url\" : \"http://mycoolserver/myapi\""));
         assertTrue(out.contains("\"/hello/bye/{name}\""));
         assertTrue(out.contains("\"/hello/hi/{name}\""));
         assertTrue(out.contains("\"summary\" : \"To update the greeting message\""));

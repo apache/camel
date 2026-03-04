@@ -39,11 +39,15 @@ class RestTest extends YamlTestSupport {
                     type: ${MockRestConsumerFactory.name}
                 - restConfiguration:
                     component: "servlet"
-                    contextPath: "/foo"       
+                    contextPath: "/foo"
+                    dataFormatProperty:
+                      - key: "contentTypeHeader"
+                        value: "false"
             """
         then:
             context.restConfiguration.component == 'servlet'
             context.restConfiguration.contextPath == '/foo'
+            context.restConfiguration.dataFormatProperties["contentTypeHeader"] == "false"
     }
 
     def "load rest (to)"() {

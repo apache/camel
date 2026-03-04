@@ -66,8 +66,8 @@
     },
     "created_time": {
       "type": "integer",
-      "title": "Created Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Created Time"
     },
     "network_interfaces": {
       "type": "array",
@@ -105,8 +105,8 @@
     },
     "boot_time": {
       "type": "integer",
-      "title": "Boot Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Boot Time"
     },
     "is_compliant": {
       "type": "boolean",
@@ -127,8 +127,8 @@
     },
     "first_seen_time": {
       "type": "integer",
-      "title": "First Seen",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "First Seen"
     },
     "uid_alt": {
       "type": "string",
@@ -186,13 +186,13 @@
     },
     "modified_time": {
       "type": "integer",
-      "title": "Modified Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Modified Time"
     },
     "last_seen_time": {
       "type": "integer",
-      "title": "Last Seen",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Last Seen"
     },
     "udid": {
       "type": "string",

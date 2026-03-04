@@ -42,7 +42,7 @@ public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
         getMockEndpoint("mock:d").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
 
-        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("foo", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 getOriginalRoute().errorHandler(noErrorHandler());
@@ -70,7 +70,7 @@ public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:dead2").expectedMessageCount(1);
 
-        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("foo", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 // override errorHandler by using on exception

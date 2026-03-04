@@ -51,6 +51,20 @@ XML::
     <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - threads:
+            poolSize: 5
+        - to:
+            uri: mock:result
+----
 ====
 
 And to use a thread pool with a task queue of only 20 elements:
@@ -76,6 +90,21 @@ XML::
     <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - threads:
+            poolSize: 5
+            maxQueueSize: 20
+        - to:
+            uri: mock:result
+----
 ====
 
 And you can also use a thread pool with no queue (meaning that a task cannot be pending on a queue):
@@ -100,6 +129,21 @@ XML::
     <threads poolSize="5" maxQueueSize="0"/>
     <to uri="mock:result"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: seda:a
+      steps:
+        - threads:
+            poolSize: 5
+            maxQueueSize: 0
+        - to:
+            uri: mock:result
 ----
 ====
 

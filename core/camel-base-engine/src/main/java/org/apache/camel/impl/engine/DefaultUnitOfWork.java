@@ -307,7 +307,9 @@ public class DefaultUnitOfWork implements UnitOfWork {
     protected void onDone() {
         // MUST clear and set uow to null on exchange after done
         // in case the same exchange is manually reused by Camel end users (should happen seldom)
-        exchange.getExchangeExtension().setUnitOfWork(null);
+        if (exchange != null) {
+            exchange.getExchangeExtension().setUnitOfWork(null);
+        }
     }
 
     @Override

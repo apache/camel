@@ -48,7 +48,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
                   @YamlProperty(name = "precondition", type = "string"),
                   @YamlProperty(name = "routeConfigurationId", type = "string"),
                   @YamlProperty(name = "autoStartup", type = "boolean"),
-                  @YamlProperty(name = "routePolicy", type = "string"),
+                  @YamlProperty(name = "routePolicyRef", type = "string"),
                   @YamlProperty(name = "startupOrder", type = "number"),
                   @YamlProperty(name = "streamCache", type = "boolean"),
                   @YamlProperty(name = "messageHistory", type = "boolean"),
@@ -115,7 +115,7 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                 case "autoStartup":
                     target.setAutoStartup(asText(val));
                     break;
-                case "routePolicy":
+                case "routePolicyRef":
                     target.setRoutePolicyRef(asText(val));
                     break;
                 case "startupOrder":

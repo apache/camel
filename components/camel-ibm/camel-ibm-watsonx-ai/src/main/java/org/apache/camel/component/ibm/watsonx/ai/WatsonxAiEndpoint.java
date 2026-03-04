@@ -39,6 +39,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.OAuthHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Interact with IBM watsonx.ai foundation models for text generation, chat, embeddings, and more.
@@ -91,7 +93,15 @@ public class WatsonxAiEndpoint extends DefaultEndpoint implements EndpointServic
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        resolveOAuthToken();
         validateConfiguration();
+    }
+
+    private void resolveOAuthToken() throws Exception {
+        if (ObjectHelper.isEmpty(configuration.getOauthProfile())) {
+            return;
+        }
+        configuration.setApiKey(OAuthHelper.resolveOAuthToken(getCamelContext(), configuration.getOauthProfile()));
     }
 
     @Override

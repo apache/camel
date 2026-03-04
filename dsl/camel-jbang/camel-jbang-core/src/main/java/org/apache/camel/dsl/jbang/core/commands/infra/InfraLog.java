@@ -41,6 +41,10 @@ public class InfraLog extends InfraBaseCommand {
     @CommandLine.Parameters(description = "Service name", arity = "0..2")
     private List<String> serviceName;
 
+    @CommandLine.Option(names = { "--lines" }, defaultValue = "50",
+                        description = "The number of lines from the end of the log to use as starting offset")
+    private int logLines = 50;
+
     private ExecutorService executorService;
 
     public InfraLog(CamelJBangMain main) {
@@ -109,6 +113,7 @@ public class InfraLog extends InfraBaseCommand {
     private void createTailer(File logFile, String alias, List<Future<?>> futures) {
         Tailer tailer = Tailer.builder()
                 .setFile(logFile)
+                .setTailFromEnd(true)
                 .setTailerListener(new StdoutTailerListener(alias))
                 .get();
 
@@ -119,7 +124,7 @@ public class InfraLog extends InfraBaseCommand {
 
     class StdoutTailerListener implements TailerListener {
 
-        private String suffix;
+        private final String suffix;
         private Tailer self;
 
         public StdoutTailerListener(String suffix) {
@@ -149,23 +154,18 @@ public class InfraLog extends InfraBaseCommand {
         @Override
         public void init(Tailer tailer) {
             this.self = tailer;
-            try (ReversedLinesFileReader fileReader = new ReversedLinesFileReader(tailer.getFile())) {
-                StringBuilder sb = new StringBuilder();
-                int linesToRead = 50;
-                for (int i = 0; i < linesToRead; i++) {
+            try (ReversedLinesFileReader fileReader = ReversedLinesFileReader.builder().setFile(tailer.getFile()).get()) {
+                List<String> lines = new ArrayList<>(logLines);
+                for (int i = 0; i < logLines; i++) {
                     String line = fileReader.readLine();
                     if (line == null) {
                         break;
                     }
-
-                    // prepend
-                    sb.insert(0, "[" + suffix + "] " + line);
+                    lines.add(0, line);
                 }
-
-                printer().println(sb.toString());
+                lines.forEach(this::handle);
             } catch (IOException e) {
-                printer().println("Error collecting logs");
-                printer().printErr(e);
+                printer().printErr("Error initializing logs", e);
             }
         }
     }

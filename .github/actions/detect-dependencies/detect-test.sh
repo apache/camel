@@ -90,7 +90,7 @@ main() {
   fi
 
   echo "🧪 Testing the following modules $modules_affected and its dependents"
-  $mavenBinary $MVND_OPTS clean test -pl "$modules_affected$exclusionList" -amd
+  $mavenBinary $MVND_OPTS test -pl "$modules_affected$exclusionList" -amd
 }
 
 main "$@"

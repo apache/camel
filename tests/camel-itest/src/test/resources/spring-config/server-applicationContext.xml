@@ -40,10 +40,6 @@
 		<properties>
   			<entry xmlns="http://www.springframework.org/schema/beans" key="mtom-enabled" value="true" />
   		</properties>
-		<features>
-			<!-- Enables logging of SOAP messages. -->
-			<logging xmlns="http://cxf.apache.org/core" />
-		</features>
 	</endpoint>
 
 	<destination xmlns="http://cxf.apache.org/transports/camel"
@@ -55,10 +51,8 @@
 		xmlns="http://camel.apache.org/schema/spring">
 		<jmxAgent id="agent" disabled="true"/>
 		<route>
-			<from
-				uri="jms://org.apache.camel.itest.customerrelations.CustomerServiceV1" />
-			<to
-				uri="direct:serverInbound" />
+			<from uri="jms://org.apache.camel.itest.customerrelations.CustomerServiceV1" />
+			<to uri="direct:serverInbound" />
 		</route>
 	</camelContext>
 </beans>

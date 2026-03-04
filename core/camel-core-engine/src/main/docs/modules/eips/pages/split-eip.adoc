@@ -34,6 +34,11 @@ then split into sub messages, which each are sent to the `direct:b` endpoint.
 The example splits the message body using a tokenizer to split into lines
 using the new-line character as separator.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -41,8 +46,8 @@ from("direct:a")
         .to("direct:b");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -54,11 +59,34 @@ And in XML:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - split:
+            expression:
+              tokenize:
+                token: "\n"
+            steps:
+              - to:
+                  uri: direct:b
+----
+====
+
 The Split EIP has special support for splitting using a delimiter, instead of using
 xref:components:languages:tokenize-language.adoc[Tokenize] language.
 
 The previous example can also be done as follows:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -66,8 +94,8 @@ from("direct:a")
         .to("direct:b");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -78,6 +106,25 @@ And in XML:
   </split>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - split:
+            delimiter: "\n"
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: direct:b
+----
+====
 
 The splitter can use any xref:manual:ROOT:expression.adoc[Expression],
 so you could use any of the supported languages such as
@@ -92,7 +139,7 @@ Java::
 ----
 from("activemq:my.queue")
     .split(xpath("//foo/bar"))
-        .to("file:some/directory")
+        .to("file:some/directory");
 ----
 
 XML::
@@ -106,6 +153,23 @@ XML::
         <to uri="file:some/directory"/>
     </split>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:my.queue
+      steps:
+        - split:
+            expression:
+              xpath:
+                expression: //foo/bar
+            steps:
+              - to:
+                  uri: file:some/directory
 ----
 ====
 
@@ -154,6 +218,25 @@ In XML, you use xref:components:languages:simple-language.adoc[Simple] to refer 
   </split>
 </route>
 ----
+
+YAML::
++
+In YAML, you use xref:components:languages:simple-language.adoc[Simple] to refer to the message body:
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:splitUsingBody
+      steps:
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: mock:result
+----
 ====
 
 === Splitting with parallel processing
@@ -189,6 +272,28 @@ XML::
         <to uri="direct:d"/>
     </split>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - split:
+            parallelProcessing: "true"
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: direct:b
+              - to:
+                  uri: direct:c
+              - to:
+                  uri: direct:d
 ----
 ====
 
@@ -240,6 +345,30 @@ And in XML its intuitive as `</split>` marks the end of the block:
     <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - split:
+            parallelProcessing: "true"
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: direct:b
+              - to:
+                  uri: direct:c
+              - to:
+                  uri: direct:d
+        - to:
+            uri: mock:result
+----
 ====
 
 === What is returned from Split EIP when its complete
@@ -287,6 +416,30 @@ And in XML we can refer to the FQN class name with `#class:` syntax as shown bel
     <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - split:
+            aggregationStrategy: "#class:com.foo.MyAggregationStrategy"
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: direct:b
+              - to:
+                  uri: direct:c
+              - to:
+                  uri: direct:d
+        - to:
+            uri: mock:result
+----
 ====
 
 [NOTE]
@@ -331,6 +484,24 @@ XML::
     </split>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:streaming
+      steps:
+        - split:
+            streaming: "true"
+            expression:
+              tokenize:
+                token: ","
+            steps:
+              - to:
+                  uri: activemq:my.parts
+----
 ====
 
 You can also supply a custom xref:components:languages:bean-language.adoc[Bean]
@@ -358,6 +529,25 @@ XML::
         <to uri="activemq:my.parts"/>
     </split>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:streaming
+      steps:
+        - split:
+            streaming: "true"
+            expression:
+              method:
+                ref: "#class:com.foo.MyCustomSplitter"
+                method: splitMe
+            steps:
+              - to:
+                  uri: activemq:my.parts
 ----
 ====
 
@@ -445,6 +635,7 @@ from("file:inbox")
   .split().tokenizeXML("order").streaming()
      .to("activemq:queue:order");
 ----
+
 XML::
 +
 [source,xml]
@@ -456,6 +647,25 @@ XML::
     <to uri="activemq:queue:order"/>
   </split>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - split:
+            streaming: "true"
+            expression:
+              tokenize:
+                token: order
+                xml: "true"
+            steps:
+              - to:
+                  uri: activemq:queue:order
 ----
 ====
 
@@ -475,6 +685,7 @@ If you want to inherit namespaces from a root/parent tag, then you can do this a
 
 [tabs]
 ====
+
 Java::
 +
 [source,java]
@@ -496,6 +707,26 @@ XML::
   </split>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - split:
+            streaming: "true"
+            expression:
+              tokenize:
+                token: order
+                inheritNamespaceTagName: orders
+                xml: "true"
+            steps:
+              - to:
+                  uri: activemq:queue:order
+----
 ====
 
 You can set `inheritNamsepaceTagName` property to `*` to include the preceding context in each token (i.e., generating each token enclosed in its ancestor elements). It is noted that each token must share the same ancestor elements in this case.
@@ -509,14 +740,55 @@ structures more naturally and efficiently.
 
 To split with XML namespaces on a tag with a local namespace such as `{urn:shop}order`, we can write:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
-Namespaces ns = new Namespaces("ns1", "urn:shop");
+var ns = new org.apache.camel.support.builder.Namespaces("ns1", "urn:shop");
 
 from("file:inbox")
   .split().xtokenize("//ns1:order", 'i', ns).streaming()
-    .to("activemq:queue:order)
+    .to("activemq:queue:order");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:inbox"/>
+    <split streaming="true">
+        <xtokenize>//ns1:order
+            <namespace key="ns1" value="urn:shop"/>
+        </xtokenize>
+        <to uri="activemq:queue:order"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - split:
+            streaming: "true"
+            expression:
+              xtokenize:
+                expression: //ns1:order
+                namespace:
+                  ns1: urn:shop
+            steps:
+              - to:
+                  uri: activemq:queue:order
+----
+====
 
 Two arguments control the behavior of the tokenizer:
 
@@ -559,7 +831,9 @@ Each mode will result in the following tokens:
 | t | 1232014-02-25...
 |===
 
-In XML, the equivalent route would be written as follows:
+In Spring XML, the equivalent route would be written as follows:
+
+NOTE: Notice how the namespace in XML can also be defined in the root tag such as `<camelContext>`.
 
 [source,xml]
 ----
@@ -622,6 +896,25 @@ XML::
     <to uri="activemq:queue:order"/>
   </split>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - split:
+            streaming: "true"
+            expression:
+              tokenize:
+                token: "\n"
+                group: 1000
+            steps:
+              - to:
+                  uri: activemq:queue:order
 ----
 ====
 
@@ -790,6 +1083,28 @@ XML::
     <to uri="direct:cheese"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - split:
+            stopOnException: "true"
+            expression:
+              tokenize:
+                token: ","
+            steps:
+              - process:
+                  ref: myProcessor
+              - to:
+                  uri: mock:split
+        - to:
+            uri: direct:cheese
+----
 ====
 
 In the example above, then `MyProcessor` is causing a failure and throws an exception.
@@ -805,8 +1120,11 @@ that either is a success or failure. In case of a failure, you want that big mes
 
 To support this use case, you would have to share the unit of work on the Splitter.
 
-Here is an example in Java DSL:
+[tabs]
+====
 
+Java::
++
 [source,java]
 ----
 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage()
@@ -829,23 +1147,8 @@ from("direct:line")
     .to("mock:line");
 ----
 
-What would happen is that in case there is an exception thrown during splitting, then
-the error handler will kick in (yes error handling still applies for the sub messages).
-
-The error handler in this example is configured to retry up till three times.
-And when a split message fails all redelivery attempts (its exhausted),
-then this message is *not* moved into that dead letter queue.
-
-The reason is that we have shared the unit of work, so the split message will report the error on the shared unit of work.
-When the Splitter is done, it checks the state of the shared unit of work and checks if any errors occurred.
-If an error occurred it will set the exception on the `Exchange` and mark it for rollback.
-
-The error handler will yet again kick in, as the `Exchange` has been marked as rollback.
-No redelivery attempts are performed (as it was marked for rollback) and the `Exchange`
-will be moved into the dead letter queue.
-
-Using this from XML DSL is just as easy as all you have to set is the `shareUnitOfWork`:
-
+Spring XML::
++
 [source,xml]
 ----
 <camelContext errorHandlerRef="dlc" xmlns="http://camel.apache.org/schema/spring">
@@ -854,6 +1157,8 @@ Using this from XML DSL is just as easy as all you have to set is the `shareUnit
   <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="mock:dead" useOriginalMessage="true">
     <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="0"/>
   </errorHandler>
+
+  <bean id="myProcessor" class="com.foo.MyProcessor"/>
 
   <route>
     <from uri="direct:start"/>
@@ -880,6 +1185,57 @@ Using this from XML DSL is just as easy as all you have to set is the `shareUnit
 </camelContext>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mock:a
+        - split:
+            shareUnitOfWork: "true"
+            expression:
+              tokenize:
+                token: ","
+            steps:
+              - to:
+                  uri: mock:b
+              - to:
+                  uri: direct:line
+        - to:
+            uri: mock:result
+
+- route:
+    from:
+      uri: direct:line
+      steps:
+        - to:
+            uri: log:line
+        - process:
+            ref: myProcessor
+        - to:
+            uri: mock:line
+----
+
+====
+
+What would happen is that in case there is an exception thrown during splitting, then
+the error handler will kick in (yes error handling still applies for the sub messages).
+
+The error handler in this example is configured to retry up till three times.
+And when a split message fails all redelivery attempts (its exhausted),
+then this message is *not* moved into that dead letter queue.
+
+The reason is that we have shared the unit of work, so the split message will report the error on the shared unit of work.
+When the Splitter is done, it checks the state of the shared unit of work and checks if any errors occurred.
+If an error occurred it will set the exception on the `Exchange` and mark it for rollback.
+
+The error handler will yet again kick in, as the `Exchange` has been marked as rollback.
+No redelivery attempts are performed (as it was marked for rollback) and the `Exchange`
+will be moved into the dead letter queue.
 
 == See Also
 

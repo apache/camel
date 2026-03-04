@@ -41,6 +41,15 @@ public final class OcsfConstants {
     public static final int CATEGORY_APPLICATION_ACTIVITY = 6;
     public static final int CATEGORY_REMEDIATION = 7;
 
+    // OCSF Event Class UIDs - System Activity Category
+    public static final int CLASS_FILE_ACTIVITY = 1001;
+    public static final int CLASS_KERNEL_EXTENSION_ACTIVITY = 1002;
+    public static final int CLASS_KERNEL_ACTIVITY = 1003;
+    public static final int CLASS_MEMORY_ACTIVITY = 1004;
+    public static final int CLASS_MODULE_ACTIVITY = 1005;
+    public static final int CLASS_SCHEDULED_JOB_ACTIVITY = 1006;
+    public static final int CLASS_PROCESS_ACTIVITY = 1007;
+
     // OCSF Event Class UIDs - Findings Category
     public static final int CLASS_SECURITY_FINDING = 2001;
     public static final int CLASS_VULNERABILITY_FINDING = 2002;
@@ -62,7 +71,22 @@ public final class OcsfConstants {
     public static final int CLASS_HTTP_ACTIVITY = 4002;
     public static final int CLASS_DNS_ACTIVITY = 4003;
     public static final int CLASS_DHCP_ACTIVITY = 4004;
+    public static final int CLASS_RDP_ACTIVITY = 4005;
+    public static final int CLASS_SMB_ACTIVITY = 4006;
     public static final int CLASS_SSH_ACTIVITY = 4007;
+    public static final int CLASS_FTP_ACTIVITY = 4008;
+    public static final int CLASS_EMAIL_ACTIVITY = 4009;
+    public static final int CLASS_NETWORK_FILE_ACTIVITY = 4010;
+    public static final int CLASS_NTP_ACTIVITY = 4013;
+
+    // OCSF Event Class UIDs - Application Activity Category
+    public static final int CLASS_WEB_RESOURCES_ACTIVITY = 6001;
+    public static final int CLASS_API_ACTIVITY = 6003;
+    public static final int CLASS_DATASTORE_ACTIVITY = 6005;
+    public static final int CLASS_SCAN_ACTIVITY = 6007;
+
+    // OCSF Event Class UIDs - Remediation Category
+    public static final int CLASS_REMEDIATION_ACTIVITY = 7001;
 
     // OCSF Severity IDs
     public static final int SEVERITY_UNKNOWN = 0;

@@ -62,7 +62,9 @@ function main() {
   local totalAffected=0
   for project in ${projects}
   do
-    if [[ ${project} != .* ]] ; then
+    if [[ ${project} == */archetype-resources ]] ; then
+      continue
+    elif [[ ${project} != .* ]] ; then
       local projectRoot
       projectRoot=$(findProjectRoot ${project})
       if [[ ${projectRoot} = "." ]] ; then

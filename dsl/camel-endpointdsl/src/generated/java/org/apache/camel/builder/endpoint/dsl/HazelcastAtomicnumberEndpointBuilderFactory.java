@@ -215,6 +215,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default HazelcastAtomicnumberHeaderNameBuilder hazelcastAtomicvalue() {
             return HazelcastAtomicnumberHeaderNameBuilder.INSTANCE;
         }
@@ -235,6 +236,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * @param path cacheName
          * @return the dsl builder
          */
+        @Deprecated
         default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String path) {
             return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder("hazelcast-atomicvalue", path);
         }
@@ -257,6 +259,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * @param path cacheName
          * @return the dsl builder
          */
+        @Deprecated
         default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String componentName, String path) {
             return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

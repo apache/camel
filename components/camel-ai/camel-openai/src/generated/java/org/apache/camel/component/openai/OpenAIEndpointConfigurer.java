@@ -27,6 +27,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalBodyProperty": target.getConfiguration().setAdditionalBodyProperty(property(camelContext, java.util.Map.class, value)); return true;
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "autotoolexecution":
+        case "autoToolExecution": target.getConfiguration().setAutoToolExecution(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "conversationhistoryproperty":
@@ -46,7 +48,19 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxtokens":
         case "maxTokens": target.getConfiguration().setMaxTokens(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxtooliterations":
+        case "maxToolIterations": target.getConfiguration().setMaxToolIterations(property(camelContext, int.class, value)); return true;
+        case "mcpprotocolversions":
+        case "mcpProtocolVersions": target.getConfiguration().setMcpProtocolVersions(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpreconnect":
+        case "mcpReconnect": target.getConfiguration().setMcpReconnect(property(camelContext, boolean.class, value)); return true;
+        case "mcpserver":
+        case "mcpServer": target.getConfiguration().setMcpServer(property(camelContext, java.util.Map.class, value)); return true;
+        case "mcptimeout":
+        case "mcpTimeout": target.getConfiguration().setMcpTimeout(property(camelContext, int.class, value)); return true;
         case "model": target.getConfiguration().setModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
         case "storefullresponse":
@@ -70,6 +84,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalBodyProperty": return java.util.Map.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "autotoolexecution":
+        case "autoToolExecution": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
         case "conversationhistoryproperty":
@@ -89,7 +105,19 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return boolean.class;
         case "maxtokens":
         case "maxTokens": return java.lang.Integer.class;
+        case "maxtooliterations":
+        case "maxToolIterations": return int.class;
+        case "mcpprotocolversions":
+        case "mcpProtocolVersions": return java.lang.String.class;
+        case "mcpreconnect":
+        case "mcpReconnect": return boolean.class;
+        case "mcpserver":
+        case "mcpServer": return java.util.Map.class;
+        case "mcptimeout":
+        case "mcpTimeout": return int.class;
         case "model": return java.lang.String.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "outputclass":
         case "outputClass": return java.lang.String.class;
         case "storefullresponse":
@@ -114,6 +142,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalBodyProperty": return target.getConfiguration().getAdditionalBodyProperty();
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
+        case "autotoolexecution":
+        case "autoToolExecution": return target.getConfiguration().isAutoToolExecution();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
         case "conversationhistoryproperty":
@@ -133,7 +163,19 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxtokens":
         case "maxTokens": return target.getConfiguration().getMaxTokens();
+        case "maxtooliterations":
+        case "maxToolIterations": return target.getConfiguration().getMaxToolIterations();
+        case "mcpprotocolversions":
+        case "mcpProtocolVersions": return target.getConfiguration().getMcpProtocolVersions();
+        case "mcpreconnect":
+        case "mcpReconnect": return target.getConfiguration().isMcpReconnect();
+        case "mcpserver":
+        case "mcpServer": return target.getConfiguration().getMcpServer();
+        case "mcptimeout":
+        case "mcpTimeout": return target.getConfiguration().getMcpTimeout();
         case "model": return target.getConfiguration().getModel();
+        case "oauthprofile":
+        case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
         case "storefullresponse":
@@ -155,6 +197,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.lang.Object.class;
+        case "mcpserver":
+        case "mcpServer": return java.lang.Object.class;
         default: return null;
         }
     }

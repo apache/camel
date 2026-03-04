@@ -16,32 +16,40 @@
  */
 package org.apache.camel.util.concurrent;
 
-import java.util.concurrent.ThreadFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Thread factory which creates threads supporting a naming pattern.
+ * Thread factory which creates threads supporting a naming pattern. The factory creates virtual threads in case the
+ * System property {@code camel.threads.virtual.enabled} set to {@code true}.
  */
-public final class CamelThreadFactory implements ThreadFactory {
+public final class CamelThreadFactory implements ThreadFactoryTypeAware {
     private static final Logger LOG = LoggerFactory.getLogger(CamelThreadFactory.class);
+
+    private static final ThreadFactoryType TYPE = ThreadFactoryType.current();
 
     private final String pattern;
     private final String name;
     private final boolean daemon;
+    private final ThreadFactoryType threadType;
 
     public CamelThreadFactory(String pattern, String name, boolean daemon) {
         this.pattern = pattern;
         this.name = name;
         this.daemon = daemon;
+        this.threadType = daemon ? TYPE : ThreadFactoryType.PLATFORM;
+    }
+
+    @Override
+    public boolean isVirtual() {
+        return threadType == ThreadFactoryType.VIRTUAL;
     }
 
     @Override
     public Thread newThread(Runnable runnable) {
         String threadName = ThreadHelper.resolveThreadName(pattern, name);
-        Thread answer = new Thread(runnable, threadName);
-        answer.setDaemon(daemon);
+
+        Thread answer = threadType.newThread(threadName, daemon, runnable);
 
         LOG.trace("Created thread[{}] -> {}", threadName, answer);
         return answer;
@@ -54,5 +62,28 @@ public final class CamelThreadFactory implements ThreadFactory {
     @Override
     public String toString() {
         return "CamelThreadFactory[" + name + "]";
+    }
+
+    private enum ThreadFactoryType {
+        PLATFORM {
+            Thread.Builder newThreadBuilder(String threadName, boolean daemon) {
+                return Thread.ofPlatform().name(threadName).daemon(daemon);
+            }
+        },
+        VIRTUAL {
+            Thread.Builder newThreadBuilder(String threadName, boolean daemon) {
+                return Thread.ofVirtual().name(threadName);
+            }
+        };
+
+        Thread newThread(String threadName, boolean daemon, Runnable runnable) {
+            return newThreadBuilder(threadName, daemon).unstarted(runnable);
+        }
+
+        abstract Thread.Builder newThreadBuilder(String threadName, boolean daemon);
+
+        static ThreadFactoryType current() {
+            return ThreadType.current() == ThreadType.VIRTUAL ? VIRTUAL : PLATFORM;
+        }
     }
 }

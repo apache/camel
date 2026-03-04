@@ -4,25 +4,21 @@ There are two different ways to send messages to any Camel
 xref:endpoint.adoc[Endpoint] from a POJO:
 
 - Using `@Produce` or `@EndpointInject`
-- Or to hide using an interface
-
-[NOTE]
-====
-The following steps use the ActiveMQ component which is not yet supported on Camel 4.
-====
+- Hiding using an interface
 
 == Using @Produce
 
 To allow sending of messages from POJOs you can use the `@Produce` annotation.
 This will inject a `org.apache.camel.ProducerTemplate` so that the bean can send messages.
 
-IMPORTANT: The `@Produce` POJO annotations are not part of any Camel routes, and you cannot use errorHandler or onException with that.
+IMPORTANT: The `@Produce` POJO annotations are not part of any Camel routes, and you cannot use xref:error-handler.adoc[errorHandler] or xref:exception-clause.adoc[onException] with this.
 
 For example to send a message to the foo queue on ActiveMQ:
 
 [source,java]
 ----
 public class Foo {
+
   @Produce("activemq:foo")
   ProducerTemplate producer;
 
@@ -52,6 +48,7 @@ you use in your business logic. Example:
 [source,java]
 ----
 public interface MyListener {
+
     // this method is request/reply (InOut) because the method has a return value
     // to use one way (InOnly) then the method should be a void method
     String sayHello(String name);
@@ -78,11 +75,19 @@ endpoint; in this case the ActiveMQ endpoint to
 queue *`foo`*. Because the `sayHello` method has a return type (`String`) then Camel
 will use xref:components:eips:requestReply-eip.adoc[Request Reply] (InOut) messaging.
 
+If the method is a `void` method, then Camel will use xref:components:eips:event-message.adoc[Event Message] (InOnly) messaging,
+as shown below:
+
 [source,java]
 ----
 public interface MyListener {
+
+    // this method is one-way (InOnly) because the method is void
     void sayHello(String name);
+
 }
 ----
 
-If the method is a `void` method, then Camel will use xref:components:eips:event-message.adoc[Event Message] (InOnly) messaging.
+== See Also
+
+- xref:pojo-consuming.adoc[]

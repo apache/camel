@@ -107,6 +107,9 @@ public class MiloClientConfiguration implements Cloneable {
     @UriParam(label = "client")
     private boolean overrideHost;
 
+    @UriParam(label = "client")
+    private boolean overridePort;
+
     @UriParam(label = "client", defaultValue = "1_000.0")
     private Double requestedPublishingInterval = DEFAULT_REQUESTED_PUBLISHING_INTERVAL;
 
@@ -133,6 +136,7 @@ public class MiloClientConfiguration implements Cloneable {
         this.keyPassword = other.keyPassword;
         this.allowedSecurityPolicies = new HashSet<>(other.allowedSecurityPolicies);
         this.overrideHost = other.overrideHost;
+        this.overridePort = other.overridePort;
         this.requestedPublishingInterval = other.requestedPublishingInterval;
     }
 
@@ -391,6 +395,17 @@ public class MiloClientConfiguration implements Cloneable {
 
     public boolean isOverrideHost() {
         return overrideHost;
+    }
+
+    /**
+     * Override the server reported endpoint port with the port from the endpoint URI.
+     */
+    public void setOverridePort(boolean overridePort) {
+        this.overridePort = overridePort;
+    }
+
+    public boolean isOverridePort() {
+        return overridePort;
     }
 
     /**

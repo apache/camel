@@ -49,7 +49,9 @@ public class CassandraAggregationRepositoryIT extends BaseCassandra {
 
     @AfterEach
     public void tearDown() throws Exception {
-        aggregationRepository.stop();
+        if (aggregationRepository != null) {
+            aggregationRepository.stop();
+        }
     }
 
     private boolean exists(String key) {

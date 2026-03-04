@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.CamelEvent;
@@ -32,8 +31,7 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.KIND;
 import static org.apache.camel.component.micrometer.MicrometerConstants.KIND_EXCHANGE;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 
-public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> extends EventNotifierSupport
-        implements CamelContextAware {
+public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> extends EventNotifierSupport {
 
     private final Class<T> eventType;
 
@@ -41,6 +39,8 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
     private MeterRegistry meterRegistry;
     private boolean prettyPrint;
     private boolean skipCamelInfo = false;
+    private boolean logMetricsOnShutdown = false;
+    private String logMetricsOnShutdownFilters[];
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 
     protected AbstractMicrometerEventNotifier(Class<T> eventType) {
@@ -81,6 +81,22 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
         this.skipCamelInfo = skipCamelInfo;
     }
 
+    public boolean isLogMetricsOnShutdown() {
+        return logMetricsOnShutdown;
+    }
+
+    public void setLogMetricsOnShutdown(boolean logMetricsOnShutdown) {
+        this.logMetricsOnShutdown = logMetricsOnShutdown;
+    }
+
+    public String[] getLogMetricsOnShutdownFilters() {
+        return logMetricsOnShutdownFilters;
+    }
+
+    public void setLogMetricsOnShutdownFilters(String... logMetricsOnShutdownFilters) {
+        this.logMetricsOnShutdownFilters = logMetricsOnShutdownFilters;
+    }
+
     public TimeUnit getDurationUnit() {
         return durationUnit;
     }
@@ -109,6 +125,8 @@ public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> exte
                 registryService.setMeterRegistry(getMeterRegistry());
                 registryService.setPrettyPrint(isPrettyPrint());
                 registryService.setSkipCamelInfo(isSkipCamelInfo());
+                registryService.setLogMetricsOnShutdown(isLogMetricsOnShutdown());
+                registryService.setLogMetricsOnShutdownFilters(getLogMetricsOnShutdownFilters());
                 registryService.setDurationUnit(getDurationUnit());
                 registryService.setMatchingTags(Tags.of(KIND, KIND_EXCHANGE));
                 camelContext.addService(registryService);

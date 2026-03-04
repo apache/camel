@@ -55,6 +55,8 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "maxNewTokens": target.getConfiguration().setMaxNewTokens(property(camelContext, java.lang.Integer.class, value)); return true;
         case "modelid":
         case "modelId": target.getConfiguration().setModelId(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class, value)); return true;
         case "presencepenalty":
         case "presencePenalty": target.getConfiguration().setPresencePenalty(property(camelContext, java.lang.Double.class, value)); return true;
@@ -123,6 +125,8 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "maxNewTokens": return java.lang.Integer.class;
         case "modelid":
         case "modelId": return java.lang.String.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "operation": return org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class;
         case "presencepenalty":
         case "presencePenalty": return java.lang.Double.class;
@@ -192,6 +196,8 @@ public class WatsonxAiEndpointConfigurer extends PropertyConfigurerSupport imple
         case "maxNewTokens": return target.getConfiguration().getMaxNewTokens();
         case "modelid":
         case "modelId": return target.getConfiguration().getModelId();
+        case "oauthprofile":
+        case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "operation": return target.getConfiguration().getOperation();
         case "presencepenalty":
         case "presencePenalty": return target.getConfiguration().getPresencePenalty();

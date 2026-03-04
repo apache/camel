@@ -8,6 +8,11 @@ before digging into how it works.
 For example if you want to perform a specific piece of processing if a
 certain exception is raised you can do this simply via:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 onException(ValidationException.class)
@@ -21,6 +26,60 @@ from("seda:inputB")
     .to("rnc:mySchema.rnc", "activemq:anotherQueue");
 ----
 
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>org.apache.camel.ValidationException</exception>
+    <to uri="activemq:validationFailed"/>
+</onException>
+
+<route>
+    <from uri="seda:inputA"/>
+    <to uri="validation:foo/bar.xsd"/>
+    <to uri="activemq:someQueue"/>
+</route>
+
+<route>
+    <from uri="seda:inputB"/>
+    <to uri="direct:foo"/>
+    <to uri="rnc:mySchema.rnc"/>
+    <to uri="activemq:anotherQueue"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.apache.camel.ValidationException
+    steps:
+      - to:
+          uri: activemq:validationFailed
+- route:
+    from:
+      uri: seda:inputA
+      steps:
+        - to:
+            uri: validation:foo/bar.xsd
+        - to:
+            uri: activemq:someQueue
+- route:
+    from:
+      uri: seda:inputB
+      steps:
+        - to:
+            uri: direct:foo
+        - to:
+            uri: rnc:mySchema.rnc
+        - to:
+            uri: activemq:anotherQueue
+----
+====
+
 Here if the processing of *`seda:inputA`* or *`seda:inputB`* cause
 a *`ValidationException`* to be thrown (such as due to the XSD
 validation of the xref:components::validator-component.adoc[Validation] component),
@@ -29,17 +88,66 @@ then the message will be sent to the
 
 You can define multiple *`onException`* clauses for different behavior:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 onException(ValidationException.class)
     .to("activemq:validationFailed");
 
-onException(ShipOrderException.class)
+onException(com.foo.ShipOrderException.class)
     .to("activemq:shipFailed");
 
 from("seda:order")
     .to("bean:processOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>org.apache.camel.ValidationException</exception>
+    <to uri="activemq:validationFailed"/>
+</onException>
+<onException>
+    <exception>com.foo.ShipOrderException</exception>
+    <to uri="activemq:shipFailed"/>
+</onException>
+
+<route>
+    <from uri="seda:order"/>
+    <to uri="bean:processOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.apache.camel.ValidationException
+    steps:
+      - to:
+          uri: activemq:validationFailed
+- onException:
+    exception:
+      - com.foo.ShipOrderException
+    steps:
+      - to:
+          uri: activemq:shipFailed
+- route:
+    from:
+      uri: seda:order
+      steps:
+        - to:
+            uri: bean:processOrder
+----
+====
 
 == Scopes
 
@@ -179,16 +287,20 @@ https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/
 object, you can do this via the fluent API. So lets retry in case
 of *`org.apache.camel.ValidationException`* up till two times.
 
-*Java DSL*:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 onException(ValidationException.class)
     .maximumRedeliveries(2);
 ----
 
-*XML DSL*:
-
+XML::
++
 [source,xml]
 ----
 <onException>
@@ -197,17 +309,54 @@ onException(ValidationException.class)
 </onException>
 ----
 
-You can customize any of the
-https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/errorhandler/RedeliveryPolicy.html[RedeliveryPolicy]
-so we can for instance set a different delay of *`5000`* millis:
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.apache.camel.ValidationException
+    redeliveryPolicy:
+      maximumRedeliveries: 2
+----
+====
 
+You can customize any of the `RedeliveryPolicy` options, for instance set a different delay of *`5000`* millis:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+onException(ValidationException.class)
+    .maximumRedeliveries(2).redeliveryDelay(5000);
+----
+
+XML::
++
 [source,xml]
 ----
 <onException>
     <exception>com.mycompany.ValidationException</exception>
-    <redeliveryPolicy maximumRedeliveries="2" delay="5000"/>
+    <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="5000"/>
 </onException>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.apache.camel.ValidationException
+    redeliveryPolicy:
+      maximumRedeliveries: 2
+      redeliveryDelay: 5000
+----
+====
+
 
 == Point of Entry for Redelivery Attempts
 
@@ -224,32 +373,13 @@ onException(ConnectException.class)
 
 Will retry from *`processor2`* - not the complete route.
 
-== Reusing RedeliveryPolicy
-
-You can reference a *`RedeliveryPolicy`* so you can reuse existing
-configurations and use standard spring bean style configuration that
-supports property placeholders.
-
-[source,xml]
-----
-<bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
-    <property name="maximumRedeliveries" value="${myprop.max}"/>
-</bean>
-
-<!-- here we reference our redelivery policy defined above -->
-<onException redeliveryPolicyRef="myRedeliveryPolicy">
-    <!-- you can define multiple exceptions just adding more exception elements as show below -->
-    <exception>com.mycompany.MyFirstException</exception>
-    <exception>com.mycompany.MySecondException</exception>
-</onException>
-----
 
 == Asynchronous Delayed Redelivery
 
 Camel has a feature to _not block_ while waiting for a
-delayed redelivery to occur. However if you use transacted routes then
-Camel will block as its mandated by the transaction manager to execute
-all the work in the same thread context. You can enable the non blocking
+delayed redelivery to occur. However, if you use transacted routes then
+Camel will block as it's mandated by the transaction manager to execute
+all the work in the same thread context. You can enable the non-blocking
 asynchronous behavior by the *`asyncDelayedRedelivery`* option. This
 option can be set on the *`errorHandler`*, *`onException`* or the
 redelivery policies.
@@ -265,6 +395,13 @@ control pool settings.
 
 Multiple exception can be caught as shown:
 
+[tabs]
+====
+
+Java::
++
+In Java DSL you can add multiple exceptions separated by comma.
++
 [source,java]
 ----
 onException(MyBusinessException.class, MyOtherBusinessException.class)
@@ -272,8 +409,10 @@ onException(MyBusinessException.class, MyOtherBusinessException.class)
     .to("activemq:businessFailed");
 ----
 
+XML::
++
 And in XML DSL you just add another exception element:
-
++
 [source,xml]
 ----
 <onException>
@@ -283,6 +422,24 @@ And in XML DSL you just add another exception element:
     <to uri="activemq:businessFailed"/>
 </onException>
 ----
+
+YAML::
++
+And in YAML DSL you just add another exception in the array:
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - com.mycompany.MyBusinessException
+      - com.mycompany.MyOtherBusinessException
+    redeliveryPolicy:
+      maximumRedeliveries: 2
+    steps:
+      - to:
+          uri: activemq:businessFailed
+----
+====
 
 == Using a Processor as a Failure Handler
 
@@ -313,18 +470,18 @@ of the route. So lets look the code for our processor.
 
 [source,java]
 ----
-    public static class MyFunctionFailureHandler implements Processor {
+public static class MyFunctionFailureHandler implements Processor {
 
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            // the caused by exception is stored in a property on the exchange
-            Throwable caused = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
-            assertNotNull(caused);
-            // here you can do what you want, but Camel regards this exception as
-            // handled, and this processor as a failure handler, so it won't do redeliveries.
-            // So this is the end of this route.
-        }
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        // the caused by exception is stored in a property on the exchange
+        Throwable caused = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        assertNotNull(caused);
+        // here you can do what you want, but Camel regards this exception as
+        // handled, and this processor as a failure handler, so it won't do redeliveries.
+        // So this is the end of this route.
     }
+}
 ----
 
 Notice how we get the *caused by* exception using a property on the Exchange.
@@ -352,17 +509,46 @@ as `true` if the response is `not null`.
 For instance to mark all *`ValidationException`* as being handled we can
 do this:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 onException(ValidationException)
     .handled(true);
 ----
 
-== Example Using Handled
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>org.apache.camel.ValidationException</exception>
+    <handled>
+      <constant>true</constant>
+    </handled>
+</onException>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.apache.camel.ValidationException
+    handled:
+      constant: "true"
+----
+====
+
+=== Example Using Handled in Java DSL
 
 In this route below we want to do special handling of
 all *`OrderFailedException`* as we want to return a customized response
-to the caller. First we setup our routing as:
+to the caller. First we set up our routing as:
 
 [source,java]
 ----
@@ -436,8 +622,6 @@ And finally the exception that is being thrown is just a regular exception:
 ----
     public static class OrderFailedException extends Exception {
 
-        private static final long serialVersionUID = 1L;
-
         public OrderFailedException(String message) {
             super(message);
         }
@@ -458,7 +642,7 @@ fabricated in the *`orderFailed`* method in our *`OrderService`*. So the
 caller receives an Exchange with the payload *`Order ERROR`* and a
 *`orderid=failed`* in a header.
 
-== Using Handled with Spring XML DSL
+=== Using Handled with Spring XML DSL
 
 The same route as above in Spring XML DSL:
 
@@ -502,6 +686,43 @@ The same route as above in Spring XML DSL:
   </route>
 
 </camelContext>
+----
+
+=== Using Handled with YAML DSL
+
+And the same example in YAML DSL
+
+[source,yaml]
+----
+- beans:
+  - name: "orderService"
+    beanType: "org.apache.camel.spring.processor.onexception.OrderService"
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: mock:error
+- onException:
+    exception:
+      - org.apache.camel.spring.processor.onexception.OrderFailedException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - redeliveryPolicy:
+          maximumRedeliveries: 1
+      - bean:
+          ref: orderService
+          method: orderFailed
+      - to:
+          uri: mock:error
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - bean:
+            ref: orderService
+            method: handleOrder
+        - to:
+            uri: mock:result
 ----
 
 == Handling and Sending a Fixed Response Back to the Client
@@ -563,11 +784,40 @@ exception did not occur.
 For example: to ignore and continue when the *`IDontCareException`* was
 thrown we can do this:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 onException(IDontCareException.class)
     .continued(true);
 ----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>com.foo.IDontCareException</exception>
+    <continued>
+      <constant>true</constant>
+    </continued>
+</onException>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - com.foo.IDontCareException
+    continued:
+      constant: "true"
+----
+====
 
 You can maybe compare continued with a having a *`try ... catch`* block
 around each step and then just ignore the exception. Using continued
@@ -580,6 +830,11 @@ use case.
 In this route below we want to do special handling of
 all *`IllegalArgumentException`* as we just want to continue routing.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 onException(IllegalArgumentException.class).continued(true);
@@ -590,29 +845,50 @@ from("direct:start")
   .to("mock:result");
 ----
 
-And the same example in Spring XML DSL:
-
+XML::
++
 [source,xml]
 ----
- <camelContext xmlns="http://camel.apache.org/schema/spring">
+<onException>
+    <exception>java.lang.IllegalArgumentException</exception>
+    <!-- tell Camel to handle and continue when this exception was thrown -->
+    <continued><constant>true</constant></continued>
+</onException>
 
-        <onException>
-            <exception>java.lang.IllegalArgumentException</exception>
-            <!-- tell Camel to handle and continue when this exception was thrown -->
-            <continued><constant>true</constant></continued>
-        </onException>
-
-        <route>
-            <from uri="direct:start"/>
-            <to uri="mock:start"/>
-            <throwException message="Forced" exceptionType="java.lang.IllegalArgumentException"/>
-            <to uri="mock:result"/>
-        </route>
-
-    </camelContext>
+<route>
+    <from uri="direct:start"/>
+    <to uri="mock:start"/>
+    <throwException message="Forced" exceptionType="java.lang.IllegalArgumentException"/>
+    <to uri="mock:result"/>
+</route>
 ----
 
-== What is the Difference Between Handled and Continued?
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - java.lang.IllegalArgumentException
+    continued:
+      constant:
+        expression: "true"
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: mock:start
+        - throwException:
+            message: Forced
+            exceptionType: java.lang.IllegalArgumentException
+        - to:
+            uri: mock:result
+----
+====
+
+
+=== What is the Difference Between Handled and Continued?
 
 If handled is true, then the thrown exception will be _handled_ and
 Camel will *not* continue routing in the original route, but break out.
@@ -627,20 +903,54 @@ you have a route configured in the *`onException`* it will route that
 route first, before it will continue routing in the original route.
 
 
-== Using `useOriginalMessage`
+== Using the original message with onException
 
 The option *`useOriginalMessage`* is used for routing the original input
 message instead of the current message that potential is modified during routing.
 
 For example: if you have this route:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("jms:queue:order:input")
-    .to("bean:validateOrder");
+    .to("bean:validateOrder")
     .to("bean:transformOrder")
     .to("bean:handleOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:order:input"/>
+    <to uri="bean:validateOrder"/>
+    <to uri="bean:transformOrder"/>
+    <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jms:queue:order:input
+      steps:
+        - to:
+            uri: bean:validateOrder
+        - to:
+            uri: bean:transformOrder
+        - to:
+            uri: bean:handleOrder
+----
+====
 
 The route listen for JMS messages and validates, transforms and handle
 it. During this the xref:exchange.adoc[Exchange] payload is
@@ -653,6 +963,11 @@ sure we want to move the original input message we received from
 `jms:queue:order:input`. So we can do this by enabling the
 *`useOriginalMessage`* option as shown below:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 // will use original input message (body and headers)
@@ -660,29 +975,66 @@ onException(MyOrderException.class)
     .useOriginalMessage()
     .handled(true)
     .to("jms:queue:order:failed");
+
+from("jms:queue:order:input")
+    .to("bean:validateOrder")
+    .to("bean:transformOrder")
+    .to("bean:handleOrder");
 ----
+
+XML::
++
+[source,xml]
+----
+<onException useOriginalMessage="true">
+    <exception>com.foo.MyOrderException</exception>
+    <handled>
+        <constant>true</constant>
+    </handled>
+    <to uri="jms:queue:order:failed"/>
+</onException>
+
+<route>
+    <from uri="jms:queue:order:input"/>
+    <to uri="bean:validateOrder"/>
+    <to uri="bean:transformOrder"/>
+    <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    useOriginalMessage: "true"
+    exception:
+      - com.foo.MyOrderException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - to:
+          uri: jms:queue:order:failed
+- route:
+    from:
+      uri: jms:queue:order:input
+      steps:
+        - to:
+            uri: bean:validateOrder
+        - to:
+            uri: bean:transformOrder
+        - to:
+            uri: bean:handleOrder
+----
+====
 
 Then the messages routed to the *`jms:queue:order:failed`* is the
 original input. If we want to manually retry we can move the JMS message
 from the failed to the input queue, with no problem as the message is
 the same as the original we received.
 
-== `useOriginalMessage` with Spring DSL
-
-The *`useOriginalMessage`* option is defined as a boolean attribute on
-the *`<onException>`* XML tag in Spring DSL. So the definition above
-would be:
-
-[source,xml]
-----
-<onException useOriginalMessage="true">
-    <exception>com.mycompany.MyOrderException</exception>
-    <handled><constant>true</constant></handled>
-    <to uri="jms:queue:order:failed"/>
-</onException>
-----
-
-== Boundary of original message
+=== Boundary of original message
 
 The original input means the input message that are bounded by the current unit of work. An unit of work typically spans one route, or multiple routes if they are connected 
 using internal endpoints such as direct or seda. When messages are passed via external
@@ -693,12 +1045,18 @@ multicast, will create a new unit of work boundary for the messages in their sub
 allows combining with the parent unit of work in regard to error handling and therefore use
 the parent original message.
 
-== Using `useOriginalBody`
+=== Using the original body with onException
 
-The useOriginalBody is similar to useOriginalMessage as documented above. You may want to use useOriginalBody when you want to be able to enrich the message with custom headers and preserve the original message body before sending to an error handler or dead letter channel.
+The `useOriginalBody` is similar to `useOriginalMessage` as documented above.
+You may want to use `useOriginalBody` when you want to be able to enrich the message with custom headers and preserve the original message body before sending to an error handler or dead letter channel.
 
 For example: if you have this route:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 // will use original input body
@@ -709,13 +1067,69 @@ onException(MyOrderException.class)
 
 from("jms:queue:order:input")
     .setHeader("application", constant("OrderApp"))
-    .to("bean:validateOrder");
+    .to("bean:validateOrder")
     .to("bean:transformOrder")
     .to("bean:handleOrder");
 ----
 
+XML::
++
+[source,xml]
+----
+<onException useOriginalBody="true">
+    <exception>com.foo.MyOrderException</exception>
+    <handled>
+        <constant>true</constant>
+    </handled>
+    <to uri="jms:queue:order:failed"/>
+</onException>
+
+<route>
+    <from uri="jms:queue:order:input"/>
+    <setHeader name="application">
+        <constant>OrderApp</constant>
+    </setHeader>
+    <to uri="bean:validateOrder"/>
+    <to uri="bean:transformOrder"/>
+    <to uri="bean:handleOrder"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    useOriginalBody: "true"
+    exception:
+      - com.foo.MyOrderException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - to:
+          uri: jms:queue:order:failed
+- route:
+    from:
+      uri: jms:queue:order:input
+      steps:
+        - setHeader:
+            name: application
+            expression:
+              constant:
+                expression: OrderApp
+        - to:
+            uri: bean:validateOrder
+        - to:
+            uri: bean:transformOrder
+        - to:
+            uri: bean:handleOrder
+----
+====
+
 Then the message has been enriched with a header named application after the original message was received by the JMS endpoint. And in case of an error `onException`
 will handle the exception and use the original message body and the headers from the current message as-is, which means the headers will include the application header.
+
 
 == Advanced Usage of Exception Clause
 
@@ -857,13 +1271,18 @@ they also applies for nested error handlers. So if a
 *`MyTechnicalException`* is thrown then it's the global exception policy
 that is selected.
 
-== Using Fine Grained Selection Using `onWhen` Predicate
+=== Using Fine Grained Selection Using `onWhen` Predicate
 
 You can attach an xref:expression.adoc[Expression] to the exception
-clause to have fine grained control when a clause should be selected or
+clause to have fine-grained control when a clause should be selected or
 not. As it's an xref:expression.adoc[Expression] you can use any kind of
 code to perform the test. Here is a sample:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
@@ -884,6 +1303,55 @@ onException(MyUserException.class).maximumRedeliveries(2)
     .redeliveryDelay(0).to(ERROR_QUEUE);
 ----
 
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>com.foo.MyUserException</exception>
+    <redeliveryPolicy maximumRedeliveries="1" redeliveryDelay="0"/>
+    <onWhen>
+        <simple>${header.user} != null</simple>
+    </onWhen>
+    <to uri="mock:error"/>
+</onException>
+
+<onException>
+    <exception>com.foo.MyUserException</exception>
+    <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0"/>
+    <to uri="mock:error"/>
+</onException>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - com.foo.MyUserException
+    steps:
+      - redeliveryPolicy:
+          maximumRedeliveries: 1
+          redeliveryDelay: 0
+      - onWhen:
+          expression:
+            simple:
+              expression: "${header.user} != null"
+      - to:
+          uri: mock:error
+- onException:
+    exception:
+      - com.foo.MyUserException
+    redeliveryPolicy:
+      maximumRedeliveries: 2
+      redeliveryDelay: 0
+    steps:
+      - to:
+          uri: mock:error
+----
+====
+
 In the sample above we have two *`onException`*'s defined. The first has
 an *`onWhen`* expression attached to only trigger if the message has a
 header with the key user that is not null. If so this clause is selected
@@ -897,7 +1365,7 @@ This is not required, if the second clause is omitted, then the
 default error handler will kick in.
 ====
 
-== Using onRedelivery Processor
+=== Using onRedelivery Processor
 
 xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] has support
 for *`onRedelivery`* to allow custom processing of a Message before its
@@ -915,16 +1383,49 @@ In the code below we want to do some custom code before redelivering any
 the *`IOException`* and set the *`onRedelivery`* to use our custom
 processor:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 // when we redeliver caused by an IOException we want to do some
-// special code before the redeliver attempt
+// special code before the redelivery attempt
 onException(IOException.class)
     // try to redeliver at most 3 times
     .maximumRedeliveries(3)
     // setting delay to zero is just to make unit testing faster
     .redeliveryDelay(0).onRedelivery(new MyIORedeliverProcessor());
 ----
+
+XML::
++
+In XML then you refer to the redelivery process using `onRedeliveryRef` which is configured on `onException`.
++
+[source,xml]
+----
+<onException onRedeliveryRef="myIORedeliverProcessor">
+    <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="0"/>
+    <exception>java.io.IOException</exception>
+</onException>
+----
+
+YAML::
++
+In YAML then you refer to the redelivery process using `onRedeliveryRef` which is configured on `onException`.
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - java.io.IOException
+    onRedeliveryRef: myIORedeliverProcessor
+    redeliveryPolicy:
+      maximumRedeliveries: 3
+      redeliveryDelay: 0
+----
+====
 
 And in our custom processor we set a special timeout header to the message.
 You can of course do anything what you like in your code.
@@ -950,28 +1451,7 @@ public static class MyRedeliverProcessor implements Processor {
 }
 ----
 
-== Using onRedelivery in Spring XML DSL
-
-In Spring DSL you need to use the *`onRedeliveryRef`* attribute to refer
-to a spring bean id that is your custom processor:
-
-[source,xml]
-----
-<onException onRedeliveryRef="myIORedeliverProcessor">
-    <exception>java.io.IOException</exception>
-</onException>
-----
-
-And our processor is just a regular spring bean (we use *`$`* for the inner
-class as this code is based on unit testing):
-
-[source,xml]
-----
- <bean id="myRedeliveryProcessor"
-          class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$MyRedeliverProcessor"/>
-----
-
-== Using onExceptionOccurred Processor
+=== Using onExceptionOccurred Processor
 
 xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel] has support
 for *`onExceptionOccurred`* to allow custom processing of a Message just
@@ -994,9 +1474,14 @@ existing exception.
 ====
 
 In the code below we want to do some custom logging when an exception
-happened. Therefore we configure an *`onExceptionOccurred`* to use our
+happened. Therefore, we configure an *`onExceptionOccurred`* to use our
 custom processor:
 
+[tabs]
+====
+
+Java::
++
 [source.java]
 ----
 errorHandler(defaultErrorHandler()
@@ -1005,26 +1490,34 @@ errorHandler(defaultErrorHandler()
     .onExceptionOccurred(myProcessor));
 ----
 
-=== Using onRedelivery in Spring XML DSL
-
-In Spring DSL you need to use the *`onExceptionOccurredRef`* attribute
-to refer to a spring bean id that is your custom processor:
-
+XML::
++
 [source,xml]
 ----
-<bean id="myProcessor" class="com.foo.MyExceptionLoggingProcessor"/>
-
-<camelContext errorHandlerRef="eh" xmlns="http://camel.apache.org/schema/spring">
-    <errorHandler id="eh" type="DefaultErrorHandler" onExceptionOccurredRef="myProcessor">
+<errorHandler>
+    <defaultErrorHandler onExceptionOccurredRef="myProcessor">
         <redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="5000"/>
-    </errorHandler>
-    ...
-</camelContext>
+    </defaultErrorHandler>
+</errorHandler>
 ----
 
-== Using Fine Grained Retry Using retryWhile Predicate
+YAML::
++
+[source,yaml]
+----
+- errorHandler:
+    defaultErrorHandler:
+      onExceptionOccurredRef: myProcessor
+      redeliveryPolicy:
+        maximumRedeliveries: 3
+        redeliveryDelay: 5000
+----
+====
 
-When you need fine grained control for determining if an exchange should
+
+=== Using Fine Grained Retry Using retryWhile Predicate
+
+When you need fine-grained control for determining if an exchange should
 be retried or not you can use the *`retryWhile`* predicate. Camel will
 redeliver until the predicate returns false.
 
@@ -1056,11 +1549,9 @@ public class MyRetryBean {
 }
 ----
 
-== Using Custom ExceptionPolicyStrategy
+=== Using Custom ExceptionPolicyStrategy
 
-The default
-https://www.javadoc.io/doc/org.apache.camel/camel-core-processor/current/org/apache/camel/processor/errorhandler/ExceptionPolicyStrategy.html[ExceptionPolicyStrategy]
-in Camel should be sufficient in nearly all use-cases.
+The default `org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy` in Camel should be sufficient in nearly all use-cases.
 However, if you need to use your own (use only for rare and advanced use-cases) this can be configured as the
 sample below illustrates:
 
@@ -1087,95 +1578,4 @@ public static class MyPolicy implements ExceptionPolicyStrategy {
 }
 ----
 
-== Using the Exception Clause in Spring XML DSL
-
-You can use all of the above mentioned exception clause features in the
-Spring XML DSL as well. Here are a few examples:
-
-* Global scoped
-
-[source,xml]
-----
-<!-- setup our error handler as the deal letter channel -->
-<bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-    <property name="deadLetterUri" value="mock:error"/>
-</bean>
-
-<!-- this is our POJO bean with our business logic defined as a plain spring bean -->
-<bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService" />
-
-<!-- this is the camel context where we define the routes -->
-<!-- define our error handler as a global error handler -->
-<camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
-
-  <onException>
-    <!-- the exception is full qualified names as plain strings -->
-    <!-- there can be more just add a 2nd, 3rd exception element (unbounded) -->
-    <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
-    <!-- we can set the redelivery policy here as well -->
-    <redeliveryPolicy maximumRedeliveries="1" />
-    <!-- mark this as handled -->
-    <handled>
-      <constant>true</constant>
-    </handled>
-    <!-- let our order service handle this exception, call the orderFailed method -->
-    <bean ref="orderService" method="orderFailed" />
-    <!-- and since this is a unit test we use mock for assertions -->
-    <to uri="mock:error" />
-  </onException>
-
-  <route>
-    <!-- the route -->
-    <from uri="direct:start" />
-    <!-- in the normal route then route to our order service and call handleOrder method -->
-    <bean ref="orderService" method="handleOrder" />
-    <!-- and since this is a unit test we use mock for assertions -->
-    <to uri="mock:result" />
-  </route>
-
-</camelContext>
-----
-
-* Route specific scoped
-
-[source,xml]
-----
-<!-- setup our error handler as the deal letter channel -->
-<bean id="deadLetter" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-    <property name="deadLetterUri" value="mock:dead"/>
-</bean>
-
-<!-- the default error handler used in the 2nd route -->
-<bean id="defaultErrorHandler" class="org.apache.camel.builder.DefaultErrorHandlerBuilder"/>
-
-<!-- this is our POJO bean with our business logic defined as a plain spring bean -->
-<bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService"/>
-
-<!-- this is the camel context where we define the routes -->
-<camelContext xmlns="http://camel.apache.org/schema/spring">
-
-    <route errorHandlerRef="deadLetter">
-        <from uri="direct:start"/>
-        <onException>
-            <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
-            <redeliveryPolicy maximumRedeliveries="1"/>
-            <handled>
-                <constant>true</constant>
-            </handled>
-            <bean ref="orderService" method="orderFailed"/>
-            <to uri="mock:error"/>
-        </onException>
-        <bean ref="orderService" method="handleOrder"/>
-        <to uri="mock:result"/>
-    </route>
-
-    <!-- The exception clause specified in the first route will not be used in this route -->
-    <route errorHandlerRef="defaultErrorHandler">
-        <from uri="direct:start_with_no_handler"/>
-        <bean ref="orderService" method="handleOrder"/>
-        <to uri="mock:result"/>
-    </route>
-
-</camelContext>
-----
 

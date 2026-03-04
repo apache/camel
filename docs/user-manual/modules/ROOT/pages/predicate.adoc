@@ -1,12 +1,17 @@
 = Predicates
 
-xref:expression.adoc[Expressions] and Predicates can then be used to
+Expressions and xref:predicate.adoc[Predicates] can then be used to
 create the various xref:components:eips:enterprise-integration-patterns.adoc[Enterprise
-Integration Patterns] in the xref:dsl.adoc[DSL] like with the xref:components:eips:choice-eip.adoc[Content Based Router] EIP.
+Integration Patterns] in the xref:dsl.adoc[DSL] like with the
+xref:components:eips:choice-eip.adoc[Content Based Router] EIP, or
+xref:components:eips:recipientList-eip.adoc[Recipient List] EIP.
 
 To support dynamic rules Camel supports pluggable
 https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Predicate.html[Predicate]
 strategies using a variety of different xref:components:languages:index.adoc[Languages].
+
+NOTE: The xref:components:languages:simple-language.adoc[Simple] is often used as predicates and expressions
+with the Camel EIPs.
 
 == Predicate API
 
@@ -14,7 +19,7 @@ The API for a Camel Predicate is defined in the
 `org.apache.camel.Predicate` interface as shown:
 
 [source,java]
--------------------------------------------------------------------------------
+----
 public interface Predicate {
 
     /**
@@ -27,7 +32,7 @@ public interface Predicate {
     boolean matches(Exchange exchange);
 
 }
--------------------------------------------------------------------------------
+----
 
 A `Predicate` is being evaluated to a boolean value so the result is
 either `true` or `false`. This makes predicates so

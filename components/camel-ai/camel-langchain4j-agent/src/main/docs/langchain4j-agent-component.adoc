@@ -55,6 +55,70 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== OAuth Authentication
+
+=== Quarkus Runtime
+
+When running in Quarkus, use the https://quarkus.io/extensions/io.quarkiverse.langchain4j/quarkus-langchain4j-oidc-mcp-auth-provider/[quarkus-langchain4j-oidc-mcp-auth-provider] extension for MCP server authentication. This is the recommended approach as it integrates natively with Quarkus OIDC, supports automatic token propagation, and follows Quarkus security best practices.
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.langchain4j</groupId>
+    <artifactId>quarkus-langchain4j-oidc-mcp-auth-provider</artifactId>
+</dependency>
+----
+
+With this extension, the authenticated user's OIDC access token is automatically propagated to MCP servers. MCP clients are configured via `quarkus.langchain4j.mcp.*` properties and are injected as pre-built beans. Camel picks them up via the `mcpClients` parameter — no `oauthProfile` or `camel-oauth` is needed.
+
+=== camel-main and manual MCP server configuration
+
+When running outside Quarkus (e.g., camel-main) or when manually configuring MCP servers via inline `mcpServer.<name>.*` parameters, use the `oauthProfile` option to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is injected as an `Authorization: Bearer` header on HTTP-based MCP transports. This requires `camel-oauth` on the classpath.
+
+[source,properties]
+----
+camel.oauth.keycloak.client-id=camel-client
+camel.oauth.keycloak.client-secret=camel-client-secret
+camel.oauth.keycloak.token-endpoint=https://keycloak.example.com/realms/camel/protocol/openid-connect/token
+----
+
+[source,java]
+----
+from("direct:agent")
+    .to("langchain4j-agent:myAgent"
+        + "?mcpServer.tools.transportType=http"
+        + "&mcpServer.tools.url=https://mcp.internal/mcp"
+        + "&mcpServer.tools.oauthProfile=keycloak");
+----
+
+=== LLM Provider Authentication
+
+The langchain4j-agent component accepts a pre-built `Agent` or `ChatModel` bean — it does not create the LLM client itself. For LLM providers that require OAuth authentication (e.g., Azure OpenAI), use `OAuthHelper` when building the bean programmatically:
+
+[source,java]
+----
+import org.apache.camel.support.OAuthHelper;
+
+public class MyRouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        String token = OAuthHelper.resolveOAuthToken(getContext(), "azure");
+
+        ChatModel chatModel = OpenAiChatModel.builder()
+                .apiKey(token)
+                .modelName("gpt-4")
+                .build();
+
+        getContext().getRegistry().bind("myChatModel", chatModel);
+
+        from("direct:agent")
+            .to("langchain4j-agent:myAgent");
+    }
+}
+----
+
+NOTE: In Quarkus or Spring Boot, configure the ChatModel via the framework's own properties and dependency injection instead of programmatic bean registration.
+
 include::spring-boot:partial$starter.adoc[]
 
 
@@ -463,9 +527,98 @@ from("direct:chat")
 
 [source,java]
 ----
-String response = template.requestBody("direct:chat", 
+String response = template.requestBody("direct:chat",
     "Can you list the files in the current directory and read the content of file.txt?", String.class);
 ----
+
+==== Endpoint-Level MCP Configuration
+
+MCP servers can also be configured directly on the endpoint, without setting them on the `AgentConfiguration`. This is useful for declarative route definitions and allows MCP tools to coexist with Camel route tools (via `tags`).
+
+===== Bean References
+
+Register pre-built `McpClient` beans and reference them via the `mcpClients` endpoint parameter:
+
+[source,java]
+----
+// Register MCP clients as beans
+McpClient timeClient = new DefaultMcpClient.Builder()
+    .key("time")
+    .transport(new StdioMcpTransport.Builder()
+        .command(Arrays.asList("docker", "run", "-i", "--rm", "mcp/time"))
+        .build())
+    .build();
+context.getRegistry().bind("timeMcpClient", timeClient);
+
+// Reference in endpoint URI
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users&mcpClients=#timeMcpClient")
+    .to("mock:response");
+----
+
+===== Inline URI Configuration
+
+MCP servers can be defined inline on the endpoint URI using the `mcpServer.<name>.<property>` pattern. The component creates and manages the MCP client lifecycle automatically.
+
+Supported properties:
+
+[cols="1,1,3"]
+|===
+| Property | Default | Description
+
+| `transportType` | `stdio` | Transport type: `stdio`, `http` (Streamable HTTP), or `sse` (legacy SSE)
+| `command` | | Comma-separated command for stdio transport (e.g., `docker,run,-i,--rm,mcp/time`)
+| `url` | | Server URL for `http` or `sse` transport
+| `environment.<key>` | | Environment variables for stdio transport
+| `timeout` | `60` | Timeout in seconds
+| `logRequests` | `false` | Log requests sent to the MCP server
+| `logResponses` | `false` | Log responses from the MCP server
+|===
+
+Example with two MCP servers configured inline:
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users"
+        + "&mcpServer.everything.transportType=http"
+        + "&mcpServer.everything.url=http://localhost:3001/mcp"
+        + "&mcpServer.time.transportType=stdio"
+        + "&mcpServer.time.command=docker,run,-i,--rm,mcp/time")
+    .to("mock:response");
+----
+
+Both `mcpClients` (bean references) and `mcpServer` (inline) can be used together on the same endpoint. All tool sources -- Camel route tools, endpoint-level MCP tools, and agent-level MCP tools -- are automatically composed into a single tool provider.
+
+==== Dynamic Tool Exclusion via Headers
+
+Tools can be dynamically excluded on a per-message basis using Camel headers. This allows routes to control which tools are available based on business logic, user roles, or message content.
+
+[cols="1,3"]
+|===
+| Header | Description
+
+| `CamelLangChain4jAgentExcludeTags` | Comma-separated list of Camel tool tags to exclude
+| `CamelLangChain4jAgentExcludeMcpServers` | Comma-separated list of MCP server names (keys) to exclude
+|===
+
+Example -- exclude specific tools based on a condition:
+
+[source,java]
+----
+from("direct:chat")
+    .choice()
+        .when(header("userRole").isEqualTo("readonly"))
+            // Exclude write-capable tools for read-only users
+            .setHeader("CamelLangChain4jAgentExcludeTags", constant("admin-tools"))
+            .setHeader("CamelLangChain4jAgentExcludeMcpServers", constant("filesystem"))
+    .end()
+    .to("langchain4j-agent:assistant?agent=#myAgent&tags=users,admin-tools"
+        + "&mcpClients=#fsMcpClient,#timeMcpClient")
+    .to("mock:response");
+----
+
+MCP servers are matched by their key, which is set via `DefaultMcpClient.Builder.key(name)` or automatically from the server name in inline `mcpServer.<name>` configuration. MCP clients without a key are never excluded.
 
 === RAG Integration
 

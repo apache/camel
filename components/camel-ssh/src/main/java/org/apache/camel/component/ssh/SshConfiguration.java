@@ -74,6 +74,8 @@ public class SshConfiguration implements Cloneable {
     private String signatures;
     @UriParam(label = "advanced")
     private String compressions;
+    @UriParam(label = "advanced")
+    private long idleTimeout;
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private ClientBuilder clientBuilder;
@@ -394,6 +396,20 @@ public class SshConfiguration implements Cloneable {
      */
     public void setCompressions(String compressions) {
         this.compressions = compressions;
+    }
+
+    public long getIdleTimeout() {
+        return idleTimeout;
+    }
+
+    /**
+     * Sets the timeout in milliseconds to wait before the SSH session is closed due to inactivity. The default value is
+     * 0, which means no idle timeout is applied.
+     *
+     * @param idleTimeout long milliseconds to wait before the session is closed due to inactivity.
+     */
+    public void setIdleTimeout(long idleTimeout) {
+        this.idleTimeout = idleTimeout;
     }
 
     public ClientBuilder getClientBuilder() {

@@ -38,6 +38,7 @@ public final class ImportantHeaderUtils {
                     "CamelHttpResponseCode",
                     "CamelHttpResponseText",
                     "CamelMqttTopic",
+                    "CamelNatsDeliveryCounter",
                     "CamelNatsSID",
                     "CamelNatsStatusCode",
                     "CamelNatsStatusError",

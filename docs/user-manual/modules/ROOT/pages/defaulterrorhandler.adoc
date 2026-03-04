@@ -30,6 +30,11 @@ In this route below, any exception thrown in, such as the `validateOrder`
 bean, will be propagated back to the caller via the jetty endpoint, which
 then returns an HTTP error message back to the client.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("jetty:http://localhost/myservice/order")
@@ -37,20 +42,98 @@ from("jetty:http://localhost/myservice/order")
   .to("jms:queue:order");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="jetty:http://localhost/myservice/order"/>
+    <to uri="bean:validateOrder"/>
+    <to uri="jms:queue:order"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty:http://localhost/myservice/order
+      steps:
+        - to:
+            uri: bean:validateOrder
+        - to:
+            uri: jms:queue:order
+----
+====
+
 We can add an `onException` in case we want to catch certain exceptions
 and route them differently, for instance to catch a
-`ValidationException` and return a fixed response to the caller.
+`org.apache.camel.ValidationException` and return a fixed response to the caller.
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 onException(ValidationException.class)
   .handled(true)
-  .transform(body(constant("INVALID ORDER")));
+  .transform(constant("INVALID ORDER"));
 
 from("jetty:http://localhost/myservice/order")
   .to("bean:validateOrder")
   .to("jms:queue:order");
 ----
+
+XML::
++
+[source,xml]
+----
+<onException>
+    <exception>org.apache.camel.ValidationException</exception>
+    <handled>
+        <constant>true</constant>
+    </handled>
+    <transform>
+        <constant>INVALID ORDER</constant>
+    </transform>
+</onException>
+
+<route>
+    <from uri="jetty:http://localhost/myservice/order"/>
+    <to uri="bean:validateOrder"/>
+    <to uri="jms:queue:order"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- onException:
+    exception:
+      - org.apache.camel.ValidationException
+    handled:
+      constant:
+        expression: "true"
+    steps:
+      - transform:
+          expression:
+            constant:
+              expression: INVALID ORDER
+- route:
+    from:
+      uri: jetty:http://localhost/myservice/order
+      steps:
+        - to:
+            uri: bean:validateOrder
+        - to:
+            uri: jms:queue:order
+----
+====
 
 When the `ValidationException` is thrown from the `validateOrder` bean,
 it is intercepted by Camel error handler which lets the

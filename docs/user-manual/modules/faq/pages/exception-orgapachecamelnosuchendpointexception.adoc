@@ -13,12 +13,12 @@ the classpath, you'll run into this exception:
 org.apache.camel.NoSuchEndpointException: No endpoint could be found for: jetty:http://localhost:8080/bus
 ----
 
+For example in a route such as XML:
+
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-  <route>
+<route>
     <from uri="jetty:http://localhost:8080/bus" />
-    <to uri="file://C:/tmp/something.xml" /> 
-  </route>
-</camelContext>
+    <to uri="file://C:/tmp/something.xml" />
+</route>
 ----

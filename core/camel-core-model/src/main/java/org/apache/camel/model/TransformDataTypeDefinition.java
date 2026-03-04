@@ -47,7 +47,7 @@ public class TransformDataTypeDefinition extends NoOutputDefinition<TransformDat
     }
 
     public TransformDataTypeDefinition(DataType fromType, DataType toType) {
-        this.fromType = fromType.getFullName();
+        this.fromType = fromType != null ? fromType.getFullName() : null;
         this.toType = toType.getFullName();
     }
 

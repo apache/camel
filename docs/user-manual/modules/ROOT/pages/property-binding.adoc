@@ -1,9 +1,9 @@
 = Property binding in Camel
 
 Camel supports binding property values (key=value) in many places such as configuration of Camel
-components, endpoints, EIPs, routes, and Camel bootstrap configuration.
+components, endpoints, xref:components:eips:enterprise-integration-patterns.adoc[EIPs], routes, and Camel bootstrap configuration.
 
-Together with property placeholders, property placeholder functions, then there is plenty of power, but also
+Together with xref:using-propertyplaceholder.adoc[property placeholders], then there is plenty of power, but also
 something that takes a little learning to master.
 
 == Property binding features
@@ -134,13 +134,14 @@ PropertyBindingSupport.bindProperties(context, foo, prop);
 
 This will then set the POJOs to have the following values:
 
+[source,properties]
 ----
 Foo.name = James
 Foo.Bar.age = 33
 Foo.Bar.rider = true
 ----
 
-Instead of providing a map with all the parameters then a single parameter can also be set using builder style as shown:
+Instead of providing a `Map` with all the parameters then a single parameter can also be set using builder style as shown:
 
 [source,java]
 ----
@@ -169,11 +170,11 @@ Foo class has a `getBar` method that returns the `Bar` instance to use:
 
 [source,java]
 ----
-    private Bar bar = new Bar();
+private Bar bar = new Bar();
 
-    public Bar getBar() {
-        return bar;
-    }
+public Bar getBar() {
+    return bar;
+}
 ----
 
 It's a common practice for POJO classes to not create nested instances, but instead on demand. So suppose
@@ -243,11 +244,10 @@ MyDriver driver = PropertyBindingSupport.build()
 Notice how we use the `build(MyDriver.class)` to build the bean via the target class `.withTarget(new MyDriverBuilder())`.
 The build method will by default invoke `build` as the builder method, but you can specify the name, such as `.build(MyDriver.class, "myBuilderMethod");`
 
-
 == More details
 
-Property binding is notably used when running Camel in standalone mode with Camel Main, or using Camel Spring Boot, Camel K,
-Camel Kafka Connector, or Camel Quarkus. All these runtimes have a similar way of configuring via property bindings such
-as from `application.properties` files.
+Property binding is notably used when running Camel in standalone mode such as with Camel Main.
+
+When using Camel Spring Boot, or Camel Quarkus, then these runtimes have their own way of doing dependency injection and property binding.
 
 See more at xref:components:others:main.adoc[Camel Main]

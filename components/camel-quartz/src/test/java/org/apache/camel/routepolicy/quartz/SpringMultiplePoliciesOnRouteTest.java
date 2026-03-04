@@ -19,12 +19,12 @@ package org.apache.camel.routepolicy.quartz;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.executeSlowly;
+import static org.apache.camel.test.junit6.TestSupport.executeSlowly;
 
 public class SpringMultiplePoliciesOnRouteTest extends CamelSpringTestSupport {
     private String url = "seda:foo?concurrentConsumers=20";

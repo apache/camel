@@ -4,7 +4,7 @@
 :artifactid: camel-aws2-s3-vectors
 :description: Store and query vector embeddings using AWS S3 Vectors with similarity search.
 :since: 4.17
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

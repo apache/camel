@@ -55,14 +55,6 @@ class ExportCamelMain extends Export {
             printer().printErr("--gav must be in syntax: groupId:artifactId:version");
             return 1;
         }
-        if (!buildTool.equals("maven") && !buildTool.equals("gradle")) {
-            printer().printErr("--build-tool must either be maven or gradle, was: " + buildTool);
-            return 1;
-        }
-        if (buildTool.equals("gradle")) {
-            printer().printErr("--build-tool=gradle is not support yet for camel-main runtime.");
-            return 1;
-        }
 
         // the settings file has information what to export
         Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
@@ -163,12 +155,10 @@ class ExportCamelMain extends Export {
         // copy agent JARs and remove as dependency
         copyAgentDependencies(deps);
         deps.removeIf(d -> d.startsWith("agent:"));
-        if ("maven".equals(buildTool)) {
-            createMavenPom(settings, profile,
-                    buildDir.resolve("pom.xml"), deps, srcPackageName);
-            if (mavenWrapper) {
-                copyMavenWrapper();
-            }
+        createMavenPom(settings, profile,
+                buildDir.resolve("pom.xml"), deps, srcPackageName);
+        if (mavenWrapper) {
+            copyMavenWrapper();
         }
         copyDockerFiles(BUILD_DIR);
         String appJar = Paths.get("target", ids[1] + "-" + ids[2] + ".jar").toString();

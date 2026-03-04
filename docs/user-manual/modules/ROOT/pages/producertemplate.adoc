@@ -8,6 +8,11 @@ It can be configured with a default endpoint if you just want to send
 lots of messages to the same endpoint; or you can specify an
 xref:endpoint.adoc[Endpoint] or uri as the first parameter.
 
+IMPORTANT: You are not meant to create a `ProducerTemplate` for each message
+invocation; you are meant to create a single instance on startup and
+keep it around. Also when you have finished using the `ProducerTemplate` you should call
+the `stop()` method to close down all the resources it has been using.
+
 The `sendBody()` method allows you to send any object to an endpoint
 easily as shown:
 
@@ -40,7 +45,7 @@ that are used to control the messaging style to use:
 In other words, all the methods on the `ProducerTemplate` that starts with `sendXXX` are for InOnly messaging,
 and all the methods starting with `requestXXX` are for InOut messaging.
 
-Lets see an example where we invoke an endpoint to get the response (InOut):
+Let's see an example where we invoke an endpoint to get the response (InOut):
 
 [source,java]
 ----

@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -73,27 +72,24 @@ public class WebsocketRoute1Test extends WebsocketCamelRouterTestSupport {
                 // route for a single line
                 from("atmosphere-websocket:///hola").to("log:info").process(new Processor() {
                     public void process(final Exchange exchange) {
-                        createResponse(exchange, false);
+                        createResponse(exchange);
                     }
                 }).to("atmosphere-websocket:///hola");
             }
         };
     }
 
-    private static void createResponse(Exchange exchange, boolean streaming) {
+    private static void createResponse(Exchange exchange) {
         Object msg = exchange.getIn().getBody();
-        if (streaming) {
-            assertTrue(msg instanceof Reader || msg instanceof InputStream, "Expects Reader or InputStream");
-        } else {
-            assertTrue(msg instanceof String || msg instanceof byte[], "Expects String or byte[]");
-        }
+        assertTrue(msg instanceof String || msg instanceof byte[] || msg instanceof Reader || msg instanceof InputStream,
+                "Expects String, byte[], Reader or InputStream");
 
         if (msg instanceof String) {
             exchange.getIn().setBody(RESPONSE_GREETING + msg);
         } else if (msg instanceof byte[]) {
             exchange.getIn().setBody(createByteResponse((byte[]) msg));
         } else if (msg instanceof Reader) {
-            exchange.getIn().setBody(new StringReader(RESPONSE_GREETING + readAll((Reader) msg)));
+            exchange.getIn().setBody(RESPONSE_GREETING + readAll((Reader) msg));
         } else if (msg instanceof InputStream) {
             exchange.getIn().setBody(createByteResponse(readAll((InputStream) msg)));
         }

@@ -694,7 +694,7 @@ public interface ComponentsBuilderFactory {
      * Invoke and manage Azure Functions.
      * 
      * Category: cloud,serverless
-     * Since: 4.18
+     * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-azure-functions
      * 
      * @return the dsl builder
@@ -1786,6 +1786,19 @@ public interface ComponentsBuilderFactory {
         return GoogleDriveComponentBuilderFactory.googleDrive();
     }
     /**
+     * Google Firestore (camel-google-firestore)
+     * Store and retrieve data from Google Cloud Firestore NoSQL database.
+     * 
+     * Category: cloud,database
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-firestore
+     * 
+     * @return the dsl builder
+     */
+    static GoogleFirestoreComponentBuilderFactory.GoogleFirestoreComponentBuilder googleFirestore() {
+        return GoogleFirestoreComponentBuilderFactory.googleFirestore();
+    }
+    /**
      * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 
@@ -1836,20 +1849,6 @@ public interface ComponentsBuilderFactory {
      */
     static GooglePubsubComponentBuilderFactory.GooglePubsubComponentBuilder googlePubsub() {
         return GooglePubsubComponentBuilderFactory.googlePubsub();
-    }
-    /**
-     * Google PubSub Lite (camel-google-pubsub-lite)
-     * Send and receive messages to/from Google Cloud Platform PubSub Lite
-     * Service.
-     * 
-     * Category: cloud,messaging
-     * Since: 4.6
-     * Maven coordinates: org.apache.camel:camel-google-pubsub-lite
-     * 
-     * @return the dsl builder
-     */
-    static GooglePubsubLiteComponentBuilderFactory.GooglePubsubLiteComponentBuilder googlePubsubLite() {
-        return GooglePubsubLiteComponentBuilderFactory.googlePubsubLite();
     }
     /**
      * Google Secret Manager (camel-google-secret-manager)
@@ -2050,6 +2049,20 @@ public interface ComponentsBuilderFactory {
         return HazelcastMultimapComponentBuilderFactory.hazelcastMultimap();
     }
     /**
+     * Hazelcast PN Counter (camel-hazelcast)
+     * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
+     * (CRDT counter).
+     * 
+     * Category: cache,clustering
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder
+     */
+    static HazelcastPncounterComponentBuilderFactory.HazelcastPncounterComponentBuilder hazelcastPncounter() {
+        return HazelcastPncounterComponentBuilderFactory.hazelcastPncounter();
+    }
+    /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
      * 
@@ -2153,6 +2166,20 @@ public interface ComponentsBuilderFactory {
      */
     static HttpsComponentBuilderFactory.HttpsComponentBuilder https() {
         return HttpsComponentBuilderFactory.https();
+    }
+    /**
+     * Hugging Face (camel-huggingface)
+     * Integration with Hugging Face's Model Hub by using the Deep Java Library
+     * (DJL) Python bridge
+     * 
+     * Category: ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-huggingface
+     * 
+     * @return the dsl builder
+     */
+    static HuggingfaceComponentBuilderFactory.HuggingfaceComponentBuilder huggingface() {
+        return HuggingfaceComponentBuilderFactory.huggingface();
     }
     /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
@@ -3608,19 +3635,6 @@ public interface ComponentsBuilderFactory {
         return NettyHttpComponentBuilderFactory.nettyHttp();
     }
     /**
-     * Nitrite (camel-nitrite)
-     * Access Nitrite databases.
-     * 
-     * Category: database
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-nitrite
-     * 
-     * @return the dsl builder
-     */
-    static NitriteComponentBuilderFactory.NitriteComponentBuilder nitrite() {
-        return NitriteComponentBuilderFactory.nitrite();
-    }
-    /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
      * 
@@ -4255,20 +4269,6 @@ public interface ComponentsBuilderFactory {
      */
     static SedaComponentBuilderFactory.SedaComponentBuilder seda() {
         return SedaComponentBuilderFactory.seda();
-    }
-    /**
-     * Service (camel-service)
-     * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
-     * and delegate to it.
-     * 
-     * Category: cloud
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-service
-     * 
-     * @return the dsl builder
-     */
-    static ServiceComponentBuilderFactory.ServiceComponentBuilder service() {
-        return ServiceComponentBuilderFactory.service();
     }
     /**
      * ServiceNow (camel-servicenow)

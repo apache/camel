@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.18.0-SNAPSHOT</version>
+        <version>4.19.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-http</artifactId>
@@ -35,13 +35,7 @@
     <properties>
     </properties>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cloud</artifactId>
-        </dependency>
-        <dependency>
+    <dependencies>        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http-common</artifactId>
         </dependency>
@@ -82,7 +76,6 @@
             </exclusions>
         </dependency>
 
-
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -96,7 +89,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit5</artifactId>
+            <artifactId>camel-test-spring-junit6</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -124,7 +117,6 @@
             </exclusions>
         </dependency>
 
-
         <!-- test infra -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -132,13 +124,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
        </dependency>
-       <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -146,13 +131,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
        </dependency>
-       <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-jetty</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.assertj</groupId>
@@ -185,6 +163,22 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- generate the attached tests jar -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>log4j2.properties</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

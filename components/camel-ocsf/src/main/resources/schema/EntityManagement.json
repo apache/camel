@@ -4,13 +4,10 @@
   "title": "EntityManagement",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.EntityManagement",
-  "additionalProperties": true,
   "description": "EntityManagement event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"

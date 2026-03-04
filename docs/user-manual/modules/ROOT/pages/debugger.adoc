@@ -15,14 +15,14 @@ method and return `true`.
 In this unit test
 
 [source,java]
------------------------------------------------
+----
 public class DebugTest extends CamelTestSupport
------------------------------------------------
+----
 
 We want to debug the following route
 
 [source,java]
------------------------------------------------
+----
 @Override
 protected RouteBuilder createRouteBuilder() throws Exception {
     return new RouteBuilder() {
@@ -36,7 +36,7 @@ protected RouteBuilder createRouteBuilder() throws Exception {
         }
     };
 }
------------------------------------------------
+----
 
 Which can easily done by overriding the `debugBefore` method as shown
 
@@ -83,7 +83,7 @@ A trick to debug a Camel route written with Java DSL is to modify the route to i
 For instance:
 
 [source,java]
------------------------------------------------
+----
 public class MyRouteBuilder extends RouteBuilder {
 
     @Override
@@ -101,7 +101,7 @@ public class MyRouteBuilder extends RouteBuilder {
         	.log("${body}");
     }
 }
------------------------------------------------
+----
 
 === Implementing a custom debugger
 

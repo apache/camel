@@ -22,8 +22,9 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
-import org.fest.assertions.Assertions;
+import org.apache.camel.test.junit6.ExchangeTestSupport;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.util.Streams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ws.pox.dom.DomPoxMessage;
@@ -79,10 +80,10 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         filter.filterProducer(exchange, message);
         filter.filterConsumer(exchange, message);
 
-        Assertions.assertThat(message.getAttachments()).isEmpty();
-        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isEmpty();
+        Assertions.assertThat(message.getAttachments()).isExhausted();
+        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isExhausted();
 
-        Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isEmpty();
+        Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isExhausted();
     }
 
     @Test
@@ -101,10 +102,10 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
         filter.filterConsumer(exchange, message);
 
-        Assertions.assertThat(message.getAttachments()).isEmpty();
-        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isEmpty();
+        Assertions.assertThat(message.getAttachments()).isExhausted();
+        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isExhausted();
 
-        Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isEmpty();
+        Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isExhausted();
     }
 
     @Test
@@ -113,11 +114,12 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         exchange.getOut().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "myElement"));
         filter.filterConsumer(exchange, message);
 
-        Assertions.assertThat(message.getAttachments()).isEmpty();
+        Assertions.assertThat(message.getAttachments()).isExhausted();
 
-        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isNotEmpty().hasSize(1);
+        Assertions.assertThat(Streams.stream(message.getSoapHeader().examineAllHeaderElements()).toList()).isNotEmpty()
+                .hasSize(1);
 
-        Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isNotEmpty().hasSize(1);
+        Assertions.assertThat(Streams.stream(message.getSoapHeader().getAllAttributes()).toList()).isNotEmpty().hasSize(1);
 
     }
 
@@ -129,11 +131,12 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
         filter.filterProducer(exchange, message);
 
-        Assertions.assertThat(message.getAttachments()).isEmpty();
+        Assertions.assertThat(message.getAttachments()).isExhausted();
 
-        Assertions.assertThat(message.getSoapHeader().examineAllHeaderElements()).isNotEmpty().hasSize(1);
+        Assertions.assertThat(Streams.stream(message.getSoapHeader().examineAllHeaderElements()).toList()).isNotEmpty()
+                .hasSize(1);
 
-        Assertions.assertThat(message.getSoapHeader().getAllAttributes()).isNotEmpty().hasSize(2);
+        Assertions.assertThat(Streams.stream(message.getSoapHeader().getAllAttributes()).toList()).isNotEmpty().hasSize(2);
 
     }
 
@@ -142,7 +145,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         filter.filterConsumer(exchange, message);
         filter.filterProducer(exchange, message);
 
-        Assertions.assertThat(message.getAttachments()).isEmpty();
+        Assertions.assertThat(message.getAttachments()).isExhausted();
     }
 
     @Test
@@ -152,7 +155,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
         filter.filterProducer(exchange, message);
 
-        Assertions.assertThat(message.getAttachments()).isNotNull().isNotEmpty();
+        Assertions.assertThat(Streams.stream(message.getAttachments()).toList()).isNotEmpty();
         Assertions.assertThat(message.getAttachment("testAttachment")).isNotNull();
     }
 
@@ -163,7 +166,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
         filter.filterConsumer(exchange, message);
 
-        Assertions.assertThat(message.getAttachments()).isNotNull().isNotEmpty();
+        Assertions.assertThat(Streams.stream(message.getAttachments()).toList()).isNotEmpty();
         Assertions.assertThat(message.getAttachment("testAttachment")).isNotNull();
     }
 }

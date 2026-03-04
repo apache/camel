@@ -22,6 +22,7 @@ The `CamelContext` provides methods to control its lifecycle:
 * `stop`
 * `suspend`
 * `resume`
+* `shutdown`
 
 The operations are paired: start/stop and suspend/resume.
 
@@ -30,11 +31,15 @@ which means all its internal state, cache, etc is cleared; and the
 routes is being stopped in a graceful manner to ensure messages are given
 time to complete.
 
+Shutdown is the last phase when Camel is shutting down. After shutdown then Camel cannot be started again.
+The shutdown happens automatic when a JVM is terminating, such as Spring Boot applications that has been signalled to terminate.
+
 IMPORTANT: If you start a `CamelContext` after a stop, then its
 performing a _cold_ start, recreating all the state, cache etc. again; which is not guaranteed to startup correctly again.
-Instead you can use the suspend/resume operations. They will keep the
+Instead, you can use the suspend/resume operations. They will keep the
 `CamelContext` _warm_ and only suspend/stop routes using the same
-graceful shutdown feature. This ensures messages are given time to complete.
+xref:graceful-shutdown.adoc[Graceful Shutdown] feature.
+This ensures messages are given time to complete.
 
 End users is encouraged to use suspend/resume if you are temporary
 stopping a Camel application.

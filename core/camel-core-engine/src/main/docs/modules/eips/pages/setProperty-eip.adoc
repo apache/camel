@@ -50,6 +50,23 @@ XML::
     <to uri="direct:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setProperty:
+            name: myProperty
+            expression:
+              constant:
+                expression: test
+        - to:
+            uri: direct:b
+----
 ====
 
 === Setting an exchange property from another exchange property
@@ -81,12 +98,31 @@ XML::
     <to uri="direct:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setProperty:
+            name: foo
+            expression:
+              exchangeProperty:
+                expression: bar
+        - to:
+            uri: direct:b
+----
 ====
 
 === Setting an exchange property with the current message body
 
 It is also possible to set an exchange property with a value
-from anything on the `Exchange` such as the message body:
+from anything on the `Exchange` such as the message body,
+where we use the xref:components:languages:simple-language.adoc[Simple] language
+to refer to the message body:
 
 [tabs]
 ====
@@ -95,14 +131,11 @@ Java::
 [source,java]
 ----
 from("direct:a")
-    .setProperty("myBody", body())
+    .setProperty("myBody", simple("${body}"))
     .to("direct:b");
 ----
 
 XML::
-+
-We use the xref:components:languages:simple-language.adoc[Simple] language
-to refer to the message body:
 +
 [source,xml]
 ----
@@ -113,5 +146,22 @@ to refer to the message body:
     </setProperty>
     <to uri="direct:b"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - setProperty:
+            name: myBody
+            expression:
+              simple:
+                expression: "${body}"
+        - to:
+            uri: direct:b
 ----
 ====

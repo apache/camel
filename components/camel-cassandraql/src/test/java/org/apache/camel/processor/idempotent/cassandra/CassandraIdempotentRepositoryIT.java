@@ -44,7 +44,9 @@ public class CassandraIdempotentRepositoryIT extends BaseCassandra {
 
     @AfterEach
     public void tearDown() {
-        idempotentRepository.stop();
+        if (idempotentRepository != null) {
+            idempotentRepository.stop();
+        }
     }
 
     private boolean exists(String key) {

@@ -25,7 +25,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.kafka.clients.producer.MockProducer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.MethodOrderer;
@@ -45,7 +45,7 @@ public class KafkaProducerMultipleMessagesInTransactionWithSplitTest extends Cam
     protected MockEndpoint doneEndpoint;
 
     private final MockProducer<String, String> mockProducer
-            = new MockProducer<>(true, new StringSerializer(), new StringSerializer());
+            = new MockProducer<>(true, null, new StringSerializer(), new StringSerializer());
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
