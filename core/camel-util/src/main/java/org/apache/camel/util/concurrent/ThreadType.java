@@ -21,12 +21,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Defines the existing type of threads. The virtual threads can only be used with the system property
- * {@code camel.threads.virtual.enabled} set to {@code true}.
- * The default value is {@code false} which means that platform threads are used by default.
+ * {@code camel.threads.virtual.enabled} set to {@code true}. The default value is {@code false} which means that
+ * platform threads are used by default.
  */
 public enum ThreadType {
     PLATFORM,
     VIRTUAL;
+
     private static final Logger LOG = LoggerFactory.getLogger(ThreadType.class);
     private static final ThreadType CURRENT = Boolean.getBoolean("camel.threads.virtual.enabled") ? VIRTUAL : PLATFORM;
     static {
@@ -36,6 +37,7 @@ public enum ThreadType {
             LOG.debug("The type of thread detected is: {}", CURRENT);
         }
     }
+
     public static ThreadType current() {
         return CURRENT;
     }

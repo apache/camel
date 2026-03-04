@@ -20,9 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Thread factory which creates threads supporting a naming pattern.
- * The factory creates virtual threads in case the System property {@code camel.threads.virtual.enabled} set to
- * {@code true}.
+ * Thread factory which creates threads supporting a naming pattern. The factory creates virtual threads in case the
+ * System property {@code camel.threads.virtual.enabled} set to {@code true}.
  */
 public final class CamelThreadFactory implements ThreadFactoryTypeAware {
     private static final Logger LOG = LoggerFactory.getLogger(CamelThreadFactory.class);

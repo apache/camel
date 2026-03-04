@@ -37,8 +37,8 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.concurrent.RejectableScheduledThreadPoolExecutor;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
-import org.apache.camel.util.concurrent.ThreadType;
 import org.apache.camel.util.concurrent.ThreadFactoryTypeAware;
+import org.apache.camel.util.concurrent.ThreadType;
 
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
@@ -146,7 +146,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
                 }
 
                 ScheduledThreadPoolExecutor answer
-                        = new RejectableScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+                        = new RejectableScheduledThreadPoolExecutor(
+                                profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
                 answer.setRemoveOnCancelPolicy(true);
 
                 // need to wrap the thread pool in a sized to guard against the problem that the
@@ -166,10 +167,12 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             }
 
             @Override
-            ExecutorService newThreadPool(int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit,
-                                          int maxQueueSize, boolean allowCoreThreadTimeOut,
-                                          RejectedExecutionHandler rejectedExecutionHandler,
-                                          ThreadFactory threadFactory) throws IllegalArgumentException {
+            ExecutorService newThreadPool(
+                    int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit,
+                    int maxQueueSize, boolean allowCoreThreadTimeOut,
+                    RejectedExecutionHandler rejectedExecutionHandler,
+                    ThreadFactory threadFactory)
+                    throws IllegalArgumentException {
                 return Executors.newThreadPerTaskExecutor(threadFactory);
             }
 
@@ -191,8 +194,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             if (ThreadType.current() == ThreadType.PLATFORM) {
                 return ThreadPoolFactoryType.PLATFORM;
             }
-            return maxPoolSize > 1 && threadFactory instanceof ThreadFactoryTypeAware factoryTypeAware && factoryTypeAware.isVirtual() ?
-                    ThreadPoolFactoryType.VIRTUAL : ThreadPoolFactoryType.PLATFORM;
+            return maxPoolSize > 1 && threadFactory instanceof ThreadFactoryTypeAware factoryTypeAware
+                    && factoryTypeAware.isVirtual() ? ThreadPoolFactoryType.VIRTUAL : ThreadPoolFactoryType.PLATFORM;
         }
 
         abstract ExecutorService newCachedThreadPool(ThreadFactory threadFactory);
