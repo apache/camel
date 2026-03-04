@@ -127,7 +127,7 @@ If you are an Apache Camel committer, then you may also clone the https://gitbox
 
 To build the project, you need http://maven.apache.org/download.html[Apache Maven].
 
-- To build Camel 4, you need Java 17 Apache Maven version 3.9.6 or higher.
+- To build Camel 4, you need Java 21 and Apache Maven version 3.9.6 or higher.
 
 === Building Camel 4
 
