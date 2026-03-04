@@ -35,7 +35,7 @@ public class RequestMDN implements HttpRequestInterceptor {
     @Override
     public void process(HttpRequest request, EntityDetails entity, HttpContext context) throws HttpException, IOException {
 
-        HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+        HttpCoreContext coreContext = HttpCoreContext.castOrCreate(context);
 
         /* Disposition-Notification-To */
         String dispositionNotificationTo = coreContext.getAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, String.class);
