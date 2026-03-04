@@ -18,7 +18,7 @@ package org.apache.camel.tooling.maven;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.nio.file.Files;
 import java.util.stream.Collectors;
 
 import eu.maveniverse.maven.mima.context.Context;
@@ -52,6 +53,7 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.metadata.DefaultMetadata;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -84,6 +86,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             true, RepositoryPolicy.UPDATE_POLICY_ALWAYS, RepositoryPolicy.CHECKSUM_POLICY_WARN);
     private static final RepositoryPolicy POLICY_DISABLED = new RepositoryPolicy(
             false, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
+    private static final DependencyFilter ACCEPT_ALL = (node, parents) -> true;
 
     // Configuration
     private boolean mavenCentralEnabled = true;
@@ -343,6 +346,28 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     .build();
         }
 
+        // Add repositories from settings.xml active profiles (provided by MIMA)
+        Set<String> repositoryURLs = originalRepositories.stream()
+                .map(RemoteRepository::getUrl)
+                .collect(Collectors.toSet());
+        for (RemoteRepository repo : mimaContext.remoteRepositories()) {
+            try {
+                URL url = URI.create(repo.getUrl()).toURL();
+                if (repositoryURLs.add(repo.getUrl())) {
+                    if (mavenApacheSnapshotEnabled && url.getHost().equals("repository.apache.org")
+                            && url.getPath().startsWith("/snapshots")) {
+                        apacheSnapshotsIncluded = true;
+                        originalRepositories.add(apacheSnapshotsRepository);
+                    } else {
+                        originalRepositories.add(repo);
+                        LOG.debug("Added repository from settings.xml profile: {}", repo.getId());
+                    }
+                }
+            } catch (Exception e) {
+                LOG.warn("Failed to add repository {} from settings.xml: {}", repo.getId(), e.getMessage());
+            }
+        }
+
         // Add custom repositories from repos parameter
         if (repos != null) {
             Set<String> urls = Arrays.stream(repos.split("\\s*,\\s*")).collect(Collectors.toSet());
@@ -510,7 +535,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
                 collectRequest.setRepositories(repositories);
 
-                DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, new AcceptAllDependencyFilter());
+                DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, ACCEPT_ALL);
 
                 // Add download listener if configured
                 if (remoteArtifactDownloadListener != null) {
@@ -543,23 +568,11 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     });
 
                     DependencyResult dependencyResult = repositorySystem.resolveDependencies(session, dependencyRequest);
-                    dependencyResult.getArtifactResults().forEach(ar -> {
-                        Artifact artifact = ar.getArtifact();
-                        MavenGav gav = MavenGav.fromCoordinates(
-                                artifact.getGroupId(), artifact.getArtifactId(),
-                                artifact.getVersion(), artifact.getExtension(), artifact.getClassifier());
-                        result.add(new MavenArtifact(gav, artifact.getFile()));
-                    });
+                    dependencyResult.getArtifactResults().forEach(ar -> result.add(toMavenArtifact(ar)));
                 } else {
                     DependencyResult dependencyResult = repositorySystem.resolveDependencies(repositorySystemSession,
                             dependencyRequest);
-                    dependencyResult.getArtifactResults().forEach(ar -> {
-                        Artifact artifact = ar.getArtifact();
-                        MavenGav gav = MavenGav.fromCoordinates(
-                                artifact.getGroupId(), artifact.getArtifactId(),
-                                artifact.getVersion(), artifact.getExtension(), artifact.getClassifier());
-                        result.add(new MavenArtifact(gav, artifact.getFile()));
-                    });
+                    dependencyResult.getArtifactResults().forEach(ar -> result.add(toMavenArtifact(ar)));
                 }
             } else {
                 // Non-transitive resolution
@@ -572,13 +585,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 }
 
                 List<ArtifactResult> results = repositorySystem.resolveArtifacts(repositorySystemSession, requests);
-                results.forEach(ar -> {
-                    Artifact artifact = ar.getArtifact();
-                    MavenGav gav = MavenGav.fromCoordinates(
-                            artifact.getGroupId(), artifact.getArtifactId(),
-                            artifact.getVersion(), artifact.getExtension(), artifact.getClassifier());
-                    result.add(new MavenArtifact(gav, artifact.getFile()));
-                });
+                results.forEach(ar -> result.add(toMavenArtifact(ar)));
             }
 
             LOG.debug("Resolved {} artifacts in {}", result.size(), watch.taken());
@@ -615,7 +622,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             }
 
             req.setFavorLocalRepository(false);
-            req.setMetadata(new org.eclipse.aether.metadata.DefaultMetadata(
+            req.setMetadata(new DefaultMetadata(
                     groupId, artifactId, "maven-metadata.xml",
                     org.eclipse.aether.metadata.Metadata.Nature.RELEASE));
 
@@ -625,7 +632,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     File f = mr.getMetadata().getFile();
                     if (f.exists() && f.isFile()) {
                         MetadataXpp3Reader reader = new MetadataXpp3Reader();
-                        try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(f))) {
+                        try (InputStream is = new BufferedInputStream(Files.newInputStream(f.toPath()))) {
                             Metadata md = reader.read(is);
                             Versioning versioning = md.getVersioning();
                             if (versioning != null) {
@@ -695,6 +702,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     public MavenDownloader customize(String localRepository, int connectTimeout, int requestTimeout) {
         // Create a copy with most configuration shared
         MavenDownloaderImpl copy = new MavenDownloaderImpl();
+        copy.embeddedMode = embeddedMode;
         copy.repositorySystem = repositorySystem;
         copy.remoteRepositories.addAll(remoteRepositories);
         copy.apacheSnapshotsRepository = apacheSnapshotsRepository;
@@ -740,15 +748,12 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         this.remoteArtifactDownloadListener = remoteArtifactDownloadListener;
     }
 
-    // ========== Helper Classes ==========
-
-    private static class AcceptAllDependencyFilter implements DependencyFilter {
-        @Override
-        public boolean accept(
-                org.eclipse.aether.graph.DependencyNode node,
-                List<org.eclipse.aether.graph.DependencyNode> parents) {
-            return true;
-        }
+    private static MavenArtifact toMavenArtifact(ArtifactResult ar) {
+        Artifact artifact = ar.getArtifact();
+        MavenGav gav = MavenGav.fromCoordinates(
+                artifact.getGroupId(), artifact.getArtifactId(),
+                artifact.getVersion(), artifact.getExtension(), artifact.getClassifier());
+        return new MavenArtifact(gav, artifact.getFile());
     }
 
 }
