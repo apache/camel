@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
@@ -66,6 +67,12 @@ public interface ManagementObjectStrategy {
     Object getManagedObjectForThreadPool(
             CamelContext context, ThreadPoolExecutor threadPool,
             String id, String sourceId, String routeId, String threadPoolProfileId);
+
+    default Object getManagedObjectForThreadPool(
+            CamelContext context, ExecutorService executorService,
+            String id, String sourceId, String routeId, String threadPoolProfileId) {
+        return null;
+    }
 
     Object getManagedObjectForEventNotifier(CamelContext context, EventNotifier eventNotifier);
 }

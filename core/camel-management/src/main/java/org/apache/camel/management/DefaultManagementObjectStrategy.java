@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
@@ -103,6 +104,7 @@ import org.apache.camel.management.mbean.ManagedStop;
 import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
+import org.apache.camel.management.mbean.ManagedVirtualThreadExecutor;
 import org.apache.camel.management.mbean.ManagedThreads;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThroughputLogger;
@@ -282,6 +284,16 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         ManagedThreadPool mtp = new ManagedThreadPool(context, threadPool, id, sourceId, routeId, threadPoolProfileId);
         mtp.init(context.getManagementStrategy());
         return mtp;
+    }
+
+    @Override
+    public Object getManagedObjectForThreadPool(
+            CamelContext context, ExecutorService executorService,
+            String id, String sourceId, String routeId, String threadPoolProfileId) {
+        ManagedVirtualThreadExecutor mvte
+                = new ManagedVirtualThreadExecutor(context, executorService, id, sourceId, routeId, threadPoolProfileId);
+        mvte.init(context.getManagementStrategy());
+        return mvte;
     }
 
     @Override
