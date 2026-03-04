@@ -36,7 +36,6 @@ Questions on using Apache Camel
 
 * xref:how-do-i-specify-which-method-to-use-when-using-beans-in-routes.adoc[How do I specify which method to use when using beans in routes?]
 * xref:how-does-camel-look-up-beans-and-endpoints.adoc[How does Camel look up beans and endpoints?]
-* xref:how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards?]
 * xref:how-do-i-restart-camelcontext.adoc[How do I restart CamelContext?]
 * xref:how-do-i-retrieve-the-thrown-exception-during-processing-an-exchange.adoc[How do I retrieve the thrown Exception during processing an Exchange?]
 * xref:how-do-i-retry-failed-messages-forever.adoc[How do I retry failed messages forever?]
