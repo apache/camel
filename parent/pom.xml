@@ -376,6 +376,7 @@
         <mapstruct-version>1.6.3</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.9.12</maven-version>
+        <mima-version>2.4.39</mima-version>
         <maven-antrun-plugin-version>3.2.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.4.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.4.1</maven-archetype-packaging-version>
@@ -3681,6 +3682,21 @@
                 <groupId>org.apache.maven.resolver</groupId>
                 <artifactId>maven-resolver-api</artifactId>
                 <version>${maven-resolver-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.maveniverse.maven.mima</groupId>
+                <artifactId>context</artifactId>
+                <version>${mima-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.maveniverse.maven.mima.runtime</groupId>
+                <artifactId>embedded-maven</artifactId>
+                <version>${mima-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.maveniverse.maven.mima.runtime</groupId>
+                <artifactId>standalone-static</artifactId>
+                <version>${mima-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.resolver</groupId>
