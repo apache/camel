@@ -71,7 +71,7 @@ public class CamelParallelExecutionStrategy implements ParallelExecutionConfigur
         @Override
         public Predicate<? super ForkJoinPool> getSaturatePredicate() {
             return (ForkJoinPool pool) -> {
-                LOG.info("Junit ForkJoinPool saturated: running threads={}, pool size={}, queued tasks={}",
+                LOG.warn("Junit ForkJoinPool saturated: running threads={}, pool size={}, queued tasks={}",
                         pool.getRunningThreadCount(),
                         pool.getPoolSize(),
                         pool.getQueuedTaskCount());
