@@ -94,7 +94,7 @@ public class AvroDataFormat extends DataFormatDefinition {
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.component.jackson.SchemaResolver")
+    @Metadata(label = "advanced")
     private String schemaResolver;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
