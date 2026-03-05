@@ -20,7 +20,7 @@ name: Build and test
 on:
   pull_request:
     branches:
-      - main
+      - camel-4.18.x
     paths-ignore:
       - .github/**
       - README.md
