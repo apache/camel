@@ -19,13 +19,11 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * Test for the virtualThreadPerTask mode of SEDA consumer
  */
-@Disabled
 public class ThreadPerTaskSedaConsumerTest extends ContextTestSupport {
 
     @Test
@@ -71,12 +69,15 @@ public class ThreadPerTaskSedaConsumerTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("seda:test?virtualThreadPerTask=true")
+                        .to("log:result")
                         .to("mock:result");
 
                 from("seda:limited?virtualThreadPerTask=true&concurrentConsumers=2")
+                        .to("log:limited")
                         .to("mock:limited");
 
                 from("seda:throughput?virtualThreadPerTask=true")
+                        .to("log:throughput")
                         .to("mock:throughput");
             }
         };

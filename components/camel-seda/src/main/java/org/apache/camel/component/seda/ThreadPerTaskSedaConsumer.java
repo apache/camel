@@ -145,6 +145,30 @@ public class ThreadPerTaskSedaConsumer extends SedaConsumer {
         });
     }
 
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // Let the parent handle the coordinator thread shutdown first
+        super.prepareShutdown(suspendOnly, forced);
+
+        // Then wait for any in-flight tasks dispatched to the task executor
+        if (!suspendOnly && taskExecutor != null) {
+            long activeCount = activeTasks.sum();
+            if (activeCount > 0) {
+                LOG.debug("Waiting for {} active tasks to complete.", activeCount);
+                long timeout = getEndpoint().getCamelContext().getShutdownStrategy().getTimeout();
+                TimeUnit timeUnit = getEndpoint().getCamelContext().getShutdownStrategy().getTimeUnit();
+                try {
+                    taskExecutor.shutdown();
+                    if (!taskExecutor.awaitTermination(timeout, timeUnit)) {
+                        LOG.warn("Timeout waiting for {} active tasks to complete during shutdown.", activeTasks.sum());
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
+
     /**
      * Returns the current number of active processing tasks.
      */
