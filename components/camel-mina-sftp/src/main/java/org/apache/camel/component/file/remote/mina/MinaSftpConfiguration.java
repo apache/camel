@@ -455,7 +455,7 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
      *             request corresponds to approximately 32KB of buffer. For example, bulkRequests=4 is equivalent to
      *             readBufferSize=131072 and writeBufferSize=131072.
      */
-    @Deprecated
+    @Deprecated(since = "4.18")
     public void setBulkRequests(Integer bulkRequests) {
         this.bulkRequests = bulkRequests;
     }
@@ -547,19 +547,19 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
     // They are ignored but log a warning to help users update their configuration.
     // ========================================
 
-    @Deprecated
+    @Deprecated(since = "4.18")
     @UriParam(label = "advanced",
               description = "Deprecated: JSch-specific parameter, ignored by mina-sftp. "
                             + "Configure logging via your logging framework instead.")
     private String jschLoggingLevel;
 
-    @Deprecated
+    @Deprecated(since = "4.18")
     @UriParam(label = "advanced",
               description = "Deprecated: JSch-specific parameter, ignored by mina-sftp. "
                             + "Configure logging via your logging framework instead.")
     private String serverMessageLoggingLevel;
 
-    @Deprecated
+    @Deprecated(since = "4.18")
     @UriParam(label = "advanced",
               description = "Deprecated: JSch-specific parameter, ignored by mina-sftp. "
                             + "MINA SSHD uses stat() for directory existence checks.")
@@ -569,7 +569,7 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
      * @deprecated This parameter is specific to the JSch-based sftp component and is ignored by mina-sftp. MINA SSHD
      *             uses SLF4J natively - configure logging via your logging framework (log4j, logback) instead.
      */
-    @Deprecated
+    @Deprecated(since = "4.18")
     public void setJschLoggingLevel(String level) {
         this.jschLoggingLevel = level;
         LOG.warn("The 'jschLoggingLevel' parameter is specific to the JSch-based sftp component and is ignored by mina-sftp. "
@@ -580,7 +580,7 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
      * @deprecated This parameter is specific to the JSch-based sftp component and is ignored by mina-sftp. Configure
      *             logging via your logging framework instead.
      */
-    @Deprecated
+    @Deprecated(since = "4.18")
     public void setServerMessageLoggingLevel(String level) {
         this.serverMessageLoggingLevel = level;
         LOG.warn(
@@ -592,7 +592,7 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
      * @deprecated This parameter is specific to the JSch-based sftp component and is ignored by mina-sftp. MINA SSHD
      *             uses a different approach for directory existence checks.
      */
-    @Deprecated
+    @Deprecated(since = "4.18")
     public void setExistDirCheckUsingLs(boolean value) {
         this.existDirCheckUsingLs = value;
         LOG.warn(
@@ -603,7 +603,7 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
     /**
      * @deprecated This parameter is specific to the JSch-based sftp component and is ignored by mina-sftp.
      */
-    @Deprecated
+    @Deprecated(since = "4.18")
     public String getJschLoggingLevel() {
         return jschLoggingLevel;
     }
@@ -611,7 +611,7 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
     /**
      * @deprecated This parameter is specific to the JSch-based sftp component and is ignored by mina-sftp.
      */
-    @Deprecated
+    @Deprecated(since = "4.18")
     public String getServerMessageLoggingLevel() {
         return serverMessageLoggingLevel;
     }
@@ -619,7 +619,7 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
     /**
      * @deprecated This parameter is specific to the JSch-based sftp component and is ignored by mina-sftp.
      */
-    @Deprecated
+    @Deprecated(since = "4.18")
     public Boolean getExistDirCheckUsingLs() {
         return existDirCheckUsingLs;
     }
