@@ -48,8 +48,6 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
     private static final Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
-    private static final long SHUTDOWN_TIMEOUT = 30000L;
-
     private final AtomicInteger taskCount = new AtomicInteger();
     private volatile CountDownLatch latch;
     private volatile boolean shutdownPending;
@@ -112,12 +110,13 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         if (latch != null) {
             LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", latch.getCount());
 
-            // wait for all threads to end
+            // wait for all threads to end, using the shutdown strategy timeout
             try {
-                boolean zero = latch.await(SHUTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
-                if (!zero) {
-                    LOG.warn("Timeout {}ms preparing to shutdown, waiting for {} consumer threads to complete.",
-                            SHUTDOWN_TIMEOUT, latch.getCount());
+                long timeout = getEndpoint().getCamelContext().getShutdownStrategy().getTimeout();
+                TimeUnit timeUnit = getEndpoint().getCamelContext().getShutdownStrategy().getTimeUnit();
+                if (!latch.await(timeout, timeUnit)) {
+                    LOG.warn("Timeout waiting for {} consumer threads to complete during shutdown (waited {} {}).",
+                            latch.getCount(), timeout, timeUnit);
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
