@@ -24,7 +24,7 @@ By default, the HTTP server is disabled. To enable it, set `quarkus.http.host-en
 
 == Available Tools
 
-The server exposes 25 tools organized into nine functional areas, plus 3 prompts that provide structured
+The server exposes 26 tools organized into ten functional areas, plus 3 prompts that provide structured
 multi-step workflows.
 
 === Catalog Exploration
@@ -111,6 +111,19 @@ multi-step workflows.
   Camel exceptions (such as `NoSuchEndpointException`, `ResolveEndpointFailedException`,
   `FailedToCreateRouteException`, `PropertyBindingException`, and others), extracts the components and EIPs
   involved, and returns common causes, suggested fixes, and links to relevant Camel documentation.
+|===
+
+=== Dependency Check
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_dependency_check`
+| Checks Camel project dependency hygiene given a `pom.xml` and optional route definitions. Detects outdated
+  Camel versions compared to the latest catalog release, identifies missing Maven dependencies for components
+  used in routes, and flags version conflicts between the Camel BOM and explicit dependency overrides.
+  Returns actionable recommendations with corrected dependency snippets.
 |===
 
 === Validation and Transformation
@@ -439,6 +452,19 @@ Caused by: org.apache.camel.NoSuchEndpointException: No endpoint could be found 
 The assistant calls `camel_error_diagnose` which identifies all three exceptions in the chain, extracts the
 `kafka` component, and returns common causes (missing `camel-kafka` dependency, typo in URI scheme), suggested
 fixes (add the dependency, verify the URI), and links to the relevant Camel documentation.
+
+=== Checking Dependency Hygiene
+
+----
+Here's my pom.xml and my main route. Can you check if I'm missing any dependencies
+or if anything is outdated?
+----
+
+Provide your `pom.xml` and route content, and the assistant calls `camel_dependency_check`. It detects whether
+your Camel version is outdated compared to the latest release, identifies components used in the route that are
+missing from the pom (e.g., `camel-kafka` for `kafka:` endpoints), and flags version conflicts where a
+dependency has an explicit version override while a BOM is present. Each issue comes with a corrected Maven
+snippet you can paste directly into your pom.
 
 === Checking Camel Versions
 
