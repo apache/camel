@@ -409,7 +409,12 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
 
         try {
             LOG.info("Closing the Kafka consumer");
-            consumer.wakeup();
+            if (consumer != null) {
+                consumer.wakeup();
+            } else {
+                // This may happen if the start up has failed in some other part
+                LOG.trace("There's no Kafka consumer available to stop");
+            }
 
             if (executorService != null) {
                 executorService.shutdown();
