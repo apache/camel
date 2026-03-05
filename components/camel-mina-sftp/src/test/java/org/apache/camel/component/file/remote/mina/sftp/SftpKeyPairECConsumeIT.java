@@ -33,7 +33,6 @@ import org.junit.jupiter.api.condition.EnabledIf;
 public class SftpKeyPairECConsumeIT extends SftpServerTestSupport {
 
     private static final ByteArrayOutputStream PRIVATE_KEY = new ByteArrayOutputStream();
-    private static KeyPair keyPair;
 
     @BeforeAll
     public static void createKeys() throws Exception {
