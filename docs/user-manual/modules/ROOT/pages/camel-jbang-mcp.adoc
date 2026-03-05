@@ -24,7 +24,8 @@ By default, the HTTP server is disabled. To enable it, set `quarkus.http.host-en
 
 == Available Tools
 
-The server exposes 24 tools organized into eight functional areas.
+The server exposes 25 tools organized into nine functional areas, plus 3 prompts that provide structured
+multi-step workflows.
 
 === Catalog Exploration
 
@@ -97,6 +98,19 @@ The server exposes 24 tools organized into eight functional areas.
 | Analyzes a route for security concerns. Identifies security-sensitive components, assigns risk levels, detects
   issues like hardcoded credentials or plain-text protocols, and returns structured security findings alongside
   best practices.
+|===
+
+=== Error Diagnosis
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_error_diagnose`
+| Diagnoses Camel errors from stack traces or error messages. Identifies the exception type against 17 known
+  Camel exceptions (such as `NoSuchEndpointException`, `ResolveEndpointFailedException`,
+  `FailedToCreateRouteException`, `PropertyBindingException`, and others), extracts the components and EIPs
+  involved, and returns common causes, suggested fixes, and links to relevant Camel documentation.
 |===
 
 === Validation and Transformation
@@ -185,6 +199,40 @@ help validate, scaffold, and provide mock guidance for that workflow.
 
 | `camel_version_list`
 | Lists available Camel versions for a given runtime, including release dates, JDK requirements, and LTS status.
+|===
+
+== Available Prompts
+
+Prompts are structured multi-step workflows that guide the LLM through orchestrating multiple tools in the correct
+sequence. Instead of the LLM having to discover which tools to call and in what order, a prompt provides the complete
+workflow as a step-by-step plan.
+
+MCP clients that support prompts (such as Claude Desktop) expose them as selectable workflows. The LLM receives the
+instructions and executes each step by calling the referenced tools.
+
+[cols="1,1,3",options="header"]
+|===
+| Prompt | Arguments | Description
+
+| `camel_build_integration`
+| `requirements` (required), `runtime` (optional)
+| Guided workflow to build a Camel integration from natural-language requirements. Walks through seven steps:
+  identify components, identify EIPs, get component documentation, build the YAML route, validate it with the
+  YAML DSL schema, run a security review, and present the final result with explanations and run instructions.
+
+| `camel_migrate_project`
+| `pomContent` (required), `targetVersion` (optional)
+| Guided workflow to migrate a Camel project to a newer version. Walks through six steps: analyze the project's
+  `pom.xml`, determine the target version, check compatibility (including WildFly/Karaf detection), get
+  OpenRewrite migration recipes, search migration guides for breaking changes per component, and produce a
+  structured migration summary with blockers, breaking changes, commands, and manual steps.
+
+| `camel_security_review`
+| `route` (required), `format` (optional)
+| Guided workflow to perform a security audit of a Camel route. Walks through three steps: analyze the route
+  for security-sensitive components and vulnerabilities, understand the route structure and data flow, and
+  produce an actionable audit checklist organized into critical issues, warnings, positive findings,
+  recommendations, and compliance notes.
 |===
 
 == Setup
@@ -376,6 +424,22 @@ The assistant calls `camel_route_harden_context` which analyzes the route for se
 detects issues (hardcoded credentials, HTTP instead of HTTPS, plain FTP, etc.), assigns risk levels, and
 returns structured findings with remediation recommendations.
 
+=== Diagnosing an Error
+
+Paste a stack trace or error message and ask:
+
+----
+I'm getting this error when starting my Camel route. What's wrong?
+
+org.apache.camel.FailedToCreateRouteException: Failed to create route route1 at: >>> To[kafka:myTopic] <<<
+Caused by: org.apache.camel.ResolveEndpointFailedException: Failed to resolve endpoint: kafka:myTopic
+Caused by: org.apache.camel.NoSuchEndpointException: No endpoint could be found for: kafka:myTopic
+----
+
+The assistant calls `camel_error_diagnose` which identifies all three exceptions in the chain, extracts the
+`kafka` component, and returns common causes (missing `camel-kafka` dependency, typo in URI scheme), suggested
+fixes (add the dependency, verify the URI), and links to the relevant Camel documentation.
+
 === Checking Camel Versions
 
 ----
@@ -466,3 +530,42 @@ with mock mode so I can prototype quickly.
 The assistant first calls `camel_openapi_validate` to check for issues, then calls `camel_openapi_scaffold`
 to generate the route scaffold. This gives you a validated spec and a complete starting point where you can
 implement routes one at a time while Camel auto-mocks the rest.
+
+=== Using the Build Integration Prompt
+
+In MCP clients that support prompts, select the `camel_build_integration` prompt and provide your requirements:
+
+----
+Requirements: Read messages from a Kafka topic, filter them by a JSON field, and write matching messages to an AWS S3 bucket.
+Runtime: quarkus
+----
+
+The prompt guides the assistant through a structured seven-step workflow: discovering the right components
+(`kafka`, `aws2-s3`), selecting EIPs (`filter`), retrieving their documentation, building a YAML route,
+validating it against the YAML DSL schema, and running a security review — all in the correct order.
+
+=== Using the Migrate Project Prompt
+
+Select the `camel_migrate_project` prompt and provide your project's `pom.xml`:
+
+----
+pomContent: <paste your pom.xml here>
+targetVersion: 4.18.0
+----
+
+The prompt orchestrates the full migration workflow: analyzing your project, checking component compatibility,
+retrieving OpenRewrite recipes, searching migration guides for per-component breaking changes, and producing a
+structured migration summary with blockers, manual steps, and the exact commands to run.
+
+=== Using the Security Review Prompt
+
+Select the `camel_security_review` prompt and provide a route:
+
+----
+Route: <paste your route here>
+Format: yaml
+----
+
+The prompt guides the assistant through a security audit: analyzing the route for vulnerabilities and
+security-sensitive components, understanding the data flow, and producing a structured audit checklist with
+critical issues, warnings, positive findings, and actionable recommendations.
