@@ -227,8 +227,7 @@ public class MinaSftpServerKeyVerifier extends KnownHostsServerKeyVerifier {
 
         // If server presented a certificate, perform additional validation
         // that MINA SSHD doesn't do: type, validity, principals
-        if (serverKey instanceof OpenSshCertificate) {
-            OpenSshCertificate certificate = (OpenSshCertificate) serverKey;
+        if (serverKey instanceof OpenSshCertificate certificate) {
             String hostname = extractHostname(remoteAddress);
             int port = extractPort(remoteAddress);
 
@@ -363,15 +362,15 @@ public class MinaSftpServerKeyVerifier extends KnownHostsServerKeyVerifier {
     }
 
     private String extractHostname(SocketAddress remoteAddress) {
-        if (remoteAddress instanceof InetSocketAddress) {
-            return ((InetSocketAddress) remoteAddress).getHostString();
+        if (remoteAddress instanceof InetSocketAddress inetRemoteSocketAddress) {
+            return inetRemoteSocketAddress.getHostString();
         }
         return remoteAddress.toString();
     }
 
     private int extractPort(SocketAddress remoteAddress) {
-        if (remoteAddress instanceof InetSocketAddress) {
-            return ((InetSocketAddress) remoteAddress).getPort();
+        if (remoteAddress instanceof InetSocketAddress inetRemoteSocketAddress) {
+            return inetRemoteSocketAddress.getPort();
         }
         return 22;
     }
