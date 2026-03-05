@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -43,8 +42,8 @@ public class SftpFromSedaDeleteFileIT extends SftpServerTestSupport {
     }
 
     @Override
-    @BeforeEach
-    public void doPostSetup() throws Exception {
+    protected void setupResources() throws Exception {
+        super.setupResources();
         createSampleFile();
     }
 

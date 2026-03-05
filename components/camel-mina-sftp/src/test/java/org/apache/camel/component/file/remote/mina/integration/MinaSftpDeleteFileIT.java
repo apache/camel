@@ -23,7 +23,6 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.component.file.remote.SftpRemoteFile;
 import org.apache.camel.component.file.remote.mina.MinaSftpEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -39,8 +38,8 @@ public class MinaSftpDeleteFileIT extends MinaSftpServerTestSupport {
 
     private String ftpRootDir;
 
-    @BeforeEach
-    public void doPostSetup() throws Exception {
+    @Override
+    protected void setupResources() throws Exception {
         // Ensure the root directory exists
         service.getFtpRootDir().toFile().mkdirs();
         ftpRootDir = service.getFtpRootDir().toString();

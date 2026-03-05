@@ -28,7 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -45,8 +44,8 @@ public class MinaSftpCustomServerKeyVerifierIT extends MinaSftpServerTestSupport
 
     private String ftpRootDir;
 
-    @BeforeEach
-    public void doPostSetup() throws Exception {
+    @Override
+    protected void setupResources() throws Exception {
         service.getFtpRootDir().toFile().mkdirs();
         ftpRootDir = service.getFtpRootDir().toString();
     }

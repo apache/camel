@@ -27,7 +27,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.sshd.common.util.io.PathUtils;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -107,8 +106,8 @@ public class MinaSftpConfigurationValidationIT extends MinaSftpServerTestSupport
         log.info("Reset home directory resolution to default");
     }
 
-    @BeforeEach
-    public void doPostSetup() {
+    @Override
+    protected void setupResources() throws Exception {
         service.getFtpRootDir().toFile().mkdirs();
         ftpRootDir = service.getFtpRootDir().toString();
     }
