@@ -34,6 +34,8 @@
     <properties>
         <!-- Vulnerability scan only enabled in non testing modules -->
         <dependency-check.skip>true</dependency-check.skip>
+        <!-- don't need coverage for testing infra -->
+        <jacoco.skip>true</jacoco.skip>        
     </properties>
 
     <modules>
