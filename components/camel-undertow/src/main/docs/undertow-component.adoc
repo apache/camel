@@ -94,12 +94,40 @@ the numerical IP address of this interface should be used as the host.
 If you need to expose an Undertow endpoint on all network interfaces, the
 `0.0.0.0` address should be used.
 
-To listen across an entire URI prefix, see
-xref:manual:faq:how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards?].
-
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
 xref:servlet-component.adoc[Servlet Transport].
+
+=== How do I let Undertow match wildcards?
+
+By default, Undertow will only match on exact uri's. But you can instruct Undertow to match prefixes. For example:
+
+[source,java]
+----
+from("undertow:http://0.0.0.0:8123/foo").to("mock:foo");
+----
+
+In the route above Undertow will only match if the uri is
+an exact match, so it will match if you enter
+`\http://0.0.0.0:8123/foo` but not match if you do
+`\http://0.0.0.0:8123/foo/bar`.
+
+So if you want to enable wildcard matching you need to set `matchOnUriPrefix=true` as follows:
+
+[source,java]
+----
+from("undertow:http://0.0.0.0:8123/foo?matchOnUriPrefix=true").to("mock:foo");
+----
+
+So now Undertow matches any endpoints with starts with `foo`.
+
+To match *any* endpoint you can remove the prefix so it will match anything from the root:
+
+[source,java]
+----
+from("undertow:http://0.0.0.0:8123?matchOnUriPrefix=true").to("mock:foo");
+----
+
 
 === Security provider
 
