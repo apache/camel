@@ -15,22 +15,17 @@
 # limitations under the License.
 #
 
-name: Build and test
+name: Main build
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    paths-ignore:
-      - .github/**
-      - README.md
-      - SECURITY.md
-      - Jenkinsfile
-      - Jenkinsfile.*
-      - NOTICE.txt
+      - camel-4.14.x
+      - camel-4.18.x
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -39,14 +34,10 @@ permissions:
 jobs:
   build:
     if: github.repository == 'apache/camel'
-    permissions:
-      issues: write
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
         java: ['21']
-        experimental: [ false ]
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -68,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()
         with:
-          name: build-${{ matrix.java }}.log
+          name: main-build-${{ matrix.java }}.log
           path: build.log
       - name: Fail if there are uncommitted changes
         shell: bash
@@ -78,11 +69,6 @@ jobs:
         uses: ./.github/actions/incremental-build
         with:
           mode: test
-          pr-id: ${{ github.event.number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
-          artifact-upload-suffix: java-${{ matrix.java }}
-      - name: mvn test parent pom dependencies changed
-        uses: ./.github/actions/detect-dependencies
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          artifact-upload-suffix: main-java-${{ matrix.java }}
