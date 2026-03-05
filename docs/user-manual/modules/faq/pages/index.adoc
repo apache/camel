@@ -34,12 +34,7 @@ General questions about Camel
 
 Questions on using Apache Camel
 
-* xref:how-do-i-specify-which-method-to-use-when-using-beans-in-routes.adoc[How do I specify which method to use when using beans in routes?]
 * xref:how-does-camel-look-up-beans-and-endpoints.adoc[How does Camel look up beans and endpoints?]
-* xref:how-do-i-reuse-the-contexttestsupport-class-in-my-unit-tests.adoc[How do I reuse the ContextTestSupport class in my unit tests?]
-* xref:how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[How do I set the max chars when debug logging messages in Camel?]
-* xref:how-do-i-use-uris-with-parameters-in-xml.adoc[How do I use URIs with parameters in XML?]
-* xref:how-do-i-write-a-custom-processor-which-sends-multiple-messages.adoc[How do I write a custom Processor which sends multiple messages?]
 * xref:how-should-i-invoke-my-pojos-or-spring-services.adoc[How should I invoke my POJOs or Spring Services?]
 * xref:how-to-avoid-sending-some-or-all-message-headers.adoc[How to avoid sending some or all message headers?]
 * xref:how-to-create-executable-jar-camel-main.adoc[How to create executable JAR for camel-main project?]
@@ -67,21 +62,6 @@ Questions on logging output from Camel to a console, using the
 xref:components::log-component.adoc[Log] endpoint or JDK 1.4 logging or Log4j etc
 
 * xref:how-do-i-use-log4j.adoc[How do I use log4j?]
-
-[[FAQ-CamelEndpointQuestions]]
-== Camel Endpoint Questions
-
-Questions on using the various Camel xref:components::index.adoc[Components]
-and xref:ROOT:endpoint.adoc[Endpoint] implementations
-
-* xref:how-do-i-set-the-mep-when-interacting-with-jbi.adoc[How do I set the MEP when interacting with JBI?]
-* xref:how-do-the-direct-event-seda-and-vm-endpoints-compare.adoc[How do the direct, event, seda and vm endpoints compare?]
-* xref:how-do-the-timer-and-quartz-endpoints-compare.adoc[How do the Timer and Quartz endpoints compare?]
-
-[[FAQ-ComponentQuestions]]
-== Component Questions
-
-Questions on using specific components
 
 [[FAQ-JMSQuestions]]
 === JMS Questions
