@@ -61,6 +61,13 @@ public class ThreadPerTaskSedaConsumer extends SedaConsumer {
     }
 
     @Override
+    protected int getLatchCount() {
+        // Thread-per-task mode uses exactly 1 coordinator thread,
+        // regardless of the concurrentConsumers setting (which is a concurrency limit, not a thread count)
+        return 1;
+    }
+
+    @Override
     protected ExecutorService createExecutor(int poolSize) {
         // Create a single-thread executor for the coordinator
         // The actual work is done by taskExecutor
@@ -80,11 +87,40 @@ public class ThreadPerTaskSedaConsumer extends SedaConsumer {
             LOG.debug("Using concurrency limit of {} for thread-per-task consumer", maxConcurrentTasks);
         }
 
-        // Call parent to create the coordinator executor and start it
-        super.setupTasks();
+        // Create the coordinator executor and start exactly one coordinator task.
+        // We cannot use super.setupTasks() because it uses concurrentConsumers as the
+        // task count, but for thread-per-task mode we always need exactly 1 coordinator.
+        ExecutorService executor = createExecutor(1);
+        setExecutor(executor);
+        LOG.debug("Creating 1 coordinator task with poll timeout {} ms.", pollTimeout);
+        executor.execute(this);
 
         LOG.info("Started thread-per-task SEDA consumer for {} (maxConcurrent={})",
                 getEndpoint().getEndpointUri(), maxConcurrentTasks > 0 ? maxConcurrentTasks : "unlimited");
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // First wait for the coordinator to finish (parent handles latch)
+        super.prepareShutdown(suspendOnly, forced);
+
+        // Then wait for any active tasks to complete
+        if (!suspendOnly && taskExecutor != null) {
+            long activeCount = activeTasks.sum();
+            if (activeCount > 0) {
+                LOG.debug("Waiting for {} active tasks to complete.", activeCount);
+                long timeout = getEndpoint().getCamelContext().getShutdownStrategy().getTimeout();
+                TimeUnit timeUnit = getEndpoint().getCamelContext().getShutdownStrategy().getTimeUnit();
+                try {
+                    taskExecutor.shutdown();
+                    if (!taskExecutor.awaitTermination(timeout, timeUnit)) {
+                        LOG.warn("Timeout waiting for {} active tasks to complete during shutdown.", activeTasks.sum());
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
     }
 
     @Override

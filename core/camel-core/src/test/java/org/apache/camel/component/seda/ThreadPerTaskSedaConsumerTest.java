@@ -19,13 +19,11 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * Test for the virtualThreadPerTask mode of SEDA consumer
  */
-@Disabled
 public class ThreadPerTaskSedaConsumerTest extends ContextTestSupport {
 
     @Test

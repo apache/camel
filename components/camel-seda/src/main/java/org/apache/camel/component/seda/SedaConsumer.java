@@ -49,7 +49,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     private static final Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
     private final AtomicInteger taskCount = new AtomicInteger();
-    private volatile CountDownLatch latch;
+    protected volatile CountDownLatch latch;
     private volatile boolean shutdownPending;
     private volatile boolean forceShutdown;
     private ExecutorService executor;
@@ -108,11 +108,17 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         forceShutdown = forced;
 
         if (latch != null) {
-            LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", latch.getCount());
+            long count = latch.getCount();
+            LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", count);
 
-            // wait for all threads to end
+            // wait for all threads to end with a timeout to prevent indefinite hangs
             try {
-                latch.await();
+                long timeout = getEndpoint().getCamelContext().getShutdownStrategy().getTimeout();
+                TimeUnit timeUnit = getEndpoint().getCamelContext().getShutdownStrategy().getTimeUnit();
+                if (!latch.await(timeout, timeUnit)) {
+                    LOG.warn("Timeout waiting for {} consumer threads to complete during shutdown (waited {} {}).",
+                            latch.getCount(), timeout, timeUnit);
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -348,12 +354,20 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        latch = new CountDownLatch(getEndpoint().getConcurrentConsumers());
+        latch = new CountDownLatch(getLatchCount());
         shutdownPending = false;
         forceShutdown = false;
 
         setupTasks();
         getEndpoint().onStarted(this);
+    }
+
+    /**
+     * Returns the number of consumer threads expected for the shutdown latch. Subclasses can override this to provide a
+     * different count (e.g., thread-per-task mode only needs 1 for the coordinator).
+     */
+    protected int getLatchCount() {
+        return getEndpoint().getConcurrentConsumers();
     }
 
     @Override
@@ -383,6 +397,13 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     @Override
     protected void doShutdown() throws Exception {
         shutdownExecutor();
+    }
+
+    /**
+     * Sets the executor service used for consumer threads. Subclasses can use this to provide their own executor.
+     */
+    protected void setExecutor(ExecutorService executor) {
+        this.executor = executor;
     }
 
     /**
