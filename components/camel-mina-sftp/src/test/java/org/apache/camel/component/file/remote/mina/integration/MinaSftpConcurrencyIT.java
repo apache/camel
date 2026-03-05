@@ -26,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -53,15 +51,15 @@ public class MinaSftpConcurrencyIT extends MinaSftpServerTestSupport {
     private String ftpRootDir;
     private ExecutorService executor;
 
-    @BeforeEach
-    public void doPostSetup() {
+    @Override
+    protected void setupResources() throws Exception {
         service.getFtpRootDir().toFile().mkdirs();
         ftpRootDir = service.getFtpRootDir().toString();
         executor = Executors.newFixedThreadPool(THREAD_COUNT);
     }
 
-    @AfterEach
-    public void doPostTearDown() {
+    @Override
+    protected void cleanupResources() throws Exception {
         if (executor != null) {
             executor.shutdownNow();
         }

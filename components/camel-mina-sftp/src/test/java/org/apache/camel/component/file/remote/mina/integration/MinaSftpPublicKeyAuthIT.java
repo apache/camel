@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.mina.MinaSftpConfiguration;
 import org.apache.camel.component.file.remote.mina.MinaSftpEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -42,8 +41,8 @@ public class MinaSftpPublicKeyAuthIT extends MinaSftpServerTestSupport {
 
     private static final String TEST_RESOURCES = "src/test/resources/";
 
-    @BeforeEach
-    public void doPostSetup() throws Exception {
+    @Override
+    protected void setupResources() throws Exception {
         // Ensure the root directory exists
         service.getFtpRootDir().toFile().mkdirs();
     }

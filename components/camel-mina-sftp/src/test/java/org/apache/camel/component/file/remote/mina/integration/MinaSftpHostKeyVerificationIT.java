@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.mina.MinaSftpConfiguration;
 import org.apache.camel.component.file.remote.mina.MinaSftpEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.io.TempDir;
@@ -50,8 +49,8 @@ public class MinaSftpHostKeyVerificationIT extends MinaSftpServerTestSupport {
     @TempDir
     Path tempDir;
 
-    @BeforeEach
-    public void doPostSetup() throws Exception {
+    @Override
+    protected void setupResources() throws Exception {
         service.getFtpRootDir().toFile().mkdirs();
         ftpRootDir = service.getFtpRootDir().toString();
     }

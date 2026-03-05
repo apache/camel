@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote.mina.integration;
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -31,8 +30,8 @@ public class MinaSftpSimpleProduceIT extends MinaSftpServerTestSupport {
 
     private String ftpRootDir;
 
-    @BeforeEach
-    public void doPostSetup() throws Exception {
+    @Override
+    protected void setupResources() throws Exception {
         // Ensure the root directory exists
         service.getFtpRootDir().toFile().mkdirs();
         ftpRootDir = service.getFtpRootDir().toString();

@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.mina.MinaSftpConfiguration;
 import org.apache.camel.component.file.remote.mina.MinaSftpEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -43,8 +42,8 @@ public class MinaSftpSecurityEdgeCasesIT extends MinaSftpServerTestSupport {
 
     private String ftpRootDir;
 
-    @BeforeEach
-    public void doPostSetup() {
+    @Override
+    protected void setupResources() throws Exception {
         service.getFtpRootDir().toFile().mkdirs();
         ftpRootDir = service.getFtpRootDir().toString();
     }
