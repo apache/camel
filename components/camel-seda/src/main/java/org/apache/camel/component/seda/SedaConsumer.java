@@ -48,6 +48,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
     private static final Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
+    private static final long SHUTDOWN_TIMEOUT = 30000L;
+
     private final AtomicInteger taskCount = new AtomicInteger();
     private volatile CountDownLatch latch;
     private volatile boolean shutdownPending;
@@ -112,7 +114,11 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
             // wait for all threads to end
             try {
-                latch.await();
+                boolean zero = latch.await(SHUTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
+                if (!zero) {
+                    LOG.warn("Timeout {}ms preparing to shutdown, waiting for {} consumer threads to complete.",
+                            SHUTDOWN_TIMEOUT, latch.getCount());
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -141,8 +147,10 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             doRun();
         } finally {
             taskCount.decrementAndGet();
-            latch.countDown();
-            LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
+            if (latch != null) {
+                latch.countDown();
+                LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
+            }
         }
     }
 
@@ -348,7 +356,9 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        latch = new CountDownLatch(getEndpoint().getConcurrentConsumers());
+        if (getEndpoint().getConcurrentConsumers() > 0) {
+            latch = new CountDownLatch(getEndpoint().getConcurrentConsumers());
+        }
         shutdownPending = false;
         forceShutdown = false;
 
@@ -421,7 +431,10 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
         // submit needed number of tasks
         int tasks = poolSize - taskCount.get();
-        LOG.debug("Creating {} consumer tasks with poll timeout {} ms.", tasks, pollTimeout);
+        if (tasks <= 0) {
+            tasks = 1;
+        }
+        LOG.debug("Creating {} queue pooler with poll timeout {} ms.", tasks, pollTimeout);
         for (int i = 0; i < tasks; i++) {
             executor.execute(this);
         }
