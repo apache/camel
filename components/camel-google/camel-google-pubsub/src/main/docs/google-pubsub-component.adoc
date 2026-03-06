@@ -116,6 +116,33 @@ from("google-pubsub:{{project.name}}:{{subscription.name}}")
 With a dead-letter policy, after the configured maximum delivery attempts are exceeded,
 the message will automatically be forwarded to the dead-letter topic by Google PubSub.
 
+==== Automatic Max Delivery Attempts Enforcement
+
+The component can enforce the subscription's `maxDeliveryAttempts` setting at the consumer level.
+When enabled, messages whose delivery attempt count is greater than or equal to the configured maximum
+will be automatically nacked without processing, allowing Pub/Sub to route them to the dead-letter topic.
+This prevents infinite redelivery loops that can occur with short retry delays.
+
+The `maxDeliveryAttempts` value is resolved as follows:
+
+1. If explicitly set via the endpoint option, that value is used.
+2. If not explicitly set, the component attempts to auto-fetch the value from the subscription's
+   dead-letter policy at consumer startup.
+3. If auto-fetch fails (e.g., insufficient permissions or no dead-letter policy), enforcement is
+   disabled and a warning is logged.
+4. A value of `0` disables enforcement.
+
+[source,java]
+----
+// Explicit configuration
+from("google-pubsub:{{project.name}}:{{subscription.name}}?maxDeliveryAttempts=5")
+    .to("direct:process");
+
+// Auto-fetch from subscription dead-letter policy (default behavior when not set)
+from("google-pubsub:{{project.name}}:{{subscription.name}}")
+    .to("direct:process");
+----
+
 === Message Body
 
 The consumer endpoint returns the content of the message as `byte[]`. Exactly as the underlying system sends it.
