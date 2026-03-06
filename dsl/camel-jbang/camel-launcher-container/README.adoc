@@ -1,0 +1,82 @@
+= Camel Launcher Container
+
+== Overview
+
+This module provides the Docker container image for the Camel Launcher, a self-contained executable JAR that includes all dependencies required to run Camel JBang without needing JBang installed.
+
+The Maven build gathers all required resources into `target/docker/`, ready for building the container image.
+
+== Building
+
+First, build the module and its dependencies. By default, it uses the current project version:
+
+[source,bash]
+----
+mvn clean package -pl dsl/camel-jbang/camel-launcher-container -am -Dquickly
+----
+
+To use a specific released version of camel-launcher instead:
+
+[source,bash]
+----
+mvn clean package -pl dsl/camel-jbang/camel-launcher-container -Dcamel-launcher.version=4.18.0
+----
+
+This produces the following layout in `target/docker/`:
+
+----
+target/docker/
+├── Dockerfile
+├── camel-launcher-<version>.jar
+└── run.sh
+----
+
+Then build the container image:
+
+[source,bash]
+----
+cd dsl/camel-jbang/camel-launcher-container
+podman build -t camel-launcher target/docker/
+----
+
+== Running
+
+[source,bash]
+----
+podman run --rm camel-launcher version
+podman run --rm -v $(pwd)/routes:/routes camel-launcher run /routes/hello.java
+----
+
+== Configuration
+
+The following Maven properties can be overridden at build time:
+
+[cols="3,2,4"]
+|===
+| Property | Default | Description
+
+| `camel-launcher.version`
+| `${project.version}`
+| Version of the camel-launcher JAR to include
+
+| `container.base-image`
+| `eclipse-temurin:21-jre`
+| Base container image used in the Dockerfile
+
+| `container.user`
+| `ubuntu`
+| Non-root user to run the container as
+|===
+
+For example, to use a specific camel-launcher version with a different base image:
+
+[source,bash]
+----
+mvn clean package -pl dsl/camel-jbang/camel-launcher-container \
+    -Dcamel-launcher.version=4.18.0 \
+    -Dcontainer.base-image=eclipse-temurin:21-jre-alpine
+----
+
+== Container details
+
+The image runs as a non-root user (default `ubuntu`). The Camel Launcher JAR is installed as `/opt/camel/bin/camel-launcher.jar` and the `run.sh` script is installed as `/opt/camel/bin/camel`, which simply invokes `java -jar` on the JAR. JVM options can be passed via the `JAVA_OPTS` environment variable.

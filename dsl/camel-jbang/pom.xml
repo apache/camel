@@ -46,5 +46,6 @@
         <module>camel-jbang-plugin-validate</module>
         <module>camel-jbang-it</module>
         <module>camel-launcher</module>
+        <module>camel-launcher-container</module>
     </modules>
 </project>
