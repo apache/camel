@@ -38,4 +38,4 @@ USER 185
 # ENV JAVA_OPTS=""
 WORKDIR /deployments
 
-ENTRYPOINT ["java", "-jar", "{{ .AppJar }}"]
+ENTRYPOINT exec java $JAVA_OPTS -jar {{ .AppJar }}
