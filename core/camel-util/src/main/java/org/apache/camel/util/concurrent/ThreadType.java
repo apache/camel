@@ -20,25 +20,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the existing type of threads. The virtual threads can only be used with the system property
- * {@code camel.threads.virtual.enabled} set to {@code true}. The default value is {@code false} which means that
- * platform threads are used by default.
+ * Defines the existing type of threads. The virtual threads can be enabled with the system property
+ * {@code camel.threads.virtual.enabled} set to {@code true}, or via the Camel Main configuration property
+ * {@code camel.main.virtualThreadsEnabled}. The default value is {@code false} which means that platform threads are
+ * used by default.
+ * <p>
+ * The thread type is resolved lazily on first access, allowing configuration properties to set the system property
+ * before the type is determined.
  */
 public enum ThreadType {
     PLATFORM,
     VIRTUAL;
 
     private static final Logger LOG = LoggerFactory.getLogger(ThreadType.class);
-    private static final ThreadType CURRENT = Boolean.getBoolean("camel.threads.virtual.enabled") ? VIRTUAL : PLATFORM;
-    static {
-        if (CURRENT == VIRTUAL) {
-            LOG.info("The type of thread detected is: {}", CURRENT);
-        } else {
-            LOG.debug("The type of thread detected is: {}", CURRENT);
-        }
-    }
+    private static volatile ThreadType current;
 
     public static ThreadType current() {
-        return CURRENT;
+        ThreadType type = current;
+        if (type == null) {
+            synchronized (ThreadType.class) {
+                type = current;
+                if (type == null) {
+                    type = Boolean.getBoolean("camel.threads.virtual.enabled") ? VIRTUAL : PLATFORM;
+                    current = type;
+                    if (type == VIRTUAL) {
+                        LOG.info("The type of thread detected is: {}", type);
+                    } else {
+                        LOG.debug("The type of thread detected is: {}", type);
+                    }
+                }
+            }
+        }
+        return type;
     }
 }
