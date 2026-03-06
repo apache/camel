@@ -271,7 +271,7 @@
         <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.0</jackson-jq-version>
-        <jackson2-version>2.20.2</jackson2-version>
+        <jackson2-version>2.21.1</jackson2-version>
         <jackson2-annotations-version>2.20</jackson2-annotations-version>
         <jackson3-version>3.0.3</jackson3-version>
         <jackrabbit-version>2.22.3</jackrabbit-version>
