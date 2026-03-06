@@ -231,6 +231,13 @@ The deprecated options `buildToool` and `gradleWrapper` has been removed.
 The `camel-tooling-maven` which is used for downloading JARs from Maven has been refactored to use
 the new https://github.com/maveniverse/mima[MIMA] project (jbang is using this also).
 
+=== camel-groovy
+
+The Groovy library has been upgraded from 4.0.x to 5.0.x. This is a major version upgrade.
+If you use Groovy scripts or the Groovy DSL, review the
+https://groovy-lang.org/releasenotes/groovy-5.0.html[Groovy 5.0 release notes] for potential breaking changes.
+The Spock testing framework has also been upgraded to 2.4-groovy-5.0.
+
 === camel-groovy-xml
 
 The `camel-groovy-xml` has been moved into `camel-groovy` and this JAR is no longer shipped.
