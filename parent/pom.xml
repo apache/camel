@@ -233,7 +233,7 @@
         <guava-version>33.5.0-jre</guava-version>
         <guice3-version>3.0</guice3-version>
         <h2-version>2.4.240</h2-version>
-        <hadoop3-version>3.4.2</hadoop3-version>
+        <hadoop3-version>3.4.3</hadoop3-version>
         <hamcrest-version>3.0</hamcrest-version>
         <hapi-version>2.6.0</hapi-version>
         <hapi-base-version>2.6.0</hapi-base-version>
