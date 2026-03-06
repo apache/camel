@@ -539,8 +539,8 @@
         <tika-version>3.2.3</tika-version>
         <twilio-version>11.3.4</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
-        <undertow-version>2.4.0.Alpha1</undertow-version>
-        <undertow-ee-version>2.0.0.Alpha2</undertow-ee-version>
+        <undertow-version>2.4.0.Beta2</undertow-version>
+        <undertow-ee-version>2.0.0.Beta2</undertow-ee-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>1.0.0</vavr-version>
