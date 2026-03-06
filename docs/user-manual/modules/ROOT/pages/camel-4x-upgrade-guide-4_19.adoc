@@ -231,6 +231,10 @@ The deprecated options `buildToool` and `gradleWrapper` has been removed.
 The `camel-tooling-maven` which is used for downloading JARs from Maven has been refactored to use
 the new https://github.com/maveniverse/mima[MIMA] project (jbang is using this also).
 
+=== camel-groovy-xml
+
+The `camel-groovy-xml` has been moved into `camel-groovy` and this JAR is no longer shipped.
+So if you use `camel-groovy-xml` then change the dependency to `camel-groovy`.
 
 === camel-kafka
 

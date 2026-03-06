@@ -50,6 +50,11 @@
             <artifactId>groovy</artifactId>
             <version>${groovy-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-xml</artifactId>
+            <version>${groovy-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>
@@ -66,6 +71,11 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
