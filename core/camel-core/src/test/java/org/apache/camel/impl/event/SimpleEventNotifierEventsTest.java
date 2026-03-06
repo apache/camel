@@ -32,8 +32,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SimpleEventNotifierEventsTest {
 
@@ -69,8 +69,8 @@ public class SimpleEventNotifierEventsTest {
 
     @Test
     public void testExchangeDone() throws Exception {
-        // ErrorRegistry requires exchange events (ExchangeFailedEvent, ExchangeFailureHandledEvent)
-        assertTrue(context.getCamelContextExtension().isEventNotificationApplicable());
+        // no exchange event notifiers are active (ErrorRegistry is disabled by default, SimpleEventNotifierSupport ignores exchange events)
+        assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
@@ -110,8 +110,8 @@ public class SimpleEventNotifierEventsTest {
 
     @Test
     public void testExchangeFailed() {
-        // ErrorRegistry requires exchange events (ExchangeFailedEvent, ExchangeFailureHandledEvent)
-        assertTrue(context.getCamelContextExtension().isEventNotificationApplicable());
+        // no exchange event notifiers are active (ErrorRegistry is disabled by default, SimpleEventNotifierSupport ignores exchange events)
+        assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
         Exception e = assertThrows(Exception.class,
                 () -> template.sendBody("direct:fail", "Hello World"),
@@ -150,8 +150,8 @@ public class SimpleEventNotifierEventsTest {
 
     @Test
     public void testSuspendResume() {
-        // ErrorRegistry requires exchange events (ExchangeFailedEvent, ExchangeFailureHandledEvent)
-        assertTrue(context.getCamelContextExtension().isEventNotificationApplicable());
+        // no exchange event notifiers are active (ErrorRegistry is disabled by default, SimpleEventNotifierSupport ignores exchange events)
+        assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
         assertEquals(12, events.size());
         assertIsInstanceOf(CamelEvent.CamelContextInitializingEvent.class, events.get(0));
