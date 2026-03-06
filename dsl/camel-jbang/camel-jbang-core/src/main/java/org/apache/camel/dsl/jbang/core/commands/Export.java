@@ -368,8 +368,12 @@ public class Export extends ExportBaseCommand {
         Path docker = Path.of(buildDir).resolve("src/main/docker");
         Files.createDirectories(docker);
         String[] ids = gav.split(":");
-        InputStream is
-                = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile21.tmpl");
+        String templateName = "templates/Dockerfile" + javaVersion + ".tmpl";
+        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream(templateName);
+        if (is == null) {
+            // fallback to JDK 21 template
+            is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile21.tmpl");
+        }
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
