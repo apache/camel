@@ -106,6 +106,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "requestTimeout": target.withRequestTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "scaletimeout":
         case "scaleTimeout": target.withScaleTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "tlsservername":
+        case "tlsServerName": target.withTlsServerName(property(camelContext, java.lang.String.class, value)); return true;
         case "tlsversions":
         case "tlsVersions": target.withTlsVersions(property(camelContext, io.fabric8.kubernetes.client.http.TlsVersion[].class, value)); return true;
         case "trustcerts":
@@ -217,6 +219,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "requestTimeout": return java.lang.Integer.class;
         case "scaletimeout":
         case "scaleTimeout": return java.lang.Long.class;
+        case "tlsservername":
+        case "tlsServerName": return java.lang.String.class;
         case "tlsversions":
         case "tlsVersions": return io.fabric8.kubernetes.client.http.TlsVersion[].class;
         case "trustcerts":
@@ -329,6 +333,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "requestTimeout": return target.getRequestTimeout();
         case "scaletimeout":
         case "scaleTimeout": return target.getScaleTimeout();
+        case "tlsservername":
+        case "tlsServerName": return target.getTlsServerName();
         case "tlsversions":
         case "tlsVersions": return target.getTlsVersions();
         case "trustcerts":
