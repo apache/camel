@@ -566,7 +566,15 @@ Evaluates a Groovy script.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="groovyJson" type="tns:groovyJSonDataFormat"/>
+  <xs:element name="groovyJson" type="tns:groovyJSonDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Transform between JSon and java.util.Map or java.util.List objects.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="groovyXml" type="tns:groovyXmlDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -7510,7 +7518,15 @@ Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}). 
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
-        <xs:attribute name="prettyPrint" type="xs:string"/>
+        <xs:attribute name="prettyPrint" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To pretty printing output nicely formatted. Is by default true. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
