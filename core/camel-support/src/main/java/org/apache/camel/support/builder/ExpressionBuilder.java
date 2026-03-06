@@ -2755,7 +2755,7 @@ public class ExpressionBuilder {
                 if (value instanceof String) {
                     return value;
                 }
-                return Jsoner.serialize(value);
+                return serializeCarelessly(value);
             }
 
             @Override
@@ -2779,7 +2779,7 @@ public class ExpressionBuilder {
                 if (body instanceof String) {
                     return body;
                 }
-                return Jsoner.serialize(body);
+                return serializeCarelessly(body);
             }
 
             @Override
@@ -2823,6 +2823,16 @@ public class ExpressionBuilder {
         } catch (Exception e) {
             return rawXml;
         }
+    }
+
+    private static String serializeCarelessly(Object value) {
+        final java.io.StringWriter writer = new java.io.StringWriter();
+        try {
+            Jsoner.serializeCarelessly(value, writer);
+        } catch (final java.io.IOException caught) {
+            /* See StringWriter. */
+        }
+        return writer.toString();
     }
 
 }

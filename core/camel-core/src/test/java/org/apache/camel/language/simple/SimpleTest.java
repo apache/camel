@@ -3305,9 +3305,18 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression(exchange, "${toJson(${body})}", "{\"name\":\"Jack\",\"id\":123}");
         assertExpression(exchange, "${toJsonBody}", "{\"name\":\"Jack\",\"id\":123}");
 
+        // list body is serialized to JSON array
+        exchange.getMessage().setBody(List.of("a", "b", "c"));
+        assertExpression(exchange, "${toJson(${body})}", "[\"a\",\"b\",\"c\"]");
+
         // null body
         exchange.getMessage().setBody(null);
         assertExpression(exchange, "${toJsonBody}", null);
+        assertExpression(exchange, "${toJson(${body})}", null);
+
+        // toJson with a header expression
+        exchange.getMessage().setHeader("myNum", 42);
+        assertExpression(exchange, "${toJson(${header.myNum})}", "42");
     }
 
     @Test

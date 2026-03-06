@@ -319,7 +319,7 @@ public final class SimpleConstants {
     public static final String TO_JSON = "toJson(exp)";
 
     @Metadata(description = "Converts the body to JSon String representation.",
-              javaType = "String", label = "json")
+              javaType = "String", label = "json", displayName = "To JSon Body")
     public static final String TO_JSON_BODY = "toJsonBody";
 
     @Metadata(description = "Lookup a property placeholder with the given key. If the key does not exist nor has a value, then an optional default value can be specified.",

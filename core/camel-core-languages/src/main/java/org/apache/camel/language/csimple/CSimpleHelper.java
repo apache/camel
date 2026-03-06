@@ -260,7 +260,13 @@ public final class CSimpleHelper {
         if (body instanceof String) {
             return (String) body;
         }
-        return Jsoner.serialize(body);
+        final java.io.StringWriter writer = new java.io.StringWriter();
+        try {
+            Jsoner.serializeCarelessly(body, writer);
+        } catch (final java.io.IOException caught) {
+            /* See StringWriter. */
+        }
+        return writer.toString();
     }
 
     private static String prettyXml(String rawXml) {
