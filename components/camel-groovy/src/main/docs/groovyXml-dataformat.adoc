@@ -1,13 +1,13 @@
 = Groovy XML DataFormat
 :doctitle: Groovy XML
 :shortname: groovyXml
-:artifactid: camel-groovy-xml
+:artifactid: camel-groovy
 :description: Transform between XML and Groovy Node (Map structure) objects.
 :since: 4.15
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: groovy-xml
+:camel-spring-boot-name: groovy
 
 *Since Camel {since}*
 
@@ -80,7 +80,7 @@ To convert back to XML you just use the opposite direction with _marshal_.
 == Dependencies
 
 To use the data format in your camel routes, you need to add
-a dependency on *camel-groovy-xml* which implements this data format.
+a dependency on *camel-groovy* which implements this data format.
 
 If you use maven, you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
@@ -90,7 +90,7 @@ the download page for the latest versions).
 ----------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-groovy-xml</artifactId>
+  <artifactId>camel-groovy</artifactId>
   <version>x.x.x</version>
 </dependency>
 ----------------------------------------
