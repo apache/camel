@@ -318,6 +318,52 @@ public interface GooglePubsubEndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of delivery attempts for each message. When set to
+         * a positive value, the consumer will automatically nack any message
+         * whose delivery attempt count is greater than or equal to this value,
+         * allowing Pub/Sub to route it to the dead-letter topic without
+         * processing it. This prevents infinite redelivery loops when short
+         * retry delays are configured. If not explicitly set and the
+         * subscription has a dead-letter policy, the value is automatically
+         * fetched from the subscription configuration at consumer startup. Set
+         * to 0 to disable enforcement.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer (advanced)
+         * 
+         * @param maxDeliveryAttempts the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder maxDeliveryAttempts(int maxDeliveryAttempts) {
+            doSetProperty("maxDeliveryAttempts", maxDeliveryAttempts);
+            return this;
+        }
+        /**
+         * The maximum number of delivery attempts for each message. When set to
+         * a positive value, the consumer will automatically nack any message
+         * whose delivery attempt count is greater than or equal to this value,
+         * allowing Pub/Sub to route it to the dead-letter topic without
+         * processing it. This prevents infinite redelivery loops when short
+         * retry delays are configured. If not explicitly set and the
+         * subscription has a dead-letter policy, the value is automatically
+         * fetched from the subscription configuration at consumer startup. Set
+         * to 0 to disable enforcement.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer (advanced)
+         * 
+         * @param maxDeliveryAttempts the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGooglePubsubEndpointConsumerBuilder maxDeliveryAttempts(String maxDeliveryAttempts) {
+            doSetProperty("maxDeliveryAttempts", maxDeliveryAttempts);
+            return this;
+        }
+        /**
          * The max number of messages to receive from the server in a single API
          * call.
          * 

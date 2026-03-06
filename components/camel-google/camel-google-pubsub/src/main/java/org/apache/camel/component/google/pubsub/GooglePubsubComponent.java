@@ -37,6 +37,8 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
+import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
 import com.google.cloud.pubsub.v1.stub.PublisherStubSettings;
 import com.google.cloud.pubsub.v1.stub.SubscriberStub;
 import com.google.cloud.pubsub.v1.stub.SubscriberStubSettings;
@@ -213,6 +215,19 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
         }
         builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));
         return builder.build().createStub();
+    }
+
+    public SubscriptionAdminClient getSubscriptionAdminClient(GooglePubsubEndpoint googlePubsubEndpoint) throws IOException {
+        SubscriptionAdminSettings.Builder builder = SubscriptionAdminSettings.newBuilder();
+
+        if (StringHelper.trimToNull(endpoint) != null) {
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(endpoint).usePlaintext().build();
+            TransportChannelProvider channelProvider
+                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+            builder.setTransportChannelProvider(channelProvider);
+        }
+        builder.setCredentialsProvider(getCredentialsProvider(googlePubsubEndpoint));
+        return SubscriptionAdminClient.create(builder.build());
     }
 
     private CredentialsProvider getCredentialsProvider(GooglePubsubEndpoint endpoint) throws IOException {
