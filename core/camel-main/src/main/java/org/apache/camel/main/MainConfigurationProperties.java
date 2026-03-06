@@ -930,6 +930,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         return this;
     }
 
+    /**
+     * Whether to enable virtual threads when creating thread pools.
+     */
+    public MainConfigurationProperties withVirtualThreadsEnabled(boolean virtualThreadsEnabled) {
+        this.virtualThreadsEnabled = virtualThreadsEnabled;
+        return this;
+    }
+
     // fluent builders - main listener
     // --------------------------------------------------------------
 

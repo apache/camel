@@ -30,20 +30,26 @@ import org.slf4j.LoggerFactory;
 class ContextValueFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextValueFactory.class);
-    private static final boolean USE_SCOPED_VALUES = shouldUseScopedValues();
 
-    static {
-        if (USE_SCOPED_VALUES) {
-            LOG.info("ContextValue will use ScopedValue for virtual thread optimization");
-        } else {
-            LOG.debug("ContextValue will use ThreadLocal");
+    // Use lazy holder pattern to avoid resolving ThreadType before configuration is loaded
+    private static final class ScopedValueHolder {
+        static final boolean USE_SCOPED_VALUES = shouldUseScopedValues();
+
+        static {
+            if (useScopedValues()) {
+                LOG.info("ContextValue will use ScopedValue for virtual thread optimization");
+            } else {
+                LOG.debug("ContextValue will use ThreadLocal");
+            }
+        }
+
+        private static boolean shouldUseScopedValues() {
+            return ThreadType.current() == ThreadType.VIRTUAL;
         }
     }
 
-    private static boolean shouldUseScopedValues() {
-        // Only use ScopedValue when virtual threads are enabled
-        // ScopedValue is immutable and designed for the "pass context through call chain" pattern
-        return ThreadType.current() == ThreadType.VIRTUAL;
+    private static boolean useScopedValues() {
+        return ScopedValueHolder.USE_SCOPED_VALUES;
     }
 
     /**
@@ -52,7 +58,7 @@ class ContextValueFactory {
      * Uses ScopedValue when virtual threads are enabled, otherwise ThreadLocal.
      */
     static <T> ContextValue<T> newInstance(String name) {
-        if (USE_SCOPED_VALUES) {
+        if (useScopedValues()) {
             return new ScopedValueContextValue<>(name);
         }
         return new ThreadLocalContextValue<>(name);
