@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 127 options, which are listed below.
+The camel.main supports 130 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -64,6 +64,10 @@ The camel.main supports 127 options, which are listed below.
 | *camel.main.endpointBridgeError{zwsp}Handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. The default value is false. | false | boolean
 | *camel.main.endpointLazyStart{zwsp}Producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. The default value is false. | false | boolean
 | *camel.main.endpointRuntime{zwsp}StatisticsEnabled* | Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false. | false | boolean
+| *camel.main.errorRegistry{zwsp}Enabled* | Sets whether the error registry is enabled to capture errors during message routing. This is by default disabled. | false | boolean
+| *camel.main.errorRegistry{zwsp}MaximumEntries* | Sets the maximum number of error entries to keep in the error registry. When the limit is exceeded, the oldest entries are evicted. The default value is 100. | 100 | int
+| *camel.main.errorRegistryStack{zwsp}TraceEnabled* | Sets whether to capture stack traces in the error registry. This is disabled by default to reduce memory usage. | false | boolean
+| *camel.main.errorRegistryTimeTo{zwsp}LiveSeconds* | Sets the time-to-live in seconds for error entries in the error registry. Entries older than this are evicted. The default value is 3600 (1 hour). | 3600 | int
 | *camel.main.exchangeFactory* | Controls whether to pool (reuse) exchanges or create new exchanges (prototype). Using pooled will reduce JVM garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives. The default is prototype mode. | default | String
 | *camel.main.exchangeFactory{zwsp}Capacity* | The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100. | 100 | int
 | *camel.main.exchangeFactory{zwsp}StatisticsEnabled* | Configures whether statistics is enabled on exchange factory. | false | boolean
