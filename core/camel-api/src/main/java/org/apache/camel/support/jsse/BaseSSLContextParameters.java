@@ -83,6 +83,12 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
     private static final String SSL_SERVER_SOCKET_PROTOCOL_LOG_MSG = createProtocolLogMessage("SSLServerSocket");
 
+    private static final String SSL_ENGINE_NAMED_GROUP_LOG_MSG = createNamedGroupLogMessage("SSLEngine");
+
+    private static final String SSL_SOCKET_NAMED_GROUP_LOG_MSG = createNamedGroupLogMessage("SSLSocket");
+
+    private static final String SSL_SERVER_SOCKET_NAMED_GROUP_LOG_MSG = createNamedGroupLogMessage("SSLServerSocket");
+
     /**
      * The optional explicitly configured cipher suites for this configuration.
      */
@@ -102,6 +108,18 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * The option secure socket protocol name filter configuration for this configuration.
      */
     private FilterParameters secureSocketProtocolsFilter;
+
+    /**
+     * The optional explicitly configured named groups (key exchange groups) for this configuration. Named groups
+     * control which key exchange algorithms are available during the TLS handshake, including post-quantum hybrid
+     * groups such as X25519MLKEM768.
+     */
+    private NamedGroupsParameters namedGroups;
+
+    /**
+     * The optional named groups filter configuration for this configuration.
+     */
+    private FilterParameters namedGroupsFilter;
 
     /**
      * The optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
@@ -211,6 +229,62 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     }
 
     /**
+     * Returns the optional explicitly configured named groups for this configuration. These options are used in the
+     * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
+     * context in which they are applied.
+     * <p/>
+     * Named groups control which key exchange algorithms are available during the TLS handshake, including post-quantum
+     * hybrid groups such as {@code X25519MLKEM768}.
+     * <p/>
+     * These values override any filters supplied in {@link #setNamedGroupsFilter(FilterParameters)}
+     */
+    public NamedGroupsParameters getNamedGroups() {
+        return namedGroups;
+    }
+
+    /**
+     * Sets the optional explicitly configured named groups for this configuration. These options are used in the
+     * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
+     * context in which they are applied.
+     * <p/>
+     * Named groups control which key exchange algorithms are available during the TLS handshake, including post-quantum
+     * hybrid groups such as {@code X25519MLKEM768}.
+     * <p/>
+     * These values override any filters supplied in {@link #setNamedGroupsFilter(FilterParameters)}
+     *
+     * @param namedGroups the named groups configuration
+     */
+    public void setNamedGroups(NamedGroupsParameters namedGroups) {
+        this.namedGroups = namedGroups;
+    }
+
+    /**
+     * Returns the optional named groups filter for this configuration. These options are used in the configuration of
+     * {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the context in which
+     * they are applied.
+     * <p/>
+     * These values are ignored if {@link #setNamedGroups(NamedGroupsParameters)} is called with a non {@code null}
+     * argument.
+     */
+    public FilterParameters getNamedGroupsFilter() {
+        return namedGroupsFilter;
+    }
+
+    /**
+     * Sets the optional named groups filter for this JSSE configuration. These options are used in the configuration of
+     * {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the context in which
+     * they are applied.
+     * <p/>
+     * These values are ignored if {@link #setNamedGroups(NamedGroupsParameters)} is called with a non {@code null}
+     * argument.
+     *
+     * @param namedGroupsFilter the filter configuration
+     */
+    public void setNamedGroupsFilter(FilterParameters namedGroupsFilter) {
+        this.namedGroupsFilter = namedGroupsFilter;
+    }
+
+    /**
      * Returns the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
      */
     public String getSessionTimeout() {
@@ -314,6 +388,17 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             enabledSecureSocketProtocolsPatterns = null;
         }
 
+        final List<String> enabledNamedGroups = this.getNamedGroups() == null
+                ? null : this.parsePropertyValues(this.getNamedGroups().getNamedGroup());
+
+        final Patterns enabledNamedGroupsPatterns;
+
+        if (this.getNamedGroupsFilter() != null) {
+            enabledNamedGroupsPatterns = this.getNamedGroupsFilter().getPatterns();
+        } else {
+            enabledNamedGroupsPatterns = null;
+        }
+
         //
 
         final boolean allowPassthrough = getAllowPassthrough();
@@ -363,6 +448,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
                 engine.setEnabledProtocols(
                         filteredSecureSocketProtocols.toArray(new String[0]));
+
+                configureNamedGroups(engine.getSSLParameters(), enabledNamedGroups, enabledNamedGroupsPatterns,
+                        engine, SSL_ENGINE_NAMED_GROUP_LOG_MSG);
 
                 return engine;
             }
@@ -479,6 +567,17 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             enabledSecureSocketProtocolsPatterns = null;
         }
 
+        final List<String> enabledNamedGroups = this.getNamedGroups() == null
+                ? null : this.parsePropertyValues(this.getNamedGroups().getNamedGroup());
+
+        final Patterns enabledNamedGroupsPatterns;
+
+        if (this.getNamedGroupsFilter() != null) {
+            enabledNamedGroupsPatterns = this.getNamedGroupsFilter().getPatterns();
+        } else {
+            enabledNamedGroupsPatterns = null;
+        }
+
         //
 
         final boolean allowPassthrough = getAllowPassthrough();
@@ -533,6 +632,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
                 socket.setEnabledProtocols(
                         filteredSecureSocketProtocols.toArray(new String[0]));
+
+                configureNamedGroups(socket.getSSLParameters(), enabledNamedGroups, enabledNamedGroupsPatterns,
+                        socket, SSL_SOCKET_NAMED_GROUP_LOG_MSG);
+
                 return socket;
             }
         };
@@ -576,6 +679,17 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             enabledSecureSocketProtocolsPatterns = this.getSecureSocketProtocolsFilter().getPatterns();
         } else {
             enabledSecureSocketProtocolsPatterns = null;
+        }
+
+        final List<String> enabledNamedGroups = this.getNamedGroups() == null
+                ? null : this.parsePropertyValues(this.getNamedGroups().getNamedGroup());
+
+        final Patterns enabledNamedGroupsPatterns;
+
+        if (this.getNamedGroupsFilter() != null) {
+            enabledNamedGroupsPatterns = this.getNamedGroupsFilter().getPatterns();
+        } else {
+            enabledNamedGroupsPatterns = null;
         }
 
         //
@@ -627,6 +741,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
                 socket.setEnabledProtocols(
                         filteredSecureSocketProtocols.toArray(new String[0]));
+
+                configureNamedGroups(socket.getSSLParameters(), enabledNamedGroups, enabledNamedGroupsPatterns,
+                        socket, SSL_SERVER_SOCKET_NAMED_GROUP_LOG_MSG);
+
                 return socket;
             }
         };
@@ -766,6 +884,60 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         }
 
         return matches;
+    }
+
+    /**
+     * Configures named groups on an {@link SSLParameters} instance. If explicit named groups are provided, those are
+     * used directly. Otherwise, if a named groups filter is configured, the available named groups from the current
+     * SSLParameters are filtered according to the include/exclude patterns.
+     *
+     * @param sslParameters              the current SSL parameters to read available named groups from
+     * @param enabledNamedGroups         the optional explicit named groups list
+     * @param enabledNamedGroupsPatterns the optional filter patterns
+     * @param target                     the SSL object (engine, socket, or server socket) to configure
+     * @param logMessage                 the log message template
+     */
+    private void configureNamedGroups(
+            SSLParameters sslParameters, List<String> enabledNamedGroups,
+            Patterns enabledNamedGroupsPatterns, Object target, String logMessage) {
+
+        if (enabledNamedGroups == null && enabledNamedGroupsPatterns == null) {
+            return;
+        }
+
+        String[] currentNamedGroups = sslParameters.getNamedGroups();
+        if (currentNamedGroups == null) {
+            currentNamedGroups = new String[0];
+        }
+
+        Collection<String> filteredNamedGroups;
+        if (enabledNamedGroups != null) {
+            filteredNamedGroups = new ArrayList<>(enabledNamedGroups);
+        } else {
+            filteredNamedGroups = this.filter(
+                    null, Arrays.asList(currentNamedGroups),
+                    enabledNamedGroupsPatterns.getIncludes(), enabledNamedGroupsPatterns.getExcludes());
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(logMessage,
+                    target,
+                    enabledNamedGroups,
+                    enabledNamedGroupsPatterns,
+                    currentNamedGroups,
+                    filteredNamedGroups);
+        }
+
+        SSLParameters updatedParams = sslParameters;
+        updatedParams.setNamedGroups(filteredNamedGroups.toArray(new String[0]));
+
+        if (target instanceof SSLEngine engine) {
+            engine.setSSLParameters(updatedParams);
+        } else if (target instanceof SSLSocket socket) {
+            socket.setSSLParameters(updatedParams);
+        } else if (target instanceof SSLServerSocket serverSocket) {
+            serverSocket.setSSLParameters(updatedParams);
+        }
     }
 
     /**
@@ -1105,5 +1277,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                + "\t currently enabled protocols [{}]," + LS
                + "\t and default protocol patterns [{}]." + LS
                + "\t Resulting enabled protocols are [{}].";
+    }
+
+    private static String createNamedGroupLogMessage(String entityName) {
+        return "Configuring " + entityName + " [{}] with " + LS
+               + "\t explicitly set named groups [{}]," + LS
+               + "\t named group patterns [{}]," + LS
+               + "\t available named groups [{}]," + LS
+               + "\t Resulting enabled named groups are [{}].";
     }
 }
