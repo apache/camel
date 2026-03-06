@@ -65,7 +65,7 @@ public class DaprWorkflowTest extends CamelTestSupport {
         String mockResult = "newInstanceId";
 
         when(endpoint.getWorkflowClient()).thenReturn(client);
-        when(client.scheduleNewWorkflow(any(), any(NewWorkflowOptions.class))).thenReturn(mockResult);
+        when(client.scheduleNewWorkflow(any(Class.class), any(NewWorkflowOptions.class))).thenReturn(mockResult);
 
         DaprConfiguration configuration = new DaprConfiguration();
         configuration.setOperation(DaprOperation.workflow);
