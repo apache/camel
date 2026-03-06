@@ -372,6 +372,7 @@ public class Export extends ExportBaseCommand {
         InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream(templateName);
         if (is == null) {
             // fallback to JDK 21 template
+            printer().printf("No Dockerfile template for Java %s, falling back to Java 21 template%n", javaVersion);
             is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile21.tmpl");
         }
         String context = IOHelper.loadText(is);
