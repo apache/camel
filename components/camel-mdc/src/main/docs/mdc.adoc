@@ -70,6 +70,6 @@ The configuration properties for the MDC component are:
 |=======================================================================
 |Option |Default |Description
 |`camel.mdc.enabled`| false | Enable the MDC logging.
-|`camel.mdc.customHeaders` |  | Provide the headers you would like to use in the logging. Use `*` value to include all available headers.
-|`camel.mdc.customProperties` |  | Provide the properties you would like to use in the logging. Use `*` value to include all available properties.
+|`camel.mdc.customHeaders` |  | Provide the exchange headers you would like to trace in MDC. Use `*` value as a wildcard to include more exchange headers at once, for example `CAMEL_HTTP_*` or only the `*` to include all available exchange headers.
+|`camel.mdc.customProperties` |  | Provide the exchange properties you would like to trace in MDC. Use `*` value as a wildcard to include more exchange properties at once, for example `property_*` or only the `*` to include all available exchange properties.
 |=======================================================================
