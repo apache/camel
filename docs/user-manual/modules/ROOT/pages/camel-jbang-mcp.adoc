@@ -24,7 +24,7 @@ By default, the HTTP server is disabled. To enable it, set `quarkus.http.host-en
 
 == Available Tools
 
-The server exposes 26 tools organized into ten functional areas, plus 3 prompts that provide structured
+The server exposes 27 tools organized into eleven functional areas, plus 3 prompts that provide structured
 multi-step workflows.
 
 === Catalog Exploration
@@ -86,6 +86,24 @@ multi-step workflows.
 | `camel_route_context`
 | Given a Camel route (YAML, XML, or Java DSL), extracts all components and EIPs used, looks up their documentation
   from the catalog, and returns structured context.
+|===
+
+=== Test Scaffolding
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_route_test_scaffold`
+| Generates a JUnit 5 test skeleton from a Camel route definition (YAML or XML). Accepts an optional `format`
+  (`yaml` or `xml`, default `yaml`) and `runtime` (`main` or `spring-boot`, default `main`). For `main` runtime,
+  the generated test extends `CamelTestSupport`; for `spring-boot`, it uses `@CamelSpringBootTest` with
+  `@SpringBootTest`. The tool replaces non-trivial producer endpoints with mock endpoints, generates
+  `@RegisterExtension` stubs for infrastructure components (Kafka, JMS/Artemis, MongoDB, PostgreSQL, Cassandra,
+  Elasticsearch, Redis, RabbitMQ, FTP, Consul, NATS, Pulsar, CouchDB, Infinispan, MinIO, Solr), and produces
+  a `NotifyBuilder` pattern for timer-based routes or `template.sendBody()` for direct/seda consumers. Returns
+  the generated test code, detected components, mock endpoint mappings, test-infra services, and required Maven
+  test dependencies.
 |===
 
 === Security Analysis
@@ -452,6 +470,35 @@ Caused by: org.apache.camel.NoSuchEndpointException: No endpoint could be found 
 The assistant calls `camel_error_diagnose` which identifies all three exceptions in the chain, extracts the
 `kafka` component, and returns common causes (missing `camel-kafka` dependency, typo in URI scheme), suggested
 fixes (add the dependency, verify the URI), and links to the relevant Camel documentation.
+
+=== Generating a Test Skeleton
+
+----
+Generate a JUnit 5 test for this route:
+
+- route:
+    from:
+      uri: kafka:orders
+      steps:
+        - marshal:
+            json: {}
+        - to: mongodb:myDb?collection=orders&operation=insert
+----
+
+The assistant calls `camel_route_test_scaffold` with the route content. It detects the `kafka` and `mongodb`
+components, generates a test class extending `CamelTestSupport` with `@RegisterExtension` stubs for both
+`KafkaService` and `MongoDBService`, replaces the `mongodb` producer with a mock endpoint, and returns the
+generated test code along with the required Maven test dependencies (`camel-test-junit5`, `camel-mock`,
+`camel-test-infra-kafka`, `camel-test-infra-mongodb`).
+
+For Spring Boot projects, specify the runtime:
+
+----
+Generate a Spring Boot test for this Kafka-to-MongoDB route
+----
+
+The tool generates a test class annotated with `@CamelSpringBootTest` and `@SpringBootTest`, with
+`CamelContext` and `ProducerTemplate` injected via `@Autowired`.
 
 === Checking Dependency Hygiene
 
