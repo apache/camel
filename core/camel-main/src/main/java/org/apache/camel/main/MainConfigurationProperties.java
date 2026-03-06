@@ -46,6 +46,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private int extraShutdownTimeout = 15;
     private String basePackageScan;
     private boolean basePackageScanEnabled = true;
+    private boolean virtualThreadsEnabled;
 
     private String mainListenerClasses;
     private String routesBuilderClasses;
@@ -584,6 +585,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setBasePackageScanEnabled(boolean basePackageScanEnabled) {
         this.basePackageScanEnabled = basePackageScanEnabled;
+    }
+
+    public boolean isVirtualThreadsEnabled() {
+        return virtualThreadsEnabled;
+    }
+
+    /**
+     * Whether to enable virtual threads when creating thread pools.
+     *
+     * When enabled, Camel will use virtual threads instead of platform threads for its thread pools. This can also be
+     * enabled via the JVM system property {@code camel.threads.virtual.enabled=true}.
+     *
+     * This option must be read early during bootstrap, so it is set as a system property before thread pools are
+     * created.
+     */
+    public void setVirtualThreadsEnabled(boolean virtualThreadsEnabled) {
+        this.virtualThreadsEnabled = virtualThreadsEnabled;
     }
 
     public int getDurationHitExitCode() {

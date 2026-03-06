@@ -577,6 +577,15 @@ public abstract class BaseMainSupport extends BaseService {
             autoConfigurationPropertiesComponent(camelContext, autoConfiguredProperties);
             recorder.endStep(step);
             step = recorder.beginStep(BaseMainSupport.class, "autoConfigurationSingleOption", "Auto Configure");
+            autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.virtualThreadsEnabled",
+                    value -> {
+                        boolean enabled = Boolean.parseBoolean(value);
+                        mainConfigurationProperties.setVirtualThreadsEnabled(enabled);
+                        if (enabled) {
+                            System.setProperty("camel.threads.virtual.enabled", "true");
+                        }
+                        return null;
+                    });
             autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.routesIncludePattern",
                     value -> {
                         mainConfigurationProperties.setRoutesIncludePattern(value);

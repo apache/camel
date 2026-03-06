@@ -54,23 +54,30 @@ Virtual threads are *opt-in* in Apache Camel. When enabled, Camel's thread pool 
 
 === Global Configuration
 
+==== Camel Main Configuration Property
+
+The recommended way to enable virtual threads is via the Camel Main configuration property.
+This works in camel-main, camel-jbang, and camel-spring-boot:
+
+[source,properties]
+----
+camel.main.virtualThreadsEnabled=true
+----
+
+This property is read early during bootstrap, before thread pools are created, so it takes effect globally.
+
 ==== System Property
+
+Alternatively, you can use a JVM system property:
 
 [source,bash]
 ----
 java -Dcamel.threads.virtual.enabled=true -jar myapp.jar
 ----
 
-==== Application Properties (Spring Boot / Quarkus)
-
-[source,properties]
-----
-camel.threads.virtual.enabled=true
-----
-
 ==== Programmatic Configuration
 
-For custom setups, the thread type is determined at JVM startup based on the system property. Camel's `ThreadType.current()` returns either `PLATFORM` or `VIRTUAL`.
+For custom setups, the thread type is determined lazily on first access based on the system property. Camel's `ThreadType.current()` returns either `PLATFORM` or `VIRTUAL`.
 
 === What Changes When Enabled
 
