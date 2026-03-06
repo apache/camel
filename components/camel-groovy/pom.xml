@@ -55,6 +55,11 @@
             <artifactId>groovy-xml</artifactId>
             <version>${groovy-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-dateutil</artifactId>
+            <version>${groovy-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>
