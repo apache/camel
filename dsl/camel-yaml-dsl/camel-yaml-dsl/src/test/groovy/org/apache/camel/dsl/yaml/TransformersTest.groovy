@@ -18,6 +18,7 @@ package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.Model
+import org.apache.camel.model.transformer.DataFormatTransformerDefinition
 import org.apache.camel.model.transformer.EndpointTransformerDefinition
 import org.apache.camel.model.transformer.CustomTransformerDefinition
 import org.apache.camel.model.transformer.LoadTransformerDefinition
@@ -77,6 +78,27 @@ class TransformersTest extends YamlTestSupport {
             it.className == 'org.example.MyTransformer'
             it.fromType == 'other:OtherXOrder'
             it.toType == 'java:org.example.XOrder'
+        }
+    }
+
+    def "transformers with dataFormatTransformer"() {
+        when:
+        loadRoutes """
+                - transformers:
+                    dataFormatTransformer:
+                      fromType: xml:XmlXOrder
+                      toType: "java:org.example.XOrder"
+                      json:
+                        library: Jackson
+            """
+
+        then:
+        def transformers = context.getCamelContextExtension().getContextPlugin(Model.class).getTransformers()
+        transformers.size() == 1
+        with(transformers[0], DataFormatTransformerDefinition) {
+            it.fromType == 'xml:XmlXOrder'
+            it.toType == 'java:org.example.XOrder'
+            it.dataFormatType != null
         }
     }
 

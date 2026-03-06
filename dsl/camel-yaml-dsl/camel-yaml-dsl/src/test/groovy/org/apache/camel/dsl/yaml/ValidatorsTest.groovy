@@ -20,6 +20,7 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.Model
 import org.apache.camel.model.validator.EndpointValidatorDefinition
 import org.apache.camel.model.validator.CustomValidatorDefinition
+import org.apache.camel.model.validator.PredicateValidatorDefinition
 
 class ValidatorsTest extends YamlTestSupport {
 
@@ -56,6 +57,25 @@ class ValidatorsTest extends YamlTestSupport {
         with(validators[0], CustomValidatorDefinition) {
             it.type == 'other:OtherXOrder'
             it.className == 'org.example.OtherXOrderValidator'
+        }
+    }
+
+    def "validators with predicateValidator"() {
+        when:
+        loadRoutes """
+                - validators:
+                    predicateValidator:
+                      type: xml:XmlXOrderResponse
+                      expression:
+                        simple: "\${body} != null"
+            """
+
+        then:
+        def validators = context.getCamelContextExtension().getContextPlugin(Model.class).getValidators()
+        validators.size() == 1
+        with(validators[0], PredicateValidatorDefinition) {
+            it.type == 'xml:XmlXOrderResponse'
+            it.expression != null
         }
     }
 
