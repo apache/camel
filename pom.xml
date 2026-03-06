@@ -147,6 +147,7 @@
 
         <enforcer.phase>none</enforcer.phase><!-- We do not enforce with -Dquickly, the property is overridden in the full profile -->
 
+        <nisse.os.classifier>overridenByNisseMavenExtension</nisse.os.classifier><!-- Workaround https://github.com/dependabot/dependabot-core/issues/14330 - Using an empty value which is overridien by nisse extension for a normal build -->
         <os.detected.classifier>${nisse.os.classifier}</os.detected.classifier>
     </properties>
 
