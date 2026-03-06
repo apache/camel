@@ -37,6 +37,7 @@ import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.ForyDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
+import org.apache.camel.model.dataformat.GroovyJSonDataFormat;
 import org.apache.camel.model.dataformat.GroovyXmlDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -338,6 +339,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         GrokDataFormat grokDataFormat = new GrokDataFormat();
         grokDataFormat.setPattern(pattern);
         return dataFormat(grokDataFormat);
+    }
+
+    /**
+     * Uses the Groovy JSon data format
+     */
+    public T groovyJson() {
+        GroovyJSonDataFormat df = new GroovyJSonDataFormat();
+        return dataFormat(df);
     }
 
     /**

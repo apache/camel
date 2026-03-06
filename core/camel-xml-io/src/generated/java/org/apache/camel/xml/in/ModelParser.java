@@ -1743,6 +1743,12 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
+    protected GroovyJSonDataFormat doParseGroovyJSonDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new GroovyJSonDataFormat(), (def, key, val) -> switch (key) {
+                case "prettyPrint": def.setPrettyPrint(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected GroovyXmlDataFormat doParseGroovyXmlDataFormat() throws IOException, XmlPullParserException {
         return doParse(new GroovyXmlDataFormat(), (def, key, val) -> switch (key) {
                 case "attributeMapping": def.setAttributeMapping(val); yield true;
@@ -2779,6 +2785,7 @@ public class ModelParser extends BaseParser {
             case "flatpack": return doParseFlatpackDataFormat();
             case "fory": return doParseForyDataFormat();
             case "grok": return doParseGrokDataFormat();
+            case "groovyJson": return doParseGroovyJSonDataFormat();
             case "groovyXml": return doParseGroovyXmlDataFormat();
             case "gzipDeflater": return doParseGzipDeflaterDataFormat();
             case "hl7": return doParseHL7DataFormat();

@@ -1,0 +1,19 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "groovyJson",
+    "title": "Groovy JSon",
+    "description": "Transform between JSon and java.util.Map or java.util.List objects.",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "label": "dataformat,transformation,json",
+    "javaType": "org.apache.camel.model.dataformat.GroovyJSonDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "prettyPrint": { "index": 1, "kind": "attribute", "displayName": "Pretty Print", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "To pretty printing output nicely formatted. Is by default true." }
+  }
+}

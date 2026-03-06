@@ -434,6 +434,9 @@ public class ModelWriter extends BaseWriter {
     public void writeGrokDataFormat(GrokDataFormat def) throws IOException {
         doWriteGrokDataFormat("grok", def);
     }
+    public void writeGroovyJSonDataFormat(GroovyJSonDataFormat def) throws IOException {
+        doWriteGroovyJSonDataFormat("groovyJson", def);
+    }
     public void writeGroovyXmlDataFormat(GroovyXmlDataFormat def) throws IOException {
         doWriteGroovyXmlDataFormat("groovyXml", def);
     }
@@ -1167,6 +1170,7 @@ public class ModelWriter extends BaseWriter {
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
                 case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
+                case "GroovyJSonDataFormat" -> doWriteGroovyJSonDataFormat("groovyJson", (GroovyJSonDataFormat) v);
                 case "GroovyXmlDataFormat" -> doWriteGroovyXmlDataFormat("groovyXml", (GroovyXmlDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
@@ -1932,6 +1936,7 @@ public class ModelWriter extends BaseWriter {
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
                 case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
+                case "GroovyJSonDataFormat" -> doWriteGroovyJSonDataFormat("groovyJson", (GroovyJSonDataFormat) v);
                 case "GroovyXmlDataFormat" -> doWriteGroovyXmlDataFormat("groovyXml", (GroovyXmlDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
@@ -2229,6 +2234,7 @@ public class ModelWriter extends BaseWriter {
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
                 case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
+                case "GroovyJSonDataFormat" -> doWriteGroovyJSonDataFormat("groovyJson", (GroovyJSonDataFormat) v);
                 case "GroovyXmlDataFormat" -> doWriteGroovyXmlDataFormat("groovyXml", (GroovyXmlDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);
@@ -2335,6 +2341,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("flattened", def.getFlattened(), null);
         doWriteAttribute("allowMultipleMatchesPerLine", def.getAllowMultipleMatchesPerLine(), "true");
         doWriteAttribute("namedOnly", def.getNamedOnly(), null);
+        endElement(name);
+    }
+    protected void doWriteGroovyJSonDataFormat(String name, GroovyJSonDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "true");
         endElement(name);
     }
     protected void doWriteGroovyXmlDataFormat(String name, GroovyXmlDataFormat def) throws IOException {
@@ -3399,6 +3411,7 @@ public class ModelWriter extends BaseWriter {
                 case "FlatpackDataFormat" -> doWriteFlatpackDataFormat("flatpack", (FlatpackDataFormat) v);
                 case "ForyDataFormat" -> doWriteForyDataFormat("fory", (ForyDataFormat) v);
                 case "GrokDataFormat" -> doWriteGrokDataFormat("grok", (GrokDataFormat) v);
+                case "GroovyJSonDataFormat" -> doWriteGroovyJSonDataFormat("groovyJson", (GroovyJSonDataFormat) v);
                 case "GroovyXmlDataFormat" -> doWriteGroovyXmlDataFormat("groovyXml", (GroovyXmlDataFormat) v);
                 case "GzipDeflaterDataFormat" -> doWriteGzipDeflaterDataFormat("gzipDeflater", (GzipDeflaterDataFormat) v);
                 case "HL7DataFormat" -> doWriteHL7DataFormat("hl7", (HL7DataFormat) v);

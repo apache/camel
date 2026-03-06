@@ -1,0 +1,106 @@
+= Groovy JSon DataFormat
+:doctitle: Groovy JSon
+:shortname: groovyJson
+:artifactid: camel-groovy
+:description: Transform between JSon and java.util.Map or java.util.List objects.
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: groovy
+
+*Since Camel {since}*
+
+The Groovy JSon data format is a basic data format to transform JSon to Map objects,
+and back to JSon; using the Groovy JSon builder and slurper.
+
+This is convenient when working with JSon and using Groovy for data manipulation.
+
+This data format is limited in functionality but intended to be easier to use.
+There are none or only a few options to configure.
+
+== Groovy XML Options
+
+// dataformat options: START
+include::partial$dataformat-options.adoc[]
+// dataformat options: END
+
+== Supported Java types
+
+This data format supports marshalling from the following Java type to JSon:
+
+- Groovy XML Node object (`groovy.util.Node`) (such as message body is from Groovy XML)
+- Jackson Node object (`com.fasterxml.jackson.databind.JsonNode`)
+- Camel JSonObject (`org.apache.camel.util.json.JsonObject`)
+- Java Map object ('java.util.Map')
+- Java List object ('java.util.List')
+
+And unmarshalling from JSon to (`java.util.Map`) / (`java.util.List`) object.
+
+== Examples
+
+For example to transform from JSon to `java.util.Map`:
+
+[source,yaml]
+----
+- route:
+    description: From timer to json
+    from:
+      uri: timer
+      parameters:
+        repeatCount: "1"
+        timerName: tick
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: |-
+                    {
+                        "library": {
+                            "book": [
+                                {
+                                    "title": "No Title",
+                                    "author": "F. Scott Fitzgerald",
+                                    "year": "1925",
+                                    "genre": "Classic",
+                                    "id": "bk101"
+                                },
+                                {
+                                    "title": "1984",
+                                    "author": "George Orwell",
+                                    "year": "1949",
+                                    "genre": "Dystopian",
+                                    "id": "bk102"
+                                }
+                            ]
+                        }
+                    }
+        - unmarshal:
+            groovyJson: {}
+        - log:
+            message: "${body}"
+----
+
+This will transform the JSon into a `java.util.Map` object which can be manipulated using Java and Groovy code.
+
+To convert back to JSon you just use the opposite direction with _marshal_.
+
+== Dependencies
+
+To use the data format in your camel routes, you need to add
+a dependency on *camel-groovy* which implements this data format.
+
+If you use maven, you could just add the following to your pom.xml,
+substituting the version number for the latest & greatest release (see
+the download page for the latest versions).
+
+[source,xml]
+----------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-groovy</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----------------------------------------
+
+include::spring-boot:partial$starter.adoc[]
