@@ -19,11 +19,11 @@ package org.apache.camel.component.file.remote.mina.sftp;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -63,8 +63,7 @@ public class SftpFromSedaDeleteFileIT extends SftpServerTestSupport {
 
     private void createSampleFile() throws IOException {
         File file = new File(service.getFtpRootDir() + "/" + "foo.txt");
-
-        Files.writeString(file.toPath(), "Hello World this file will be deleted", StandardCharsets.UTF_8);
+        FileUtils.writeStringToFile(file, "Hello World this file will be deleted", StandardCharsets.UTF_8);
     }
 
     @Override
