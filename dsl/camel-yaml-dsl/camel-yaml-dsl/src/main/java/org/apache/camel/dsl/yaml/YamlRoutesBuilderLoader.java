@@ -41,6 +41,7 @@ import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.KameletDefinition;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -55,6 +56,8 @@ import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Resource;
@@ -251,6 +254,20 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     ((RestConfigurationDefinition) item).asRestConfiguration(
                             getCamelContext(),
                             getCamelContext().getRestConfiguration());
+                    return true;
+                } else if (item instanceof TransformersDefinition definition) {
+                    if (definition.getTransformers() != null) {
+                        getCamelContext().getCamelContextExtension()
+                                .getContextPlugin(Model.class)
+                                .getTransformers().addAll(definition.getTransformers());
+                    }
+                    return true;
+                } else if (item instanceof ValidatorsDefinition definition) {
+                    if (definition.getValidators() != null) {
+                        getCamelContext().getCamelContextExtension()
+                                .getContextPlugin(Model.class)
+                                .getValidators().addAll(definition.getValidators());
+                    }
                     return true;
                 }
 
