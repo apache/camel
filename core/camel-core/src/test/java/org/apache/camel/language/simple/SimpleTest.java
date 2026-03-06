@@ -3291,6 +3291,26 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testToJson() {
+        // string body is returned as-is
+        exchange.getMessage().setBody("Hello");
+        assertExpression(exchange, "${toJson(${body})}", "Hello");
+        assertExpression(exchange, "${toJsonBody}", "Hello");
+
+        // map body is serialized to JSON
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("name", "Jack");
+        map.put("id", 123);
+        exchange.getMessage().setBody(map);
+        assertExpression(exchange, "${toJson(${body})}", "{\"name\":\"Jack\",\"id\":123}");
+        assertExpression(exchange, "${toJsonBody}", "{\"name\":\"Jack\",\"id\":123}");
+
+        // null body
+        exchange.getMessage().setBody(null);
+        assertExpression(exchange, "${toJsonBody}", null);
+    }
+
+    @Test
     public void testTrimResult() {
         exchange.getMessage().setBody("Camel  ");
 

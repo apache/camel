@@ -2742,6 +2742,54 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression result serialized as a JSON string
+     */
+    public static Expression toJsonExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object value = expression.evaluate(exchange, Object.class);
+                if (value == null) {
+                    return null;
+                }
+                if (value instanceof String) {
+                    return value;
+                }
+                return Jsoner.serialize(value);
+            }
+
+            @Override
+            public String toString() {
+                return "toJson(" + expression + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the message body serialized as a JSON string
+     */
+    public static Expression toJsonBodyExpression() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object body = exchange.getIn().getBody();
+                if (body == null) {
+                    return null;
+                }
+                if (body instanceof String) {
+                    return body;
+                }
+                return Jsoner.serialize(body);
+            }
+
+            @Override
+            public String toString() {
+                return "toJsonBody";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the message body as pretty formatted string
      */
     public static Expression prettyBodyExpression() {

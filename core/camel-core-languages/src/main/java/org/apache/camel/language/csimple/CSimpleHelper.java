@@ -252,6 +252,17 @@ public final class CSimpleHelper {
         return body;
     }
 
+    public static String toJsonBody(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            return null;
+        }
+        if (body instanceof String) {
+            return (String) body;
+        }
+        return Jsoner.serialize(body);
+    }
+
     private static String prettyXml(String rawXml) {
         try {
             boolean includeDeclaration = rawXml.startsWith("<?xml");
