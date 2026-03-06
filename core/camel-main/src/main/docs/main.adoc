@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 126 options, which are listed below.
+The camel.main supports 127 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -150,6 +150,7 @@ The camel.main supports 126 options, which are listed below.
 | *camel.main.useDataType* | Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | boolean
 | *camel.main.useMdcLogging* | To turn on MDC logging | false | boolean
 | *camel.main.uuidGenerator* | UUID generator to use. default (32 bytes), short (16 bytes), classic (32 bytes or longer), simple (long incrementing counter), off (turned off for exchanges - only intended for performance profiling) | default | String
+| *camel.main.virtualThreads{zwsp}Enabled* | Whether to enable virtual threads when creating thread pools. When enabled, Camel will use virtual threads instead of platform threads for its thread pools. This can also be enabled via the JVM system property {code camel.threads.virtual.enabled=true} . This option must be read early during bootstrap, so it is set as a system property before thread pools are created. | false | boolean
 |===
 
 
