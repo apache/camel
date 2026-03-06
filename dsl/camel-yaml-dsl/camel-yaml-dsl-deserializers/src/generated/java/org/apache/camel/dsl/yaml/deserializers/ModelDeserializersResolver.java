@@ -137,6 +137,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.GrokDataFormat": return new ModelDeserializers.GrokDataFormatDeserializer();
             case "groovy": return new ModelDeserializers.GroovyExpressionDeserializer();
             case "org.apache.camel.model.language.GroovyExpression": return new ModelDeserializers.GroovyExpressionDeserializer();
+            case "groovyJson": return new ModelDeserializers.GroovyJSonDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.GroovyJSonDataFormat": return new ModelDeserializers.GroovyJSonDataFormatDeserializer();
             case "groovyXml": return new ModelDeserializers.GroovyXmlDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.GroovyXmlDataFormat": return new ModelDeserializers.GroovyXmlDataFormatDeserializer();
             case "gzipDeflater": return new ModelDeserializers.GzipDeflaterDataFormatDeserializer();

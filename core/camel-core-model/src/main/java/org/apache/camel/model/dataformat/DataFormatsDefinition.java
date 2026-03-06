@@ -60,6 +60,7 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "flatpack", type = FlatpackDataFormat.class),
             @XmlElement(name = "fory", type = ForyDataFormat.class),
             @XmlElement(name = "grok", type = GrokDataFormat.class),
+            @XmlElement(name = "groovyJson", type = GroovyJSonDataFormat.class),
             @XmlElement(name = "groovyXml", type = GroovyXmlDataFormat.class),
             @XmlElement(name = "gzipDeflater", type = GzipDeflaterDataFormat.class),
             @XmlElement(name = "hl7", type = HL7DataFormat.class),

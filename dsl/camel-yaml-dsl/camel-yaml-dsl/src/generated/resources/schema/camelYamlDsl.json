@@ -3033,6 +3033,8 @@
               }, {
                 "required" : [ "grok" ]
               }, {
+                "required" : [ "groovyJson" ]
+              }, {
                 "required" : [ "groovyXml" ]
               }, {
                 "required" : [ "gzipDeflater" ]
@@ -3214,6 +3216,14 @@
             "properties" : {
               "grok" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "groovyJson" ],
+            "properties" : {
+              "groovyJson" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GroovyJSonDataFormat"
               }
             }
           }, {
@@ -3514,6 +3524,7 @@
           "flatpack" : { },
           "fory" : { },
           "grok" : { },
+          "groovyJson" : { },
           "groovyXml" : { },
           "gzipDeflater" : { },
           "hl7" : { },
@@ -8374,6 +8385,7 @@
           "flatpack" : { },
           "fory" : { },
           "grok" : { },
+          "groovyJson" : { },
           "groovyXml" : { },
           "gzipDeflater" : { },
           "hl7" : { },
@@ -8449,6 +8461,8 @@
                 "required" : [ "fory" ]
               }, {
                 "required" : [ "grok" ]
+              }, {
+                "required" : [ "groovyJson" ]
               }, {
                 "required" : [ "groovyXml" ]
               }, {
@@ -8631,6 +8645,14 @@
             "properties" : {
               "grok" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "groovyJson" ],
+            "properties" : {
+              "groovyJson" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GroovyJSonDataFormat"
               }
             }
           }, {
@@ -10116,6 +10138,9 @@
           "grok" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
           },
+          "groovyJson" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GroovyJSonDataFormat"
+          },
           "groovyXml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GroovyXmlDataFormat"
           },
@@ -10594,6 +10619,25 @@
           }
         },
         "required" : [ "pattern" ]
+      },
+      "org.apache.camel.model.dataformat.GroovyJSonDataFormat" : {
+        "title" : "Groovy JSon",
+        "description" : "Transform between JSon and java.util.Map or java.util.List objects.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "prettyPrint" : {
+            "type" : "boolean",
+            "title" : "Pretty Print",
+            "description" : "To pretty printing output nicely formatted. Is by default true.",
+            "default" : true
+          }
+        }
       },
       "org.apache.camel.model.dataformat.GroovyXmlDataFormat" : {
         "title" : "Groovy XML",
@@ -16332,6 +16376,8 @@
               }, {
                 "required" : [ "grok" ]
               }, {
+                "required" : [ "groovyJson" ]
+              }, {
                 "required" : [ "groovyXml" ]
               }, {
                 "required" : [ "gzipDeflater" ]
@@ -16509,6 +16555,14 @@
             "properties" : {
               "grok" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GrokDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "groovyJson" ],
+            "properties" : {
+              "groovyJson" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.GroovyJSonDataFormat"
               }
             }
           }, {
@@ -16782,6 +16836,7 @@
           "flatpack" : { },
           "fory" : { },
           "grok" : { },
+          "groovyJson" : { },
           "groovyXml" : { },
           "gzipDeflater" : { },
           "hl7" : { },

@@ -32,6 +32,7 @@ import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.ForyDataFormat;
 import org.apache.camel.model.dataformat.GrokDataFormat;
+import org.apache.camel.model.dataformat.GroovyJSonDataFormat;
 import org.apache.camel.model.dataformat.GroovyXmlDataFormat;
 import org.apache.camel.model.dataformat.GzipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
@@ -178,6 +179,13 @@ public final class DataFormatBuilderFactory {
      */
     public GrokDataFormat.Builder grok() {
         return new GrokDataFormat.Builder();
+    }
+
+    /**
+     * Uses the Groovy JSon format
+     */
+    public GroovyJSonDataFormat.Builder groovyJson() {
+        return new GroovyJSonDataFormat.Builder();
     }
 
     /**
