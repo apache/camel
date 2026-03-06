@@ -18511,6 +18511,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
     }
 
+    @YamlIn
     @YamlType(
             nodes = "transformers",
             types = org.apache.camel.model.transformer.TransformersDefinition.class,
@@ -19570,6 +19571,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
     }
 
+    @YamlIn
     @YamlType(
             nodes = "validators",
             types = org.apache.camel.model.validator.ValidatorsDefinition.class,

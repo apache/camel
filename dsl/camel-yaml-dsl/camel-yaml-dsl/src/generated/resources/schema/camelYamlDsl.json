@@ -17052,6 +17052,12 @@
       },
       "rest" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestDefinition"
+      },
+      "transformers" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.transformer.TransformersDefinition"
+      },
+      "validators" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.validator.ValidatorsDefinition"
       }
     }
   }
