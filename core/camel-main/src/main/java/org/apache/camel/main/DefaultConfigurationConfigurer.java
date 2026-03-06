@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -200,6 +201,11 @@ public final class DefaultConfigurationConfigurer {
                 .setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
 
         camelContext.getInflightRepository().setInflightBrowseEnabled(config.isInflightRepositoryBrowseEnabled());
+
+        camelContext.getErrorRegistry().setEnabled(config.isErrorRegistryEnabled());
+        camelContext.getErrorRegistry().setMaximumEntries(config.getErrorRegistryMaximumEntries());
+        camelContext.getErrorRegistry().setTimeToLive(Duration.ofSeconds(config.getErrorRegistryTimeToLiveSeconds()));
+        camelContext.getErrorRegistry().setStackTraceEnabled(config.isErrorRegistryStackTraceEnabled());
 
         if (config.getLogDebugMaxChars() != 0) {
             camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS,

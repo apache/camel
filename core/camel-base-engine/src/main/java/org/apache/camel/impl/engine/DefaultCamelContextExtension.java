@@ -46,6 +46,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
+import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
@@ -127,6 +128,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile MessageHistoryFactory messageHistoryFactory;
     private volatile StreamCachingStrategy streamCachingStrategy;
     private volatile InflightRepository inflightRepository;
+    private volatile ErrorRegistry errorRegistry;
     private volatile UuidGenerator uuidGenerator;
     private volatile Tracer tracer;
     private volatile TransformerRegistry transformerRegistry;
@@ -876,6 +878,24 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     void setInflightRepository(InflightRepository repository) {
         this.inflightRepository = camelContext.getInternalServiceManager().addService(camelContext, repository);
+    }
+
+    ErrorRegistry getErrorRegistry() {
+        if (errorRegistry == null) {
+            lock.lock();
+            try {
+                if (errorRegistry == null) {
+                    setErrorRegistry(camelContext.createErrorRegistry());
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        return errorRegistry;
+    }
+
+    void setErrorRegistry(ErrorRegistry errorRegistry) {
+        this.errorRegistry = camelContext.getInternalServiceManager().addService(camelContext, errorRegistry);
     }
 
     UuidGenerator getUuidGenerator() {

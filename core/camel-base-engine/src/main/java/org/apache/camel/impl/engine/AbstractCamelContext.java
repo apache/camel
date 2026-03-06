@@ -116,6 +116,7 @@ import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointServiceRegistry;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
@@ -2612,6 +2613,12 @@ public abstract class AbstractCamelContext extends BaseService
             addService(runtimeEndpointRegistry, true, true);
         }
 
+        // register error registry as event notifier so it captures exchange failure events
+        ErrorRegistry errorRegistry = getErrorRegistry();
+        if (errorRegistry instanceof EventNotifier && getManagementStrategy() != null) {
+            getManagementStrategy().addEventNotifier((EventNotifier) errorRegistry);
+        }
+
         bindDataFormats();
 
         // init components
@@ -3872,6 +3879,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public ErrorRegistry getErrorRegistry() {
+        return camelContextExtension.getErrorRegistry();
+    }
+
+    @Override
+    public void setErrorRegistry(ErrorRegistry errorRegistry) {
+        camelContextExtension.setErrorRegistry(errorRegistry);
+    }
+
+    @Override
     public void setAutoStartup(Boolean autoStartup) {
         this.autoStartup = autoStartup;
     }
@@ -4429,6 +4446,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract MessageHistoryFactory createMessageHistoryFactory();
 
     protected abstract InflightRepository createInflightRepository();
+
+    protected abstract ErrorRegistry createErrorRegistry();
 
     protected abstract AsyncProcessorAwaitManager createAsyncProcessorAwaitManager();
 
