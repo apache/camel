@@ -52,16 +52,64 @@ so no previous downloaded cache etc. may cause a problem.
 IMPORTANT: From Camel 4.17 onwards then Kamelets are optional, and only downloaded on demand. You define the version
 of kamelets via `--kamelets-version` parameter to `camel run` or can pre-configure the version via `camel config set kamelets-version=4.17.0`.
 
-=== Installing offline safe Camel JBang
+=== Installing Offline-Safe or Version-Pinned Camel JBang
 
-When installing Camel JBang as a JBang app via `jbang app install ...` then JBang would usually check
-occasionally if the upstream version has changed and then automatic update. This can be undesired if you
-want to ensure your Camel JBang app is not automatically updated, such as when there are newer Apache Camel releases.
+When installing Camel JBang using `jbang app install`, JBang will occasionally check
+upstream sources and update the installed application automatically. This may be undesirable if you
+want to ensure your Camel JBang installation remains on a specific Camel release.
 
-1. Download https://github.com/apache/camel/blob/main/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java[CamelJBang.java] file to local disk
-2. Edit the `CamelJBang.java` file with the desired Camel version you want to use
-3. And then install via `jbang app install CamelJBang.java`
-4. After this you can delete the `CamelJBang.java` file
+The following options allow you to install Camel JBang in a way that prevents unexpected upgrades.
+
+==== Option 1: Pin by Installing from a Local `CamelJBang.java`
+
+This approach pins the Camel version directly in the source file used to install the application.
+
+1. Download the `CamelJBang.java` file to your local machine:
++
+[source]
+----
+https://github.com/apache/camel/blob/main/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java
+----
+
+2. Edit the `CamelJBang.java` file and set the Camel version you want to use.
+
+3. Install Camel JBang locally:
++
+[source,bash]
+----
+jbang app install CamelJBang.java
+----
+
+4. After installation, the `CamelJBang.java` file can be deleted.
+
+==== Option 2: Install from a Version-Pinned Catalog
+
+Another option is to install Camel JBang from a catalog tied to a specific Camel release tag.
+
+Example:
+[source,bash]
+----
+CAMEL_VERSION="4.18.0"
+CAMEL_TAG="camel-${CAMEL_VERSION}"
+CAMEL_JBANG_CATALOG_URL="https://raw.githubusercontent.com/apache/camel/${CAMEL_TAG}/jbang-catalog.json"
+
+jbang app install --force --fresh \
+  -Dcamel.jbang.version="${CAMEL_VERSION}" \
+  -Dcamel-kamelets.version="${CAMEL_VERSION}" \
+  camel@"${CAMEL_JBANG_CATALOG_URL}"
+----
+
+In this example:
+
+* The catalog URL points to a specific Camel release tag.
+* `-Dcamel.jbang.version` ensures the installed application uses that same Camel version.
+
+[NOTE]
+====
+Option 1 provides the most deterministic installation and is best suited for fully offline-safe environments.  
+
+Option 2 offers a simpler installation while still ensuring the version is pinned to a specific Camel release.
+====
 
 
 == Container Image
