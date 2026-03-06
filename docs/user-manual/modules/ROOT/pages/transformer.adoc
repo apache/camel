@@ -11,8 +11,6 @@ looks for a `Transformer` which transforms from the current message type to the 
 type and apply. Once transform succeed or message is already in expected type, then the message
 data type is updated.
 
-NOTE: Currently, transformers is only supported in Java DSL and the classic Spring XML.
-
 == Data type format
 
 [source,text]
@@ -63,7 +61,7 @@ Java::
 ----
 from("direct:abc")
     .inputType("myScheme:myTransformer")
-    .to("...");
+    .to("log:abc");
 ----
 
 XML::
@@ -73,8 +71,22 @@ XML::
 <route>
     <from uri="direct:abc"/>
     <inputType urn="myScheme:myTransformer"/>
-    <to uri="..."/>
+    <to uri="log:abc"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:abc
+      steps:
+        - inputType:
+            urn: myScheme:myTransformer
+        - to:
+            uri: "log:abc"
 ----
 ====
 
@@ -118,13 +130,28 @@ transformer()
     .withDataFormat(bindy);
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<dataFormatTransformer fromType="java:com.example.Order" toType="csv:CSVOrder">
-    <bindy id="csvdf" type="Csv" classType="com.example.Order"/>
-</dataFormatTransformer>
+<transformers>
+    <dataFormatTransformer fromType="java:com.example.Order" toType="csv:CSVOrder">
+        <bindy id="csvdf" type="Csv" classType="com.example.Order"/>
+    </dataFormatTransformer>
+</transformers>
+----
+
+YAML::
++
+[source,yaml]
+----
+- transformers:
+    dataFormatTransformer:
+      fromType: java:com.example.Order
+      toType: "csv:CSVOrder"
+      bindy:
+        type: "Csv"
+        classType: "com.example.Order"
 ----
 ====
 
@@ -149,14 +176,27 @@ Java::
 transformer()
     .fromType("xml")
     .toType("json")
-    .withUri("component:componentPathOptions?mappingFile=myMapping.xml...");
+    .withUri("component:componentPathOptions?mappingFile=myMapping.xml");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<endpointTransformer ref="myEndpoint" fromType="xml" toType="json"/>
+<transformers>
+    <endpointTransformer uri="component:componentPathOptions?mappingFile=myMapping.xml" fromType="xml" toType="json"/>
+</transformers>
+----
+
+YAML::
++
+[source,yaml]
+----
+- transformers:
+    endpointTransformer:
+      uri: component:componentPathOptions?mappingFile=myMapping.xml
+      fromType: xml
+      toType: json
 ----
 ====
 
@@ -185,11 +225,24 @@ transformer()
     .withJava(com.example.MyCustomTransformer.class);
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<customTransformer className="com.example.MyCustomTransformer" fromType="xml" toType="json"/>
+<transformers>
+    <customTransformer className="com.example.MyCustomTransformer" fromType="xml" toType="json"/>
+</transformers>
+----
+
+YAML::
++
+[source,yaml]
+----
+- transformers:
+    customTransformer:
+      className: com.example.MyCustomTransformer
+      fromType: xml
+      toType: json
 ----
 ====
 
@@ -204,7 +257,7 @@ Users are able to preload known default transformers. Also users may load transf
 | location | Classpath location to scan for transformer implementations. Transformer implementations must use the `org.apache.camel.spi.DataTypeTransformer` annotation to get recognized by the scanner.
 |===
 
-Here is an example to load default Transformer classes:
+Here is an example to load default `Transformer` classes:
 
 [tabs]
 ====
@@ -216,11 +269,22 @@ transformer()
     .withDefaults();
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<loadTransformer defaults="true"/>
+<transformers>
+    <loadTransformer defaults="true"/>
+</transformers>
+----
+
+YAML::
++
+[source,yaml]
+----
+- transformers:
+    loadTransformer:
+      defaults: true
 ----
 ====
 
@@ -236,11 +300,22 @@ transformer()
     .scan("org.apache.camel.transformer.standard");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<loadTransformer packageScan="org.apache.camel.transformer.standard"/>
+<transformers>
+    <loadTransformer packageScan="org.apache.camel.transformer.standard"/>
+</transformers>
+----
+
+YAML::
++
+[source,yaml]
+----
+- transformers:
+    loadTransformer:
+      packageScan: "org.apache.camel.transformer.standard"
 ----
 ====
 
@@ -276,16 +351,24 @@ transformer()
     .withUri("xslt:transform.xsl");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <transformers>
-        <endpointTransformer uri="xslt:transform.xsl" fromType="xml:ABCOrder" toType="xml:XYZOrder"/>
-    </transformers>
-    ....
-</camelContext>
+<transformers>
+    <endpointTransformer uri="xslt:transform.xsl" fromType="xml:ABCOrder" toType="xml:XYZOrder"/>
+</transformers>
+----
+
+YAML::
++
+[source,yaml]
+----
+- transformers:
+    endpointTransformer:
+      uri: xslt:transform.xsl
+      fromType: xml:ABCOrder
+      toType: xml:XYZOrder
 ----
 ====
 
@@ -306,11 +389,11 @@ from("direct:xyz")
     .to("somewhere:else");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+<routes>
     <route>
         <from uri="direct:abc"/>
         <inputType urn="xml:ABCOrder"/>
@@ -321,7 +404,29 @@ Spring XML::
         <inputType urn="xml:XYZOrder"/>
         <to uri="somewhere:else"/>
     </route>
-</camelContext>
+</routes>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:abc
+      steps:
+        - inputType:
+            urn: xml:ABCOrder
+        - to:
+            uri: direct:xyz
+- route:
+    from:
+      uri: direct:xyz
+      steps:
+        - inputType:
+            urn: xml:XYZOrder
+        - to:
+            uri: somewhere:else
 ----
 ====
 
