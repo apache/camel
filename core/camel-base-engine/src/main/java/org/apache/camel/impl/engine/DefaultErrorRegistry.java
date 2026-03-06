@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.ErrorRegistryEntry;
@@ -39,7 +38,7 @@ import org.apache.camel.support.EventNotifierSupport;
 /**
  * Default {@link ErrorRegistry} implementation that listens to exchange failure events and captures error snapshots.
  */
-public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorRegistry, NonManagedService {
+public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorRegistry {
 
     private final ConcurrentLinkedDeque<ErrorRegistryEntry> entries = new ConcurrentLinkedDeque<>();
     private volatile boolean enabled;
@@ -53,8 +52,11 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         setIgnoreCamelContextInitEvents(true);
         setIgnoreRouteEvents(true);
         setIgnoreServiceEvents(true);
+        // ignore all exchange events by default (disabled); toggled when enabled
+        setIgnoreExchangeEvents(true);
         setIgnoreExchangeCreatedEvent(true);
         setIgnoreExchangeCompletedEvent(true);
+        setIgnoreExchangeFailedEvents(true);
         setIgnoreExchangeRedeliveryEvents(true);
         setIgnoreExchangeSentEvents(true);
         setIgnoreExchangeSendingEvents(true);
@@ -190,6 +192,13 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+        // toggle exchange event listening based on enabled state
+        setIgnoreExchangeEvents(!enabled);
+        setIgnoreExchangeFailedEvents(!enabled);
+        if (enabled && getCamelContext() != null) {
+            // ensure exchange event notification is activated
+            getCamelContext().getCamelContextExtension().setEventNotificationApplicable(true);
+        }
     }
 
     @Override
