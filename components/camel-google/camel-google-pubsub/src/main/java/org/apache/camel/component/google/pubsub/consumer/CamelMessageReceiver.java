@@ -75,6 +75,15 @@ public class CamelMessageReceiver implements MessageReceiver {
             exchange.getIn().setHeader(GooglePubsubConstants.DELIVERY_ATTEMPT, deliveryAttempt);
         }
 
+        // Enforce maxDeliveryAttempts: nack without processing if limit reached
+        int maxDeliveryAttempts = consumer.getResolvedMaxDeliveryAttempts();
+        if (maxDeliveryAttempts > 0 && deliveryAttempt != null && deliveryAttempt >= maxDeliveryAttempts) {
+            localLog.info("Message {} has reached max delivery attempts ({}/{}), nacking to route to dead-letter topic",
+                    pubsubMessage.getMessageId(), deliveryAttempt, maxDeliveryAttempts);
+            ackReplyConsumer.nack();
+            return;
+        }
+
         GooglePubsubAcknowledge acknowledge = new AcknowledgeAsync(ackReplyConsumer);
         if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
             exchange.getExchangeExtension().addOnCompletion(new AcknowledgeCompletion(acknowledge));
