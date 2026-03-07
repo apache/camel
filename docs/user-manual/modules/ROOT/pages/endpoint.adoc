@@ -177,6 +177,27 @@ So if you write the following XML it should work...
 </route>
 ----
 
+If you do not escape the & sign, then you can `org.xml.sax.SAXParseException` or other kind of XML parsing errors.
+
+In the URIs used for specifying Camel endpoints, the `&` is used to
+separate the parameters. However, `&` also is a reserved character in XML.
+
+Because of this, you have to replace all `&` in your URIs by `+&amp;+` when
+using the XML DSL to configure Camel routes.
+
+An example: this snippet of code in Java DSL:
+
+[source,java]
+----
+from("timer://myTimer?fixedRate=true&delay=0&period=2000")
+----
+
+... matches this example in the XML syntax where `&` has been replaced with `+&amp;+`
+
+[source,xml]
+----
+<from uri="timer://myTimer?fixedRate=true&amp;delay=0&amp;period=2000"/>
+----
 
 === Configuring parameter values using raw values, such as passwords
 

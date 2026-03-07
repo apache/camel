@@ -139,6 +139,21 @@ Component-DSL is a builder API that allows using type-safe construction of Camel
 
 This is an advanced topic and described in more detail in the xref:writing-components.adoc[Writing Components Guide].
 
+=== Using HeaderFilterStrategy with components
+
+Some components supports configuring a custom header filter strategy.
+
+This allows you to implement the
+`org.apache.camel.spi.HeaderFilterStrategy` interface, where one can
+filter unwanted headers from the communication while not removing them from the
+`Exchange`.
+
+Camel core offers a default filter strategy implementation, the
+`DefaultHeaderFilterStrategy`, to which one can provide a regular expression
+pattern or a set of header names to be filtered out.
+
+
+
 == See Also
 
 - List of all Camel xref:components::index.adoc[Components]
