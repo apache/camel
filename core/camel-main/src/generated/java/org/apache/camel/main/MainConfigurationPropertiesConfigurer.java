@@ -62,6 +62,10 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("EndpointBridgeErrorHandler", boolean.class);
         map.put("EndpointLazyStartProducer", boolean.class);
         map.put("EndpointRuntimeStatisticsEnabled", boolean.class);
+        map.put("ErrorRegistryEnabled", boolean.class);
+        map.put("ErrorRegistryMaximumEntries", int.class);
+        map.put("ErrorRegistryStackTraceEnabled", boolean.class);
+        map.put("ErrorRegistryTimeToLiveSeconds", int.class);
         map.put("ExchangeFactory", java.lang.String.class);
         map.put("ExchangeFactoryCapacity", int.class);
         map.put("ExchangeFactoryStatisticsEnabled", boolean.class);
@@ -234,6 +238,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "endpointLazyStartProducer": target.setEndpointLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "endpointruntimestatisticsenabled":
         case "endpointRuntimeStatisticsEnabled": target.setEndpointRuntimeStatisticsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "errorregistryenabled":
+        case "errorRegistryEnabled": target.setErrorRegistryEnabled(property(camelContext, boolean.class, value)); return true;
+        case "errorregistrymaximumentries":
+        case "errorRegistryMaximumEntries": target.setErrorRegistryMaximumEntries(property(camelContext, int.class, value)); return true;
+        case "errorregistrystacktraceenabled":
+        case "errorRegistryStackTraceEnabled": target.setErrorRegistryStackTraceEnabled(property(camelContext, boolean.class, value)); return true;
+        case "errorregistrytimetoliveseconds":
+        case "errorRegistryTimeToLiveSeconds": target.setErrorRegistryTimeToLiveSeconds(property(camelContext, int.class, value)); return true;
         case "exchangefactory":
         case "exchangeFactory": target.setExchangeFactory(property(camelContext, java.lang.String.class, value)); return true;
         case "exchangefactorycapacity":
@@ -494,6 +506,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "endpointLazyStartProducer": return boolean.class;
         case "endpointruntimestatisticsenabled":
         case "endpointRuntimeStatisticsEnabled": return boolean.class;
+        case "errorregistryenabled":
+        case "errorRegistryEnabled": return boolean.class;
+        case "errorregistrymaximumentries":
+        case "errorRegistryMaximumEntries": return int.class;
+        case "errorregistrystacktraceenabled":
+        case "errorRegistryStackTraceEnabled": return boolean.class;
+        case "errorregistrytimetoliveseconds":
+        case "errorRegistryTimeToLiveSeconds": return int.class;
         case "exchangefactory":
         case "exchangeFactory": return java.lang.String.class;
         case "exchangefactorycapacity":
@@ -750,6 +770,14 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "endpointLazyStartProducer": return target.isEndpointLazyStartProducer();
         case "endpointruntimestatisticsenabled":
         case "endpointRuntimeStatisticsEnabled": return target.isEndpointRuntimeStatisticsEnabled();
+        case "errorregistryenabled":
+        case "errorRegistryEnabled": return target.isErrorRegistryEnabled();
+        case "errorregistrymaximumentries":
+        case "errorRegistryMaximumEntries": return target.getErrorRegistryMaximumEntries();
+        case "errorregistrystacktraceenabled":
+        case "errorRegistryStackTraceEnabled": return target.isErrorRegistryStackTraceEnabled();
+        case "errorregistrytimetoliveseconds":
+        case "errorRegistryTimeToLiveSeconds": return target.getErrorRegistryTimeToLiveSeconds();
         case "exchangefactory":
         case "exchangeFactory": return target.getExchangeFactory();
         case "exchangefactorycapacity":

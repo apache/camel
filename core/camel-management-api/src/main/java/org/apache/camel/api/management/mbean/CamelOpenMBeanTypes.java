@@ -369,4 +369,23 @@ public final class CamelOpenMBeanTypes {
                         SimpleType.LONG, SimpleType.LONG, SimpleType.LONG, SimpleType.LONG, SimpleType.STRING });
     }
 
+    public static TabularType listErrorRegistryTabularType() throws OpenDataException {
+        CompositeType ct = listErrorRegistryCompositeType();
+        return new TabularType("listErrors", "Lists captured routing errors", ct, new String[] { "exchangeId" });
+    }
+
+    public static CompositeType listErrorRegistryCompositeType() throws OpenDataException {
+        return new CompositeType(
+                "errors", "Errors",
+                new String[] {
+                        "exchangeId", "routeId", "endpointUri", "timestamp",
+                        "handled", "exceptionType", "exceptionMessage" },
+                new String[] {
+                        "Exchange Id", "Route Id", "Endpoint Uri", "Timestamp",
+                        "Handled", "Exception Type", "Exception Message" },
+                new OpenType[] {
+                        SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                        SimpleType.BOOLEAN, SimpleType.STRING, SimpleType.STRING });
+    }
+
 }

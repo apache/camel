@@ -52,6 +52,7 @@ import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointServiceRegistry;
+import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -341,6 +342,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected InflightRepository createInflightRepository() {
         return new DefaultInflightRepository();
+    }
+
+    @Override
+    protected ErrorRegistry createErrorRegistry() {
+        return new DefaultErrorRegistry();
     }
 
     @Override

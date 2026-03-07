@@ -47,6 +47,12 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean shutdownLogInflightExchangesOnTimeout = true;
     private boolean inflightRepositoryBrowseEnabled;
+    private boolean errorRegistryEnabled;
+    @Metadata(defaultValue = "100")
+    private int errorRegistryMaximumEntries = 100;
+    @Metadata(defaultValue = "3600")
+    private int errorRegistryTimeToLiveSeconds = 3600;
+    private boolean errorRegistryStackTraceEnabled;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
     @Metadata(enums = "classic,default,short,simple,off", defaultValue = "default")
@@ -319,6 +325,57 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setInflightRepositoryBrowseEnabled(boolean inflightRepositoryBrowseEnabled) {
         this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
+    }
+
+    public boolean isErrorRegistryEnabled() {
+        return errorRegistryEnabled;
+    }
+
+    /**
+     * Sets whether the error registry is enabled to capture errors during message routing.
+     *
+     * This is by default disabled.
+     */
+    public void setErrorRegistryEnabled(boolean errorRegistryEnabled) {
+        this.errorRegistryEnabled = errorRegistryEnabled;
+    }
+
+    public int getErrorRegistryMaximumEntries() {
+        return errorRegistryMaximumEntries;
+    }
+
+    /**
+     * Sets the maximum number of error entries to keep in the error registry. When the limit is exceeded, the oldest
+     * entries are evicted.
+     *
+     * The default value is 100.
+     */
+    public void setErrorRegistryMaximumEntries(int errorRegistryMaximumEntries) {
+        this.errorRegistryMaximumEntries = errorRegistryMaximumEntries;
+    }
+
+    public int getErrorRegistryTimeToLiveSeconds() {
+        return errorRegistryTimeToLiveSeconds;
+    }
+
+    /**
+     * Sets the time-to-live in seconds for error entries in the error registry. Entries older than this are evicted.
+     *
+     * The default value is 3600 (1 hour).
+     */
+    public void setErrorRegistryTimeToLiveSeconds(int errorRegistryTimeToLiveSeconds) {
+        this.errorRegistryTimeToLiveSeconds = errorRegistryTimeToLiveSeconds;
+    }
+
+    public boolean isErrorRegistryStackTraceEnabled() {
+        return errorRegistryStackTraceEnabled;
+    }
+
+    /**
+     * Sets whether to capture stack traces in the error registry. This is disabled by default to reduce memory usage.
+     */
+    public void setErrorRegistryStackTraceEnabled(boolean errorRegistryStackTraceEnabled) {
+        this.errorRegistryStackTraceEnabled = errorRegistryStackTraceEnabled;
     }
 
     public String getFileConfigurations() {
@@ -1821,6 +1878,44 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withInflightRepositoryBrowseEnabled(boolean inflightRepositoryBrowseEnabled) {
         this.inflightRepositoryBrowseEnabled = inflightRepositoryBrowseEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether the error registry is enabled to capture errors during message routing.
+     *
+     * This is by default disabled.
+     */
+    public T withErrorRegistryEnabled(boolean errorRegistryEnabled) {
+        this.errorRegistryEnabled = errorRegistryEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Sets the maximum number of error entries to keep in the error registry.
+     *
+     * The default value is 100.
+     */
+    public T withErrorRegistryMaximumEntries(int errorRegistryMaximumEntries) {
+        this.errorRegistryMaximumEntries = errorRegistryMaximumEntries;
+        return (T) this;
+    }
+
+    /**
+     * Sets the time-to-live in seconds for error entries in the error registry.
+     *
+     * The default value is 3600 (1 hour).
+     */
+    public T withErrorRegistryTimeToLiveSeconds(int errorRegistryTimeToLiveSeconds) {
+        this.errorRegistryTimeToLiveSeconds = errorRegistryTimeToLiveSeconds;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether to capture stack traces in the error registry.
+     */
+    public T withErrorRegistryStackTraceEnabled(boolean errorRegistryStackTraceEnabled) {
+        this.errorRegistryStackTraceEnabled = errorRegistryStackTraceEnabled;
         return (T) this;
     }
 

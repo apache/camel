@@ -32,6 +32,28 @@ uses `InOnly` pattern.
 
 Removed 2 deprecated methods in Java DSL for `throttler` EIP.
 
+==== ErrorRegistry
+
+A new `ErrorRegistry` SPI has been added to `CamelContext`. It captures snapshots of exceptions that occur during
+message routing, without retaining references to the original exchange or exception objects.
+
+The registry is disabled by default (opt-in). It can be enabled via:
+
+[source,java]
+----
+context.getErrorRegistry().setEnabled(true);
+----
+
+Or via configuration properties:
+
+[source,properties]
+----
+camel.context.error-registry-enabled = true
+----
+
+When enabled, error snapshots can be browsed globally or scoped to a specific route. A dev console (`errors`) and
+JMX MBean (`ManagedErrorRegistry`) are available for monitoring.
+
 ==== Saga EIP
 
 The Saga EIP has _fixed_ the model for how to configure completion and compensation URIs.

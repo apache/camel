@@ -69,7 +69,7 @@ public class SimpleEventNotifierEventsTest {
 
     @Test
     public void testExchangeDone() throws Exception {
-        // optimized as this does not require exchange events
+        // no exchange event notifiers are active (ErrorRegistry is disabled by default, SimpleEventNotifierSupport ignores exchange events)
         assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
@@ -110,7 +110,7 @@ public class SimpleEventNotifierEventsTest {
 
     @Test
     public void testExchangeFailed() {
-        // optimized as this does not require exchange events
+        // no exchange event notifiers are active (ErrorRegistry is disabled by default, SimpleEventNotifierSupport ignores exchange events)
         assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
         Exception e = assertThrows(Exception.class,
@@ -150,7 +150,7 @@ public class SimpleEventNotifierEventsTest {
 
     @Test
     public void testSuspendResume() {
-        // optimized as this does not require exchange events
+        // no exchange event notifiers are active (ErrorRegistry is disabled by default, SimpleEventNotifierSupport ignores exchange events)
         assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
         assertEquals(12, events.size());
