@@ -19,30 +19,24 @@ package org.apache.camel.component.langchain4j.agent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.Base64;
 
 import dev.langchain4j.data.audio.Audio;
 import dev.langchain4j.data.image.Image;
-import dev.langchain4j.data.message.AudioContent;
-import dev.langchain4j.data.message.Content;
-import dev.langchain4j.data.message.ImageContent;
-import dev.langchain4j.data.message.PdfFileContent;
-import dev.langchain4j.data.message.TextContent;
-import dev.langchain4j.data.message.VideoContent;
+import dev.langchain4j.data.message.*;
 import dev.langchain4j.data.pdf.PdfFile;
 import dev.langchain4j.data.video.Video;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.langchain4j.agent.api.Headers.MEDIA_TYPE;
-import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
-import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
-import static org.apache.camel.component.langchain4j.agent.api.Headers.USER_MESSAGE;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.*;
 
 /**
  * Type converters for the LangChain4j Agent component.
@@ -108,17 +102,7 @@ public final class LangChain4jAgentConverter {
         byte[] fileData = readFileBytes(file);
         Content content = createContent(fileData, mimeType);
 
-        String userMessage = exchange.getIn().getHeader(USER_MESSAGE, String.class);
-        String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
-        Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
-
-        AiAgentBody<Content> body = new AiAgentBody<>();
-        body.setUserMessage(userMessage != null ? userMessage : "");
-        body.setSystemMessage(systemMessage);
-        body.setMemoryId(memoryId);
-        body.setContent(content);
-
-        return body;
+        return buildAiAgentBody(exchange, content, "");
     }
 
     /**
@@ -153,17 +137,7 @@ public final class LangChain4jAgentConverter {
         String mimeType = detectMimeTypeFromHeaders(exchange);
         Content content = createContent(data, mimeType);
 
-        String userMessage = exchange.getIn().getHeader(USER_MESSAGE, String.class);
-        String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
-        Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
-
-        AiAgentBody<Content> body = new AiAgentBody<>();
-        body.setUserMessage(userMessage != null ? userMessage : "");
-        body.setSystemMessage(systemMessage);
-        body.setMemoryId(memoryId);
-        body.setContent(content);
-
-        return body;
+        return buildAiAgentBody(exchange, content, "");
     }
 
     /**
@@ -192,9 +166,43 @@ public final class LangChain4jAgentConverter {
     }
 
     /**
+     * Converts a {@link String} to an {@link AiAgentBody} with the appropriate {@link Content} type.
+     * <p>
+     * This converter is useful for the text components that return Text Body.
+     * </p>
+     *
+     * @param  text     String as message
+     * @param  exchange the Camel exchange containing headers
+     * @return          an AiAgentBody with the appropriate Content type
+     */
+    @Converter
+    public static AiAgentBody<?> textToAiAgentBody(String text, Exchange exchange) {
+        TextContent content = TextContent.from(text);
+        return buildAiAgentBody(exchange, content, text);
+    }
+
+    /**
+     * Support Camel stream caching bodies (ByteArrayInputStreamCache) and delegate them to the existing InputStream
+     * converter.
+     *
+     * @param  cache    the cached input stream containing the message body
+     * @param  exchange the Camel exchange containing headers such as * {@code CamelLangChain4jAgentMediaType},
+     *                  user/system messages, * and optional memory identifiers
+     * @return          an {@link AiAgentBody} containing the appropriate * LangChain4j {@link Content} representation
+     */
+    @Converter
+    public static AiAgentBody<?> inputStreamCacheToAiAgentBody(
+            org.apache.camel.converter.stream.ByteArrayInputStreamCache cache,
+            Exchange exchange) {
+
+        return inputStreamToAiAgentBody(cache, exchange);
+    }
+
+    /**
      * Creates the appropriate LangChain4j Content object based on the MIME type.
      */
     static Content createContent(byte[] data, String mimeType) {
+
         String base64Data = Base64.getEncoder().encodeToString(data);
 
         if (mimeType.startsWith("image/")) {
@@ -273,38 +281,45 @@ public final class LangChain4jAgentConverter {
      */
     private static String detectMimeTypeFromHeaders(Exchange exchange) {
         // Check agent-specific header first (highest priority)
-        String mediaType = exchange.getIn().getHeader(MEDIA_TYPE, String.class);
+        Message message = exchange.getMessage();
+
+        String mediaType = message.getHeader(MEDIA_TYPE, String.class);
         if (mediaType != null) {
             return normalizeContentType(mediaType);
         }
-
         // Cloud storage component content type headers
         String[] cloudContentTypeHeaders = {
-                "CamelAwsS3ContentType",                  // AWS S3
-                "CamelAzureStorageBlobContentType",       // Azure Blob Storage
-                "CamelAzureStorageDataLakeContentType",   // Azure Data Lake Storage
-                "CamelGoogleCloudStorageContentType",     // Google Cloud Storage
-                "CamelMinioContentType",                  // Minio (S3-compatible)
-                "CamelIBMCOSContentType"                  // IBM Cloud Object Storage
+                "CamelAwsS3ContentType",
+                "CamelAzureStorageBlobContentType",
+                "CamelAzureStorageDataLakeContentType",
+                "CamelGoogleCloudStorageContentType",
+                "CamelMinioContentType",
+                "CamelIBMCOSContentType"
         };
 
         for (String header : cloudContentTypeHeaders) {
-            String cloudContentType = exchange.getIn().getHeader(header, String.class);
+            String cloudContentType = message.getHeader(header, String.class);
             if (cloudContentType != null) {
                 return normalizeContentType(cloudContentType);
             }
         }
-
         // Check standard content type header
-        String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+        String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
         if (contentType != null) {
             return normalizeContentType(contentType);
         }
-
         // Check file component's content type header
-        String fileContentType = exchange.getIn().getHeader(Exchange.FILE_CONTENT_TYPE, String.class);
+        String fileContentType = message.getHeader(Exchange.FILE_CONTENT_TYPE, String.class);
         if (fileContentType != null) {
             return normalizeContentType(fileContentType);
+        }
+
+        String fileName = message.getHeader(Exchange.FILE_NAME, String.class);
+        if (fileName != null) {
+            String mime = URLConnection.guessContentTypeFromName(fileName);
+            if (mime != null) {
+                return normalizeContentType(mime);
+            }
         }
 
         throw new IllegalArgumentException(
@@ -404,5 +419,32 @@ public final class LangChain4jAgentConverter {
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to read file: " + file.getAbsolutePath(), e);
         }
+    }
+
+    /**
+     * Utility method to build agent body.
+     *
+     * @param  exchange           the Camel exchange containing message headers
+     * @param  content            the LangChain4j content to attach to the agent body
+     * @param  defaultUserMessage the fallback user message if the corresponding header is absent
+     * @return                    a fully populated {@link AiAgentBody} instance
+     * @param  <T>                the type of LangChain4j {@link Content}
+     */
+    private static <
+            T extends Content> AiAgentBody<T> buildAiAgentBody(Exchange exchange, T content, String defaultUserMessage) {
+
+        Message message = exchange.getMessage();
+
+        String userMessage = message.getHeader(USER_MESSAGE, String.class);
+        String systemMessage = message.getHeader(SYSTEM_MESSAGE, String.class);
+        Object memoryId = message.getHeader(MEMORY_ID);
+
+        AiAgentBody<T> body = new AiAgentBody<>();
+        body.setUserMessage(userMessage != null ? userMessage : defaultUserMessage);
+        body.setSystemMessage(systemMessage);
+        body.setMemoryId(memoryId);
+        body.setContent(content);
+
+        return body;
     }
 }

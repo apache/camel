@@ -79,7 +79,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             agent = agentFactory.createAgent(exchange);
         }
 
-        AiAgentBody<?> aiAgentBody = agent.processBody(messagePayload, exchange);
+        AiAgentBody<?> aiAgentBody = exchange.getMessage().getMandatoryBody(AiAgentBody.class);
 
         ToolProvider toolProvider = createComposedToolProvider(tags, exchange);
         String response = agent.chat(aiAgentBody, toolProvider);
