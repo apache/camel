@@ -203,6 +203,18 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.prettyExpression(inlined);
         }
 
+        // toJson
+        remainder = ifStartsWithReturnRemainder("toJson(", function);
+        if (remainder != null) {
+            String exp = StringHelper.beforeLast(remainder, ")");
+            if (exp == null) {
+                throw new SimpleParserException("Valid syntax: ${toJson(exp)} was: " + function, token.getIndex());
+            }
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
+            Expression inlined = camelContext.resolveLanguage("simple").createExpression(exp);
+            return ExpressionBuilder.toJsonExpression(inlined);
+        }
+
         // file: prefix
         remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {
@@ -719,6 +731,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.bodyTypeExpression();
         } else if (ObjectHelper.equal(expression, "prettyBody")) {
             return ExpressionBuilder.prettyBodyExpression();
+        } else if (ObjectHelper.equal(expression, "toJsonBody")) {
+            return ExpressionBuilder.toJsonBodyExpression();
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
             return ExpressionBuilder.bodyOneLine();
         } else if (ObjectHelper.equal(expression, "originalBody")) {
@@ -1987,6 +2001,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "bodyType(exchange)";
         } else if (ObjectHelper.equal(expression, "prettyBody")) {
             return "prettyBody(exchange)";
+        } else if (ObjectHelper.equal(expression, "toJsonBody")) {
+            return "toJsonBody(exchange)";
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
             return "bodyOneLine(exchange)";
         } else if (ObjectHelper.equal(expression, "id")) {

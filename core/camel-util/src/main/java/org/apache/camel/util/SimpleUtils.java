@@ -130,6 +130,8 @@ public class SimpleUtils {
                     "threadid",
                     "threadname",
                     "throwexception",
+                    "tojson",
+                    "tojsonbody",
                     "trim",
                     "type",
                     "unquote",

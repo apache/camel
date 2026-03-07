@@ -314,6 +314,14 @@ public final class SimpleConstants {
               javaType = "String", label = "json,xml")
     public static final String PRETTY_BODY = "prettyBody";
 
+    @Metadata(description = "Converts the expression to JSon String representation.",
+              label = "json", javaType = "String", displayName = "To JSon")
+    public static final String TO_JSON = "toJson(exp)";
+
+    @Metadata(description = "Converts the body to JSon String representation.",
+              javaType = "String", label = "json", displayName = "To JSon Body")
+    public static final String TO_JSON_BODY = "toJsonBody";
+
     @Metadata(description = "Lookup a property placeholder with the given key. If the key does not exist nor has a value, then an optional default value can be specified.",
               label = "core", javaType = "String", displayName = "Property Placeholder")
     public static final String PROPERTIES = "properties:key:default";
