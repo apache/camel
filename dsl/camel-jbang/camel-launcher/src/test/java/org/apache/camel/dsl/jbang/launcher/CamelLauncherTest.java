@@ -18,9 +18,10 @@ package org.apache.camel.dsl.jbang.launcher;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -67,20 +68,52 @@ public class CamelLauncherTest {
         PrintStream ps = new PrintStream(baos);
 
         // Create a custom main that doesn't exit
-        CamelJBangMain main = new CamelJBangMain() {
+        CamelLauncherMain main = new CamelLauncherMain() {
             @Override
             public void quit(int exitCode) {
                 // Do nothing to prevent System.exit
             }
         };
 
+        main.setDiscoverPlugins(false);
+
         // Set a custom printer to capture output
         main.setOut(new PrintStreamPrinter(ps));
 
         // Run the version command
-        CamelJBangMain.run(main, "version");
+        main.execute("version");
 
         String output = baos.toString();
         assertTrue(output.contains("Camel JBang version:"), "Output should contain version information");
     }
+
+    @Test
+    public void testLauncherValidatePlugin() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+
+        // Create a custom main that doesn't exit
+        final AtomicInteger code = new AtomicInteger();
+        CamelLauncherMain main = new CamelLauncherMain() {
+            @Override
+            public void quit(int exitCode) {
+                // Do nothing to prevent System.exit
+                code.set(exitCode);
+            }
+        };
+
+        main.setDiscoverPlugins(false);
+
+        // Set a custom printer to capture output
+        main.setOut(new PrintStreamPrinter(ps));
+
+        // Run the validate command
+        main.execute("validate", "yaml", "src/test/resources/cheese.yaml");
+
+        Assertions.assertEquals(1, code.get());
+
+        String output = baos.toString();
+        Assertions.assertTrue(output.startsWith("Validation error detected (errors:1)"));
+    }
+
 }
