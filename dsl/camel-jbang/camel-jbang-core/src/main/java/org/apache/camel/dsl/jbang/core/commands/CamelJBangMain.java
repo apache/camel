@@ -161,6 +161,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("transformer", new CommandLine(new ListTransformer(main)))
                         .addSubcommand("variable", new CommandLine(new ListVariable(main)))
                         .addSubcommand("vault", new CommandLine(new ListVault(main))))
+                .addSubcommand("diagram", new CommandLine(new Diagram(main)))
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
                 .addSubcommand("infra", new CommandLine(new InfraCommand(main))
                         .addSubcommand("get", new CommandLine(new InfraGet(main)))
