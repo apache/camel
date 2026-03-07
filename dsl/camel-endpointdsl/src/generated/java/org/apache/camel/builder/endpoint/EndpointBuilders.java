@@ -370,7 +370,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.TikaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.TimerEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Timestream2EndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.TorchServeEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Transcribe2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Translate2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.TwilioEndpointBuilderFactory,

@@ -322,28 +322,35 @@ Previously the context-path would always be used:
 
 The intention is to allow to configure the `base.path` _as is_ in the return API specification.
 
-=== camel-nitrite (Removal)
-
-The camel-nitrite is removed in this version. It was deprecated in 4.10.
-
 === camel-as2
 
 Some public constants were deprecated:
 
-```
+[source,java]
+----
 org.apache.camel.component.as2.api.AS2AsynchronousMDNManager.HTTP_REQUEST
 org.apache.camel.component.as2.api.AS2AsynchronousMDNManager.HTTP_RESPONSE
 org.apache.camel.component.as2.api.AS2ClientManager.HTTP_REQUEST
 org.apache.camel.component.as2.api.AS2ClientManager.HTTP_RESPONSE
 org.apache.camel.component.as2.api.AS2Constants.HTTP_CLIENT_CONNECTION
-```
+----
 
 They can be replaced by the the getter/setter method of the HttpContext implementation, for example:
 
-```
-# the deprecated way
+[source,java]
+----
+// the deprecated way
 HttpRequest request = context.getAttribute(AS2ClientManager.HTTP_REQUEST, HttpRequest.class);
 
-# new way
+// new way
 HttpRequest request = context.getRequest();
-```
+----
+
+== Removed deprecated components
+
+The following deprecated components has been removed:
+
+- `camel-nitrite`
+- `camel-torchserve`
+- `camel-test-infra-torchserve`
+

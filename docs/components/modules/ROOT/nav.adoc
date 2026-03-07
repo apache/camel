@@ -26,7 +26,6 @@
 *** xref:spring-ai-tools-component.adoc[Spring AI Tools]
 *** xref:spring-ai-vector-store-component.adoc[Spring AI Vector Store]
 *** xref:tensorflow-serving-component.adoc[TensorFlow Serving]
-*** xref:torchserve-component.adoc[TorchServe]
 *** xref:weaviate-component.adoc[weaviate]
 ** xref:amqp-component.adoc[AMQP]
 ** xref:arangodb-component.adoc[ArangoDb]
