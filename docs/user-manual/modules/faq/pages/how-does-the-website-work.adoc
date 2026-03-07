@@ -1,5 +1,0 @@
-= How does the website work?
-
-The website content sources are distributed across all the camel repositories, and assembled using the Antora and Hugo static site generators, configured in the https://github.com/apache/camel-website repository.
-
-See xref:how-do-i-edit-the-website.adoc[] for instructions for simple website edits and xref:ROOT:improving-the-documentation.adoc[] for more detailed information and instructions for more complicated edits.

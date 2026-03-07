@@ -184,6 +184,25 @@ camel.main.producerTemplateCacheSize = 50
 
 The default maximum cache size is 1000.
 
+== Reusing ProducerTemplate
+
+When you use a `ProducerTemplate` you should ideally reuse the template for the duration of the lifecycle
+of your Camel application.
+
+A common reason is creating a new `ProducerTemplate` inside a `Processor` or
+xref:ROOT:bean-integration.adoc[bean method invocation].
+
+You are not meant to create a `ProducerTemplate` for each message
+invocation; you are meant to create a single instance on startup and
+keep it around.
+
+When you have finished using the `ProducerTemplate` you should call
+the `stop()` method to close down all the resources it has been using.
+
+If you fail to do so then the Camel application can create more and more resources (threads etc.)
+
+It's better to either explicitly create one on startup and inject
+the `ProducerTemplate` into your `Processor` or bean, for the template to be reused.
 
 == See Also
 
