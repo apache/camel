@@ -4867,20 +4867,6 @@ public interface ComponentsBuilderFactory {
         return TimerComponentBuilderFactory.timer();
     }
     /**
-     * TorchServe (camel-torchserve)
-     * Provide access to PyTorch TorchServe servers to run inference with
-     * PyTorch models remotely
-     * 
-     * Category: ai
-     * Since: 4.9
-     * Maven coordinates: org.apache.camel:camel-torchserve
-     * 
-     * @return the dsl builder
-     */
-    static TorchserveComponentBuilderFactory.TorchserveComponentBuilder torchserve() {
-        return TorchserveComponentBuilderFactory.torchserve();
-    }
-    /**
      * Twilio (camel-twilio)
      * Interact with Twilio REST APIs using Twilio Java SDK.
      * 
