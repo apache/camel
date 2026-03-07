@@ -52,14 +52,6 @@ public final class LangChain4jAgentConverterLoader implements TypeConverterLoade
                 }
                 return answer;
             });
-        addTypeConverter(registry, org.apache.camel.component.langchain4j.agent.api.AiAgentBody.class, java.awt.image.BufferedImage.class, false,
-            (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.langchain4j.agent.LangChain4jAgentConverter.bufferImageToAiAgentBody((java.awt.image.BufferedImage) value, exchange);
-                if (false && answer == null) {
-                    answer = Void.class;
-                }
-                return answer;
-            });
         addTypeConverter(registry, org.apache.camel.component.langchain4j.agent.api.AiAgentBody.class, java.io.InputStream.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.langchain4j.agent.LangChain4jAgentConverter.inputStreamToAiAgentBody((java.io.InputStream) value, exchange);

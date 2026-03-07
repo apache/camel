@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.langchain4j.agent;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,16 +23,9 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.Base64;
 
-import javax.imageio.ImageIO;
-
 import dev.langchain4j.data.audio.Audio;
 import dev.langchain4j.data.image.Image;
-import dev.langchain4j.data.message.AudioContent;
-import dev.langchain4j.data.message.Content;
-import dev.langchain4j.data.message.ImageContent;
-import dev.langchain4j.data.message.PdfFileContent;
-import dev.langchain4j.data.message.TextContent;
-import dev.langchain4j.data.message.VideoContent;
+import dev.langchain4j.data.message.*;
 import dev.langchain4j.data.pdf.PdfFile;
 import dev.langchain4j.data.video.Video;
 import org.apache.camel.Converter;
@@ -45,10 +36,7 @@ import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.langchain4j.agent.api.Headers.MEDIA_TYPE;
-import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
-import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
-import static org.apache.camel.component.langchain4j.agent.api.Headers.USER_MESSAGE;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.*;
 
 /**
  * Type converters for the LangChain4j Agent component.
@@ -114,17 +102,7 @@ public final class LangChain4jAgentConverter {
         byte[] fileData = readFileBytes(file);
         Content content = createContent(fileData, mimeType);
 
-        String userMessage = exchange.getIn().getHeader(USER_MESSAGE, String.class);
-        String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
-        Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
-
-        AiAgentBody<Content> body = new AiAgentBody<>();
-        body.setUserMessage(userMessage != null ? userMessage : "");
-        body.setSystemMessage(systemMessage);
-        body.setMemoryId(memoryId);
-        body.setContent(content);
-
-        return body;
+        return buildAiAgentBody(exchange, content, "");
     }
 
     /**
@@ -159,17 +137,7 @@ public final class LangChain4jAgentConverter {
         String mimeType = detectMimeTypeFromHeaders(exchange);
         Content content = createContent(data, mimeType);
 
-        String userMessage = exchange.getIn().getHeader(USER_MESSAGE, String.class);
-        String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
-        Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
-
-        AiAgentBody<Content> body = new AiAgentBody<>();
-        body.setUserMessage(userMessage != null ? userMessage : "");
-        body.setSystemMessage(systemMessage);
-        body.setMemoryId(memoryId);
-        body.setContent(content);
-
-        return body;
+        return buildAiAgentBody(exchange, content, "");
     }
 
     /**
@@ -203,60 +171,25 @@ public final class LangChain4jAgentConverter {
      * This converter is useful for the text components that return Text Body.
      * </p>
      *
-     * @param  text
-     * @param  exchange
+     * @param  text     String as message
+     * @param  exchange the Camel exchange containing headers
      * @return          an AiAgentBody with the appropriate Content type
      */
     @Converter
     public static AiAgentBody<?> textToAiAgentBody(String text, Exchange exchange) {
-        String userMessage = exchange.getIn().getHeader(USER_MESSAGE, String.class);
-        String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
-        Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
-
         TextContent content = TextContent.from(text);
-
-        AiAgentBody<TextContent> body = new AiAgentBody<>();
-        body.setUserMessage(userMessage != null ? userMessage : text);
-        body.setSystemMessage(systemMessage);
-        body.setMemoryId(memoryId);
-        body.setContent(content);
-        return body;
+        return buildAiAgentBody(exchange, content, text);
     }
 
     /**
-     * Converts a {@link String} to an {@link AiAgentBody} with the appropriate {@link Content} type.
-     * <p>
-     * This converter is useful for the text components that return Text Body.
-     * </p>
+     * Support Camel stream caching bodies (ByteArrayInputStreamCache) and delegate them to the existing InputStream
+     * converter.
      *
-     * @param  bufferedImage
-     * @param  exchange
-     * @return               an AiAgentBody with the appropriate Content type
+     * @param  cache    the cached input stream containing the message body
+     * @param  exchange the Camel exchange containing headers such as * {@code CamelLangChain4jAgentMediaType},
+     *                  user/system messages, * and optional memory identifiers
+     * @return          an {@link AiAgentBody} containing the appropriate * LangChain4j {@link Content} representation
      */
-    @Converter
-    public static AiAgentBody<?> bufferImageToAiAgentBody(BufferedImage bufferedImage, Exchange exchange) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            ImageIO.write(bufferedImage, "png", baos);
-            byte[] bytes = baos.toByteArray();
-            String base64 = Base64.getEncoder().encodeToString(bytes);
-            Image img = Image.builder().base64Data(base64).mimeType("image/png").build();
-            ImageContent content = ImageContent.from(img);
-            String userMessage = exchange.getIn().getHeader(USER_MESSAGE, String.class);
-            String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
-            Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
-
-            AiAgentBody<ImageContent> body = new AiAgentBody<ImageContent>();
-            body.setUserMessage(userMessage != null ? userMessage : "");
-            body.setSystemMessage(systemMessage);
-            body.setMemoryId(memoryId);
-            body.setContent(content);
-            return body;
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to convert BufferedImage", e);
-        }
-
-    }
-
     @Converter
     public static AiAgentBody<?> inputStreamCacheToAiAgentBody(
             org.apache.camel.converter.stream.ByteArrayInputStreamCache cache,
@@ -389,7 +322,9 @@ public final class LangChain4jAgentConverter {
             }
         }
 
-        return "text/plain";
+        throw new IllegalArgumentException(
+                "MIME type is required for byte[] or InputStream input. "
+                                           + "Please set the CamelLangChain4jAgentMediaType header.");
     }
 
     /**
@@ -484,5 +419,32 @@ public final class LangChain4jAgentConverter {
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to read file: " + file.getAbsolutePath(), e);
         }
+    }
+
+    /**
+     * Utility method to build agent body.
+     *
+     * @param  exchange           the Camel exchange containing message headers
+     * @param  content            the LangChain4j content to attach to the agent body
+     * @param  defaultUserMessage the fallback user message if the corresponding header is absent
+     * @return                    a fully populated {@link AiAgentBody} instance
+     * @param  <T>                the type of LangChain4j {@link Content}
+     */
+    private static <
+            T extends Content> AiAgentBody<T> buildAiAgentBody(Exchange exchange, T content, String defaultUserMessage) {
+
+        Message message = exchange.getMessage();
+
+        String userMessage = message.getHeader(USER_MESSAGE, String.class);
+        String systemMessage = message.getHeader(SYSTEM_MESSAGE, String.class);
+        Object memoryId = message.getHeader(MEMORY_ID);
+
+        AiAgentBody<T> body = new AiAgentBody<>();
+        body.setUserMessage(userMessage != null ? userMessage : defaultUserMessage);
+        body.setSystemMessage(systemMessage);
+        body.setMemoryId(memoryId);
+        body.setContent(content);
+
+        return body;
     }
 }
