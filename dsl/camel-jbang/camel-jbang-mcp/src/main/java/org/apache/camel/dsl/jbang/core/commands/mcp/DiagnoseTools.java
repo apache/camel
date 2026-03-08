@@ -275,8 +275,7 @@ public class DiagnoseTools {
                         "Check available components with 'camel-catalog' or the Camel documentation",
                         "Ensure the component JAR is on the classpath"),
                 Arrays.asList(
-                        CAMEL_MANUAL_DOC + "component.html",
-                        CAMEL_MANUAL_DOC + "faq/why-is-my-message-body-empty.html")));
+                        CAMEL_MANUAL_DOC + "component.html")));
 
         exceptions.put("ResolveEndpointFailedException", new ExceptionInfo(
                 "Failed to resolve or create an endpoint from the given URI. The URI syntax may be invalid or required options may be missing.",

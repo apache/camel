@@ -60,9 +60,6 @@ import org.apache.camel.spi.annotations.ConstantProvider;
  * {@link Message} are not automatically copied to the out by Camel, and you'll have to set the headers and attachments
  * you need yourself. If your {@link Processor} is not producing a different {@link Message} but only needs to slightly
  * modify the in, you can simply update the in {@link Message} returned by {@link #getIn()}.
- * <p/>
- * See this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> for more
- * details.
  */
 @ConstantProvider("org.apache.camel.ExchangeConstantProvider")
 public interface Exchange extends VariableAware {
@@ -588,9 +585,6 @@ public interface Exchange extends VariableAware {
      * <p/>
      * <br/>
      * If you want to test whether an OUT message has been set or not, use the {@link #hasOut()} method.
-     * <p/>
-     * See also the class Javadoc for this {@link Exchange} for more details and this
-     * <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a>.
      *
      * @return     the response
      * @see        #getIn()
@@ -608,9 +602,6 @@ public interface Exchange extends VariableAware {
      * <p/>
      * <br/>
      * If you want to test whether an OUT message has been set or not, use the {@link #hasOut()} method.
-     * <p/>
-     * See also the class Javadoc for this {@link Exchange} for more details and this
-     * <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a>.
      *
      * @param      type the given type
      * @return          the message as the given type or <tt>null</tt> if not possible to covert to given type

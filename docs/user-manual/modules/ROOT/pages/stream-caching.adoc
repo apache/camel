@@ -6,6 +6,22 @@ Streams are cached in memory. However, for large stream messages, you can set `s
 and then large message (over 128 KB) will be cached in a temporary file instead.
 Camel itself will handle deleting the temporary file once the cached stream is no longer necessary.
 
+== Why is my message empty?
+
+In Camel the message body can be of any types. Some types are safely
+readable multiple times, and therefore do not _suffer_ from becoming
+_empty_.
+
+So when you message body suddenly is empty, then that is often related
+to using a message type that is no re-readable; in other words, the
+message body can only be read once. On subsequent reads the body is now empty.
+This happens with types that are streaming based, such as `java.util.InputStream`, etc.
+
+A number of Camel components supports and use streaming types out of the
+box. For example the HTTP related components, CXF, etc.
+
+Camel comes with Stream Caching that caches the stream, so it can be re-readable.
+
 [IMPORTANT]
 ====
 *StreamCache - Affecting the message payload*

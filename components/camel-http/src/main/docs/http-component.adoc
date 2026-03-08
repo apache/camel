@@ -582,5 +582,67 @@ property.
 </bean>
 ----------------------------------------------------------------------------
 
+== Removing http protocol headers in the Camel Message
+
+In camel there are a number of components that use the http protocol
+headers to do their business.
+
+The components include camel-http, camel-jetty, camel-cxf, etc.
+
+If you are using these component, you may pay attention to the HTTP protocol headers:
+
+[source,text]
+----
+  Exchange.CONTENT_ENCODING
+  Exchange.CONTENT_TYPE
+  Exchange.HTTP_BASE_URI
+  Exchange.HTTP_CHARACTER_ENCODING
+  Exchange.HTTP_METHOD
+  Exchange.HTTP_PATH
+  Exchange.HTTP_QUERY
+  Exchange.HTTP_RESPONSE_CODE
+----
+
+If you don't want these headers to bother your other endpoints, you can
+remove these headers using xref:eips:removeHeaders-eip.adoc[Remove Headers] EIP as follows:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("jetty://http://myhost:9000/myservice/")
+  .removeHeaders("CamelHttp*")
+  .to("otherEndpoint");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="jetty://http://myhost:9000/myservice/"/>
+  <removeHeaders pattern="CamelHttp*" />
+  <to uri="otherEndpoint"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: jetty://http://myhost:9000/myservice/
+      steps:
+        - removeHeaders:
+            pattern: "CamelHttp*"
+        - to:
+            uri: otherEndpoint
+----
+
+====
 
 include::spring-boot:partial$starter.adoc[]

@@ -84,3 +84,173 @@ YAML::
             uri: jms:queue:foo
 ----
 ====
+
+== How to use a dynamic URI in to
+
+A dynamic URI is an endpoint URI that varies depending on inflight
+routing information, such as Exchange properties, message headers, the
+body, the Camel Context, etc.
+
+For example, if you're using a Freemarker producer and the template
+location is provided inside the current message, you might expect the
+following code to work, *but it will not*.
+
+[WARNING]
+====
+*This is not valid code*
+
+This snippet is not valid code. Read on.
+====
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:messages/foo")
+    .to("freemarker://templateHome/${body.templateName}.ftl")
+    .to("jms:queue:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <to uri="freemarker://templateHome/${body.templateName}.ftl"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:messages/foo
+      steps:
+        - to:
+            uri: "freemarker://templateHome/${body.templateName}.ftl"
+        - to:
+            uri: jms:queue:foo
+----
+====
+
+In this case, you must use an EIP (Enterprise Integration Pattern) that
+is capable of computing a dynamic URI using
+an xref:manual::expression.adoc[Expression], such as
+the xref:components:eips:toD-eip.adoc[toD] or xref:components:eips:recipientList-eip.adoc[Recipient List] EIP pattern.
+
+[TIP]
+====
+*This is valid code*
+
+This snippet is valid code.
+====
+
+To fix the above problem we can use either toD or recipientList.
+Using toD is easier as shown below:
+
+[tabs]
+====
+Java::
++
+Use `toD` for dynamic URIs
++
+[source,java]
+----
+from("file:messages/foo")
+    .toD("freemarker://templateHome/${body.templateName}.ftl")
+    .to("jms:queue:foo");
+----
+
+XML::
++
+Use `<toD>` for dynamic URIs
++
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <toD uri="freemarker://templateHome/${body.templateName}.ftl"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+YAML::
++
+Use `- toD:` for dynamic URIs
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:messages/foo
+      steps:
+        - toD:
+            uri: "freemarker://templateHome/${body.templateName}.ftl"
+        - to:
+            uri: jms:queue:foo
+----
+====
+
+When using recipient list:
+
+[source,java]
+----
+.recipientList(simple("freemarker://templateHome/${body.templateName}.ftl"))
+----
+
+[tabs]
+====
+Java::
++
+Use `recipientList` for more flexible and dynamic URIs
++
+[source,java]
+----
+from("file:messages/foo")
+    .recipientList(simple("freemarker://templateHome/${body.templateName}.ftl"))
+    .to("jms:queue:foo");
+----
+
+XML::
++
+Use `<recipientList>` for more flexible and dynamic URIs
++
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo"/>
+    <recipientList>
+        <simple>freemarker://templateHome/${body.templateName}.ftl</simple>
+    </recipientList>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+YAML::
++
+Use `- recipientList:` for more flexible and dynamic URIs
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:messages/foo
+      steps:
+        - recipientList:
+            expression:
+              simple:
+                expression: "freemarker://templateHome/${body.templateName}.ftl"
+        - to:
+            uri: jms:queue:foo
+----
+====
+
+
+
+

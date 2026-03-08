@@ -22,13 +22,4 @@ General questions about Camel
 * xref:ROOT:languages.adoc[What languages are supported?]
 * xref:why-the-name-camel.adoc[Why the name Camel?]
 
-[[FAQ-UsingCamelQuestions]]
-== Using Camel Questions
-
-Questions on using Apache Camel
-
-* xref:how-to-remove-the-http-protocol-headers-in-the-camel-message.adoc[How to remove the http protocol headers in the camel message?]
-* xref:how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in to()?]
-* xref:using-getin-or-getout-methods-on-exchange.adoc[Using getIn or getOut methods on Exchange]
-* xref:why-is-my-message-body-empty.adoc[Why is my message body empty?]
 
