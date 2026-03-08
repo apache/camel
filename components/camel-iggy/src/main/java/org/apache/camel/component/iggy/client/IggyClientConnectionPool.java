@@ -20,6 +20,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.iggy.client.blocking.IggyBaseClient;
 
 public class IggyClientConnectionPool {
+
     private final GenericObjectPool<IggyBaseClient> pool;
 
     public IggyClientConnectionPool(String host, int port, String username, String password, String transport) {

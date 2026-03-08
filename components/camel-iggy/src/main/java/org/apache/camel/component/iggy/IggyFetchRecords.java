@@ -169,14 +169,13 @@ public class IggyFetchRecords implements Runnable {
         exchange.getIn().setHeader(IggyConstants.MESSAGE_LENGTH, message.header().payloadLength());
         exchange.getIn().setHeader(IggyConstants.MESSAGE_SIZE, message.getSize());
 
-        message.userHeaders().ifPresent(userHeaders -> {
-            Map<String, Object> stringUserHeaders = userHeaders.entrySet().stream().collect(Collectors.toMap(
-                    k -> k.getKey(),
-                    hv -> hv.getValue().value() // TODO this way `HeaderKind kind` will be lost
-            ));
-
-            exchange.getIn().setHeaders(stringUserHeaders);
-        });
+        Map<String, Object> stringUserHeaders = message.userHeaders().entrySet().stream().collect(Collectors.toMap(
+                k -> k.getKey().toString(),
+                hv -> hv.getValue().asString() // TODO this way `HeaderKind kind` will be lost
+        ));
+        if (!stringUserHeaders.isEmpty()) {
+            exchange.getIn().getHeaders().putAll(stringUserHeaders);
+        }
 
         return exchange;
     }

@@ -33,6 +33,7 @@
 
     <properties>
         <iggy-netty-version>4.2.7.Final</iggy-netty-version>
+        <supportLevel>Preview</supportLevel>
     </properties>
 
     <!-- Iggy client 0.6.0 requires Netty 4.2.x for MultiThreadIoEventLoopGroup -->
