@@ -21,10 +21,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import tools.jackson.core.JacksonException;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,7 +57,7 @@ public class XmlToCamelRouteCoverageTest {
     }
 
     @Test
-    public void testConvertException() throws JsonProcessingException {
+    public void testConvertException() throws JacksonException {
 
         XmlToCamelRouteCoverageConverter spy = spy(new XmlToCamelRouteCoverageConverter());
 

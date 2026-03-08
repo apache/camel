@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -34,6 +33,7 @@ import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 public class PushTopicHelper {
     private static final Logger LOG = LoggerFactory.getLogger(PushTopicHelper.class);
@@ -124,9 +124,6 @@ public class PushTopicHelper {
 
         } catch (SalesforceException e) {
             throw new CamelException(String.format("Error retrieving Topic %s: %s", topicName, e.getMessage()), e);
-        } catch (IOException e) {
-            throw new CamelException(
-                    String.format("Un-marshaling error retrieving Topic %s: %s", topicName, e.getMessage()), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CamelException(
@@ -182,8 +179,6 @@ public class PushTopicHelper {
             }
         } catch (SalesforceException e) {
             throw new CamelException(String.format("Error creating Topic %s: %s", topicName, e.getMessage()), e);
-        } catch (IOException e) {
-            throw new CamelException(String.format("Un-marshaling error creating Topic %s: %s", topicName, e.getMessage()), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CamelException(String.format("Interrupted while creating Topic %s", topicName), e);
@@ -234,9 +229,6 @@ public class PushTopicHelper {
         } catch (InterruptedException e) {
             // reset interrupt status
             Thread.currentThread().interrupt();
-            throw new CamelException(
-                    String.format("Error updating topic %s with query [%s] : %s", topicName, query, e.getMessage()), e);
-        } catch (IOException e) {
             throw new CamelException(
                     String.format("Error updating topic %s with query [%s] : %s", topicName, query, e.getMessage()), e);
         } finally {

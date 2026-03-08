@@ -18,32 +18,33 @@ package org.apache.camel.component.leveldb.serializer.jackson;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.apache.camel.support.DefaultExchangeHolder;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 
 public final class ObjectMapperHelper {
 
     private ObjectMapperHelper() {
     }
 
-    public static ObjectMapper create(Module customModule) {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-
+    public static ObjectMapper create(JacksonModule customModule) {
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
         simpleModule.addSerializer(long.class, ToStringSerializer.instance);
 
         simpleModule.setMixInAnnotation(DefaultExchangeHolder.class, HolderBodyMixin.class);
 
-        objectMapper.registerModule(simpleModule);
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .changeDefaultVisibility(vc -> vc
+                        .withVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
+                        .withVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY))
+                .addModule(simpleModule)
+                .build();
         if (customModule != null) {
-            objectMapper.registerModule(customModule);
+            objectMapper.rebuild().addModule(customModule);
         }
 
         return objectMapper;

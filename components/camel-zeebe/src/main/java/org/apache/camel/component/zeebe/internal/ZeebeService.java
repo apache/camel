@@ -19,8 +19,6 @@ package org.apache.camel.component.zeebe.internal;
 
 import java.time.Duration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.command.ClientStatusException;
@@ -45,6 +43,8 @@ import org.apache.camel.component.zeebe.model.ProcessRequest;
 import org.apache.camel.component.zeebe.model.ProcessResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public class ZeebeService {
     private static final Logger LOG = LoggerFactory.getLogger(ZeebeService.class);
@@ -191,7 +191,7 @@ public class ZeebeService {
             resultMessage.setErrorMessage(exception.getMessage());
             resultMessage.setErrorCode(exception.getStatus().toString());
             resultMessage.setSuccess(false);
-        } catch (JsonProcessingException exception) {
+        } catch (JacksonException exception) {
             LOG.error("Could not convert variables to JSON", exception);
             resultMessage.setErrorMessage(exception.getMessage());
             resultMessage.setSuccess(false);
@@ -219,7 +219,7 @@ public class ZeebeService {
             resultMessage.setErrorMessage(exception.getMessage());
             resultMessage.setErrorCode(exception.getStatus().toString());
             resultMessage.setSuccess(false);
-        } catch (JsonProcessingException exception) {
+        } catch (JacksonException exception) {
             LOG.error("Could not convert variables to JSON", exception);
             resultMessage.setErrorMessage(exception.getMessage());
             resultMessage.setSuccess(false);

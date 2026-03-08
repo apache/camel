@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterOutputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
@@ -32,6 +31,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_COMPRESS_HEADER_LENGTH;
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_DATA_HEADER_LENGTH;

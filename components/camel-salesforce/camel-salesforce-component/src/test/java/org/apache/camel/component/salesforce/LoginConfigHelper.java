@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,12 +24,12 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -84,22 +83,17 @@ public final class LoginConfigHelper {
             return;
         }
 
-        try {
-            LOG.info("Loading credentials from SF CLI: {}", credentialsPath);
+        LOG.info("Loading credentials from SF CLI: {}", credentialsPath);
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(credentialsPath.toFile());
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(credentialsPath.toFile());
 
-            setIfPresent(root, "clientId", "salesforce.client.id");
-            setIfPresent(root, "clientSecret", "salesforce.client.secret");
-            setIfPresent(root, "refreshToken", "salesforce.refresh.token");
-            setIfPresent(root, "username", "salesforce.username");
-            setIfPresent(root, "password", "salesforce.password");
-            setIfPresent(root, "instanceUrl", "salesforce.login.url");
-
-        } catch (IOException e) {
-            LOG.debug("Failed to read SF CLI credentials file: {}", e.getMessage());
-        }
+        setIfPresent(root, "clientId", "salesforce.client.id");
+        setIfPresent(root, "clientSecret", "salesforce.client.secret");
+        setIfPresent(root, "refreshToken", "salesforce.refresh.token");
+        setIfPresent(root, "username", "salesforce.username");
+        setIfPresent(root, "password", "salesforce.password");
+        setIfPresent(root, "instanceUrl", "salesforce.login.url");
     }
 
     private void setIfPresent(JsonNode root, String jsonKey, String configKey) {

@@ -23,10 +23,10 @@ import java.util.Map;
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
 import ai.djl.modality.nlp.qa.QAInput;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Predictor for the QUESTION_ANSWERING task, extracting answers from a given context.

@@ -45,7 +45,7 @@
         <!-- JSON is vital to MongoDB, so we absolutely require camel-jackson -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson</artifactId>
+            <artifactId>camel-jackson3</artifactId>
         </dependency>
 
         <!-- MongoDB driver dependency -->

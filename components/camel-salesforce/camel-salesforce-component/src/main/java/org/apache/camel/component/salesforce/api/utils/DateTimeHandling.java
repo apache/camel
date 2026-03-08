@@ -26,6 +26,23 @@ import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 
 final class DateTimeHandling {
 
+    // For Date type - uses +0000 for UTC
+    static final DateTimeFormatter ISO_OFFSET_DATE_TIME_NUMERIC = new DateTimeFormatterBuilder()//
+            .parseCaseInsensitive()//
+            .append(DateTimeFormatter.ISO_LOCAL_DATE)//
+            .appendLiteral('T')//
+            .appendValue(HOUR_OF_DAY, 2)//
+            .appendLiteral(':')//
+            .appendValue(MINUTE_OF_HOUR, 2)//
+            .appendLiteral(':')//
+            .appendValue(SECOND_OF_MINUTE, 2)//
+            .optionalStart()//
+            .appendFraction(NANO_OF_SECOND, 3, 3, true)//
+            .optionalEnd()//
+            .appendOffset("+HHMM", "+0000")//
+            .toFormatter();
+
+    // For JSR-310 types - uses Z for UTC
     static final DateTimeFormatter ISO_OFFSET_DATE_TIME = new DateTimeFormatterBuilder()//
             .parseCaseInsensitive()//
             .append(DateTimeFormatter.ISO_LOCAL_DATE)//

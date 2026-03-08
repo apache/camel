@@ -33,15 +33,13 @@ import jakarta.xml.bind.JAXBContext;
 
 import javax.imageio.ImageIO;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.EnumFeature;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jackson.JacksonDataFormat;
+import org.apache.camel.component.jackson3.JacksonDataFormat;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
@@ -50,6 +48,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.binaryEqualTo;
@@ -410,8 +411,9 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(EnumFeature.WRITE_ENUMS_TO_LOWERCASE, true);
+        ObjectMapper mapper = JsonMapper.builder()
+                .enable(EnumFeature.WRITE_ENUMS_TO_LOWERCASE)
+                .build();
 
         JacksonDataFormat jacksonDataFormat = new JacksonDataFormat();
         jacksonDataFormat.setObjectMapper(mapper);

@@ -18,8 +18,8 @@ package org.apache.camel.component.jsonvalidator;
 
 import java.util.Set;
 
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.Schema;
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
@@ -33,7 +33,7 @@ public interface JsonValidatorErrorHandler {
      * @param  errors              the validation errors
      * @throws ValidationException is thrown in case of validation errors
      */
-    void handleErrors(Exchange exchange, JsonSchema schema, Set<ValidationMessage> errors) throws ValidationException;
+    void handleErrors(Exchange exchange, Schema schema, Set<Error> errors) throws ValidationException;
 
     /**
      * Process a general error that happens during valdating
@@ -43,6 +43,6 @@ public interface JsonValidatorErrorHandler {
      * @param  e                   general error
      * @throws ValidationException is thrown in case of validation errors
      */
-    void handleErrors(Exchange exchange, JsonSchema schema, Exception e) throws ValidationException;
+    void handleErrors(Exchange exchange, Schema schema, Exception e) throws ValidationException;
 
 }

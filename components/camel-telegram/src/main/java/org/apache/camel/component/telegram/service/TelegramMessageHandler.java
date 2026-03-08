@@ -21,11 +21,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.ExecutionException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.TelegramMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
+import tools.jackson.databind.ObjectMapper;
 
 abstract class TelegramMessageHandler<T extends TelegramMessage> {
     protected final ObjectMapper mapper;

@@ -22,12 +22,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.swagger.v3.oas.models.media.Content;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.support.http.RestUtil.isValidOrAcceptedContentType;
 

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.language;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.LanguageBuilderFactory;
-import org.apache.camel.component.jackson.JacksonConstants;
+import org.apache.camel.component.jackson3.JacksonConstants;
 import org.apache.camel.model.language.JqExpression;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.StringNode;
 
 /**
  * Ensures that the "jq" language is compliant with the single input / typed language expectations.
@@ -52,6 +52,6 @@ class JqLanguageTest extends AbstractSingleInputTypedLanguageTest<JqExpression.B
 
     @Override
     protected TestContext testWithoutTypeContext() {
-        return new TestContext(defaultContentToSend(), new TextNode("1"), TextNode.class);
+        return new TestContext(defaultContentToSend(), new StringNode("1"), StringNode.class);
     }
 }

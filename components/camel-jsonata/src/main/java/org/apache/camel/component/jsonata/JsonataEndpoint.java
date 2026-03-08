@@ -24,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 import com.dashjoin.jsonata.Jsonata;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -34,6 +33,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.ObjectMapper;
 
 import static com.dashjoin.jsonata.Jsonata.jsonata;
 

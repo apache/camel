@@ -16,25 +16,23 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
-import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
-import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeDeserializer;
-import com.fasterxml.jackson.databind.node.TreeTraversingParser;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.jsontype.TypeDeserializer;
+import tools.jackson.databind.jsontype.TypeIdResolver;
+import tools.jackson.databind.jsontype.impl.AsPropertyTypeDeserializer;
+import tools.jackson.databind.node.TreeTraversingParser;
 
 public class AsNestedPropertyDeserializer extends AsPropertyTypeDeserializer {
 
     public AsNestedPropertyDeserializer(JavaType bt, TypeIdResolver idRes, String typePropertyName, boolean typeIdVisible,
                                         JavaType defaultImpl, JsonTypeInfo.As inclusion) {
-        super(bt, idRes, typePropertyName, typeIdVisible, defaultImpl, inclusion);
+        super(bt, idRes, typePropertyName, typeIdVisible, defaultImpl, inclusion, false);
     }
 
     public AsNestedPropertyDeserializer(AsPropertyTypeDeserializer src, BeanProperty property) {
@@ -47,7 +45,7 @@ public class AsNestedPropertyDeserializer extends AsPropertyTypeDeserializer {
     }
 
     @Override
-    public Object deserializeTypedFromObject(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public Object deserializeTypedFromObject(JsonParser p, DeserializationContext ctxt) {
         JsonNode originalNode = p.readValueAsTree();
         JsonNode node = originalNode;
         for (String property : _typePropertyName.split("\\.")) {
@@ -59,9 +57,9 @@ public class AsNestedPropertyDeserializer extends AsPropertyTypeDeserializer {
             }
             node = nestedProperty;
         }
-        JsonDeserializer<Object> deser = _findDeserializer(ctxt, node.asText());
-        try (JsonParser jsonParser = new TreeTraversingParser(originalNode, p.getCodec())) {
-            if (jsonParser.getCurrentToken() == null) {
+        ValueDeserializer<Object> deser = _findDeserializer(ctxt, node.asText());
+        try (JsonParser jsonParser = new TreeTraversingParser(originalNode, ctxt)) {
+            if (jsonParser.currentToken() == null) {
                 jsonParser.nextToken();
             }
             return deser.deserialize(jsonParser, ctxt);

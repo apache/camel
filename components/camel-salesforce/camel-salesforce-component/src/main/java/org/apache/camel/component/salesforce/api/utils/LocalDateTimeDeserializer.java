@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.std.StdDeserializer;
+
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
 final class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 
-    static final JsonDeserializer<LocalDateTime> INSTANCE = new LocalDateTimeDeserializer();
+    static final ValueDeserializer<LocalDateTime> INSTANCE = new LocalDateTimeDeserializer();
 
     private static final long serialVersionUID = 1L;
 
@@ -36,11 +37,14 @@ final class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-            throws IOException {
-        final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
-
-        return zonedDateTime.toLocalDateTime();
+    public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt) {
+        try {
+            final String text = p.getText();
+            final ZonedDateTime zonedDateTime = ZonedDateTime.parse(text, ISO_OFFSET_DATE_TIME);
+            return zonedDateTime.toLocalDateTime();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to deserialize LocalDateTime", e);
+        }
     }
 
 }

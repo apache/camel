@@ -18,9 +18,6 @@ package org.apache.camel.groovy.xml;
 
 import org.w3c.dom.Document;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import groovy.util.Node;
 import groovy.xml.XmlParser;
 import org.apache.camel.RoutesBuilder;
@@ -31,6 +28,9 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class GroovyXmlDataFormatTest extends CamelTestSupport {
 

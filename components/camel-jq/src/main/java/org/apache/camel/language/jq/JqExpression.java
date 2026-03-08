@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
 import net.thisptr.jackson.jq.JsonQuery;
 import net.thisptr.jackson.jq.Scope;
 import net.thisptr.jackson.jq.Versions;
@@ -38,6 +36,8 @@ import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.BooleanNode;
 
 public class JqExpression extends ExpressionAdapter implements ExpressionResultTypeAware {
 

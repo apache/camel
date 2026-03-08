@@ -37,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
@@ -59,6 +58,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.Fields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 public class SalesforceSession extends ServiceSupport {
 
@@ -355,9 +355,6 @@ public class SalesforceSession extends ServiceSupport {
                             String.format("Login error status:[%s] reason:[%s]", responseStatus, loginResponse.getReason()),
                             responseStatus);
             }
-        } catch (IOException e) {
-            String msg = "Login error: response parse exception " + e.getMessage();
-            throw new SalesforceException(msg, e);
         } finally {
             lock.unlock();
         }

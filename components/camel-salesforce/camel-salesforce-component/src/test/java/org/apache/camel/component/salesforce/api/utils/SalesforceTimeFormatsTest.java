@@ -29,12 +29,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ObjectMapper;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -94,7 +93,7 @@ public class SalesforceTimeFormatsTest {
     public void shouldDeserializeJson(DateTransferObject<?> dto, String json, Class<?> parameterType)
             throws IOException {
         final JavaType javaType
-                = TypeFactory.defaultInstance().constructParametricType(DateTransferObject.class, parameterType);
+                = objectMapper.getTypeFactory().constructParametricType(DateTransferObject.class, parameterType);
 
         final DateTransferObject<?> deserialized = objectMapper.readerFor(javaType).readValue(json);
 
@@ -104,7 +103,7 @@ public class SalesforceTimeFormatsTest {
     @ParameterizedTest
     @MethodSource("cases")
     public void shouldSerializeJson(DateTransferObject<?> dto, String json, Class<?> parameterType)
-            throws JsonProcessingException {
+            throws JacksonException {
         String actual = objectMapper.writeValueAsString(dto).replaceAll("000\\+00:00", "000+0000");
         String expected = json;
         assertThat(actual).isEqualTo(expected);

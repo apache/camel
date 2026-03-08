@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.telemetry.Op;
 import org.apache.camel.telemetry.TagConstants;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
@@ -32,6 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.junit.jupiter.api.AfterEach;
+import tools.jackson.databind.ObjectMapper;
 
 public class TelemetryDevTracerTestSupport extends ExchangeTestSupport {
 

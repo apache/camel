@@ -162,7 +162,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "notifyforoperations":
         case "notifyForOperations": getOrCreateConfig(target).setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": getOrCreateConfig(target).setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "objectMapper": getOrCreateConfig(target).setObjectMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "packages": target.setPackages(property(camelContext, java.lang.String.class, value)); return true;
         case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pkchunking":
@@ -378,7 +378,7 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "notifyforoperations":
         case "notifyForOperations": return org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class;
         case "objectmapper":
-        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "objectMapper": return tools.jackson.databind.ObjectMapper.class;
         case "packages": return java.lang.String.class;
         case "password": return java.lang.String.class;
         case "pkchunking":

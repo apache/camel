@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.whatsapp.WhatsAppTestSupport;
 import org.apache.camel.component.whatsapp.model.Address;
 import org.apache.camel.component.whatsapp.model.ContactMessage;
@@ -47,6 +46,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariables;
+import tools.jackson.databind.ObjectMapper;
 
 @EnabledIfEnvironmentVariables({
         @EnabledIfEnvironmentVariable(named = "WHATSAPP_AUTHORIZATION_TOKEN", matches = ".*",

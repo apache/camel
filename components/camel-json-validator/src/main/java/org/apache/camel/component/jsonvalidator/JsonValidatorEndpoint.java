@@ -17,13 +17,12 @@
 package org.apache.camel.component.jsonvalidator;
 
 import java.io.InputStream;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.Schema;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
@@ -34,6 +33,11 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Validate JSON payloads using NetworkNT JSON Schema.
@@ -44,7 +48,7 @@ import org.apache.camel.spi.UriParam;
              remote = false, producerOnly = true, category = { Category.VALIDATION })
 public class JsonValidatorEndpoint extends ResourceEndpoint {
 
-    private volatile JsonSchema schema;
+    private volatile Schema schema;
 
     @UriParam(defaultValue = "true")
     private boolean failOnNullBody = true;
@@ -84,19 +88,28 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     protected void doInit() throws Exception {
         super.doInit();
         if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
+            objectMapper = JsonMapper.builder().build();
         }
-        if (enabledDeserializationFeatures != null) {
-            for (var featureName : enabledDeserializationFeatures.split(",")) {
-                var feature = DeserializationFeature.valueOf(featureName);
-                objectMapper.enable(feature);
+
+        // Configure deserialization features if specified
+        if (enabledDeserializationFeatures != null || disabledDeserializationFeatures != null) {
+            @SuppressWarnings("unchecked")
+            MapperBuilder<?, ?> builder = objectMapper.rebuild();
+
+            if (enabledDeserializationFeatures != null) {
+                for (var featureName : enabledDeserializationFeatures.split(",")) {
+                    var feature = DeserializationFeature.valueOf(featureName);
+                    builder.enable(feature);
+                }
             }
-        }
-        if (disabledDeserializationFeatures != null) {
-            for (var featureName : disabledDeserializationFeatures.split(",")) {
-                var feature = DeserializationFeature.valueOf(featureName);
-                objectMapper.disable(feature);
+            if (disabledDeserializationFeatures != null) {
+                for (var featureName : disabledDeserializationFeatures.split(",")) {
+                    var feature = DeserializationFeature.valueOf(featureName);
+                    builder.disable(feature);
+                }
             }
+
+            objectMapper = (ObjectMapper) builder.build();
         }
     }
 
@@ -123,7 +136,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
         }
 
         // Get a local copy of the current schema to improve concurrency.
-        JsonSchema localSchema = this.schema;
+        Schema localSchema = this.schema;
         if (localSchema == null) {
             localSchema = getOrCreateSchema();
         }
@@ -148,7 +161,8 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                     if (node == null) {
                         throw new NoJsonBodyValidationException(exchange);
                     }
-                    Set<ValidationMessage> errors = localSchema.validate(node);
+                    List<Error> errorList = localSchema.validate(node);
+                    Set<Error> errors = new LinkedHashSet<>(errorList);
 
                     if (!errors.isEmpty()) {
                         this.log.debug("Validated JSON has {} errors", errors.size());
@@ -187,7 +201,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
      *
      * @return The currently loaded schema
      */
-    private JsonSchema getOrCreateSchema() throws Exception {
+    private Schema getOrCreateSchema() throws Exception {
         getInternalLock().lock();
         try {
             if (this.schema == null) {

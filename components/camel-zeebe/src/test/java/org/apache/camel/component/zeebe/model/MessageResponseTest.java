@@ -17,8 +17,11 @@
 
 package org.apache.camel.component.zeebe.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,21 +36,21 @@ public class MessageResponseTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    public void marshalTest() {
+    public void marshalTest() throws JSONException {
         MessageResponse message = new MessageResponse();
         message.setMessageKey(111);
         message.setCorrelationKey("testKey");
         message.setSuccess(true);
 
         String messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
-        assertEquals(MARSHAL_TEST_RESULT_1, messageString);
+        JSONAssert.assertEquals(MARSHAL_TEST_RESULT_1, messageString, JSONCompareMode.NON_EXTENSIBLE);
 
         message.setSuccess(false);
         message.setErrorMessage("Test Error");
         message.setErrorCode("TestCode");
 
         messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
-        assertEquals(MARSHAL_TEST_RESULT_2, messageString);
+        JSONAssert.assertEquals(MARSHAL_TEST_RESULT_2, messageString, JSONCompareMode.NON_EXTENSIBLE);
     }
 
     @Test

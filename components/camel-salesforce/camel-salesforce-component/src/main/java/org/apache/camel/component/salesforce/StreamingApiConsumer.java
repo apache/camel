@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.PlatformEvent;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
@@ -38,6 +35,7 @@ import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * The Salesforce Streaming API consumer.
@@ -247,25 +245,18 @@ public class StreamingApiConsumer extends DefaultConsumer {
         // get SObject
         @SuppressWarnings("unchecked")
         final Map<String, Object> sObject = (Map<String, Object>) data.get(SOBJECT_PROPERTY);
-        try {
+        final String sObjectString = objectMapper.writeValueAsString(sObject);
+        LOG.debug("Received SObject: {}", sObjectString);
 
-            final String sObjectString = objectMapper.writeValueAsString(sObject);
-            LOG.debug("Received SObject: {}", sObjectString);
-
-            if (rawPayload) {
-                // return sobject string as exchange body
-                in.setBody(sObjectString);
-            } else if (sObjectClass == null) {
-                // return sobject map as exchange body
-                in.setBody(sObject);
-            } else {
-                // create the expected SObject
-                in.setBody(objectMapper.readValue(new StringReader(sObjectString), sObjectClass));
-            }
-        } catch (final IOException e) {
-            final String msg
-                    = String.format("Error parsing message [%s] from Topic %s: %s", message, topicName, e.getMessage());
-            handleException(msg, new SalesforceException(msg, e));
+        if (rawPayload) {
+            // return sobject string as exchange body
+            in.setBody(sObjectString);
+        } else if (sObjectClass == null) {
+            // return sobject map as exchange body
+            in.setBody(sObject);
+        } else {
+            // create the expected SObject
+            in.setBody(objectMapper.readValue(new StringReader(sObjectString), sObjectClass));
         }
     }
 

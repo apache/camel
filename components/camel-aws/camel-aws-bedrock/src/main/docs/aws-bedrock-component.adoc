@@ -925,12 +925,12 @@ and you can then send to the direct endpoint something like
             ObjectNode rootNode = mapper.createObjectNode();
             ObjectNode textParameter = mapper.createObjectNode();
             textParameter.putIfAbsent("text",
-                    new TextNode("A Sci-fi camel running in the desert"));
+                    new StringNode("A Sci-fi camel running in the desert"));
             rootNode.putIfAbsent("textToImageParams", textParameter);
-            rootNode.putIfAbsent("taskType", new TextNode("TEXT_IMAGE"));
+            rootNode.putIfAbsent("taskType", new StringNode("TEXT_IMAGE"));
             ObjectNode childNode = mapper.createObjectNode();
             childNode.putIfAbsent("numberOfImages", new IntNode(3));
-            childNode.putIfAbsent("quality", new TextNode("standard"));
+            childNode.putIfAbsent("quality", new StringNode("standard"));
             childNode.putIfAbsent("cfgScale", new IntNode(8));
             childNode.putIfAbsent("height", new IntNode(512));
             childNode.putIfAbsent("width", new IntNode(512));
@@ -964,7 +964,7 @@ and you can then send to the direct endpoint something like
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
             rootNode.putIfAbsent("inputText",
-                    new TextNode("A Sci-fi camel running in the desert"));
+                    new StringNode("A Sci-fi camel running in the desert"));
 
             exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
             exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");

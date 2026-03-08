@@ -23,13 +23,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.clickup.model.Webhook;
 import org.apache.camel.component.clickup.model.WebhookCreationCommand;
 import org.apache.camel.component.clickup.model.WebhookCreationResult;
 import org.apache.camel.component.clickup.model.WebhooksReadResult;
 import org.apache.camel.component.clickup.model.errors.WebhookAlreadyExistsException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public class ClickUpServiceApiImpl implements ClickUpService {
 
@@ -52,7 +52,7 @@ public class ClickUpServiceApiImpl implements ClickUpService {
         String payload;
         try {
             payload = MAPPER.writeValueAsString(command);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
 
@@ -76,7 +76,7 @@ public class ClickUpServiceApiImpl implements ClickUpService {
             String body = response.body();
 
             result = MAPPER.readValue(body, WebhookCreationResult.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
 
@@ -115,7 +115,7 @@ public class ClickUpServiceApiImpl implements ClickUpService {
             String body = response.body();
 
             result = MAPPER.readValue(body, WebhooksReadResult.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
 

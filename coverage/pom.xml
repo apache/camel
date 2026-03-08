@@ -1204,22 +1204,22 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson</artifactId>
+            <artifactId>camel-jackson3</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson-avro</artifactId>
+            <artifactId>camel-jackson3-avro</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson-protobuf</artifactId>
+            <artifactId>camel-jackson3-protobuf</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jacksonxml</artifactId>
+            <artifactId>camel-jackson3xml</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -46,6 +46,15 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
     <!-- HuaweiCloud OBS SDK -->
     <dependency>
       <groupId>com.huaweicloud</groupId>

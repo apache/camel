@@ -16,27 +16,31 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-final class OffsetDateTimeDeserializer extends JsonDeserializer<OffsetDateTime> {
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
-    static final JsonDeserializer<OffsetDateTime> INSTANCE = new OffsetDateTimeDeserializer();
+final class OffsetDateTimeDeserializer extends ValueDeserializer<OffsetDateTime> {
+
+    static final ValueDeserializer<OffsetDateTime> INSTANCE = new OffsetDateTimeDeserializer();
 
     private OffsetDateTimeDeserializer() {
     }
 
     @Override
-    public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-            throws IOException {
-        final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
-
-        return zonedDateTime.toOffsetDateTime();
+    public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt) {
+        try {
+            final String text = p.getText();
+            final ZonedDateTime zonedDateTime = ZonedDateTime.parse(text, ISO_OFFSET_DATE_TIME);
+            return zonedDateTime.toOffsetDateTime();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to deserialize OffsetDateTime", e);
+        }
     }
 
 }

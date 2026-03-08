@@ -24,11 +24,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
+import tools.jackson.databind.ObjectMapper;
 
 public class QueryResultIterator<T extends AbstractSObjectBase> implements Iterator<T> {
 
@@ -70,8 +70,6 @@ public class QueryResultIterator<T extends AbstractSObjectBase> implements Itera
                     iterator = queryRecords.getRecords().iterator();
                     valueHolder.add(iterator.next());
                     latch.countDown();
-                } catch (IOException e) {
-                    throw new RuntimeCamelException(e);
                 } finally {
                     if (response != null) {
                         try {

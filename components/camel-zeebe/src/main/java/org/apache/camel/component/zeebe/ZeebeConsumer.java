@@ -17,8 +17,6 @@
 
 package org.apache.camel.component.zeebe;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.client.api.worker.JobHandler;
@@ -33,6 +31,8 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public class ZeebeConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(ZeebeConsumer.class);
@@ -102,8 +102,8 @@ public class ZeebeConsumer extends DefaultConsumer {
                 try {
                     exchange.getMessage().setBody(objectMapper.writeValueAsString(message));
                     exchange.getMessage().setHeader(ZeebeConstants.JOB_KEY, job.getKey());
-                } catch (JsonProcessingException jsonProcessingException) {
-                    throw new IllegalArgumentException("Cannot convert result", jsonProcessingException);
+                } catch (JacksonException JacksonException) {
+                    throw new IllegalArgumentException("Cannot convert result", JacksonException);
                 }
             } else {
                 exchange.getMessage().setBody(message);

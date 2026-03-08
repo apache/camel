@@ -19,11 +19,6 @@ package org.apache.camel.component.aws2.bedrock.runtime.integration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -41,6 +36,11 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.StringNode;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,7 +75,7 @@ class BedrockProducerStreamingIT extends CamelTestSupport {
         final Exchange resultExchange = template.send("direct:send_titan_express_streaming_complete", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
-            rootNode.putIfAbsent("inputText", new TextNode("Write a short poem about Apache Camel."));
+            rootNode.putIfAbsent("inputText", new StringNode("Write a short poem about Apache Camel."));
 
             ArrayNode stopSequences = mapper.createArrayNode();
             stopSequences.add("User:");
@@ -123,7 +123,7 @@ class BedrockProducerStreamingIT extends CamelTestSupport {
         final Exchange resultExchange = template.send("direct:send_titan_express_streaming_chunks", exchange -> {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
-            rootNode.putIfAbsent("inputText", new TextNode("Count from 1 to 5."));
+            rootNode.putIfAbsent("inputText", new StringNode("Count from 1 to 5."));
 
             ArrayNode stopSequences = mapper.createArrayNode();
             ObjectNode childNode = mapper.createObjectNode();

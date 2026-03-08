@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xj;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -27,6 +26,7 @@ import org.apache.camel.component.xslt.saxon.XsltSaxonEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import tools.jackson.core.json.JsonFactory;
 
 /**
  * Transform JSON and XML message using a XSLT.

@@ -35,13 +35,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.maven.dsl.yaml.support.ToolingSupport;
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.Strings;
@@ -57,6 +50,13 @@ import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 @Mojo(
       name = "generate-yaml-schema",
@@ -374,7 +374,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     private void kebabToCamelCaseProperties(ObjectNode props, ArrayNode required) {
         Map<String, JsonNode> rebuild = new LinkedHashMap<>();
         // the properties are in mixed kebab-case and camelCase
-        for (Iterator<String> it = props.fieldNames(); it.hasNext();) {
+        for (Iterator<String> it = props.propertyNames().iterator();
+             it.hasNext();) {
             String n = it.next();
             String t = StringHelper.dashToCamelCase(n);
             JsonNode prop = props.get(n);

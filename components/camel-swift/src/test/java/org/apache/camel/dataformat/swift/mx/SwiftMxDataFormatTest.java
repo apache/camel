@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prowidesoftware.swift.model.mx.MxCamt04800103;
 import com.prowidesoftware.swift.model.mx.MxPacs00800107;
 import com.prowidesoftware.swift.model.mx.MxReadConfiguration;
@@ -36,6 +35,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

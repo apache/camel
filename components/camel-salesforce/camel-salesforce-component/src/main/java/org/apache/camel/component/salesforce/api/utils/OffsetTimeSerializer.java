@@ -18,16 +18,31 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.OffsetTime;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.ser.std.StdSerializer;
 
-final class OffsetTimeSerializer extends com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer {
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_TIME;
 
-    static final JsonSerializer<OffsetTime> INSTANCE = new OffsetTimeSerializer();
+final class OffsetTimeSerializer extends StdSerializer<OffsetTime> {
+
+    static final ValueSerializer<OffsetTime> INSTANCE = new OffsetTimeSerializer();
 
     private static final long serialVersionUID = 1L;
 
     private OffsetTimeSerializer() {
-        super(com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer.INSTANCE, null, DateTimeHandling.ISO_OFFSET_TIME);
+        super(OffsetTime.class);
+    }
+
+    @Override
+    public void serialize(final OffsetTime value, final JsonGenerator gen, final SerializationContext serializers) {
+        try {
+            final String formatted = ISO_OFFSET_TIME.format(value);
+            gen.writeString(formatted);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize OffsetTime", e);
+        }
     }
 
 }

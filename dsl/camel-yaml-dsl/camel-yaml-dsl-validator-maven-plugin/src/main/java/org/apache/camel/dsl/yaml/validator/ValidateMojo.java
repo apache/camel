@@ -27,7 +27,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.maven.execution.MavenSession;
@@ -124,7 +124,7 @@ public class ValidateMojo extends AbstractMojo {
         findYamlRouters(yamlFiles, includeTest, ext, project);
         getLog().debug("Found " + yamlFiles.size() + " YAML files ...");
 
-        Map<File, List<ValidationMessage>> reports = new LinkedHashMap<>();
+        Map<File, List<Error>> reports = new LinkedHashMap<>();
         List<File> matched = new ArrayList<>();
         for (File file : yamlFiles) {
             if (matchFile(file)) {
@@ -147,7 +147,7 @@ public class ValidateMojo extends AbstractMojo {
         validateResults(reports);
     }
 
-    private void validateResults(Map<File, List<ValidationMessage>> reports) throws MojoExecutionException {
+    private void validateResults(Map<File, List<Error>> reports) throws MojoExecutionException {
         int count = errorCounts(reports);
         if (count == 0) {
             getLog().info("Validation success (files:" + reports.size() + ")");
@@ -174,9 +174,9 @@ public class ValidateMojo extends AbstractMojo {
         }
     }
 
-    private int errorCounts(Map<File, List<ValidationMessage>> reports) {
+    private int errorCounts(Map<File, List<Error>> reports) {
         int count = 0;
-        for (List<ValidationMessage> list : reports.values()) {
+        for (List<Error> list : reports.values()) {
             if (!list.isEmpty()) {
                 count++;
             }
@@ -184,7 +184,7 @@ public class ValidateMojo extends AbstractMojo {
         return count;
     }
 
-    private List<ValidationMessage> validateYamlRoute(File file) throws Exception {
+    private List<Error> validateYamlRoute(File file) throws Exception {
         getLog().debug("Validating YAML DSL in file: " + file);
         return validator.validate(file);
     }

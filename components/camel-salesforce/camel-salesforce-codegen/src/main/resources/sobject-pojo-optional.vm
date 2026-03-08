@@ -38,8 +38,8 @@ import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 #if ( $hasMultiSelectPicklists )
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 #end
 
 /**

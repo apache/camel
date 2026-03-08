@@ -33,9 +33,9 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
 
 /**
  * XML Json bridge. Explicitly using XMLStreamReader and not XMLEventReader because saxon wants that.
@@ -93,100 +93,96 @@ public class JsonXmlStreamReader implements XMLStreamReader {
 
     @Override
     public int next() throws XMLStreamException {
-        try {
-            final StackElement previousElement = tokenStack.peek();
-            if (previousElement != null) {
-                switch (previousElement.jsonToken) {
-                    case VALUE_STRING:
-                    case VALUE_NUMBER_INT:
-                    case VALUE_NUMBER_FLOAT:
-                    case VALUE_NULL:
-                    case VALUE_TRUE:
-                    case VALUE_FALSE: {
-                        switch (previousElement.xmlEvent) {
-                            case XMLStreamConstants.START_ELEMENT:
-                                previousElement.xmlEvent = XMLStreamConstants.CHARACTERS;
-                                return XMLStreamConstants.CHARACTERS;
-                            case XMLStreamConstants.CHARACTERS:
-                                removeStackElement(previousElement.jsonToken);
-                                removeStackElement(JsonToken.FIELD_NAME);
-
-                                ObjectHelper.notNull(tokenStack.peek(), "tokenStack.peek()");
-                                tokenStack.peek().xmlEvent = XMLStreamConstants.END_ELEMENT;
-                                return XMLStreamConstants.END_ELEMENT;
-                            default:
-                                throw new IllegalStateException("illegal state");
-                        }
-                    }
-                    default:
-                        break;
-                }
-            }
-
-            if (eof) {
-                return END_DOCUMENT;
-            }
-
-            JsonToken currentToken = jsonParser.nextToken();
-            if (currentToken == null) {
-                throw new IllegalStateException("End of document");
-            }
-
-            StackElement stackElement = new StackElement(currentToken, toXmlString(jsonParser.getCurrentName()));
-            tokenStack.push(stackElement);
-
-            if (currentToken == JsonToken.FIELD_NAME) {
-                currentToken = jsonParser.nextToken();
-
-                stackElement = new StackElement(currentToken, toXmlString(jsonParser.getCurrentName()));
-                tokenStack.push(stackElement);
-            }
-
-            switch (currentToken) {
-                case START_OBJECT:
-                case START_ARRAY:
+        final StackElement previousElement = tokenStack.peek();
+        if (previousElement != null) {
+            switch (previousElement.jsonToken) {
                 case VALUE_STRING:
                 case VALUE_NUMBER_INT:
                 case VALUE_NUMBER_FLOAT:
                 case VALUE_NULL:
                 case VALUE_TRUE:
-                case VALUE_FALSE:
-                    stackElement.xmlEvent = XMLStreamConstants.START_ELEMENT;
+                case VALUE_FALSE: {
+                    switch (previousElement.xmlEvent) {
+                        case XMLStreamConstants.START_ELEMENT:
+                            previousElement.xmlEvent = XMLStreamConstants.CHARACTERS;
+                            return XMLStreamConstants.CHARACTERS;
+                        case XMLStreamConstants.CHARACTERS:
+                            removeStackElement(previousElement.jsonToken);
+                            removeStackElement(JsonToken.PROPERTY_NAME);
 
-                    return XMLStreamConstants.START_ELEMENT;
-                case END_OBJECT:
-                    removeStackElement(JsonToken.END_OBJECT);
-                    removeStackElement(JsonToken.START_OBJECT);
-                    removeStackElement(JsonToken.FIELD_NAME);
-                    eof = tokenStack.isEmpty();
-
-                    return XMLStreamConstants.END_ELEMENT;
-                case END_ARRAY:
-                    removeStackElement(JsonToken.END_ARRAY);
-                    removeStackElement(JsonToken.START_ARRAY);
-                    removeStackElement(JsonToken.FIELD_NAME);
-                    eof = tokenStack.isEmpty();
-
-                    return XMLStreamConstants.END_ELEMENT;
+                            ObjectHelper.notNull(tokenStack.peek(), "tokenStack.peek()");
+                            tokenStack.peek().xmlEvent = XMLStreamConstants.END_ELEMENT;
+                            return XMLStreamConstants.END_ELEMENT;
+                        default:
+                            throw new IllegalStateException("illegal state");
+                    }
+                }
                 default:
-                    throw new IllegalStateException("JsonToken: " + currentToken);
+                    break;
             }
-
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
         }
+
+        if (eof) {
+            return END_DOCUMENT;
+        }
+
+        JsonToken currentToken = jsonParser.nextToken();
+        if (currentToken == null) {
+            throw new IllegalStateException("End of document");
+        }
+
+        StackElement stackElement = new StackElement(currentToken, toXmlString(jsonParser.currentName()));
+        tokenStack.push(stackElement);
+
+        if (currentToken == JsonToken.PROPERTY_NAME) {
+            currentToken = jsonParser.nextToken();
+
+            stackElement = new StackElement(currentToken, toXmlString(jsonParser.currentName()));
+            tokenStack.push(stackElement);
+        }
+
+        switch (currentToken) {
+            case START_OBJECT:
+            case START_ARRAY:
+            case VALUE_STRING:
+            case VALUE_NUMBER_INT:
+            case VALUE_NUMBER_FLOAT:
+            case VALUE_NULL:
+            case VALUE_TRUE:
+            case VALUE_FALSE:
+                stackElement.xmlEvent = XMLStreamConstants.START_ELEMENT;
+
+                return XMLStreamConstants.START_ELEMENT;
+            case END_OBJECT:
+                removeStackElement(JsonToken.END_OBJECT);
+                removeStackElement(JsonToken.START_OBJECT);
+                removeStackElement(JsonToken.PROPERTY_NAME);
+                eof = tokenStack.isEmpty();
+
+                return XMLStreamConstants.END_ELEMENT;
+            case END_ARRAY:
+                removeStackElement(JsonToken.END_ARRAY);
+                removeStackElement(JsonToken.START_ARRAY);
+                removeStackElement(JsonToken.PROPERTY_NAME);
+                eof = tokenStack.isEmpty();
+
+                return XMLStreamConstants.END_ELEMENT;
+            default:
+                throw new IllegalStateException("JsonToken: " + currentToken);
+        }
+
     }
 
     private void removeStackElement(JsonToken jsonToken) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || stackElement.jsonToken != jsonToken) {
-            if (stackElement != null && jsonToken == JsonToken.FIELD_NAME
+            if (stackElement != null && jsonToken == JsonToken.PROPERTY_NAME
                     && stackElement.jsonToken == JsonToken.START_ARRAY) {
                 // anonymous array
                 return;
             }
 
-            if (stackElement == null && jsonToken == JsonToken.FIELD_NAME) {
+            if (stackElement == null && jsonToken == JsonToken.PROPERTY_NAME) {
                 // root object / array
                 return;
             }
@@ -226,11 +222,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
 
     @Override
     public void close() throws XMLStreamException {
-        try {
-            jsonParser.close();
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
+        jsonParser.close();
     }
 
     @Override

@@ -23,13 +23,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.leveldb.serializer.jackson.ObjectMapperHelper;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class JacksonLevelDBSerializer extends AbstractLevelDBSerializer {
 
@@ -39,8 +39,12 @@ public class JacksonLevelDBSerializer extends AbstractLevelDBSerializer {
         this(null);
     }
 
-    public JacksonLevelDBSerializer(Module customMudule) {
-        this.objectMapper = ObjectMapperHelper.create(customMudule);
+    public JacksonLevelDBSerializer(JacksonModule customMudule) {
+        if (customMudule != null) {
+            this.objectMapper = JsonMapper.builder().addModule(customMudule).build();
+        } else {
+            this.objectMapper = JsonMapper.builder().build();
+        }
     }
 
     @Override

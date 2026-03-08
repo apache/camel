@@ -19,7 +19,6 @@ package org.apache.camel.component.clickup;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -29,6 +28,7 @@ import org.apache.camel.component.clickup.model.Event;
 import org.apache.camel.component.clickup.service.ClickUpWebhookService;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import tools.jackson.databind.ObjectMapper;
 
 public class ClickUpWebhookProcessor extends AsyncProcessorSupport {
 

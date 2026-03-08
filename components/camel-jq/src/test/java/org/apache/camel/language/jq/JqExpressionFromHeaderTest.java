@@ -16,11 +16,11 @@
  */
 package org.apache.camel.language.jq;
 
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.node.StringNode;
 
 public class JqExpressionFromHeaderTest extends JqTestSupport {
     @Override
@@ -44,7 +44,7 @@ public class JqExpressionFromHeaderTest extends JqTestSupport {
     @Test
     public void testExpressionFromHeader() throws Exception {
         getMockEndpoint("mock:result")
-                .expectedBodiesReceived(new TextNode("bar"));
+                .expectedBodiesReceived(new StringNode("bar"));
         getMockEndpoint("mock:fail")
                 .expectedMessageCount(0);
 

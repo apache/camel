@@ -629,15 +629,14 @@ public interface ServicenowComponentBuilderFactory {
          * Sets Jackson's ObjectMapper to use for request/reply.
          * 
          * The option is a:
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * &lt;code&gt;tools.jackson.databind.ObjectMapper&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param mapper the value to set
          * @return the dsl builder
          */
-        default ServicenowComponentBuilder mapper(com.fasterxml.jackson.databind.ObjectMapper mapper) {
+        default ServicenowComponentBuilder mapper(tools.jackson.databind.ObjectMapper mapper) {
             doSetProperty("mapper", mapper);
             return this;
         }
@@ -930,7 +929,7 @@ public interface ServicenowComponentBuilderFactory {
             case "dateTimeFormat": getOrCreateConfiguration((ServiceNowComponent) component).setDateTimeFormat((java.lang.String) value); return true;
             case "httpClientPolicy": getOrCreateConfiguration((ServiceNowComponent) component).setHttpClientPolicy((org.apache.cxf.transports.http.configuration.HTTPClientPolicy) value); return true;
             case "instanceName": ((ServiceNowComponent) component).setInstanceName((java.lang.String) value); return true;
-            case "mapper": getOrCreateConfiguration((ServiceNowComponent) component).setMapper((com.fasterxml.jackson.databind.ObjectMapper) value); return true;
+            case "mapper": getOrCreateConfiguration((ServiceNowComponent) component).setMapper((tools.jackson.databind.ObjectMapper) value); return true;
             case "proxyAuthorizationPolicy": getOrCreateConfiguration((ServiceNowComponent) component).setProxyAuthorizationPolicy((org.apache.cxf.configuration.security.ProxyAuthorizationPolicy) value); return true;
             case "retrieveTargetRecordOnImport": getOrCreateConfiguration((ServiceNowComponent) component).setRetrieveTargetRecordOnImport((java.lang.Boolean) value); return true;
             case "timeFormat": getOrCreateConfiguration((ServiceNowComponent) component).setTimeFormat((java.lang.String) value); return true;

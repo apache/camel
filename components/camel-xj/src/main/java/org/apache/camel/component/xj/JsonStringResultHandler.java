@@ -21,10 +21,10 @@ import java.io.StringWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.stax.StAXResult;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.camel.Message;
 import org.apache.camel.component.xslt.ResultHandler;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.json.JsonFactory;
 
 /**
  * Result handler impl. to write a json document into a {@link String}

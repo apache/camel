@@ -18,7 +18,6 @@ package org.apache.camel.component.telegram;
 
 import java.io.InputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -26,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.telegram.model.Update;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 

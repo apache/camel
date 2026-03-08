@@ -46,6 +46,18 @@
         <camel.failsafe.fork.additional-vmargs>-XX:+ExitOnOutOfMemoryError -Xmx3G</camel.failsafe.fork.additional-vmargs>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-jupiter-version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

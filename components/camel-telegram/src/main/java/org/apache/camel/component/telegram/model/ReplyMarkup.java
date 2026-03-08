@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public interface ReplyMarkup {
 
     default String toJson() {
         try {
             return new ObjectMapper().writeValueAsString(this);
-        } catch (final JsonProcessingException e) {
+        } catch (final JacksonException e) {
             throw new RuntimeCamelException("Object conversion failed.");
         }
     }

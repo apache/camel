@@ -39,8 +39,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.zookeepermaster.group.Group;
 import org.apache.camel.component.zookeepermaster.group.GroupListener;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
@@ -57,6 +55,9 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * <p>
@@ -74,7 +75,9 @@ import org.slf4j.LoggerFactory;
 public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperGroup.class);
-    private static ObjectMapper mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    private static ObjectMapper mapper = JsonMapper.builder()
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .build();
 
     private final Class<T> clazz;
     private final CuratorFramework client;
@@ -210,7 +213,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
             }
             listeners.clear();
             mapper.getTypeFactory().clearCache();
-            mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            mapper = JsonMapper.builder().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();
 
             client.clearWatcherReferences(childrenWatcher);
             client.clearWatcherReferences(dataWatcher);
@@ -592,11 +595,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     }
 
     private T decode(byte[] data) {
-        try {
-            return mapper.readValue(data, clazz);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to decode data", e);
-        }
+        return mapper.readValue(data, clazz);
     }
 
     private void offerOperation(Operation operation) {

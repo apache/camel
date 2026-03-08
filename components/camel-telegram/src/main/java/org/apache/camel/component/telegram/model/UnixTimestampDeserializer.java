@@ -16,24 +16,23 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import java.io.IOException;
 import java.time.Instant;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
 /**
  * A deserializer for a unix timestamp.
  */
-public class UnixTimestampDeserializer extends JsonDeserializer<Instant> {
+public class UnixTimestampDeserializer extends ValueDeserializer<Instant> {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    public Instant deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public Instant deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) {
         try {
             long unixTimestamp = Long.parseLong(jsonParser.getText());
 

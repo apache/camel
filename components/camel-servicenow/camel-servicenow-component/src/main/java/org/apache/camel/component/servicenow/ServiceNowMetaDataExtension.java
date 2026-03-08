@@ -36,10 +36,6 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.extension.MetaDataExtension;
@@ -51,6 +47,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * An implementation of the MetaData extension {@link MetaDataExtension} that retrieve information about ServiceNow
@@ -466,7 +466,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                         required.add(id);
                     }
 
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new RuntimeCamelException(e);
                 } finally {
                     context.getStack().pop();
@@ -519,7 +519,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
     private void processResult(JsonNode node, Consumer<JsonNode> consumer) {
         if (node.isArray()) {
-            Iterator<JsonNode> it = node.elements();
+            Iterator<JsonNode> it = node.iterator();
             while (it.hasNext()) {
                 consumer.accept(it.next());
             }
@@ -532,7 +532,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
         if (ObjectHelper.isNotEmpty(response.getHeaderString(HttpHeaders.CONTENT_TYPE))) {
             JsonNode root = response.readEntity(JsonNode.class);
             if (root != null) {
-                Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
+                Iterator<Map.Entry<String, JsonNode>> fields = root.properties().iterator();
                 while (fields.hasNext()) {
                     final Map.Entry<String, JsonNode> entry = fields.next();
                     final String key = entry.getKey();

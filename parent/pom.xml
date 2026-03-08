@@ -173,7 +173,7 @@
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
         <flink-version>1.20.3</flink-version>
-        <flowable-version>7.2.0</flowable-version>
+        <flowable-version>8.0.0</flowable-version>
         <fop-version>2.11</fop-version>
         <formatter-maven-plugin-version>2.29.0</formatter-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
@@ -270,10 +270,12 @@
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
-        <jackson-jq-version>1.6.0</jackson-jq-version>
+        <jackson-jq-version>2.0.0-alpha1</jackson-jq-version>
         <jackson2-version>2.20.2</jackson2-version>
         <jackson2-annotations-version>2.20</jackson2-annotations-version>
         <jackson3-version>3.0.3</jackson3-version>
+        <jackson-jsonSchema-jakarta-version>3.1.0</jackson-jsonSchema-jakarta-version>
+        <jackson-datatype-version>3.0.0-rc2</jackson-datatype-version>
         <jackrabbit-version>2.22.3</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
         <jandex-version>3.5.3</jandex-version>
@@ -335,7 +337,7 @@
         <jsmpp-version>3.0.1</jsmpp-version>
         <jsch-version>2.27.7</jsch-version>
         <javax-json-api-version>1.1.4</javax-json-api-version>
-        <jsonschema-generator-version>4.38.0</jsonschema-generator-version>
+        <jsonschema-generator-version>5.0.0</jsonschema-generator-version>
         <jsonassert-version>1.5.3</jsonassert-version>
         <json-path-version>3.0.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
@@ -424,8 +426,9 @@
         <neo4j-version>6.0.2</neo4j-version>
         <netty-version>4.2.10.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-        <networknt-json-schema-validator-version>1.5.9</networknt-json-schema-validator-version>
+        <networknt-json-schema-validator-version>3.0.0</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.8</nimbus-jose-jwt>
+        <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.10</ognl-version>
@@ -3278,13 +3281,17 @@
             </dependency>
 
             <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
+                <groupId>tools.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>${jackson2-version}</version>
+                <version>${jackson3-version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson2-annotations-version}</version>
+            </dependency>
 
             <!--
             If we import the grpc-bom, we get a lot of duplicate dependencies

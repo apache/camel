@@ -16,19 +16,20 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.ser.std.StdSerializer;
+
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
 final class LocalDateTimeSerializer extends StdSerializer<LocalDateTime> {
 
-    static final JsonSerializer<LocalDateTime> INSTANCE = new LocalDateTimeSerializer();
+    static final ValueSerializer<LocalDateTime> INSTANCE = new LocalDateTimeSerializer();
 
     private static final long serialVersionUID = 1L;
 
@@ -37,12 +38,14 @@ final class LocalDateTimeSerializer extends StdSerializer<LocalDateTime> {
     }
 
     @Override
-    public void serialize(final LocalDateTime value, final JsonGenerator gen, final SerializerProvider serializers)
-            throws IOException {
-
-        final ZonedDateTime zonedDateTime = ZonedDateTime.of(value, ZoneId.systemDefault());
-
-        serializers.defaultSerializeValue(zonedDateTime, gen);
+    public void serialize(final LocalDateTime value, final JsonGenerator gen, final SerializationContext serializers) {
+        try {
+            final ZonedDateTime zonedDateTime = ZonedDateTime.of(value, ZoneId.systemDefault());
+            final String formatted = ISO_OFFSET_DATE_TIME.format(zonedDateTime);
+            gen.writeString(formatted);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize LocalDateTime", e);
+        }
     }
 
 }
