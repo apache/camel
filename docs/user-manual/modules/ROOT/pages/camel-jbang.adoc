@@ -1312,6 +1312,8 @@ camel run joke.yaml
 
 ==== Binding Kamelets in a pipe
 
+WARNING: The bind command is deprecated from Camel 4.19 onwards
+
 Camel JBang is able to create the Pipe custom resource for you.
 You can use the `bind` command to specify a source and a sink that should be set in the pipe.
 As a result, Camel JBang will create a proper Pipe custom resource for you.

@@ -23,6 +23,7 @@ import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@Deprecated
 class BindKnativeBrokerTest extends CamelCommandBaseTestSupport {
 
     @Test

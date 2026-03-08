@@ -26,6 +26,7 @@ import org.apache.camel.util.StringHelper;
  * Helper class provides access to the templates that construct the Pipe resource. Subclasses may overwrite the provider
  * to inject their own templates.
  */
+@Deprecated
 public interface TemplateProvider {
     default InputStream getPipeTemplate() {
         return TemplateProvider.class.getClassLoader().getResourceAsStream("templates/pipe.yaml.tmpl");

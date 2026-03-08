@@ -36,8 +36,9 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "bind", description = "Bind source and sink Kamelets as a new Camel integration",
+@Command(name = "bind", description = "DEPRECATED: Bind source and sink Kamelets as a new Camel integration",
          sortOptions = false, showDefaultValues = true)
+@Deprecated(since = "4.19")
 public class Bind extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of binding file to be saved", arity = "1",
