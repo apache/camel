@@ -6284,6 +6284,48 @@ public class StaticEndpointBuilders {
         return GoogleVertexAIEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Google Cloud Vision (camel-google-vision)
+     * Detect labels, text, faces, logos and more on images through Google Cloud
+     * Vision API
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-vision
+     * 
+     * Syntax: <code>google-vision:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation name
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static GoogleCloudVisionEndpointBuilderFactory.GoogleCloudVisionEndpointBuilder googleVision(String path) {
+        return googleVision("google-vision", path);
+    }
+    /**
+     * Google Cloud Vision (camel-google-vision)
+     * Detect labels, text, faces, logos and more on images through Google Cloud
+     * Vision API
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-vision
+     * 
+     * Syntax: <code>google-vision:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static GoogleCloudVisionEndpointBuilderFactory.GoogleCloudVisionEndpointBuilder googleVision(String componentName, String path) {
+        return GoogleCloudVisionEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.
