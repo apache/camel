@@ -255,10 +255,15 @@ in arrays or lists.
 |`empty(kind)` | `<T>` | *Deprecated* Use `createEmpty` instead.
 |`forEach(exp,fun)` | `<List>` | Returns a List containing the values returned by the function when applied to each value from the input expression. This function is not supported when using csimple.
 |`list(val1,val2,...)` | `List` | The list function creates an `java.util.ArrayList` with the given set of values.
-|`listAdd(source,fun)` | `List` | Adds the result of the function to the message body (or expression) as a list object.
-|`listRemove(source,fun)` | `List` | Removes the result of the function (use int to remove by position index) from the message body (or expression) as a list object.
+|`listAdd(fun)` | `List` | Adds the result of the function to the message body as a list object.
+|`listAdd(source,fun)` | `List` | Adds the result of the function to the source expression as a list object.
+|`listRemove(fun)` | `List` | Removes the result of the function (use int to remove by position index) from the message body as a list object.
+|`listRemove(source,fun)` | `List` | Removes the result of the function (use int to remove by position index) from the source expression as a list object.
 |`map(key1,value1,...)` | `Map` | The map function creates a `java.util.LinkedHashMap` with the given set of pairs.
-|`mapAdd(source,key,fun)` | `List` | Adds the result of the function to the message body (or expression) as a map object.
+|`mapAdd(key,fun)` | `List` | Adds the result of the function to the message body as a map object.
+|`mapAdd(source,key,fun)` | `List` | Adds the result of the function to the source expression as a map object.
+|`mapRemove(key)` | `List` | Removes the key from the message body as a map object.
+|`mapRemove(source,key)` | `List` | Removes the key from the source expression as a map object.
 |`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.
 |`reverse(val1,val2,...)` | `List` | Returns a list of all the values, but in reverse order.
 |`shuffle(val1,val2,...)` | `List` | Returns a list of all the values shuffled in random order.
