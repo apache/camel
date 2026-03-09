@@ -18,7 +18,7 @@ package org.apache.camel.component.kserve;
 
 import java.util.Optional;
 
-import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.GeneratedMessage;
 import inference.GRPCInferenceServiceGrpc;
 import inference.GrpcPredictV2;
 import org.apache.camel.Exchange;
@@ -43,7 +43,7 @@ public class KServeProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) {
-        GeneratedMessageV3 response = switch (api) {
+        GeneratedMessage response = switch (api) {
             case "infer" -> infer(exchange);
             case "model/ready" -> modelReady(exchange);
             case "model/metadata" -> modelMetadata(exchange);
