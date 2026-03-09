@@ -1917,6 +1917,19 @@ public interface ComponentsBuilderFactory {
         return GoogleVertexaiComponentBuilderFactory.googleVertexai();
     }
     /**
+     * Google Cloud Vision (camel-google-vision)
+     * Analyze images using Google Cloud Vision AI
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-vision
+     * 
+     * @return the dsl builder
+     */
+    static GoogleVisionComponentBuilderFactory.GoogleVisionComponentBuilder googleVision() {
+        return GoogleVisionComponentBuilderFactory.googleVision();
+    }
+    /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.

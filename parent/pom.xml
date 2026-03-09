@@ -219,6 +219,7 @@
         <google-cloud-secretmanager-version>2.85.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.64.0</google-cloud-storage-version>
         <google-cloud-aiplatform-version>3.86.0</google-cloud-aiplatform-version>
+        <google-cloud-vision-version>3.59.0</google-cloud-vision-version>
         <google-genai-version>1.42.0</google-genai-version>
         <graaljs-version>25.0.2</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
@@ -1524,6 +1525,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-google-vertexai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-google-vision</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
