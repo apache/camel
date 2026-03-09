@@ -36,6 +36,8 @@
     <properties>
         <!-- Vulnerability scan only enabled in runtime modules -->
         <dependency-check.skip>true</dependency-check.skip>
+        <!-- don't need coverage for tooling -->
+        <jacoco.skip>true</jacoco.skip>
     </properties>
 
     <modules>
