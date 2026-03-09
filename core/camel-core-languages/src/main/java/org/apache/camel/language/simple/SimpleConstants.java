@@ -247,11 +247,11 @@ public final class SimpleConstants {
               javaType = "java.util.ArrayList", displayName = "Create List of values")
     public static final String LIST = "list(val...)";
 
-    @Metadata(description = "Adds the result of the expression to the message body (or expression) as a list",
+    @Metadata(description = "Adds the result of the expression to the message body (or expression) which is a list",
               label = "collection", javaType = "List", displayName = "List Add")
     public static final String LIST_ADD = "listAdd(source,exp)";
 
-    @Metadata(description = "Removes the result of the expression from the message body (or expression) as a list",
+    @Metadata(description = "Removes the result of the expression from the message body (or expression) which is a list",
               label = "collection", javaType = "List", displayName = "List Remove")
     public static final String LIST_REMOVE = "listRemove(source,exp)";
 

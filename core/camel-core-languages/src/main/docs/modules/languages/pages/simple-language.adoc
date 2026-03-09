@@ -286,7 +286,7 @@ The `list` function is used for taking all input values and putting them into a 
 For example if the message body contains '4' then `${list(1,2,3,$\{body})}` will return a list with 4 elements. `[1,2,3,4]`.
 
 You can also add and remove from `java.util.List`(s). For example if the message body is a `List` then you can add
-something `${listAdd('Hello')}`. This will add to the message body. The source can also be an expression instread
+something `${listAdd('Hello')}`. This will add to the message body. The source can also be an expression instead
 of the message body, such as a variable: `${listAdd(${variable.myVar},'Hello')}`.
 To remove from a list, you use `${listRemove('Hello')}`, or use a number to refer to the position `${listRemove(0)}`.
 Use _last_ as a special index to remove the last element: `${listRemove(last)}`.

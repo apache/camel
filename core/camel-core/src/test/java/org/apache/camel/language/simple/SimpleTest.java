@@ -3860,6 +3860,16 @@ public class SimpleTest extends LanguageTestSupport {
         assertEquals("B", list.get(1));
         assertEquals("C", list.get(2));
         assertEquals("D", list.get(3));
+
+        // two-parameter form: add to a header list instead of body
+        List headerList = new ArrayList();
+        headerList.add("X");
+        exchange.getMessage().setHeader("myList", headerList);
+        expression = context.resolveLanguage("simple").createExpression("${listAdd(${header.myList},'Y')}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(2, list.size());
+        assertEquals("X", list.get(0));
+        assertEquals("Y", list.get(1));
     }
 
     @Test
