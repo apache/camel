@@ -25,6 +25,7 @@ import org.apache.camel.support.jsse.CipherSuitesParameters;
 import org.apache.camel.support.jsse.FilterParameters;
 import org.apache.camel.support.jsse.NamedGroupsParameters;
 import org.apache.camel.support.jsse.SecureSocketProtocolsParameters;
+import org.apache.camel.support.jsse.SignatureSchemesParameters;
 
 @XmlTransient
 public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends BaseSSLContextParameters>
@@ -41,6 +42,10 @@ public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends Base
     private NamedGroupsParametersDefinition namedGroups;
 
     private FilterParametersDefinition namedGroupsFilter;
+
+    private SignatureSchemesParametersDefinition signatureSchemes;
+
+    private FilterParametersDefinition signatureSchemesFilter;
 
     @XmlAttribute
     @Metadata(description = "The optional SSLSessionContext timeout time for javax.net.ssl.SSLSession in seconds.")
@@ -96,6 +101,16 @@ public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends Base
 
         if (namedGroupsFilter != null) {
             newInstance.setNamedGroupsFilter(createFilterParameters(namedGroupsFilter));
+        }
+
+        if (signatureSchemes != null) {
+            SignatureSchemesParameters signatureSchemesInstance = new SignatureSchemesParameters();
+            signatureSchemesInstance.setSignatureScheme(signatureSchemes.getSignatureScheme());
+            newInstance.setSignatureSchemes(signatureSchemesInstance);
+        }
+
+        if (signatureSchemesFilter != null) {
+            newInstance.setSignatureSchemesFilter(createFilterParameters(signatureSchemesFilter));
         }
 
         if (sessionTimeout != null) {
@@ -160,6 +175,22 @@ public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends Base
 
     public void setNamedGroupsFilter(FilterParametersDefinition namedGroupsFilter) {
         this.namedGroupsFilter = namedGroupsFilter;
+    }
+
+    public SignatureSchemesParametersDefinition getSignatureSchemes() {
+        return signatureSchemes;
+    }
+
+    public void setSignatureSchemes(SignatureSchemesParametersDefinition signatureSchemes) {
+        this.signatureSchemes = signatureSchemes;
+    }
+
+    public FilterParametersDefinition getSignatureSchemesFilter() {
+        return signatureSchemesFilter;
+    }
+
+    public void setSignatureSchemesFilter(FilterParametersDefinition signatureSchemesFilter) {
+        this.signatureSchemesFilter = signatureSchemesFilter;
     }
 
     public String getSessionTimeout() {

@@ -42,6 +42,9 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         map.put("SecureRandomProvider", java.lang.String.class);
         map.put("SecureSocketProtocol", java.lang.String.class);
         map.put("SessionTimeout", int.class);
+        map.put("SignatureSchemes", java.lang.String.class);
+        map.put("SignatureSchemesExclude", java.lang.String.class);
+        map.put("SignatureSchemesInclude", java.lang.String.class);
         map.put("TrustAllCertificates", boolean.class);
         map.put("TrustStore", java.lang.String.class);
         map.put("TrustStorePassword", java.lang.String.class);
@@ -90,6 +93,12 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": target.setSecureSocketProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": target.setSessionTimeout(property(camelContext, int.class, value)); return true;
+        case "signatureschemes":
+        case "signatureSchemes": target.setSignatureSchemes(property(camelContext, java.lang.String.class, value)); return true;
+        case "signatureschemesexclude":
+        case "signatureSchemesExclude": target.setSignatureSchemesExclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "signatureschemesinclude":
+        case "signatureSchemesInclude": target.setSignatureSchemesInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "truststore":
@@ -146,6 +155,12 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return int.class;
+        case "signatureschemes":
+        case "signatureSchemes": return java.lang.String.class;
+        case "signatureschemesexclude":
+        case "signatureSchemesExclude": return java.lang.String.class;
+        case "signatureschemesinclude":
+        case "signatureSchemesInclude": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "truststore":
@@ -198,6 +213,12 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": return target.getSecureSocketProtocol();
         case "sessiontimeout":
         case "sessionTimeout": return target.getSessionTimeout();
+        case "signatureschemes":
+        case "signatureSchemes": return target.getSignatureSchemes();
+        case "signatureschemesexclude":
+        case "signatureSchemesExclude": return target.getSignatureSchemesExclude();
+        case "signatureschemesinclude":
+        case "signatureSchemesInclude": return target.getSignatureSchemesInclude();
         case "trustallcertificates":
         case "trustAllCertificates": return target.isTrustAllCertificates();
         case "truststore":

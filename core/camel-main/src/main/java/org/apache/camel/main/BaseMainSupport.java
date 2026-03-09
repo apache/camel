@@ -101,6 +101,7 @@ import org.apache.camel.support.jsse.NamedGroupsParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.SecureRandomParameters;
+import org.apache.camel.support.jsse.SignatureSchemesParameters;
 import org.apache.camel.support.jsse.TrustAllTrustManager;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.support.scan.PackageScanHelper;
@@ -2219,6 +2220,27 @@ public abstract class BaseMainSupport extends BaseService {
                 }
             }
             sslContextParameters.setNamedGroupsFilter(fp);
+        }
+        if (sslConfig.getSignatureSchemes() != null) {
+            SignatureSchemesParameters ssp = new SignatureSchemesParameters();
+            for (String s : sslConfig.getSignatureSchemes().split(",")) {
+                ssp.addSignatureScheme(s);
+            }
+            sslContextParameters.setSignatureSchemes(ssp);
+        }
+        if (sslConfig.getSignatureSchemesInclude() != null || sslConfig.getSignatureSchemesExclude() != null) {
+            FilterParameters fp = new FilterParameters();
+            if (sslConfig.getSignatureSchemesInclude() != null) {
+                for (String s : sslConfig.getSignatureSchemesInclude().split(",")) {
+                    fp.addInclude(s);
+                }
+            }
+            if (sslConfig.getSignatureSchemesExclude() != null) {
+                for (String s : sslConfig.getSignatureSchemesExclude().split(",")) {
+                    fp.addExclude(s);
+                }
+            }
+            sslContextParameters.setSignatureSchemesFilter(fp);
         }
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);

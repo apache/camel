@@ -26,6 +26,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.NamedGroupsParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
+import org.apache.camel.support.jsse.SignatureSchemesParameters;
 import org.apache.camel.support.jsse.TrustAllTrustManager;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Assertions;
@@ -287,6 +288,133 @@ public class MainSSLTest {
         Assertions.assertEquals("X25519.*", fp.getInclude().get(0));
         Assertions.assertEquals(1, fp.getExclude().size());
         Assertions.assertEquals("secp521r1", fp.getExclude().get(0));
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLSignatureSchemes() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.ssl.enabled", "true");
+        main.addInitialProperty("camel.ssl.keyStore", "server.jks");
+        main.addInitialProperty("camel.ssl.keystorePassword", "security");
+        main.addInitialProperty("camel.ssl.signatureSchemes", "ed25519,rsa_pss_rsae_sha256,ecdsa_secp256r1_sha256");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+
+        SignatureSchemesParameters ssp = sslParams.getSignatureSchemes();
+        assertNotNull(ssp);
+
+        List<String> schemes = ssp.getSignatureScheme();
+        Assertions.assertEquals(3, schemes.size());
+        Assertions.assertEquals("ed25519", schemes.get(0));
+        Assertions.assertEquals("rsa_pss_rsae_sha256", schemes.get(1));
+        Assertions.assertEquals("ecdsa_secp256r1_sha256", schemes.get(2));
+
+        assertNull(sslParams.getSignatureSchemesFilter());
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLSignatureSchemesFluent() {
+        Main main = new Main();
+
+        main.configure().sslConfig()
+                .withEnabled(true)
+                .withKeyStore("server.jks")
+                .withKeystorePassword("security")
+                .withSignatureSchemes("ed25519,rsa_pss_rsae_sha256");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+
+        SignatureSchemesParameters ssp = sslParams.getSignatureSchemes();
+        assertNotNull(ssp);
+
+        List<String> schemes = ssp.getSignatureScheme();
+        Assertions.assertEquals(2, schemes.size());
+        Assertions.assertEquals("ed25519", schemes.get(0));
+        Assertions.assertEquals("rsa_pss_rsae_sha256", schemes.get(1));
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLSignatureSchemesFilter() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.ssl.enabled", "true");
+        main.addInitialProperty("camel.ssl.keyStore", "server.jks");
+        main.addInitialProperty("camel.ssl.keystorePassword", "security");
+        main.addInitialProperty("camel.ssl.signatureSchemesInclude", "ecdsa_.*,ed.*");
+        main.addInitialProperty("camel.ssl.signatureSchemesExclude", "ed448");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+
+        assertNull(sslParams.getSignatureSchemes());
+
+        FilterParameters fp = sslParams.getSignatureSchemesFilter();
+        assertNotNull(fp);
+
+        List<String> includes = fp.getInclude();
+        Assertions.assertEquals(2, includes.size());
+        Assertions.assertEquals("ecdsa_.*", includes.get(0));
+        Assertions.assertEquals("ed.*", includes.get(1));
+
+        List<String> excludes = fp.getExclude();
+        Assertions.assertEquals(1, excludes.size());
+        Assertions.assertEquals("ed448", excludes.get(0));
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLSignatureSchemesFilterFluent() {
+        Main main = new Main();
+
+        main.configure().sslConfig()
+                .withEnabled(true)
+                .withKeyStore("server.jks")
+                .withKeystorePassword("security")
+                .withSignatureSchemesInclude("ecdsa_.*")
+                .withSignatureSchemesExclude("ed448");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+
+        assertNull(sslParams.getSignatureSchemes());
+
+        FilterParameters fp = sslParams.getSignatureSchemesFilter();
+        assertNotNull(fp);
+
+        Assertions.assertEquals(1, fp.getInclude().size());
+        Assertions.assertEquals("ecdsa_.*", fp.getInclude().get(0));
+        Assertions.assertEquals(1, fp.getExclude().size());
+        Assertions.assertEquals("ed448", fp.getExclude().get(0));
 
         main.stop();
     }

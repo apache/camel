@@ -89,6 +89,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
     private static final String SSL_SERVER_SOCKET_NAMED_GROUP_LOG_MSG = createNamedGroupLogMessage("SSLServerSocket");
 
+    private static final String SSL_ENGINE_SIGNATURE_SCHEME_LOG_MSG = createSignatureSchemeLogMessage("SSLEngine");
+
+    private static final String SSL_SOCKET_SIGNATURE_SCHEME_LOG_MSG = createSignatureSchemeLogMessage("SSLSocket");
+
+    private static final String SSL_SERVER_SOCKET_SIGNATURE_SCHEME_LOG_MSG
+            = createSignatureSchemeLogMessage("SSLServerSocket");
+
     /**
      * The optional explicitly configured cipher suites for this configuration.
      */
@@ -120,6 +127,18 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * The optional named groups filter configuration for this configuration.
      */
     private FilterParameters namedGroupsFilter;
+
+    /**
+     * The optional explicitly configured signature schemes for this configuration. Signature schemes control which
+     * signature algorithms are available during the TLS handshake, including post-quantum signature algorithms such as
+     * ML-DSA.
+     */
+    private SignatureSchemesParameters signatureSchemes;
+
+    /**
+     * The optional signature schemes filter configuration for this configuration.
+     */
+    private FilterParameters signatureSchemesFilter;
 
     /**
      * The optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
@@ -285,6 +304,62 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     }
 
     /**
+     * Returns the optional explicitly configured signature schemes for this configuration. These options are used in
+     * the configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on
+     * the context in which they are applied.
+     * <p/>
+     * Signature schemes control which signature algorithms are available during the TLS handshake, including
+     * post-quantum signature algorithms such as ML-DSA.
+     * <p/>
+     * These values override any filters supplied in {@link #setSignatureSchemesFilter(FilterParameters)}
+     */
+    public SignatureSchemesParameters getSignatureSchemes() {
+        return signatureSchemes;
+    }
+
+    /**
+     * Sets the optional explicitly configured signature schemes for this configuration. These options are used in the
+     * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
+     * context in which they are applied.
+     * <p/>
+     * Signature schemes control which signature algorithms are available during the TLS handshake, including
+     * post-quantum signature algorithms such as ML-DSA.
+     * <p/>
+     * These values override any filters supplied in {@link #setSignatureSchemesFilter(FilterParameters)}
+     *
+     * @param signatureSchemes the signature schemes configuration
+     */
+    public void setSignatureSchemes(SignatureSchemesParameters signatureSchemes) {
+        this.signatureSchemes = signatureSchemes;
+    }
+
+    /**
+     * Returns the optional signature schemes filter for this configuration. These options are used in the configuration
+     * of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the context in
+     * which they are applied.
+     * <p/>
+     * These values are ignored if {@link #setSignatureSchemes(SignatureSchemesParameters)} is called with a non
+     * {@code null} argument.
+     */
+    public FilterParameters getSignatureSchemesFilter() {
+        return signatureSchemesFilter;
+    }
+
+    /**
+     * Sets the optional signature schemes filter for this JSSE configuration. These options are used in the
+     * configuration of {@link SSLEngine}, {@link SSLSocketFactory} and {@link SSLServerSocketFactory} depending on the
+     * context in which they are applied.
+     * <p/>
+     * These values are ignored if {@link #setSignatureSchemes(SignatureSchemesParameters)} is called with a non
+     * {@code null} argument.
+     *
+     * @param signatureSchemesFilter the filter configuration
+     */
+    public void setSignatureSchemesFilter(FilterParameters signatureSchemesFilter) {
+        this.signatureSchemesFilter = signatureSchemesFilter;
+    }
+
+    /**
      * Returns the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
      */
     public String getSessionTimeout() {
@@ -399,6 +474,17 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             enabledNamedGroupsPatterns = null;
         }
 
+        final List<String> enabledSignatureSchemes = this.getSignatureSchemes() == null
+                ? null : this.parsePropertyValues(this.getSignatureSchemes().getSignatureScheme());
+
+        final Patterns enabledSignatureSchemesPatterns;
+
+        if (this.getSignatureSchemesFilter() != null) {
+            enabledSignatureSchemesPatterns = this.getSignatureSchemesFilter().getPatterns();
+        } else {
+            enabledSignatureSchemesPatterns = null;
+        }
+
         //
 
         final boolean allowPassthrough = getAllowPassthrough();
@@ -463,6 +549,23 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                     }
                     SSLParameters params = engine.getSSLParameters();
                     params.setNamedGroups(namedGroups);
+                    engine.setSSLParameters(params);
+                }
+
+                String[] signatureSchemes = resolveSignatureSchemes(
+                        engine.getSSLParameters().getSignatureSchemes(),
+                        enabledSignatureSchemes, enabledSignatureSchemesPatterns);
+                if (signatureSchemes != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(SSL_ENGINE_SIGNATURE_SCHEME_LOG_MSG,
+                                engine,
+                                enabledSignatureSchemes,
+                                enabledSignatureSchemesPatterns,
+                                engine.getSSLParameters().getSignatureSchemes(),
+                                signatureSchemes);
+                    }
+                    SSLParameters params = engine.getSSLParameters();
+                    params.setSignatureSchemes(signatureSchemes);
                     engine.setSSLParameters(params);
                 }
 
@@ -592,6 +695,17 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             enabledNamedGroupsPatterns = null;
         }
 
+        final List<String> enabledSignatureSchemes = this.getSignatureSchemes() == null
+                ? null : this.parsePropertyValues(this.getSignatureSchemes().getSignatureScheme());
+
+        final Patterns enabledSignatureSchemesPatterns;
+
+        if (this.getSignatureSchemesFilter() != null) {
+            enabledSignatureSchemesPatterns = this.getSignatureSchemesFilter().getPatterns();
+        } else {
+            enabledSignatureSchemesPatterns = null;
+        }
+
         //
 
         final boolean allowPassthrough = getAllowPassthrough();
@@ -664,6 +778,23 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                     socket.setSSLParameters(params);
                 }
 
+                String[] signatureSchemes = resolveSignatureSchemes(
+                        socket.getSSLParameters().getSignatureSchemes(),
+                        enabledSignatureSchemes, enabledSignatureSchemesPatterns);
+                if (signatureSchemes != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(SSL_SOCKET_SIGNATURE_SCHEME_LOG_MSG,
+                                socket,
+                                enabledSignatureSchemes,
+                                enabledSignatureSchemesPatterns,
+                                socket.getSSLParameters().getSignatureSchemes(),
+                                signatureSchemes);
+                    }
+                    SSLParameters params = socket.getSSLParameters();
+                    params.setSignatureSchemes(signatureSchemes);
+                    socket.setSSLParameters(params);
+                }
+
                 return socket;
             }
         };
@@ -718,6 +849,17 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             enabledNamedGroupsPatterns = this.getNamedGroupsFilter().getPatterns();
         } else {
             enabledNamedGroupsPatterns = null;
+        }
+
+        final List<String> enabledSignatureSchemes = this.getSignatureSchemes() == null
+                ? null : this.parsePropertyValues(this.getSignatureSchemes().getSignatureScheme());
+
+        final Patterns enabledSignatureSchemesPatterns;
+
+        if (this.getSignatureSchemesFilter() != null) {
+            enabledSignatureSchemesPatterns = this.getSignatureSchemesFilter().getPatterns();
+        } else {
+            enabledSignatureSchemesPatterns = null;
         }
 
         //
@@ -784,6 +926,23 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                     }
                     SSLParameters params = socket.getSSLParameters();
                     params.setNamedGroups(namedGroups);
+                    socket.setSSLParameters(params);
+                }
+
+                String[] signatureSchemes = resolveSignatureSchemes(
+                        socket.getSSLParameters().getSignatureSchemes(),
+                        enabledSignatureSchemes, enabledSignatureSchemesPatterns);
+                if (signatureSchemes != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(SSL_SERVER_SOCKET_SIGNATURE_SCHEME_LOG_MSG,
+                                socket,
+                                enabledSignatureSchemes,
+                                enabledSignatureSchemesPatterns,
+                                socket.getSSLParameters().getSignatureSchemes(),
+                                signatureSchemes);
+                    }
+                    SSLParameters params = socket.getSSLParameters();
+                    params.setSignatureSchemes(signatureSchemes);
                     socket.setSSLParameters(params);
                 }
 
@@ -960,6 +1119,41 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         }
 
         return filteredNamedGroups.toArray(new String[0]);
+    }
+
+    /**
+     * Resolves the signature schemes to configure based on explicit values or filter patterns. Returns {@code null} if
+     * no signature schemes configuration is needed (both parameters are {@code null}).
+     *
+     * @param  currentSignatureSchemes         the currently available signature schemes from the SSL object
+     * @param  enabledSignatureSchemes         the optional explicit signature schemes list
+     * @param  enabledSignatureSchemesPatterns the optional filter patterns
+     *
+     * @return                                 the filtered signature schemes array, or {@code null} if no configuration
+     *                                         is needed
+     */
+    private String[] resolveSignatureSchemes(
+            String[] currentSignatureSchemes, List<String> enabledSignatureSchemes,
+            Patterns enabledSignatureSchemesPatterns) {
+
+        if (enabledSignatureSchemes == null && enabledSignatureSchemesPatterns == null) {
+            return null;
+        }
+
+        if (currentSignatureSchemes == null) {
+            currentSignatureSchemes = new String[0];
+        }
+
+        Collection<String> filteredSignatureSchemes;
+        if (enabledSignatureSchemes != null) {
+            filteredSignatureSchemes = new ArrayList<>(enabledSignatureSchemes);
+        } else {
+            filteredSignatureSchemes = this.filter(
+                    null, Arrays.asList(currentSignatureSchemes),
+                    enabledSignatureSchemesPatterns.getIncludes(), enabledSignatureSchemesPatterns.getExcludes());
+        }
+
+        return filteredSignatureSchemes.toArray(new String[0]);
     }
 
     /**
@@ -1307,5 +1501,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                + "\t named group patterns [{}]," + LS
                + "\t available named groups [{}]," + LS
                + "\t Resulting enabled named groups are [{}].";
+    }
+
+    private static String createSignatureSchemeLogMessage(String entityName) {
+        return "Configuring " + entityName + " [{}] with " + LS
+               + "\t explicitly set signature schemes [{}]," + LS
+               + "\t signature scheme patterns [{}]," + LS
+               + "\t available signature schemes [{}]," + LS
+               + "\t Resulting enabled signature schemes are [{}].";
     }
 }

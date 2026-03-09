@@ -50,6 +50,12 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     private String namedGroupsInclude;
     @Metadata(label = "advanced")
     private String namedGroupsExclude;
+    @Metadata(label = "advanced")
+    private String signatureSchemes;
+    @Metadata(label = "advanced")
+    private String signatureSchemesInclude;
+    @Metadata(label = "advanced")
+    private String signatureSchemesExclude;
     @Metadata
     private String keyStore;
     @Metadata(label = "advanced")
@@ -235,6 +241,52 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public void setNamedGroupsExclude(String namedGroupsExclude) {
         this.namedGroupsExclude = namedGroupsExclude;
+    }
+
+    public String getSignatureSchemes() {
+        return signatureSchemes;
+    }
+
+    /**
+     * List of TLS/SSL signature schemes. Multiple names can be separated by comma.
+     * <p>
+     * Signature schemes control which signature algorithms are available during the TLS handshake, including
+     * post-quantum signature algorithms such as ML-DSA.
+     */
+    public void setSignatureSchemes(String signatureSchemes) {
+        this.signatureSchemes = signatureSchemes;
+    }
+
+    public String getSignatureSchemesInclude() {
+        return signatureSchemesInclude;
+    }
+
+    /**
+     * Filters TLS/SSL signature schemes.
+     * <p>
+     * This filter is used for including signature schemes that match the naming pattern. Multiple names can be
+     * separated by comma.
+     * <p>
+     * Notice that if the signatureSchemes option has been configured then the include/exclude filters are not in use.
+     */
+    public void setSignatureSchemesInclude(String signatureSchemesInclude) {
+        this.signatureSchemesInclude = signatureSchemesInclude;
+    }
+
+    public String getSignatureSchemesExclude() {
+        return signatureSchemesExclude;
+    }
+
+    /**
+     * Filters TLS/SSL signature schemes.
+     * <p>
+     * This filter is used for excluding signature schemes that match the naming pattern. Multiple names can be
+     * separated by comma.
+     * <p>
+     * Notice that if the signatureSchemes option has been configured then the include/exclude filters are not in use.
+     */
+    public void setSignatureSchemesExclude(String signatureSchemesExclude) {
+        this.signatureSchemesExclude = signatureSchemesExclude;
     }
 
     public String getKeyStore() {
@@ -511,6 +563,43 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withNamedGroupsExclude(String namedGroupsExclude) {
         this.namedGroupsExclude = namedGroupsExclude;
+        return this;
+    }
+
+    /**
+     * List of TLS/SSL signature schemes. Multiple names can be separated by comma.
+     * <p>
+     * Signature schemes control which signature algorithms are available during the TLS handshake, including
+     * post-quantum signature algorithms such as ML-DSA.
+     */
+    public SSLConfigurationProperties withSignatureSchemes(String signatureSchemes) {
+        this.signatureSchemes = signatureSchemes;
+        return this;
+    }
+
+    /**
+     * Filters TLS/SSL signature schemes.
+     * <p>
+     * This filter is used for including signature schemes that match the naming pattern. Multiple names can be
+     * separated by comma.
+     * <p>
+     * Notice that if the signatureSchemes option has been configured then the include/exclude filters are not in use.
+     */
+    public SSLConfigurationProperties withSignatureSchemesInclude(String signatureSchemesInclude) {
+        this.signatureSchemesInclude = signatureSchemesInclude;
+        return this;
+    }
+
+    /**
+     * Filters TLS/SSL signature schemes.
+     * <p>
+     * This filter is used for excluding signature schemes that match the naming pattern. Multiple names can be
+     * separated by comma.
+     * <p>
+     * Notice that if the signatureSchemes option has been configured then the include/exclude filters are not in use.
+     */
+    public SSLConfigurationProperties withSignatureSchemesExclude(String signatureSchemesExclude) {
+        this.signatureSchemesExclude = signatureSchemesExclude;
         return this;
     }
 
