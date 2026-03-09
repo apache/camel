@@ -501,7 +501,7 @@
         <snakeyaml-engine-version>3.0.1</snakeyaml-engine-version>
         <snmp4j-version>3.9.7</snmp4j-version>
         <solr-version>9.10.1</solr-version>
-        <solr-zookeeper-version>3.9.4</solr-zookeeper-version>
+        <solr-zookeeper-version>3.9.5</solr-zookeeper-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.4-groovy-4.0</spock-version>
         <spring-ai-version>1.1.2</spring-ai-version>
@@ -566,7 +566,7 @@
         <yetus-audience-annotations-version>0.15.1</yetus-audience-annotations-version>
         <zeebe-version>8.8.11</zeebe-version>
         <zendesk-client-version>1.4.0</zendesk-client-version>
-        <zookeeper-version>3.9.4</zookeeper-version>
+        <zookeeper-version>3.9.5</zookeeper-version>
         <zxing-version>3.5.4</zxing-version>
     </properties>
 
