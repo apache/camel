@@ -99,8 +99,8 @@
                     <artifactId>undertow-servlet</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>io.undertow</groupId>
-                    <artifactId>undertow-servlet-jakarta</artifactId>
+                    <groupId>io.undertow.ee</groupId>
+                    <artifactId>undertow-servlet</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>io.undertow</groupId>
