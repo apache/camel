@@ -54,7 +54,9 @@ public class GoogleCloudVisionConfiguration implements Cloneable, GoogleCommonCo
     }
 
     /**
-     * The operation name
+     * Set the operation name
+     *
+     * @param operation
      */
     public void setOperation(String operation) {
         this.operation = operation;
@@ -67,6 +69,8 @@ public class GoogleCloudVisionConfiguration implements Cloneable, GoogleCommonCo
 
     /**
      * Service account key
+     *
+     * @param serviceAccountKey
      */
     public void setServiceAccountKey(String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
@@ -78,6 +82,8 @@ public class GoogleCloudVisionConfiguration implements Cloneable, GoogleCommonCo
 
     /**
      * The operation to perform on the producer.
+     *
+     * @param operationType
      */
     public void setOperationType(GoogleCloudVisionOperations operationType) {
         this.operationType = operationType;
@@ -88,7 +94,9 @@ public class GoogleCloudVisionConfiguration implements Cloneable, GoogleCommonCo
     }
 
     /**
-     * The max number of results to return per feature type.
+     * Max results to return per feature type.
+     *
+     * @param maxResults
      */
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
@@ -100,6 +108,8 @@ public class GoogleCloudVisionConfiguration implements Cloneable, GoogleCommonCo
 
     /**
      * The client to use during service invocation.
+     *
+     * @param client
      */
     public void setClient(ImageAnnotatorClient client) {
         this.client = client;
@@ -111,6 +121,8 @@ public class GoogleCloudVisionConfiguration implements Cloneable, GoogleCommonCo
 
     /**
      * Configure the input type. If true the message will be POJO type.
+     *
+     * @param pojoRequest
      */
     public void setPojoRequest(boolean pojoRequest) {
         this.pojoRequest = pojoRequest;

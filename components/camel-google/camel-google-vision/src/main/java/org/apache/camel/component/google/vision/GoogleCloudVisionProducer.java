@@ -32,7 +32,7 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 
 /**
- * The GoogleCloudVision producer.
+ * Producer for the Google Cloud Vision component.
  */
 public class GoogleCloudVisionProducer extends DefaultProducer {
     private GoogleCloudVisionEndpoint endpoint;

@@ -28,10 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Analyze images using Google Cloud Vision AI
- *
- * Google Cloud Vision Endpoint definition represents the Vision API and contains configuration to customize the
- * behavior of Producer.
+ * Detect labels, text, faces, logos and more on images through Google Cloud Vision API
  */
 @UriEndpoint(firstVersion = "4.19.0", scheme = "google-vision", title = "Google Cloud Vision",
              syntax = "google-vision:operation", category = {
@@ -66,7 +63,9 @@ public class GoogleCloudVisionEndpoint extends DefaultEndpoint implements Endpoi
     }
 
     /**
-     * Setup configuration
+     * Set the endpoint configuration.
+     *
+     * @param configuration
      */
     public void setConfiguration(GoogleCloudVisionConfiguration configuration) {
         this.configuration = configuration;
