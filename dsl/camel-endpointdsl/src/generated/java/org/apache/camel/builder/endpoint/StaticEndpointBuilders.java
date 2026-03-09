@@ -6285,7 +6285,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Cloud Vision (camel-google-vision)
-     * Analyze images using Google Cloud Vision AI
+     * Detect labels, text, faces, logos and more on images through Google Cloud
+     * Vision API
      * 
      * Category: cloud,ai
      * Since: 4.19
@@ -6304,7 +6305,8 @@ public class StaticEndpointBuilders {
     }
     /**
      * Google Cloud Vision (camel-google-vision)
-     * Analyze images using Google Cloud Vision AI
+     * Detect labels, text, faces, logos and more on images through Google Cloud
+     * Vision API
      * 
      * Category: cloud,ai
      * Since: 4.19
