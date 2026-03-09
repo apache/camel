@@ -33,6 +33,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIX12Entity;
 import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationXMLEntity;
+import org.apache.camel.component.as2.api.entity.GenericApplicationEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.codec.DecoderException;
@@ -203,7 +204,9 @@ public final class EntityUtils {
             case AS2MediaType.APPLICATION_XML:
                 return new ApplicationXMLEntity(ediMessage, charset, contentTransferEncoding, isMainBody, filename);
             default:
-                throw new CamelException("Invalid EDI entity mime type: " + ediMessageContentType.getMimeType());
+                return new GenericApplicationEntity(
+                        ediMessage, ediMessageContentType, contentTransferEncoding,
+                        isMainBody, filename);
         }
 
     }

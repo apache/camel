@@ -75,7 +75,7 @@ public final class HttpMessageUtils {
         } else if (message instanceof BasicClassicHttpResponse httpResponse) {
             HttpEntity entity = httpResponse.getEntity();
             if (entity != null && type.isInstance(entity)) {
-                type.cast(entity);
+                return type.cast(entity);
             }
         }
         return null;
@@ -152,10 +152,23 @@ public final class HttpMessageUtils {
                 }
                 break;
             }
-            default:
-                throw new HttpException(
-                        "Failed to extract EDI message: invalid content type '" + contentType.getMimeType()
-                                        + "' for AS2 request message");
+            default: {
+                // Accept non-standard content types (e.g., text/plain, application/octet-stream)
+                // that real-world AS2 partners may use to wrap EDI payloads
+                if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null) {
+                    throw new AS2InsufficientSecurityException("Failed to validate the signature");
+                }
+                if (decrpytingAndSigningInfo.getDecryptingPrivateKey() != null) {
+                    throw new AS2InsufficientSecurityException("Expected to be encrypted");
+                }
+                ediEntity = getEntity(message, ApplicationEntity.class);
+                if (ediEntity == null) {
+                    throw new HttpException(
+                            "Failed to extract EDI message: could not parse entity with content type '"
+                                            + contentType.getMimeType() + "'");
+                }
+                break;
+            }
         }
 
         return ediEntity;
@@ -274,10 +287,20 @@ public final class HttpMessageUtils {
                 ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo, false);
                 break;
             }
-            default:
-                throw new HttpException(
-                        "Failed to extract EDI payload: invalid content type '" + contentType.getMimeType()
-                                        + "' for AS2 enveloped entity");
+            default: {
+                // Accept non-standard content types within enveloped entities
+                if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null) {
+                    throw new AS2InsufficientSecurityException("Failed to validate the signature");
+                }
+                if (entity instanceof ApplicationEntity) {
+                    ediEntity = (ApplicationEntity) entity;
+                } else {
+                    throw new HttpException(
+                            "Failed to extract EDI payload: invalid content type '" + contentType.getMimeType()
+                                            + "' for AS2 enveloped entity");
+                }
+                break;
+            }
         }
 
         return ediEntity;
@@ -325,10 +348,20 @@ public final class HttpMessageUtils {
                 }
                 break;
             }
-            default:
-                throw new HttpException(
-                        "Failed to extract EDI payload: invalid content type '" + contentType.getMimeType()
-                                        + "' for AS2 compressed entity");
+            default: {
+                // Accept non-standard content types within compressed entities
+                if (!hasValidSignature && decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null) {
+                    throw new AS2InsufficientSecurityException("Failed to validate the signature");
+                }
+                if (entity instanceof ApplicationEntity) {
+                    ediEntity = (ApplicationEntity) entity;
+                } else {
+                    throw new HttpException(
+                            "Failed to extract EDI payload: invalid content type '" + contentType.getMimeType()
+                                            + "' for AS2 compressed entity");
+                }
+                break;
+            }
         }
 
         return ediEntity;
