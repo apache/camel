@@ -1987,6 +1987,74 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Adds the result of the function to the source map
+     */
+    public static Expression mapAddExpression(final String source, final String key, final String function) {
+        return new ExpressionAdapter() {
+            private CamelContext context;
+            private Expression exp1;
+            private Expression exp2;
+
+            @Override
+            public void init(CamelContext context) {
+                this.context = context;
+                exp1 = context.resolveLanguage("simple").createExpression(source);
+                exp1.init(context);
+                exp2 = context.resolveLanguage("simple").createExpression(function);
+                exp2.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Map<String, Object> map = exp1.evaluate(exchange, Map.class);
+                if (map != null) {
+                    Object value = exp2.evaluate(exchange, Object.class);
+                    if (value != null) {
+                        map.put(key, value);
+                    }
+                }
+                return map;
+            }
+
+            @Override
+            public String toString() {
+                return "mapAdd(" + source + ", " + key + ", " + function + ")";
+            }
+        };
+    }
+
+    /**
+     * Removes the result of the function from the source map
+     */
+    public static Expression mapRemoveExpression(final String source, final String key) {
+        return new ExpressionAdapter() {
+            private CamelContext context;
+            private Expression exp1;
+
+            @Override
+            public void init(CamelContext context) {
+                this.context = context;
+                exp1 = context.resolveLanguage("simple").createExpression(source);
+                exp1.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Map<String, Object> map = exp1.evaluate(exchange, Map.class);
+                if (map != null) {
+                    map.remove(key);
+                }
+                return map;
+            }
+
+            @Override
+            public String toString() {
+                return "mapRemove(" + source + ", " + key + ")";
+            }
+        };
+    }
+
+    /**
      * Filters the values from the source that matches the predicate function
      */
     public static Expression filterExpression(final String source, final String function) {

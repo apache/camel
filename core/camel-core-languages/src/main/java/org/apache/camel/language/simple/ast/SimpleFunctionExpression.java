@@ -1287,6 +1287,56 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
             return SimpleExpressionBuilder.listRemoveExpression(exp1, exp2);
         }
+        // mapAdd function
+        remainder = ifStartsWithReturnRemainder("mapAdd(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapAdd(key,exp)} or ${mapAdd(exp,key,exp)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            int skip;
+            String exp1 = "${body}";
+            String key;
+            if (tokens.length > 2) {
+                exp1 = tokens[0];
+                key = tokens[1];
+                skip = 2;
+            } else if (tokens.length == 2) {
+                key = tokens[0];
+                skip = 1;
+            } else {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapAdd(key,exp)} or ${mapAdd(exp,key,exp)} was: " + function, token.getIndex());
+            }
+            // the function takes the remainder of the tokens
+            String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
+            return SimpleExpressionBuilder.mapAddExpression(exp1, key, exp2);
+        }
+        // mapRemove function
+        remainder = ifStartsWithReturnRemainder("mapRemove(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapRemove(key)} or ${mapRemove(exp,key)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapRemove(key)} or ${mapRemove(exp,key)} was: " + function, token.getIndex());
+            }
+            String key;
+            String exp = "${body}";
+            if (tokens.length == 2) {
+                exp = tokens[0];
+                key = tokens[1];
+            } else {
+                key = tokens[0];
+            }
+            return SimpleExpressionBuilder.mapRemoveExpression(exp, key);
+        }
 
         // isEmpty function
         remainder = ifStartsWithReturnRemainder("isEmpty(", function);

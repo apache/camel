@@ -258,6 +258,7 @@ in arrays or lists.
 |`listAdd(source,fun)` | `List` | Adds the result of the function to the message body (or expression) as a list object.
 |`listRemove(source,fun)` | `List` | Removes the result of the function (use int to remove by position index) from the message body (or expression) as a list object.
 |`map(key1,value1,...)` | `Map` | The map function creates a `java.util.LinkedHashMap` with the given set of pairs.
+|`mapAdd(source,key,fun)` | `List` | Adds the result of the function to the message body (or expression) as a map object.
 |`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.
 |`reverse(val1,val2,...)` | `List` | Returns a list of all the values, but in reverse order.
 |`shuffle(val1,val2,...)` | `List` | Returns a list of all the values shuffled in random order.
@@ -290,6 +291,11 @@ something `${listAdd('Hello')}`. This will add to the message body. The source c
 of the message body, such as a variable: `${listAdd(${variable.myVar},'Hello')}`.
 To remove from a list, you use `${listRemove('Hello')}`, or use a number to refer to the position `${listRemove(0)}`.
 Use _last_ as a special index to remove the last element: `${listRemove(last)}`.
+
+Besides adding to a `List` its also possible to add to a `java.util.Map` with the `mapAdd` function. For example if the message body is a `Map` then you can add
+something `${mapAdd('country','DK')}`. This will add to the message body. The source can also be an expression instead
+of the message body, such as a variable: `${mapAdd(${variable.myVar},'country','DK')}`.
+To remove from a list, you use `${mapRemove('country')}`.
 
 The `map` function is similar to the `list` function but for creating a `Map` instead where the values are grouped in pairs 2 by 2.
 For example `${map(1,a,2,b,3,c)}` will return a map with 3 elements `{1=a, 2=b, 3=c}`.

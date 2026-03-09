@@ -92,6 +92,8 @@ public class SimpleUtils {
                     "lowercase",
                     "mandatorybodyas",
                     "map",
+                    "mapadd",
+                    "mapremove",
                     "max",
                     "messageas",
                     "messagehistory",

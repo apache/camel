@@ -3903,6 +3903,65 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testMapAdd() {
+        Map body = new HashMap<>();
+        body.put("A", "AAA");
+        body.put("B", "BBB");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${mapAdd('C','CCC')}");
+        Map map = expression.evaluate(exchange, Map.class);
+        assertEquals(3, map.size());
+        assertEquals("AAA", map.get("A"));
+        assertEquals("BBB", map.get("B"));
+        assertEquals("CCC", map.get("C"));
+
+        exchange.getMessage().setHeader("myChar", "DDD");
+        expression = context.resolveLanguage("simple").createExpression("${mapAdd('D',${header.myChar})}");
+        map = expression.evaluate(exchange, Map.class);
+        assertEquals(4, map.size());
+        assertEquals("AAA", map.get("A"));
+        assertEquals("BBB", map.get("B"));
+        assertEquals("CCC", map.get("C"));
+        assertEquals("DDD", map.get("D"));
+
+        // two-parameter form: add to a header list instead of body
+        Map headerMap = new HashMap();
+        headerMap.put("X", "XXX");
+        exchange.getMessage().setHeader("myMap", headerMap);
+        expression = context.resolveLanguage("simple").createExpression("${mapAdd(${header.myMap},'Y','YYY')}");
+        map = expression.evaluate(exchange, Map.class);
+        assertEquals(2, map.size());
+        assertEquals("XXX", map.get("X"));
+        assertEquals("YYY", map.get("Y"));
+    }
+
+    @Test
+    public void testMapRemove() {
+        Map body = new HashMap<>();
+        body.put("A", "AAA");
+        body.put("B", "BBB");
+        body.put("C", "CCC");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${mapRemove('C')}");
+        Map map = expression.evaluate(exchange, Map.class);
+        assertEquals(2, map.size());
+        assertEquals("AAA", map.get("A"));
+        assertEquals("BBB", map.get("B"));
+
+        // two-parameter form: add to a header list instead of body
+        Map headerMap = new HashMap();
+        headerMap.put("X", "XXX");
+        headerMap.put("Z", "ZZZ");
+        exchange.getMessage().setHeader("myMap", headerMap);
+        expression = context.resolveLanguage("simple").createExpression("${mapRemove(${header.myMap},'X')}");
+        map = expression.evaluate(exchange, Map.class);
+        assertEquals(1, map.size());
+        assertEquals("ZZZ", map.get("Z"));
+    }
+
+    @Test
     public void testForEach() {
         exchange.getMessage().setBody("Camel,World,Cheese");
 
