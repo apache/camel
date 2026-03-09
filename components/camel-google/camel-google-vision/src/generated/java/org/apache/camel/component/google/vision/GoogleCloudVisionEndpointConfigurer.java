@@ -28,8 +28,6 @@ public class GoogleCloudVisionEndpointConfigurer extends PropertyConfigurerSuppo
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxresults":
         case "maxResults": target.getConfiguration().setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "operationtype":
-        case "operationType": target.getConfiguration().setOperationType(property(camelContext, org.apache.camel.component.google.vision.GoogleCloudVisionOperations.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": target.getConfiguration().setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "serviceaccountkey":
@@ -51,8 +49,6 @@ public class GoogleCloudVisionEndpointConfigurer extends PropertyConfigurerSuppo
         case "lazyStartProducer": return boolean.class;
         case "maxresults":
         case "maxResults": return java.lang.Integer.class;
-        case "operationtype":
-        case "operationType": return org.apache.camel.component.google.vision.GoogleCloudVisionOperations.class;
         case "pojorequest":
         case "pojoRequest": return boolean.class;
         case "serviceaccountkey":
@@ -70,8 +66,6 @@ public class GoogleCloudVisionEndpointConfigurer extends PropertyConfigurerSuppo
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxresults":
         case "maxResults": return target.getConfiguration().getMaxResults();
-        case "operationtype":
-        case "operationType": return target.getConfiguration().getOperationType();
         case "pojorequest":
         case "pojoRequest": return target.getConfiguration().isPojoRequest();
         case "serviceaccountkey":

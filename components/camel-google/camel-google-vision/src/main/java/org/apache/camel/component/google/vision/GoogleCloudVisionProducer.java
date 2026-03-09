@@ -137,9 +137,6 @@ public class GoogleCloudVisionProducer extends DefaultProducer {
         GoogleCloudVisionOperations operation = exchange.getIn().getHeader(GoogleCloudVisionConstants.OPERATION,
                 GoogleCloudVisionOperations.class);
         if (operation == null) {
-            operation = getConfiguration().getOperationType();
-        }
-        if (operation == null) {
             String operationName = getConfiguration().getOperation();
             if (operationName != null) {
                 operation = GoogleCloudVisionOperations.valueOf(operationName);

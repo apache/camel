@@ -38,7 +38,6 @@ public class GoogleCloudVisionConfigurationTest {
         GoogleCloudVisionConfiguration config = new GoogleCloudVisionConfiguration();
         config.setOperation("labelDetection");
         config.setServiceAccountKey("test-key.json");
-        config.setOperationType(GoogleCloudVisionOperations.labelDetection);
         config.setMaxResults(10);
         config.setPojoRequest(true);
 
@@ -46,7 +45,6 @@ public class GoogleCloudVisionConfigurationTest {
         assertNotSame(config, copy);
         assertEquals("labelDetection", copy.getOperation());
         assertEquals("test-key.json", copy.getServiceAccountKey());
-        assertEquals(GoogleCloudVisionOperations.labelDetection, copy.getOperationType());
         assertEquals(10, copy.getMaxResults());
     }
 

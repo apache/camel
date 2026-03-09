@@ -92,36 +92,6 @@ public interface GoogleCloudVisionEndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform on the producer.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.vision.GoogleCloudVisionOperations</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param operationType the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudVisionEndpointBuilder operationType(org.apache.camel.component.google.vision.GoogleCloudVisionOperations operationType) {
-            doSetProperty("operationType", operationType);
-            return this;
-        }
-        /**
-         * The operation to perform on the producer.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.vision.GoogleCloudVisionOperations</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param operationType the value to set
-         * @return the dsl builder
-         */
-        default GoogleCloudVisionEndpointBuilder operationType(String operationType) {
-            doSetProperty("operationType", operationType);
-            return this;
-        }
-        /**
          * Specifies if the request is a pojo request.
          * 
          * The option is a: <code>boolean</code> type.

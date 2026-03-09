@@ -35,10 +35,6 @@ public class GoogleCloudVisionConfiguration implements Cloneable, GoogleCommonCo
     private String serviceAccountKey;
 
     @UriParam(label = "producer",
-              enums = "labelDetection,textDetection,faceDetection,landmarkDetection,logoDetection,safeSearchDetection,imagePropertiesDetection,webDetection,objectLocalization,cropHintsDetection,documentTextDetection")
-    private GoogleCloudVisionOperations operationType;
-
-    @UriParam(label = "producer",
               description = "The max number of results to return per feature type. Default is unset (API default).")
     private Integer maxResults;
 
@@ -74,19 +70,6 @@ public class GoogleCloudVisionConfiguration implements Cloneable, GoogleCommonCo
      */
     public void setServiceAccountKey(String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
-    }
-
-    public GoogleCloudVisionOperations getOperationType() {
-        return operationType;
-    }
-
-    /**
-     * The operation to perform on the producer.
-     *
-     * @param operationType
-     */
-    public void setOperationType(GoogleCloudVisionOperations operationType) {
-        this.operationType = operationType;
     }
 
     public Integer getMaxResults() {

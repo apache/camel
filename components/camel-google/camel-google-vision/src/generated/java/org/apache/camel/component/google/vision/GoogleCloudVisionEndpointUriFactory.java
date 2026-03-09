@@ -23,12 +23,11 @@ public class GoogleCloudVisionEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(6);
         props.add("client");
         props.add("lazyStartProducer");
         props.add("maxResults");
         props.add("operation");
-        props.add("operationType");
         props.add("pojoRequest");
         props.add("serviceAccountKey");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
