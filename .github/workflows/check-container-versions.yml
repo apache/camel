@@ -39,6 +39,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
 
     steps:
       - name: Checkout repository
@@ -304,6 +305,17 @@ jobs:
 
                 echo "✅ PR created successfully for $PROPERTY_NAME"
                 PRS_CREATED=$((PRS_CREATED + 1))
+
+                # Trigger CI build for the PR via workflow_dispatch
+                # (GITHUB_TOKEN events don't trigger pull_request workflows,
+                # but workflow_dispatch is an exception to this limitation)
+                PR_NUMBER=$(gh pr view "$BRANCH_NAME" --json number --jq '.number' 2>/dev/null || echo "")
+                if [[ -n "$PR_NUMBER" ]]; then
+                  echo "Triggering CI build for PR #$PR_NUMBER on branch $BRANCH_NAME"
+                  gh workflow run pr-build-main.yml \
+                    -f pr_number="$PR_NUMBER" \
+                    -f pr_ref="$BRANCH_NAME" || echo "⚠️ Failed to trigger CI build"
+                fi
               else
                 echo "❌ Failed to create PR for $PROPERTY_NAME"
               fi
