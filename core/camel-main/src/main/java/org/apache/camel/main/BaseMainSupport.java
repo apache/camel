@@ -97,6 +97,7 @@ import org.apache.camel.support.jsse.CipherSuitesParameters;
 import org.apache.camel.support.jsse.FilterParameters;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.NamedGroupsParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.SecureRandomParameters;
@@ -2197,6 +2198,27 @@ public abstract class BaseMainSupport extends BaseService {
                 }
             }
             sslContextParameters.setCipherSuitesFilter(fp);
+        }
+        if (sslConfig.getNamedGroups() != null) {
+            NamedGroupsParameters ngp = new NamedGroupsParameters();
+            for (String g : sslConfig.getNamedGroups().split(",")) {
+                ngp.addNamedGroup(g);
+            }
+            sslContextParameters.setNamedGroups(ngp);
+        }
+        if (sslConfig.getNamedGroupsInclude() != null || sslConfig.getNamedGroupsExclude() != null) {
+            FilterParameters fp = new FilterParameters();
+            if (sslConfig.getNamedGroupsInclude() != null) {
+                for (String g : sslConfig.getNamedGroupsInclude().split(",")) {
+                    fp.addInclude(g);
+                }
+            }
+            if (sslConfig.getNamedGroupsExclude() != null) {
+                for (String g : sslConfig.getNamedGroupsExclude().split(",")) {
+                    fp.addExclude(g);
+                }
+            }
+            sslContextParameters.setNamedGroupsFilter(fp);
         }
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);

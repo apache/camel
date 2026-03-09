@@ -44,6 +44,12 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     private String cipherSuitesInclude;
     @Metadata(label = "advanced")
     private String cipherSuitesExclude;
+    @Metadata(label = "advanced")
+    private String namedGroups;
+    @Metadata(label = "advanced")
+    private String namedGroupsInclude;
+    @Metadata(label = "advanced")
+    private String namedGroupsExclude;
     @Metadata
     private String keyStore;
     @Metadata(label = "advanced")
@@ -183,6 +189,52 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public void setCipherSuitesExclude(String cipherSuitesExclude) {
         this.cipherSuitesExclude = cipherSuitesExclude;
+    }
+
+    public String getNamedGroups() {
+        return namedGroups;
+    }
+
+    /**
+     * List of TLS/SSL named groups (key exchange groups). Multiple names can be separated by comma.
+     * <p>
+     * Named groups control which key exchange algorithms are available during the TLS handshake, including post-quantum
+     * hybrid groups such as X25519MLKEM768.
+     */
+    public void setNamedGroups(String namedGroups) {
+        this.namedGroups = namedGroups;
+    }
+
+    public String getNamedGroupsInclude() {
+        return namedGroupsInclude;
+    }
+
+    /**
+     * Filters TLS/SSL named groups.
+     * <p>
+     * This filter is used for including named groups that match the naming pattern. Multiple names can be separated by
+     * comma.
+     * <p>
+     * Notice that if the namedGroups option has been configured then the include/exclude filters are not in use.
+     */
+    public void setNamedGroupsInclude(String namedGroupsInclude) {
+        this.namedGroupsInclude = namedGroupsInclude;
+    }
+
+    public String getNamedGroupsExclude() {
+        return namedGroupsExclude;
+    }
+
+    /**
+     * Filters TLS/SSL named groups.
+     * <p>
+     * This filter is used for excluding named groups that match the naming pattern. Multiple names can be separated by
+     * comma.
+     * <p>
+     * Notice that if the namedGroups option has been configured then the include/exclude filters are not in use.
+     */
+    public void setNamedGroupsExclude(String namedGroupsExclude) {
+        this.namedGroupsExclude = namedGroupsExclude;
     }
 
     public String getKeyStore() {
@@ -422,6 +474,43 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withCipherSuitesExclude(String cipherSuitesExclude) {
         this.cipherSuitesExclude = cipherSuitesExclude;
+        return this;
+    }
+
+    /**
+     * List of TLS/SSL named groups (key exchange groups). Multiple names can be separated by comma.
+     * <p>
+     * Named groups control which key exchange algorithms are available during the TLS handshake, including post-quantum
+     * hybrid groups such as X25519MLKEM768.
+     */
+    public SSLConfigurationProperties withNamedGroups(String namedGroups) {
+        this.namedGroups = namedGroups;
+        return this;
+    }
+
+    /**
+     * Filters TLS/SSL named groups.
+     * <p>
+     * This filter is used for including named groups that match the naming pattern. Multiple names can be separated by
+     * comma.
+     * <p>
+     * Notice that if the namedGroups option has been configured then the include/exclude filters are not in use.
+     */
+    public SSLConfigurationProperties withNamedGroupsInclude(String namedGroupsInclude) {
+        this.namedGroupsInclude = namedGroupsInclude;
+        return this;
+    }
+
+    /**
+     * Filters TLS/SSL named groups.
+     * <p>
+     * This filter is used for excluding named groups that match the naming pattern. Multiple names can be separated by
+     * comma.
+     * <p>
+     * Notice that if the namedGroups option has been configured then the include/exclude filters are not in use.
+     */
+    public SSLConfigurationProperties withNamedGroupsExclude(String namedGroupsExclude) {
+        this.namedGroupsExclude = namedGroupsExclude;
         return this;
     }
 

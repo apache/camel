@@ -16,10 +16,14 @@
  */
 package org.apache.camel.main;
 
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.jsse.ClientAuthentication;
+import org.apache.camel.support.jsse.FilterParameters;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.NamedGroupsParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustAllTrustManager;
@@ -28,6 +32,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MainSSLTest {
 
@@ -153,6 +158,135 @@ public class MainSSLTest {
         SSLContextParameters sslParams = context.getSSLContextParameters();
         TrustManagersParameters tmp = sslParams.getTrustManagers();
         Assertions.assertEquals(tmp.getTrustManager(), TrustAllTrustManager.INSTANCE);
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLNamedGroups() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.ssl.enabled", "true");
+        main.addInitialProperty("camel.ssl.keyStore", "server.jks");
+        main.addInitialProperty("camel.ssl.keystorePassword", "security");
+        main.addInitialProperty("camel.ssl.namedGroups", "X25519MLKEM768,X25519,secp256r1");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+
+        NamedGroupsParameters ngp = sslParams.getNamedGroups();
+        assertNotNull(ngp);
+
+        List<String> groups = ngp.getNamedGroup();
+        Assertions.assertEquals(3, groups.size());
+        Assertions.assertEquals("X25519MLKEM768", groups.get(0));
+        Assertions.assertEquals("X25519", groups.get(1));
+        Assertions.assertEquals("secp256r1", groups.get(2));
+
+        // when explicit named groups are set, filter should be null
+        assertNull(sslParams.getNamedGroupsFilter());
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLNamedGroupsFluent() {
+        Main main = new Main();
+
+        main.configure().sslConfig()
+                .withEnabled(true)
+                .withKeyStore("server.jks")
+                .withKeystorePassword("security")
+                .withNamedGroups("X25519MLKEM768,X25519,secp256r1,secp384r1");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+
+        NamedGroupsParameters ngp = sslParams.getNamedGroups();
+        assertNotNull(ngp);
+
+        List<String> groups = ngp.getNamedGroup();
+        Assertions.assertEquals(4, groups.size());
+        Assertions.assertEquals("X25519MLKEM768", groups.get(0));
+        Assertions.assertEquals("secp384r1", groups.get(3));
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLNamedGroupsFilter() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.ssl.enabled", "true");
+        main.addInitialProperty("camel.ssl.keyStore", "server.jks");
+        main.addInitialProperty("camel.ssl.keystorePassword", "security");
+        main.addInitialProperty("camel.ssl.namedGroupsInclude", "X25519.*,secp.*");
+        main.addInitialProperty("camel.ssl.namedGroupsExclude", "secp521r1");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+
+        // when filters are used, explicit named groups should be null
+        assertNull(sslParams.getNamedGroups());
+
+        FilterParameters fp = sslParams.getNamedGroupsFilter();
+        assertNotNull(fp);
+
+        List<String> includes = fp.getInclude();
+        Assertions.assertEquals(2, includes.size());
+        Assertions.assertEquals("X25519.*", includes.get(0));
+        Assertions.assertEquals("secp.*", includes.get(1));
+
+        List<String> excludes = fp.getExclude();
+        Assertions.assertEquals(1, excludes.size());
+        Assertions.assertEquals("secp521r1", excludes.get(0));
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLNamedGroupsFilterFluent() {
+        Main main = new Main();
+
+        main.configure().sslConfig()
+                .withEnabled(true)
+                .withKeyStore("server.jks")
+                .withKeystorePassword("security")
+                .withNamedGroupsInclude("X25519.*")
+                .withNamedGroupsExclude("secp521r1");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+
+        assertNull(sslParams.getNamedGroups());
+
+        FilterParameters fp = sslParams.getNamedGroupsFilter();
+        assertNotNull(fp);
+
+        Assertions.assertEquals(1, fp.getInclude().size());
+        Assertions.assertEquals("X25519.*", fp.getInclude().get(0));
+        Assertions.assertEquals(1, fp.getExclude().size());
+        Assertions.assertEquals("secp521r1", fp.getExclude().get(0));
 
         main.stop();
     }
