@@ -1,0 +1,15 @@
+{
+  "name": "Person",
+  "type": "record",
+  "namespace": "org.apache.camel",
+  "fields": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "age",
+      "type": "int"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "google-vision",
+    "title": "Google Cloud Vision",
+    "description": "Detect labels, text, faces, logos and more on images through Google Cloud Vision API",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "label": "cloud,ai",
+    "javaType": "org.apache.camel.component.google.vision.GoogleCloudVisionComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-vision",
+    "version": "4.19.0-SNAPSHOT",
+    "scheme": "google-vision",
+    "extendsScheme": "",
+    "syntax": "google-vision:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "GoogleCloudVisionOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "org.apache.camel.component.google.vision.GoogleCloudVisionOperations", "enum": [ "labelDetection", "textDetection", "faceDetection", "landmarkDetection", "logoDetection", "safeSearchDetection", "imagePropertiesDetection", "webDetection", "objectLocalization", "cropHintsDetection", "documentTextDetection" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform", "constantName": "org.apache.camel.component.google.vision.GoogleCloudVisionConstants#OPERATION" },
+    "GoogleCloudVisionResponseObject": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "com.google.cloud.vision.v1.AnnotateImageResponse", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The response object resulting from the Google Cloud Vision API invocation", "constantName": "org.apache.camel.component.google.vision.GoogleCloudVisionConstants#RESPONSE_OBJECT" }
+  },
+  "properties": {
+    "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.vision.GoogleCloudVisionConfiguration", "configurationField": "configuration", "description": "The operation name" },
+    "serviceAccountKey": { "index": 1, "kind": "parameter", "displayName": "Service Account Key", "group": "common", "label": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.vision.GoogleCloudVisionConfiguration", "configurationField": "configuration", "description": "Service account key to authenticate an application as a service account" },
+    "maxResults": { "index": 2, "kind": "parameter", "displayName": "Max Results", "group": "producer", "label": "producer", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.vision.GoogleCloudVisionConfiguration", "configurationField": "configuration", "description": "The max number of results to return per feature type. Default is unset (API default)." },
+    "pojoRequest": { "index": 3, "kind": "parameter", "displayName": "Pojo Request", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.google.vision.GoogleCloudVisionConfiguration", "configurationField": "configuration", "description": "Specifies if the request is a pojo request" },
+    "lazyStartProducer": { "index": 4, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "client": { "index": 5, "kind": "parameter", "displayName": "Client", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "com.google.cloud.vision.v1.ImageAnnotatorClient", "deprecated": false, "deprecationNote": "", "autowired": true, "secret": false, "configurationClass": "org.apache.camel.component.google.vision.GoogleCloudVisionConfiguration", "configurationField": "configuration", "description": "The client to use during service invocation." }
+  }
+}

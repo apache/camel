@@ -55,4 +55,7 @@ public final class QdrantHeaders {
 
     @Metadata(description = "The point id to use for operation.", javaType = "int")
     public static final String POINT_ID = "CamelQdrantPointId";
+
+    @Metadata(description = "The maximum number of results to return from a similarity search.", javaType = "int")
+    public static final String MAX_RESULTS = "CamelQdrantMaxResults";
 }

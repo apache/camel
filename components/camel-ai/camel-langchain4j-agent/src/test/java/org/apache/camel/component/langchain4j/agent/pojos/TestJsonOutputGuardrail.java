@@ -17,8 +17,8 @@
 package org.apache.camel.component.langchain4j.agent.pojos;
 
 import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.guardrail.JsonExtractorOutputGuardrail;
 import dev.langchain4j.guardrail.OutputGuardrailResult;
+import dev.langchain4j.guardrails.JsonExtractorOutputGuardrail;
 
 /**
  * Test JSON output guardrail that extends JsonExtractorOutputGuardrail but returns the JSON as a String instead of a

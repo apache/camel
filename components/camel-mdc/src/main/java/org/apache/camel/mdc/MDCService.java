@@ -16,7 +16,10 @@
  */
 package org.apache.camel.mdc;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -203,12 +206,52 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
     // Set/unset those headers selected by the user.
     private void userSelectedHeadersMDC(Exchange exchange, boolean push) {
         for (String customHeader : getCustomHeaders().split(",")) {
-            if (exchange.getIn().getHeader(customHeader) != null) {
-                if (push) {
-                    MDC.put(customHeader, exchange.getIn().getHeader(customHeader, String.class));
-                } else {
-                    MDC.remove(customHeader);
+            if (customHeader.contains("*")) {
+                for (String filteredHeader : filter(exchange.getIn().getHeaders().keySet(), customHeader)) {
+                    String value = exchange.getIn().getHeader(filteredHeader, String.class);
+                    mdcAction(exchange, filteredHeader, value, push);
                 }
+            } else {
+                String value = exchange.getIn().getHeader(customHeader, String.class);
+                mdcAction(exchange, customHeader, value, push);
+            }
+        }
+    }
+
+    // filter returns a list of values matching the condition expressed in the filter.
+    private List<String> filter(Set<String> all, String filter) {
+        List<String> filteredHeaders = new ArrayList<>();
+        for (String f : all) {
+            if (matches(filter, f)) {
+                filteredHeaders.add(f);
+            }
+        }
+
+        return filteredHeaders;
+    }
+
+    // NOTE: we avoid using regex on purpose in order to avoid potential vulnerabilities and better performances.
+    private boolean matches(String filter, String value) {
+        String[] parts = filter.split("\\*", -1);
+
+        int pos = 0;
+        for (String part : parts) {
+            int idx = value.indexOf(part, pos);
+            if (idx == -1) {
+                return false;
+            }
+            pos = idx + part.length();
+        }
+
+        return true;
+    }
+
+    private void mdcAction(Exchange exchange, String key, String value, boolean push) {
+        if (value != null) {
+            if (push) {
+                MDC.put(key, value);
+            } else {
+                MDC.remove(key);
             }
         }
     }
@@ -229,12 +272,14 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
     // Set/unset those properties selected by the user.
     private void userSelectedPropertiesMDC(Exchange exchange, boolean push) {
         for (String customProperty : getCustomProperties().split(",")) {
-            if (exchange.getProperty(customProperty) != null) {
-                if (push) {
-                    MDC.put(customProperty, exchange.getProperty(customProperty, String.class));
-                } else {
-                    MDC.remove(customProperty);
+            if (customProperty.contains("*")) {
+                for (String filteredProperty : filter(exchange.getProperties().keySet(), customProperty)) {
+                    String value = exchange.getProperty(filteredProperty, String.class);
+                    mdcAction(exchange, filteredProperty, value, push);
                 }
+            } else {
+                String value = exchange.getProperty(customProperty, String.class);
+                mdcAction(exchange, customProperty, value, push);
             }
         }
     }

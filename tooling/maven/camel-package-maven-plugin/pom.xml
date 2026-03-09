@@ -219,6 +219,17 @@
 
     <profiles>
         <profile>
+            <id>skipITs</id>
+            <activation>
+                <property>
+                    <name>skipITs</name>
+                </property>
+            </activation>
+            <properties>
+                <skip.camel.maven.plugin.tests>true</skip.camel.maven.plugin.tests>
+            </properties>
+        </profile>
+        <profile>
             <id>full</id>
             <activation>
                 <property>
@@ -276,6 +287,7 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <skip>${skip.camel.maven.plugin.tests}</skip>
                             <executable>bash</executable>
                             <arguments>
                                 <argument>-c</argument>

@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 public final class CamelThreadFactory implements ThreadFactoryTypeAware {
     private static final Logger LOG = LoggerFactory.getLogger(CamelThreadFactory.class);
 
-    private static final ThreadFactoryType TYPE = ThreadFactoryType.current();
-
     private final String pattern;
     private final String name;
     private final boolean daemon;
@@ -37,7 +35,7 @@ public final class CamelThreadFactory implements ThreadFactoryTypeAware {
         this.pattern = pattern;
         this.name = name;
         this.daemon = daemon;
-        this.threadType = daemon ? TYPE : ThreadFactoryType.PLATFORM;
+        this.threadType = daemon ? ThreadFactoryType.current() : ThreadFactoryType.PLATFORM;
     }
 
     @Override

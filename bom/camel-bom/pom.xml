@@ -979,6 +979,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-google-vision</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-grape</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
@@ -995,11 +1000,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-groovy</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-groovy-xml</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -1210,6 +1210,26 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jackson-protobuf</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jackson3</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jackson3-avro</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jackson3-protobuf</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jackson3xml</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -2360,11 +2380,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tooling-util</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-torchserve</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
       <dependency>

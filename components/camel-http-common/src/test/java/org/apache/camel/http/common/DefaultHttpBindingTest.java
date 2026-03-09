@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
     public void testConvertDate() {
         DefaultHttpBinding binding = new DefaultHttpBinding();
         Date date = new Date();
-        Exchange exchange = super.createExchangeWithBody(null);
+        Exchange exchange = new DefaultExchange(context);
 
         String value = binding.convertHeaderValueToString(exchange, date);
         assertNotEquals(value, date.toString());
@@ -43,7 +44,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
     public void testConvertDateTypeConverter() {
         DefaultHttpBinding binding = new DefaultHttpBinding();
         Date date = new Date();
-        Exchange exchange = super.createExchangeWithBody(null);
+        Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(DefaultHttpBinding.DATE_LOCALE_CONVERSION, false);
         String value = binding.convertHeaderValueToString(exchange, date);
         assertEquals(value, date.toString());
@@ -53,7 +54,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
     public void testConvertLocale() {
         DefaultHttpBinding binding = new DefaultHttpBinding();
         Locale l = Locale.SIMPLIFIED_CHINESE;
-        Exchange exchange = super.createExchangeWithBody(null);
+        Exchange exchange = new DefaultExchange(context);
 
         String value = binding.convertHeaderValueToString(exchange, l);
         assertNotEquals(value, l.toString());
@@ -64,7 +65,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
     public void testConvertLocaleTypeConverter() {
         DefaultHttpBinding binding = new DefaultHttpBinding();
         Locale l = Locale.SIMPLIFIED_CHINESE;
-        Exchange exchange = super.createExchangeWithBody(null);
+        Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(DefaultHttpBinding.DATE_LOCALE_CONVERSION, false);
         String value = binding.convertHeaderValueToString(exchange, l);
         assertEquals(value, l.toString());

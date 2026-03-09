@@ -127,7 +127,7 @@ to construct the `String` containing the message to be logged.
 
 === Logging message body with streaming
 
-If the message body is stream based, then logging the message body may cause the message body to be empty afterward. See this xref:manual:faq:why-is-my-message-body-empty.adoc[FAQ]. For streamed messages, you can use Stream caching to allow logging the message body and be able to read the message body afterward again.
+If the message body is stream based, then logging the message body may cause the message body to be empty afterward. For streamed messages, you can use xref:manual::stream-caching.adoc[Stream caching] to allow logging the message body and be able to read the message body afterward again.
 
 [tabs]
 ====

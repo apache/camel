@@ -1,4 +1,0 @@
-= How does Camel work?
-
-Please see the xref:ROOT:architecture.adoc[Architecture] for details of how
-things work.

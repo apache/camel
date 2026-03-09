@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=1"
-def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dkafka.instance.type=local-strimzi-container -Dci.env.name=apache.org"
+def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 def MAVEN_TEST_PARAMS_UBUNTU = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 /*
 Below parameters are required for camel/core/camel-core module's test cases to pass on ppc64 and s390x
@@ -148,7 +148,7 @@ pipeline {
                                 if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_21_latest") {
                                     withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
                                         echo "Code quality review ENABLED for ${PLATFORM} with ${JDK_NAME}"
-                                        sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"
+                                        sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.coverage.exclusions=test-infra/**,tooling/**"
                                     }
                                 } else {
                                     echo "Code quality review DISABLED for ${PLATFORM} with ${JDK_NAME}"

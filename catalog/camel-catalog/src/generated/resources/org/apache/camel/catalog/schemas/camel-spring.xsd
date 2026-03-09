@@ -611,6 +611,15 @@ Evaluates a Groovy script.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="groovyJson" type="tns:groovyJSonDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Transform between JSon and java.util.Map or java.util.List objects.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="groovyXml" type="tns:groovyXmlDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3468,6 +3477,11 @@ configuration.
       <xs:element maxOccurs="unbounded" minOccurs="0" name="exclude" nillable="true" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
+  <xs:complexType name="namedGroupsParameters">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="namedGroup" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="sniHostNames">
     <xs:sequence>
       <xs:element maxOccurs="unbounded" minOccurs="0" name="sniHostName" type="xs:string"/>
@@ -3476,6 +3490,11 @@ configuration.
   <xs:complexType name="secureSocketProtocolsParameters">
     <xs:sequence>
       <xs:element maxOccurs="unbounded" minOccurs="0" name="secureSocketProtocol" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="signatureSchemesParameters">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="signatureScheme" nillable="true" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="output">
@@ -7423,6 +7442,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:fory"/>
             <xs:element ref="tns:grok"/>
+            <xs:element ref="tns:groovyJson"/>
             <xs:element ref="tns:groovyXml"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
@@ -8824,6 +8844,22 @@ non-terminal pattern is used. Default value: true
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP}). Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="groovyJSonDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="prettyPrint" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To pretty printing output nicely formatted. Is by default true. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14898,6 +14934,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:fory"/>
             <xs:element ref="tns:grok"/>
+            <xs:element ref="tns:groovyJson"/>
             <xs:element ref="tns:groovyXml"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
@@ -16329,6 +16366,7 @@ Sets the example.
         <xs:element ref="tns:flatpack"/>
         <xs:element ref="tns:fory"/>
         <xs:element ref="tns:grok"/>
+        <xs:element ref="tns:groovyJson"/>
         <xs:element ref="tns:groovyXml"/>
         <xs:element ref="tns:gzipDeflater"/>
         <xs:element ref="tns:hl7"/>
@@ -17232,6 +17270,7 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:flatpack"/>
             <xs:element ref="tns:fory"/>
             <xs:element ref="tns:grok"/>
+            <xs:element ref="tns:groovyJson"/>
             <xs:element ref="tns:groovyXml"/>
             <xs:element ref="tns:gzipDeflater"/>
             <xs:element ref="tns:hl7"/>
@@ -18017,6 +18056,10 @@ converter. The default logging level is DEBUG. Default value: DEBUG
           <xs:element minOccurs="0" name="cipherSuitesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocols" type="tns:secureSocketProtocolsParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocolsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="namedGroups" type="tns:namedGroupsParameters"/>
+          <xs:element minOccurs="0" name="namedGroupsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemes" type="tns:signatureSchemesParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="sniHostNames" type="tns:sniHostNames"/>
         </xs:all>
         <xs:attribute name="sessionTimeout" type="xs:string"/>
@@ -18031,6 +18074,10 @@ converter. The default logging level is DEBUG. Default value: DEBUG
           <xs:element minOccurs="0" name="cipherSuitesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocols" type="tns:secureSocketProtocolsParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocolsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="namedGroups" type="tns:namedGroupsParameters"/>
+          <xs:element minOccurs="0" name="namedGroupsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemes" type="tns:signatureSchemesParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="keyManagers" type="tns:keyManagersParametersFactoryBean"/>
           <xs:element minOccurs="0" name="trustManagers" type="tns:trustManagersParametersFactoryBean"/>
           <xs:element minOccurs="0" name="secureRandom" type="tns:secureRandomParametersFactoryBean"/>
@@ -18101,6 +18148,10 @@ An optional certificate alias to use. This is useful when the keystore has multi
           <xs:element minOccurs="0" name="cipherSuitesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocols" type="tns:secureSocketProtocolsParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocolsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="namedGroups" type="tns:namedGroupsParameters"/>
+          <xs:element minOccurs="0" name="namedGroupsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemes" type="tns:signatureSchemesParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemesFilter" type="tns:filterParameters"/>
         </xs:all>
         <xs:attribute name="sessionTimeout" type="xs:string"/>
         <xs:attribute name="clientAuthentication" type="xs:string"/>

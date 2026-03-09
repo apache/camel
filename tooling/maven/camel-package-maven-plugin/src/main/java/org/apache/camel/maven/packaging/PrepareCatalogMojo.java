@@ -658,6 +658,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // Check duplicates
         duplicateJsonFiles = getDuplicates(jsonFiles);
 
+        // Filter out Jackson 3.x data formats
+        jsonFiles = filterJackson3Duplicates(jsonFiles);
+
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> dataFormatsOutDir.resolve(p.getFileName()));
         try (Stream<Path> stream = list(dataFormatsOutDir).filter(p -> !newJsons.containsValue(p))) {
@@ -777,6 +780,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // Check duplicates
         duplicateJsonFiles = getDuplicates(jsonFiles);
+
+        // Filter out Jackson 3.x transformers
+        jsonFiles = filterJackson3Duplicates(jsonFiles);
 
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> transformersOutDir.resolve(p.getFileName()));
@@ -1514,6 +1520,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 // list
                 this::concat); // merge lists
         return byName.values().stream().flatMap(l -> l.stream().skip(1)).collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    /**
+     * Filters out Jackson 3.x data formats from the catalog - they conflict with the previous existing camel-jackson /
+     * camel-jacksonxml / camel-jackson-avro / camel-jackson-protobuf.
+     */
+    private Set<Path> filterJackson3Duplicates(Set<Path> jsonFiles) {
+        return jsonFiles.stream()
+                .filter(p -> !p.toString().contains("/components/camel-jackson3"))
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
 }

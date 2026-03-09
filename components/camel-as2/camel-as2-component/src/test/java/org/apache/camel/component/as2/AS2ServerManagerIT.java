@@ -624,8 +624,8 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        this.clientSslContext = setupClientContext(context);
-        this.serverSslContext = setupClientContext(context);
+        clientSslContext = setupClientContext(context);
+        serverSslContext = setupClientContext(context);
         AS2Component as2Component = (AS2Component) context.getComponent("as2");
         AS2Configuration configuration = as2Component.getConfiguration();
         configuration.setSslContext(serverSslContext);

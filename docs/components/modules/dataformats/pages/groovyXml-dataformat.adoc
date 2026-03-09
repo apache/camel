@@ -1,1 +1,1 @@
-../../../../../components/camel-groovy-xml/src/main/docs/groovyXml-dataformat.adoc
+../../../../../components/camel-groovy/src/main/docs/groovyXml-dataformat.adoc

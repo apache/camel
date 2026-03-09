@@ -34,8 +34,8 @@ If you need persistence, reliability or distributed SEDA, try using xref:jms-com
 ====
 *Synchronous*
 
-The xref:direct-component.adoc[Direct] component provides synchronous invocation
-of any consumers when a producer sends a message exchange.
+The xref:direct-component.adoc[Direct] component provides synchronous invocation (uses no threading; it directly invokes the
+consumer when sending) of any consumers when a producer sends a message exchange.
 ====
 
 == URI format

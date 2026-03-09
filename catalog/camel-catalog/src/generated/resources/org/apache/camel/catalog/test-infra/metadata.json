@@ -548,15 +548,6 @@
   "artifactId" : "camel-test-infra-azure-storage-blob",
   "version" : "4.19.0-SNAPSHOT"
 }, {
-  "service" : "org.apache.camel.test.infra.torchserve.services.TorchServeInfraService",
-  "description" : "TorchServe is a flexible tool for serving PyTorch",
-  "implementation" : "org.apache.camel.test.infra.torchserve.services.TorchServeLocalContainerInfraService",
-  "alias" : [ "torch-serve" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-torchserve",
-  "version" : "4.19.0-SNAPSHOT"
-}, {
   "service" : "org.apache.camel.test.infra.docling.services.DoclingInfraService",
   "description" : "Document processing and conversion service",
   "implementation" : "org.apache.camel.test.infra.docling.services.DoclingLocalContainerInfraService",

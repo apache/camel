@@ -58,6 +58,7 @@ bin\camel.bat [command] [options]
 - Avoids classpath conflicts (dependencies kept as separate JARs)
 - Each self-executing JAR is its own release, avoiding version complexity
 - Can still be used with JBang if preferred
+- Locked to use pinned version of Camel which is the same version as the launcher; to upgrade, then download and use a newer launcher.
 
 == Limitations
 

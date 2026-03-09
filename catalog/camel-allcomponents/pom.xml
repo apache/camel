@@ -849,6 +849,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-google-vision</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-grape</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -865,11 +870,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-groovy</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-groovy-xml</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1075,6 +1075,26 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jackson-protobuf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson3</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson3-avro</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson3-protobuf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson3xml</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -2125,11 +2145,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-timer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-torchserve</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -49,16 +49,15 @@ import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.config.Http1Config;
 import org.apache.hc.core5.http.impl.io.HttpService;
+import org.apache.hc.core5.http.impl.routing.RequestRouter;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.io.HttpServerConnection;
 import org.apache.hc.core5.http.io.HttpServerRequestHandler;
 import org.apache.hc.core5.http.io.support.BasicHttpServerRequestHandler;
-import org.apache.hc.core5.http.protocol.BasicHttpContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
-import org.apache.hc.core5.http.protocol.RequestHandlerRegistry;
 import org.apache.hc.core5.http.protocol.ResponseConnControl;
 import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.apache.hc.core5.http.protocol.ResponseDate;
@@ -371,7 +370,22 @@ public class AS2ServerConnection {
     class RequestListenerService {
 
         private final HttpService httpService;
-        private final RequestHandlerRegistry registry;
+        private final Map<String, HttpRequestHandler> routeMap = new LinkedHashMap<>();
+        private volatile HttpServerRequestHandler currentHandler;
+
+        /**
+         * Delegating handler that always forwards to the current handler. This allows us to update the routing
+         * configuration dynamically.
+         */
+        private class DelegatingRequestHandler implements HttpServerRequestHandler {
+            @Override
+            public void handle(
+                    ClassicHttpRequest request, HttpServerRequestHandler.ResponseTrigger responseTrigger,
+                    HttpContext context)
+                    throws HttpException, IOException {
+                currentHandler.handle(request, responseTrigger, context);
+            }
+        }
 
         public RequestListenerService(String as2Version,
                                       String originServer,
@@ -384,20 +398,32 @@ public class AS2ServerConnection {
                     as2Version, originServer, serverFqdn,
                     mdnMessageTemplate);
 
-            registry = new RequestHandlerRegistry<>();
-            HttpServerRequestHandler handler = new BasicHttpServerRequestHandler(registry);
+            // Create initial empty router
+            currentHandler = createHandler();
 
-            // Set up the HTTP service
-            httpService = new HttpService(inhttpproc, handler);
+            // Set up the HTTP service with delegating handler
+            httpService = new HttpService(inhttpproc, new DelegatingRequestHandler());
+        }
+
+        private HttpServerRequestHandler createHandler() {
+            RequestRouter.Builder<HttpRequestHandler> builder = RequestRouter.builder();
+            // Use LOCAL_AUTHORITY_RESOLVER to match any host
+            builder.resolveAuthority(RequestRouter.LOCAL_AUTHORITY_RESOLVER);
+            for (Map.Entry<String, HttpRequestHandler> entry : routeMap.entrySet()) {
+                builder.addRoute(RequestRouter.LOCAL_AUTHORITY, entry.getKey(), entry.getValue());
+            }
+            return new BasicHttpServerRequestHandler(builder.build());
         }
 
         void registerHandler(String requestUriPattern, HttpRequestHandler httpRequestHandler) {
-            registry.register(null, requestUriPattern, httpRequestHandler);
+            routeMap.put(requestUriPattern, httpRequestHandler);
+            currentHandler = createHandler();
         }
 
         void unregisterHandler(String requestUriPattern) {
             // we cannot remove from http registry, but we can replace with a not found to simulate 404
-            registry.register(null, requestUriPattern, new NotFoundHttpRequestHandler());
+            routeMap.put(requestUriPattern, new NotFoundHttpRequestHandler());
+            currentHandler = createHandler();
         }
     }
 
@@ -465,14 +491,14 @@ public class AS2ServerConnection {
         @Override
         public void run() {
             LOG.info("Processing new AS2 request");
-            final HttpContext context = new BasicHttpContext(null);
+            final HttpContext context = HttpCoreContext.create();
 
             try {
                 while (!Thread.interrupted()) {
 
                     this.httpService.handleRequest(this.serverConnection, context);
 
-                    HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+                    HttpCoreContext coreContext = HttpCoreContext.castOrCreate(context);
 
                     // Safely retrieve the AS2 consumer configuration and path from ThreadLocal storage.
                     AS2ConsumerConfiguration config = Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
@@ -498,13 +524,12 @@ public class AS2ServerConnection {
                                 AS2ServerConnection.this.password,
                                 AS2ServerConnection.this.accessToken);
 
-                        HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
+                        HttpRequest request = coreContext.getRequest();
                         AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
                                 request,
                                 config.getSigningAlgorithm(),
                                 config.getSigningCertificateChain(),
                                 config.getSigningPrivateKey());
-
                         if (gen != null) {
                             // send a signed MDN
                             MultipartSignedEntity multipartSignedEntity = null;

@@ -192,6 +192,10 @@ class EipNode {
                 if (otherwise != null) {
                     answer.put("otherwise", otherwise);
                 }
+            } else if ("errorHandler".equals(name)) {
+                EipNode o = outputs.get(0);
+                JsonObject jo = o.asJsonObject();
+                answer.put(o.getName(), jo);
             } else {
                 JsonArray arr = new JsonArray();
                 for (EipNode o : outputs) {

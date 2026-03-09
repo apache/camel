@@ -86,12 +86,18 @@ public class AS2ClientManager {
 
     /**
      * The HTTP Context Attribute containing the HTTP request message transporting the EDI message
+     *
+     * @deprecated Use getter method from HttpContext implementation.
      */
+    @Deprecated
     public static final String HTTP_REQUEST = HttpCoreContext.HTTP_REQUEST;
 
     /**
      * The HTTP Context Attribute containing the HTTP response message transporting the EDI message
+     *
+     * @deprecated Use getter method from HttpContext implementation.
      */
+    @Deprecated
     public static final String HTTP_RESPONSE = HttpCoreContext.HTTP_RESPONSE;
 
     /**
@@ -272,7 +278,7 @@ public class AS2ClientManager {
 
         BasicClassicHttpRequest request = new BasicClassicHttpRequest("POST", requestUri);
         request.setVersion(new ProtocolVersion("HTTP", 1, 1));
-        httpContext.setAttribute(HTTP_REQUEST, request);
+        httpContext.setRequest(request);
 
         // Create Message Body
         ApplicationEntity applicationEntity;
@@ -346,7 +352,7 @@ public class AS2ClientManager {
         }
 
         final HttpResponse response = sendRequest(httpContext, request);
-        httpContext.setAttribute(HTTP_RESPONSE, response);
+        httpContext.setResponse(response);
         return httpContext;
     }
 

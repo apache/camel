@@ -66,6 +66,11 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
             type = context.getClassResolver().resolveClass(name);
         }
 
+        // Special handling for Jackson-based data formats - detect which implementation is available
+        if (type == null && isJacksonDataFormat(name)) {
+            type = detectJacksonDataFormat(name, context);
+        }
+
         if (type != null) {
             if (DataFormat.class.isAssignableFrom(type)) {
                 dataFormat = (DataFormat) context.getInjector().newInstance(type, false);
@@ -77,6 +82,68 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
         }
 
         return dataFormat;
+    }
+
+    /**
+     * Checks if the data format name is a Jackson-based data format that needs version detection.
+     *
+     * @param  name the data format name
+     * @return      true if this is a Jackson-based data format
+     */
+    private boolean isJacksonDataFormat(String name) {
+        return "jackson".equals(name)
+                || "avroJackson".equals(name)
+                || "jacksonXml".equals(name)
+                || "protobufJackson".equals(name);
+    }
+
+    /**
+     * Detects which Jackson implementation is available on the classpath and returns the appropriate DataFormat class.
+     * Tries Jackson 3.x first (tools.jackson), then falls back to Jackson 2.x (com.fasterxml.jackson).
+     *
+     * @param  name    the data format name
+     * @param  context the CamelContext
+     * @return         the Jackson DataFormat class, or null if neither is available
+     */
+    private Class<?> detectJacksonDataFormat(String name, CamelContext context) {
+        // Try Jackson 3.x first (tools.jackson.databind.ObjectMapper)
+        Class<?> jackson3Marker = context.getClassResolver().resolveClass("tools.jackson.databind.ObjectMapper");
+        if (jackson3Marker != null) {
+            // Jackson 3.x is available, use camel-jackson3 variants
+            return resolveJackson3DataFormatClass(name, context);
+        }
+
+        // Try Jackson 2.x (com.fasterxml.jackson.databind.ObjectMapper)
+        Class<?> jackson2Marker = context.getClassResolver().resolveClass("com.fasterxml.jackson.databind.ObjectMapper");
+        if (jackson2Marker != null) {
+            // Jackson 2.x is available, use camel-jackson variants
+            return resolveJackson2DataFormatClass(name, context);
+        }
+
+        // Neither Jackson version is available
+        return null;
+    }
+
+    private Class<?> resolveJackson3DataFormatClass(String name, CamelContext context) {
+        String className = switch (name) {
+            case "jackson" -> "org.apache.camel.component.jackson3.JacksonDataFormat";
+            case "avroJackson" -> "org.apache.camel.component.jackson3.avro.JacksonAvroDataFormat";
+            case "jacksonXml" -> "org.apache.camel.component.jackson3xml.JacksonXMLDataFormat";
+            case "protobufJackson" -> "org.apache.camel.component.jackson3.protobuf.JacksonProtobufDataFormat";
+            default -> null;
+        };
+        return className != null ? context.getClassResolver().resolveClass(className) : null;
+    }
+
+    private Class<?> resolveJackson2DataFormatClass(String name, CamelContext context) {
+        String className = switch (name) {
+            case "jackson" -> "org.apache.camel.component.jackson.JacksonDataFormat";
+            case "avroJackson" -> "org.apache.camel.component.jackson.avro.JacksonAvroDataFormat";
+            case "jacksonXml" -> "org.apache.camel.component.jacksonxml.JacksonXMLDataFormat";
+            case "protobufJackson" -> "org.apache.camel.component.jackson.protobuf.JacksonProtobufDataFormat";
+            default -> null;
+        };
+        return className != null ? context.getClassResolver().resolveClass(className) : null;
     }
 
 }

@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -36,8 +35,8 @@ public class MinaSftpAuthenticationIT extends MinaSftpServerTestSupport {
 
     private String ftpRootDir;
 
-    @BeforeEach
-    public void doPostSetup() throws Exception {
+    @Override
+    protected void setupResources() throws Exception {
         // Ensure the root directory exists
         service.getFtpRootDir().toFile().mkdirs();
         ftpRootDir = service.getFtpRootDir().toString();

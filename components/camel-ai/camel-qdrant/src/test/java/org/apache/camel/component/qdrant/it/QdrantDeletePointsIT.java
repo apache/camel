@@ -24,13 +24,14 @@ import io.qdrant.client.ConditionFactory;
 import io.qdrant.client.PointIdFactory;
 import io.qdrant.client.ValueFactory;
 import io.qdrant.client.VectorsFactory;
-import io.qdrant.client.grpc.Collections;
 import io.qdrant.client.grpc.Common;
 import io.qdrant.client.grpc.Points;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.qdrant.QdrantAction;
 import org.apache.camel.component.qdrant.QdrantHeaders;
 import org.apache.camel.component.qdrant.QdrantTestSupport;
+import org.apache.camel.component.qdrant.rag.RAGCreateCollection;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -40,15 +41,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class QdrantDeletePointsIT extends QdrantTestSupport {
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                RAGCreateCollection createCollectionProcessor = new RAGCreateCollection();
+                createCollectionProcessor.setSize("2");
+
+                from("direct:createCollection")
+                        .process(createCollectionProcessor)
+                        .to("qdrant:testDelete");
+            }
+        };
+    }
+
     @Test
     @Order(1)
     void createCollection() {
-        Exchange result = fluentTemplate.to("qdrant:testDelete")
-                .withHeader(QdrantHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
-                .withBody(
-                        Collections.VectorParams.newBuilder()
-                                .setSize(2)
-                                .setDistance(Collections.Distance.Cosine).build())
+        Exchange result = fluentTemplate.to("direct:createCollection")
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();

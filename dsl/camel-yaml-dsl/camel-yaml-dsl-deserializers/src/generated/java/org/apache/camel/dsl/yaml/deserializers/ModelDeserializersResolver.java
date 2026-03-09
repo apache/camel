@@ -137,6 +137,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.GrokDataFormat": return new ModelDeserializers.GrokDataFormatDeserializer();
             case "groovy": return new ModelDeserializers.GroovyExpressionDeserializer();
             case "org.apache.camel.model.language.GroovyExpression": return new ModelDeserializers.GroovyExpressionDeserializer();
+            case "groovyJson": return new ModelDeserializers.GroovyJSonDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.GroovyJSonDataFormat": return new ModelDeserializers.GroovyJSonDataFormatDeserializer();
             case "groovyXml": return new ModelDeserializers.GroovyXmlDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.GroovyXmlDataFormat": return new ModelDeserializers.GroovyXmlDataFormatDeserializer();
             case "gzipDeflater": return new ModelDeserializers.GzipDeflaterDataFormatDeserializer();
@@ -163,8 +165,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.InterceptSendToEndpointDefinition": return new ModelDeserializers.InterceptSendToEndpointDefinitionDeserializer();
             case "iso8583": return new ModelDeserializers.Iso8583DataFormatDeserializer();
             case "org.apache.camel.model.dataformat.Iso8583DataFormat": return new ModelDeserializers.Iso8583DataFormatDeserializer();
-            case "jacksonXml": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.JacksonXMLDataFormat": return new ModelDeserializers.JacksonXMLDataFormatDeserializer();
             case "java": return new ModelDeserializers.JavaExpressionDeserializer();
             case "org.apache.camel.model.language.JavaExpression": return new ModelDeserializers.JavaExpressionDeserializer();
             case "js": return new ModelDeserializers.JavaScriptExpressionDeserializer();

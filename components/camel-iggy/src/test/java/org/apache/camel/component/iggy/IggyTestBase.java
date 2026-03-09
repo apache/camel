@@ -59,8 +59,9 @@ public abstract class IggyTestBase {
 
     @BeforeAll
     public static void setup() {
-        client = new IggyTcpClient(iggyService.host(), iggyService.port());
-        client.users().login(iggyService.username(), iggyService.password());
+        client = IggyTcpClient.builder().host(iggyService.host()).port(iggyService.port())
+                .credentials(iggyService.username(), iggyService.password())
+                .buildAndLogin();
     }
 
     @RouteFixture

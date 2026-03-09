@@ -49,7 +49,7 @@ public class ValidatorsDefinition {
     }
 
     /**
-     * The configured transformers
+     * The configured validators
      */
     public void setValidators(List<ValidatorDefinition> validators) {
         this.validators = validators;

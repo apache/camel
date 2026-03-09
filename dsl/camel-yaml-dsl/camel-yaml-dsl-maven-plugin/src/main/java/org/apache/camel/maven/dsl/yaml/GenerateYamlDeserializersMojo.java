@@ -344,13 +344,25 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     // add inner classes
                     deserializers.addType(holder.type);
 
+                    // Skip JacksonXMLDataFormat to avoid duplicate case with JacksonXML3DataFormat
+                    // The unified resolver will handle auto-detection between Jackson 2.x and 3.x
+                    boolean skipJacksonXML = "JacksonXMLDataFormatDeserializer".equals(holder.type.name);
+
                     if (holder.attributes.containsKey("node")) {
-                        holder.attributes.get("node").forEach(node -> constructors.addStatement(
-                                "case $S: return new ModelDeserializers.$L()", node, holder.type.name));
+                        holder.attributes.get("node").forEach(node -> {
+                            if (!skipJacksonXML || !"jacksonXml".equals(node)) {
+                                constructors.addStatement(
+                                        "case $S: return new ModelDeserializers.$L()", node, holder.type.name);
+                            }
+                        });
                     }
                     if (holder.attributes.containsKey("type")) {
-                        holder.attributes.get("type").forEach(type -> constructors.addStatement(
-                                "case $S: return new ModelDeserializers.$L()", type, holder.type.name));
+                        holder.attributes.get("type").forEach(type -> {
+                            if (!skipJacksonXML) {
+                                constructors.addStatement(
+                                        "case $S: return new ModelDeserializers.$L()", type, holder.type.name);
+                            }
+                        });
                     }
                 });
 
@@ -422,6 +434,12 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             builder.addAnnotation(CN_YAML_IN);
         }
         if (info.name().toString().equals("org.apache.camel.model.rest.RestConfigurationDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
+        if (info.name().toString().equals("org.apache.camel.model.transformer.TransformersDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
+        if (info.name().toString().equals("org.apache.camel.model.validator.ValidatorsDefinition")) {
             builder.addAnnotation(CN_YAML_IN);
         }
 

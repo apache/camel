@@ -103,7 +103,6 @@
  ** xref:faq:how-do-i-restart-camelcontext.adoc[How do I restart CamelContext?]
  ** xref:faq:how-do-i-retrieve-the-thrown-exception-during-processing-an-exchange.adoc[How do I retrieve the thrown Exception during processing an Exchange?]
  ** xref:faq:how-do-i-retry-failed-messages-forever.adoc[How do I retry failed messages forever?]
- ** xref:faq:how-do-i-retry-processing-a-message-from-a-certain-point-back-or-an-entire-route.adoc[How do I retry processing a message from a certain point back or an entire route?]
  ** xref:faq:how-do-i-reuse-the-contexttestsupport-class-in-my-unit-tests.adoc[How do I reuse the ContextTestSupport class in my unit tests?]
  ** xref:faq:how-do-i-run-activemq-and-camel-in-jboss.adoc[How do I run ActiveMQ and Camel in JBoss?]
  ** xref:faq:how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[How do I set the max chars when debug logging messages in Camel?]

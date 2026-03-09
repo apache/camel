@@ -71,7 +71,7 @@ public class GroovyXmlDataFormat extends DataFormatDefinition {
 
     @Override
     public String toString() {
-        return "GroovyXmlDataFormat'";
+        return "GroovyXmlDataFormat";
     }
 
     @XmlTransient

@@ -702,7 +702,7 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
     }
 
     private MinaSftpConfiguration getMinaSftpConfiguration() {
-        return (MinaSftpConfiguration) endpoint.getConfiguration();
+        return endpoint.getConfiguration();
     }
 
     /**

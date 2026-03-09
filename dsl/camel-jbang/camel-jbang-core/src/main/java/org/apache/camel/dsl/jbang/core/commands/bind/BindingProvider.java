@@ -24,6 +24,7 @@ import java.util.Map;
  * may represent a Kamelet, Camel endpoint URI or a Kubernetes object reference such as a reference to a Knative broker
  * for instance. Implementations must not hold any state as the binding provider instance is used for multiple calls.
  */
+@Deprecated
 public interface BindingProvider {
 
     String getEndpoint(

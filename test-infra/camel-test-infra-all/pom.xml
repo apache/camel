@@ -243,11 +243,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-torchserve</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-tensorflow-serving</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -539,12 +534,6 @@
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-hazelcast</artifactId>
-                                    </dependency>
-                                </fileSet>
-                                <fileSet>
-                                    <dependency>
-                                        <groupId>org.apache.camel</groupId>
-                                        <artifactId>camel-test-infra-torchserve</artifactId>
                                     </dependency>
                                 </fileSet>
                                 <fileSet>

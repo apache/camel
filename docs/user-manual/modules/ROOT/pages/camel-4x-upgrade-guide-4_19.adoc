@@ -228,6 +228,21 @@ This order is also the same order that UI builders like Camel Karavan and Kaoto 
 Support for exporting to use Gradle as build tool has been removed (it was deprecated and not working well)
 The deprecated options `buildToool` and `gradleWrapper` has been removed.
 
+The `camel-tooling-maven` which is used for downloading JARs from Maven has been refactored to use
+the new https://github.com/maveniverse/mima[MIMA] project (jbang is using this also).
+
+=== camel-groovy
+
+The Groovy library has been upgraded from 4.0.x to 5.0.x. This is a major version upgrade.
+If you use Groovy scripts or the Groovy DSL, review the
+https://groovy-lang.org/releasenotes/groovy-5.0.html[Groovy 5.0 release notes] for potential breaking changes.
+The Spock testing framework has also been upgraded to 2.4-groovy-5.0.
+
+=== camel-groovy-xml
+
+The `camel-groovy-xml` has been moved into `camel-groovy` and this JAR is no longer shipped.
+So if you use `camel-groovy-xml` then change the dependency to `camel-groovy`.
+
 === camel-kafka
 
 The Kafka client library has been upgraded from 3.9.1 to 4.2.0. This is a major version upgrade of Apache Kafka with several notable changes:
@@ -307,7 +322,35 @@ Previously the context-path would always be used:
 
 The intention is to allow to configure the `base.path` _as is_ in the return API specification.
 
-=== camel-nitrite (Removal)
+=== camel-as2
 
-The camel-nitrite is removed in this version. It was deprecated in 4.10.
+Some public constants were deprecated:
+
+[source,java]
+----
+org.apache.camel.component.as2.api.AS2AsynchronousMDNManager.HTTP_REQUEST
+org.apache.camel.component.as2.api.AS2AsynchronousMDNManager.HTTP_RESPONSE
+org.apache.camel.component.as2.api.AS2ClientManager.HTTP_REQUEST
+org.apache.camel.component.as2.api.AS2ClientManager.HTTP_RESPONSE
+org.apache.camel.component.as2.api.AS2Constants.HTTP_CLIENT_CONNECTION
+----
+
+They can be replaced by the the getter/setter method of the HttpContext implementation, for example:
+
+[source,java]
+----
+// the deprecated way
+HttpRequest request = context.getAttribute(AS2ClientManager.HTTP_REQUEST, HttpRequest.class);
+
+// new way
+HttpRequest request = context.getRequest();
+----
+
+== Removed deprecated components
+
+The following deprecated components has been removed:
+
+- `camel-nitrite`
+- `camel-torchserve`
+- `camel-test-infra-torchserve`
 

@@ -69,12 +69,15 @@ public class ThreadPerTaskSedaConsumerTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("seda:test?virtualThreadPerTask=true")
+                        .to("log:result")
                         .to("mock:result");
 
                 from("seda:limited?virtualThreadPerTask=true&concurrentConsumers=2")
+                        .to("log:limited")
                         .to("mock:limited");
 
                 from("seda:throughput?virtualThreadPerTask=true")
+                        .to("log:throughput")
                         .to("mock:throughput");
             }
         };

@@ -35,12 +35,12 @@ import org.apache.camel.component.solr.SolrOperation;
 import org.apache.camel.component.solr.SolrProducer;
 import org.apache.camel.component.solr.SolrUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.beans.BindingException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.request.SolrPing;
+import org.apache.solr.client.solrj.request.SolrQuery;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.ContentStreamBase;
@@ -138,7 +138,7 @@ public final class SolrRequestConverter {
             body = wrappedFile.getFile();
         }
         if (body instanceof File file) {
-            ContentStreamBase.FileStream stream = new ContentStreamBase.FileStream(file);
+            ContentStreamBase.FileStream stream = new ContentStreamBase.FileStream(file.toPath());
             if (ObjectHelper.isEmpty(contentType)) {
                 contentType = stream.getContentType();
             }

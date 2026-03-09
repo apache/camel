@@ -104,7 +104,7 @@ public class JmsBinding {
                 Object payload = objectMessage.getObject();
                 if (payload instanceof DefaultExchangeHolder) {
                     DefaultExchangeHolder holder = (DefaultExchangeHolder) payload;
-                    DefaultExchangeHolder.unmarshal(exchange, holder);
+                    DefaultExchangeHolder.unmarshal(exchange, holder); // NOSONAR
                     return exchange.getIn().getBody();
                 } else {
                     return objectMessage.getObject();

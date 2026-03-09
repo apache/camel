@@ -725,6 +725,51 @@ And the same example in YAML DSL
             uri: mock:result
 ----
 
+== Why is the exception null when I use onException ?
+
+If you use `onException` to handle exceptions, and want to get the caused
+`Exception` from a `Processor` in Java code, such as shown below:
+
+[source,java]
+----
+.onException(Exception.class)
+    .handled(true)
+    .process(new Processor() {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Exception cause = exchange.getException();
+            // why cause exception is null ???
+        }
+    })
+.end()
+----
+
+Then beware the caused exception is no longer available from `exchange.getException()`, because
+the message is processed by the `onException` block.
+
+Instead, you can access the caused exception from exchange property on the
+exchange with the key `Exchange.EXCEPTION_CAUGHT`, as follows:
+
+[source,java]
+----
+Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+----
+
+The correct code to use in the example is there:
+
+[source,java]
+----
+.onException(Exception.class).handled(true)
+    .process(new Processor() {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+            // we now have the caused exception
+        }
+    })
+.end()
+----
+
 == Handling and Sending a Fixed Response Back to the Client
 
 In the route above we handled the exception but routed it to a different

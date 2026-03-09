@@ -24,6 +24,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Binding to a Strimzi Kafka topic resource.
  */
+@Deprecated
 public class StrimziKafkaTopicBindingProvider extends ObjectReferenceBindingProvider {
 
     private static final String prefix = "kafka:topic:";

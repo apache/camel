@@ -1,0 +1,74 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: Main build
+
+on:
+  push:
+    branches:
+      - main
+      - camel-4.14.x
+      - camel-4.18.x
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: github.repository == 'apache/camel'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: ['21']
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - id: install-packages
+        uses: ./.github/actions/install-packages
+      - id: install-mvnd
+        uses: ./.github/actions/install-mvnd
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+          cache: 'maven'
+      - name: maven build
+        run: ./etc/scripts/regen.sh
+      - name: archive logs
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        if: always()
+        with:
+          name: main-build-${{ matrix.java }}.log
+          path: build.log
+      - name: Fail if there are uncommitted changes
+        shell: bash
+        run: |
+          [[ -z $(git status --porcelain) ]] || { echo 'There are uncommitted changes'; git status; echo; echo; git diff; exit 1; }
+      - name: mvn test
+        uses: ./.github/actions/incremental-build
+        with:
+          mode: test
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-mvnd-install: 'true'
+          artifact-upload-suffix: main-java-${{ matrix.java }}

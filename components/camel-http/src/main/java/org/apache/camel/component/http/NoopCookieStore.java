@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +40,13 @@ public class NoopCookieStore implements CookieStore {
     }
 
     @Override
+    @Deprecated
     public boolean clearExpired(Date date) {
+        return false;
+    }
+
+    @Override
+    public boolean clearExpired(Instant instant) {
         return false;
     }
 

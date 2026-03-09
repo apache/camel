@@ -49,6 +49,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -187,7 +188,7 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
         assertTrue(response instanceof ClassicHttpResponse);
         HttpEntity responseEntity = ((ClassicHttpResponse) response).getEntity();
         assertNotNull(responseEntity, "Response entity");
-        assertTrue(responseEntity instanceof MultipartSignedEntity, "Unexpected response entity type");
+        assertInstanceOf(MultipartSignedEntity.class, responseEntity);
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
         assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,

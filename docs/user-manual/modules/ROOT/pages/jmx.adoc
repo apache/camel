@@ -146,6 +146,22 @@ due to the increasing number of MBeans in the registry from its associated
 services/producers. Keep in mind that an MBean is not a lightweight object
 and consumes memory.
 
+=== Why is my processor not showing up in JMX?
+
+Not every processor is managed, and thus not all are visible in JMX,
+such as when browsing JConsole.
+
+A `Processor` must implement the `org.apache.camel.Service` to be managed.
+
+All EIP that are implemented in `Processor` are a `Service`.
+
+Your custom `Processor` can implement `Service` or extend `ServiceSupport`,
+and information that should be exposed in JMX can be marked up with the following annotations from `camel-management` JAR:
+
+- `@ManagedResource` - on class level for general information
+- `@ManagedAttribute` - for JMX attributes
+- `@ManagedOperation` - for JMX operations
+
 == Management naming pattern
 
 You can configure a naming pattern for the MBeans names that Camel creates.

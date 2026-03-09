@@ -18,12 +18,11 @@ package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
@@ -32,13 +31,16 @@ import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ApiException;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
 import com.google.cloud.pubsub.v1.stub.SubscriberStub;
 import com.google.common.base.Strings;
+import com.google.pubsub.v1.DeadLetterPolicy;
 import com.google.pubsub.v1.ProjectSubscriptionName;
 import com.google.pubsub.v1.PubsubMessage;
 import com.google.pubsub.v1.PullRequest;
 import com.google.pubsub.v1.PullResponse;
 import com.google.pubsub.v1.ReceivedMessage;
+import com.google.pubsub.v1.Subscription;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.google.pubsub.consumer.AcknowledgeCompletion;
@@ -64,12 +66,13 @@ public class GooglePubsubConsumer extends DefaultConsumer {
     private final List<Subscriber> subscribers;
     private final Set<ApiFuture<PullResponse>> pendingSynchronousPullResponses;
     private final HeaderFilterStrategy headerFilterStrategy;
+    private int resolvedMaxDeliveryAttempts;
 
     GooglePubsubConsumer(GooglePubsubEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
-        this.subscribers = Collections.synchronizedList(new LinkedList<>());
+        this.subscribers = new CopyOnWriteArrayList<>();
         this.pendingSynchronousPullResponses = ConcurrentHashMap.newKeySet();
         String loggerId = endpoint.getLoggerId();
 
@@ -86,6 +89,13 @@ public class GooglePubsubConsumer extends DefaultConsumer {
         super.doStart();
 
         localLog.info("Starting Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
+
+        resolvedMaxDeliveryAttempts = resolveMaxDeliveryAttempts();
+        if (resolvedMaxDeliveryAttempts > 0) {
+            localLog.info("Max delivery attempts enforcement enabled: {} for subscription {}",
+                    resolvedMaxDeliveryAttempts, endpoint.getDestinationName());
+        }
+
         executor = endpoint.createExecutor(this);
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
             executor.submit(new SubscriberWrapper());
@@ -96,11 +106,9 @@ public class GooglePubsubConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         localLog.info("Stopping Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
 
-        synchronized (subscribers) {
-            if (!subscribers.isEmpty()) {
-                localLog.info("Stopping subscribers for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
-                subscribers.forEach(AbstractApiService::stopAsync);
-            }
+        if (!subscribers.isEmpty()) {
+            localLog.info("Stopping subscribers for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
+            subscribers.forEach(AbstractApiService::stopAsync);
         }
 
         safeCancelSynchronousPullResponses();
@@ -126,6 +134,40 @@ public class GooglePubsubConsumer extends DefaultConsumer {
             }
         }
         pendingSynchronousPullResponses.clear();
+    }
+
+    private int resolveMaxDeliveryAttempts() {
+        if (endpoint.isMaxDeliveryAttemptsExplicitlySet()) {
+            localLog.debug("Using explicitly configured maxDeliveryAttempts: {}", endpoint.getMaxDeliveryAttempts());
+            return endpoint.getMaxDeliveryAttempts();
+        }
+
+        String subscriptionName = ProjectSubscriptionName.format(endpoint.getProjectId(), endpoint.getDestinationName());
+        try (SubscriptionAdminClient adminClient = endpoint.getComponent().getSubscriptionAdminClient(endpoint)) {
+            Subscription subscription = adminClient.getSubscription(subscriptionName);
+            if (subscription.hasDeadLetterPolicy()) {
+                DeadLetterPolicy dlp = subscription.getDeadLetterPolicy();
+                int maxAttempts = dlp.getMaxDeliveryAttempts();
+                if (maxAttempts > 0) {
+                    localLog.info("Auto-fetched maxDeliveryAttempts={} from subscription dead-letter policy for {}",
+                            maxAttempts, endpoint.getDestinationName());
+                    return maxAttempts;
+                }
+            }
+            localLog.debug("No dead-letter policy found on subscription {}, maxDeliveryAttempts enforcement disabled",
+                    endpoint.getDestinationName());
+        } catch (Exception e) {
+            localLog.warn("Failed to auto-fetch maxDeliveryAttempts from subscription {}: {}. "
+                          + "Max delivery attempts enforcement will be disabled. "
+                          + "Set the maxDeliveryAttempts endpoint option explicitly to enable enforcement.",
+                    endpoint.getDestinationName(), e.getMessage());
+            localLog.debug("Auto-fetch failure details", e);
+        }
+        return 0;
+    }
+
+    public int getResolvedMaxDeliveryAttempts() {
+        return resolvedMaxDeliveryAttempts;
     }
 
     private class SubscriberWrapper implements Runnable {
@@ -257,6 +299,17 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                         int deliveryAttempt = message.getDeliveryAttempt();
                         if (deliveryAttempt > 0) {
                             exchange.getIn().setHeader(GooglePubsubConstants.DELIVERY_ATTEMPT, deliveryAttempt);
+                        }
+
+                        // Enforce maxDeliveryAttempts: nack without processing if limit reached
+                        if (resolvedMaxDeliveryAttempts > 0 && deliveryAttempt >= resolvedMaxDeliveryAttempts) {
+                            localLog.info(
+                                    "Message {} has reached max delivery attempts ({}/{}), nacking to route to dead-letter topic",
+                                    pubsubMessage.getMessageId(), deliveryAttempt, resolvedMaxDeliveryAttempts);
+                            GooglePubsubAcknowledge ack = new AcknowledgeSync(
+                                    () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName);
+                            ack.nack(exchange);
+                            continue;
                         }
 
                         //existing subscriber can not be propagated, because it will be closed at the end of this block

@@ -72,7 +72,7 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldHandleMissingSourceFile(RuntimeType rt) throws Exception {
         KubernetesRun command = createCommand(List.of("mickey-mouse.groovy"),
-                "--disable-auto=true", "--output=yaml", "--runtime=" + rt.runtime(), "--java-version=17");
+                "--disable-auto=true", "--output=yaml", "--runtime=" + rt.runtime(), "--java-version=21");
         int exit = command.doCall();
 
         Assertions.assertEquals(1, exit);
@@ -86,7 +86,7 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
                 "--gav=examples:route:1.0.0", "--runtime=quarkus", "--name=my-route-props",
                 "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--property=a=b", "--property=c=d", "--property=src/test/resources/my-route-props1.properties",
-                "--property=file:src/test/resources/my-route-props2.properties", "--java-version=17");
+                "--property=file:src/test/resources/my-route-props2.properties", "--java-version=21");
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
@@ -108,7 +108,7 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
         KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
                 "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--trait", "container.image-pull-policy=IfNotPresent",
-                "--runtime=" + rt.runtime(), "--java-version=17");
+                "--runtime=" + rt.runtime(), "--java-version=21");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -157,7 +157,7 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
     public void shouldGenerateKubernetesCronjobManifest(RuntimeType rt) throws Exception {
         KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
                 "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
-                "--service-account=my-svc-account", "--runtime=" + rt.runtime(), "--java-version=17");
+                "--service-account=my-svc-account", "--runtime=" + rt.runtime(), "--java-version=21");
         command.traits = new String[] {
                 "cronjob.enabled=true",
                 "cronjob.schedule=\"0 22 * * 1-5\"",
@@ -196,7 +196,7 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldHandleUnsupportedOutputFormat(RuntimeType rt) throws Exception {
         KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
-                "--disable-auto=true", "--output=wrong", "--runtime=" + rt.runtime(), "--java-version=17");
+                "--disable-auto=true", "--output=wrong", "--runtime=" + rt.runtime(), "--java-version=21");
 
         Assertions.assertEquals(1, command.doCall());
         Assertions.assertTrue(printer.getOutput().endsWith("ERROR: Unsupported output format 'wrong' (supported: yaml, json)"));
@@ -208,7 +208,7 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
         KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
                 "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
                 "--namespace", "custom",
-                "--runtime=" + rt.runtime(), "--java-version=17");
+                "--runtime=" + rt.runtime(), "--java-version=21");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);

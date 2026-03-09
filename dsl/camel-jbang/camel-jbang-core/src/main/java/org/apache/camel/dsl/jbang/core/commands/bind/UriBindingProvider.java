@@ -26,6 +26,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
+@Deprecated
 public class UriBindingProvider implements BindingProvider {
 
     private static final Pattern CAMEL_ENDPOINT_URI_PATTERN = Pattern.compile("^[a-z0-9+][a-zA-Z0-9-+]*:.*$");

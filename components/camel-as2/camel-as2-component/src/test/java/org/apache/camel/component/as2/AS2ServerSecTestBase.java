@@ -127,7 +127,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
     }
 
     protected void verifyOkResponse(HttpCoreContext context) {
-        HttpResponse response = context.getAttribute(AS2ClientManager.HTTP_RESPONSE, HttpResponse.class);
+        HttpResponse response = context.getResponse();
         assertEquals(200, response.getCode());
     }
 
@@ -152,7 +152,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
     protected void verifyMic(
             AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity, HttpCoreContext context)
             throws HttpException {
-        HttpRequest request = context.getAttribute(AS2ClientManager.HTTP_REQUEST, HttpRequest.class);
+        HttpRequest request = context.getRequest();
         MicUtils.ReceivedContentMic computedContentMic = createReceivedContentMic(request);
         MicUtils.ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
 
@@ -164,7 +164,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
     }
 
     protected AS2MessageDispositionNotificationEntity getAs2MdnEntity(HttpCoreContext context) {
-        HttpResponse response = context.getAttribute(AS2ClientManager.HTTP_RESPONSE, HttpResponse.class);
+        HttpResponse response = context.getResponse();
 
         assert (response instanceof ClassicHttpResponse);
         ClassicHttpResponse classicHttpResponse = (ClassicHttpResponse) response;
@@ -194,7 +194,6 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
         kpg.initialize(1024, new SecureRandom());
         String invalidIssueDN = "O=Hackers Unlimited Ltd., C=US";
         var invalidIssueKP = kpg.generateKeyPair();
-        var invalidissueCert = Utils.makeCertificate(invalidIssueKP, invalidIssueDN, invalidIssueKP, invalidIssueDN);
 
         String invalidDN = "CN=John Doe, E=j.doe@sharklasers.com, O=Self Signed, C=US";
         var invalidKP = kpg.generateKeyPair();

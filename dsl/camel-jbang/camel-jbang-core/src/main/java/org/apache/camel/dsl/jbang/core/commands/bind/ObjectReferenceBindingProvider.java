@@ -36,6 +36,7 @@ import org.apache.camel.util.URISupport;
  * specify resource properties. Subclasses may add logic for a very specific Kubernetes resource such as Kamelets or
  * Knative brokers.
  */
+@Deprecated
 public class ObjectReferenceBindingProvider implements BindingProvider {
 
     private static final Pattern OBJECT_REFERENCE_URI_PATTERN

@@ -62,6 +62,103 @@ public class DefaultTransformerResolver implements TransformerResolver<Transform
 
     private Optional<Transformer> findTransformer(String key, CamelContext context) {
         FactoryFinder ff = context.getCamelContextExtension().getBootstrapFactoryFinder(DATA_TYPE_TRANSFORMER_RESOURCE_PATH);
-        return ResolverHelper.resolveService(context, ff, key, Transformer.class);
+        Optional<Transformer> transformer = ResolverHelper.resolveService(context, ff, key, Transformer.class);
+
+        // Special handling for Jackson transformers - detect which implementation is available
+        if (transformer.isEmpty() && isJacksonTransformer(key)) {
+            Class<?> transformerClass = detectJacksonTransformer(key, context);
+            if (transformerClass != null) {
+                try {
+                    Transformer instance = (Transformer) context.getInjector().newInstance(transformerClass, false);
+                    transformer = Optional.of(instance);
+                } catch (Exception e) {
+                    LOG.debug("Failed to instantiate Jackson transformer class: {}", transformerClass.getName(), e);
+                }
+            }
+        }
+
+        return transformer;
+    }
+
+    /**
+     * Checks if the transformer key is a Jackson-based transformer that needs version detection.
+     *
+     * @param  key the transformer key
+     * @return     true if this is a Jackson transformer
+     */
+    private boolean isJacksonTransformer(String key) {
+        return "application-json".equals(key)
+                || "application-x-java-object".equals(key)
+                || "application-x-struct".equals(key)
+                || "avro-binary".equals(key)
+                || "avro-x-java-object".equals(key)
+                || "avro-x-struct".equals(key)
+                || "protobuf-binary".equals(key)
+                || "protobuf-x-java-object".equals(key)
+                || "protobuf-x-struct".equals(key);
+    }
+
+    /**
+     * Detects which Jackson implementation is available on the classpath and returns the appropriate Transformer class.
+     * Tries Jackson 3.x first (tools.jackson), then falls back to Jackson 2.x (com.fasterxml.jackson).
+     *
+     * @param  key     the transformer key
+     * @param  context the CamelContext
+     * @return         the Jackson Transformer class, or null if neither is available
+     */
+    private Class<?> detectJacksonTransformer(String key, CamelContext context) {
+        // Try Jackson 3.x first (tools.jackson.databind.ObjectMapper)
+        Class<?> jackson3Marker = context.getClassResolver().resolveClass("tools.jackson.databind.ObjectMapper");
+        if (jackson3Marker != null) {
+            // Jackson 3.x is available, use camel-jackson3 transformers
+            return resolveJackson3TransformerClass(key, context);
+        }
+
+        // Try Jackson 2.x (com.fasterxml.jackson.databind.ObjectMapper)
+        Class<?> jackson2Marker = context.getClassResolver().resolveClass("com.fasterxml.jackson.databind.ObjectMapper");
+        if (jackson2Marker != null) {
+            // Jackson 2.x is available, use camel-jackson transformers
+            return resolveJackson2TransformerClass(key, context);
+        }
+
+        // Neither Jackson version is available
+        return null;
+    }
+
+    private Class<?> resolveJackson3TransformerClass(String key, CamelContext context) {
+        String className = switch (key) {
+            case "application-json" -> "org.apache.camel.component.jackson3.transform.JsonDataTypeTransformer";
+            case "application-x-java-object" -> "org.apache.camel.component.jackson3.transform.JsonPojoDataTypeTransformer";
+            case "application-x-struct" -> "org.apache.camel.component.jackson3.transform.JsonStructDataTypeTransformer";
+            case "avro-binary" -> "org.apache.camel.component.jackson3.avro.transform.AvroBinaryDataTypeTransformer";
+            case "avro-x-java-object" -> "org.apache.camel.component.jackson3.avro.transform.AvroPojoDataTypeTransformer";
+            case "avro-x-struct" -> "org.apache.camel.component.jackson3.avro.transform.AvroStructDataTypeTransformer";
+            case "protobuf-binary" ->
+                "org.apache.camel.component.jackson3.protobuf.transform.ProtobufBinaryDataTypeTransformer";
+            case "protobuf-x-java-object" ->
+                "org.apache.camel.component.jackson3.protobuf.transform.ProtobufPojoDataTypeTransformer";
+            case "protobuf-x-struct" ->
+                "org.apache.camel.component.jackson3.protobuf.transform.ProtobufStructDataTypeTransformer";
+            default -> null;
+        };
+        return className != null ? context.getClassResolver().resolveClass(className) : null;
+    }
+
+    private Class<?> resolveJackson2TransformerClass(String key, CamelContext context) {
+        String className = switch (key) {
+            case "application-json" -> "org.apache.camel.component.jackson.transform.JsonDataTypeTransformer";
+            case "application-x-java-object" -> "org.apache.camel.component.jackson.transform.JsonPojoDataTypeTransformer";
+            case "application-x-struct" -> "org.apache.camel.component.jackson.transform.JsonStructDataTypeTransformer";
+            case "avro-binary" -> "org.apache.camel.component.jackson.avro.transform.AvroBinaryDataTypeTransformer";
+            case "avro-x-java-object" -> "org.apache.camel.component.jackson.avro.transform.AvroPojoDataTypeTransformer";
+            case "avro-x-struct" -> "org.apache.camel.component.jackson.avro.transform.AvroStructDataTypeTransformer";
+            case "protobuf-binary" -> "org.apache.camel.component.jackson.protobuf.transform.ProtobufBinaryDataTypeTransformer";
+            case "protobuf-x-java-object" ->
+                "org.apache.camel.component.jackson.protobuf.transform.ProtobufPojoDataTypeTransformer";
+            case "protobuf-x-struct" ->
+                "org.apache.camel.component.jackson.protobuf.transform.ProtobufStructDataTypeTransformer";
+            default -> null;
+        };
+        return className != null ? context.getClassResolver().resolveClass(className) : null;
     }
 }

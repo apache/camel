@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.util.StringHelper;
 
+@Deprecated
 public class KnativeChannelBindingProvider extends ObjectReferenceBindingProvider {
 
     private static final String prefix = "knative:channel:";

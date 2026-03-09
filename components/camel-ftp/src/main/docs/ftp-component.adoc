@@ -544,6 +544,11 @@ String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?pass
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
+=== Why does FTP component not download any files?
+
+The xref:components::ftp-component.adoc[FTP] component has many options. So make sure you have configured it properly.
+Also, a common issue is that you have to use either active or passive mode. So you may have to set `passiveMode=true` on the endpoint configuration.
+
 == Examples
 
 In the sample below, we set up Camel to download all the reports from the

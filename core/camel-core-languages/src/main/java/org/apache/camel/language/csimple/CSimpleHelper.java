@@ -252,6 +252,27 @@ public final class CSimpleHelper {
         return body;
     }
 
+    public static String toJsonBody(Exchange exchange, boolean pretty) {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            return null;
+        }
+        if (body instanceof String) {
+            return (String) body;
+        }
+        final java.io.StringWriter writer = new java.io.StringWriter();
+        try {
+            Jsoner.serializeCarelessly(body, writer);
+        } catch (final java.io.IOException caught) {
+            /* See StringWriter. */
+        }
+        String answer = writer.toString();
+        if (pretty && answer != null) {
+            answer = Jsoner.prettyPrint(answer);
+        }
+        return answer;
+    }
+
     private static String prettyXml(String rawXml) {
         try {
             boolean includeDeclaration = rawXml.startsWith("<?xml");

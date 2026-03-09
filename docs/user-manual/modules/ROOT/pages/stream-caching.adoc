@@ -6,6 +6,22 @@ Streams are cached in memory. However, for large stream messages, you can set `s
 and then large message (over 128 KB) will be cached in a temporary file instead.
 Camel itself will handle deleting the temporary file once the cached stream is no longer necessary.
 
+== Why is my message empty?
+
+In Camel the message body can be of any types. Some types are safely
+readable multiple times, and therefore do not _suffer_ from becoming
+_empty_.
+
+So when you message body suddenly is empty, then that is often related
+to using a message type that is no re-readable; in other words, the
+message body can only be read once. On subsequent reads the body is now empty.
+This happens with types that are streaming based, such as `java.util.InputStream`, etc.
+
+A number of Camel components supports and use streaming types out of the
+box. For example the HTTP related components, CXF, etc.
+
+Camel comes with Stream Caching that caches the stream, so it can be re-readable.
+
 [IMPORTANT]
 ====
 *StreamCache - Affecting the message payload*
@@ -338,3 +354,45 @@ from("direct:start")
     .process(new StreamCachingProcessor())
     .to("log:cached");
 ----
+
+== How do I enable streams when debug logging messages in Camel
+
+When you run Camel with `DEBUG` level as logging, it will log the
+messages and its content from time to time.
+As some messages can contain streams, which are prone to be not readable
+multiple times, and therefore Camel will by default *not* log these
+types.
+
+These are typical instances which are not logged by default:
+
+* `java.xml.transform.StreamSource`
+* `java.io.InputStream`
+* `java.io.OutputStream`
+* `java.io.Reader`
+* `java.io.Writer`
+
+You will see this in the log as:
+
+[source,log]
+----
+DEBUG ProducerCache                  - >>>> Endpoint[direct:start] Exchange[Message: [Body is instance of java.xml.transform.StreamSource]]
+----
+
+Here we have a message which is XML stream based.
+You can customize whether Camel should log the payload anyway.
+
+You can enable this as a global option on `CamelContext` from Java:
+
+[source,java]
+----
+context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
+----
+
+In `application.properties` this can also be done as shown:
+
+[source,properties]
+----
+camel.main.globalOptions[CamelLogDebugBodyStreams] = true
+----
+
+Notice default is `false`.

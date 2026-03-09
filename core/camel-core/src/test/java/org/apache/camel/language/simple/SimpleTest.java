@@ -60,6 +60,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
@@ -3291,6 +3292,48 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testToJson() {
+        // string body is returned as-is
+        exchange.getMessage().setBody("Hello");
+        assertExpression(exchange, "${toJson(${body})}", "Hello");
+        assertExpression(exchange, "${toJsonBody}", "Hello");
+
+        // map body is serialized to JSON
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("name", "Jack");
+        map.put("id", 123);
+        exchange.getMessage().setBody(map);
+        assertExpression(exchange, "${toJson(${body})}", "{\"name\":\"Jack\",\"id\":123}");
+        assertExpression(exchange, "${toJsonBody}", "{\"name\":\"Jack\",\"id\":123}");
+        // pretty mode
+        String pretty = Jsoner.prettyPrint("{\"name\":\"Jack\",\"id\":123}");
+        assertExpression(exchange, "${toPrettyJson(${body})}", pretty);
+        assertExpression(exchange, "${toPrettyJsonBody}", pretty);
+
+        // list body is serialized to JSON array
+        exchange.getMessage().setBody(List.of("a", "b", "c"));
+        assertExpression(exchange, "${toJson(${body})}", "[\"a\",\"b\",\"c\"]");
+        // pretty mode
+        pretty = Jsoner.prettyPrint("[\"a\",\"b\",\"c\"]");
+        assertExpression(exchange, "${toPrettyJson(${body})}", pretty);
+        assertExpression(exchange, "${toPrettyJsonBody}", pretty);
+
+        // null body
+        exchange.getMessage().setBody(null);
+        assertExpression(exchange, "${toJsonBody}", null);
+        assertExpression(exchange, "${toJson(${body})}", null);
+        // pretty mode
+        assertExpression(exchange, "${toPrettyJsonBody}", null);
+        assertExpression(exchange, "${toPrettyJson(${body})}", null);
+
+        // toJson with a header expression
+        exchange.getMessage().setHeader("myNum", 42);
+        assertExpression(exchange, "${toJson(${header.myNum})}", "42");
+        // pretty mode
+        assertExpression(exchange, "${toPrettyJson(${header.myNum})}", "42");
+    }
+
+    @Test
     public void testTrimResult() {
         exchange.getMessage().setBody("Camel  ");
 
@@ -3749,6 +3792,173 @@ public class SimpleTest extends LanguageTestSupport {
         expression = context.resolveLanguage("simple").createExpression("${shuffle()}");
         s = expression.evaluate(exchange, String.class);
         assertEquals("[]", s);
+    }
+
+    @Test
+    public void testSort() {
+        List body = new ArrayList();
+        body.add("Z");
+        body.add("A");
+        body.add("H");
+        body.add("D");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${sort()}");
+        List list = expression.evaluate(exchange, List.class);
+        assertEquals(4, list.size());
+        assertEquals("A", list.get(0));
+        assertEquals("D", list.get(1));
+        assertEquals("H", list.get(2));
+        assertEquals("Z", list.get(3));
+
+        expression = context.resolveLanguage("simple").createExpression("${sort(true)}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(4, list.size());
+        assertEquals("A", list.get(3));
+        assertEquals("D", list.get(2));
+        assertEquals("H", list.get(1));
+        assertEquals("Z", list.get(0));
+
+        expression = context.resolveLanguage("simple").createExpression("${sort(${body})}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(4, list.size());
+        assertEquals("A", list.get(0));
+        assertEquals("D", list.get(1));
+        assertEquals("H", list.get(2));
+        assertEquals("Z", list.get(3));
+
+        exchange.getMessage().setBody("5,2,1,3,4");
+        expression = context.resolveLanguage("simple").createExpression("${sort()}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(5, list.size());
+        assertEquals("1", list.get(0));
+        assertEquals("2", list.get(1));
+        assertEquals("3", list.get(2));
+        assertEquals("4", list.get(3));
+        assertEquals("5", list.get(4));
+    }
+
+    @Test
+    public void testListAdd() {
+        List body = new ArrayList();
+        body.add("A");
+        body.add("B");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${listAdd('C')}");
+        List list = expression.evaluate(exchange, List.class);
+        assertEquals(3, list.size());
+        assertEquals("A", list.get(0));
+        assertEquals("B", list.get(1));
+        assertEquals("C", list.get(2));
+
+        exchange.getMessage().setHeader("myChar", "D");
+        expression = context.resolveLanguage("simple").createExpression("${listAdd(${header.myChar})}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(4, list.size());
+        assertEquals("A", list.get(0));
+        assertEquals("B", list.get(1));
+        assertEquals("C", list.get(2));
+        assertEquals("D", list.get(3));
+
+        // two-parameter form: add to a header list instead of body
+        List headerList = new ArrayList();
+        headerList.add("X");
+        exchange.getMessage().setHeader("myList", headerList);
+        expression = context.resolveLanguage("simple").createExpression("${listAdd(${header.myList},'Y')}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(2, list.size());
+        assertEquals("X", list.get(0));
+        assertEquals("Y", list.get(1));
+    }
+
+    @Test
+    public void testListRemove() {
+        List body = new ArrayList();
+        body.add("A");
+        body.add("B");
+        body.add("C");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${listRemove('C')}");
+        List list = expression.evaluate(exchange, List.class);
+        assertEquals(2, list.size());
+        assertEquals("A", list.get(0));
+        assertEquals("B", list.get(1));
+
+        expression = context.resolveLanguage("simple").createExpression("${listRemove(0)}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(1, list.size());
+        assertEquals("B", list.get(0));
+
+        body.add("C");
+        body.add("D");
+        body.add("E");
+        expression = context.resolveLanguage("simple").createExpression("${listRemove(last)}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(3, list.size());
+        assertEquals("B", list.get(0));
+        assertEquals("C", list.get(1));
+        assertEquals("D", list.get(2));
+    }
+
+    @Test
+    public void testMapAdd() {
+        Map body = new HashMap<>();
+        body.put("A", "AAA");
+        body.put("B", "BBB");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${mapAdd('C','CCC')}");
+        Map map = expression.evaluate(exchange, Map.class);
+        assertEquals(3, map.size());
+        assertEquals("AAA", map.get("A"));
+        assertEquals("BBB", map.get("B"));
+        assertEquals("CCC", map.get("C"));
+
+        exchange.getMessage().setHeader("myChar", "DDD");
+        expression = context.resolveLanguage("simple").createExpression("${mapAdd('D',${header.myChar})}");
+        map = expression.evaluate(exchange, Map.class);
+        assertEquals(4, map.size());
+        assertEquals("AAA", map.get("A"));
+        assertEquals("BBB", map.get("B"));
+        assertEquals("CCC", map.get("C"));
+        assertEquals("DDD", map.get("D"));
+
+        // two-parameter form: add to a header list instead of body
+        Map headerMap = new HashMap();
+        headerMap.put("X", "XXX");
+        exchange.getMessage().setHeader("myMap", headerMap);
+        expression = context.resolveLanguage("simple").createExpression("${mapAdd(${header.myMap},'Y','YYY')}");
+        map = expression.evaluate(exchange, Map.class);
+        assertEquals(2, map.size());
+        assertEquals("XXX", map.get("X"));
+        assertEquals("YYY", map.get("Y"));
+    }
+
+    @Test
+    public void testMapRemove() {
+        Map body = new HashMap<>();
+        body.put("A", "AAA");
+        body.put("B", "BBB");
+        body.put("C", "CCC");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${mapRemove('C')}");
+        Map map = expression.evaluate(exchange, Map.class);
+        assertEquals(2, map.size());
+        assertEquals("AAA", map.get("A"));
+        assertEquals("BBB", map.get("B"));
+
+        // two-parameter form: add to a header list instead of body
+        Map headerMap = new HashMap();
+        headerMap.put("X", "XXX");
+        headerMap.put("Z", "ZZZ");
+        exchange.getMessage().setHeader("myMap", headerMap);
+        expression = context.resolveLanguage("simple").createExpression("${mapRemove(${header.myMap},'X')}");
+        map = expression.evaluate(exchange, Map.class);
+        assertEquals(1, map.size());
+        assertEquals("ZZZ", map.get("Z"));
     }
 
     @Test

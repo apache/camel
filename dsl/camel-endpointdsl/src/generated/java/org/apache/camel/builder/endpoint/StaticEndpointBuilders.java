@@ -6284,6 +6284,48 @@ public class StaticEndpointBuilders {
         return GoogleVertexAIEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Google Cloud Vision (camel-google-vision)
+     * Detect labels, text, faces, logos and more on images through Google Cloud
+     * Vision API
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-vision
+     * 
+     * Syntax: <code>google-vision:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation name
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static GoogleCloudVisionEndpointBuilderFactory.GoogleCloudVisionEndpointBuilder googleVision(String path) {
+        return googleVision("google-vision", path);
+    }
+    /**
+     * Google Cloud Vision (camel-google-vision)
+     * Detect labels, text, faces, logos and more on images through Google Cloud
+     * Vision API
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-vision
+     * 
+     * Syntax: <code>google-vision:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static GoogleCloudVisionEndpointBuilderFactory.GoogleCloudVisionEndpointBuilder googleVision(String componentName, String path) {
+        return GoogleCloudVisionEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.
@@ -16322,66 +16364,6 @@ public class StaticEndpointBuilders {
      */
     public static TimerEndpointBuilderFactory.TimerEndpointBuilder timer(String componentName, String path) {
         return TimerEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * TorchServe (camel-torchserve)
-     * Provide access to PyTorch TorchServe servers to run inference with
-     * PyTorch models remotely
-     * 
-     * Category: ai
-     * Since: 4.9
-     * Maven coordinates: org.apache.camel:camel-torchserve
-     * 
-     * Syntax: <code>torchserve:api/operation</code>
-     * 
-     * Path parameter: api (required)
-     * The TorchServe API
-     * There are 3 enums and the value can be one of: inference, management,
-     * metrics
-     * 
-     * Path parameter: operation (required)
-     * The API operation
-     * There are 10 enums and the value can be one of: ping, predictions,
-     * explanations, register, scale-worker, describe, unregister, list,
-     * set-default, metrics
-     * 
-     * @param path api/operation
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static TorchServeEndpointBuilderFactory.TorchServeEndpointBuilder torchserve(String path) {
-        return torchserve("torchserve", path);
-    }
-    /**
-     * TorchServe (camel-torchserve)
-     * Provide access to PyTorch TorchServe servers to run inference with
-     * PyTorch models remotely
-     * 
-     * Category: ai
-     * Since: 4.9
-     * Maven coordinates: org.apache.camel:camel-torchserve
-     * 
-     * Syntax: <code>torchserve:api/operation</code>
-     * 
-     * Path parameter: api (required)
-     * The TorchServe API
-     * There are 3 enums and the value can be one of: inference, management,
-     * metrics
-     * 
-     * Path parameter: operation (required)
-     * The API operation
-     * There are 10 enums and the value can be one of: ping, predictions,
-     * explanations, register, scale-worker, describe, unregister, list,
-     * set-default, metrics
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path api/operation
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static TorchServeEndpointBuilderFactory.TorchServeEndpointBuilder torchserve(String componentName, String path) {
-        return TorchServeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Twilio (camel-twilio)

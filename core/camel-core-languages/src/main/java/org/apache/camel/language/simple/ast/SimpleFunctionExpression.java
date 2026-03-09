@@ -203,6 +203,29 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.prettyExpression(inlined);
         }
 
+        // toJson
+        remainder = ifStartsWithReturnRemainder("toJson(", function);
+        if (remainder != null) {
+            String exp = StringHelper.beforeLast(remainder, ")");
+            if (exp == null) {
+                throw new SimpleParserException("Valid syntax: ${toJson(exp)} was: " + function, token.getIndex());
+            }
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
+            Expression inlined = camelContext.resolveLanguage("simple").createExpression(exp);
+            return ExpressionBuilder.toJsonExpression(inlined, false);
+        }
+        // toPrettyJson
+        remainder = ifStartsWithReturnRemainder("toPrettyJson(", function);
+        if (remainder != null) {
+            String exp = StringHelper.beforeLast(remainder, ")");
+            if (exp == null) {
+                throw new SimpleParserException("Valid syntax: ${toPrettyJson(exp)} was: " + function, token.getIndex());
+            }
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
+            Expression inlined = camelContext.resolveLanguage("simple").createExpression(exp);
+            return ExpressionBuilder.toJsonExpression(inlined, true);
+        }
+
         // file: prefix
         remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {
@@ -719,6 +742,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.bodyTypeExpression();
         } else if (ObjectHelper.equal(expression, "prettyBody")) {
             return ExpressionBuilder.prettyBodyExpression();
+        } else if (ObjectHelper.equal(expression, "toJsonBody")) {
+            return ExpressionBuilder.toJsonExpression(ExpressionBuilder.bodyExpression(), false);
+        } else if (ObjectHelper.equal(expression, "toPrettyJsonBody")) {
+            return ExpressionBuilder.toJsonExpression(ExpressionBuilder.bodyExpression(), true);
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
             return ExpressionBuilder.bodyOneLine();
         } else if (ObjectHelper.equal(expression, "originalBody")) {
@@ -1165,6 +1192,27 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return SimpleExpressionBuilder.splitStringExpression(exp, separator);
         }
+        // sort function
+        remainder = ifStartsWithReturnRemainder("sort(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String exp = "${body}";
+            boolean reverse = false;
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${sort(reverse)} or ${sort(exp,reverse)} was: " + function, token.getIndex());
+                }
+                if (tokens.length == 2) {
+                    exp = tokens[0];
+                    reverse = Boolean.parseBoolean(tokens[1]);
+                } else {
+                    reverse = Boolean.parseBoolean(tokens[0]);
+                }
+            }
+            return SimpleExpressionBuilder.sortExpression(exp, reverse);
+        }
         // foreach function
         remainder = ifStartsWithReturnRemainder("forEach(", function);
         if (remainder != null) {
@@ -1200,6 +1248,94 @@ public class SimpleFunctionExpression extends LiteralExpression {
             // the function takes the remainder of the tokens
             String exp2 = Arrays.stream(tokens).skip(1).collect(Collectors.joining(","));
             return SimpleExpressionBuilder.filterExpression(exp1, exp2);
+        }
+        // listAdd function
+        remainder = ifStartsWithReturnRemainder("listAdd(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${listAdd(exp)} or ${listAdd(exp,exp)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            int skip = 0;
+            String exp1 = "${body}";
+            if (tokens.length > 1) {
+                skip = 1;
+                exp1 = tokens[0];
+            }
+            // the function takes the remainder of the tokens
+            String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
+            return SimpleExpressionBuilder.listAddExpression(exp1, exp2);
+        }
+        // listRemove function
+        remainder = ifStartsWithReturnRemainder("listRemove(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${listRemove(exp)} or ${listRemove(exp,exp)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            int skip = 0;
+            String exp1 = "${body}";
+            if (tokens.length > 1) {
+                skip = 1;
+                exp1 = tokens[0];
+            }
+            // the function takes the remainder of the tokens
+            String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
+            return SimpleExpressionBuilder.listRemoveExpression(exp1, exp2);
+        }
+        // mapAdd function
+        remainder = ifStartsWithReturnRemainder("mapAdd(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapAdd(key,exp)} or ${mapAdd(exp,key,exp)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            int skip;
+            String exp1 = "${body}";
+            String key;
+            if (tokens.length > 2) {
+                exp1 = tokens[0];
+                key = tokens[1];
+                skip = 2;
+            } else if (tokens.length == 2) {
+                key = tokens[0];
+                skip = 1;
+            } else {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapAdd(key,exp)} or ${mapAdd(exp,key,exp)} was: " + function, token.getIndex());
+            }
+            // the function takes the remainder of the tokens
+            String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
+            return SimpleExpressionBuilder.mapAddExpression(exp1, key, exp2);
+        }
+        // mapRemove function
+        remainder = ifStartsWithReturnRemainder("mapRemove(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapRemove(key)} or ${mapRemove(exp,key)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mapRemove(key)} or ${mapRemove(exp,key)} was: " + function, token.getIndex());
+            }
+            String key;
+            String exp = "${body}";
+            if (tokens.length == 2) {
+                exp = tokens[0];
+                key = tokens[1];
+            } else {
+                key = tokens[0];
+            }
+            return SimpleExpressionBuilder.mapRemoveExpression(exp, key);
         }
 
         // isEmpty function
@@ -1987,6 +2123,10 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "bodyType(exchange)";
         } else if (ObjectHelper.equal(expression, "prettyBody")) {
             return "prettyBody(exchange)";
+        } else if (ObjectHelper.equal(expression, "toJsonBody")) {
+            return "toJsonBody(exchange, false)";
+        } else if (ObjectHelper.equal(expression, "toPrettyJsonBody")) {
+            return "toJsonBody(exchange, true)";
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
             return "bodyOneLine(exchange)";
         } else if (ObjectHelper.equal(expression, "id")) {

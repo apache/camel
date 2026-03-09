@@ -118,10 +118,11 @@ public final class EntityUtils {
         }
         switch (encoding.toLowerCase()) {
             case "base64":
-                return new Base64OutputStream(os, true);
+                return Base64OutputStream.builder().setOutputStream(os).setEncode(true).get();
             case "quoted-printable":
                 // TODO: implement QuotedPrintableOutputStream
-                return new Base64OutputStream(os, true);
+                return Base64OutputStream.builder().setOutputStream(os).setEncode(true).get();
+            // return new Base64OutputStream(os, true);
             case "binary":
             case "7bit":
             case "8bit":
@@ -168,10 +169,10 @@ public final class EntityUtils {
         }
         switch (encoding.toLowerCase()) {
             case "base64":
-                return new Base64InputStream(is, false);
+                return Base64InputStream.builder().setInputStream(is).setEncode(false).get();
             case "quoted-printable":
                 // TODO: implement QuotedPrintableInputStream
-                return new Base64InputStream(is, false);
+                return Base64InputStream.builder().setInputStream(is).setEncode(false).get();
             case "binary":
             case "7bit":
             case "8bit":

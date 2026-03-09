@@ -98,9 +98,9 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
-    public void shouldGenerateJava17Project(RuntimeType rt) throws Exception {
+    public void shouldGenerateJava21Project(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
-                "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime(), "--java-version=17");
+                "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime(), "--java-version=21");
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
@@ -112,7 +112,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Properties props = model.getProperties();
         Assertions.assertEquals("route:1.0.0", props.get("jkube.image.name"));
         Assertions.assertEquals("route:1.0.0", props.get("jkube.container-image.name"));
-        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:17", props.get("jkube.container-image.from"));
+        Assertions.assertEquals("mirror.gcr.io/library/eclipse-temurin:21", props.get("jkube.container-image.from"));
         Assertions.assertEquals("jib", props.get("jkube.build.strategy"));
         Assertions.assertNull(props.get("jkube.docker.push.registry"));
         Assertions.assertNull(props.get("jkube.container-image.registry"));

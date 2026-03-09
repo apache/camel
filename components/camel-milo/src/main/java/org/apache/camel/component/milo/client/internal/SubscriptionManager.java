@@ -33,6 +33,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -582,6 +584,7 @@ public class SubscriptionManager {
     private final MiloClientConfiguration configuration;
     private final ScheduledExecutorService executor;
     private final long reconnectTimeout;
+    private final Lock lock = new ReentrantLock();
 
     private Connected connected;
     private boolean disposed;
@@ -598,31 +601,39 @@ public class SubscriptionManager {
         connect();
     }
 
-    private synchronized void handleConnectionFailure(final Throwable e) {
-        if (this.connected != null) {
-            this.connected.dispose();
-            this.connected = null;
+    private void handleConnectionFailure(final Throwable e) {
+        lock.lock();
+        try {
+            if (this.connected != null) {
+                this.connected.dispose();
+                this.connected = null;
+            }
+
+            // log
+
+            LOG.info("Connection failed", e);
+
+            // always trigger re-connect
+
+            triggerReconnect(true);
+        } finally {
+            lock.unlock();
         }
-
-        // log
-
-        LOG.info("Connection failed", e);
-
-        // always trigger re-connect
-
-        triggerReconnect(true);
     }
 
     private void connect() {
         LOG.info("Starting connect");
 
-        synchronized (this) {
+        lock.lock();
+        try {
             this.reconnectJob = null;
 
             if (this.disposed) {
                 // we woke up disposed
                 return;
             }
+        } finally {
+            lock.unlock();
         }
 
         performAndEvalConnect();
@@ -632,7 +643,8 @@ public class SubscriptionManager {
         try {
             final Connected connected = performConnect();
             LOG.debug("Connect call done");
-            synchronized (this) {
+            lock.lock();
+            try {
                 if (this.disposed) {
                     // we got disposed during connect
                     return;
@@ -656,6 +668,8 @@ public class SubscriptionManager {
                     connected.dispose();
                     throw e;
                 }
+            } finally {
+                lock.unlock();
             }
         } catch (final Exception e) {
             LOG.info("Failed to connect", e);
@@ -765,12 +779,15 @@ public class SubscriptionManager {
     public void dispose() {
         Connected connected;
 
-        synchronized (this) {
+        lock.lock();
+        try {
             if (this.disposed) {
                 return;
             }
             this.disposed = true;
             connected = this.connected;
+        } finally {
+            lock.unlock();
         }
 
         if (connected != null) {
@@ -779,18 +796,23 @@ public class SubscriptionManager {
         }
     }
 
-    private synchronized void triggerReconnect(final boolean immediate) {
-        LOG.info("Trigger re-connect (immediate: {})", immediate);
+    private void triggerReconnect(final boolean immediate) {
+        lock.lock();
+        try {
+            LOG.info("Trigger re-connect (immediate: {})", immediate);
 
-        if (this.reconnectJob != null) {
-            LOG.info("Re-connect already scheduled");
-            return;
-        }
+            if (this.reconnectJob != null) {
+                LOG.info("Re-connect already scheduled");
+                return;
+            }
 
-        if (immediate) {
-            this.reconnectJob = this.executor.submit(this::connect);
-        } else {
-            this.reconnectJob = this.executor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
+            if (immediate) {
+                this.reconnectJob = this.executor.submit(this::connect);
+            } else {
+                this.reconnectJob = this.executor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -873,13 +895,18 @@ public class SubscriptionManager {
                 .toString();
     }
 
-    protected synchronized void whenConnected(final Worker<Connected> worker) {
-        if (this.connected != null) {
-            try {
-                worker.work(this.connected);
-            } catch (final Exception e) {
-                handleConnectionFailure(e);
+    protected void whenConnected(final Worker<Connected> worker) {
+        lock.lock();
+        try {
+            if (this.connected != null) {
+                try {
+                    worker.work(this.connected);
+                } catch (final Exception e) {
+                    handleConnectionFailure(e);
+                }
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -896,28 +923,37 @@ public class SubscriptionManager {
         final UInteger clientHandle = Unsigned.uint(this.clientHandleCounter.incrementAndGet());
         final Subscription subscription = new Subscription(nodeId, samplingInterval, valueConsumer, monitorFilterConfiguration);
 
-        synchronized (this) {
+        lock.lock();
+        try {
             this.subscriptions.put(clientHandle, subscription);
 
             whenConnected(connected -> {
                 connected.activate(clientHandle, subscription);
             });
+        } finally {
+            lock.unlock();
         }
 
         return clientHandle;
     }
 
-    public synchronized void unregisterItem(final UInteger clientHandle) {
-        if (this.subscriptions.remove(clientHandle) != null) {
-            whenConnected(connected -> {
-                connected.deactivate(clientHandle);
-            });
+    public void unregisterItem(final UInteger clientHandle) {
+        lock.lock();
+        try {
+            if (this.subscriptions.remove(clientHandle) != null) {
+                whenConnected(connected -> {
+                    connected.deactivate(clientHandle);
+                });
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
     public CompletableFuture<CallMethodResult> call(
             final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Variant[] inputArguments) {
-        synchronized (this) {
+        lock.lock();
+        try {
             if (this.connected == null) {
                 return newNotConnectedResult();
             }
@@ -930,11 +966,14 @@ public class SubscriptionManager {
                 }
                 return null;
             }, this.executor);
+        } finally {
+            lock.unlock();
         }
     }
 
     public CompletableFuture<?> write(final ExpandedNodeId nodeId, final DataValue value) {
-        synchronized (this) {
+        lock.lock();
+        try {
             if (this.connected == null) {
                 return newNotConnectedResult();
             }
@@ -947,11 +986,14 @@ public class SubscriptionManager {
                 }
                 return status;
             }, this.executor);
+        } finally {
+            lock.unlock();
         }
     }
 
     public CompletableFuture<?> readValues(final List<ExpandedNodeId> nodeIds) {
-        synchronized (this) {
+        lock.lock();
+        try {
             if (this.connected == null) {
                 return newNotConnectedResult();
             }
@@ -964,13 +1006,16 @@ public class SubscriptionManager {
                 }
                 return nodes;
             }, this.executor);
+        } finally {
+            lock.unlock();
         }
     }
 
     public CompletableFuture<Map<ExpandedNodeId, BrowseResult>> browse(
             List<ExpandedNodeId> expandedNodeIds, BrowseDirection direction, int nodeClasses, int maxDepth, String filter,
             boolean includeSubTypes, int maxNodesPerRequest) {
-        synchronized (this) {
+        lock.lock();
+        try {
             if (this.connected == null) {
                 return newNotConnectedResult();
             }
@@ -985,6 +1030,8 @@ public class SubscriptionManager {
                         }
                         return browseResult;
                     }, this.executor);
+        } finally {
+            lock.unlock();
         }
     }
 }

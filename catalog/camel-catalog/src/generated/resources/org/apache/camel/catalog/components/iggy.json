@@ -8,7 +8,7 @@
     "firstVersion": "4.17.0",
     "label": "messaging",
     "javaType": "org.apache.camel.component.iggy.IggyComponent",
-    "supportLevel": "Stable",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iggy",
     "version": "4.19.0-SNAPSHOT",

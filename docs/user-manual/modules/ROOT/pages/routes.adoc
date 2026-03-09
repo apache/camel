@@ -44,6 +44,51 @@ YAML::
 ----
 ====
 
+== Naming routes
+
+You can assign names to your routes in Java DSL using `routeId`:
+
+[tabs]
+====
+
+Java::
++
+In Java DSL you use `routeId` to declare the name/id of the route.
++
+[source,java]
+----
+from("ftp:myserver/folder").routeId("myRoute")
+  .to("activemq:queue:cheese");
+----
+
+XML::
++
+In XML DSL you use `id` in the `<route>` element to declare the name/id of the route.
++
+[source,xml]
+----
+<route id="myRoute">
+  <from uri="ftp:myserver/folder"/>
+  <to uri="activemq:queue:cheese"/>
+</route>
+----
+
+YAML::
++
+In YAML DSL you use `id` in the `- route` node to declare the name/id of the route.
++
+[source,yaml]
+----
+- route:
+    id: myRoute
+    from:
+      uri: ftp:myserver/folder
+      steps:
+        - to:
+            uri: activemq:queue:cheese
+----
+====
+
 
 == Route Description and Notes
 

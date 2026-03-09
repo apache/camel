@@ -19,6 +19,8 @@ package org.apache.camel.component.milo.client;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import org.apache.camel.RuntimeCamelException;
@@ -37,6 +39,7 @@ import static java.util.Objects.requireNonNull;
 
 public class MiloClientConnection implements AutoCloseable {
 
+    private final Lock lock = new ReentrantLock();
     private final MiloClientConfiguration configuration;
     private SubscriptionManager manager;
     private volatile boolean initialized;
@@ -67,17 +70,22 @@ public class MiloClientConnection implements AutoCloseable {
         }
     }
 
-    protected synchronized void checkInit() {
-        if (this.initialized) {
-            return;
-        }
-
+    protected void checkInit() {
+        lock.lock();
         try {
-            init();
-        } catch (final Exception e) {
-            throw new RuntimeCamelException(e);
+            if (this.initialized) {
+                return;
+            }
+
+            try {
+                init();
+            } catch (final Exception e) {
+                throw new RuntimeCamelException(e);
+            }
+            this.initialized = true;
+        } finally {
+            lock.unlock();
         }
-        this.initialized = true;
     }
 
     @FunctionalInterface

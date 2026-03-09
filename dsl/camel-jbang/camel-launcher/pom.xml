@@ -42,8 +42,7 @@
 
         <!-- Dependency versions -->
         <camel-kamelets-version>4.18.0</camel-kamelets-version>
-        <maven-version>3.9.12</maven-version>
-        <maven-resolver-version>1.9.25</maven-resolver-version>
+        <maven-version>3.9.13</maven-version>
         <plexus-interpolation-version>1.29</plexus-interpolation-version>
         <plexus-utils-version>4.0.2</plexus-utils-version>
         <plexus-xml-version>3.0.1</plexus-xml-version>
@@ -67,6 +66,7 @@
         <!-- Pre-installed plugins -->
         <!-- the edit plugin is not pre-installed -->
         <!-- the route-parser plugin is not pre-installed -->
+        <!-- the citrus test plugin cannot be embedded -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-generate</artifactId>
@@ -75,11 +75,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-kubernetes</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jbang-plugin-test</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

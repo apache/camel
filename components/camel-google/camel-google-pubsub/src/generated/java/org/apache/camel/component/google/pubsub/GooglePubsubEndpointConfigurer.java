@@ -44,6 +44,8 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": target.setLoggerId(property(camelContext, java.lang.String.class, value)); return true;
         case "maxackextensionperiod":
         case "maxAckExtensionPeriod": target.setMaxAckExtensionPeriod(property(camelContext, int.class, value)); return true;
+        case "maxdeliveryattempts":
+        case "maxDeliveryAttempts": target.setMaxDeliveryAttempts(property(camelContext, int.class, value)); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, java.lang.Integer.class, value)); return true;
         case "messageorderingenabled":
@@ -89,6 +91,8 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": return java.lang.String.class;
         case "maxackextensionperiod":
         case "maxAckExtensionPeriod": return int.class;
+        case "maxdeliveryattempts":
+        case "maxDeliveryAttempts": return int.class;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return java.lang.Integer.class;
         case "messageorderingenabled":
@@ -130,6 +134,8 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": return target.getLoggerId();
         case "maxackextensionperiod":
         case "maxAckExtensionPeriod": return target.getMaxAckExtensionPeriod();
+        case "maxdeliveryattempts":
+        case "maxDeliveryAttempts": return target.getMaxDeliveryAttempts();
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
         case "messageorderingenabled":

@@ -4,8 +4,6 @@ Validator performs declarative validation of the message according to the declar
 _Input Type_ and/or _Output Type_ on a route definition which declares the expected
 message type.
 
-NOTE: Currently, validators is only supported in Java DSL and the classic Spring XML.
-
 
 == Data type format
 
@@ -51,23 +49,35 @@ Here is an example to specify a validation predicate:
 [tabs]
 ====
 
-
 Java::
 +
 [source,java]
 ----
 validator()
     .type("csv:CSVOrder")
-    .withExpression(bodyAs(String.class).contains("{name:XOrder}"));
+    .withExpression(simple("${body} contains '{name:XOrder}'"));
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<predicateValidator Type="csv:CSVOrder">
-    <simple>${body} contains '{name:XOrder}'</simple>
-</predicateValidator>
+<validators>
+    <predicateValidator type="csv:CSVOrder">
+        <simple>${body} contains '{name:XOrder}'</simple>
+    </predicateValidator>
+</validators>
+----
+
+YAML::
++
+[source,yaml]
+----
+- validators:
+    predicateValidator:
+      type: csv:CSVOrder
+      expression:
+        simple: "${body} contains '{name:XOrder}'"
 ----
 ====
 
@@ -94,11 +104,23 @@ validator()
     .withUri("validator:xsd/schema.xsd");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<endpointValidator uri="validator:xsd/schema.xsd" type="xml"/>
+<validators>
+    <endpointValidator uri="validator:xsd/schema.xsd" type="xml"/>
+</validators>
+----
+
+YAML::
++
+[source,yaml]
+----
+- validators:
+    endpointValidator:
+      type: xml
+      uri: validator:xsd/schema.xsd
 ----
 ====
 
@@ -132,11 +154,23 @@ validator()
     .withJava(com.example.MyCustomValidator.class);
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<customTransformer className="com.example.MyCustomValidator" type="json"/>
+<validators>
+    <customValidator className="com.example.MyCustomValidator" type="json"/>
+</validators>
+----
+
+YAML::
++
+[source,yaml]
+----
+- validators:
+    customValidator:
+      type: json
+      className: com.example.MyCustomValidator
 ----
 ====
 
@@ -157,15 +191,23 @@ validator()
     .withUri("validator:xsd/schema.xsd");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <validators>
-        <endpointValidator uri="validator:xsd/schema.xsd" type="xml:ABCOrder"/>
-    </validators>
-</camelContext>
+<validators>
+    <endpointValidator uri="validator:xsd/schema.xsd" type="xml:ABCOrder"/>
+</validators>
+----
+
+YAML::
++
+[source,yaml]
+----
+- validators:
+    endpointValidator:
+      type: xml:ABCOrder
+      uri: "validator:xsd/schema.xsd"
 ----
 ====
 
@@ -185,18 +227,32 @@ from("direct:abc")
     .log("${body}");
 ----
 
-Spring XML::
+XML::
 +
 [source,xml]
 ----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-        <from uri="direct:abc"/>
-        <inputType urn="xml:ABCOrder" validate="true"/>
-        <log message="${body}"/>
-    </route>
-</camelContext>
+<route>
+    <from uri="direct:abc"/>
+    <inputType urn="xml:ABCOrder" validate="true"/>
+    <log message="${body}"/>
+</route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:abc
+      steps:
+        - inputType:
+            urn: xml:ABCOrder
+            validate: "true"
+        - log:
+            message: "${body}"
+----
+
 ====
 
 == See Also

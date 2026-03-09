@@ -19,6 +19,8 @@ package org.apache.camel.util.function;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -37,17 +39,21 @@ public final class Suppliers {
      */
     public static <T> Supplier<T> memorize(Supplier<T> supplier) {
         final AtomicReference<T> valueHolder = new AtomicReference<>();
+        final Lock lock = new ReentrantLock();
         return new Supplier<>() {
             @Override
             public T get() {
                 T supplied = valueHolder.get();
                 if (supplied == null) {
-                    synchronized (valueHolder) {
+                    lock.lock();
+                    try {
                         supplied = valueHolder.get();
                         if (supplied == null) {
                             supplied = Objects.requireNonNull(supplier.get(), "Supplier should not return null");
                             valueHolder.lazySet(supplied);
                         }
+                    } finally {
+                        lock.unlock();
                     }
                 }
                 return supplied;
@@ -66,12 +72,14 @@ public final class Suppliers {
      */
     public static <T> Supplier<T> memorize(ThrowingSupplier<T, ? extends Exception> supplier, Consumer<Exception> consumer) {
         final AtomicReference<T> valueHolder = new AtomicReference<>();
+        final Lock lock = new ReentrantLock();
         return new Supplier<>() {
             @Override
             public T get() {
                 T supplied = valueHolder.get();
                 if (supplied == null) {
-                    synchronized (valueHolder) {
+                    lock.lock();
+                    try {
                         supplied = valueHolder.get();
                         if (supplied == null) {
                             try {
@@ -81,6 +89,8 @@ public final class Suppliers {
                                 consumer.accept(e);
                             }
                         }
+                    } finally {
+                        lock.unlock();
                     }
                 }
                 return supplied;

@@ -457,7 +457,6 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
         String issueDN = "O=Punkhorn Software, C=US";
         KeyPair issueKP = kpg.generateKeyPair();
-        X509Certificate issueCert = Utils.makeCertificate(issueKP, issueDN, issueKP, issueDN);
 
         // certificate we sign against
         String signingDN = "CN=William J. Collins, E=punkhornsw@gmail.com, O=Punkhorn Software, C=US";

@@ -21,7 +21,6 @@ import java.nio.file.Files;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.remote.FtpConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;

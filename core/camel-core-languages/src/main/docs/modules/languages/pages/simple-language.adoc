@@ -255,13 +255,22 @@ in arrays or lists.
 |`empty(kind)` | `<T>` | *Deprecated* Use `createEmpty` instead.
 |`forEach(exp,fun)` | `<List>` | Returns a List containing the values returned by the function when applied to each value from the input expression. This function is not supported when using csimple.
 |`list(val1,val2,...)` | `List` | The list function creates an `java.util.ArrayList` with the given set of values.
+|`listAdd(fun)` | `List` | Adds the result of the function to the message body as a list object.
+|`listAdd(source,fun)` | `List` | Adds the result of the function to the source expression as a list object.
+|`listRemove(fun)` | `List` | Removes the result of the function (use int to remove by position index) from the message body as a list object.
+|`listRemove(source,fun)` | `List` | Removes the result of the function (use int to remove by position index) from the source expression as a list object.
 |`map(key1,value1,...)` | `Map` | The map function creates a `java.util.LinkedHashMap` with the given set of pairs.
+|`mapAdd(key,fun)` | `List` | Adds the result of the function to the message body as a map object.
+|`mapAdd(source,key,fun)` | `List` | Adds the result of the function to the source expression as a map object.
+|`mapRemove(key)` | `List` | Removes the key from the message body as a map object.
+|`mapRemove(source,key)` | `List` | Removes the key from the source expression as a map object.
 |`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.
 |`reverse(val1,val2,...)` | `List` | Returns a list of all the values, but in reverse order.
 |`shuffle(val1,val2,...)` | `List` | Returns a list of all the values shuffled in random order.
 |`size()` | `int` | Returns the number of elements in collection or array based message body. If the value is null then 0 is returned, otherwise 1.
 |`size(exp)` | `int` | Returns the number of elements in collection or array based value. If the value is null then 0 is returned, otherwise 1.
 |`skip(number)` | `Iterator` | The skip function iterates the message body and skips the first number of items. This can be used with the Splitter EIP to split a message body and skip the first N number of items.
+|`sort(exp,reverse)` | `List` | Sorts the message body or expression in natural order
 |`split(separator)` | `String[]` | Splits the message body as a `String` value using the separator into a `String` array. The separator is comma by default.
 |`split(exp,separator)` | `String[]` | Splits the expression as a `String` value using the separator into a `String` array. The separator is comma by default.
 |====
@@ -282,6 +291,17 @@ executing `${forEach($\{body},'Hello $\{body}')}` will return a List with 3 valu
 The `list` function is used for taking all input values and putting them into a single `List` as response.
 For example if the message body contains '4' then `${list(1,2,3,$\{body})}` will return a list with 4 elements. `[1,2,3,4]`.
 
+You can also add and remove from `java.util.List`(s). For example if the message body is a `List` then you can add
+something `${listAdd('Hello')}`. This will add to the message body. The source can also be an expression instead
+of the message body, such as a variable: `${listAdd(${variable.myVar},'Hello')}`.
+To remove from a list, you use `${listRemove('Hello')}`, or use a number to refer to the position `${listRemove(0)}`.
+Use _last_ as a special index to remove the last element: `${listRemove(last)}`.
+
+Besides adding to a `List` its also possible to add to a `java.util.Map` with the `mapAdd` function. For example if the message body is a `Map` then you can add
+something `${mapAdd('country','DK')}`. This will add to the message body. The source can also be an expression instead
+of the message body, such as a variable: `${mapAdd(${variable.myVar},'country','DK')}`.
+To remove from a list, you use `${mapRemove('country')}`.
+
 The `map` function is similar to the `list` function but for creating a `Map` instead where the values are grouped in pairs 2 by 2.
 For example `${map(1,a,2,b,3,c)}` will return a map with 3 elements `{1=a, 2=b, 3=c}`.
 
@@ -290,7 +310,8 @@ To create an empty `Map` use `${createEmpty(map)}`.
 
 The `reverse` function is to reverse the order of the values.
 For example `${reverse(1,2,3,4,5)}` will return a `List` with the values `5,4,3,2,1`.
-And the `shuffle` function will randomize the order of the values.
+
+And the `shuffle` function will randomize the order of the values. The `sort` function will sort the order of the values (in natural order A...Z).
 
 The `size` functions is used to determine the number of elements, when using `Collection` or array based payloads.
 If not then either 0 or 1 is returned whether the body is `null` or not.
@@ -592,6 +613,10 @@ Functions to work with XML and JSon payloads.
 |`jsonpath(input,exp)` | `Object` | Same as `jsonpath(exp)` but to use the _input_ expression as the source of the JSon document.
 |`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
 |`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
+|`toJson(exp)` | `String` | Converts the expression to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon.
+|`toJsonBody` | `String` | Converts the message body to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon.
+|`toPrettyJson(exp)` | `String` | Converts the expression to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon in pretty mode.
+|`toPrettyJsonBody` | `String` | Converts the message body to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon in pretty mode.
 |`xpath(exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
 |`xpath(input,exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath. For input you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
 |====
@@ -640,6 +665,21 @@ from("direct:map")
             }""")
         .to("log:data");
 ----
+
+The `toJson` function is to convert the payload to JSon as a `String` value. However if the payload is already a `String` then no conversion happens.
+So suppose the payload is a `Map` object as follows:
+
+[source,java]
+----
+Map<String, Object> map = new LinkedHashMap<>();
+map.put("name", "Jack");
+map.put("id", 123);
+----
+
+Then `toJson` will output: `{"name":"Jack","id":123}`.
+
+There are also _pretty_ alternatives so when calling `toPrettyJson` will output: TODO:
+
 
 The `xpath` function is for working with XML and using XPath expressions to extract data from XML payloads.
 

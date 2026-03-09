@@ -59,7 +59,7 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
                 .setRequestRouter(RequestRouter.create(
                         new URIAuthority("localhost"),
                         UriPatternType.URI_PATTERN,
-                        Collections.EMPTY_LIST,
+                        Collections.emptyList(),
                         RequestRouter.LOCAL_AUTHORITY_RESOLVER,
                         null))
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())

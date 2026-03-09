@@ -2742,6 +2742,38 @@ public class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression result serialized as a JSON string
+     */
+    public static Expression toJsonExpression(final Expression expression, boolean pretty) {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object value = expression.evaluate(exchange, Object.class);
+                if (value == null) {
+                    return null;
+                }
+                if (value instanceof String) {
+                    return value;
+                }
+                String answer = serializeCarelessly(value);
+                if (answer != null && pretty) {
+                    answer = answer.trim();
+                    // only pretty print if json structure
+                    if (answer.startsWith("{") && answer.endsWith("}") || answer.startsWith("[") && answer.endsWith("]")) {
+                        answer = Jsoner.prettyPrint(answer);
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "toJson(" + expression + ")";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the message body as pretty formatted string
      */
     public static Expression prettyBodyExpression() {
@@ -2775,6 +2807,16 @@ public class ExpressionBuilder {
         } catch (Exception e) {
             return rawXml;
         }
+    }
+
+    private static String serializeCarelessly(Object value) {
+        final java.io.StringWriter writer = new java.io.StringWriter();
+        try {
+            Jsoner.serializeCarelessly(value, writer);
+        } catch (final java.io.IOException caught) {
+            /* See StringWriter. */
+        }
+        return writer.toString();
     }
 
 }

@@ -985,8 +985,6 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         String issueDN = "O=Punkhorn Software, C=US";
         KeyPair issueKP = kpg.generateKeyPair();
-        X509Certificate issueCert = Utils.makeCertificate(
-                issueKP, issueDN, issueKP, issueDN);
 
         //
         // certificate we sign against
@@ -1016,8 +1014,6 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         String issueDN = "O=Punkhorn Software, C=US";
         KeyPair issueKP = kpg.generateKeyPair();
-        X509Certificate issueCert = Utils.makeCertificate(
-                issueKP, issueDN, issueKP, issueDN);
 
         //
         // certificate we sign against

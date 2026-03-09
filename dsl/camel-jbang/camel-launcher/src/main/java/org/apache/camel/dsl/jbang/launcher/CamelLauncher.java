@@ -20,8 +20,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-
 /**
  * Main class for the Camel JBang Fat-Jar Launcher.
  * <p>
@@ -45,7 +43,9 @@ public class CamelLauncher {
             System.setProperty("camel.launcher.jar", jarPath);
         }
 
-        CamelJBangMain.run(args);
+        CamelLauncherMain main = new CamelLauncherMain();
+        main.setDiscoverPlugins(false);
+        main.execute(args);
     }
 
     private static String detectJarPath() {

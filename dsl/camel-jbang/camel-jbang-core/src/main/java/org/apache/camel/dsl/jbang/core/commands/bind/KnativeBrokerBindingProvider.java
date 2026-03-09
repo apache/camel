@@ -24,6 +24,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Binding to a Knative broker resource.
  */
+@Deprecated
 public class KnativeBrokerBindingProvider extends ObjectReferenceBindingProvider {
 
     private static final String prefix = "knative:broker:";

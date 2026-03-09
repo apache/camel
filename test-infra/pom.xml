@@ -34,6 +34,8 @@
     <properties>
         <!-- Vulnerability scan only enabled in non testing modules -->
         <dependency-check.skip>true</dependency-check.skip>
+        <!-- don't need coverage for testing infra -->
+        <jacoco.skip>true</jacoco.skip>        
     </properties>
 
     <modules>
@@ -90,7 +92,6 @@
         <module>camel-test-infra-milvus</module>
         <module>camel-test-infra-hazelcast</module>
         <module>camel-test-infra-hivemq</module>
-        <module>camel-test-infra-torchserve</module>
         <module>camel-test-infra-tensorflow-serving</module>
         <module>camel-test-infra-triton</module>
         <module>camel-test-infra-neo4j</module>

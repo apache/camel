@@ -18,10 +18,11 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MisspelledRouteRefTest {
@@ -33,7 +34,8 @@ public class MisspelledRouteRefTest {
 
         Exception ex = assertThrows(RuntimeCamelException.class, () -> main.start());
 
-        CamelException ce = assertIsInstanceOf(CamelException.class, ex.getCause());
+        CamelException ce = ObjectHelper.getException(CamelException.class, ex);
+        assertNotNull(ce, "Expected a CamelException in the cause chain");
         assertEquals("Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]",
                 ce.getMessage());
 

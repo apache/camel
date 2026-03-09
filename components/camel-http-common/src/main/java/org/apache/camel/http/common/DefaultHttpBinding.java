@@ -369,9 +369,10 @@ public class DefaultHttpBinding implements HttpBinding {
                 doWriteFaultResponse(target, response, exchange);
             }
         } else {
-            if (exchange.hasOut()) {
+            if (exchange.getMessage() != null) {
+                // if (exchange.getOut() != null) {
                 // just copy the protocol relates header if we do not have them
-                copyProtocolHeaders(exchange.getIn(), exchange.getOut());
+                copyProtocolHeaders(exchange.getIn(), exchange.getMessage());
             }
             doWriteResponse(target, response, exchange);
         }

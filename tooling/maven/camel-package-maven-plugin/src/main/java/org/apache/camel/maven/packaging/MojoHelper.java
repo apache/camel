@@ -47,7 +47,7 @@ public final class MojoHelper {
                         dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"), dir.resolve("camel-neo4j"),
                         dir.resolve("camel-openai"),
                         dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"),
-                        dir.resolve("camel-torchserve"), dir.resolve("camel-tensorflow-serving"),
+                        dir.resolve("camel-tensorflow-serving"),
                         dir.resolve("camel-weaviate"), dir.resolve("camel-docling"));
             case "camel-as2":
                 return Collections.singletonList(dir.resolve("camel-as2-component"));
@@ -83,7 +83,8 @@ public final class MojoHelper {
                         dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
                         dir.resolve("camel-google-sheets"),
                         dir.resolve("camel-google-storage"), dir.resolve("camel-google-functions"),
-                        dir.resolve("camel-google-secret-manager"), dir.resolve("camel-google-vertexai"));
+                        dir.resolve("camel-google-secret-manager"), dir.resolve("camel-google-vertexai"),
+                        dir.resolve("camel-google-vision"));
             case "camel-debezium":
                 return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
                         dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"),
