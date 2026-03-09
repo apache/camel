@@ -58,7 +58,7 @@ public final class AS2ConnectionHelper {
                 configuration.getTargetHostname(), configuration.getTargetPortNumber(), configuration.getHttpSocketTimeout(),
                 configuration.getHttpConnectionTimeout(), configuration.getHttpConnectionPoolSize(),
                 configuration.getHttpConnectionPoolTtl(), configuration.getSslContext(),
-                configuration.getHostnameVerifier());
+                configuration.getHostnameVerifier(), configuration.isExpectContinue());
     }
 
     /**

@@ -129,6 +129,8 @@ public class AS2Configuration {
     private String password;
     @UriParam(label = "security", secret = true)
     private String accessToken;
+    @UriParam(defaultValue = "false", label = "producer")
+    private boolean expectContinue;
     @UriParam(label = "security", secret = true)
     private String mdnUserName;
     @UriParam(label = "security", secret = true)
@@ -618,6 +620,20 @@ public class AS2Configuration {
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public boolean isExpectContinue() {
+        return expectContinue;
+    }
+
+    /**
+     * Controls whether the Expect: 100-Continue header is included in outbound AS2 messages. When enabled, the client
+     * sends the headers first and waits for a 100 Continue response from the server before sending the message body.
+     * This can improve efficiency with compatible partners but may cause 3-second delays with servers that don't
+     * support the protocol. Default is false for backward compatibility.
+     */
+    public void setExpectContinue(boolean expectContinue) {
+        this.expectContinue = expectContinue;
     }
 
     public String getMdnUserName() {
