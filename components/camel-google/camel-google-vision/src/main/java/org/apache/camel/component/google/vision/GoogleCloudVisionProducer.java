@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.vision;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.cloud.vision.v1.AnnotateImageRequest;
@@ -29,13 +28,12 @@ import com.google.protobuf.ByteString;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultProducer;
 
-/**
- * Producer for the Google Cloud Vision component.
- */
 public class GoogleCloudVisionProducer extends DefaultProducer {
-    private GoogleCloudVisionEndpoint endpoint;
+
+    private final GoogleCloudVisionEndpoint endpoint;
 
     public GoogleCloudVisionProducer(GoogleCloudVisionEndpoint endpoint) {
         super(endpoint);
@@ -55,13 +53,15 @@ public class GoogleCloudVisionProducer extends DefaultProducer {
         ImageAnnotatorClient client = endpoint.getClient();
         AnnotateImageRequest request = exchange.getIn().getMandatoryBody(AnnotateImageRequest.class);
 
-        List<AnnotateImageRequest> requests = new ArrayList<>();
-        requests.add(request);
-
-        BatchAnnotateImagesResponse batchResponse = client.batchAnnotateImages(requests);
+        BatchAnnotateImagesResponse batchResponse = client.batchAnnotateImages(List.of(request));
         AnnotateImageResponse response = batchResponse.getResponses(0);
 
-        Message message = getMessageForResponse(exchange);
+        if (response.hasError()) {
+            throw new RuntimeCamelException(
+                    "Google Cloud Vision API error: " + response.getError().getMessage());
+        }
+
+        Message message = exchange.getMessage();
         message.setHeader(GoogleCloudVisionConstants.RESPONSE_OBJECT, response);
         message.setBody(response);
     }
@@ -83,85 +83,54 @@ public class GoogleCloudVisionProducer extends DefaultProducer {
             featureBuilder.setMaxResults(getConfiguration().getMaxResults());
         }
 
-        Feature feature = featureBuilder.build();
-
         AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
-                .addFeatures(feature)
+                .addFeatures(featureBuilder.build())
                 .setImage(image)
                 .build();
 
-        List<AnnotateImageRequest> requests = new ArrayList<>();
-        requests.add(request);
-
-        BatchAnnotateImagesResponse batchResponse = client.batchAnnotateImages(requests);
+        BatchAnnotateImagesResponse batchResponse = client.batchAnnotateImages(List.of(request));
         AnnotateImageResponse response = batchResponse.getResponses(0);
 
         if (response.hasError()) {
-            throw new RuntimeException(
+            throw new RuntimeCamelException(
                     "Google Cloud Vision API error: " + response.getError().getMessage());
         }
 
-        Message message = getMessageForResponse(exchange);
+        Message message = exchange.getMessage();
         message.setHeader(GoogleCloudVisionConstants.RESPONSE_OBJECT, response);
         message.setBody(extractResult(response, operation));
     }
 
     private Feature.Type mapOperationToFeatureType(GoogleCloudVisionOperations operation) {
-        switch (operation) {
-            case labelDetection:
-                return Feature.Type.LABEL_DETECTION;
-            case textDetection:
-                return Feature.Type.TEXT_DETECTION;
-            case faceDetection:
-                return Feature.Type.FACE_DETECTION;
-            case landmarkDetection:
-                return Feature.Type.LANDMARK_DETECTION;
-            case logoDetection:
-                return Feature.Type.LOGO_DETECTION;
-            case safeSearchDetection:
-                return Feature.Type.SAFE_SEARCH_DETECTION;
-            case imagePropertiesDetection:
-                return Feature.Type.IMAGE_PROPERTIES;
-            case webDetection:
-                return Feature.Type.WEB_DETECTION;
-            case objectLocalization:
-                return Feature.Type.OBJECT_LOCALIZATION;
-            case cropHintsDetection:
-                return Feature.Type.CROP_HINTS;
-            case documentTextDetection:
-                return Feature.Type.DOCUMENT_TEXT_DETECTION;
-            default:
-                throw new IllegalArgumentException("Unsupported operation: " + operation);
-        }
+        return switch (operation) {
+            case labelDetection -> Feature.Type.LABEL_DETECTION;
+            case textDetection -> Feature.Type.TEXT_DETECTION;
+            case faceDetection -> Feature.Type.FACE_DETECTION;
+            case landmarkDetection -> Feature.Type.LANDMARK_DETECTION;
+            case logoDetection -> Feature.Type.LOGO_DETECTION;
+            case safeSearchDetection -> Feature.Type.SAFE_SEARCH_DETECTION;
+            case imagePropertiesDetection -> Feature.Type.IMAGE_PROPERTIES;
+            case webDetection -> Feature.Type.WEB_DETECTION;
+            case objectLocalization -> Feature.Type.OBJECT_LOCALIZATION;
+            case cropHintsDetection -> Feature.Type.CROP_HINTS;
+            case documentTextDetection -> Feature.Type.DOCUMENT_TEXT_DETECTION;
+        };
     }
 
     private Object extractResult(AnnotateImageResponse response, GoogleCloudVisionOperations operation) {
-        switch (operation) {
-            case labelDetection:
-                return response.getLabelAnnotationsList();
-            case textDetection:
-                return response.getTextAnnotationsList();
-            case faceDetection:
-                return response.getFaceAnnotationsList();
-            case landmarkDetection:
-                return response.getLandmarkAnnotationsList();
-            case logoDetection:
-                return response.getLogoAnnotationsList();
-            case safeSearchDetection:
-                return response.getSafeSearchAnnotation();
-            case imagePropertiesDetection:
-                return response.getImagePropertiesAnnotation();
-            case webDetection:
-                return response.getWebDetection();
-            case objectLocalization:
-                return response.getLocalizedObjectAnnotationsList();
-            case cropHintsDetection:
-                return response.getCropHintsAnnotation();
-            case documentTextDetection:
-                return response.getFullTextAnnotation();
-            default:
-                throw new IllegalArgumentException("Unsupported operation: " + operation);
-        }
+        return switch (operation) {
+            case labelDetection -> response.getLabelAnnotationsList();
+            case textDetection -> response.getTextAnnotationsList();
+            case faceDetection -> response.getFaceAnnotationsList();
+            case landmarkDetection -> response.getLandmarkAnnotationsList();
+            case logoDetection -> response.getLogoAnnotationsList();
+            case safeSearchDetection -> response.getSafeSearchAnnotation();
+            case imagePropertiesDetection -> response.getImagePropertiesAnnotation();
+            case webDetection -> response.getWebDetection();
+            case objectLocalization -> response.getLocalizedObjectAnnotationsList();
+            case cropHintsDetection -> response.getCropHintsAnnotation();
+            case documentTextDetection -> response.getFullTextAnnotation();
+        };
     }
 
     private GoogleCloudVisionOperations determineOperation(Exchange exchange) {
@@ -181,10 +150,6 @@ public class GoogleCloudVisionProducer extends DefaultProducer {
                     "Operation must be specified via endpoint URI, configuration, or message header.");
         }
         return operation;
-    }
-
-    public static Message getMessageForResponse(final Exchange exchange) {
-        return exchange.getMessage();
     }
 
     private GoogleCloudVisionConfiguration getConfiguration() {
