@@ -247,6 +247,14 @@ public final class SimpleConstants {
               javaType = "java.util.ArrayList", displayName = "Create List of values")
     public static final String LIST = "list(val...)";
 
+    @Metadata(description = "Adds the result of the expression to the message body (or expression) as a list",
+              label = "collection", javaType = "List", displayName = "List Add")
+    public static final String LIST_ADD = "listAdd(source,exp)";
+
+    @Metadata(description = "Removes the result of the expression from the message body (or expression) as a list",
+              label = "collection", javaType = "List", displayName = "List Remove")
+    public static final String LIST_REMOVE = "listRemove(source,exp)";
+
     @Metadata(description = "Loads the content of the resource from classpath (cannot load from file-system to avoid dangerous situations).",
               label = "core", javaType = "String", displayName = "Load")
     public static final String LOAD = "load(file)";

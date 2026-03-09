@@ -73,8 +73,6 @@ import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
-import static java.io.File.separator;
-
 /**
  * Expression builder used by the simple language.
  */
@@ -1895,6 +1893,95 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "forEach(" + source + ", " + function + ")";
+            }
+        };
+    }
+
+    /**
+     * Adds the result of the function to the source list
+     */
+    public static Expression listAddExpression(final String source, final String function) {
+        return new ExpressionAdapter() {
+            private CamelContext context;
+            private Expression exp1;
+            private Expression exp2;
+
+            @Override
+            public void init(CamelContext context) {
+                this.context = context;
+                exp1 = context.resolveLanguage("simple").createExpression(source);
+                exp1.init(context);
+                exp2 = context.resolveLanguage("simple").createExpression(function);
+                exp2.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Collection<Object> col = exp1.evaluate(exchange, Collection.class);
+                if (col != null) {
+                    Object value = exp2.evaluate(exchange, Object.class);
+                    if (value != null) {
+                        col.add(value);
+                    }
+                }
+                return col;
+            }
+
+            @Override
+            public String toString() {
+                return "listAdd(" + source + ", " + function + ")";
+            }
+        };
+    }
+
+    /**
+     * Removes the result of the function from the source list
+     */
+    public static Expression listRemoveExpression(final String source, final String function) {
+        return new ExpressionAdapter() {
+            private CamelContext context;
+            private Expression exp1;
+            private Expression exp2;
+
+            @Override
+            public void init(CamelContext context) {
+                this.context = context;
+                exp1 = context.resolveLanguage("simple").createExpression(source);
+                exp1.init(context);
+                exp2 = context.resolveLanguage("simple").createExpression(function);
+                exp2.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                List<Object> list = exp1.evaluate(exchange, List.class);
+                if (list != null) {
+                    Object value = exp2.evaluate(exchange, Object.class);
+                    if (value != null) {
+                        boolean removed = list.remove(value);
+                        if (!removed) {
+                            Integer pos;
+                            // special name to remove last
+                            if ("last".equals(value)) {
+                                pos = list.size() - 1;
+                            } else {
+                                // this may be an integer
+                                pos = context.getTypeConverter().tryConvertTo(int.class, exchange, value);
+                            }
+                            if (pos != null) {
+                                if (pos >= 0 && pos < list.size()) {
+                                    list.remove((int) pos);
+                                }
+                            }
+                        }
+                    }
+                }
+                return list;
+            }
+
+            @Override
+            public String toString() {
+                return "listRemove(" + source + ", " + function + ")";
             }
         };
     }

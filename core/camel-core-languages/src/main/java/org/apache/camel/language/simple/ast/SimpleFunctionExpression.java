@@ -1249,6 +1249,44 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String exp2 = Arrays.stream(tokens).skip(1).collect(Collectors.joining(","));
             return SimpleExpressionBuilder.filterExpression(exp1, exp2);
         }
+        // listAdd function
+        remainder = ifStartsWithReturnRemainder("listAdd(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${listAdd(exp)} or ${listAdd(exp,exp)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            int skip = 0;
+            String exp1 = "${body}";
+            if (tokens.length > 1) {
+                skip = 1;
+                exp1 = tokens[0];
+            }
+            // the function takes the remainder of the tokens
+            String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
+            return SimpleExpressionBuilder.listAddExpression(exp1, exp2);
+        }
+        // listRemove function
+        remainder = ifStartsWithReturnRemainder("listRemove(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${listRemove(exp)} or ${listRemove(exp,exp)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            int skip = 0;
+            String exp1 = "${body}";
+            if (tokens.length > 1) {
+                skip = 1;
+                exp1 = tokens[0];
+            }
+            // the function takes the remainder of the tokens
+            String exp2 = Arrays.stream(tokens).skip(skip).collect(Collectors.joining(","));
+            return SimpleExpressionBuilder.listRemoveExpression(exp1, exp2);
+        }
 
         // isEmpty function
         remainder = ifStartsWithReturnRemainder("isEmpty(", function);

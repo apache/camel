@@ -3839,6 +3839,60 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testListAdd() {
+        List body = new ArrayList();
+        body.add("A");
+        body.add("B");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${listAdd('C')}");
+        List list = expression.evaluate(exchange, List.class);
+        assertEquals(3, list.size());
+        assertEquals("A", list.get(0));
+        assertEquals("B", list.get(1));
+        assertEquals("C", list.get(2));
+
+        exchange.getMessage().setHeader("myChar", "D");
+        expression = context.resolveLanguage("simple").createExpression("${listAdd(${header.myChar})}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(4, list.size());
+        assertEquals("A", list.get(0));
+        assertEquals("B", list.get(1));
+        assertEquals("C", list.get(2));
+        assertEquals("D", list.get(3));
+    }
+
+    @Test
+    public void testListRemove() {
+        List body = new ArrayList();
+        body.add("A");
+        body.add("B");
+        body.add("C");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${listRemove('C')}");
+        List list = expression.evaluate(exchange, List.class);
+        assertEquals(2, list.size());
+        assertEquals("A", list.get(0));
+        assertEquals("B", list.get(1));
+
+        expression = context.resolveLanguage("simple").createExpression("${listRemove(0)}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(1, list.size());
+        assertEquals("B", list.get(0));
+
+        body.add("C");
+        body.add("D");
+        body.add("E");
+        expression = context.resolveLanguage("simple").createExpression("${listRemove(last)}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(3, list.size());
+        assertEquals("B", list.get(0));
+        assertEquals("C", list.get(1));
+        assertEquals("D", list.get(2));
+    }
+
+    @Test
     public void testForEach() {
         exchange.getMessage().setBody("Camel,World,Cheese");
 
