@@ -25,8 +25,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.clustering.FailoverFeature;
 import org.apache.cxf.clustering.RandomStrategy;
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +45,7 @@ public class FailOverFeatureTest {
     private static final String PAYLOAD_PROXY_ADDRESS = "http://localhost:" + port2 + "/FailOverFeatureTest/proxy";
     private static final String POJO_PROXY_ADDRESS = "http://localhost:" + port3 + "/FailOverFeatureTest/proxy";
     private static final String NONE_EXIST_ADDRESS = "http://localhost:" + port4 + "/FailOverFeatureTest";
+    private static Server server;
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;
 
@@ -53,7 +56,15 @@ public class FailOverFeatureTest {
         ServerFactoryBean factory = new ServerFactoryBean();
         factory.setAddress(SERVICE_ADDRESS);
         factory.setServiceBean(new HelloServiceImpl());
-        factory.create();
+        server = factory.create();
+    }
+
+    @AfterAll
+    public static void destroy() {
+        if (server != null) {
+            server.stop();
+            server.destroy();
+        }
     }
 
     @Test
