@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.Base64;
-
 import dev.langchain4j.data.audio.Audio;
 import dev.langchain4j.data.image.Image;
 import dev.langchain4j.data.message.*;
@@ -35,8 +34,12 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.MEDIA_TYPE;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
+import static org.apache.camel.component.langchain4j.agent.api.Headers.USER_MESSAGE;
 
-import static org.apache.camel.component.langchain4j.agent.api.Headers.*;
+
 
 /**
  * Type converters for the LangChain4j Agent component.
@@ -181,24 +184,7 @@ public final class LangChain4jAgentConverter {
         return buildAiAgentBody(exchange, content, text);
     }
 
-    /**
-     * Support Camel stream caching bodies (ByteArrayInputStreamCache) and delegate them to the existing InputStream
-     * converter.
-     *
-     * @param  cache    the cached input stream containing the message body
-     * @param  exchange the Camel exchange containing headers such as * {@code CamelLangChain4jAgentMediaType},
-     *                  user/system messages, * and optional memory identifiers
-     * @return          an {@link AiAgentBody} containing the appropriate * LangChain4j {@link Content} representation
-     */
-    @Converter
-    public static AiAgentBody<?> inputStreamCacheToAiAgentBody(
-            org.apache.camel.converter.stream.ByteArrayInputStreamCache cache,
-            Exchange exchange) {
-
-        return inputStreamToAiAgentBody(cache, exchange);
-    }
-
-    /**
+   /**
      * Creates the appropriate LangChain4j Content object based on the MIME type.
      */
     static Content createContent(byte[] data, String mimeType) {
