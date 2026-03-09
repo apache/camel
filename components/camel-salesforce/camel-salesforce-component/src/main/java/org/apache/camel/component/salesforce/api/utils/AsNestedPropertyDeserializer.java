@@ -57,7 +57,7 @@ public class AsNestedPropertyDeserializer extends AsPropertyTypeDeserializer {
             }
             node = nestedProperty;
         }
-        ValueDeserializer<Object> deser = _findDeserializer(ctxt, node.asText());
+        ValueDeserializer<Object> deser = _findDeserializer(ctxt, node.asString());
         try (JsonParser jsonParser = new TreeTraversingParser(originalNode, ctxt)) {
             if (jsonParser.currentToken() == null) {
                 jsonParser.nextToken();

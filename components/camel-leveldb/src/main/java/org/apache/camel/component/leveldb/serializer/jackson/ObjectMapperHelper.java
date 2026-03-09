@@ -44,7 +44,7 @@ public final class ObjectMapperHelper {
                 .addModule(simpleModule)
                 .build();
         if (customModule != null) {
-            objectMapper.rebuild().addModule(customModule);
+            objectMapper = objectMapper.rebuild().addModule(customModule).build();
         }
 
         return objectMapper;

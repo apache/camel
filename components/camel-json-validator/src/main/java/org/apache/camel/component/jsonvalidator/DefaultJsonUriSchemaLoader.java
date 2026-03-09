@@ -47,7 +47,7 @@ public class DefaultJsonUriSchemaLoader implements JsonUriSchemaLoader {
         // Detect version from $schema field if present
         SpecificationVersion version = defaultVersion;
         if (node.has("$schema")) {
-            String dialectId = node.get("$schema").asText();
+            String dialectId = node.get("$schema").asString();
             version = SpecificationVersion.fromDialectId(dialectId).orElse(defaultVersion);
         }
 
