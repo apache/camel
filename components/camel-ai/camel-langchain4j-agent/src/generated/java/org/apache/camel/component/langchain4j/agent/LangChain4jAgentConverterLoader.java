@@ -76,14 +76,6 @@ public final class LangChain4jAgentConverterLoader implements TypeConverterLoade
                 }
                 return answer;
             });
-        addTypeConverter(registry, org.apache.camel.component.langchain4j.agent.api.AiAgentBody.class, org.apache.camel.converter.stream.ByteArrayInputStreamCache.class, false,
-            (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.langchain4j.agent.LangChain4jAgentConverter.inputStreamCacheToAiAgentBody((org.apache.camel.converter.stream.ByteArrayInputStreamCache) value, exchange);
-                if (false && answer == null) {
-                    answer = Void.class;
-                }
-                return answer;
-            });
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) {
