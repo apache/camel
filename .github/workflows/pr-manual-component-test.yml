@@ -51,8 +51,13 @@ jobs:
         run: |
           pr="$(gh api /repos/${GH_REPO}/pulls/${PR_NUMBER})"
           head_sha="$(echo "$pr" | jq -r .head.sha)"
-          pushed_at="$(echo "$pr" | jq -r .head.repo.pushed_at)"
-          if [[ $(date -d "$pushed_at" +%s) -gt $(date -d "$COMMENT_AT" +%s) ]]; then
+          # Check that the PR branch was not pushed to after the comment was created.
+          # Use the head commit date (not head.repo.pushed_at which is repo-level
+          # and changes whenever any branch is pushed, causing false negatives).
+          commit="$(gh api /repos/${GH_REPO}/commits/${head_sha})"
+          committed_at="$(echo "$commit" | jq -r .commit.committer.date)"
+          if [[ $(date -d "$committed_at" +%s) -gt $(date -d "$COMMENT_AT" +%s) ]]; then
+              echo "PR branch was updated after the comment was posted (commit: $committed_at, comment: $COMMENT_AT). Aborting."
               exit 1
           fi
           echo "pr_sha=$head_sha" >> $GITHUB_OUTPUT
