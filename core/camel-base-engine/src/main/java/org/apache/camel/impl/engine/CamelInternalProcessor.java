@@ -384,6 +384,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
         boolean sync = processor.process(exchange, async);
         if (!sync) {
+            // Deprecated since 4.19.0
             EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
         }
 

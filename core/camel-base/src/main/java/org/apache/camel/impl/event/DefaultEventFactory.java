@@ -437,6 +437,7 @@ public class DefaultEventFactory implements EventFactory {
     }
 
     @Override
+    @Deprecated(since = "4.19.0")
     public CamelEvent createCamelExchangeAsyncProcessingStartedEvent(Exchange exchange) {
         CamelEvent answer = new ExchangeAsyncProcessingStartedEvent(exchange);
         if (timestampEnabled) {

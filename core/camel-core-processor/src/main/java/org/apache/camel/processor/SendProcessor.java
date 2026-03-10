@@ -252,6 +252,7 @@ public class SendProcessor extends BaseProcessorSupport implements Traceable, En
             LOG.debug(">>>> {} {}", destination, exchange);
             boolean sync = producer.process(exchange, ac);
             if (!sync) {
+                // Deprecated since 4.19.0
                 EventHelper.notifyExchangeAsyncProcessingStartedEvent(camelContext, exchange);
             }
             return sync;

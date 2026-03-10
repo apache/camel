@@ -1518,6 +1518,7 @@ public final class EventHelper {
         return answer;
     }
 
+    @Deprecated(since = "4.19.0")
     public static boolean notifyExchangeAsyncProcessingStartedEvent(CamelContext context, Exchange exchange) {
         ManagementStrategy management = context.getManagementStrategy();
         if (management == null) {

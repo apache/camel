@@ -351,6 +351,7 @@ public interface EventFactory {
      * @param  exchange the exchange
      * @return          the created event
      */
+    @Deprecated(since = "4.19.0")
     CamelEvent createCamelExchangeAsyncProcessingStartedEvent(Exchange exchange);
 
     /**

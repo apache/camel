@@ -31,6 +31,7 @@ import org.apache.camel.support.RoutePolicySupport;
  *
  * @see ExchangeAsyncProcessingStartedEvent
  */
+@Deprecated(since = "4.19.0")
 public class ExchangeAsyncProcessingStartedEvent extends AbstractExchangeEvent
         implements CamelEvent.ExchangeAsyncProcessingStartedEvent {
     private static final @Serial long serialVersionUID = -19248832613958122L;

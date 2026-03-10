@@ -52,6 +52,7 @@ public interface CamelEvent {
         ExchangeRedelivery,
         ExchangeSending,
         ExchangeSent,
+        @Deprecated(since = "4.19.0")
         ExchangeAsyncProcessingStarted,
         RoutesStarting,
         RoutesStarted,
@@ -487,6 +488,7 @@ public interface CamelEvent {
     /**
      * Special event only in use for camel-tracing / camel-opentelemetry. This event is NOT (by default) in use.
      */
+    @Deprecated(since = "4.19.0")
     interface ExchangeAsyncProcessingStartedEvent extends ExchangeEvent {
         @Override
         default Type getType() {

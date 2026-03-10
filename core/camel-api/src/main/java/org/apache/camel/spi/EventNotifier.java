@@ -96,7 +96,9 @@ public interface EventNotifier {
 
     void setIgnoreStepEvents(boolean ignoreStepEvents);
 
+    @Deprecated(since = "4.19.0")
     void setIgnoreExchangeAsyncProcessingStartedEvents(boolean ignoreExchangeAsyncProcessingStartedEvents);
 
+    @Deprecated(since = "4.19.0")
     boolean isIgnoreExchangeAsyncProcessingStartedEvents();
 }
