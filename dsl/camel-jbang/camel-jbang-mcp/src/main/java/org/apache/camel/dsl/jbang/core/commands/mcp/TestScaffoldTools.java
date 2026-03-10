@@ -17,15 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
@@ -65,13 +64,8 @@ public class TestScaffoldTools {
     private static final Pattern XML_TO = Pattern.compile("<to\\s+uri=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE);
     private static final Pattern XML_TOD = Pattern.compile("<toD\\s+uri=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE);
 
-    /** Component schemes that are trivial and should not be replaced with mocks. */
-    private static final Set<String> TRIVIAL_SCHEMES = Set.of("log", "direct", "seda", "mock", "controlbus", "stub");
-
-    /** Component schemes that are internally triggered (user can send messages to them). */
-    private static final Set<String> SENDABLE_SCHEMES = Set.of("direct", "seda");
-
-    private static final Map<String, TestInfraInfo> TEST_INFRA_MAP = buildTestInfraMap();
+    @Inject
+    TestInfraData testInfraData;
 
     private final CamelCatalog catalog;
 
@@ -111,12 +105,12 @@ public class TestScaffoldTools {
             List<String> mockEndpoints = toEndpoints.stream()
                     .filter(uri -> {
                         String scheme = extractScheme(uri);
-                        return scheme != null && !TRIVIAL_SCHEMES.contains(scheme);
+                        return scheme != null && !testInfraData.getTrivialSchemes().contains(scheme);
                     })
                     .toList();
 
             // Determine test-infra services needed (deduplicated)
-            List<TestInfraInfo> infraServices = resolveInfraServices(allSchemes);
+            List<TestInfraData.TestInfraInfo> infraServices = resolveInfraServices(allSchemes);
 
             // Generate test code
             String testCode = "spring-boot".equals(resolvedRuntime)
@@ -250,10 +244,10 @@ public class TestScaffoldTools {
 
     // ---- Test-infra resolution ----
 
-    private List<TestInfraInfo> resolveInfraServices(List<String> schemes) {
-        Set<TestInfraInfo> seen = new LinkedHashSet<>();
+    private List<TestInfraData.TestInfraInfo> resolveInfraServices(List<String> schemes) {
+        Set<TestInfraData.TestInfraInfo> seen = new LinkedHashSet<>();
         for (String scheme : schemes) {
-            TestInfraInfo info = TEST_INFRA_MAP.get(scheme);
+            TestInfraData.TestInfraInfo info = testInfraData.getTestInfra(scheme);
             if (info != null) {
                 seen.add(info);
             }
@@ -265,7 +259,7 @@ public class TestScaffoldTools {
 
     private String generateMainTest(
             List<String> fromEndpoints, List<String> mockEndpoints,
-            List<TestInfraInfo> infraServices) {
+            List<TestInfraData.TestInfraInfo> infraServices) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -281,13 +275,13 @@ public class TestScaffoldTools {
             sb.append("import java.util.concurrent.TimeUnit;\n");
         }
         sb.append("import org.junit.jupiter.api.Test;\n");
-        for (TestInfraInfo info : infraServices) {
+        for (TestInfraData.TestInfraInfo info : infraServices) {
             sb.append("import org.junit.jupiter.api.extension.RegisterExtension;\n");
             break;
         }
-        for (TestInfraInfo info : infraServices) {
-            sb.append("import ").append(info.packageName).append('.').append(info.serviceClass).append(";\n");
-            sb.append("import ").append(info.packageName).append('.').append(info.factoryClass).append(";\n");
+        for (TestInfraData.TestInfraInfo info : infraServices) {
+            sb.append("import ").append(info.packageName()).append('.').append(info.serviceClass()).append(";\n");
+            sb.append("import ").append(info.packageName()).append('.').append(info.factoryClass()).append(";\n");
         }
         sb.append("\n");
         sb.append("import static org.junit.jupiter.api.Assertions.assertTrue;\n");
@@ -297,11 +291,11 @@ public class TestScaffoldTools {
         sb.append("class RouteTest extends CamelTestSupport {\n\n");
 
         // @RegisterExtension fields
-        for (TestInfraInfo info : infraServices) {
-            String fieldName = Character.toLowerCase(info.serviceClass.charAt(0)) + info.serviceClass.substring(1);
+        for (TestInfraData.TestInfraInfo info : infraServices) {
+            String fieldName = Character.toLowerCase(info.serviceClass().charAt(0)) + info.serviceClass().substring(1);
             sb.append("    @RegisterExtension\n");
-            sb.append("    static ").append(info.serviceClass).append(' ').append(fieldName);
-            sb.append(" = ").append(info.factoryClass).append(".createService();\n\n");
+            sb.append("    static ").append(info.serviceClass()).append(' ').append(fieldName);
+            sb.append(" = ").append(info.factoryClass()).append(".createService();\n\n");
         }
 
         // createRouteBuilder
@@ -313,7 +307,7 @@ public class TestScaffoldTools {
 
         String fromUri = fromEndpoints.isEmpty() ? "direct:start" : fromEndpoints.get(0);
         String fromScheme = extractScheme(fromUri);
-        boolean isSendable = fromScheme != null && SENDABLE_SCHEMES.contains(fromScheme);
+        boolean isSendable = fromScheme != null && testInfraData.getSendableSchemes().contains(fromScheme);
         boolean isTimer = "timer".equals(fromScheme);
 
         if (!isSendable && !isTimer && !fromEndpoints.isEmpty()) {
@@ -380,7 +374,7 @@ public class TestScaffoldTools {
 
     private String generateSpringBootTest(
             List<String> fromEndpoints, List<String> mockEndpoints,
-            List<TestInfraInfo> infraServices) {
+            List<TestInfraData.TestInfraInfo> infraServices) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -398,13 +392,13 @@ public class TestScaffoldTools {
         sb.append("import org.junit.jupiter.api.Test;\n");
         sb.append("import org.springframework.beans.factory.annotation.Autowired;\n");
         sb.append("import org.springframework.boot.test.context.SpringBootTest;\n");
-        for (TestInfraInfo info : infraServices) {
+        for (TestInfraData.TestInfraInfo info : infraServices) {
             sb.append("import org.junit.jupiter.api.extension.RegisterExtension;\n");
             break;
         }
-        for (TestInfraInfo info : infraServices) {
-            sb.append("import ").append(info.packageName).append('.').append(info.serviceClass).append(";\n");
-            sb.append("import ").append(info.packageName).append('.').append(info.factoryClass).append(";\n");
+        for (TestInfraData.TestInfraInfo info : infraServices) {
+            sb.append("import ").append(info.packageName()).append('.').append(info.serviceClass()).append(";\n");
+            sb.append("import ").append(info.packageName()).append('.').append(info.factoryClass()).append(";\n");
         }
         sb.append("\n");
         sb.append("import static org.junit.jupiter.api.Assertions.assertTrue;\n");
@@ -422,11 +416,11 @@ public class TestScaffoldTools {
         sb.append("    private ProducerTemplate template;\n\n");
 
         // @RegisterExtension fields
-        for (TestInfraInfo info : infraServices) {
-            String fieldName = Character.toLowerCase(info.serviceClass.charAt(0)) + info.serviceClass.substring(1);
+        for (TestInfraData.TestInfraInfo info : infraServices) {
+            String fieldName = Character.toLowerCase(info.serviceClass().charAt(0)) + info.serviceClass().substring(1);
             sb.append("    @RegisterExtension\n");
-            sb.append("    static ").append(info.serviceClass).append(' ').append(fieldName);
-            sb.append(" = ").append(info.factoryClass).append(".createService();\n\n");
+            sb.append("    static ").append(info.serviceClass()).append(' ').append(fieldName);
+            sb.append(" = ").append(info.factoryClass()).append(".createService();\n\n");
         }
 
         // Test method
@@ -447,7 +441,7 @@ public class TestScaffoldTools {
         // Send or wait
         String fromUri = fromEndpoints.isEmpty() ? "direct:start" : fromEndpoints.get(0);
         String fromScheme = extractScheme(fromUri);
-        boolean isSendable = fromScheme != null && SENDABLE_SCHEMES.contains(fromScheme);
+        boolean isSendable = fromScheme != null && testInfraData.getSendableSchemes().contains(fromScheme);
         boolean isTimer = "timer".equals(fromScheme);
 
         if (isTimer) {
@@ -517,7 +511,7 @@ public class TestScaffoldTools {
     private String buildResult(
             String testCode, String format, String runtime,
             List<String> allSchemes, List<String> fromEndpoints, List<String> toEndpoints,
-            List<String> mockEndpoints, List<TestInfraInfo> infraServices) {
+            List<String> mockEndpoints, List<TestInfraData.TestInfraInfo> infraServices) {
 
         JsonObject result = new JsonObject();
         result.put("testCode", testCode);
@@ -551,12 +545,12 @@ public class TestScaffoldTools {
 
         // Test-infra services
         JsonArray infraJson = new JsonArray();
-        for (TestInfraInfo info : infraServices) {
+        for (TestInfraData.TestInfraInfo info : infraServices) {
             JsonObject infraObj = new JsonObject();
-            infraObj.put("service", info.serviceClass);
-            infraObj.put("factory", info.factoryClass);
-            infraObj.put("artifactId", info.artifactId);
-            infraObj.put("package", info.packageName);
+            infraObj.put("service", info.serviceClass());
+            infraObj.put("factory", info.factoryClass());
+            infraObj.put("artifactId", info.artifactId());
+            infraObj.put("package", info.packageName());
             infraJson.add(infraObj);
         }
         result.put("testInfraServices", infraJson);
@@ -567,8 +561,8 @@ public class TestScaffoldTools {
         if (!mockEndpoints.isEmpty()) {
             addDependency(depsJson, "camel-mock");
         }
-        for (TestInfraInfo info : infraServices) {
-            addDependency(depsJson, info.artifactId);
+        for (TestInfraData.TestInfraInfo info : infraServices) {
+            addDependency(depsJson, info.artifactId());
         }
         if ("spring-boot".equals(runtime)) {
             addDependency(depsJson, "camel-test-spring-junit5");
@@ -593,134 +587,5 @@ public class TestScaffoldTools {
         dep.put("artifactId", artifactId);
         dep.put("scope", "test");
         array.add(dep);
-    }
-
-    // ---- Test-infra mapping ----
-
-    private static Map<String, TestInfraInfo> buildTestInfraMap() {
-        Map<String, TestInfraInfo> map = new LinkedHashMap<>();
-
-        TestInfraInfo kafka = new TestInfraInfo(
-                "KafkaService", "KafkaServiceFactory",
-                "camel-test-infra-kafka", "org.apache.camel.test.infra.kafka.services");
-        map.put("kafka", kafka);
-
-        TestInfraInfo artemis = new TestInfraInfo(
-                "ArtemisService", "ArtemisServiceFactory",
-                "camel-test-infra-artemis", "org.apache.camel.test.infra.artemis.services");
-        map.put("jms", artemis);
-        map.put("activemq", artemis);
-        map.put("sjms", artemis);
-        map.put("sjms2", artemis);
-        map.put("amqp", artemis);
-
-        TestInfraInfo mongodb = new TestInfraInfo(
-                "MongoDBService", "MongoDBServiceFactory",
-                "camel-test-infra-mongodb", "org.apache.camel.test.infra.mongodb.services");
-        map.put("mongodb", mongodb);
-
-        TestInfraInfo postgres = new TestInfraInfo(
-                "PostgresService", "PostgresServiceFactory",
-                "camel-test-infra-postgres", "org.apache.camel.test.infra.postgres.services");
-        map.put("sql", postgres);
-        map.put("jdbc", postgres);
-
-        TestInfraInfo cassandra = new TestInfraInfo(
-                "CassandraService", "CassandraServiceFactory",
-                "camel-test-infra-cassandra", "org.apache.camel.test.infra.cassandra.services");
-        map.put("cql", cassandra);
-
-        TestInfraInfo elasticsearch = new TestInfraInfo(
-                "ElasticSearchService", "ElasticSearchServiceFactory",
-                "camel-test-infra-elasticsearch", "org.apache.camel.test.infra.elasticsearch.services");
-        map.put("elasticsearch", elasticsearch);
-        map.put("elasticsearch-rest", elasticsearch);
-
-        TestInfraInfo redis = new TestInfraInfo(
-                "RedisService", "RedisServiceFactory",
-                "camel-test-infra-redis", "org.apache.camel.test.infra.redis.services");
-        map.put("spring-redis", redis);
-
-        TestInfraInfo rabbitmq = new TestInfraInfo(
-                "RabbitMQService", "RabbitMQServiceFactory",
-                "camel-test-infra-rabbitmq", "org.apache.camel.test.infra.rabbitmq.services");
-        map.put("rabbitmq", rabbitmq);
-
-        TestInfraInfo ftp = new TestInfraInfo(
-                "FtpService", "FtpServiceFactory",
-                "camel-test-infra-ftp", "org.apache.camel.test.infra.ftp.services");
-        map.put("ftp", ftp);
-        map.put("sftp", ftp);
-        map.put("ftps", ftp);
-
-        TestInfraInfo consul = new TestInfraInfo(
-                "ConsulService", "ConsulServiceFactory",
-                "camel-test-infra-consul", "org.apache.camel.test.infra.consul.services");
-        map.put("consul", consul);
-
-        TestInfraInfo nats = new TestInfraInfo(
-                "NatsService", "NatsServiceFactory",
-                "camel-test-infra-nats", "org.apache.camel.test.infra.nats.services");
-        map.put("nats", nats);
-
-        TestInfraInfo pulsar = new TestInfraInfo(
-                "PulsarService", "PulsarServiceFactory",
-                "camel-test-infra-pulsar", "org.apache.camel.test.infra.pulsar.services");
-        map.put("pulsar", pulsar);
-
-        TestInfraInfo couchdb = new TestInfraInfo(
-                "CouchDbService", "CouchDbServiceFactory",
-                "camel-test-infra-couchdb", "org.apache.camel.test.infra.couchdb.services");
-        map.put("couchdb", couchdb);
-
-        TestInfraInfo infinispan = new TestInfraInfo(
-                "InfinispanService", "InfinispanServiceFactory",
-                "camel-test-infra-infinispan", "org.apache.camel.test.infra.infinispan.services");
-        map.put("infinispan", infinispan);
-
-        TestInfraInfo minio = new TestInfraInfo(
-                "MinioService", "MinioServiceFactory",
-                "camel-test-infra-minio", "org.apache.camel.test.infra.minio.services");
-        map.put("minio", minio);
-
-        TestInfraInfo solr = new TestInfraInfo(
-                "SolrService", "SolrServiceFactory",
-                "camel-test-infra-solr", "org.apache.camel.test.infra.solr.services");
-        map.put("solr", solr);
-
-        return map;
-    }
-
-    /**
-     * Holds test-infra service information for a component.
-     */
-    static final class TestInfraInfo {
-        final String serviceClass;
-        final String factoryClass;
-        final String artifactId;
-        final String packageName;
-
-        TestInfraInfo(String serviceClass, String factoryClass, String artifactId, String packageName) {
-            this.serviceClass = serviceClass;
-            this.factoryClass = factoryClass;
-            this.artifactId = artifactId;
-            this.packageName = packageName;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof TestInfraInfo that)) {
-                return false;
-            }
-            return artifactId.equals(that.artifactId);
-        }
-
-        @Override
-        public int hashCode() {
-            return artifactId.hashCode();
-        }
     }
 }

@@ -30,6 +30,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
@@ -1227,6 +1228,20 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param repository the repository
      */
     void setInflightRepository(InflightRepository repository);
+
+    /**
+     * Gets the error registry
+     *
+     * @return the error registry
+     */
+    ErrorRegistry getErrorRegistry();
+
+    /**
+     * Sets a custom error registry to use
+     *
+     * @param errorRegistry the error registry
+     */
+    void setErrorRegistry(ErrorRegistry errorRegistry);
 
     /**
      * Gets the application CamelContext class loader which may be helpful for running camel in other containers

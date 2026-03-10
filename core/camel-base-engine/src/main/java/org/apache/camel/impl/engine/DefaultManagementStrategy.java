@@ -197,8 +197,11 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     @Override
     protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
-        if (!getEventNotifiers().isEmpty()) {
-            getCamelContext().getCamelContextExtension().setEventNotificationApplicable(true);
+        for (EventNotifier notifier : getEventNotifiers()) {
+            if (!notifier.isIgnoreExchangeEvents()) {
+                getCamelContext().getCamelContextExtension().setEventNotificationApplicable(true);
+                break;
+            }
         }
         for (EventNotifier notifier : eventNotifiers) {
             // inject CamelContext if the service is aware

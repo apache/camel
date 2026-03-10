@@ -63,6 +63,7 @@ import org.apache.camel.management.mbean.ManagedDumpRouteStrategy;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedEndpointServiceRegistry;
+import org.apache.camel.management.mbean.ManagedErrorRegistry;
 import org.apache.camel.management.mbean.ManagedExchangeFactoryManager;
 import org.apache.camel.management.mbean.ManagedInflightRepository;
 import org.apache.camel.management.mbean.ManagedProducerCache;
@@ -97,6 +98,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointServiceRegistry;
+import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.InflightRepository;
@@ -583,6 +585,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedEndpointServiceRegistry(context, endpointServiceRegistry);
         } else if (service instanceof InflightRepository inflightRepository) {
             answer = new ManagedInflightRepository(context, inflightRepository);
+        } else if (service instanceof ErrorRegistry errorRegistry) {
+            answer = new ManagedErrorRegistry(context, errorRegistry);
         } else if (service instanceof AsyncProcessorAwaitManager asyncProcessorAwaitManager) {
             answer = new ManagedAsyncProcessorAwaitManager(context, asyncProcessorAwaitManager);
         } else if (service instanceof RuntimeEndpointRegistry runtimeEndpointRegistry) {

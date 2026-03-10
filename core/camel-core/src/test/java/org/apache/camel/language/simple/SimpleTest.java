@@ -60,6 +60,8 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
@@ -2710,6 +2712,40 @@ public class SimpleTest extends LanguageTestSupport {
         s = expression.evaluate(exchange, Object.class);
         assertIsInstanceOf(Boolean.class, s);
         assertEquals(Boolean.TRUE, s);
+    }
+
+    @Test
+    public void testConvertToCamelJson() {
+        exchange.getMessage().setBody("{ \"name\": \"Scott\", \"age\": 44 }");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${convertTo(JsonObject)}");
+        JsonObject jo = expression.evaluate(exchange, JsonObject.class);
+        assertNotNull(jo);
+        assertEquals("Scott", jo.getString("name"));
+        assertEquals(44, jo.getInteger("age"));
+
+        // shorthand for either JSonObject or JSonArray
+        expression = context.resolveLanguage("simple").createExpression("${convertTo(Json)}");
+        jo = expression.evaluate(exchange, JsonObject.class);
+        assertNotNull(jo);
+        assertEquals("Scott", jo.getString("name"));
+        assertEquals(44, jo.getInteger("age"));
+
+        exchange.getMessage().setBody("[ { \"name\": \"Scott\", \"age\": 44 }, { \"name\": \"Jack\", \"age\": 23 } ]");
+        expression = context.resolveLanguage("simple").createExpression("${convertTo(JsonArray)}");
+        JsonArray arr = expression.evaluate(exchange, JsonArray.class);
+        assertNotNull(arr);
+        assertEquals(2, arr.size());
+        assertEquals("Scott", arr.getJsonObject(0).getString("name"));
+        assertEquals(44, arr.getJsonObject(0).getInteger("age"));
+        assertEquals("Jack", arr.getJsonObject(1).getString("name"));
+        assertEquals(23, arr.getJsonObject(1).getInteger("age"));
+
+        // shorthand for either JSonObject or JSonArray
+        expression = context.resolveLanguage("simple").createExpression("${convertTo(Json)}");
+        arr = expression.evaluate(exchange, JsonArray.class);
+        assertNotNull(arr);
+        assertEquals(2, arr.size());
     }
 
     @Test

@@ -276,11 +276,27 @@ jobs:
           EOF
           )
 
-            # Generate unique branch name
-            BRANCH_NAME="automated/upgrade-$(echo "$PROPERTY_NAME" | tr '.' '-' | tr '_' '-')-${NEW_VERSION}-${{ github.run_number }}"
+            # Generate branch name (deterministic per property+version, no run number)
+            BRANCH_NAME="automated/upgrade-$(echo "$PROPERTY_NAME" | tr '.' '-' | tr '_' '-')-${NEW_VERSION}"
 
             echo "Creating PR: $PR_TITLE"
             echo "Branch: $BRANCH_NAME"
+
+            # Check for existing open PR for the exact same property+version upgrade
+            EXISTING_PR=$(gh pr list --state open --head "$BRANCH_NAME" --json number --jq '.[0].number' 2>/dev/null || echo "")
+            if [[ -n "$EXISTING_PR" ]]; then
+              echo "⏭️  Skipping $PROPERTY_NAME $NEW_VERSION — open PR #$EXISTING_PR already exists"
+              continue
+            fi
+
+            # Check if there is an open PR for the same property but an older version — close it
+            STALE_PR=$(gh pr list --state open --label "container-images" --search "upgrade $PROPERTY_NAME" --json number,headRefName --jq '.[0]' 2>/dev/null || echo "")
+            if [[ -n "$STALE_PR" && "$STALE_PR" != "null" ]]; then
+              STALE_PR_NUMBER=$(echo "$STALE_PR" | jq -r '.number')
+              STALE_BRANCH=$(echo "$STALE_PR" | jq -r '.headRefName')
+              echo "🔄 Closing stale PR #$STALE_PR_NUMBER for $PROPERTY_NAME (superseded by $NEW_VERSION)"
+              gh pr close "$STALE_PR_NUMBER" --comment "Superseded by a newer version ($NEW_VERSION)." --delete-branch 2>/dev/null || true
+            fi
 
             # Configure git
             git config user.name "github-actions[bot]"
