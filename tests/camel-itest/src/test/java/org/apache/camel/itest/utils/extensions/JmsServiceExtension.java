@@ -63,8 +63,8 @@ public final class JmsServiceExtension implements Extension {
         }
         artemisConfiguration.addAddressSetting("#",
                 new AddressSettings()
-                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
-                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
+                        .setDeadLetterAddress(SimpleString.of("DLQ"))
+                        .setExpiryAddress(SimpleString.of("ExpiryQueue")));
 
         embeddedBrokerService.setConfiguration(artemisConfiguration);
 
