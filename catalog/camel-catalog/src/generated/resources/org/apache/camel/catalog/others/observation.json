@@ -4,7 +4,7 @@
     "name": "observation",
     "title": "Micrometer Observability",
     "description": "Observability using Micrometer Observation",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.21.0",
     "label": "monitoring,microservice",
     "supportLevel": "Stable",

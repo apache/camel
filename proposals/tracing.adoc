@@ -9,7 +9,7 @@ approvers:
   - "@zbendhiba"
   - "@davsclaus"
 creation-date: 2025-01-08
-last-updated: 2025-11-07
+last-updated: 2026-03-10
 status: implemented
 see-also: []
 replaces: []
@@ -153,3 +153,7 @@ A new feature is available to add `TRACE_ID` and `SPAN_ID` Exchange headers. Thi
 === Design clarification about the adoption of W3C trace context (2025-11-07)
 
 Added a chapter to clarify the adoption and compliancy of W3C trace context of Camel for trace context propagation.
+
+=== Deprecation of older `camel-tracing` components (2026-03-10)
+
+Added a deprecation notice for `camel-tracing` and related components. Also, identified the custom logic previously required by these components into core dependencies. Also deprecated that part for future removals.
