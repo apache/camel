@@ -69,6 +69,37 @@ public class DiagnoseResources {
     }
 
     /**
+     * All known Camel exceptions with version-specific documentation links.
+     */
+    @ResourceTemplate(uriTemplate = "camel://error/exception-catalog/{version}",
+                      name = "camel_error_exception_catalog_versioned",
+                      title = "Camel Exception Catalog (Versioned)",
+                      description = "Registry of all known Camel exceptions with documentation links resolved "
+                                    + "for a specific Camel version (e.g., '4.18.x', '4.14.x'). "
+                                    + "Use 'next' for the latest development docs.",
+                      mimeType = "application/json")
+    public TextResourceContents exceptionCatalogVersioned(
+            @ResourceTemplateArg(name = "version") String version) {
+
+        String uri = "camel://error/exception-catalog/" + version;
+
+        JsonObject result = new JsonObject();
+        result.put("version", version);
+
+        JsonArray exceptions = new JsonArray();
+        for (Map.Entry<String, DiagnoseData.ExceptionInfo> entry : diagnoseData.getKnownExceptions().entrySet()) {
+            JsonObject exJson = entry.getValue().toSummaryJson(version);
+            exJson.put("name", entry.getKey());
+            exceptions.add(exJson);
+        }
+
+        result.put("exceptions", exceptions);
+        result.put("totalCount", exceptions.size());
+
+        return new TextResourceContents(uri, result.toJson(), "application/json");
+    }
+
+    /**
      * Detail for a specific Camel exception by name.
      */
     @ResourceTemplate(uriTemplate = "camel://error/exception/{name}",
@@ -94,6 +125,41 @@ public class DiagnoseResources {
 
         JsonObject result = info.toJson();
         result.put("name", name);
+        result.put("found", true);
+
+        return new TextResourceContents(uri, result.toJson(), "application/json");
+    }
+
+    /**
+     * Detail for a specific Camel exception with version-specific documentation links.
+     */
+    @ResourceTemplate(uriTemplate = "camel://error/exception/{name}/{version}",
+                      name = "camel_error_exception_detail_versioned",
+                      title = "Exception Detail (Versioned)",
+                      description = "Full diagnostic detail for a specific Camel exception with documentation links "
+                                    + "resolved for a specific Camel version (e.g., '4.18.x', '4.14.x'). "
+                                    + "Use 'next' for the latest development docs.",
+                      mimeType = "application/json")
+    public TextResourceContents exceptionDetailVersioned(
+            @ResourceTemplateArg(name = "name") String name,
+            @ResourceTemplateArg(name = "version") String version) {
+
+        String uri = "camel://error/exception/" + name + "/" + version;
+
+        DiagnoseData.ExceptionInfo info = diagnoseData.getException(name);
+        if (info == null) {
+            JsonObject result = new JsonObject();
+            result.put("name", name);
+            result.put("version", version);
+            result.put("found", false);
+            result.put("message", "Exception '" + name + "' is not in the known exceptions catalog. "
+                                  + "Use the camel://error/exception-catalog resource to see all known exceptions.");
+            return new TextResourceContents(uri, result.toJson(), "application/json");
+        }
+
+        JsonObject result = info.toJson(version);
+        result.put("name", name);
+        result.put("version", version);
         result.put("found", true);
 
         return new TextResourceContents(uri, result.toJson(), "application/json");

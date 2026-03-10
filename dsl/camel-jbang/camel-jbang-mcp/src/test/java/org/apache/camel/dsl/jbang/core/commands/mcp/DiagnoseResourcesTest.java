@@ -132,4 +132,103 @@ class DiagnoseResourcesTest {
         assertThat(result.getBoolean("found")).isFalse();
         assertThat(result.getString("message")).contains("not in the known exceptions catalog");
     }
+
+    // ---- Versioned catalog ----
+
+    @Test
+    void versionedCatalogReturnsVersionSpecificDocLinks() throws Exception {
+        TextResourceContents contents = resources.exceptionCatalogVersioned("4.18.x");
+
+        assertThat(contents.uri()).isEqualTo("camel://error/exception-catalog/4.18.x");
+        assertThat(contents.mimeType()).isEqualTo("application/json");
+
+        JsonObject result = (JsonObject) Jsoner.deserialize(contents.text());
+        assertThat(result.getString("version")).isEqualTo("4.18.x");
+        assertThat(result.getInteger("totalCount")).isGreaterThan(0);
+
+        // Verify doc links use 4.18.x instead of next
+        JsonArray exceptions = result.getCollection("exceptions");
+        for (Object obj : exceptions) {
+            JsonObject entry = (JsonObject) obj;
+            JsonArray docs = entry.getCollection("documentationLinks");
+            for (Object doc : docs) {
+                String link = (String) doc;
+                if (link.contains("/components/")) {
+                    assertThat(link).contains("components/4.18.x/");
+                    assertThat(link).doesNotContain("components/next/");
+                }
+            }
+        }
+    }
+
+    @Test
+    void versionedCatalogWithNextReturnsDefaultLinks() throws Exception {
+        TextResourceContents contents = resources.exceptionCatalogVersioned("next");
+        JsonObject result = (JsonObject) Jsoner.deserialize(contents.text());
+
+        JsonArray exceptions = result.getCollection("exceptions");
+        for (Object obj : exceptions) {
+            JsonObject entry = (JsonObject) obj;
+            JsonArray docs = entry.getCollection("documentationLinks");
+            for (Object doc : docs) {
+                String link = (String) doc;
+                if (link.contains("/components/")) {
+                    assertThat(link).contains("components/next/");
+                }
+            }
+        }
+    }
+
+    // ---- Versioned detail ----
+
+    @Test
+    void versionedDetailReturnsVersionSpecificDocLinks() throws Exception {
+        TextResourceContents contents = resources.exceptionDetailVersioned("DirectConsumerNotAvailableException", "4.14.x");
+
+        assertThat(contents.uri()).isEqualTo("camel://error/exception/DirectConsumerNotAvailableException/4.14.x");
+
+        JsonObject result = (JsonObject) Jsoner.deserialize(contents.text());
+        assertThat(result.getBoolean("found")).isTrue();
+        assertThat(result.getString("version")).isEqualTo("4.14.x");
+
+        // DirectConsumerNotAvailableException has component doc links (direct-component.html, seda-component.html)
+        JsonArray docs = result.getCollection("documentationLinks");
+        for (Object doc : docs) {
+            String link = (String) doc;
+            if (link.contains("/components/")) {
+                assertThat(link).contains("components/4.14.x/");
+                assertThat(link).doesNotContain("components/next/");
+            }
+        }
+    }
+
+    @Test
+    void versionedDetailNotFoundIncludesVersion() throws Exception {
+        TextResourceContents contents = resources.exceptionDetailVersioned("NonExistentException", "4.18.x");
+
+        assertThat(contents.uri()).isEqualTo("camel://error/exception/NonExistentException/4.18.x");
+
+        JsonObject result = (JsonObject) Jsoner.deserialize(contents.text());
+        assertThat(result.getBoolean("found")).isFalse();
+        assertThat(result.getString("version")).isEqualTo("4.18.x");
+    }
+
+    @Test
+    void versionedDetailPreservesManualLinks() throws Exception {
+        // CamelExecutionException has manual doc links (manual/exception-clause.html, etc.)
+        TextResourceContents contents = resources.exceptionDetailVersioned("CamelExecutionException", "4.18.x");
+        JsonObject result = (JsonObject) Jsoner.deserialize(contents.text());
+
+        JsonArray docs = result.getCollection("documentationLinks");
+        boolean hasManualLink = false;
+        for (Object doc : docs) {
+            String link = (String) doc;
+            if (link.contains("/manual/")) {
+                hasManualLink = true;
+                // Manual links should NOT have a version segment inserted
+                assertThat(link).doesNotContain("components/");
+            }
+        }
+        assertThat(hasManualLink).as("CamelExecutionException should have at least one manual doc link").isTrue();
+    }
 }

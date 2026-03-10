@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,6 +41,41 @@ public class DiagnoseData {
     public static final String CAMEL_COMPONENT_DOC = CAMEL_DOC_BASE + "components/next/";
     public static final String CAMEL_MANUAL_DOC = CAMEL_DOC_BASE + "manual/";
     public static final String CAMEL_EIP_DOC = CAMEL_COMPONENT_DOC + "eips/";
+
+    /**
+     * Component doc base URL for a specific Camel version.
+     *
+     * @param version the version segment (e.g., "4.18.x", "4.14.x"), or null/"next" for the latest development docs
+     */
+    public static String componentDocBase(String version) {
+        String v = (version == null || version.isBlank() || "next".equals(version)) ? "next" : version;
+        return CAMEL_DOC_BASE + "components/" + v + "/";
+    }
+
+    /**
+     * EIP doc base URL for a specific Camel version.
+     */
+    public static String eipDocBase(String version) {
+        return componentDocBase(version) + "eips/";
+    }
+
+    /**
+     * Resolve documentation links for a specific version by replacing the "next" version segment in component/EIP doc
+     * URLs with the specified version. Manual URLs (which have no version segment) are left unchanged.
+     *
+     * @param links   the original documentation links (using "next")
+     * @param version the target version (e.g., "4.18.x"), or null/"next" to keep defaults
+     */
+    public static List<String> resolveDocLinks(List<String> links, String version) {
+        if (version == null || version.isBlank() || "next".equals(version)) {
+            return links;
+        }
+        List<String> resolved = new ArrayList<>(links.size());
+        for (String link : links) {
+            resolved.add(link.replace("components/next/", "components/" + version + "/"));
+        }
+        return resolved;
+    }
 
     private static final Map<String, ExceptionInfo> KNOWN_EXCEPTIONS;
 
@@ -379,11 +415,20 @@ public class DiagnoseData {
          * Convert this exception info to a full JSON object with all fields.
          */
         public JsonObject toJson() {
+            return toJson(null);
+        }
+
+        /**
+         * Convert this exception info to a full JSON object, resolving doc links for the given version.
+         *
+         * @param version the Camel doc version (e.g., "4.18.x"), or null for "next"
+         */
+        public JsonObject toJson(String version) {
             JsonObject json = new JsonObject();
             json.put("description", description);
             json.put("commonCauses", toJsonArray(commonCauses));
             json.put("suggestedFixes", toJsonArray(suggestedFixes));
-            json.put("documentationLinks", toJsonArray(documentationLinks));
+            json.put("documentationLinks", toJsonArray(resolveDocLinks(documentationLinks, version)));
             return json;
         }
 
@@ -391,9 +436,18 @@ public class DiagnoseData {
          * Convert this exception info to a summary JSON object (description and doc links only).
          */
         public JsonObject toSummaryJson() {
+            return toSummaryJson(null);
+        }
+
+        /**
+         * Convert this exception info to a summary JSON object, resolving doc links for the given version.
+         *
+         * @param version the Camel doc version (e.g., "4.18.x"), or null for "next"
+         */
+        public JsonObject toSummaryJson(String version) {
             JsonObject json = new JsonObject();
             json.put("description", description);
-            json.put("documentationLinks", toJsonArray(documentationLinks));
+            json.put("documentationLinks", toJsonArray(resolveDocLinks(documentationLinks, version)));
             return json;
         }
 
