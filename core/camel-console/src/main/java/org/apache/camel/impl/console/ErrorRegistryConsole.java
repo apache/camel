@@ -75,6 +75,12 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
                     entry.exchangeId(), entry.routeId(), entry.endpointUri(),
                     entry.handled(), entry.exceptionType(), entry.exceptionMessage(),
                     entry.timestamp()));
+            if (entry.messageHistory() != null) {
+                sb.append(String.format("%n      Message History:"));
+                for (String step : entry.messageHistory()) {
+                    sb.append(String.format("%n        %s", step));
+                }
+            }
             if (includeStackTrace && entry.stackTrace() != null) {
                 for (String line : entry.stackTrace()) {
                     sb.append(String.format("%n        %s", line));
@@ -118,6 +124,13 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
             jo.put("handled", entry.handled());
             jo.put("exceptionType", entry.exceptionType());
             jo.put("exceptionMessage", entry.exceptionMessage());
+            if (entry.messageHistory() != null) {
+                JsonArray history = new JsonArray();
+                for (String step : entry.messageHistory()) {
+                    history.add(step);
+                }
+                jo.put("messageHistory", history);
+            }
             if (includeStackTrace && entry.stackTrace() != null) {
                 JsonArray stackTrace = new JsonArray();
                 for (String line : entry.stackTrace()) {

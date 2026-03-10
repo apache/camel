@@ -66,4 +66,11 @@ public interface ErrorRegistryEntry {
      * Each element represents one line of the stack trace.
      */
     String[] stackTrace();
+
+    /**
+     * The message history trace, or {@code null} if message history is not enabled.
+     * <p/>
+     * Each element represents one step in the routing history (e.g. "routeId[nodeId]").
+     */
+    String[] messageHistory();
 }

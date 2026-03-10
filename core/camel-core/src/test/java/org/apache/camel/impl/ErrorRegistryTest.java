@@ -59,7 +59,9 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertTrue(entry.handled());
         assertEquals("java.lang.IllegalArgumentException", entry.exceptionType());
         assertEquals("Forced error", entry.exceptionMessage());
-        assertNull(entry.stackTrace());
+        // stack trace is enabled by default
+        assertNotNull(entry.stackTrace());
+        assertTrue(entry.stackTrace().length > 0);
     }
 
     @Test
@@ -119,8 +121,6 @@ public class ErrorRegistryTest extends ContextTestSupport {
 
     @Test
     public void testErrorRegistryWithStackTrace() throws Exception {
-        context.getErrorRegistry().setStackTraceEnabled(true);
-
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
@@ -129,6 +129,18 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertNotNull(entry.stackTrace());
         assertTrue(entry.stackTrace().length > 0);
         assertTrue(entry.stackTrace()[0].contains("IllegalArgumentException"));
+    }
+
+    @Test
+    public void testErrorRegistryWithoutStackTrace() throws Exception {
+        context.getErrorRegistry().setStackTraceEnabled(false);
+
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        ErrorRegistryEntry entry = context.getErrorRegistry().browse().iterator().next();
+        assertNull(entry.stackTrace());
     }
 
     @Test

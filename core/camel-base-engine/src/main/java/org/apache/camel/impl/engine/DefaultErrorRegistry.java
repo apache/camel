@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ErrorRegistry;
 import org.apache.camel.spi.ErrorRegistryEntry;
@@ -44,7 +45,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     private volatile boolean enabled;
     private volatile int maximumEntries = 100;
     private volatile Duration timeToLive = Duration.ofHours(1);
-    private volatile boolean stackTraceEnabled;
+    private volatile boolean stackTraceEnabled = true;
 
     public DefaultErrorRegistry() {
         // only listen to exchange failure events
@@ -107,10 +108,11 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         String exceptionType = exception.getClass().getName();
         String exceptionMessage = exception.getMessage();
         String[] stackTrace = stackTraceEnabled ? captureStackTrace(exception) : null;
+        String[] messageHistory = captureMessageHistory(exchange);
 
         DefaultErrorRegistryEntry entry = new DefaultErrorRegistryEntry(
                 exchangeId, routeId, endpointUri, Instant.now(),
-                handled, exceptionType, exceptionMessage, stackTrace);
+                handled, exceptionType, exceptionMessage, stackTrace, messageHistory);
 
         entries.addFirst(entry);
         evict();
@@ -120,6 +122,22 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         StringWriter writer = new StringWriter();
         exception.printStackTrace(new PrintWriter(writer, true));
         return writer.toString().split("\n");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static String[] captureMessageHistory(Exchange exchange) {
+        List<MessageHistory> history
+                = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (history == null || history.isEmpty()) {
+            return null;
+        }
+        String[] result = new String[history.size()];
+        for (int i = 0; i < history.size(); i++) {
+            MessageHistory mh = history.get(i);
+            String nodeId = mh.getNode() != null ? mh.getNode().getId() : null;
+            result[i] = mh.getRouteId() + "[" + nodeId + "]";
+        }
+        return result;
     }
 
     private void evict() {
@@ -291,7 +309,8 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             boolean handled,
             String exceptionType,
             String exceptionMessage,
-            String[] stackTrace)
+            String[] stackTrace,
+            String[] messageHistory)
             implements
                 ErrorRegistryEntry {
     }

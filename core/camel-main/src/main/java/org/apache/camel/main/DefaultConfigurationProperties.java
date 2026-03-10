@@ -52,7 +52,8 @@ public abstract class DefaultConfigurationProperties<T> {
     private int errorRegistryMaximumEntries = 100;
     @Metadata(defaultValue = "3600")
     private int errorRegistryTimeToLiveSeconds = 3600;
-    private boolean errorRegistryStackTraceEnabled;
+    @Metadata(defaultValue = "true")
+    private boolean errorRegistryStackTraceEnabled = true;
     private String fileConfigurations;
     private boolean jmxEnabled = true;
     @Metadata(enums = "classic,default,short,simple,off", defaultValue = "default")
@@ -372,7 +373,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Sets whether to capture stack traces in the error registry. This is disabled by default to reduce memory usage.
+     * Sets whether to capture stack traces in the error registry. This is enabled by default.
      */
     public void setErrorRegistryStackTraceEnabled(boolean errorRegistryStackTraceEnabled) {
         this.errorRegistryStackTraceEnabled = errorRegistryStackTraceEnabled;

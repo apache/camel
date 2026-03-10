@@ -90,7 +90,7 @@ public interface ErrorRegistry extends ErrorRegistryView, StaticService {
     boolean isStackTraceEnabled();
 
     /**
-     * Sets whether to capture stack traces. This is disabled by default to reduce memory usage.
+     * Sets whether to capture stack traces. This is enabled by default.
      */
     void setStackTraceEnabled(boolean stackTraceEnabled);
 }
