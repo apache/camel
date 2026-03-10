@@ -1,10 +1,11 @@
-= Micrometer Observability Component
+= Micrometer Observability Component (deprecated)
 :doctitle: Micrometer Observability
 :shortname: observation
 :artifactid: camel-observation
 :description: Observability using Micrometer Observation
 :since: 3.21
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: observation
@@ -13,6 +14,8 @@
 
 The Micrometer Observation component is used for performing observability of incoming and
 outgoing Camel messages using https://micrometer.io/docs/observation[Micrometer Observation].
+
+NOTE: this component is deprecated since version 4.19.0. Please, use xref:micrometer-observability.adoc[`camel-micrometer-observability`] component instead.
 
 By configuring the `ObservationRegistry` you can add behaviour to your observations such as metrics (e.g., via `Micrometer`) or tracing (e.g., via `OpenTelemetry` or `Brave`) or any custom behaviour.
 

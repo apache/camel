@@ -118,6 +118,7 @@ public class OpenTelemetryTracingStrategyPropagateContextTest extends CamelOpenT
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected Function<OpenTelemetryTracer, InterceptStrategy> getTracingStrategy() {
         return (tracer) -> {
             OpenTelemetryTracingStrategy strategy = new OpenTelemetryTracingStrategy(tracer);

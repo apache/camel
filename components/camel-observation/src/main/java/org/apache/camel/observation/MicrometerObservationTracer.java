@@ -35,9 +35,14 @@ import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.SpanKind;
 import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "MicrometerObservationTracer")
+@Deprecated(since = "4.19.0")
 public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MicrometerObservationTracer.class);
 
     private static final String SPAN_DECORATOR_INTERNAL = "camel.micrometer.abstract-internal";
     private static final String CAMEL_CONTEXT_NAME = "camel.component";
@@ -113,6 +118,8 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
 
     @Override
     protected void initTracer() {
+        LOG.warn("Camel micrometer observability is deprecated and may be removed in future versions. " +
+                 "Please, use camel-micrometer-observability components instead!");
         if (tracer == null) {
             tracer = CamelContextHelper.findSingleByType(getCamelContext(), Tracer.class);
         }

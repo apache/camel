@@ -30,6 +30,7 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.tracing.ActiveSpanManager;
 import org.apache.camel.tracing.SpanDecorator;
 
+@SuppressWarnings("deprecation")
 public class OpenTelemetryTracingStrategy implements InterceptStrategy {
 
     private static final String UNNAMED = "unnamed";

@@ -29,6 +29,7 @@ import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 import org.apache.camel.tracing.TagConstants;
 
+@SuppressWarnings("deprecation")
 public class OpenTelemetrySpanAdapter implements SpanAdapter {
 
     private static final String DEFAULT_EVENT_NAME = "log";

@@ -34,7 +34,7 @@
 
   <artifactId>camel-tracing</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Common Tracing</name>
+  <name>Camel :: Common Tracing (deprecated)</name>
   <description>Distributed tracing common interfaces</description>
 
   <dependencies>

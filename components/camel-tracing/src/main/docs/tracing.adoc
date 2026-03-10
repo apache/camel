@@ -1,10 +1,11 @@
-= Tracing Component
+= Tracing Component (deprecated)
 :doctitle: Tracing
 :shortname: tracing
 :artifactid: camel-tracing
 :description: Distributed tracing common interfaces
 :since: 3.5
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 
 *Since Camel {since}*
@@ -13,6 +14,8 @@ This module is a common interface and API for distributed tracing. It is not int
 
 * xref:opentelemetry.adoc[`camel-opentelemetry`]
 * xref:observation.adoc[`camel-observation`]
+
+NOTE: this component and the related implementations are deprecated since version 4.19.0. Please, use xref:telemetry.adoc[`camel-telemetry`] components instead.
 
 Tracing an application in a distributed deployment is an important feature supported by Camel. As there are plenty of potential tracing implementation out there we have created an abstract component whose goal is to define the structure and lifecycle of a trace from Camel point of view. This component acts as a trace manager, making sure that regardless of the concrete technology used, the traces are consistently treated by Camel applications.
 

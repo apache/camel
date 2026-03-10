@@ -4,7 +4,7 @@
     "name": "tracing",
     "title": "Tracing",
     "description": "Distributed tracing common interfaces",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.5.0",
     "label": "monitoring,microservice",
     "supportLevel": "Stable",

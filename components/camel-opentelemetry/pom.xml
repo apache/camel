@@ -28,7 +28,7 @@
 
     <artifactId>camel-opentelemetry</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: OpenTelemetry</name>
+    <name>Camel :: OpenTelemetry (deprecated)</name>
     <description>Distributed tracing using OpenTelemetry</description>
 
     <properties>

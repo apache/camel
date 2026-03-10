@@ -88,6 +88,7 @@ class OpenTelemetryTracingStrategyTest extends CamelOpenTelemetryTestSupport {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected Function<OpenTelemetryTracer, InterceptStrategy> getTracingStrategy() {
         return OpenTelemetryTracingStrategy::new;
     }

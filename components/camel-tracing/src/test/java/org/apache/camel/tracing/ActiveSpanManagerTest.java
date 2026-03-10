@@ -103,6 +103,7 @@ class ActiveSpanManagerTest extends ExchangeTestSupport {
         ActiveSpanManager.activate(path2, parent);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     void testMDCSupport() {
         Exchange exchange = createExchange();

@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 @JdkService("opentelemetry-tracer")
 @Configurer
 @ManagedResource(description = "OpenTelemetryTracer")
+@Deprecated(since = "4.19.0")
 public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTelemetryTracer.class);
@@ -143,6 +144,8 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     @Override
     protected void initContextPropagators() {
+        LOG.warn("Camel Opentelemetry component has been deprecated and may be removed in future versions. " +
+                 "Please, use camel-opentelemetry2 component instead!");
         if (contextPropagators == null) {
             contextPropagators = CamelContextHelper.findSingleByType(getCamelContext(), ContextPropagators.class);
         }

@@ -55,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Tags({ @Tag("not-parallel") })
 @SetSystemProperty(key = "io.opentelemetry.context.enableStrictContext", value = "true")
+@SuppressWarnings("deprecation")
 class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
     static final AttributeKey<String> COMPONENT_KEY = AttributeKey.stringKey("component");

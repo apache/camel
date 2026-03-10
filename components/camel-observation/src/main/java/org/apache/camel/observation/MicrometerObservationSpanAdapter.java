@@ -26,6 +26,7 @@ import io.micrometer.tracing.handler.TracingObservationHandler.TracingContext;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
+@SuppressWarnings("deprecation")
 public class MicrometerObservationSpanAdapter implements SpanAdapter {
     private static final String DEFAULT_EVENT_NAME = "log";
 
