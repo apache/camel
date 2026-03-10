@@ -3278,17 +3278,21 @@
                 <scope>import</scope>
             </dependency>
 
-            <dependency>
-                <groupId>tools.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson3-version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
+            <!-- Jackson 2 BOM must be imported before Jackson 3 BOM so that
+                 Jackson 2 artifact versions (annotations, core, databind) are
+                 resolved at ${jackson2-version} rather than the older versions
+                 pinned by the Jackson 3 BOM for backward compatibility. -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>${jackson2-version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson3-version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
