@@ -59,6 +59,7 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
                 withNetworkAliases(CONTAINER_NAME)
                         .withEnv("LICENSE", "accept")
                         .withEnv("MQ_QMGR_NAME", IbmMQProperties.DEFAULT_QMGR_NAME)
+                        .withEnv("MQ_APP_PASSWORD", IbmMQProperties.DEFAULT_APP_PASSWORD)
                         .withLogConsumer(new Slf4jLogConsumer(LOG))
                         .waitingFor(Wait.forLogMessage(
                                 ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1));

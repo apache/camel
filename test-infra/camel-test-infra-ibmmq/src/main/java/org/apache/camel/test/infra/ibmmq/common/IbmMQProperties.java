@@ -24,6 +24,8 @@ public class IbmMQProperties {
 
     public static final String DEFAULT_QMGR_NAME = "QM1";
     public static final String DEFAULT_CHANNEL = "DEV.APP.SVRCONN";
+    public static final String DEFAULT_APP_USER = "app";
+    public static final String DEFAULT_APP_PASSWORD = "passw0rd";
 
     private IbmMQProperties() {
 

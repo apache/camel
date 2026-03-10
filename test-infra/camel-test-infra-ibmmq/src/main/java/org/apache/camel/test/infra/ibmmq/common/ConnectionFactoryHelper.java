@@ -35,6 +35,9 @@ public class ConnectionFactoryHelper {
         factory.setChannel(channel);
         factory.setPort(port);
         factory.setTransportType(WMQConstants.WMQ_CM_CLIENT);
+        factory.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
+        factory.setStringProperty(WMQConstants.USERID, IbmMQProperties.DEFAULT_APP_USER);
+        factory.setStringProperty(WMQConstants.PASSWORD, IbmMQProperties.DEFAULT_APP_PASSWORD);
 
         return factory;
     }
