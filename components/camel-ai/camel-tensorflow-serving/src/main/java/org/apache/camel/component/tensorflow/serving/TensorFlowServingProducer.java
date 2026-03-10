@@ -18,7 +18,7 @@ package org.apache.camel.component.tensorflow.serving;
 
 import java.util.Optional;
 
-import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.Int64Value;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -52,7 +52,7 @@ public class TensorFlowServingProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        GeneratedMessageV3 response = switch (api) {
+        GeneratedMessage response = switch (api) {
             case "model-status" -> modelStatus(exchange);
             case "model-metadata" -> modelMetadata(exchange);
             case "classify" -> classify(exchange);

@@ -57,6 +57,7 @@ import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
 import org.apache.hc.core5.http.protocol.RequestConnControl;
 import org.apache.hc.core5.http.protocol.RequestContent;
 import org.apache.hc.core5.http.protocol.RequestDate;
+import org.apache.hc.core5.http.protocol.RequestExpectContinue;
 import org.apache.hc.core5.http.protocol.RequestTargetHost;
 import org.apache.hc.core5.http.protocol.RequestUserAgent;
 import org.apache.hc.core5.net.URIAuthority;
@@ -80,6 +81,15 @@ public class AS2ClientConnection {
                                Integer targetPortNumber, Duration socketTimeout, Duration connectionTimeout,
                                Integer connectionPoolMaxSize, Duration connectionPoolTtl,
                                SSLContext sslContext, HostnameVerifier hostnameVerifier) throws IOException {
+        this(as2Version, userAgent, clientFqdn, targetHostName, targetPortNumber, socketTimeout, connectionTimeout,
+             connectionPoolMaxSize, connectionPoolTtl, sslContext, hostnameVerifier, false);
+    }
+
+    public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName,
+                               Integer targetPortNumber, Duration socketTimeout, Duration connectionTimeout,
+                               Integer connectionPoolMaxSize, Duration connectionPoolTtl,
+                               SSLContext sslContext, HostnameVerifier hostnameVerifier,
+                               boolean expectContinue) throws IOException {
 
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.userAgent = ObjectHelper.notNull(userAgent, "userAgent");
@@ -94,14 +104,18 @@ public class AS2ClientConnection {
         ObjectHelper.notNull(connectionPoolTtl, "connectionPoolTtl");
 
         // Build Processor
-        httpProcessor = HttpProcessorBuilder.create()
+        HttpProcessorBuilder processorBuilder = HttpProcessorBuilder.create()
                 .add(new RequestAS2(as2Version, clientFqdn))
                 .add(new RequestMDN())
                 .add(new RequestTargetHost())
                 .add(new RequestUserAgent(this.userAgent))
                 .add(new RequestDate())
                 .add(new RequestContent(true))
-                .add(new RequestConnControl()).build();
+                .add(new RequestConnControl());
+        if (expectContinue) {
+            processorBuilder.add(new RequestExpectContinue());
+        }
+        httpProcessor = processorBuilder.build();
 
         final Http1Config h1Config = Http1Config.custom().setBufferSize(8 * 1024).build();
 

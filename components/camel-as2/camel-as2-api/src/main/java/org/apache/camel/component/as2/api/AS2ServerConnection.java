@@ -53,6 +53,7 @@ import org.apache.hc.core5.http.impl.routing.RequestRouter;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.io.HttpServerConnection;
 import org.apache.hc.core5.http.io.HttpServerRequestHandler;
+import org.apache.hc.core5.http.io.support.BasicHttpServerExpectationDecorator;
 import org.apache.hc.core5.http.io.support.BasicHttpServerRequestHandler;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
@@ -401,8 +402,10 @@ public class AS2ServerConnection {
             // Create initial empty router
             currentHandler = createHandler();
 
-            // Set up the HTTP service with delegating handler
-            httpService = new HttpService(inhttpproc, new DelegatingRequestHandler());
+            // Set up the HTTP service with delegating handler, wrapped to support Expect: 100-continue
+            httpService = new HttpService(
+                    inhttpproc,
+                    new BasicHttpServerExpectationDecorator(new DelegatingRequestHandler()));
         }
 
         private HttpServerRequestHandler createHandler() {

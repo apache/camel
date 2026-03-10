@@ -110,6 +110,10 @@ public class ExchangeEventNotifierAutoConfigIT extends CamelTestSupport {
         for (LogRecord log : logs) {
             if (log.getParameters() != null && log.getParameters().length > 0) {
                 MetricData metricData = (MetricData) log.getParameters()[0];
+                // Skip non-Camel metrics (e.g. otel.sdk.* internal metrics added in OTel 1.60+)
+                if (!metricData.getName().startsWith("camel.")) {
+                    continue;
+                }
                 counts.compute(metricData.getName(), (k, v) -> v == null ? 1 : v + 1);
                 switch (metricData.getName()) {
                     case DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER,

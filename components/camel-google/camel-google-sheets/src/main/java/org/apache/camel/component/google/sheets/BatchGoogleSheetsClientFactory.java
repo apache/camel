@@ -91,13 +91,12 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
     public Sheets makeClient(
             CamelContext camelContext, String serviceAccountKey, Collection<String> scopes, String applicationName,
             String delegate) {
-        if (serviceAccountKey == null) {
-            throw new IllegalArgumentException("serviceAccountKey is required to create Google Sheets client.");
-        }
         try {
             // Create a temporary configuration to use GoogleCredentialsHelper
             GoogleSheetsConfiguration tempConfig = new GoogleSheetsConfiguration();
-            tempConfig.setServiceAccountKey(serviceAccountKey);
+            if (serviceAccountKey != null) {
+                tempConfig.setServiceAccountKey(serviceAccountKey);
+            }
             tempConfig.setDelegate(delegate);
 
             Credential credential

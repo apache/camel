@@ -58,8 +58,8 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
                 .withNetwork(network)
                 .withCreateContainerCmdModifier(createContainerCmd -> setupContainer(name, createContainerCmd))
                 .withCommand("sh", "-c",
-                        "bin/kafka-storage.sh format -t " + clusterId + " -c config/kraft/server.properties && "
-                                         + "bin/kafka-server-start.sh config/kraft/server.properties "
+                        "bin/kafka-storage.sh format -t " + clusterId + " -c config/server.properties --standalone && "
+                                         + "bin/kafka-server-start.sh config/server.properties "
                                          + "--override listeners=${KAFKA_LISTENERS} "
                                          + "--override advertised.listeners=${KAFKA_ADVERTISED_LISTENERS} "
                                          + "--override listener.security.protocol.map=${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP} "

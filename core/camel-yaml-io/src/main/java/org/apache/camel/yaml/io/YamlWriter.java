@@ -242,6 +242,8 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     }
                 } else if ("marshal".equals(parent.getName()) || "unmarshal".equals(parent.getName())) {
                     parent.getMetadata().put("_dataFormatType", last);
+                } else if ("errorHandler".equals(parent.getName())) {
+                    parent.getMetadata().put("_errorHandlerType", last);
                 }
             }
         }
@@ -384,6 +386,10 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     && "_dataFormatType".equals(key)) {
                 EipModel other = (EipModel) entry.getValue();
                 node.addOutput(asNode(other));
+            } else if ("errorHandler".equals(node.getName())
+                    && "_errorHandlerType".equals(key)) {
+                EipModel other = (EipModel) entry.getValue();
+                node.addOutput(asNode(other));
             } else {
                 boolean skip = key.startsWith("_") || key.equals("customId");
                 if (skip) {
@@ -472,6 +478,10 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                         if (r instanceof EipModel eipModel) {
                             EipNode en = asNode(eipModel);
                             value = en.asJsonObject();
+                            if ("route".equals(model.getName()) && "errorHandler".equals(en.getName())) {
+                                jo.put("errorHandler", value);
+                                continue;
+                            }
                             JsonObject wrap = new JsonObject();
                             wrap.put(en.getName(), value);
                             r = wrap;
@@ -481,11 +491,36 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     if ("_output".equals(key)) {
                         key = "steps";
                     }
-                    // special with "from" where outputs needs to be embedded
-                    if (jo.containsKey("from")) {
-                        jo = jo.getMap("from");
+                    if ("route".equals(model.getName())) {
+                        // special with "from" where outputs needs to be embedded
+                        if (jo.containsKey("from")) {
+                            jo = jo.getMap("from");
+                        }
                     }
                     jo.put(key, list);
+                } else if ("_input".equals(key)) {
+                    jo = answer.getMap("route");
+                    if (!jo.containsKey("from")) {
+                        jo.put("from", new JsonObject());
+                    }
+                    jo = jo.getMap("from");
+                    if (value instanceof EipModel eipModel) {
+                        EipNode r = asNode(eipModel);
+                        JsonObject uri = r.asJsonObject();
+                        Object steps = jo.remove("steps");
+                        if (steps == null) {
+                            // steps was placed directly on route and not under from so move it
+                            var route = answer.getMap("route");
+                            steps = route.remove("steps");
+                        }
+                        // ensure uri comes before steps
+                        jo.putAll(uri);
+                        if (steps != null) {
+                            jo.put("steps", steps);
+                        }
+                    } else {
+                        jo.put(key, value);
+                    }
                 } else {
                     if (value instanceof EipModel eipModel) {
                         EipNode r = asNode(eipModel);

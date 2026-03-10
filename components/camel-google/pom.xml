@@ -45,6 +45,7 @@
         <module>camel-google-sheets</module>
         <module>camel-google-storage</module>
         <module>camel-google-vertexai</module>
+        <module>camel-google-vision</module>
     </modules>
 
 </project>

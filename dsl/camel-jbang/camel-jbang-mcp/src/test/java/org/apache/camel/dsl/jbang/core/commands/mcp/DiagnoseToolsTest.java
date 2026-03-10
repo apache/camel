@@ -27,7 +27,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DiagnoseToolsTest {
 
-    private final DiagnoseTools tools = new DiagnoseTools();
+    private final DiagnoseTools tools;
+
+    DiagnoseToolsTest() {
+        tools = new DiagnoseTools();
+        tools.diagnoseData = new DiagnoseData();
+    }
 
     // ---- Input validation ----
 

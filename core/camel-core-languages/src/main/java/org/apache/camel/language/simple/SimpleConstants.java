@@ -247,6 +247,14 @@ public final class SimpleConstants {
               javaType = "java.util.ArrayList", displayName = "Create List of values")
     public static final String LIST = "list(val...)";
 
+    @Metadata(description = "Adds the result of the expression to the message body (or expression) which is a list",
+              label = "collection", javaType = "List", displayName = "List Add")
+    public static final String LIST_ADD = "listAdd(source,exp)";
+
+    @Metadata(description = "Removes the result of the expression from the message body (or expression) which is a list",
+              label = "collection", javaType = "List", displayName = "List Remove")
+    public static final String LIST_REMOVE = "listRemove(source,exp)";
+
     @Metadata(description = "Loads the content of the resource from classpath (cannot load from file-system to avoid dangerous situations).",
               label = "core", javaType = "String", displayName = "Load")
     public static final String LOAD = "load(file)";
@@ -262,6 +270,14 @@ public final class SimpleConstants {
     @Metadata(description = "The map function creates a LinkedHashMap with the given set of pairs.", label = "collection",
               javaType = "java.util.LinkedHashMap", displayName = "Create Map of pairs")
     public static final String MAP = "map(key1,value1,...)";
+
+    @Metadata(description = "Adds the result of the expression to the message body (or expression) which is a map",
+              label = "collection", javaType = "Map", displayName = "Map Add")
+    public static final String MAP_ADD = "mapAdd(source,key,exp)";
+
+    @Metadata(description = "Removes the result of the expression from the message body (or expression) which is a map",
+              label = "collection", javaType = "Map", displayName = "Map Remove")
+    public static final String MAP_REMOVE = "mapRemove(source,key)";
 
     @Metadata(description = "Returns the maximum number from all the values (integral numbers only).", label = "number",
               javaType = "long",

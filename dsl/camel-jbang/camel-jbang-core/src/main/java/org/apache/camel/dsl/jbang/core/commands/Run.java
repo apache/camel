@@ -45,6 +45,9 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.Plugin;
+import org.apache.camel.dsl.jbang.core.common.PluginExporter;
+import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
@@ -362,7 +365,7 @@ public class Run extends CamelCommand {
     boolean prompt;
 
     @Option(names = { "--skip-plugins" }, defaultValue = "false",
-            description = "Skip plugins during export")
+            description = "Skip resolving plugin dependencies")
     boolean skipPlugins;
 
     public Run(CamelJBangMain main) {
@@ -985,6 +988,20 @@ public class Run extends CamelCommand {
 
         // Add runtime-specific dependencies
         addRuntimeSpecificDependenciesFromProperties(profileProperties);
+
+        // Add plugin dependencies
+        if (!skipPlugins) {
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
+                    .stream()
+                    .map(Plugin::getExporter)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+
+            for (PluginExporter exporter : exporters) {
+                addDependencies(exporter.getDependencies(runtime).toArray(String[]::new));
+            }
+        }
 
         if (observe) {
             dependencies.add("camel:observability-services");

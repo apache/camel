@@ -83,7 +83,8 @@ public final class MojoHelper {
                         dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
                         dir.resolve("camel-google-sheets"),
                         dir.resolve("camel-google-storage"), dir.resolve("camel-google-functions"),
-                        dir.resolve("camel-google-secret-manager"), dir.resolve("camel-google-vertexai"));
+                        dir.resolve("camel-google-secret-manager"), dir.resolve("camel-google-vertexai"),
+                        dir.resolve("camel-google-vision"));
             case "camel-debezium":
                 return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
                         dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"),

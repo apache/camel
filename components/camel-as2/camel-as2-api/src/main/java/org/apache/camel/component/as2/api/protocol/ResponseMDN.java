@@ -73,16 +73,18 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     public static final String DISPOSITION_MODIFIER = "Disposition-Modifier";
 
-    private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = """
-            MDN for -
-             Message ID: $requestHeaders["Message-Id"]
-              Subject: $requestHeaders["Subject"]
-              Date: $requestHeaders["Date"]
-              From: $requestHeaders["AS2-From"]
-              To: $requestHeaders["AS2-To"]
-              Received on: $responseHeaders["Date"]
-             Status: $dispositionType
-            """;
+    // Use explicit CRLF line endings to ensure consistent digest computation for signed MDNs.
+    // Java text blocks use LF, which causes CRLF/LF mismatch when headers are written through
+    // CanonicalOutputStream (CRLF) but body content is written directly (LF).
+    private static final String DEFAULT_MDN_MESSAGE_TEMPLATE
+            = "MDN for -\r\n"
+              + " Message ID: $requestHeaders[\"Message-Id\"]\r\n"
+              + "  Subject: $requestHeaders[\"Subject\"]\r\n"
+              + "  Date: $requestHeaders[\"Date\"]\r\n"
+              + "  From: $requestHeaders[\"AS2-From\"]\r\n"
+              + "  To: $requestHeaders[\"AS2-To\"]\r\n"
+              + "  Received on: $responseHeaders[\"Date\"]\r\n"
+              + " Status: $dispositionType\r\n";
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
 

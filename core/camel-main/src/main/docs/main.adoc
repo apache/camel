@@ -19,7 +19,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 127 options, which are listed below.
+The camel.main supports 131 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -64,6 +64,10 @@ The camel.main supports 127 options, which are listed below.
 | *camel.main.endpointBridgeError{zwsp}Handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. The default value is false. | false | boolean
 | *camel.main.endpointLazyStart{zwsp}Producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. The default value is false. | false | boolean
 | *camel.main.endpointRuntime{zwsp}StatisticsEnabled* | Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false. | false | boolean
+| *camel.main.errorRegistry{zwsp}Enabled* | Sets whether the error registry is enabled to capture errors during message routing. This is by default disabled. | false | boolean
+| *camel.main.errorRegistry{zwsp}MaximumEntries* | Sets the maximum number of error entries to keep in the error registry. When the limit is exceeded, the oldest entries are evicted. The default value is 100. | 100 | int
+| *camel.main.errorRegistryStack{zwsp}TraceEnabled* | Sets whether to capture stack traces in the error registry. This is enabled by default. | true | boolean
+| *camel.main.errorRegistryTimeTo{zwsp}LiveSeconds* | Sets the time-to-live in seconds for error entries in the error registry. Entries older than this are evicted. The default value is 3600 (1 hour). | 3600 | int
 | *camel.main.exchangeFactory* | Controls whether to pool (reuse) exchanges or create new exchanges (prototype). Using pooled will reduce JVM garbage collection overhead by avoiding to re-create Exchange instances per message each consumer receives. The default is prototype mode. | default | String
 | *camel.main.exchangeFactory{zwsp}Capacity* | The capacity the pool (for each consumer) uses for storing exchanges. The default capacity is 100. | 100 | int
 | *camel.main.exchangeFactory{zwsp}StatisticsEnabled* | Configures whether statistics is enabled on exchange factory. | false | boolean
@@ -299,7 +303,7 @@ The camel.trace supports 14 options, which are listed below.
 
 
 === Camel SSL configurations
-The camel.ssl supports 20 options, which are listed below.
+The camel.ssl supports 26 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -316,11 +320,17 @@ The camel.ssl supports 20 options, which are listed below.
 | *camel.ssl.keystorePassword* | Sets the SSL Keystore password. |  | String
 | *camel.ssl.keyStoreProvider* | To use a specific provider for creating KeyStore. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
 | *camel.ssl.keyStoreType* | The type of the key store to load. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
+| *camel.ssl.namedGroups* | List of TLS/SSL named groups (key exchange groups). Multiple names can be separated by comma. Named groups control which key exchange algorithms are available during the TLS handshake, including post-quantum hybrid groups such as X25519MLKEM768. |  | String
+| *camel.ssl.namedGroupsExclude* | Filters TLS/SSL named groups. This filter is used for excluding named groups that match the naming pattern. Multiple names can be separated by comma. Notice that if the namedGroups option has been configured then the include/exclude filters are not in use. |  | String
+| *camel.ssl.namedGroupsInclude* | Filters TLS/SSL named groups. This filter is used for including named groups that match the naming pattern. Multiple names can be separated by comma. Notice that if the namedGroups option has been configured then the include/exclude filters are not in use. |  | String
 | *camel.ssl.provider* | To use a specific provider for creating SSLContext. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
 | *camel.ssl.secureRandom{zwsp}Algorithm* | Algorithm name used for creating the SecureRandom. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
 | *camel.ssl.secureRandomProvider* | To use a specific provider for creating SecureRandom. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
 | *camel.ssl.secureSocketProtocol* | The protocol for the secure sockets created by the SSLContext. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html | TLSv1.3 | String
 | *camel.ssl.sessionTimeout* | Timeout in seconds to use for SSLContext. The default is 24 hours. | 86400 | int
+| *camel.ssl.signatureSchemes* | List of TLS/SSL signature schemes. Multiple names can be separated by comma. Signature schemes control which signature algorithms are available during the TLS handshake, including post-quantum signature algorithms such as ML-DSA. |  | String
+| *camel.ssl.signatureSchemes{zwsp}Exclude* | Filters TLS/SSL signature schemes. This filter is used for excluding signature schemes that match the naming pattern. Multiple names can be separated by comma. Notice that if the signatureSchemes option has been configured then the include/exclude filters are not in use. |  | String
+| *camel.ssl.signatureSchemes{zwsp}Include* | Filters TLS/SSL signature schemes. This filter is used for including signature schemes that match the naming pattern. Multiple names can be separated by comma. Notice that if the signatureSchemes option has been configured then the include/exclude filters are not in use. |  | String
 | *camel.ssl.trustAllCertificates* | Allows to trust all SSL certificates without performing certificate validation. This can be used in development environment but may expose the system to security risks. Notice that if the trustAllCertificates option is set to true then the trustStore/trustStorePassword options are not in use. | false | boolean
 | *camel.ssl.trustStore* | The trust store to load. The trust store is by default loaded from classpath. If you must load from file system, then use file: as prefix. file:nameOfFile (to refer to the file system) classpath:nameOfFile (to refer to the classpath; default) http:uri (to load the resource using HTTP) ref:nameOfBean (to lookup an existing KeyStore instance from the registry, for example for testing and development). |  | String
 | *camel.ssl.trustStorePassword* | Sets the SSL Truststore password. |  | String
