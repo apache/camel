@@ -150,8 +150,12 @@ public final class GoogleCredentialsHelper {
                     context, serviceAccountKey, scopes, config.getDelegate(), transport, factory);
         }
 
-        throw new IllegalArgumentException(
-                "Either OAuth credentials (clientId + clientSecret) or serviceAccountKey must be provided");
+        // Fall back to Application Default Credentials
+        GoogleCredential credential = GoogleCredential.getApplicationDefault(transport, factory);
+        if (scopes != null && !scopes.isEmpty()) {
+            credential = credential.createScoped(scopes);
+        }
+        return credential;
     }
 
     /**
