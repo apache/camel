@@ -36,7 +36,7 @@ camel.main.errorRegistryEnabled = true
 
 == Message History
 
-When xref:message-history.adoc[Message History] is enabled on the `CamelContext`, the error registry
+When xref:components:eips:message-history.adoc[Message History] is enabled on the `CamelContext`, the error registry
 also captures the message history trace for each error. This shows every node the message was
 routed through up until the point of failure, which is very useful for debugging.
 
