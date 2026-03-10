@@ -19,7 +19,7 @@ package org.apache.camel.spi;
 import java.util.Collection;
 
 /**
- * A read-only view over error entries in an {@link ErrorRegistry}, supporting browsing and clearing.
+ * A scoped view over error entries in an {@link ErrorRegistry}, supporting browsing and clearing.
  */
 public interface ErrorRegistryView {
 

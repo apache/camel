@@ -121,7 +121,7 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
     private static String[] captureStackTrace(Throwable exception) {
         StringWriter writer = new StringWriter();
         exception.printStackTrace(new PrintWriter(writer, true));
-        return writer.toString().split("\n");
+        return writer.toString().split("\\r?\\n");
     }
 
     @SuppressWarnings("unchecked")
@@ -135,7 +135,12 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
         for (int i = 0; i < history.size(); i++) {
             MessageHistory mh = history.get(i);
             String nodeId = mh.getNode() != null ? mh.getNode().getId() : null;
-            result[i] = mh.getRouteId() + "[" + nodeId + "]";
+            long elapsed = mh.getElapsed();
+            if (elapsed > 0) {
+                result[i] = mh.getRouteId() + "[" + nodeId + "] (" + elapsed + " ms)";
+            } else {
+                result[i] = mh.getRouteId() + "[" + nodeId + "]";
+            }
         }
         return result;
     }
@@ -313,5 +318,15 @@ public class DefaultErrorRegistry extends EventNotifierSupport implements ErrorR
             String[] messageHistory)
             implements
                 ErrorRegistryEntry {
+
+        @Override
+        public String[] stackTrace() {
+            return stackTrace != null ? stackTrace.clone() : null;
+        }
+
+        @Override
+        public String[] messageHistory() {
+            return messageHistory != null ? messageHistory.clone() : null;
+        }
     }
 }

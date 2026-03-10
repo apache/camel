@@ -53,8 +53,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
     @Override
     protected String doCallText(Map<String, Object> options) {
         String routeId = (String) options.get(ROUTE_ID);
-        String limit = (String) options.get(LIMIT);
-        int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        int max = parseLimit(options);
         boolean includeStackTrace = "true".equals(options.get(STACK_TRACE));
 
         StringBuilder sb = new StringBuilder();
@@ -94,8 +93,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         String routeId = (String) options.get(ROUTE_ID);
-        String limit = (String) options.get(LIMIT);
-        int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
+        int max = parseLimit(options);
         boolean includeStackTrace = "true".equals(options.get(STACK_TRACE));
 
         JsonObject root = new JsonObject();
@@ -143,5 +141,17 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
         root.put("errors", list);
 
         return root;
+    }
+
+    private static int parseLimit(Map<String, Object> options) {
+        String limit = (String) options.get(LIMIT);
+        if (limit == null) {
+            return Integer.MAX_VALUE;
+        }
+        try {
+            return Integer.parseInt(limit);
+        } catch (NumberFormatException e) {
+            return Integer.MAX_VALUE;
+        }
     }
 }

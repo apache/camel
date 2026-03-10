@@ -47,6 +47,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean shutdownRoutesInReverseOrder = true;
     private boolean shutdownLogInflightExchangesOnTimeout = true;
     private boolean inflightRepositoryBrowseEnabled;
+    @Metadata(defaultValue = "false")
     private boolean errorRegistryEnabled;
     @Metadata(defaultValue = "100")
     private int errorRegistryMaximumEntries = 100;

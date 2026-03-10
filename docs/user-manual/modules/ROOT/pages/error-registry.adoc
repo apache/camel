@@ -20,7 +20,7 @@ Or via configuration properties:
 
 [source,properties]
 ----
-camel.context.error-registry-enabled = true
+camel.main.errorRegistryEnabled = true
 ----
 
 == Configuration
@@ -28,10 +28,10 @@ camel.context.error-registry-enabled = true
 [width="100%",cols="3,1,1,5",options="header"]
 |===
 | Option | Default | Type | Description
-| `errorRegistryEnabled` | `false` | boolean | Whether the error registry is enabled.
-| `errorRegistryMaximumEntries` | `100` | int | Maximum number of error entries to keep. When exceeded, the oldest entries are evicted.
-| `errorRegistryTimeToLiveSeconds` | `3600` | int | Time-to-live for error entries in seconds. Entries older than this are evicted.
-| `errorRegistryStackTraceEnabled` | `true` | boolean | Whether to capture stack traces.
+| `camel.main.errorRegistryEnabled` | `false` | boolean | Whether the error registry is enabled.
+| `camel.main.errorRegistryMaximumEntries` | `100` | int | Maximum number of error entries to keep. When exceeded, the oldest entries are evicted.
+| `camel.main.errorRegistryTimeToLiveSeconds` | `3600` | int | Time-to-live for error entries in seconds. Entries older than this are evicted.
+| `camel.main.errorRegistryStackTraceEnabled` | `true` | boolean | Whether to capture stack traces.
 |===
 
 == Message History
@@ -48,7 +48,7 @@ Options:
 
 * `routeId` — filter by route id
 * `limit` — limit the number of entries displayed
-* `stackTrace` — set to `true` to include stack traces in the output
+* `stackTrace` — set to `true` to include stack traces in the output (stack traces are captured by default but not displayed unless this option is set, to keep the output concise)
 
 == JMX
 

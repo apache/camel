@@ -27,6 +27,7 @@ import org.apache.camel.spi.ErrorRegistryView;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,6 +38,7 @@ public class ErrorRegistryTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getErrorRegistry().setEnabled(true);
+        context.setMessageHistory(true);
         return context;
     }
 
@@ -168,6 +170,51 @@ public class ErrorRegistryTest extends ContextTestSupport {
         assertEquals(0, context.getErrorRegistry().size());
     }
 
+    @Test
+    public void testErrorRegistryCapturesUnhandledError() throws Exception {
+        try {
+            template.sendBody("direct:unhandled", "Hello World");
+        } catch (Exception e) {
+            // expected
+        }
+
+        ErrorRegistry registry = context.getErrorRegistry();
+        Collection<ErrorRegistryEntry> entries = registry.browse();
+        assertEquals(1, entries.size());
+
+        ErrorRegistryEntry entry = entries.iterator().next();
+        assertNotNull(entry.exchangeId());
+        assertEquals("unhandled", entry.routeId());
+        assertFalse(entry.handled());
+        assertEquals("java.lang.IllegalArgumentException", entry.exceptionType());
+        assertEquals("Unhandled error", entry.exceptionMessage());
+    }
+
+    @Test
+    public void testErrorRegistryCapturesEndpointUri() throws Exception {
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
+        template.sendBody("direct:withEndpoint", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        ErrorRegistryEntry entry = context.getErrorRegistry().browse().iterator().next();
+        assertNotNull(entry.endpointUri());
+        assertTrue(entry.endpointUri().contains("direct://fail"),
+                "Expected endpoint URI to contain direct://fail but was: " + entry.endpointUri());
+    }
+
+    @Test
+    public void testErrorRegistryCapturesMessageHistory() throws Exception {
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        ErrorRegistryEntry entry = context.getErrorRegistry().browse().iterator().next();
+        assertNotNull(entry.messageHistory(), "Message history should be captured when enabled");
+        assertTrue(entry.messageHistory().length > 0, "Message history should have at least one entry");
+        // verify format includes route and node info
+        assertTrue(entry.messageHistory()[0].contains("foo"), "Message history should contain route id");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -180,6 +227,16 @@ public class ErrorRegistryTest extends ContextTestSupport {
 
                 from("direct:start2").routeId("bar")
                         .throwException(new IllegalArgumentException("Forced error 2"));
+
+                from("direct:unhandled").routeId("unhandled")
+                        .errorHandler(noErrorHandler())
+                        .throwException(new IllegalArgumentException("Unhandled error"));
+
+                from("direct:withEndpoint").routeId("withEndpoint")
+                        .to("direct:fail");
+
+                from("direct:fail").routeId("failRoute")
+                        .throwException(new IllegalArgumentException("Endpoint error"));
             }
         };
     }
