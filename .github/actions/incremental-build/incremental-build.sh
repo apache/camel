@@ -154,7 +154,7 @@ function main() {
           echo "$w"
         done
         # This need to install, other commands like test are not enough, otherwise test-infra will fail due to jandex maven plugin
-        $mavenBinary -l $log $MVND_OPTS install -DskipITs -pl "$pl"
+        $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
         ret=$?
       else
         echo "Testing the affected projects and the projects that depend on them:"
@@ -162,7 +162,7 @@ function main() {
           echo "$w"
         done
         # This need to install, other commands like test are not enough, otherwise test-infra will fail due to jandex maven plugin
-        $mavenBinary -l $log $MVND_OPTS install -DskipITs -pl "$pl" -amd
+        $mavenBinary -l $log $MVND_OPTS install -pl "$pl" -amd
         ret=$?
       fi
     fi
