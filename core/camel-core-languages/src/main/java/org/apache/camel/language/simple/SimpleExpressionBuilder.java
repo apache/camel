@@ -3360,6 +3360,9 @@ public final class SimpleExpressionBuilder {
         };
     }
 
+    /**
+     * Executes a custom simple function
+     */
     public static Expression customFunction(final String name, final String parameter) {
         return new ExpressionAdapter() {
             private Expression func;
@@ -3396,14 +3399,17 @@ public final class SimpleExpressionBuilder {
         };
     }
 
+    /**
+     * Evaluates the simple jsonpath with the source input
+     */
     public static Expression simpleJsonPathExpression(String source, String path) {
         return new ExpressionAdapter() {
             private Expression input;
 
             @Override
             public Object evaluate(Exchange exchange) {
-                JsonObject body = input.evaluate(exchange, JsonObject.class);
-                if (body instanceof JsonObject jo) {
+                JsonObject jo = input.evaluate(exchange, JsonObject.class);
+                if (jo != null) {
                     return jo.path(path);
                 }
                 return null;
@@ -3413,6 +3419,7 @@ public final class SimpleExpressionBuilder {
             public void init(CamelContext context) {
                 super.init(context);
                 input = ExpressionBuilder.singleInputExpression(source);
+                input.init(context);
             }
 
             @Override
