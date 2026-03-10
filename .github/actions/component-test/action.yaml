@@ -24,9 +24,6 @@ inputs:
   pr-id:
     description: 'Id of the pull request to update'
     required: true
-  comment-id:
-    description: 'Id of the comment to process'
-    required: true
   comment-body:
     description: 'Body of the comment to process'
     required: true
@@ -68,22 +65,16 @@ runs:
         name: tests-${{ inputs.artifact-upload-suffix }}.log
         path: tests.log
     - name: Success comment
-      if: success() 
+      if: success()
       uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
       with:
-        comment-id: ${{ inputs.comment-id }}
-        edit-mode: replace
+        issue-number: ${{ inputs.pr-id }}
         body: |
-          ${{ inputs.comment-body }}
-
-          **Result** :white_check_mark: The tests passed successfully
+          :white_check_mark: `${{ inputs.comment-body }}` tests passed successfully.
     - name: Failure comment
-      if: failure() 
+      if: failure()
       uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
       with:
-        comment-id: ${{ inputs.comment-id }}
-        edit-mode: replace
+        issue-number: ${{ inputs.pr-id }}
         body: |
-          ${{ inputs.comment-body }}
-
-          **Result** :x: The tests failed please [check the logs](https://github.com/apache/camel/actions/runs/${{ inputs.run-id }})
+          :x: `${{ inputs.comment-body }}` tests failed. Please [check the logs](https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run-id }}).

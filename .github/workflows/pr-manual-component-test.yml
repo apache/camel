@@ -61,15 +61,16 @@ jobs:
               exit 1
           fi
           echo "pr_sha=$head_sha" >> $GITHUB_OUTPUT
+      - name: React to comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh api /repos/${GH_REPO}/issues/comments/${{ github.event.comment.id }}/reactions -f content="+1"
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ env.pr_sha }}
+          ref: ${{ steps.pr.outputs.pr_sha }}
           submodules: recursive
-      - uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          body: |
-            :robot: The Apache Camel test robot will run the tests for you :+1:
       - id: install-packages
         uses: ./.github/actions/install-packages
       - name: Set up JDK ${{ matrix.java }}
@@ -86,6 +87,12 @@ jobs:
         with:
           run-id: ${{ github.run_id }}
           pr-id: ${{ github.event.issue.number }}
-          comment-id: ${{ github.event.comment.id }}
           comment-body: ${{ env.comment_body }}
           artifact-upload-suffix: java-${{ matrix.java }}
+      - name: Post failure comment
+        if: failure() && steps.test.outcome != 'failure'
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            :x: The `/component-test` run failed. Please [check the logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
