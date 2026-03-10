@@ -87,6 +87,7 @@ jobs:
         with:
           run-id: ${{ github.run_id }}
           pr-id: ${{ github.event.issue.number }}
+          comment-id: ${{ github.event.comment.id }}
           comment-body: ${{ env.comment_body }}
           artifact-upload-suffix: java-${{ matrix.java }}
       - name: Post failure comment

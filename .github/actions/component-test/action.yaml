@@ -24,6 +24,10 @@ inputs:
   pr-id:
     description: 'Id of the pull request to update'
     required: true
+  comment-id:
+    description: 'Id of the comment (unused, kept for backward compatibility with older PR branches)'
+    required: false
+    default: ''
   comment-body:
     description: 'Body of the comment to process'
     required: true
