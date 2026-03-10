@@ -43,9 +43,8 @@ import org.apache.camel.util.json.JsonObject;
 @ApplicationScoped
 public class DiagnoseTools {
 
-    private static final String CAMEL_DOC_BASE = "https://camel.apache.org/";
-    private static final String CAMEL_COMPONENT_DOC = CAMEL_DOC_BASE + "components/next/";
-    private static final String CAMEL_EIP_DOC = CAMEL_COMPONENT_DOC + "eips/";
+    private static final String CAMEL_COMPONENT_DOC = DiagnoseData.CAMEL_COMPONENT_DOC;
+    private static final String CAMEL_EIP_DOC = DiagnoseData.CAMEL_EIP_DOC;
 
     /**
      * Pattern to extract component names from endpoint URIs in error messages (e.g., "kafka:myTopic", "http://host").
@@ -98,28 +97,8 @@ public class DiagnoseTools {
             for (String exceptionName : matchedExceptions) {
                 DiagnoseData.ExceptionInfo info = diagnoseData.getException(exceptionName);
                 if (info != null) {
-                    JsonObject exJson = new JsonObject();
+                    JsonObject exJson = info.toJson();
                     exJson.put("exception", exceptionName);
-                    exJson.put("description", info.description());
-
-                    JsonArray causesJson = new JsonArray();
-                    for (String cause : info.commonCauses()) {
-                        causesJson.add(cause);
-                    }
-                    exJson.put("commonCauses", causesJson);
-
-                    JsonArray fixesJson = new JsonArray();
-                    for (String fix : info.suggestedFixes()) {
-                        fixesJson.add(fix);
-                    }
-                    exJson.put("suggestedFixes", fixesJson);
-
-                    JsonArray docsJson = new JsonArray();
-                    for (String doc : info.documentationLinks()) {
-                        docsJson.add(doc);
-                    }
-                    exJson.put("documentationLinks", docsJson);
-
                     exceptionsJson.add(exJson);
                 }
             }

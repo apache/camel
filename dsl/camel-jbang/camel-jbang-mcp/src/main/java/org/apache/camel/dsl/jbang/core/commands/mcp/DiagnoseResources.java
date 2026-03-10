@@ -57,16 +57,8 @@ public class DiagnoseResources {
 
         JsonArray exceptions = new JsonArray();
         for (Map.Entry<String, DiagnoseData.ExceptionInfo> entry : diagnoseData.getKnownExceptions().entrySet()) {
-            JsonObject exJson = new JsonObject();
+            JsonObject exJson = entry.getValue().toSummaryJson();
             exJson.put("name", entry.getKey());
-            exJson.put("description", entry.getValue().description());
-
-            JsonArray docsJson = new JsonArray();
-            for (String doc : entry.getValue().documentationLinks()) {
-                docsJson.add(doc);
-            }
-            exJson.put("documentationLinks", docsJson);
-
             exceptions.add(exJson);
         }
 
@@ -100,28 +92,9 @@ public class DiagnoseResources {
             return new TextResourceContents(uri, result.toJson(), "application/json");
         }
 
-        JsonObject result = new JsonObject();
+        JsonObject result = info.toJson();
         result.put("name", name);
         result.put("found", true);
-        result.put("description", info.description());
-
-        JsonArray causesJson = new JsonArray();
-        for (String cause : info.commonCauses()) {
-            causesJson.add(cause);
-        }
-        result.put("commonCauses", causesJson);
-
-        JsonArray fixesJson = new JsonArray();
-        for (String fix : info.suggestedFixes()) {
-            fixesJson.add(fix);
-        }
-        result.put("suggestedFixes", fixesJson);
-
-        JsonArray docsJson = new JsonArray();
-        for (String doc : info.documentationLinks()) {
-            docsJson.add(doc);
-        }
-        result.put("documentationLinks", docsJson);
 
         return new TextResourceContents(uri, result.toJson(), "application/json");
     }
