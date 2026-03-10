@@ -385,6 +385,12 @@ Upgraded QuickFixJ from 2.3.2 to 3.0.0 in `camel-quickfix` component.
 
 The older logic used for MDC (enabled via `camel.main.useMdcLogging = true`) is deprecated in favor of `camel-mdc` component.
 
+=== camel-tracing (Deprecation)
+
+The `camel-tracing` and related components (`camel-opentelemetry` and `camel-observation`) are now deprecated. You should move your implementation to the newer `camel-telemetry` components (`camel-opentelemetry2` and `camel-micrometer-observability`). We have implemented these new components in order to fix certain design flaws (mainly, span duplications) identified in the older components.
+
+Some minor difference may be expected when moving to the new components, make sure to read the documentation carefully.
+
 == Removed deprecated components
 
 The following deprecated components has been removed:
