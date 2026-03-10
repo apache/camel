@@ -68,6 +68,41 @@ runs:
       with:
         name: tests-${{ inputs.artifact-upload-suffix }}.log
         path: tests.log
+    - name: Check for disabled tests
+      id: disabled-tests
+      if: always()
+      shell: bash
+      env:
+        COMMENT_BODY: ${{ inputs.comment-body }}
+      run: |
+        # Resolve component paths from the comment (same logic as component-test.sh)
+        componentList="${COMMENT_BODY:16}"
+        skipped_modules=""
+        for component in ${componentList}; do
+          if [[ ${component} = camel-* ]]; then
+            componentPath="components/${component}"
+          else
+            componentPath="components/camel-${component}"
+          fi
+          if [[ -d "${componentPath}" ]]; then
+            # Search for @DisabledIfSystemProperty(named = "ci.env.name") in test sources
+            matches=$(grep -rl 'DisabledIfSystemProperty' "${componentPath}" --include="*.java" 2>/dev/null \
+              | xargs grep -l 'ci.env.name' 2>/dev/null || true)
+            if [[ -n "$matches" ]]; then
+              count=$(echo "$matches" | wc -l | tr -d ' ')
+              skipped_modules="${skipped_modules}\n- \`${componentPath}\`: ${count} test(s) disabled on GitHub Actions"
+            fi
+          fi
+        done
+        if [[ -n "$skipped_modules" ]]; then
+          {
+            echo 'warning<<SKIPPED_EOF'
+            echo ""
+            echo ":warning: **Some integration tests are disabled on GitHub Actions** (\`@DisabledIfSystemProperty(named = \"ci.env.name\")\`) and require manual verification:"
+            echo -e "$skipped_modules"
+            echo 'SKIPPED_EOF'
+          } >> $GITHUB_OUTPUT
+        fi
     - name: Success comment
       if: success()
       uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
@@ -75,6 +110,7 @@ runs:
         issue-number: ${{ inputs.pr-id }}
         body: |
           :white_check_mark: `${{ inputs.comment-body }}` tests passed successfully.
+          ${{ steps.disabled-tests.outputs.warning }}
     - name: Failure comment
       if: failure()
       uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
@@ -82,3 +118,4 @@ runs:
         issue-number: ${{ inputs.pr-id }}
         body: |
           :x: `${{ inputs.comment-body }}` tests failed. Please [check the logs](https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run-id }}).
+          ${{ steps.disabled-tests.outputs.warning }}
