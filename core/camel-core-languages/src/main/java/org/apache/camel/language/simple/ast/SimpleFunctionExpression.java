@@ -688,6 +688,29 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return ExpressionBuilder.languageExpression("jq", exp);
         }
+        // simple-jsonpath
+        remainder = ifStartsWithReturnRemainder("simpleJsonpath(", function);
+        if (remainder != null) {
+            String exp = StringHelper.beforeLast(remainder, ")");
+            if (exp == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${simpleJsonpath(input,exp)} was: " + function, token.getIndex());
+            }
+            String input = null;
+            exp = StringHelper.removeLeadingAndEndingQuotes(exp);
+            if (exp.startsWith("header:") || exp.startsWith("property:") || exp.startsWith("exchangeProperty:")
+                    || exp.startsWith("variable:")) {
+                input = StringHelper.before(exp, ",");
+                exp = StringHelper.after(exp, ",");
+                if (input != null) {
+                    input = input.trim();
+                }
+                if (exp != null) {
+                    exp = exp.trim();
+                }
+            }
+            return SimpleExpressionBuilder.simpleJsonPathExpression(input, exp);
+        }
         // jsonpath
         remainder = ifStartsWithReturnRemainder("jsonpath(", function);
         if (remainder != null) {

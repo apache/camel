@@ -410,6 +410,10 @@ public final class SimpleConstants {
               label = "collection", javaType = "List", displayName = "Shuffle Values")
     public static final String SHUFFLE = "shuffle(val...)";
 
+    @Metadata(description = "When working with JSon data, then this allows using the Simple JSonPath language, for example, to extract data from the message body (in JSon format). For input (optional), you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.",
+              label = "json", javaType = "Object", displayName = "Simple JSonPath")
+    public static final String SIMPLE_JSONPATH = "simpleJsonpath(input,exp)";
+
     @Metadata(description = "Returns the number of elements in collection or array based payloads. If the value is null then 0 is returned, otherwise 1.",
               label = "collection", javaType = "int", displayName = "Size")
     public static final String SIZE = "size(exp)";

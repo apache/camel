@@ -53,11 +53,11 @@ public class JsonObjectPathTest {
     public void testPath() throws Exception {
         JsonObject jo = (JsonObject) Jsoner.deserialize(BOOKS);
 
-        JsonObject obj = jo.path("library.book[0]");
+        JsonObject obj = jo.pathJsonObject("library.book[0]");
         Assertions.assertNotNull(obj);
         Assertions.assertEquals("No Title", obj.getString("title"));
 
-        obj = jo.path("library.book[1]");
+        obj = jo.pathJsonObject("library.book[1]");
         Assertions.assertNotNull(obj);
         Assertions.assertEquals("1984", obj.getString("title"));
     }
@@ -68,14 +68,20 @@ public class JsonObjectPathTest {
         Assertions.assertNotNull(jo);
 
         Assertions.assertEquals("No Title", jo.pathString("library.book[0].title"));
+        Assertions.assertEquals("No Title", jo.path("library.book[0].title"));
         Assertions.assertEquals(1925, jo.pathInteger("library.book[0].year"));
+        Assertions.assertEquals("1925", jo.path("library.book[0].year"));
         Assertions.assertFalse(jo.pathBoolean("library.book[0].movie"));
+        Assertions.assertEquals(Boolean.FALSE, jo.path("library.book[0].movie"));
         Assertions.assertEquals("1984", jo.pathString("library.book[1].title"));
+        Assertions.assertEquals("1984", jo.path("library.book[1].title"));
         Assertions.assertEquals(1949, jo.pathInteger("library.book[1].year"));
+        Assertions.assertEquals("1949", jo.path("library.book[1].year"));
         Assertions.assertTrue(jo.pathBoolean("library.book[1].movie"));
+        Assertions.assertEquals(Boolean.TRUE, jo.path("library.book[1].movie"));
 
         try {
-            Assertions.assertNull(jo.path("library.book[1].unknown"));
+            Assertions.assertNull(jo.pathJsonObject("library.book[1].unknown"));
             fail();
         } catch (IllegalArgumentException e) {
             // expected
@@ -87,10 +93,10 @@ public class JsonObjectPathTest {
         JsonObject jo = (JsonObject) Jsoner.deserialize(BOOKS);
         Assertions.assertNotNull(jo);
 
-        Assertions.assertNotNull(jo.path("library?.book[0]"));
-        Assertions.assertNull(jo.path("library?.book[2]"));
+        Assertions.assertNotNull(jo.pathJsonObject("library?.book[0]"));
+        Assertions.assertNull(jo.pathJsonObject("library?.book[2]"));
         try {
-            Assertions.assertNull(jo.path("library.book[2]"));
+            Assertions.assertNull(jo.pathJsonObject("library.book[2]"));
             fail();
         } catch (IllegalArgumentException e) {
             // expected

@@ -72,6 +72,7 @@ import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * Expression builder used by the simple language.
@@ -3391,6 +3392,32 @@ public final class SimpleExpressionBuilder {
 
             public String toString() {
                 return "function(" + name + ")";
+            }
+        };
+    }
+
+    public static Expression simpleJsonPathExpression(String source, String path) {
+        return new ExpressionAdapter() {
+            private Expression input;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                JsonObject body = input.evaluate(exchange, JsonObject.class);
+                if (body instanceof JsonObject jo) {
+                    return jo.path(path);
+                }
+                return null;
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                input = ExpressionBuilder.singleInputExpression(source);
+            }
+
+            @Override
+            public String toString() {
+                return "simpleJsonpath[" + path + "]";
             }
         };
     }

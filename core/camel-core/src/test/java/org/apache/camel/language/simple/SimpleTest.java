@@ -82,6 +82,30 @@ public class SimpleTest extends LanguageTestSupport {
 
     private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out of bounds for length 2";
 
+    private static final String BOOKS
+            = """
+                    {
+                        "library": {
+                            "book": [
+                                {
+                                    "title": "No Title",
+                                    "author": "F. Scott Fitzgerald",
+                                    "year": "1925",
+                                    "genre": "Classic",
+                                    "id": "bk101"
+                                },
+                                {
+                                    "title": "1984",
+                                    "author": "George Orwell",
+                                    "year": "1949",
+                                    "genre": "Dystopian",
+                                    "id": "bk102"
+                                }
+                            ]
+                        }
+                    }
+                    """;
+
     @Override
     protected Registry createCamelRegistry() throws Exception {
         Registry jndi = super.createCamelRegistry();
@@ -4218,6 +4242,26 @@ public class SimpleTest extends LanguageTestSupport {
         expression = context.resolveLanguage("simple").createExpression("${kindOfType(${body})}");
         s = expression.evaluate(exchange, String.class);
         assertEquals("object", s);
+    }
+
+    @Test
+    public void testSimpleJsonpath() {
+        exchange.getMessage().setBody("{\"id\": 123, \"age\": 42, \"name\": \"scott\"}");
+        assertExpression("${simpleJsonpath(id)}", 123);
+        assertExpression("${simpleJsonpath(age)}", 42);
+        assertExpression("${simpleJsonpath(name)}", "scott");
+        assertExpression("${simpleJsonpath(?cheese)}", null);
+
+        exchange.getMessage().setBody(BOOKS);
+        assertExpression("${simpleJsonpath(library.book[0].title)}", "No Title");
+        assertExpression("${simpleJsonpath(library.book[0].year)}", 1925);
+        assertExpression("${simpleJsonpath(library.book[1].title)}", "1984");
+        assertExpression("${simpleJsonpath(library.book[1].year)}", 1949);
+        assertExpression("${simpleJsonpath(library?.book[2].year)}", null);
+
+        exchange.getMessage().setBody("Hello World");
+        exchange.getMessage().setHeader("books", BOOKS);
+        assertExpression("${simpleJsonpath(header:books,library.book[0].title)}", "No Title");
     }
 
     @Override

@@ -613,6 +613,8 @@ Functions to work with XML and JSon payloads.
 |`jsonpath(input,exp)` | `Object` | Same as `jsonpath(exp)` but to use the _input_ expression as the source of the JSon document.
 |`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
 |`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
+|`simpleJsonpath(exp)` | `Object` | When working with JSon data, then this allows using built-in Simple JsonPath, for example, to extract data from the message body (in JSon format).
+|`simpleJsonpath(input,exp)` | `Object` | Same as `simpleJsonpath(exp)` but to use the _input_ expression as the source of the JSon document.
 |`toJson(exp)` | `String` | Converts the expression to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon.
 |`toJsonBody` | `String` | Converts the message body to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon.
 |`toPrettyJson(exp)` | `String` | Converts the expression to a JSon `String` representation. String values are returned as-is, null values return null, all other types are serialized to JSon in pretty mode.
@@ -665,6 +667,78 @@ from("direct:map")
             }""")
         .to("log:data");
 ----
+
+The `simpleJsonpath` function is using Camel's built in JSon library from `camel-util-json` that is a basic JSon parser.
+The syntax for the path is similar to Camel's bean OGNL syntax to use a dot notation to walk down a nested structure.
+
+Because the input JSon is not nested then the mapping example is just:
+
+[source,java]
+----
+from("direct:map")
+        .transform().simple("""
+            {
+              "roll": ${simpleJsonpath(id)},
+              "years": ${simpleJsonpath(age)},
+              "fullname": "${simpleJsonpath(name)}"
+            }""")
+        .to("log:data");
+----
+
+However if there are nested JSon such as:
+
+[source,json]
+----
+{
+    "library": {
+        "book": [
+            {
+                "title": "No Title",
+                "author": "F. Scott Fitzgerald",
+                "year": "1925",
+                "genre": "Classic",
+                "movie": false,
+                "id": "bk101"
+            },
+            {
+                "title": "1984",
+                "author": "George Orwell",
+                "year": "1949",
+                "genre": "Dystopian",
+                "movie": true,
+                "id": "bk102"
+            }
+        ]
+    }
+}
+----
+
+Then you can retrieve data from the JSon payload as follows:
+
+[source,text]
+----
+library.book[0].title
+library.book[0].author
+library.book[0].year
+
+library.book[1].title
+library.book[1].author
+library.book[2].year
+----
+
+TIP: You can use `[last]` to refer to the last element in an array.
+
+You can use `?.` to declare that the path is option, so if the node or attribute does not exist, then `null` is returned.
+Otherwise, Camel will throw an exception.
+
+For example, we attempt to refer to a non-existing attribute
+
+[source,text]
+----
+library.book[0]?.cheese
+----
+
+The optional marker can also be used sooner in the path, such as `foo?.bar.age` which will not fail if there are no nested _bar_ node in the JSon payload.
 
 The `toJson` function is to convert the payload to JSon as a `String` value. However if the payload is already a `String` then no conversion happens.
 So suppose the payload is a `Map` object as follows:

@@ -121,6 +121,7 @@ public class SimpleUtils {
                     "setheader",
                     "setvariable",
                     "shuffle",
+                    "simplejsonpath",
                     "size",
                     "skip",
                     "sort",
