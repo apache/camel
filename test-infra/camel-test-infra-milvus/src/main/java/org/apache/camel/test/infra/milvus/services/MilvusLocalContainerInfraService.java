@@ -61,6 +61,7 @@ public class MilvusLocalContainerInfraService implements MilvusInfraService, Con
             public TestInfraMilvusContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("milvusdb/milvus"));
                 withStartupTimeout(Duration.ofMinutes(3L));
+                withEnv("DEPLOY_MODE", "STANDALONE");
 
                 ContainerEnvironmentUtil.configurePorts(this, fixedPort,
                         ContainerEnvironmentUtil.PortConfig.primary(19530),
