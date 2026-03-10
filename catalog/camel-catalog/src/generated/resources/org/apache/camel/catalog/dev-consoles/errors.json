@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "errors",
+    "title": "Error Registry",
+    "description": "Display captured routing errors",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.ErrorRegistryConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.19.0-SNAPSHOT"
+  }
+}
+

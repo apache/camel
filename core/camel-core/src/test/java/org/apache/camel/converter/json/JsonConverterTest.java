@@ -17,6 +17,9 @@
 package org.apache.camel.converter.json;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.model.ConvertBodyDefinition;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
@@ -85,6 +88,45 @@ public class JsonConverterTest extends ContextTestSupport {
     @Test
     public void testConvertArray() throws Exception {
         JsonArray arr = context.getTypeConverter().convertTo(JsonArray.class, BOOKS_ARR);
+        Assertions.assertNotNull(arr);
+
+        Assertions.assertEquals(2, arr.size());
+        JsonObject b1 = arr.getJsonObject(0);
+        JsonObject b2 = arr.getJsonObject(1);
+        Assertions.assertEquals("No Title", b1.getString("title"));
+        Assertions.assertEquals(1925, b1.getInteger("year"));
+        Assertions.assertEquals("1984", b2.getString("title"));
+        Assertions.assertEquals(1949, b2.getInteger("year"));
+    }
+
+    @Test
+    public void testConvertObjectShorthand() throws Exception {
+        RouteDefinition rd = new RouteDefinition();
+        rd.setInput(new FromDefinition("direct:start"));
+        rd.addOutput(new ConvertBodyDefinition("JsonObject")); // use shorthand name instead of full FQN
+        context.addRouteDefinition(rd);
+
+        JsonObject jo = (JsonObject) template.requestBody("direct:start", BOOKS);
+        Assertions.assertNotNull(jo);
+
+        JsonArray arr = jo.getJsonObject("library").getJsonArray("book");
+        Assertions.assertEquals(2, arr.size());
+        JsonObject b1 = arr.getJsonObject(0);
+        JsonObject b2 = arr.getJsonObject(1);
+        Assertions.assertEquals("No Title", b1.getString("title"));
+        Assertions.assertEquals(1925, b1.getInteger("year"));
+        Assertions.assertEquals("1984", b2.getString("title"));
+        Assertions.assertEquals(1949, b2.getInteger("year"));
+    }
+
+    @Test
+    public void testConvertArrayShorthand() throws Exception {
+        RouteDefinition rd = new RouteDefinition();
+        rd.setInput(new FromDefinition("direct:start"));
+        rd.addOutput(new ConvertBodyDefinition("JsonArray")); // use shorthand name instead of full FQN
+        context.addRouteDefinition(rd);
+
+        JsonArray arr = (JsonArray) template.requestBody("direct:start", BOOKS_ARR);
         Assertions.assertNotNull(arr);
 
         Assertions.assertEquals(2, arr.size());
