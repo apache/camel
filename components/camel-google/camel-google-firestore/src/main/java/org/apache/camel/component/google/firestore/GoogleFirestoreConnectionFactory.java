@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.google.firestore;
 
-import java.io.InputStream;
-
 import com.google.api.client.util.Strings;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.auth.Credentials;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import org.apache.camel.CamelContext;
-import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.component.google.common.GoogleCredentialsHelper;
 
 /**
  * Factory for creating Google Firestore client connections.
@@ -48,11 +45,9 @@ public final class GoogleFirestoreConnectionFactory {
     public static Firestore create(CamelContext context, GoogleFirestoreConfiguration configuration) throws Exception {
         FirestoreOptions.Builder builder = FirestoreOptions.newBuilder();
 
-        // Set credentials if service account key is provided
-        if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
-            InputStream credentialsStream = ResourceHelper.resolveMandatoryResourceAsInputStream(
-                    context, configuration.getServiceAccountKey());
-            GoogleCredentials credentials = ServiceAccountCredentials.fromStream(credentialsStream);
+        // Use GoogleCredentialsHelper for credential resolution (service account key or ADC fallback)
+        Credentials credentials = GoogleCredentialsHelper.getCredentials(context, configuration);
+        if (credentials != null) {
             builder.setCredentials(credentials);
         }
 

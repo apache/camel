@@ -18,6 +18,7 @@ package org.apache.camel.component.google.firestore;
 
 import com.google.cloud.firestore.Firestore;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -27,7 +28,7 @@ import org.apache.camel.spi.UriPath;
  * Configuration for the Google Firestore component.
  */
 @UriParams
-public class GoogleFirestoreConfiguration implements Cloneable {
+public class GoogleFirestoreConfiguration implements Cloneable, GoogleCommonConfiguration {
 
     @UriPath(label = "common", description = "The collection name to use")
     @Metadata(required = true)
@@ -94,6 +95,7 @@ public class GoogleFirestoreConfiguration implements Cloneable {
         this.databaseId = databaseId;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
