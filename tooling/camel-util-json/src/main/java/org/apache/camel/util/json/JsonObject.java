@@ -77,7 +77,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (path.contains(".")) {
             // grab until last dot
             int pos = path.lastIndexOf(".");
-            optional |= '?' == path.charAt(pos - 1);
+            optional = '?' == path.charAt(pos - 1);
             sub = path.substring(pos + 1);
             if (optional) {
                 pos = pos - 1;
@@ -118,7 +118,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (path.contains(".")) {
             // grab until last dot
             int pos = path.lastIndexOf(".");
-            optional |= '?' == path.charAt(pos - 1);
+            optional = '?' == path.charAt(pos - 1);
             sub = path.substring(pos + 1);
             if (optional) {
                 pos = pos - 1;
@@ -153,7 +153,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (path.contains(".")) {
             // grab until last dot
             int pos = path.lastIndexOf(".");
-            optional |= '?' == path.charAt(pos - 1);
+            optional = '?' == path.charAt(pos - 1);
             sub = path.substring(pos + 1);
             if (optional) {
                 pos = pos - 1;
