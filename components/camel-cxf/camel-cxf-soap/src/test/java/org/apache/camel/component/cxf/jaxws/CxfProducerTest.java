@@ -48,9 +48,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfProducerTest {
     protected static final String ECHO_OPERATION = "echo";
@@ -137,28 +137,17 @@ public class CxfProducerTest {
     public void testInvokingAWrongServer() throws Exception {
         Exchange reply = sendSimpleMessage(getWrongEndpointUri());
         assertNotNull(reply.getException(), "We should get the exception here");
-        assertHasCauseOfType(reply.getException(), IOException.class);
+        assertInstanceOf(IOException.class, reply.getException().getCause());
 
         //Test the data format PAYLOAD
         reply = sendSimpleMessageWithPayloadMessage(getWrongEndpointUri() + "&dataFormat=PAYLOAD");
         assertNotNull(reply.getException(), "We should get the exception here");
-        assertHasCauseOfType(reply.getException(), IOException.class);
+        assertInstanceOf(IOException.class, reply.getException().getCause());
 
         //Test the data format MESSAGE
         reply = sendSimpleMessageWithRawMessage(getWrongEndpointUri() + "&dataFormat=RAW");
         assertNotNull(reply.getException(), "We should get the exception here");
-        assertHasCauseOfType(reply.getException(), IOException.class);
-    }
-
-    private static void assertHasCauseOfType(Throwable throwable, Class<? extends Throwable> type) {
-        Throwable cause = throwable;
-        while (cause != null) {
-            if (type.isInstance(cause)) {
-                return;
-            }
-            cause = cause.getCause();
-        }
-        fail("Expected a cause of type " + type.getName() + " in exception chain of: " + throwable);
+        assertInstanceOf(IOException.class, reply.getException().getCause());
     }
 
     @Test

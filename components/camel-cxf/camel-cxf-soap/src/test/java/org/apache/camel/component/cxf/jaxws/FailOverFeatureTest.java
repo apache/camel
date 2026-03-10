@@ -89,7 +89,7 @@ public class FailOverFeatureTest {
         }
     }
 
-    @Disabled("CXF failover not compatible with Undertow 2.4.0.RC1 - NPE in ClientImpl.onMessage due to null inbound message")
+    @Disabled("CXF failover not compatible with Undertow 2.4.0.RC1 - NPE in ClientImpl.onMessage due to null inbound message (CXF-9204)")
     @Test
     public void testPojo() throws Exception {
         startRoutePojo();
