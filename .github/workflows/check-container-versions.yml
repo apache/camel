@@ -276,11 +276,25 @@ jobs:
           EOF
           )
 
-            # Generate unique branch name
-            BRANCH_NAME="automated/upgrade-$(echo "$PROPERTY_NAME" | tr '.' '-' | tr '_' '-')-${NEW_VERSION}-${{ github.run_number }}"
+            # Generate branch name (deterministic per property+version, no run number)
+            BRANCH_NAME="automated/upgrade-$(echo "$PROPERTY_NAME" | tr '.' '-' | tr '_' '-')-${NEW_VERSION}"
 
             echo "Creating PR: $PR_TITLE"
             echo "Branch: $BRANCH_NAME"
+
+            # Check for existing open PR for the same property upgrade
+            EXISTING_PR=$(gh pr list --state open --head "$BRANCH_NAME" --json number --jq '.[0].number' 2>/dev/null || echo "")
+            if [[ -n "$EXISTING_PR" ]]; then
+              echo "⏭️  Skipping $PROPERTY_NAME $NEW_VERSION — open PR #$EXISTING_PR already exists"
+              continue
+            fi
+
+            # Also check if there is any open PR updating the same property (even to a different version)
+            EXISTING_PROPERTY_PR=$(gh pr list --state open --label "container-images" --search "upgrade $PROPERTY_NAME" --json number,title --jq '.[0].number' 2>/dev/null || echo "")
+            if [[ -n "$EXISTING_PROPERTY_PR" ]]; then
+              echo "⏭️  Skipping $PROPERTY_NAME $NEW_VERSION — open PR #$EXISTING_PROPERTY_PR already exists for this property"
+              continue
+            fi
 
             # Configure git
             git config user.name "github-actions[bot]"
