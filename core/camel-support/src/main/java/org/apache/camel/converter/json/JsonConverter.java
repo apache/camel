@@ -20,6 +20,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsonable;
 import org.apache.camel.util.json.Jsoner;
 
 /**
@@ -42,6 +43,11 @@ public final class JsonConverter {
     @Converter(order = 2)
     public static JsonArray convertToJsonArray(String json, Exchange exchange) throws Exception {
         return (JsonArray) Jsoner.deserialize(json);
+    }
+
+    @Converter(order = 3)
+    public static Jsonable convertToJson(String json, Exchange exchange) throws Exception {
+        return (Jsonable) Jsoner.deserialize(json);
     }
 
 }

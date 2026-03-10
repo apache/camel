@@ -1,0 +1,115 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: PR Update Branch
+
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+
+jobs:
+  update_branch:
+    name: Update branch
+    if: ${{ github.repository == 'apache/camel' && github.event.issue.pull_request && (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'CONTRIBUTOR') && github.event.comment.body == '/update-branch' }}
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: React to comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh api /repos/${GH_REPO}/issues/comments/${{ github.event.comment.id }}/reactions -f content="+1"
+
+      - name: Get PR details
+        id: pr
+        env:
+          PR_NUMBER: ${{ github.event.issue.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          pr="$(gh api /repos/${GH_REPO}/pulls/${PR_NUMBER})"
+          head_ref="$(echo "$pr" | jq -r .head.ref)"
+          head_repo="$(echo "$pr" | jq -r .head.repo.full_name)"
+          base_ref="$(echo "$pr" | jq -r .base.ref)"
+
+          echo "head_ref=$head_ref" >> $GITHUB_OUTPUT
+          echo "head_repo=$head_repo" >> $GITHUB_OUTPUT
+          echo "base_ref=$base_ref" >> $GITHUB_OUTPUT
+
+          # Check if PR is from the same repo (not a fork)
+          if [[ "$head_repo" != "$GH_REPO" ]]; then
+            echo "::error::Cannot update branch for fork PRs ($head_repo). The author must update it manually."
+            exit 1
+          fi
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ steps.pr.outputs.head_ref }}
+          fetch-depth: 0
+
+      - name: Merge base branch
+        id: merge
+        env:
+          BASE_REF: ${{ steps.pr.outputs.base_ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin "$BASE_REF"
+          if git merge "origin/$BASE_REF" --no-edit; then
+            if [[ "$(git rev-parse HEAD)" == "$(git rev-parse @{u})" ]]; then
+              echo "Branch is already up to date."
+              echo "result=up-to-date" >> $GITHUB_OUTPUT
+            else
+              git push
+              echo "result=updated" >> $GITHUB_OUTPUT
+            fi
+          else
+            git merge --abort
+            echo "result=conflict" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post result comment
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          RESULT: ${{ steps.merge.outputs.result }}
+          HEAD_REPO: ${{ steps.pr.outputs.head_repo }}
+        run: |
+          if [[ "$RESULT" == "updated" ]]; then
+            gh pr comment "$PR_NUMBER" --repo "$GH_REPO" --body \
+              ":white_check_mark: Branch updated successfully by merging \`${{ steps.pr.outputs.base_ref }}\`."
+          elif [[ "$RESULT" == "up-to-date" ]]; then
+            gh pr comment "$PR_NUMBER" --repo "$GH_REPO" --body \
+              ":white_check_mark: Branch is already up to date with \`${{ steps.pr.outputs.base_ref }}\`."
+          elif [[ "$RESULT" == "conflict" ]]; then
+            gh pr comment "$PR_NUMBER" --repo "$GH_REPO" --body \
+              ":x: Cannot update branch — merge conflicts with \`${{ steps.pr.outputs.base_ref }}\`. Manual resolution required."
+          elif [[ "$HEAD_REPO" != "$GH_REPO" ]]; then
+            gh pr comment "$PR_NUMBER" --repo "$GH_REPO" --body \
+              ":x: Cannot update branch for fork PRs. The author must update it manually."
+          else
+            gh pr comment "$PR_NUMBER" --repo "$GH_REPO" --body \
+              ":x: Branch update failed. Please [check the logs](https://github.com/$GH_REPO/actions/runs/${{ github.run_id }}) for details."
+          fi
