@@ -28,7 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,19 +59,6 @@ public class HazelcastReplicatedmapConsumerTest extends CamelTestSupport {
     public void resetState() {
         map.clear();
         MockEndpoint.resetMocks(context);
-    }
-
-    @AfterEach
-    public void debugMocks() {
-        context.getEndpoints().stream()
-                .filter(e -> e instanceof MockEndpoint)
-                .map(e -> (MockEndpoint) e)
-                .forEach(m -> {
-                    System.out.println(
-                            m.getEndpointUri()
-                                       + " expected=" + m.getExpectedCount()
-                                       + " received=" + m.getReceivedCounter());
-                });
     }
 
     @Override
