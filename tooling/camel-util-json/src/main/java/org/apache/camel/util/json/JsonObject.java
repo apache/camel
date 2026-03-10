@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * JsonObject is a common non-thread safe data format for string to data mappings. The contents of a JsonObject are only
@@ -49,10 +50,183 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * Instantiate a new JsonObject by accepting a map's entries, which could lead to de/serialization issues of the
      * resulting JsonObject since the entry values aren't validated as JSON values.
      *
+     * The json-path syntax also supports arrays using square brackets with the position index, such as
+     * "foo.bar[0].title", "foo.bar[1].title". You can use "last" as index number to get the last element of the array.
+     *
      * @param map represents the mappings to produce the JsonObject with.
      */
     public JsonObject(final Map<String, ?> map) {
         super(map);
+    }
+
+    /**
+     * A very basic json-path that can retrieve leaf node using a dot syntax, such as "foo.bar.title", to get the title
+     * attribute from the leaf JsonObject object (ie bar).
+     *
+     * The json-path syntax also supports arrays using square brackets with the position index, such as
+     * "foo.bar[0].title", "foo.bar[1].title". You can use "last" as index number to get the last element of the array.
+     *
+     * The returned value is expected to be a String
+     *
+     * @throws IllegalArgumentException if the path traversal does not exist
+     */
+    public String pathString(final String path) {
+        boolean optional = path.startsWith("?");
+        JsonObject jo = this;
+        String sub = path;
+        if (path.contains(".")) {
+            // grab until last dot
+            int pos = path.lastIndexOf(".");
+            optional |= '?' == path.charAt(pos - 1);
+            sub = path.substring(pos + 1);
+            if (optional) {
+                pos = pos - 1;
+            }
+            java.util.Optional<JsonObject> o = doPath(path.substring(0, pos));
+            if (o.isPresent()) {
+                jo = o.get();
+            } else {
+                optional = true;
+                jo = null;
+            }
+        }
+        String answer = jo != null ? jo.getString(sub) : null;
+        if (answer == null && !optional) {
+            throw new IllegalArgumentException("JSonObject path " + path + " is null");
+        }
+        return answer;
+    }
+
+    /**
+     * A very basic json-path that can retrieve leaf node using a dot syntax, such as "foo.bar.title", to get the title
+     * attribute from the leaf JsonObject object (ie bar).
+     *
+     * The json-path syntax also supports arrays using square brackets with the position index, such as
+     * "foo.bar[0].title", "foo.bar[1].title". You can use "last" as index number to get the last element of the array.
+     *
+     * You can use ?. to mark a path as optional, which returns null instead of throwing an exception if the path
+     * traversal does not exist.
+     *
+     * The returned value is expected to be an Integer
+     *
+     * @throws IllegalArgumentException if the path traversal does not exist
+     */
+    public Integer pathInteger(String path) {
+        boolean optional = path.startsWith("?");
+        JsonObject jo = this;
+        String sub = path;
+        if (path.contains(".")) {
+            // grab until last dot
+            int pos = path.lastIndexOf(".");
+            optional |= '?' == path.charAt(pos - 1);
+            sub = path.substring(pos + 1);
+            if (optional) {
+                pos = pos - 1;
+            }
+            java.util.Optional<JsonObject> o = doPath(path.substring(0, pos));
+            if (o.isPresent()) {
+                jo = o.get();
+            } else {
+                optional = true;
+                jo = null;
+            }
+        }
+        Integer answer = jo != null ? jo.getInteger(sub) : null;
+        if (answer == null && !optional) {
+            throw new IllegalArgumentException("JSonObject path " + path + " is null");
+        }
+        return answer;
+    }
+
+    /**
+     * A very basic json-path that can retrieve leaf node using a dot syntax, such as "foo.bar.title", to get the title
+     * attribute from the leaf JsonObject object (ie bar).
+     *
+     * The returned value is expected to be a Boolean
+     *
+     * @throws IllegalArgumentException if the path traversal does not exist
+     */
+    public Boolean pathBoolean(String path) {
+        boolean optional = path.startsWith("?");
+        JsonObject jo = this;
+        String sub = path;
+        if (path.contains(".")) {
+            // grab until last dot
+            int pos = path.lastIndexOf(".");
+            optional |= '?' == path.charAt(pos - 1);
+            sub = path.substring(pos + 1);
+            if (optional) {
+                pos = pos - 1;
+            }
+            java.util.Optional<JsonObject> o = doPath(path.substring(0, pos));
+            if (o.isPresent()) {
+                jo = o.get();
+            } else {
+                optional = true;
+                jo = null;
+            }
+        }
+        Boolean answer = jo != null ? jo.getBoolean(sub) : null;
+        if (answer == null && !optional) {
+            throw new IllegalArgumentException("JSonObject path " + path + " is null");
+        }
+        return answer;
+    }
+
+    /**
+     * A very basic json-path that can retrieve a JSonObject node using a dot syntax, such as "foo.bar", to get the bar
+     * JSonObject.
+     */
+    public JsonObject path(final String path) {
+        return doPath(path).orElse(null);
+    }
+
+    private Optional<JsonObject> doPath(final String path) {
+        Jsonable answer = null;
+
+        String[] split = path.splitWithDelimiters("(\\?\\.|\\.)", 0);
+        for (int i = 0; i < split.length; i = i + 2) {
+            String part = split[i];
+            String dot = i > 0 ? split[i - 1] : null;
+            int pos = -1;
+            boolean optional;
+            if (part.startsWith("?")) {
+                part = part.substring(1);
+                optional = true;
+            } else {
+                optional = dot != null && dot.equals("?.");
+            }
+            // notice multi-level index is not supported, such as[0][0] or [0][1]
+            if (part.endsWith("]")) {
+                String num = part.substring(part.lastIndexOf('[') + 1, part.length() - 1);
+                if ("last".equals(num)) {
+                    pos = Integer.MAX_VALUE;
+                } else {
+                    pos = Integer.parseInt(num);
+                }
+                part = part.substring(0, part.lastIndexOf('['));
+            }
+            if (answer instanceof JsonObject jo) {
+                answer = pos == -1 ? jo.getMap(part) : jo.getJsonArray(part);
+            } else {
+                answer = pos == -1 ? getMap(part) : getJsonArray(part);
+            }
+            if (pos != -1 && answer instanceof JsonArray arr) {
+                if (pos == Integer.MAX_VALUE) {
+                    answer = (Jsonable) arr.getLast();
+                } else if (pos < arr.size()) {
+                    answer = (Jsonable) arr.get(pos);
+                } else {
+                    answer = null;
+                }
+            }
+            if (answer == null && !optional) {
+                throw new IllegalArgumentException("JSonObject path " + path + " at " + part + " does not exist");
+            } else if (answer == null) {
+                return Optional.empty();
+            }
+        }
+        return Optional.of(JsonObject.class.cast(answer));
     }
 
     /**
@@ -796,4 +970,4 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         }
         writable.write('}');
     }
-}
+};
