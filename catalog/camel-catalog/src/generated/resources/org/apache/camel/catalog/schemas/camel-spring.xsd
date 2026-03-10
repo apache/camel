@@ -3477,6 +3477,11 @@ configuration.
       <xs:element maxOccurs="unbounded" minOccurs="0" name="exclude" nillable="true" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
+  <xs:complexType name="namedGroupsParameters">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="namedGroup" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="sniHostNames">
     <xs:sequence>
       <xs:element maxOccurs="unbounded" minOccurs="0" name="sniHostName" type="xs:string"/>
@@ -3485,6 +3490,11 @@ configuration.
   <xs:complexType name="secureSocketProtocolsParameters">
     <xs:sequence>
       <xs:element maxOccurs="unbounded" minOccurs="0" name="secureSocketProtocol" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="signatureSchemesParameters">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="signatureScheme" nillable="true" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="output">
@@ -18046,6 +18056,10 @@ converter. The default logging level is DEBUG. Default value: DEBUG
           <xs:element minOccurs="0" name="cipherSuitesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocols" type="tns:secureSocketProtocolsParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocolsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="namedGroups" type="tns:namedGroupsParameters"/>
+          <xs:element minOccurs="0" name="namedGroupsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemes" type="tns:signatureSchemesParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="sniHostNames" type="tns:sniHostNames"/>
         </xs:all>
         <xs:attribute name="sessionTimeout" type="xs:string"/>
@@ -18060,6 +18074,10 @@ converter. The default logging level is DEBUG. Default value: DEBUG
           <xs:element minOccurs="0" name="cipherSuitesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocols" type="tns:secureSocketProtocolsParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocolsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="namedGroups" type="tns:namedGroupsParameters"/>
+          <xs:element minOccurs="0" name="namedGroupsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemes" type="tns:signatureSchemesParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="keyManagers" type="tns:keyManagersParametersFactoryBean"/>
           <xs:element minOccurs="0" name="trustManagers" type="tns:trustManagersParametersFactoryBean"/>
           <xs:element minOccurs="0" name="secureRandom" type="tns:secureRandomParametersFactoryBean"/>
@@ -18130,6 +18148,10 @@ An optional certificate alias to use. This is useful when the keystore has multi
           <xs:element minOccurs="0" name="cipherSuitesFilter" type="tns:filterParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocols" type="tns:secureSocketProtocolsParameters"/>
           <xs:element minOccurs="0" name="secureSocketProtocolsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="namedGroups" type="tns:namedGroupsParameters"/>
+          <xs:element minOccurs="0" name="namedGroupsFilter" type="tns:filterParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemes" type="tns:signatureSchemesParameters"/>
+          <xs:element minOccurs="0" name="signatureSchemesFilter" type="tns:filterParameters"/>
         </xs:all>
         <xs:attribute name="sessionTimeout" type="xs:string"/>
         <xs:attribute name="clientAuthentication" type="xs:string"/>

@@ -72,6 +72,28 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     }
 
     /**
+     * A convenience method that assumes there is another JsonObject at the given index.
+     *
+     * @param  index              representing where the value is expected to be at.
+     * @return                    the value stored at the key.
+     * @throws ClassCastException if the value didn't match the assumed return type.
+     */
+    public JsonObject getJsonObject(final int index) {
+        return getMap(index);
+    }
+
+    /**
+     * A convenience method that assumes there is a JsonArray at the given index.
+     *
+     * @param  index              representing where the value is expected to be at.
+     * @return                    the value stored at the key.
+     * @throws ClassCastException if the value didn't match the assumed return type.
+     */
+    public JsonArray getJsonArray(final int index) {
+        return getCollection(index);
+    }
+
+    /**
      * A convenience method that assumes there is a BigDecimal, Number, or String at the given index. If a Number or
      * String is there it is used to construct a new BigDecimal.
      *

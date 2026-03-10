@@ -40,11 +40,13 @@ import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.io.HttpServerConnection;
 import org.apache.hc.core5.http.io.HttpServerRequestHandler;
 import org.apache.hc.core5.http.io.support.BasicHttpServerRequestHandler;
-import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
-import org.apache.hc.core5.http.protocol.RequestValidateHost;
+import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
+import org.apache.hc.core5.http.protocol.ResponseConnControl;
+import org.apache.hc.core5.http.protocol.ResponseContent;
+import org.apache.hc.core5.http.protocol.ResponseDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +128,11 @@ public class AS2AsyncMDNServerConnection {
                 SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
                 serverSocket = factory.createServerSocket(port);
             }
-            HttpProcessor httpProcessor = new DefaultHttpProcessor(new RequestValidateHost());
+            HttpProcessor httpProcessor = HttpProcessorBuilder.create()
+                    .add(new ResponseContent(true))
+                    .add(new ResponseDate())
+                    .add(new ResponseConnControl())
+                    .build();
             // Create initial empty router
             currentHandler = createHandler();
             // Set up the HTTP service with delegating handler
@@ -194,6 +200,10 @@ public class AS2AsyncMDNServerConnection {
             final HttpContext context = HttpCoreContext.create();
             try {
                 while (!Thread.interrupted()) {
+                    // Make raw body bytes available in the context for signature verification
+                    if (this.serverConnection instanceof AS2BHttpServerConnection as2Conn) {
+                        context.setAttribute(AS2BHttpServerConnection.class.getName(), as2Conn);
+                    }
                     this.httpService.handleRequest(this.serverConnection, context);
                 }
             } catch (final IOException ex) {

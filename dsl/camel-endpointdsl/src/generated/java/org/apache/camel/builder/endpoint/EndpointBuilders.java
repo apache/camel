@@ -136,6 +136,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.GoogleCalendarStreamEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.GoogleCloudVisionEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleFirestoreEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleMailEndpointBuilderFactory,

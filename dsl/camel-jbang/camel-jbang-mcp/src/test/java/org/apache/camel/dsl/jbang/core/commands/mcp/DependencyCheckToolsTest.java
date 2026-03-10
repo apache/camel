@@ -27,7 +27,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DependencyCheckToolsTest {
 
-    private final DependencyCheckTools tools = new DependencyCheckTools();
+    private final DependencyCheckTools tools;
+
+    DependencyCheckToolsTest() {
+        tools = new DependencyCheckTools();
+        tools.dependencyData = new DependencyData();
+    }
 
     // A pom.xml with Camel BOM and some components
     private static final String POM_WITH_BOM = """

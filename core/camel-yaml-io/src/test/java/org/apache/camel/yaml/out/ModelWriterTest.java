@@ -25,11 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.ErrorHandlerDefinition;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -42,6 +44,7 @@ import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.dataformat.CsvDataFormat;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.SimpleExpression;
@@ -433,6 +436,29 @@ public class ModelWriterTest {
 
         String out = sw.toString();
         String expected = stripLineComments(Paths.get("src/test/resources/route16.yaml"), "#", true);
+        Assertions.assertEquals(expected, out);
+    }
+
+    @Test
+    public void testErrorHandler() throws Exception {
+        StringWriter sw = new StringWriter();
+        ModelWriter writer = new ModelWriter(sw);
+
+        RouteDefinition route = new RouteDefinition();
+        ErrorHandlerDefinition ehd = new ErrorHandlerDefinition();
+        ehd.setErrorHandlerType(new NoErrorHandlerDefinition());
+        route.setErrorHandler(ehd);
+        route.setId("myRout17");
+        route.setInput(new FromDefinition("direct:sub"));
+        route.addOutput(new ToDefinition("mock:b"));
+        ProcessDefinition p = new ProcessDefinition();
+        p.setRef("myProcessor");
+        route.addOutput(p);
+
+        writer.writeRouteDefinition(route);
+
+        String out = sw.toString();
+        String expected = stripLineComments(Paths.get("src/test/resources/route17.yaml"), "#", true);
         Assertions.assertEquals(expected, out);
     }
 

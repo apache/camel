@@ -46,6 +46,8 @@ contain the following elements:
 * cipherSuitesFilter (element)
 * secureSocketProtocols (element)
 * secureSocketProtocolsFilter (element)
+* namedGroups (element)
+* namedGroupsFilter (element)
 * keyManagers (element)
 * trustManagers (element)
 * secureRandom (element)
@@ -112,6 +114,23 @@ are:
 ----
 Includes .*
 ----
+
+namedGroups::
+This optional property represents a collection of explicitly named
+TLS named groups (key exchange algorithms) to enable on both the client
+and server side as well as in the SSLEngine. Named groups control which
+key exchange algorithms are available during the TLS handshake, including
+post-quantum hybrid groups such as `X25519MLKEM768`. These values take
+precedence over filters supplied in namedGroupsFilter. The utility
+attempts to enable the listed named groups regardless of whether the
+JSSE provider actually supports them or not. No default filtering is
+applied to named groups.
+namedGroupsFilter::
+This optional property represents a collection of include and exclude
+patterns for named groups to enable on both the client and server side
+as well as in the SSLEngine. The patterns are applied over only the
+available named groups. The excludes patterns have precedence over the
+includes patterns. No default filtering is applied to named groups.
 
 keyManagers::
 This optional property configures the source of key material for
@@ -271,6 +290,8 @@ SSLContextServerParameters contain the following elements:
 * cipherSuitesFilter (element)
 * secureSocketProtocols (element)
 * secureSocketProtocolsFilter (element)
+* namedGroups (element)
+* namedGroupsFilter (element)
 
 clientAuthentication::
 This optional property indicates if the server side does not request,
@@ -300,6 +321,14 @@ secureSocketProtocolsFilter::
 This optional property overrides the value of this
 setting in the SSLContextParameters. This option has no effect on the
 SSLEngine configuration.
+namedGroups::
+This optional property overrides the value of this
+setting in the SSLContextParameters. This option has no effect on the
+SSLEngine configuration.
+namedGroupsFilter::
+This optional property overrides the value of this
+setting in the SSLContextParameters. This option has no effect on the
+SSLEngine configuration.
 
 === SSLContextClientParameters
 
@@ -311,6 +340,8 @@ SSLContextClientParameters contains the following elements:
 * cipherSuitesFilter (element)
 * secureSocketProtocols (element)
 * secureSocketProtocolsFilter (element)
+* namedGroups (element)
+* namedGroupsFilter (element)
 
 sniHostNames::
 Contains a list of sniHostName elements which provides a list
@@ -324,6 +355,10 @@ See above
 secureSocketProtocols::
 See above
 secureSocketProtocolsFilter::
+See above
+namedGroups::
+See above
+namedGroupsFilter::
 See above
 
 == Examples

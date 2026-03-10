@@ -28,9 +28,19 @@ on:
       - Jenkinsfile
       - Jenkinsfile.*
       - NOTICE.txt
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull request number to build'
+        required: true
+        type: string
+      pr_ref:
+        description: 'Git ref of the pull request branch'
+        required: true
+        type: string
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -55,6 +65,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
+          ref: ${{ inputs.pr_ref || '' }}
       - id: install-packages
         uses: ./.github/actions/install-packages
       - id: install-mvnd
@@ -81,7 +92,7 @@ jobs:
         uses: ./.github/actions/incremental-build
         with:
           mode: test
-          pr-id: ${{ github.event.number }}
+          pr-id: ${{ github.event.number || inputs.pr_number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
           artifact-upload-suffix: java-${{ matrix.java }}
@@ -89,3 +100,4 @@ jobs:
         uses: ./.github/actions/detect-dependencies
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-ref: ${{ github.base_ref || 'main' }}

@@ -523,6 +523,9 @@ public final class EntityParser {
                         contentTransferEncoding);
                 break;
             default:
+                // Accept non-standard content types (e.g., text/plain, application/octet-stream)
+                // that real-world AS2 partners may use to wrap EDI payloads
+                parseApplicationEDIEntity(message, entity.getContent(), inBuffer, contentType, contentTransferEncoding);
                 break;
         }
     }

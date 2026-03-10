@@ -183,7 +183,7 @@ public final class PluginHelper {
             final String group = extractGroup(mavenGav, "org.apache.camel");
             final String depVersion = extractVersion(mavenGav, defaultVersion);
 
-            plugin = downloadPlugin(name, depVersion, group, repos, printer);
+            plugin = downloadPlugin(name, defaultVersion, depVersion, group, repos, printer);
         }
 
         return plugin;
@@ -212,7 +212,7 @@ public final class PluginHelper {
     }
 
     private static Optional<Plugin> downloadPlugin(
-            String command, String version, String group, String repos, Printer printer) {
+            String command, String camelVersion, String version, String group, String repos, Printer printer) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
         DependencyDownloaderClassLoader ddlcl = new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
         downloader.setClassLoader(ddlcl);
@@ -221,7 +221,7 @@ public final class PluginHelper {
         }
         downloader.start();
         // downloads and adds to the classpath
-        downloader.downloadDependencyWithParent("org.apache.camel:camel-jbang-parent:" + version, group,
+        downloader.downloadDependencyWithParent("org.apache.camel:camel-jbang-parent:pom:" + camelVersion, group,
                 "camel-jbang-plugin-" + command, version);
         Optional<Plugin> instance = Optional.empty();
         InputStream in = null;

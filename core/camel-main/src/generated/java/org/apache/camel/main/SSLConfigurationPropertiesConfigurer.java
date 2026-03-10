@@ -34,11 +34,17 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         map.put("KeyStoreProvider", java.lang.String.class);
         map.put("KeyStoreType", java.lang.String.class);
         map.put("KeystorePassword", java.lang.String.class);
+        map.put("NamedGroups", java.lang.String.class);
+        map.put("NamedGroupsExclude", java.lang.String.class);
+        map.put("NamedGroupsInclude", java.lang.String.class);
         map.put("Provider", java.lang.String.class);
         map.put("SecureRandomAlgorithm", java.lang.String.class);
         map.put("SecureRandomProvider", java.lang.String.class);
         map.put("SecureSocketProtocol", java.lang.String.class);
         map.put("SessionTimeout", int.class);
+        map.put("SignatureSchemes", java.lang.String.class);
+        map.put("SignatureSchemesExclude", java.lang.String.class);
+        map.put("SignatureSchemesInclude", java.lang.String.class);
         map.put("TrustAllCertificates", boolean.class);
         map.put("TrustStore", java.lang.String.class);
         map.put("TrustStorePassword", java.lang.String.class);
@@ -72,6 +78,12 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "keyStoreType": target.setKeyStoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "keystorepassword":
         case "keystorePassword": target.setKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "namedgroups":
+        case "namedGroups": target.setNamedGroups(property(camelContext, java.lang.String.class, value)); return true;
+        case "namedgroupsexclude":
+        case "namedGroupsExclude": target.setNamedGroupsExclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "namedgroupsinclude":
+        case "namedGroupsInclude": target.setNamedGroupsInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "provider": target.setProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "securerandomalgorithm":
         case "secureRandomAlgorithm": target.setSecureRandomAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
@@ -81,6 +93,12 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": target.setSecureSocketProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": target.setSessionTimeout(property(camelContext, int.class, value)); return true;
+        case "signatureschemes":
+        case "signatureSchemes": target.setSignatureSchemes(property(camelContext, java.lang.String.class, value)); return true;
+        case "signatureschemesexclude":
+        case "signatureSchemesExclude": target.setSignatureSchemesExclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "signatureschemesinclude":
+        case "signatureSchemesInclude": target.setSignatureSchemesInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "truststore":
@@ -122,6 +140,12 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "keyStoreType": return java.lang.String.class;
         case "keystorepassword":
         case "keystorePassword": return java.lang.String.class;
+        case "namedgroups":
+        case "namedGroups": return java.lang.String.class;
+        case "namedgroupsexclude":
+        case "namedGroupsExclude": return java.lang.String.class;
+        case "namedgroupsinclude":
+        case "namedGroupsInclude": return java.lang.String.class;
         case "provider": return java.lang.String.class;
         case "securerandomalgorithm":
         case "secureRandomAlgorithm": return java.lang.String.class;
@@ -131,6 +155,12 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return int.class;
+        case "signatureschemes":
+        case "signatureSchemes": return java.lang.String.class;
+        case "signatureschemesexclude":
+        case "signatureSchemesExclude": return java.lang.String.class;
+        case "signatureschemesinclude":
+        case "signatureSchemesInclude": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "truststore":
@@ -168,6 +198,12 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "keyStoreType": return target.getKeyStoreType();
         case "keystorepassword":
         case "keystorePassword": return target.getKeystorePassword();
+        case "namedgroups":
+        case "namedGroups": return target.getNamedGroups();
+        case "namedgroupsexclude":
+        case "namedGroupsExclude": return target.getNamedGroupsExclude();
+        case "namedgroupsinclude":
+        case "namedGroupsInclude": return target.getNamedGroupsInclude();
         case "provider": return target.getProvider();
         case "securerandomalgorithm":
         case "secureRandomAlgorithm": return target.getSecureRandomAlgorithm();
@@ -177,6 +213,12 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureSocketProtocol": return target.getSecureSocketProtocol();
         case "sessiontimeout":
         case "sessionTimeout": return target.getSessionTimeout();
+        case "signatureschemes":
+        case "signatureSchemes": return target.getSignatureSchemes();
+        case "signatureschemesexclude":
+        case "signatureSchemesExclude": return target.getSignatureSchemesExclude();
+        case "signatureschemesinclude":
+        case "signatureSchemesInclude": return target.getSignatureSchemesInclude();
         case "trustallcertificates":
         case "trustAllCertificates": return target.isTrustAllCertificates();
         case "truststore":

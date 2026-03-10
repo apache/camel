@@ -1639,6 +1639,46 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Controls whether the Expect: 100-Continue header is included in
+         * outbound AS2 messages. When enabled, the client sends the headers
+         * first and waits for a 100 Continue response from the server before
+         * sending the message body. This can improve efficiency with compatible
+         * partners but may cause 3-second delays with servers that don't
+         * support the protocol. Default is false for backward compatibility.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param expectContinue the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder expectContinue(boolean expectContinue) {
+            doSetProperty("expectContinue", expectContinue);
+            return this;
+        }
+        /**
+         * Controls whether the Expect: 100-Continue header is included in
+         * outbound AS2 messages. When enabled, the client sends the headers
+         * first and waits for a 100 Continue response from the server before
+         * sending the message body. This can improve efficiency with compatible
+         * partners but may cause 3-second delays with servers that don't
+         * support the protocol. Default is false for backward compatibility.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param expectContinue the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder expectContinue(String expectContinue) {
+            doSetProperty("expectContinue", expectContinue);
+            return this;
+        }
+        /**
          * The access token that is used by the client for bearer
          * authentication.
          * 

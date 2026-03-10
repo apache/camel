@@ -21,6 +21,10 @@ inputs:
   github-token:
     description: 'The github token to access to the API'
     required: false
+  base-ref:
+    description: 'The base branch to compare against (defaults to github.base_ref)'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -32,4 +36,4 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: bash
-      run: ${{ github.action_path }}/detect-test.sh ${{ github.base_ref }} ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd
+      run: ${{ github.action_path }}/detect-test.sh ${{ inputs.base-ref || github.base_ref }} ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd

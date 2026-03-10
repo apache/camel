@@ -154,6 +154,7 @@
 *** xref:google-calendar-component.adoc[Google Calendar]
 *** xref:google-calendar-stream-component.adoc[Google Calendar Stream]
 *** xref:google-functions-component.adoc[Google Cloud Functions]
+*** xref:google-vision-component.adoc[Google Cloud Vision]
 *** xref:google-drive-component.adoc[Google Drive]
 *** xref:google-firestore-component.adoc[Google Firestore]
 *** xref:google-mail-component.adoc[Google Mail]

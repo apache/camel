@@ -56,6 +56,28 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
     }
 
     /**
+     * A convenience method that assumes there is another JsonObject at the given key.
+     *
+     * @param  key                representing where the value ought to be stored at.
+     * @return                    the value stored at the key.
+     * @throws ClassCastException if the value didn't match the assumed return type.
+     */
+    public JsonObject getJsonObject(final String key) {
+        return getMap(key);
+    }
+
+    /**
+     * A convenience method that assumes there is a JsonArray at the given key.
+     *
+     * @param  key                representing where the value ought to be stored at.
+     * @return                    the value stored at the key.
+     * @throws ClassCastException if the value didn't match the assumed return type.
+     */
+    public JsonArray getJsonArray(final String key) {
+        return getCollection(key);
+    }
+
+    /**
      * A convenience method that assumes there is a BigDecimal, Number, or String at the given key. If a Number is there
      * its Number#toString() is used to construct a new BigDecimal(String). If a String is there it is used to construct
      * a new BigDecimal(String).

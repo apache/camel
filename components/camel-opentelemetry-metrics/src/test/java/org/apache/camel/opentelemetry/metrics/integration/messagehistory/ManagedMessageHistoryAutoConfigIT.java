@@ -105,6 +105,10 @@ public class ManagedMessageHistoryAutoConfigIT extends CamelTestSupport {
         for (LogRecord log : logs) {
             if (log.getParameters() != null && log.getParameters().length > 0) {
                 MetricData metricData = (MetricData) log.getParameters()[0];
+                // Skip non-Camel metrics (e.g. otel.sdk.* internal metrics added in OTel 1.60+)
+                if (!metricData.getName().startsWith("camel.")) {
+                    continue;
+                }
                 assertEquals(DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME, metricData.getName());
 
                 assertPointDataForRouteId(metricData, "route1");

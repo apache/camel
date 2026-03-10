@@ -21,8 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,8 +55,6 @@ public final class AS2Utils {
 
     public static final Pattern AS_NAME_PATTERN = Pattern.compile(AS2_NAME);
 
-    private static SecureRandom generator = new SecureRandom();
-
     private AS2Utils() {
     }
 
@@ -88,8 +86,7 @@ public final class AS2Utils {
      * @return      The generated message id.
      */
     public static String createMessageId(String fqdn) {
-        /* Wall Clock Time in Nanoseconds */ /* 64 Bit Random Number */ /* Fully Qualified Domain Name */
-        return "<" + Long.toString(System.nanoTime(), 36) + "." + Long.toString(generator.nextLong(), 36) + "@" + fqdn + ">";
+        return "<" + UUID.randomUUID() + "@" + fqdn + ">";
     }
 
     /**

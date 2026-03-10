@@ -16,11 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
@@ -40,20 +39,8 @@ import org.apache.camel.util.json.JsonObject;
 @ApplicationScoped
 public class DependencyCheckTools {
 
-    /**
-     * Artifacts that are transitive dependencies of camel-core and do not need to be declared explicitly.
-     */
-    private static final Set<String> CAMEL_CORE_TRANSITIVE_ARTIFACTS = Set.copyOf(Arrays.asList(
-            "camel-core", "camel-core-model", "camel-core-engine", "camel-core-processor",
-            "camel-core-reifier", "camel-core-languages", "camel-core-catalog",
-            "camel-bean", "camel-browse", "camel-cluster", "camel-controlbus",
-            "camel-dataformat", "camel-dataset", "camel-direct", "camel-file",
-            "camel-health", "camel-language", "camel-log", "camel-mock", "camel-ref",
-            "camel-rest", "camel-saga", "camel-scheduler", "camel-seda", "camel-stub",
-            "camel-timer", "camel-validator", "camel-xpath", "camel-xslt",
-            "camel-xml-io", "camel-xml-jaxb", "camel-xml-jaxp", "camel-yaml-io",
-            "camel-api", "camel-base", "camel-base-engine", "camel-management-api",
-            "camel-support", "camel-util"));
+    @Inject
+    DependencyData dependencyData;
 
     private final CamelCatalog catalog;
 
@@ -192,7 +179,7 @@ public class DependencyCheckTools {
             }
 
             // Skip core components — they are transitive dependencies of camel-core
-            if (CAMEL_CORE_TRANSITIVE_ARTIFACTS.contains(artifactId)) {
+            if (dependencyData.isCoreTransitive(artifactId)) {
                 continue;
             }
 
@@ -408,32 +395,6 @@ public class DependencyCheckTools {
     }
 
     private String formatBomSnippet(MigrationData.PomAnalysis pom) {
-        String bomArtifact;
-        String bomGroup = "org.apache.camel";
-        String runtimeType = pom.runtimeType();
-
-        if ("spring-boot".equals(runtimeType)) {
-            bomArtifact = "camel-spring-boot-bom";
-            bomGroup = "org.apache.camel.springboot";
-        } else if ("quarkus".equals(runtimeType)) {
-            bomArtifact = "camel-quarkus-bom";
-            bomGroup = "org.apache.camel.quarkus";
-        } else {
-            bomArtifact = "camel-bom";
-        }
-
-        String version = pom.camelVersion() != null ? pom.camelVersion() : "${camel.version}";
-
-        return "<dependencyManagement>\n"
-               + "    <dependencies>\n"
-               + "        <dependency>\n"
-               + "            <groupId>" + bomGroup + "</groupId>\n"
-               + "            <artifactId>" + bomArtifact + "</artifactId>\n"
-               + "            <version>" + version + "</version>\n"
-               + "            <type>pom</type>\n"
-               + "            <scope>import</scope>\n"
-               + "        </dependency>\n"
-               + "    </dependencies>\n"
-               + "</dependencyManagement>";
+        return dependencyData.formatBomSnippet(pom.runtimeType(), pom.camelVersion());
     }
 }

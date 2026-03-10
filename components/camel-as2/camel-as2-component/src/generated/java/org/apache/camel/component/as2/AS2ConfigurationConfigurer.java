@@ -39,6 +39,7 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         map.put("EdiMessageType", java.lang.String.class);
         map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
+        map.put("ExpectContinue", boolean.class);
         map.put("From", java.lang.String.class);
         map.put("HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("HttpConnectionPoolSize", java.lang.Integer.class);
@@ -108,6 +109,8 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "encryptingAlgorithm": target.setEncryptingAlgorithm(property(camelContext, org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class, value)); return true;
         case "encryptingcertificatechain":
         case "encryptingCertificateChain": target.setEncryptingCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
+        case "expectcontinue":
+        case "expectContinue": target.setExpectContinue(property(camelContext, boolean.class, value)); return true;
         case "from": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
         case "hostnameverifier":
         case "hostnameVerifier": target.setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
@@ -206,6 +209,8 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "encryptingAlgorithm": return org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class;
         case "encryptingcertificatechain":
         case "encryptingCertificateChain": return java.security.cert.Certificate[].class;
+        case "expectcontinue":
+        case "expectContinue": return boolean.class;
         case "from": return java.lang.String.class;
         case "hostnameverifier":
         case "hostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
@@ -300,6 +305,8 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "encryptingAlgorithm": return target.getEncryptingAlgorithm();
         case "encryptingcertificatechain":
         case "encryptingCertificateChain": return target.getEncryptingCertificateChain();
+        case "expectcontinue":
+        case "expectContinue": return target.isExpectContinue();
         case "from": return target.getFrom();
         case "hostnameverifier":
         case "hostnameVerifier": return target.getHostnameVerifier();

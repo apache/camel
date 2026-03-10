@@ -54,6 +54,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("UserAgent", java.lang.String.class);
         map.put("ExceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("ExchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("ExpectContinue", boolean.class);
         map.put("LazyStartProducer", boolean.class);
         map.put("AccessToken", java.lang.String.class);
         map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
@@ -114,6 +115,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "expectcontinue":
+        case "expectContinue": target.getConfiguration().setExpectContinue(property(camelContext, boolean.class, value)); return true;
         case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.String.class, value)); return true;
         case "hostnameverifier":
         case "hostnameVerifier": target.getConfiguration().setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
@@ -216,6 +219,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "expectcontinue":
+        case "expectContinue": return boolean.class;
         case "from": return java.lang.String.class;
         case "hostnameverifier":
         case "hostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
@@ -314,6 +319,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "expectcontinue":
+        case "expectContinue": return target.getConfiguration().isExpectContinue();
         case "from": return target.getConfiguration().getFrom();
         case "hostnameverifier":
         case "hostnameVerifier": return target.getConfiguration().getHostnameVerifier();

@@ -1917,6 +1917,20 @@ public interface ComponentsBuilderFactory {
         return GoogleVertexaiComponentBuilderFactory.googleVertexai();
     }
     /**
+     * Google Cloud Vision (camel-google-vision)
+     * Detect labels, text, faces, logos and more on images through Google Cloud
+     * Vision API
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-vision
+     * 
+     * @return the dsl builder
+     */
+    static GoogleVisionComponentBuilderFactory.GoogleVisionComponentBuilder googleVision() {
+        return GoogleVisionComponentBuilderFactory.googleVision();
+    }
+    /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.
