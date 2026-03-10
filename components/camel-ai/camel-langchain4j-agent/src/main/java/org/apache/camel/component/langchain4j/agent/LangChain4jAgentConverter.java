@@ -25,7 +25,12 @@ import java.util.Base64;
 
 import dev.langchain4j.data.audio.Audio;
 import dev.langchain4j.data.image.Image;
-import dev.langchain4j.data.message.*;
+import dev.langchain4j.data.message.AudioContent;
+import dev.langchain4j.data.message.Content;
+import dev.langchain4j.data.message.ImageContent;
+import dev.langchain4j.data.message.PdfFileContent;
+import dev.langchain4j.data.message.TextContent;
+import dev.langchain4j.data.message.VideoContent;
 import dev.langchain4j.data.pdf.PdfFile;
 import dev.langchain4j.data.video.Video;
 import org.apache.camel.Converter;
@@ -180,15 +185,13 @@ public final class LangChain4jAgentConverter {
      */
     @Converter
     public static AiAgentBody<?> textToAiAgentBody(String text, Exchange exchange) {
-        TextContent content = TextContent.from(text);
-        return buildAiAgentBody(exchange, content, text);
+        return buildAiAgentBody(exchange, null, text);
     }
 
     /**
      * Creates the appropriate LangChain4j Content object based on the MIME type.
      */
     static Content createContent(byte[] data, String mimeType) {
-
         String base64Data = Base64.getEncoder().encodeToString(data);
 
         if (mimeType.startsWith("image/")) {
@@ -236,13 +239,13 @@ public final class LangChain4jAgentConverter {
      */
     private static String detectMimeType(File file, Exchange exchange) {
         // Check agent-specific header first (highest priority)
-        String mediaType = exchange.getIn().getHeader(MEDIA_TYPE, String.class);
+        String mediaType = exchange.getMessage().getHeader(MEDIA_TYPE, String.class);
         if (mediaType != null) {
             return mediaType;
         }
 
         // Check file component's content type header
-        String fileContentType = exchange.getIn().getHeader(Exchange.FILE_CONTENT_TYPE, String.class);
+        String fileContentType = exchange.getMessage().getHeader(Exchange.FILE_CONTENT_TYPE, String.class);
         if (fileContentType != null) {
             return fileContentType;
         }
@@ -275,12 +278,12 @@ public final class LangChain4jAgentConverter {
         }
         // Cloud storage component content type headers
         String[] cloudContentTypeHeaders = {
-                "CamelAwsS3ContentType",
-                "CamelAzureStorageBlobContentType",
-                "CamelAzureStorageDataLakeContentType",
-                "CamelGoogleCloudStorageContentType",
-                "CamelMinioContentType",
-                "CamelIBMCOSContentType"
+                "CamelAwsS3ContentType",                  // AWS S3
+                "CamelAzureStorageBlobContentType",       // Azure Blob Storage
+                "CamelAzureStorageDataLakeContentType",   // Azure Data Lake Storage
+                "CamelGoogleCloudStorageContentType",     // Google Cloud Storage
+                "CamelMinioContentType",                  // Minio (S3-compatible)
+                "CamelIBMCOSContentType"                  // IBM Cloud Object Storage
         };
 
         for (String header : cloudContentTypeHeaders) {

@@ -30,10 +30,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class LangChain4jAgentAutoConversionIT extends CamelTestSupport {
+public class LangChain4jAgentAutoConversionTest extends CamelTestSupport {
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
@@ -73,15 +74,19 @@ public class LangChain4jAgentAutoConversionIT extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start",
+        template.send("direct:start", exchange -> {
+            exchange.getMessage().setBody(
                     new ByteArrayInputStream("Hello stream".getBytes()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+            exchange.getMessage().setHeader("Content-Type", "text/plain");
+        });
 
         mock.assertIsSatisfied();
+        AiAgentBody<?> body = mock.getExchanges().get(0)
+                .getMessage()
+                .getBody(AiAgentBody.class);
+
+        assertNotNull(body);
+        assertEquals("Hello stream", body.getUserMessage());
     }
 
     @Test
