@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +34,12 @@ import org.apache.camel.util.ObjectHelper;
  * Default class resolver that uses regular class loader to load classes.
  */
 public class DefaultClassResolver implements ClassResolver, CamelContextAware {
+
+    // shorthand for known camel types (so you do not have to remember to FQN)
+    private static final Map<String, String> KNOWN_CAMEL_TYPES = Map.of(
+            "JsonObject", "org.apache.camel.util.json.JsonObject",
+            "JsonArray", "org.apache.camel.util.json.JsonArray",
+            "Json", "org.apache.camel.util.json.Jsonable");
 
     private Set<ClassLoader> classLoaders;
     private CamelContext camelContext;
@@ -99,6 +106,10 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
         if (answer == null && getApplicationContextClassLoader() != null) {
             // fallback and use application context class loader
             answer = loadClass(name, getApplicationContextClassLoader());
+        }
+        if (answer == null && KNOWN_CAMEL_TYPES.containsKey(name)) {
+            // try alias
+            answer = resolveClass(KNOWN_CAMEL_TYPES.get(name));
         }
         return answer;
     }
