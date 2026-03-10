@@ -16,6 +16,7 @@
  */
 package org.apache.camel.tracing;
 
+@Deprecated(since = "4.19.0")
 public enum SpanKind {
     SPAN_KIND_CLIENT,
     SPAN_KIND_SERVER,

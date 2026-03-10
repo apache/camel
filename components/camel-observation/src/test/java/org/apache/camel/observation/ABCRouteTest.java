@@ -21,6 +21,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+@Deprecated(since = "4.19.0")
 class ABCRouteTest extends CamelMicrometerObservationTestSupport {
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")

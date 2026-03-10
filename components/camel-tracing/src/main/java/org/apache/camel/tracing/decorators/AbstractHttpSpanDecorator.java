@@ -22,6 +22,7 @@ import org.apache.camel.Message;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.TagConstants;
 
+@Deprecated(since = "4.19.0")
 public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
 
     public static final String POST_METHOD = "POST";

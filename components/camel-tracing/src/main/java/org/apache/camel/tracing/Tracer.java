@@ -148,8 +148,6 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
      * Registers this {@link Tracer} on the {@link CamelContext} if not already registered.
      */
     public void init(CamelContext camelContext) {
-        LOG.warn("Camel tracing and related components have been deprecated and may be removed in future versions. " +
-                 "Please, use camel-telemetry components instead!");
         if (hasOtherTracerType(camelContext)) {
             LOG.warn("Could not add {} tracer type. Another tracer type, {}, was already registered. " +
                      "Make sure to include only one tracing dependency type.",

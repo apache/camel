@@ -18,6 +18,7 @@ package org.apache.camel.tracing;
 
 import java.util.Map;
 
+@Deprecated(since = "4.19.0")
 public interface SpanAdapter {
 
     void setComponent(String component);

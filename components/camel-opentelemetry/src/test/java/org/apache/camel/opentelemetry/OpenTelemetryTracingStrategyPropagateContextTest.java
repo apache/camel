@@ -39,6 +39,7 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.apache.camel.test.junit6.TestSupport.fileUri;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Deprecated(since = "4.19.0")
 public class OpenTelemetryTracingStrategyPropagateContextTest extends CamelOpenTelemetryTestSupport {
 
     @TempDir
@@ -118,7 +119,6 @@ public class OpenTelemetryTracingStrategyPropagateContextTest extends CamelOpenT
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected Function<OpenTelemetryTracer, InterceptStrategy> getTracingStrategy() {
         return (tracer) -> {
             OpenTelemetryTracingStrategy strategy = new OpenTelemetryTracingStrategy(tracer);

@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.TagConstants;
 
+@Deprecated(since = "4.19.0")
 public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
 
     public static final String ELASTICSEARCH_DB_TYPE = "elasticsearch";

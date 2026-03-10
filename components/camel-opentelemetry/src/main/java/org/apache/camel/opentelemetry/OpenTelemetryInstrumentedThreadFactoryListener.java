@@ -22,6 +22,7 @@ import io.opentelemetry.context.Context;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.annotations.JdkService;
 
+@Deprecated(since = "4.19.0")
 @JdkService(ExecutorServiceManager.ThreadFactoryListener.FACTORY)
 public class OpenTelemetryInstrumentedThreadFactoryListener implements ExecutorServiceManager.ThreadFactoryListener {
 

@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
+@Deprecated(since = "4.19.0")
 class HttpMethodHelper {
 
     private static final Pattern HTTP_METHOD_PATTERN = Pattern.compile("(?i)httpMethod=([A-Z]+)");

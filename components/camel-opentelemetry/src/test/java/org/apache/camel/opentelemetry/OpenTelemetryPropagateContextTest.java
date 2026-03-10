@@ -37,6 +37,7 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.apache.camel.test.junit6.TestSupport.fileUri;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Deprecated(since = "4.19.0")
 public class OpenTelemetryPropagateContextTest extends CamelOpenTelemetryTestSupport {
 
     @TempDir

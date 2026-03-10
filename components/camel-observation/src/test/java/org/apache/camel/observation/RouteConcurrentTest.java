@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Deprecated(since = "4.19.0")
 @Tags({ @Tag("not-parallel") })
 class RouteConcurrentTest extends CamelMicrometerObservationTestSupport {
 

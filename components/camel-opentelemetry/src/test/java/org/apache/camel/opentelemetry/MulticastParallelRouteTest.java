@@ -21,6 +21,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+@Deprecated(since = "4.19.0")
 class MulticastParallelRouteTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {

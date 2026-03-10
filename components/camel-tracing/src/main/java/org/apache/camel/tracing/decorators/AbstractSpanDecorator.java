@@ -35,6 +35,7 @@ import org.apache.camel.util.URISupport;
 /**
  * An abstract base implementation of the {@link SpanDecorator} interface.
  */
+@Deprecated(since = "4.19.0")
 public abstract class AbstractSpanDecorator implements SpanDecorator {
 
     private static final int MAX_LENGTH = 250;

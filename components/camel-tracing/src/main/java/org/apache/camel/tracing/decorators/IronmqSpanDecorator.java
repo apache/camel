@@ -18,6 +18,7 @@ package org.apache.camel.tracing.decorators;
 
 import org.apache.camel.Exchange;
 
+@Deprecated(since = "4.19.0")
 public class IronmqSpanDecorator extends AbstractMessagingSpanDecorator {
 
     public static final String CAMEL_IRON_MQ_MESSAGE_ID = "CamelIronMQMessageId";

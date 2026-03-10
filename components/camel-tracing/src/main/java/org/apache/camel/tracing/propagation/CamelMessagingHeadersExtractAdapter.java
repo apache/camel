@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.tracing.ExtractAdapter;
 import org.apache.camel.util.CaseInsensitiveMap;
 
+@Deprecated(since = "4.19.0")
 public final class CamelMessagingHeadersExtractAdapter implements ExtractAdapter {
 
     private final Map<String, Object> map = new CaseInsensitiveMap();

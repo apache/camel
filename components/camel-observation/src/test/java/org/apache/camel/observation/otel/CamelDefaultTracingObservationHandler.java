@@ -22,6 +22,7 @@ import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 
+@Deprecated(since = "4.19.0")
 public class CamelDefaultTracingObservationHandler extends DefaultTracingObservationHandler {
 
     /**

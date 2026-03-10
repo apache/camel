@@ -19,6 +19,7 @@ package org.apache.camel.tracing.decorators;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
+@Deprecated(since = "4.19.0")
 public class JmsSpanDecorator extends AbstractMessagingSpanDecorator {
 
     public static final String JMS_MESSAGE_ID = "JMSMessageID";

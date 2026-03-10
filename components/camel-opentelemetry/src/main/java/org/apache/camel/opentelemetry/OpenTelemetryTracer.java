@@ -144,7 +144,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     @Override
     protected void initContextPropagators() {
-        LOG.warn("Camel Opentelemetry component has been deprecated and may be removed in future versions. " +
+        LOG.warn("Camel OpenTelemetry component has been deprecated and may be removed in future versions. " +
                  "Please, use camel-opentelemetry2 component instead!");
         if (contextPropagators == null) {
             contextPropagators = CamelContextHelper.findSingleByType(getCamelContext(), ContextPropagators.class);

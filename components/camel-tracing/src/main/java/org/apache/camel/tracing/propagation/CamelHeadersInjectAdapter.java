@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.tracing.InjectAdapter;
 
+@Deprecated(since = "4.19.0")
 public final class CamelHeadersInjectAdapter implements InjectAdapter {
     private final Map<String, Object> map;
 

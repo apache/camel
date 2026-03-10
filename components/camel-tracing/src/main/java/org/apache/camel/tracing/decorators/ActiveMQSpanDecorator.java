@@ -16,6 +16,7 @@
  */
 package org.apache.camel.tracing.decorators;
 
+@Deprecated(since = "4.19.0")
 public class ActiveMQSpanDecorator extends JmsSpanDecorator {
 
     @Override

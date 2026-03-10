@@ -30,6 +30,7 @@ import io.opentelemetry.sdk.trace.data.SpanData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.19.0")
 final class SpanTreePrinter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpanTreePrinter.class);

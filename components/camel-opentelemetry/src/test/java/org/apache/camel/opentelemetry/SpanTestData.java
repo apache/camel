@@ -24,6 +24,7 @@ import java.util.Map;
 
 import io.opentelemetry.api.trace.SpanKind;
 
+@Deprecated(since = "4.19.0")
 public class SpanTestData {
 
     private String label;

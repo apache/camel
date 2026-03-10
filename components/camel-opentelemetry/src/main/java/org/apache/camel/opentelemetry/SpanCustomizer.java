@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
  * An abstraction to customize the generation of a {@link io.opentelemetry.api.trace.Span} produced by
  * {@link OpenTelemetryTracer}.
  */
+@Deprecated(since = "4.19.0")
 public interface SpanCustomizer {
     /**
      * Applies customizations to Spans created by {@link OpenTelemetryTracer}.

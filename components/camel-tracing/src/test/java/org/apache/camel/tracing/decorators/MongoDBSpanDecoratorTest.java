@@ -28,6 +28,7 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Deprecated(since = "4.19.0")
 public class MongoDBSpanDecoratorTest {
 
     private static final String MONGODB_STATEMENT = "mongodb:myDb?database=flights&collection=tickets&operation=findOneByQuery";

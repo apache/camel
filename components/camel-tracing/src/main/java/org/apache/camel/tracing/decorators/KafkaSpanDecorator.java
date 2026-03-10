@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 
+@Deprecated(since = "4.19.0")
 public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
 
     public static final String KAFKA_PARTITION_TAG = "kafka.partition";

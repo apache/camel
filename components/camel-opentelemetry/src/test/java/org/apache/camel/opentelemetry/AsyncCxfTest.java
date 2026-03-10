@@ -22,6 +22,7 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+@Deprecated(since = "4.19.0")
 class AsyncCxfTest extends CamelOpenTelemetryTestSupport {
 
     private static int port1 = CXFTestSupport.getPort1();

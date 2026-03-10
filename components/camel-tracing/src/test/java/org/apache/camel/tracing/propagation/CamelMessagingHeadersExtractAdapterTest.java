@@ -27,6 +27,7 @@ import static org.apache.camel.tracing.propagation.CamelMessagingHeadersInjectAd
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@Deprecated(since = "4.19.0")
 public class CamelMessagingHeadersExtractAdapterTest {
 
     private Map<String, Object> map;

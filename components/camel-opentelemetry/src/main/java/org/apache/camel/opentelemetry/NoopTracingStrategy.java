@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
+@Deprecated(since = "4.19.0")
 public class NoopTracingStrategy implements InterceptStrategy {
 
     @Override

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated(since = "4.19.0")
 public class MockSpanAdapter implements SpanAdapter {
 
     private final List<LogEntry> logEntries = new ArrayList<>();

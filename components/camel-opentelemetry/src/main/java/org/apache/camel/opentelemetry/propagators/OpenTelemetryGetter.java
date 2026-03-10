@@ -19,6 +19,7 @@ package org.apache.camel.opentelemetry.propagators;
 import io.opentelemetry.context.propagation.TextMapGetter;
 import org.apache.camel.tracing.ExtractAdapter;
 
+@Deprecated(since = "4.19.0")
 public class OpenTelemetryGetter implements TextMapGetter<ExtractAdapter> {
 
     private final ExtractAdapter adapter;

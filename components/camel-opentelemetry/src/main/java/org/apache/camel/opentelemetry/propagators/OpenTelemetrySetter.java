@@ -19,6 +19,7 @@ package org.apache.camel.opentelemetry.propagators;
 import io.opentelemetry.context.propagation.TextMapSetter;
 import org.apache.camel.tracing.InjectAdapter;
 
+@Deprecated(since = "4.19.0")
 public class OpenTelemetrySetter implements TextMapSetter<InjectAdapter> {
 
     @Override

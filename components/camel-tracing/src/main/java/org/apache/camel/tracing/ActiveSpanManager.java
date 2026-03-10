@@ -25,6 +25,7 @@ import org.slf4j.MDC;
 /**
  * Utility class for managing active spans as a stack associated with an exchange.
  */
+@Deprecated(since = "4.19.0")
 public final class ActiveSpanManager {
 
     @Deprecated

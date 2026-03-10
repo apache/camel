@@ -16,8 +16,8 @@
  */
 package org.apache.camel.tracing;
 
+@Deprecated(since = "4.19.0")
 public interface InjectAdapter {
-
     /**
      * Inject a tag into the current tracing span, for context propagation.
      *

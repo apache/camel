@@ -18,6 +18,7 @@ package org.apache.camel.tracing.decorators;
 
 import org.apache.camel.Exchange;
 
+@Deprecated(since = "4.19.0")
 public class NatsSpanDecorator extends AbstractMessagingSpanDecorator {
 
     public static final String NATS_SID = "CamelNatsSID";

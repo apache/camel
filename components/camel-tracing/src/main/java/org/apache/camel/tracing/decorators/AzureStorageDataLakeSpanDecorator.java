@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.TagConstants;
 
+@Deprecated(since = "4.19.0")
 public class AzureStorageDataLakeSpanDecorator extends AbstractSpanDecorator {
 
     static final String STORAGE_DATALAKE_DIRECTORY_NAME = "directoryName";

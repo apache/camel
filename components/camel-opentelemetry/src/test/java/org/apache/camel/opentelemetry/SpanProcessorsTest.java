@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Deprecated(since = "4.19.0")
 class SpanProcessorsTest extends CamelOpenTelemetryTestSupport {
 
     private static final SpanTestData[] TEST_DATA = {

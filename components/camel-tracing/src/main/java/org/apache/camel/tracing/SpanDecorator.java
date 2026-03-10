@@ -25,6 +25,7 @@ import org.apache.camel.tracing.decorators.AbstractSpanDecorator;
 /**
  * This interface represents a decorator specific to the component/endpoint being instrumented.
  */
+@Deprecated(since = "4.19.0")
 public interface SpanDecorator {
 
     /* Prefix for camel component tag */

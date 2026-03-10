@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.tracing.InjectAdapter;
 
+@Deprecated(since = "4.19.0")
 public final class CamelMessagingHeadersInjectAdapter implements InjectAdapter {
 
     // As per the JMS specs, header names must be valid Java identifier part

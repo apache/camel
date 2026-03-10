@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 
+@Deprecated(since = "4.19.0")
 public class RestSpanDecorator extends AbstractHttpSpanDecorator {
 
     @Override

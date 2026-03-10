@@ -28,6 +28,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.DefaultThreadPoolFactory;
 
+@Deprecated(since = "4.19.0")
 @JdkService(ThreadPoolFactory.FACTORY)
 public class OpenTelemetryInstrumentedThreadPoolFactory extends DefaultThreadPoolFactory {
 

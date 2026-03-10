@@ -55,6 +55,7 @@ import org.slf4j.MarkerFactory;
  * Adapted from
  * https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk/testing/src/main/java/io/opentelemetry/sdk/testing/junit5/OpenTelemetryExtension.java
  */
+@Deprecated(since = "4.19.0")
 final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEachCallback {
 
     /**

@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.decorators.SedaSpanDecorator;
 
+@Deprecated(since = "4.19.0")
 class TestSEDASpanDecorator extends SedaSpanDecorator {
 
     @Override

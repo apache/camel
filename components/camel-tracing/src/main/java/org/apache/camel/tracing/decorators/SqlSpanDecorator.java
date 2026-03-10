@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.TagConstants;
 
+@Deprecated(since = "4.19.0")
 public class SqlSpanDecorator extends AbstractSpanDecorator {
 
     public static final String CAMEL_SQL_QUERY = "CamelSqlQuery";

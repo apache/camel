@@ -16,6 +16,7 @@
  */
 package org.apache.camel.tracing;
 
+@Deprecated(since = "4.19.0")
 public class TagConstants {
 
     public static final String ERROR = "error";

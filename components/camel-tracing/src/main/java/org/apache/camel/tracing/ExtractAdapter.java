@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+@Deprecated(since = "4.19.0")
 public interface ExtractAdapter {
     Iterator<Map.Entry<String, Object>> iterator();
 

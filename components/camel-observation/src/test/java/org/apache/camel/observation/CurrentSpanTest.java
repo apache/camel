@@ -53,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Deprecated(since = "4.19.0")
 class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     CurrentSpanTest() {
         super(new SpanTestData[0]);

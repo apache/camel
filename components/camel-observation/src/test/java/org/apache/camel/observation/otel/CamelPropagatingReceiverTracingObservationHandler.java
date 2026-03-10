@@ -22,6 +22,7 @@ import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.handler.PropagatingReceiverTracingObservationHandler;
 import io.micrometer.tracing.propagation.Propagator;
 
+@Deprecated(since = "4.19.0")
 public class CamelPropagatingReceiverTracingObservationHandler<T extends ReceiverContext<?>>
         extends PropagatingReceiverTracingObservationHandler<T> {
 

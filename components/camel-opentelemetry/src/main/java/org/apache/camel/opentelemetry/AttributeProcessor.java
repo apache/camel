@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
  * A processor which adds a attribute on the active {@link io.opentelemetry.api.trace.Span} with an
  * {@link org.apache.camel.Expression}
  */
+@Deprecated(since = "4.19.0")
 public class AttributeProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(AttributeProcessor.class);

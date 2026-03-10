@@ -28,6 +28,7 @@ import org.apache.camel.tracing.TagConstants;
 import org.apache.camel.tracing.propagation.CamelMessagingHeadersExtractAdapter;
 import org.apache.camel.tracing.propagation.CamelMessagingHeadersInjectAdapter;
 
+@Deprecated(since = "4.19.0")
 public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorator {
 
     @Override

@@ -21,6 +21,7 @@ import java.net.URI;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
+@Deprecated(since = "4.19.0")
 public class CometdSpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
