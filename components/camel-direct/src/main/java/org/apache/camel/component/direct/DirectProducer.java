@@ -96,6 +96,7 @@ public class DirectProducer extends DefaultAsyncProducer {
                 } else {
                     //Ensure we can close the CLIENT Scope created by this DirectProducer
                     //in the same thread
+                    // Deprecated in 4.19.0
                     if (exchange.getProperty(ExchangePropertyKey.OTEL_ACTIVE_SPAN) != null) {
                         exchange.setProperty(ExchangePropertyKey.OTEL_CLOSE_CLIENT_SCOPE, Boolean.TRUE);
                     }

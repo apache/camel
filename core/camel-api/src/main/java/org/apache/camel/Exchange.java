@@ -315,7 +315,9 @@ public interface Exchange extends VariableAware {
     String XSLT_WARNING = "CamelXsltWarning";
 
     // special for camel-tracing/open-telemetry
+    @Deprecated(since = "4.19.0")
     String OTEL_ACTIVE_SPAN = "OpenTracing.activeSpan";
+    @Deprecated(since = "4.19.0")
     String OTEL_CLOSE_CLIENT_SCOPE = "OpenTracing.closeClientScope";
 
     /**

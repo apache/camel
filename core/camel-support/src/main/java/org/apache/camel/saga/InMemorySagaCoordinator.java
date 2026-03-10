@@ -228,6 +228,7 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
         });
     }
 
+    @SuppressWarnings("deprecation")
     private Exchange createExchange(Exchange parent, Endpoint endpoint, CamelSagaStep step) {
         Exchange answer = endpoint.createExchange();
         answer.getMessage().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, getId());

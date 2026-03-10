@@ -85,7 +85,9 @@ public enum ExchangePropertyKey {
     TRY_ROUTE_BLOCK(Exchange.TRY_ROUTE_BLOCK),
     UNIT_OF_WORK_EXHAUSTED(Exchange.UNIT_OF_WORK_EXHAUSTED),
     // special for camel-tracing/open-telemetry
+    @Deprecated(since = "4.19.0")
     OTEL_ACTIVE_SPAN(Exchange.OTEL_ACTIVE_SPAN),
+    @Deprecated(since = "4.19.0")
     OTEL_CLOSE_CLIENT_SCOPE(Exchange.OTEL_CLOSE_CLIENT_SCOPE);
 
     private final String name;
@@ -218,8 +220,10 @@ public enum ExchangePropertyKey {
                 return TRY_ROUTE_BLOCK;
             case Exchange.UNIT_OF_WORK_EXHAUSTED:
                 return UNIT_OF_WORK_EXHAUSTED;
+            // Deprecated since 4.19.0
             case Exchange.OTEL_ACTIVE_SPAN:
                 return OTEL_ACTIVE_SPAN;
+            // Deprecated since 4.19.0
             case Exchange.OTEL_CLOSE_CLIENT_SCOPE:
                 return OTEL_CLOSE_CLIENT_SCOPE;
             default:
