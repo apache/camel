@@ -159,7 +159,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson2-annotations-version}</version>
+            <version>${jackson2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
