@@ -41,7 +41,7 @@ public final class CamelSupportBulkConverterLoader implements TypeConverterLoade
 
     @Override
     public int size() {
-        return 8;
+        return 9;
     }
 
     @Override
@@ -92,6 +92,10 @@ public final class CamelSupportBulkConverterLoader implements TypeConverterLoade
             if (value instanceof java.lang.String) {
                 return org.apache.camel.converter.json.JsonConverter.convertToJsonObject((java.lang.String) value, exchange);
             }
+        } else if (to == org.apache.camel.util.json.Jsonable.class) {
+            if (value instanceof java.lang.String) {
+                return org.apache.camel.converter.json.JsonConverter.convertToJson((java.lang.String) value, exchange);
+            }
         }
         return null;
     }
@@ -105,6 +109,7 @@ public final class CamelSupportBulkConverterLoader implements TypeConverterLoade
         registry.addConverter(new TypeConvertible<>(java.io.Reader.class, org.apache.camel.StreamCache.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, org.apache.camel.util.json.JsonArray.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.String.class, org.apache.camel.util.json.JsonObject.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, org.apache.camel.util.json.Jsonable.class), this);
     }
 
     public TypeConverter lookup(Class<?> to, Class<?> from) {
@@ -134,6 +139,10 @@ public final class CamelSupportBulkConverterLoader implements TypeConverterLoade
                 return this;
             }
         } else if (to == org.apache.camel.util.json.JsonObject.class) {
+            if (from == java.lang.String.class) {
+                return this;
+            }
+        } else if (to == org.apache.camel.util.json.Jsonable.class) {
             if (from == java.lang.String.class) {
                 return this;
             }

@@ -29,7 +29,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TestScaffoldToolsTest {
 
-    private final TestScaffoldTools tools = new TestScaffoldTools();
+    private final TestScaffoldTools tools;
+
+    TestScaffoldToolsTest() {
+        tools = new TestScaffoldTools();
+        tools.testInfraData = new TestInfraData();
+    }
 
     // ---- Input validation ----
 

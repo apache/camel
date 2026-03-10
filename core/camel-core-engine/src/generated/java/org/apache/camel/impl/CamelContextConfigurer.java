@@ -54,6 +54,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "devConsole": target.setDevConsole(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "dumproutes":
         case "dumpRoutes": target.setDumpRoutes(property(camelContext, java.lang.String.class, value)); return true;
+        case "errorregistry":
+        case "errorRegistry": target.setErrorRegistry(property(camelContext, org.apache.camel.spi.ErrorRegistry.class, value)); return true;
         case "executorservicemanager":
         case "executorServiceManager": target.setExecutorServiceManager(property(camelContext, org.apache.camel.spi.ExecutorServiceManager.class, value)); return true;
         case "globaloptions":
@@ -174,6 +176,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "devConsole": return java.lang.Boolean.class;
         case "dumproutes":
         case "dumpRoutes": return java.lang.String.class;
+        case "errorregistry":
+        case "errorRegistry": return org.apache.camel.spi.ErrorRegistry.class;
         case "executorservicemanager":
         case "executorServiceManager": return org.apache.camel.spi.ExecutorServiceManager.class;
         case "globaloptions":
@@ -295,6 +299,8 @@ public class CamelContextConfigurer extends org.apache.camel.support.component.P
         case "devConsole": return target.isDevConsole();
         case "dumproutes":
         case "dumpRoutes": return target.getDumpRoutes();
+        case "errorregistry":
+        case "errorRegistry": return target.getErrorRegistry();
         case "executorservicemanager":
         case "executorServiceManager": return target.getExecutorServiceManager();
         case "globaloptions":

@@ -57,12 +57,10 @@ public class GoogleSheetsComponent
                 client = getClientFactory().makeClient(config.getClientId(),
                         config.getClientSecret(), config.getScopesAsList(),
                         config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
+            } else {
+                // Use service account key or fall back to Application Default Credentials
                 client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
                         config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
-            } else {
-                throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or serviceAccountKey are required to create Google Sheets client");
             }
         }
         return client;

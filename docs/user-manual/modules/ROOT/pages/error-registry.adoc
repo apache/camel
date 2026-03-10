@@ -1,0 +1,60 @@
+= Error Registry
+
+The `ErrorRegistry` SPI captures snapshots of exceptions that occur during message routing,
+without retaining references to the original exchange or exception objects.
+
+When enabled, the registry stores error snapshots including the exception type, message,
+stack trace, and message history (the trace of every node the message was routed through).
+Error entries can be browsed globally or scoped to a specific route.
+
+== Enabling
+
+The error registry is disabled by default (opt-in). It can be enabled via Java:
+
+[source,java]
+----
+context.getErrorRegistry().setEnabled(true);
+----
+
+Or via configuration properties:
+
+[source,properties]
+----
+camel.main.errorRegistryEnabled = true
+----
+
+== Configuration
+
+[width="100%",cols="3,1,1,5",options="header"]
+|===
+| Option | Default | Type | Description
+| `camel.main.errorRegistryEnabled` | `false` | boolean | Whether the error registry is enabled.
+| `camel.main.errorRegistryMaximumEntries` | `100` | int | Maximum number of error entries to keep. When exceeded, the oldest entries are evicted.
+| `camel.main.errorRegistryTimeToLiveSeconds` | `3600` | int | Time-to-live for error entries in seconds. Entries older than this are evicted.
+| `camel.main.errorRegistryStackTraceEnabled` | `true` | boolean | Whether to capture stack traces.
+|===
+
+== Message History
+
+When xref:components:eips:message-history.adoc[Message History] is enabled on the `CamelContext`, the error registry
+also captures the message history trace for each error. This shows every node the message was
+routed through up until the point of failure, which is very useful for debugging.
+
+== Dev Console
+
+A dev console named `errors` is available for browsing captured errors.
+
+Options:
+
+* `routeId` — filter by route id
+* `limit` — limit the number of entries displayed
+* `stackTrace` — set to `true` to include stack traces in the output (stack traces are captured by default but not displayed unless this option is set, to keep the output concise)
+
+== JMX
+
+A JMX MBean (`ManagedErrorRegistry`) is registered when JMX is enabled, providing operations to:
+
+* Enable/disable the error registry
+* Browse error entries (globally or by route)
+* Configure maximum entries and time-to-live
+* Clear all entries

@@ -32,6 +32,11 @@ uses `InOnly` pattern.
 
 Removed 2 deprecated methods in Java DSL for `throttler` EIP.
 
+==== ErrorRegistry
+
+A new `ErrorRegistry` SPI has been added to `CamelContext` for capturing routing errors.
+See xref:error-registry.adoc[Error Registry] for more details.
+
 ==== Saga EIP
 
 The Saga EIP has _fixed_ the model for how to configure completion and compensation URIs.
