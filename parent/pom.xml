@@ -272,8 +272,7 @@
         <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>2.0.0-alpha1</jackson-jq-version>
-        <jackson2-version>2.20.2</jackson2-version>
-        <jackson2-annotations-version>2.20</jackson2-annotations-version>
+        <jackson2-version>2.21.1</jackson2-version>
         <jackson3-version>3.0.4</jackson3-version>
         <jackson-jsonSchema-jakarta-version>3.1.0</jackson-jsonSchema-jakarta-version>
         <jackrabbit-version>2.22.3</jackrabbit-version>
@@ -3287,9 +3286,11 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson2-annotations-version}</version>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson2-version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
 
             <!--
