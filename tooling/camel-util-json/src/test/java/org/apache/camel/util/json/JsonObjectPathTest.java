@@ -56,6 +56,11 @@ public class JsonObjectPathTest {
                     }
                     """;
 
+    private static final String ARRAY_ONLY
+            = """
+                    [ "Red", "Green", "Blue" ]
+                    """;
+
     @Test
     public void testPath() throws Exception {
         JsonObject jo = (JsonObject) Jsoner.deserialize(BOOKS);
@@ -170,6 +175,30 @@ public class JsonObjectPathTest {
         } catch (IllegalArgumentException e) {
             // expected
         }
+    }
+
+    @Test
+    public void testPathArrayOnly() throws Exception {
+        JsonArray jo = (JsonArray) Jsoner.deserialize(ARRAY_ONLY);
+        Assertions.assertNotNull(jo);
+        Assertions.assertEquals(3, jo.size());
+
+        // wrap in root
+        JsonObject wrap = new JsonObject();
+        wrap.put("_root_", jo);
+
+        Assertions.assertEquals("Red", wrap.path("_root_.[0]"));
+        Assertions.assertEquals("Green", wrap.path("_root_.[1]"));
+        Assertions.assertEquals("Blue", wrap.path("_root_.[2]"));
+        Assertions.assertEquals("Blue", wrap.path("_root_.[last]"));
+        Assertions.assertNull(wrap.path("_root_?.[3]"));
+        try {
+            wrap.path("_root_.[3]");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+
     }
 
 }

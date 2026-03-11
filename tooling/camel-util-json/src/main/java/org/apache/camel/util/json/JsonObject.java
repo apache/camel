@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -146,7 +147,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         Object answer = null;
 
         boolean optional = path.startsWith("?");
-        JsonObject jo = this;
+        Map jo = this;
         String sub = path;
         if (optional && !path.contains(".") && !path.contains("[")) {
             sub = sub.substring(1);
@@ -161,8 +162,8 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             java.util.Optional<Object> o = doPath(path.substring(0, pos));
             if (o.isPresent()) {
                 answer = o.get();
-                if (answer instanceof JsonObject) {
-                    jo = (JsonObject) answer;
+                if (answer instanceof Map) {
+                    jo = (Map) answer;
                 }
             } else {
                 optional = true;
@@ -173,11 +174,32 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             java.util.Optional<Object> o = doPath(path);
             if (o.isPresent()) {
                 answer = o.get();
-                if (answer instanceof JsonObject) {
-                    jo = (JsonObject) answer;
+                if (answer instanceof Map) {
+                    jo = (Map) answer;
                 }
             } else {
                 optional = true;
+            }
+        }
+
+        // last part can be an index
+        if (sub.startsWith("[")) {
+            int pos = -1;
+            String num = sub.substring(1, sub.length() - 1);
+            if ("last".equals(num)) {
+                pos = Integer.MAX_VALUE;
+            } else {
+                pos = Integer.parseInt(num);
+            }
+            if (pos != -1 && answer instanceof List<?> arr) {
+                jo = null;
+                if (pos == Integer.MAX_VALUE) {
+                    answer = arr.getLast();
+                } else if (pos < arr.size()) {
+                    answer = arr.get(pos);
+                } else {
+                    answer = null;
+                }
             }
         }
         if (jo != null) {
@@ -233,12 +255,12 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
                 }
                 part = part.substring(0, part.lastIndexOf('['));
             }
-            if (answer instanceof JsonObject jo) {
-                answer = pos == -1 ? jo.getMap(part) : jo.getJsonArray(part);
+            if (answer instanceof Map jo) {
+                answer = jo.get(part);
             } else {
-                answer = pos == -1 ? getMap(part) : getJsonArray(part);
+                answer = get(part);
             }
-            if (pos != -1 && answer instanceof JsonArray arr) {
+            if (pos != -1 && answer instanceof List<?> arr) {
                 if (pos == Integer.MAX_VALUE) {
                     answer = arr.getLast();
                 } else if (pos < arr.size()) {

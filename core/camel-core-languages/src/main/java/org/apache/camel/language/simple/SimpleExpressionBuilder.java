@@ -72,7 +72,9 @@ import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsonable;
 
 /**
  * Expression builder used by the simple language.
@@ -3408,9 +3410,14 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                JsonObject jo = input.evaluate(exchange, JsonObject.class);
-                if (jo != null) {
+                Jsonable j = input.evaluate(exchange, Jsonable.class);
+                if (j instanceof JsonObject jo) {
                     return jo.path(path);
+                } else if (j instanceof JsonArray ja) {
+                    // wrap array in pseudo root to leverage json-path here
+                    JsonObject jo = new JsonObject();
+                    jo.put("_root_", ja);
+                    return jo.path("_root_." + path);
                 }
                 return null;
             }
