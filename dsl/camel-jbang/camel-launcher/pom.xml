@@ -87,6 +87,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-plugin-diagram</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel.kamelets</groupId>
             <artifactId>camel-kamelets</artifactId>
             <version>${camel-kamelets-version}</version>

@@ -17,11 +17,18 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.stream.Stream;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HomeHelper;
@@ -67,20 +74,7 @@ public final class LauncherHelper {
                     .getCodeSource().getLocation();
             if (location != null) {
                 String urlStr = location.toString();
-                // Handle nested JAR (Spring Boot loader)
-                if (urlStr.startsWith("jar:file:")) {
-                    int idx = urlStr.indexOf("!/");
-                    if (idx > 0) {
-                        String path = urlStr.substring(9, idx);
-                        // Decode URL-encoded characters (spaces, special chars)
-                        return URLDecoder.decode(path, StandardCharsets.UTF_8);
-                    }
-                }
-                // Handle direct file URL
-                if (urlStr.startsWith("file:")) {
-                    String path = urlStr.substring(5);
-                    return URLDecoder.decode(path, StandardCharsets.UTF_8);
-                }
+                return normalizeJarPath(urlStr);
             }
         } catch (Exception e) {
             System.err.println("WARN: Failed to detect launcher JAR path: " + e.getMessage());
@@ -129,5 +123,91 @@ public final class LauncherHelper {
             }
         }
         return "java";
+    }
+
+    /**
+     * Resolves the Jolokia agent javaagent jar from the local Maven repository (~/.m2). Returns {@code null} if the
+     * agent jar is not found.
+     */
+    public static File findJolokiaAgentJar() {
+        String version = null;
+        ClassLoader loader = LauncherHelper.class.getClassLoader();
+        if (loader == null) {
+            loader = ClassLoader.getSystemClassLoader();
+        }
+        try (InputStream is = loader.getResourceAsStream(
+                "META-INF/maven/org.jolokia/jolokia-agent-jvm/pom.properties")) {
+            if (is != null) {
+                Properties props = new Properties();
+                props.load(is);
+                version = props.getProperty("version");
+            }
+        } catch (Exception ignored) {
+        }
+        Path m2Base = Path.of(System.getProperty("user.home"), ".m2", "repository", "org", "jolokia", "jolokia-agent-jvm");
+        if (!Files.isDirectory(m2Base)) {
+            return null;
+        }
+        if (version != null && !version.isBlank()) {
+            Path candidate = m2Base.resolve(version).resolve("jolokia-agent-jvm-" + version + "-javaagent.jar");
+            if (Files.exists(candidate)) {
+                return candidate.toFile();
+            }
+        }
+        try (Stream<Path> stream = Files.list(m2Base)) {
+            return stream.filter(Files::isDirectory)
+                    .map(dir -> {
+                        String v = dir.getFileName().toString();
+                        Path jar = dir.resolve("jolokia-agent-jvm-" + v + "-javaagent.jar");
+                        return new JarCandidate(v, jar);
+                    })
+                    .filter(c -> Files.exists(c.path))
+                    .max(Comparator.comparing(c -> c.version, VersionHelper::compare))
+                    .map(c -> c.path.toFile())
+                    .orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Normalizes a JAR path URL string (possibly a Spring Boot {@code nested:} or {@code jar:} URL) to a plain
+     * filesystem path ending with {@code .jar}.
+     */
+    public static String normalizeJarPath(String path) {
+        if (path == null || path.isBlank()) {
+            return path;
+        }
+        String normalized = path;
+        if (normalized.startsWith("jar:")) {
+            normalized = normalized.substring("jar:".length());
+        }
+        if (normalized.startsWith("nested:")) {
+            normalized = normalized.substring("nested:".length());
+        }
+        if (normalized.startsWith("file:")) {
+            normalized = normalized.substring("file:".length());
+        }
+        int bang = normalized.indexOf("!/");
+        if (bang > 0) {
+            normalized = normalized.substring(0, bang);
+        }
+        int jarIndex = normalized.toLowerCase(Locale.ROOT).lastIndexOf(".jar");
+        if (jarIndex > 0) {
+            normalized = normalized.substring(0, jarIndex + 4);
+        } else {
+            return null;
+        }
+        return URLDecoder.decode(normalized, StandardCharsets.UTF_8);
+    }
+
+    private static final class JarCandidate {
+        private final String version;
+        private final Path path;
+
+        private JarCandidate(String version, Path path) {
+            this.version = version;
+            this.path = path;
+        }
     }
 }
