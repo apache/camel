@@ -190,12 +190,14 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
     }
 
     private void createKafkaMessageConsumer(
-            KafkaConsumer<String, String> consumerConn, String topic, CountDownLatch messagesLatch) {
+            KafkaConsumer<String, String> consumerConn, String topic, CountDownLatch messagesLatch)
+            throws InterruptedException {
 
         consumerConn.subscribe(Arrays.asList(topic));
         boolean run = true;
+        int numberOfAttempts = 0;
 
-        while (run) {
+        while (run && numberOfAttempts < 100) {
             ConsumerRecords<String, String> records = consumerConn.poll(Duration.ofMillis(100));
             for (int i = 0; i < records.count(); i++) {
                 messagesLatch.countDown();
@@ -203,6 +205,8 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
                     run = false;
                 }
             }
+            numberOfAttempts++;
+            Thread.sleep(100);
         }
     }
 
