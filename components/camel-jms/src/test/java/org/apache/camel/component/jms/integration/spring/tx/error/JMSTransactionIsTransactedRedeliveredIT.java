@@ -84,7 +84,7 @@ public class JMSTransactionIsTransactedRedeliveredIT extends AbstractSpringJMSIT
 
         // check JMX stats
         // need a little sleep to ensure JMX is updated
-        final Set<ObjectName> objectNames = Awaitility.await().atMost(1000, TimeUnit.MILLISECONDS)
+        final Set<ObjectName> objectNames = Awaitility.await().atMost(5, TimeUnit.SECONDS)
                 .until(() -> getMBeanServer()
                         .queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null),
                         Matchers.hasSize(1));

@@ -50,9 +50,9 @@ public class JmsDestinationProducedHeaderIT extends AbstractPersistentJMSTest {
         assertEquals(2, count, "There should only be 1 activemq endpoint");
 
         // and the messages should be in the queues
-        String out = consumer.receiveBody("activemq:queue:JmsDestinationProducedHeaderTest.bar2", 2000, String.class);
+        String out = consumer.receiveBody("activemq:queue:JmsDestinationProducedHeaderTest.bar2", 5000, String.class);
         assertEquals("Hello bar", out);
-        out = consumer.receiveBody("activemq:queue:JmsDestinationProducedHeaderTest.beer2", 2000, String.class);
+        out = consumer.receiveBody("activemq:queue:JmsDestinationProducedHeaderTest.beer2", 5000, String.class);
         assertEquals("Hello beer", out);
     }
 

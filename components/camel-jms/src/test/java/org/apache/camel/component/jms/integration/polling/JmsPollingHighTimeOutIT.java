@@ -33,7 +33,7 @@ class JmsPollingHighTimeOutIT extends JmsPollingConsumerIT {
     @BeforeEach
     void setupConsumer() {
         Executors.newSingleThreadExecutor().execute(() -> {
-            body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", 3000, String.class);
+            body = consumer.receiveBody("activemq:queue.JmsPollingConsumerTest.start", 5000, String.class);
             template.sendBody("activemq:queue.JmsPollingConsumerTest.foo", body + " Claus");
         });
     }

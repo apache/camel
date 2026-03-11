@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jms.integration.spring.tx.security;
 
+import org.apache.activemq.artemis.core.config.FileDeploymentManager;
+import org.apache.activemq.artemis.core.config.impl.FileConfiguration;
+import org.apache.activemq.artemis.core.config.impl.LegacyJMSConfiguration;
 import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
 import org.apache.activemq.artemis.core.server.ActiveMQServer;
 import org.apache.activemq.artemis.core.server.ActiveMQServers;
@@ -49,9 +52,17 @@ public class JmsToJmsTransactedSecurityIT extends CamelSpringTestSupport {
         ActiveMQJAASSecurityManager securityManager
                 = new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), securityConfig);
 
-        activeMQServer = ActiveMQServers.newActiveMQServer(
-                "org/apache/camel/component/jms/integration/spring/tx/security/artemis-security.xml", null,
-                securityManager);
+        FileConfiguration config = new FileConfiguration();
+        LegacyJMSConfiguration legacyJMSConfiguration = new LegacyJMSConfiguration(config);
+        new FileDeploymentManager(
+                "org/apache/camel/component/jms/integration/spring/tx/security/artemis-security.xml")
+                .addDeployable(config).addDeployable(legacyJMSConfiguration).readConfiguration();
+
+        // Use the 4-arg version with enablePersistence=false to honor the XML's persistence-enabled=false.
+        // The 3-arg version hardcodes enablePersistence=true, which causes the broker to get stuck
+        // in STARTING state on JDK 25 due to journal initialization issues.
+        // TODO: revert this workaround once https://github.com/apache/activemq-artemis/pull/6286 is released
+        activeMQServer = ActiveMQServers.newActiveMQServer(config, null, securityManager, false);
         activeMQServer.start();
     }
 

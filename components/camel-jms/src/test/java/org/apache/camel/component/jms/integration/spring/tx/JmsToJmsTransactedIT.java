@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.jms.integration.spring.tx;
 
+import org.apache.activemq.artemis.api.core.QueueConfiguration;
+import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,11 +39,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Isolated("Uses a shared DLQ queue name and embedded VM broker")
 public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
+
+    private static final int MAX_DELIVERY_ATTEMPTS = 3;
 
     @Order(0)
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = createArtemisService();
+
+    static ArtemisService createArtemisService() {
+        ArtemisVMService svc = new ArtemisVMService();
+        svc.customConfiguration(cfg -> {
+            cfg.getAddressSettings().values()
+                    .forEach(s -> s.setMaxDeliveryAttempts(MAX_DELIVERY_ATTEMPTS));
+            cfg.addQueueConfiguration(
+                    QueueConfiguration.of("DLQ").setRoutingType(RoutingType.ANYCAST));
+        });
+        return svc;
+    }
 
     /**
      * Used by spring xml configurations
@@ -97,7 +114,7 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
         bar.expectedMessageCount(0);
 
         MockEndpoint start = getMockEndpoint("mock:start");
-        start.expectedMessageCount(7); // default number of redeliveries by AMQ is 6 so we get 6+1
+        start.expectedMessageCount(MAX_DELIVERY_ATTEMPTS);
 
         template.sendBody("activemq:queue:JmsToJmsTransactedIT", "Hello World");
 
@@ -125,14 +142,14 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
         bar.expectedMessageCount(0);
 
         MockEndpoint start = getMockEndpoint("mock:start");
-        start.expectedMessageCount(7); // default number of redeliveries by AMQ is 6 so we get 6+1
+        start.expectedMessageCount(MAX_DELIVERY_ATTEMPTS);
 
         template.sendBody("activemq:queue:JmsToJmsTransactedIT", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
 
         // it should be moved to DLQ in JMS broker
-        Object body = consumer.receiveBody("activemq:queue:DLQ", 2000);
+        Object body = consumer.receiveBody("activemq:queue:DLQ", 10000);
         assertEquals("Hello World", body);
     }
 }

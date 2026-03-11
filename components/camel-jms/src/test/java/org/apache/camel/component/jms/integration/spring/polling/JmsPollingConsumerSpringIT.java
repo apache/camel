@@ -95,7 +95,7 @@ public class JmsPollingConsumerSpringIT extends SpringJMSBasic {
             StringBuilder result = new StringBuilder();
 
             Exchange exchange;
-            while ((exchange = consumer.receive("jms:JmsPollingConsumerSpringITQueue", 2000)) != null) {
+            while ((exchange = consumer.receive("jms:JmsPollingConsumerSpringITQueue", 5000)) != null) {
                 result.append(exchange.getIn().getBody(String.class));
             }
 

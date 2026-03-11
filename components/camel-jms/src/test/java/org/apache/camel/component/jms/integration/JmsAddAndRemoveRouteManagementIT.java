@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.jms.integration;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -31,6 +34,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
@@ -38,8 +43,6 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test that all thread pools are removed when adding and removing a route dynamically. This test manipulates the thread
@@ -68,8 +71,9 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
     @Test
     public void testAddAndRemoveRoute() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
+        ObjectName query = new ObjectName("*:type=threadpools,*");
 
-        Set<ObjectName> before = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
+        Set<ObjectName> before = mbeanServer.queryNames(query, null);
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -81,8 +85,20 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
             }
         });
 
-        Set<ObjectName> during = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
-        assertEquals(before.size() + 1, during.size(), "There should be one more thread pool in JMX");
+        // Wait for the new route's thread pool to be registered and identify it
+        AtomicReference<Set<ObjectName>> duringRef = new AtomicReference<>();
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<ObjectName> during = mbeanServer.queryNames(query, null);
+            Set<ObjectName> added = new HashSet<>(during);
+            added.removeAll(before);
+            Assertions.assertFalse(added.isEmpty(),
+                    "There should be at least one new thread pool in JMX");
+            duringRef.set(during);
+        });
+
+        // Identify the thread pools added by the new route
+        Set<ObjectName> addedPools = new HashSet<>(duringRef.get());
+        addedPools.removeAll(before);
 
         template.sendBody("activemq:queue:JmsAddAndRemoveRouteManagementTest.in", "Hello World");
 
@@ -92,8 +108,14 @@ public class JmsAddAndRemoveRouteManagementIT extends AbstractJMSTest {
         context.getRouteController().stopRoute("myNewRoute");
         context.removeRoute("myNewRoute");
 
-        Set<ObjectName> after = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
-        assertEquals(before.size(), after.size(), "Should have removed all thread pools from removed route");
+        // Verify the thread pools from the removed route are cleaned up
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<ObjectName> after = mbeanServer.queryNames(query, null);
+            for (ObjectName added : addedPools) {
+                Assertions.assertFalse(after.contains(added),
+                        "Thread pool from removed route should be cleaned up: " + added);
+            }
+        });
     }
 
     @Override

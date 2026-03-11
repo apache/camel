@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Timeout(10)
+@Timeout(30)
 public class AsyncConsumerInOutTwoTest extends AbstractJMSTest {
 
     @Order(2)

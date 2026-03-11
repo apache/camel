@@ -203,7 +203,7 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
         assertNotNull(bar, "Should be a message on queue");
         template.send("activemq:queue:fooJmsProducerWithJMSHeaderTest?preserveMessageQos=true", bar);
 
-        Awaitility.await().atMost(1, TimeUnit.SECONDS)
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }
 

@@ -34,16 +34,16 @@ public class JmsToDSendDynamicIT extends AbstractPersistentJMSTest {
         assertEquals(1, count, "There should only be 1 activemq endpoint");
 
         // and the messages should be in the queues
-        String out = consumer.receiveBody("activemq:queue:JmsToDSendDynamicIT.bar", 2000, String.class);
+        String out = consumer.receiveBody("activemq:queue:JmsToDSendDynamicIT.bar", 5000, String.class);
         assertEquals("Hello bar", out);
-        out = consumer.receiveBody("activemq:queue:JmsToDSendDynamicIT.beer", 2000, String.class);
+        out = consumer.receiveBody("activemq:queue:JmsToDSendDynamicIT.beer", 5000, String.class);
         assertEquals("Hello beer", out);
     }
 
     @Test
     public void testToDSlashed() {
         template.sendBodyAndHeader("direct:startSlashed", "Hello bar", "where", "JmsToDSendDynamicIT.bar");
-        String out = consumer.receiveBody("activemq://JmsToDSendDynamicIT.bar", 2000, String.class);
+        String out = consumer.receiveBody("activemq://JmsToDSendDynamicIT.bar", 5000, String.class);
         assertEquals("Hello bar", out);
     }
 

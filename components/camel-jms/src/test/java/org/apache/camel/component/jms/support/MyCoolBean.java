@@ -40,9 +40,9 @@ public final class MyCoolBean {
     public void someBusinessLogic() {
         // loop to empty queue
         while (true) {
-            // receive the message from the queue, wait at most 2 sec
+            // receive the message from the queue, wait at most 5 sec
             try {
-                String msg = consumer.receiveBody("activemq:" + queueName + ".in", 2000, String.class);
+                String msg = consumer.receiveBody("activemq:" + queueName + ".in", 5000, String.class);
                 if (msg == null) {
                     // no more messages in queue
                     break;

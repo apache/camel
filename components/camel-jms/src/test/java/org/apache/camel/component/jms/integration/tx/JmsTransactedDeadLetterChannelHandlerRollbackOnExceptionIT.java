@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.integration.tx;
 
 import jakarta.jms.ConnectionFactory;
 
+import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
@@ -26,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -36,11 +37,25 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-// This test cannot run in parallel: it reads from the default DLQ and there could be more messages there
 @Tags({ @Tag("not-parallel"), @Tag("transaction") })
 public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT extends CamelTestSupport {
+
+    private static final String DLQ_NAME
+            = "DLQ." + JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT.class.getSimpleName();
+
     @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+    public static ArtemisService service = createArtemisService();
+
+    static ArtemisService createArtemisService() {
+        ArtemisVMService svc = new ArtemisVMService();
+        svc.customConfiguration(
+                cfg -> cfg.getAddressSettings().values()
+                        .forEach(s -> {
+                            s.setMaxDeliveryAttempts(1);
+                            s.setDeadLetterAddress(SimpleString.of(DLQ_NAME));
+                        }));
+        return svc;
+    }
 
     public static class BadErrorHandler {
         @Handler
@@ -51,10 +66,6 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT extends 
 
     protected final String testingEndpoint = "activemq:test." + getClass().getName();
 
-    protected boolean isHandleNew() {
-        return true;
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -63,7 +74,7 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT extends 
                 // we use DLC to handle the exception but if it throw a new exception
                 // then the DLC handles that too (the transaction will always commit)
                 errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName())
-                        .deadLetterHandleNewException(isHandleNew())
+                        .deadLetterHandleNewException(true)
                         .logNewException(true));
 
                 from(testingEndpoint)
@@ -78,8 +89,8 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT extends 
         template.sendBody(testingEndpoint, "Hello World");
 
         // as we handle new exception, then the exception is ignored
-        // and causes the transaction to commit, so there is no message in the ActiveMQ DLQ queue
-        Object dlqBody = consumer.receiveBody("activemq:DLQ", 2000);
+        // and causes the transaction to commit, so there is no message in the DLQ queue
+        Object dlqBody = consumer.receiveBody("activemq:" + DLQ_NAME, 10000);
         assertNull(dlqBody, "Should not rollback the transaction");
     }
 
@@ -87,7 +98,6 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionIT extends 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        // no redeliveries
         ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service, 0);
 
         JmsComponent component = jmsComponentTransacted(connectionFactory);

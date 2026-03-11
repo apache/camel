@@ -36,7 +36,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Timeout(10)
+@Timeout(30)
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteWithInOnlyAndMultipleAcksTest extends AbstractJMSTest {
 

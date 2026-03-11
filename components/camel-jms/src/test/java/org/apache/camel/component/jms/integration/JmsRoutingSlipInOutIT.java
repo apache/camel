@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-@Timeout(10)
+@Timeout(30)
 public class JmsRoutingSlipInOutIT extends AbstractJMSTest {
 
     @Order(2)

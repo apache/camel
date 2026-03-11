@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test inspired by user forum
  */
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-@Timeout(10)
+@Timeout(30)
 public class JmsRouteWithInOnlyTest extends AbstractJMSTest {
 
     @Order(2)

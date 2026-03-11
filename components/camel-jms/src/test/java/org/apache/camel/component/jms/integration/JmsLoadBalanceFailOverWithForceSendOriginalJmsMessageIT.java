@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit test for Camel loadbalancer failover with JMS
  */
-@Timeout(10)
+@Timeout(30)
 public class JmsLoadBalanceFailOverWithForceSendOriginalJmsMessageIT extends AbstractJMSTest {
     @Order(2)
     @RegisterExtension

@@ -19,14 +19,18 @@ package org.apache.camel.component.jms.integration.spring.tx;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.integration.spring.AbstractSpringJMSITSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
 
     @Override
@@ -35,6 +39,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
                 "/org/apache/camel/component/jms/integration/spring/tx/RouteIdTransactedIT.xml");
     }
 
+    @Order(1)
     @Test
     public void testRouteId() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
@@ -48,6 +53,7 @@ public class RouteIdTransactedIT extends AbstractSpringJMSITSupport {
         assertEquals("myCoolRoute", id);
     }
 
+    @Order(2)
     @Test
     public void testRouteIdFailed() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
