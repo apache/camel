@@ -296,4 +296,11 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
         PropertyBindingSupport.bindProperties(getCamelContext(), map, configuration.getAdditionalProperties());
         configuration.setAdditionalProperties(map);
     }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        pendingConsumers.clear();
+    }
+
 }
