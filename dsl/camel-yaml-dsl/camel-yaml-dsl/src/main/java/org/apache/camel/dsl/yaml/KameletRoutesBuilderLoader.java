@@ -31,6 +31,7 @@ import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.DependencyStrategy;
 import org.apache.camel.spi.annotations.RoutesLoader;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
@@ -67,6 +68,12 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         final RouteTemplateDefinition rtd = ctx.construct(template, RouteTemplateDefinition.class);
         rtd.id(asText(nodeAt(root, "/metadata/name")));
 
+        // process data types (inputType/outputType) if defined
+        Node dataTypesNode = nodeAt(root, "/spec/dataTypes");
+        if (dataTypesNode != null) {
+            configureDataTypes(asMappingNode(dataTypesNode), rtd);
+        }
+
         Node properties = nodeAt(root, "/spec/definition/properties");
         if (properties != null) {
             rtd.setTemplateParameters(new ArrayList<>());
@@ -99,6 +106,51 @@ public class KameletRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                 getRouteTemplateCollection().routeTemplate(rtd);
             }
         };
+    }
+
+    private void configureDataTypes(MappingNode dataTypes, RouteTemplateDefinition rtd) {
+        MappingNode in = asMappingNode(nodeAt(dataTypes, "/in"));
+        if (in != null) {
+            String dataType = extractKameletDataType(in);
+            if (dataType != null) {
+                rtd.route().inputType(dataType);
+            }
+        }
+        MappingNode out = asMappingNode(nodeAt(dataTypes, "/out"));
+        if (out != null) {
+            String dataType = extractKameletDataType(out);
+            if (dataType != null) {
+                rtd.route().outputType(dataType);
+            }
+        }
+    }
+
+    /**
+     * Extracts the data type name from a kamelet dataTypes direction node (in or out). The kamelet structure uses a
+     * default type name referencing a types map entry that contains scheme and format fields.
+     */
+    private String extractKameletDataType(MappingNode directionNode) {
+        String defaultType = extractTupleValue(directionNode.getValue(), "default");
+        if (defaultType == null) {
+            return null;
+        }
+        MappingNode types = asMappingNode(nodeAt(directionNode, "/types"));
+        if (types == null) {
+            return null;
+        }
+        MappingNode typeNode = asMappingNode(nodeAt(types, "/" + defaultType));
+        if (typeNode == null) {
+            return null;
+        }
+        String scheme = extractTupleValue(typeNode.getValue(), "scheme");
+        String format = extractTupleValue(typeNode.getValue(), "format");
+        if (format == null) {
+            return null;
+        }
+        if (scheme != null) {
+            return scheme + ":" + format;
+        }
+        return format;
     }
 
     private CamelContextCustomizer preConfigureDependencies(Node node) {
