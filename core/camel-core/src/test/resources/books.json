@@ -1,0 +1,20 @@
+{
+  "library": {
+    "book": [
+      {
+        "title": "No Title",
+        "author": "F. Scott Fitzgerald",
+        "year": "1925",
+        "genre": "Classic",
+        "id": "bk101"
+      },
+      {
+        "title": "1984",
+        "author": "George Orwell",
+        "year": "1949",
+        "genre": "Dystopian",
+        "id": "bk102"
+      }
+    ]
+  }
+}

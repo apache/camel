@@ -16,7 +16,10 @@
  */
 package org.apache.camel.converter.json;
 
+import java.io.ByteArrayInputStream;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.model.ConvertBodyDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -136,6 +139,65 @@ public class JsonConverterTest extends ContextTestSupport {
         Assertions.assertEquals(1925, b1.getInteger("year"));
         Assertions.assertEquals("1984", b2.getString("title"));
         Assertions.assertEquals(1949, b2.getInteger("year"));
+    }
+
+    @Test
+    public void testConvertObjectFromByteArray() throws Exception {
+        JsonObject jo = context.getTypeConverter().convertTo(JsonObject.class, BOOKS.getBytes());
+        Assertions.assertNotNull(jo);
+
+        JsonArray arr = jo.getJsonObject("library").getJsonArray("book");
+        Assertions.assertEquals(2, arr.size());
+        JsonObject b1 = arr.getJsonObject(0);
+        JsonObject b2 = arr.getJsonObject(1);
+        Assertions.assertEquals("No Title", b1.getString("title"));
+        Assertions.assertEquals(1925, b1.getInteger("year"));
+        Assertions.assertEquals("1984", b2.getString("title"));
+        Assertions.assertEquals(1949, b2.getInteger("year"));
+    }
+
+    @Test
+    public void testConvertObjectFromInputStream() throws Exception {
+        JsonObject jo = context.getTypeConverter().convertTo(JsonObject.class, new ByteArrayInputStream(BOOKS.getBytes()));
+        Assertions.assertNotNull(jo);
+
+        JsonArray arr = jo.getJsonObject("library").getJsonArray("book");
+        Assertions.assertEquals(2, arr.size());
+        JsonObject b1 = arr.getJsonObject(0);
+        JsonObject b2 = arr.getJsonObject(1);
+        Assertions.assertEquals("No Title", b1.getString("title"));
+        Assertions.assertEquals(1925, b1.getInteger("year"));
+        Assertions.assertEquals("1984", b2.getString("title"));
+        Assertions.assertEquals(1949, b2.getInteger("year"));
+    }
+
+    @Test
+    public void testConvertObjectFromStreamCacheInputStream() throws Exception {
+        ByteArrayInputStreamCache sc = new ByteArrayInputStreamCache(new ByteArrayInputStream(BOOKS.getBytes()));
+        JsonObject jo = context.getTypeConverter().convertTo(JsonObject.class, sc);
+        Assertions.assertNotNull(jo);
+        JsonArray arr = jo.getJsonObject("library").getJsonArray("book");
+        Assertions.assertEquals(2, arr.size());
+        JsonObject b1 = arr.getJsonObject(0);
+        JsonObject b2 = arr.getJsonObject(1);
+        Assertions.assertEquals("No Title", b1.getString("title"));
+        Assertions.assertEquals(1925, b1.getInteger("year"));
+        Assertions.assertEquals("1984", b2.getString("title"));
+        Assertions.assertEquals(1949, b2.getInteger("year"));
+
+        // should be able to reuse the stream cache again if we reset
+        sc.reset();
+        JsonObject jo2 = context.getTypeConverter().convertTo(JsonObject.class, sc);
+        Assertions.assertNotSame(jo, jo2); // not same instance
+        arr = jo2.getJsonObject("library").getJsonArray("book");
+        Assertions.assertEquals(2, arr.size());
+        b1 = arr.getJsonObject(0);
+        b2 = arr.getJsonObject(1);
+        Assertions.assertEquals("No Title", b1.getString("title"));
+        Assertions.assertEquals(1925, b1.getInteger("year"));
+        Assertions.assertEquals("1984", b2.getString("title"));
+        Assertions.assertEquals(1949, b2.getInteger("year"));
+
     }
 
 }
