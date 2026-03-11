@@ -242,21 +242,25 @@ public class StreamingApiConsumer extends DefaultConsumer {
             in.setHeader(SalesforceConstants.HEADER_SALESFORCE_REPLAY_ID, replayId);
         }
 
-        // get SObject
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> sObject = (Map<String, Object>) data.get(SOBJECT_PROPERTY);
-        final String sObjectString = objectMapper.writeValueAsString(sObject);
-        LOG.debug("Received SObject: {}", sObjectString);
+        try {
+            // get SObject
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> sObject = (Map<String, Object>) data.get(SOBJECT_PROPERTY);
+            final String sObjectString = objectMapper.writeValueAsString(sObject);
+            LOG.debug("Received SObject: {}", sObjectString);
 
-        if (rawPayload) {
-            // return sobject string as exchange body
-            in.setBody(sObjectString);
-        } else if (sObjectClass == null) {
-            // return sobject map as exchange body
-            in.setBody(sObject);
-        } else {
-            // create the expected SObject
-            in.setBody(objectMapper.readValue(new StringReader(sObjectString), sObjectClass));
+            if (rawPayload) {
+                // return sobject string as exchange body
+                in.setBody(sObjectString);
+            } else if (sObjectClass == null) {
+                // return sobject map as exchange body
+                in.setBody(sObject);
+            } else {
+                // create the expected SObject
+                in.setBody(objectMapper.readValue(new StringReader(sObjectString), sObjectClass));
+            }
+        } catch (RuntimeException e) {
+            handleException("Error deserializing SObject for push topic " + topicName, e);
         }
     }
 

@@ -45,6 +45,7 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationConfig;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.jsonFormatVisitors.JsonValueFormat;
 import tools.jackson.databind.ser.BeanPropertyWriter;
@@ -91,6 +92,8 @@ public final class JsonUtils {
         ObjectMapper objectMapper = new ObjectMapper().rebuild()
                 .filterProvider(filterProvider)
                 .addModule(new TimeModule())
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .build();
 
         return objectMapper;

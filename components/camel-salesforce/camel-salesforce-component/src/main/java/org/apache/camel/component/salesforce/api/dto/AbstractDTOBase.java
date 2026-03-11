@@ -30,8 +30,12 @@ public abstract class AbstractDTOBase {
 
     @Override
     public String toString() {
-        StringWriter writer = new StringWriter();
-        MAPPER.writeValue(writer, this);
-        return writer.toString();
+        try {
+            StringWriter writer = new StringWriter();
+            MAPPER.writeValue(writer, this);
+            return writer.toString();
+        } catch (RuntimeException e) {
+            return "Error in toString " + e.getMessage();
+        }
     }
 }

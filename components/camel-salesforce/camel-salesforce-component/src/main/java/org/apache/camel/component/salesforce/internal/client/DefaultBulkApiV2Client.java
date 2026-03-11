@@ -372,26 +372,38 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     }
 
     private void marshalRequest(Object input, Request request) throws SalesforceException {
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        objectMapper.writeValue(outputStream, input);
-        request.body(new BytesRequestContent(outputStream.toByteArray()));
+        try {
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            objectMapper.writeValue(outputStream, input);
+            request.body(new BytesRequestContent(outputStream.toByteArray()));
+        } catch (RuntimeException e) {
+            throw new SalesforceException("Error marshaling request: " + e.getMessage(), e);
+        }
     }
 
     private <T> T unmarshalResponse(InputStream response, Request request, Class<T> resultClass)
             throws SalesforceException {
-        T result = null;
-        if (response != null) {
-            result = objectMapper.readValue(response, resultClass);
+        try {
+            T result = null;
+            if (response != null) {
+                result = objectMapper.readValue(response, resultClass);
+            }
+            return result;
+        } catch (RuntimeException e) {
+            throw new SalesforceException("Error unmarshaling response: " + e.getMessage(), e);
         }
-        return result;
     }
 
     private <T> T unmarshalResponse(InputStream response, Request request, TypeReference<T> typeRef)
             throws SalesforceException {
-        T result = null;
-        if (response != null) {
-            result = objectMapper.readValue(response, typeRef);
+        try {
+            T result = null;
+            if (response != null) {
+                result = objectMapper.readValue(response, typeRef);
+            }
+            return result;
+        } catch (RuntimeException e) {
+            throw new SalesforceException("Error unmarshaling response: " + e.getMessage(), e);
         }
-        return result;
     }
 }

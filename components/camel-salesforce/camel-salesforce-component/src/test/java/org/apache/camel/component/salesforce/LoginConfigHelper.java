@@ -85,15 +85,19 @@ public final class LoginConfigHelper {
 
         LOG.info("Loading credentials from SF CLI: {}", credentialsPath);
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(credentialsPath.toFile());
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(credentialsPath.toFile());
 
-        setIfPresent(root, "clientId", "salesforce.client.id");
-        setIfPresent(root, "clientSecret", "salesforce.client.secret");
-        setIfPresent(root, "refreshToken", "salesforce.refresh.token");
-        setIfPresent(root, "username", "salesforce.username");
-        setIfPresent(root, "password", "salesforce.password");
-        setIfPresent(root, "instanceUrl", "salesforce.login.url");
+            setIfPresent(root, "clientId", "salesforce.client.id");
+            setIfPresent(root, "clientSecret", "salesforce.client.secret");
+            setIfPresent(root, "refreshToken", "salesforce.refresh.token");
+            setIfPresent(root, "username", "salesforce.username");
+            setIfPresent(root, "password", "salesforce.password");
+            setIfPresent(root, "instanceUrl", "salesforce.login.url");
+        } catch (RuntimeException e) {
+            LOG.debug("Failed to parse SF CLI credentials file: {}", e.getMessage());
+        }
     }
 
     private void setIfPresent(JsonNode root, String jsonKey, String configKey) {
