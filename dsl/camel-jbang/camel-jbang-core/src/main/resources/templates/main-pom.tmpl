@@ -96,30 +96,19 @@
             </plugin>
             <!-- package as runner jar -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.7.1</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/resources/assembly/runner.xml</descriptor>
-                    </descriptors>
-                    <archive>
-                        <manifest>
-                            <mainClass>{{ .MainClassname }}</mainClass>
-                        </manifest>
-                        <manifestEntries>
-                            <Multi-Release>true</Multi-Release>
-                        </manifestEntries>
-                    </archive>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-repackager-maven-plugin</artifactId>
+                <version>{{ .CamelVersion }}</version>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
+                        <id>repackage-executable</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>repackage</goal>
                         </goals>
+                        <configuration>
+                            <mainClass>{{ .MainClassname }}</mainClass>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
