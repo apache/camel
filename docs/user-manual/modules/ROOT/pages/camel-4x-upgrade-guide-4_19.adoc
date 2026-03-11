@@ -228,6 +228,32 @@ commonly used at in the top. EIPs such as `circuitBreaker` now has `onFallback` 
 
 This order is also the same order that UI builders like Camel Karavan and Kaoto do as well.
 
+=== Jackson 3 components
+
+Four new components have been added which provide Jackson 3 support - they are named similarly to the previously existing camel-jackson components.   Jackson 3 operates under a different package name (tools.jackson.* vs. com.fasterxml.jackson) and there are a number of API changes between Jackson 2 and Jackson 3 - see the  https://github.com/FasterXML/jackson/blob/main/jackson3/MIGRATING_TO_JACKSON_3.md[Jackson Migration Guide] for details.
+
+  .Jackson Components
+  [cols="1,1",options="header"]
+  |===
+  |Jackson 2 component |Jackson 3 component
+
+  |camel-jackson
+  |camel-jackson3
+
+  |camel-jackson-avro
+  |camel-jackson3-avro
+
+  |camel-jackson-protobuf
+  |camel-jackson3-protobuf
+
+  |camel-jacksonxml
+  |camel-jackson3xml
+  |===
+
+The camel-jackson3 component shares a unified DSL with the camel-jackson component under the "jackson" name.   DefaultDataFormatResolver and DefaultTransformerResolver resolve which Jackson library version is available on the classpath and choose the appropriate data format or transformer.   This allows easy migration from the camel-jackson component to the camel-jackson3 component and a consistent interface between the two.
+
+The same detection mechanism and combined interface extends to the other Jackson data formats (avroJackson, protobufJackson, and jacksonXml).
+
 === camel-jbang
 
 Support for exporting to use Gradle as build tool has been removed (it was deprecated and not working well)
