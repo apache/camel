@@ -37,6 +37,7 @@ import quickfix.InvalidMessage;
 import quickfix.Message;
 import quickfix.Session;
 import quickfix.SessionID;
+import quickfix.ValidationSettings;
 import quickfix.field.MsgType;
 
 import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.EVENT_CATEGORY_KEY;
@@ -45,6 +46,7 @@ import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.SESSION_ID_
 
 @Converter(generateLoader = true)
 public final class QuickfixjConverters {
+
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjConverters.class);
 
     private QuickfixjConverters() {
@@ -65,6 +67,7 @@ public final class QuickfixjConverters {
     @Converter
     public static Message toMessage(byte[] value, Exchange exchange)
             throws InvalidMessage, ConfigError, UnsupportedEncodingException {
+        ValidationSettings vs = new ValidationSettings();
         DataDictionary dataDictionary = getDataDictionary(exchange);
         String charsetName = ExchangeHelper.getCharsetName(exchange);
 
@@ -82,7 +85,7 @@ public final class QuickfixjConverters {
             message = message.substring(0, message.length() - 1);
         }
 
-        return new Message(message, dataDictionary, false);
+        return new Message(message, dataDictionary, vs, false);
     }
 
     @Converter

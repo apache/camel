@@ -73,7 +73,7 @@ public class QuickfixjSpringTest extends CamelSpringTestSupport {
     public static class CustomMessageFactory extends DefaultMessageFactory {
         @Override
         public Message create(String beginString, String msgType) {
-            if (beginString.equals(FixVersions.BEGINSTRING_FIX42) && msgType.equals(MsgType.ORDER_SINGLE)) {
+            if (beginString.equals(FixVersions.BEGINSTRING_FIX42) && msgType.equals(MsgType.NEW_ORDER_SINGLE)) {
                 return new CustomNewOrderSingle();
             }
             return super.create(beginString, msgType);

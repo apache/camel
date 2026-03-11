@@ -377,6 +377,9 @@ HttpRequest request = context.getAttribute(AS2ClientManager.HTTP_REQUEST, HttpRe
 HttpRequest request = context.getRequest();
 ----
 
+=== camel-quickfix
+
+Upgraded QuickFixJ from 2.3.2 to 3.0.0 in `camel-quickfix` component.
 
 === MDC older logic (Deprecation)
 

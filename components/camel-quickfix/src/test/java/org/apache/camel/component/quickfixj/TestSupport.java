@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.mockito.Mockito;
 import quickfix.Acceptor;
@@ -72,6 +73,7 @@ public final class TestSupport {
         MessageStoreFactory mockMessageStoreFactory = Mockito.mock(MessageStoreFactory.class);
         MessageStore mockMessageStore = Mockito.mock(MessageStore.class);
         Mockito.when(mockMessageStore.getCreationTime()).thenReturn(new Date());
+        Mockito.when(mockMessageStore.getCreationTimeCalendar()).thenReturn(new GregorianCalendar());
 
         Mockito.when(mockMessageStoreFactory.create(sessionID)).thenReturn(mockMessageStore);
 

@@ -85,7 +85,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
         QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(context));
 
         Message message = new Message();
-        message.getHeader().setString(MsgType.FIELD, MsgType.ORDER_SINGLE);
+        message.getHeader().setString(MsgType.FIELD, MsgType.NEW_ORDER_SINGLE);
 
         Exchange exchange = QuickfixjConverters.toExchange(endpoint, sessionID, message, QuickfixjEventCategory.AppMessageSent);
 
@@ -94,7 +94,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
         assertThat((QuickfixjEventCategory) exchange.getIn().getHeader(QuickfixjEndpoint.EVENT_CATEGORY_KEY),
                 is(QuickfixjEventCategory.AppMessageSent));
 
-        assertThat((String) exchange.getIn().getHeader(QuickfixjEndpoint.MESSAGE_TYPE_KEY), is(MsgType.ORDER_SINGLE));
+        assertThat((String) exchange.getIn().getHeader(QuickfixjEndpoint.MESSAGE_TYPE_KEY), is(MsgType.NEW_ORDER_SINGLE));
     }
 
     @Test
