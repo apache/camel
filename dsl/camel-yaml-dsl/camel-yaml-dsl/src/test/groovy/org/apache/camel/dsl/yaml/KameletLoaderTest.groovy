@@ -333,6 +333,124 @@ class KameletLoaderTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
+    def "kamelet with dataTypes input"() {
+        when:
+            loadKamelets('''
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-sink
+                spec:
+                  definition:
+                    title: "My Sink"
+                    required:
+                      - table
+                    properties:
+                      table:
+                        title: Table
+                        type: string
+                  dataTypes:
+                    in:
+                      default: json
+                      types:
+                        json:
+                          scheme: my-component
+                          format: application-json
+                  template:
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - to: "log:test"
+            ''')
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with (context.routeTemplateDefinitions[0]) {
+                id == 'my-sink'
+
+                with(route) {
+                    inputType.urn == 'my-component:application-json'
+                    outputType == null
+                }
+            }
+    }
+
+    def "kamelet with dataTypes input and output"() {
+        when:
+            loadKamelets('''
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-action
+                spec:
+                  definition:
+                    title: "My Action"
+                  dataTypes:
+                    in:
+                      default: json
+                      types:
+                        json:
+                          scheme: my-component
+                          format: application-json
+                    out:
+                      default: binary
+                      types:
+                        binary:
+                          format: application-octet-stream
+                  template:
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - to: "log:test"
+            ''')
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with (context.routeTemplateDefinitions[0]) {
+                id == 'my-action'
+
+                with(route) {
+                    inputType.urn == 'my-component:application-json'
+                    outputType.urn == 'application-octet-stream'
+                }
+            }
+    }
+
+    def "kamelet with dataTypes format only"() {
+        when:
+            loadKamelets('''
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: my-source
+                spec:
+                  definition:
+                    title: "My Source"
+                  dataTypes:
+                    out:
+                      default: binary
+                      types:
+                        binary:
+                          format: application-octet-stream
+                  template:
+                    from:
+                      uri: "kamelet:source"
+                      steps:
+                        - to: "log:test"
+            ''')
+        then:
+            context.routeTemplateDefinitions.size() == 1
+
+            with (context.routeTemplateDefinitions[0]) {
+                id == 'my-source'
+
+                with(route) {
+                    inputType == null
+                    outputType.urn == 'application-octet-stream'
+                }
+            }
+    }
+
     def "kamelet with bean constructors"() {
         when:
         loadKamelets('''
