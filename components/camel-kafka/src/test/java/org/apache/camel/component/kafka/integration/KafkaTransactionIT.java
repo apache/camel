@@ -119,7 +119,7 @@ public class KafkaTransactionIT extends BaseKafkaTestSupport {
         }
 
         for (int i = 0; i < THREAD_NUM; i++) {
-            threads[i].join();
+            threads[i].join(30000);
         }
 
         createKafkaMessageConsumer(stringsConsumerConn, TOPIC_CONCURRENCY_TRANSACTION, messagesLatch);
