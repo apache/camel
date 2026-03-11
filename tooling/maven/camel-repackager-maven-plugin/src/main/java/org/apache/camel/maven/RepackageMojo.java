@@ -18,6 +18,7 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -48,6 +49,12 @@ public class RepackageMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
+
+    /**
+     * All reactor projects in the current Maven build.
+     */
+    @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
+    private List<MavenProject> reactorProjects;
 
     /**
      * The source JAR file to repackage. If not specified, uses the project's main artifact.
@@ -119,7 +126,7 @@ public class RepackageMojo extends AbstractMojo {
         Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact artifact : artifacts) {
             if (includeArtifact(artifact)) {
-                File file = artifact.getFile();
+                File file = resolveArtifactFile(artifact);
                 if (file != null && file.exists()) {
                     LibraryScope scope = getLibraryScope(artifact);
                     getLog().debug("Including dependency: " + artifact + " with scope: " + scope);
@@ -135,6 +142,37 @@ public class RepackageMojo extends AbstractMojo {
         return Artifact.SCOPE_COMPILE.equals(scope) ||
                 Artifact.SCOPE_RUNTIME.equals(scope) ||
                 (Artifact.SCOPE_PROVIDED.equals(scope) && artifact.getGroupId().startsWith("org.apache.camel"));
+    }
+
+    private File resolveArtifactFile(Artifact artifact) {
+        MavenProject reactorProject = findReactorProject(artifact);
+        if (reactorProject != null) {
+            Artifact reactorArtifact = reactorProject.getArtifact();
+            if (reactorArtifact != null && reactorArtifact.getFile() != null && reactorArtifact.getFile().exists()) {
+                return reactorArtifact.getFile();
+            }
+        }
+        return artifact.getFile();
+    }
+
+    private MavenProject findReactorProject(Artifact artifact) {
+        // reactorProjects (${reactorProjects}) is the complete reactor — a superset of both
+        // project.getProjectReferences() and project.getCollectedProjects(). Only one lookup needed.
+        return findReactorProject(reactorProjects, artifact);
+    }
+
+    private MavenProject findReactorProject(Iterable<MavenProject> projects, Artifact artifact) {
+        if (projects == null) {
+            return null;
+        }
+        for (MavenProject reactorProject : projects) {
+            if (artifact.getGroupId().equals(reactorProject.getGroupId())
+                    && artifact.getArtifactId().equals(reactorProject.getArtifactId())
+                    && artifact.getVersion().equals(reactorProject.getVersion())) {
+                return reactorProject;
+            }
+        }
+        return null;
     }
 
     private LibraryScope getLibraryScope(Artifact artifact) {

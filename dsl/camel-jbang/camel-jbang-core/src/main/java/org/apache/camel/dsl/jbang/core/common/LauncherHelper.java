@@ -65,7 +65,7 @@ public final class LauncherHelper {
         // 1. Check system property first
         String jarPath = System.getProperty(CAMEL_LAUNCHER_JAR_PROPERTY);
         if (jarPath != null && !jarPath.isEmpty()) {
-            return jarPath;
+            return normalizeJarPath(jarPath);
         }
 
         // 2. Try to detect from code source location
@@ -130,6 +130,7 @@ public final class LauncherHelper {
      * agent jar is not found.
      */
     public static File findJolokiaAgentJar() {
+        // Try to find the exact version via embedded pom.properties
         String version = null;
         ClassLoader loader = LauncherHelper.class.getClassLoader();
         if (loader == null) {
@@ -154,6 +155,7 @@ public final class LauncherHelper {
                 return candidate.toFile();
             }
         }
+        // Scan all version directories and return the newest one
         try (Stream<Path> stream = Files.list(m2Base)) {
             return stream.filter(Files::isDirectory)
                     .map(dir -> {

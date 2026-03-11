@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -371,6 +372,9 @@ public final class PluginHelper {
                     break; // Found jar, no need to continue
                 }
             }
+            if (!foundAny) {
+                foundAny = scanLauncherForPlugins(commandLine, main, target, classLoader);
+            }
         } catch (Exception e) {
             // Ignore errors in classpath scanning
         }
@@ -398,9 +402,8 @@ public final class PluginHelper {
                     if (entryName.startsWith(PLUGIN_SERVICE_DIR)
                             && !entryName.endsWith("/")) {
                         String pluginName = entryName.substring(entryName.lastIndexOf("/") + 1);
-                        URL serviceUrl = classLoader.getResource(entryName);
-                        if (serviceUrl != null) {
-                            if (loadPluginFromService(commandLine, main, target, classLoader, serviceUrl, pluginName)) {
+                        try (InputStream is = jarFile.getInputStream(entry)) {
+                            if (loadPluginFromProperties(commandLine, main, target, classLoader, is, pluginName)) {
                                 foundAny = true;
                             }
                         }
@@ -413,12 +416,59 @@ public final class PluginHelper {
         return foundAny;
     }
 
-    private static boolean loadPluginFromService(
+    private static boolean scanLauncherForPlugins(
+            CommandLine commandLine, CamelJBangMain main, String target, ClassLoader classLoader) {
+        String jarPath = LauncherHelper.getLauncherJarPath();
+        if (jarPath == null || jarPath.isBlank()) {
+            return false;
+        }
+        boolean foundAny = false;
+        try (JarFile jarFile = new JarFile(jarPath)) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String entryName = entry.getName();
+                if (!entryName.startsWith("BOOT-INF/lib/") || !entryName.endsWith(".jar")
+                        || !entryName.contains("camel-jbang-plugin-")) {
+                    continue;
+                }
+                Path tempJar = Files.createTempFile("camel-jbang-plugin", ".jar");
+                tempJar.toFile().deleteOnExit();
+                try (InputStream is = jarFile.getInputStream(entry)) {
+                    Files.copy(is, tempJar, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                }
+                try (JarFile nestedJar = new JarFile(tempJar.toFile())) {
+                    // Intentionally not closed — class loader must remain open for the full
+                    // command lifecycle (picocli may load inner classes or annotations lazily).
+                    URLClassLoader pluginLoader = new URLClassLoader(new URL[] { tempJar.toUri().toURL() }, classLoader);
+                    Enumeration<JarEntry> nestedEntries = nestedJar.entries();
+                    while (nestedEntries.hasMoreElements()) {
+                        JarEntry nested = nestedEntries.nextElement();
+                        String nestedName = nested.getName();
+                        if (nestedName.startsWith(PLUGIN_SERVICE_DIR) && !nestedName.endsWith("/")) {
+                            String pluginName = nestedName.substring(nestedName.lastIndexOf("/") + 1);
+                            try (InputStream entryStream = nestedJar.getInputStream(nested)) {
+                                if (loadPluginFromProperties(commandLine, main, target, pluginLoader, entryStream,
+                                        pluginName)) {
+                                    foundAny = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Ignore errors
+        }
+        return foundAny;
+    }
+
+    private static boolean loadPluginFromProperties(
             CommandLine commandLine, CamelJBangMain main, String target,
-            ClassLoader classLoader, URL serviceUrl, String pluginName) {
-        try (InputStream is = serviceUrl.openStream()) {
+            ClassLoader classLoader, InputStream input, String pluginName) {
+        try {
             Properties prop = new Properties();
-            prop.load(is);
+            prop.load(input);
             String pluginClassName = prop.getProperty("class");
             if (pluginClassName != null) {
                 Class<?> pluginClass = classLoader.loadClass(pluginClassName);

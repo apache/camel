@@ -16,13 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.io.File;
 import java.util.List;
+import java.util.Properties;
 
+import com.sun.tools.attach.VirtualMachine;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.jolokia.jvmagent.client.command.CommandDispatcher;
-import org.jolokia.jvmagent.client.util.OptionsAndArgs;
-import org.jolokia.jvmagent.client.util.PlatformUtils;
-import org.jolokia.jvmagent.client.util.VirtualMachineHandlerOperations;
+import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -59,37 +59,12 @@ public class Jolokia extends ProcessBaseCommand {
         }
 
         this.pid = pids.get(0);
-        int exitCode;
-        try {
-            OptionsAndArgs options;
-            if (stop) {
-                options = new OptionsAndArgs(null, "stop", Long.toString(pid));
-            } else {
-                long p = port;
-                if (p <= 0) {
-                    // find a new free port to use when starting a new connection
-                    p = AvailablePortFinder.getNextAvailable(8778, 10000);
-                }
-                options = new OptionsAndArgs(
-                        null, "--port", Long.toString(p), "--discoveryEnabled", "true", "start", Long.toString(pid));
-            }
-            VirtualMachineHandlerOperations vmHandler = PlatformUtils.createVMAccess(options);
-            CommandDispatcher dispatcher = new CommandDispatcher(options);
-
-            Object vm = options.needsVm() ? vmHandler.attachVirtualMachine() : null;
-            try {
-                exitCode = dispatcher.dispatchCommand(vm, vmHandler);
-            } finally {
-                if (vm != null) {
-                    vmHandler.detachAgent(vm);
-                }
-            }
-        } catch (Exception e) {
-            printer().printErr("Cannot execute jolokia command due: " + e.getMessage());
-            exitCode = 1;
+        long effectivePort = port;
+        if (!stop && effectivePort <= 0) {
+            // find a new free port to use when starting a new connection
+            effectivePort = AvailablePortFinder.getNextAvailable(8778, 10000);
         }
-
-        return exitCode;
+        return attachDirect(pid, effectivePort, stop);
     }
 
     /**
@@ -98,4 +73,50 @@ public class Jolokia extends ProcessBaseCommand {
     long getPid() {
         return pid;
     }
+
+    private int attachDirect(long pid, long port, boolean stop) {
+        VirtualMachine vm = null;
+        try {
+            File agentJar = resolveAgentJar();
+            vm = VirtualMachine.attach(Long.toString(pid));
+            Properties props = vm.getSystemProperties();
+            String agentUrl = props.getProperty("jolokia.agent");
+            if (stop) {
+                if (agentUrl == null) {
+                    printer().printErr("Jolokia agent not running for PID: " + pid);
+                    return 1;
+                }
+                vm.loadAgent(agentJar.getAbsolutePath(), "mode=stop");
+                return 0;
+            }
+            if (agentUrl != null) {
+                // Already attached — treat as success (idempotent)
+                return 0;
+            }
+            String args = "port=" + port + ",discoveryEnabled=true";
+            vm.loadAgent(agentJar.getAbsolutePath(), args);
+            return 0;
+        } catch (Exception e) {
+            printer().printErr("Cannot execute jolokia command due: " + e.getMessage());
+            return 1;
+        } finally {
+            if (vm != null) {
+                try {
+                    vm.detach();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    private File resolveAgentJar() throws Exception {
+        File m2Jar = LauncherHelper.findJolokiaAgentJar();
+        if (m2Jar != null) {
+            return m2Jar;
+        }
+        throw new IllegalStateException(
+                "Jolokia agent jar not found in ~/.m2 repository. Ensure jolokia-agent-jvm is installed.");
+    }
+
 }
