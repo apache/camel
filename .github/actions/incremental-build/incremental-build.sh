@@ -168,9 +168,36 @@ function main() {
     fi
   fi
 
+  # Write the list of tested modules to the step summary
+  if [[ -n "$pl" && ${buildAll} != "true" ]] ; then
+    echo "### Changed modules" >> "$GITHUB_STEP_SUMMARY"
+    echo "" >> "$GITHUB_STEP_SUMMARY"
+    for w in $(echo "$pl" | tr ',' '\n'); do
+      echo "- \`$w\`" >> "$GITHUB_STEP_SUMMARY"
+    done
+    echo "" >> "$GITHUB_STEP_SUMMARY"
+    # Extract full reactor module list from the build log
+    if [[ -f "$log" ]] ; then
+      local reactor_modules
+      reactor_modules=$(grep '^\[INFO\] Camel ::' "$log" | sed 's/\[INFO\] //' | sed 's/ \..*$//' | sort -u)
+      if [[ -n "$reactor_modules" ]] ; then
+        local count
+        count=$(echo "$reactor_modules" | wc -l | tr -d ' ')
+        echo "<details><summary><b>All tested modules ($count)</b></summary>" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo "$reactor_modules" | while read -r m; do
+          echo "- $m" >> "$GITHUB_STEP_SUMMARY"
+        done
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo "</details>" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+      fi
+    fi
+  fi
+
   if [[ ${ret} -ne 0 ]] ; then
     echo "Processing surefire and failsafe reports to create the summary"
-    echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |"  > "$GITHUB_STEP_SUMMARY"
+    echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |"  >> "$GITHUB_STEP_SUMMARY"
     find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
   fi
 
