@@ -431,6 +431,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    @Deprecated(since = "4.19.0")
     public boolean isUseMDCLogging() {
         return context.isUseMDCLogging();
     }

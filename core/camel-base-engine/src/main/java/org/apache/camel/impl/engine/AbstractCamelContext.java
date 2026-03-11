@@ -283,7 +283,9 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean sourceLocationEnabled = Boolean.FALSE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private String dumpRoutes;
+    @Deprecated(since = "4.19.0")
     private Boolean useMDCLogging = Boolean.FALSE;
+    @Deprecated(since = "4.19.0")
     private String mdcLoggingKeysPattern;
     private Boolean useDataType = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.FALSE;
@@ -2984,6 +2986,7 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.info("Tracing is enabled on CamelContext: {}", camelContextExtension.getName());
         }
         if (isUseMDCLogging()) {
+            LOG.info("Tracing is enabled on CamelContext: {}", camelContextExtension.getName());
             // log if MDC has been enabled
             String pattern = getMDCLoggingKeysPattern();
             if (pattern != null) {
@@ -2992,6 +2995,8 @@ public abstract class AbstractCamelContext extends BaseService
             } else {
                 LOG.info("MDC logging is enabled on CamelContext: {}", camelContextExtension.getName());
             }
+            LOG.warn("The MDC core logging is deprecated and may be removed in future versions. " +
+                     "Please, use camel-mdc component instead.");
         }
         if (getDelayer() != null && getDelayer() > 0) {
             LOG.info("Delayer is enabled with: {} ms. on CamelContext: {}", getDelayer(), camelContextExtension.getName());
@@ -3978,21 +3983,25 @@ public abstract class AbstractCamelContext extends BaseService
         this.dumpRoutes = dumpRoutes;
     }
 
+    @Deprecated(since = "4.19.0")
     @Override
     public Boolean isUseMDCLogging() {
         return useMDCLogging != null && useMDCLogging;
     }
 
+    @Deprecated(since = "4.19.0")
     @Override
     public void setUseMDCLogging(Boolean useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
     }
 
+    @Deprecated(since = "4.19.0")
     @Override
     public String getMDCLoggingKeysPattern() {
         return mdcLoggingKeysPattern;
     }
 
+    @Deprecated(since = "4.19.0")
     @Override
     public void setMDCLoggingKeysPattern(String pattern) {
         this.mdcLoggingKeysPattern = pattern;
@@ -4594,6 +4603,7 @@ public abstract class AbstractCamelContext extends BaseService
         return status;
     }
 
+    @Deprecated(since = "4.19.0")
     class LifecycleHelper implements AutoCloseable {
         final Map<String, String> originalContextMap;
         final ClassLoader tccl;

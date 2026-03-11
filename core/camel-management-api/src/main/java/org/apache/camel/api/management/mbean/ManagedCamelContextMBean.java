@@ -163,6 +163,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     boolean isLogMask();
 
     @ManagedAttribute(description = "Whether MDC logging is supported")
+    @Deprecated(since = "4.19.0")
     boolean isUseMDCLogging();
 
     @ManagedAttribute(description = "Whether Message DataType is enabled")

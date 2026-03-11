@@ -46,6 +46,7 @@ public class MllpTcpServerConsumerBindTimeoutTest extends CamelTestSupport {
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

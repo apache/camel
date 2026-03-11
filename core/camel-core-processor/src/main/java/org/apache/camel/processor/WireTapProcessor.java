@@ -179,6 +179,7 @@ public class WireTapProcessor extends BaseProcessorSupport
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
@@ -199,6 +200,7 @@ public class WireTapProcessor extends BaseProcessorSupport
         try {
             // create task which has state used during routing
             Runnable task = taskFactory.acquire(target, null);
+            // Deprecated since 4.19.0
             task = ProcessorHelper.prepareMDCParallelTask(camelContext, task);
             executorService.submit(task);
         } catch (Exception e) {

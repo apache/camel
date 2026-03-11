@@ -35,6 +35,7 @@ import org.slf4j.MDC;
 /**
  * This unit of work supports <a href="http://www.slf4j.org/api/org/slf4j/MDC.html">MDC</a>.
  */
+@Deprecated(since = "4.19.0")
 public class MDCUnitOfWork extends DefaultUnitOfWork implements Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCUnitOfWork.class);

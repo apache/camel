@@ -88,6 +88,7 @@ public class AbstractCamelContextFactoryBeanTest {
             }, false, false);
 
     // properties that should return value that can be converted to boolean
+    // MDC values deprecated in 4.19.0
     final Set<String> valuesThatReturnBoolean = new HashSet<>(
             asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
                     "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}",

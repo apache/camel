@@ -107,6 +107,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
     abstract boolean validatePayload();
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

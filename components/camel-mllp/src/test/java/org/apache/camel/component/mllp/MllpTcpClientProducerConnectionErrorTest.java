@@ -62,6 +62,7 @@ public class MllpTcpClientProducerConnectionErrorTest extends CamelTestSupport {
     @EndpointInject("mock://acknowledgement-ex")
     MockEndpoint acknowledgementEx;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

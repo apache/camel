@@ -117,6 +117,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
+    // MDC deprecated since 4.19.0, use camel-mdc instead
     public void run() {
         running = true;
         String originalThreadName = Thread.currentThread().getName();

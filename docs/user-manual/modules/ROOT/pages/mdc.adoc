@@ -10,7 +10,7 @@ NOTE: The framework should generally handle MDC correctly. However, there could 
 
 == Enabling MDC
 
-NOTE: Using the new xref:components:others:mdc.adoc[camel-mdc] will automatic enabled MDC logging in Camel.
+NOTE: This feature is deprecated. Use the new xref:components:others:mdc.adoc[camel-mdc] service component instead.
 
 The first thing you need to do is to enable MDC logging in Camel.
 

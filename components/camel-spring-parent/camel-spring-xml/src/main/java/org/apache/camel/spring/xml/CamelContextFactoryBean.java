@@ -153,6 +153,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String useMDCLogging;
     @XmlAttribute
     @Metadata(displayName = "MDC Logging Keys Pattern")
+    @Deprecated(since = "4.19.0")
     private String mdcLoggingKeysPattern;
     @XmlAttribute
     private String useDataType;
@@ -1015,6 +1016,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     }
 
     @Override
+    @Deprecated(since = "4.19.0")
     public String getUseMDCLogging() {
         return useMDCLogging;
     }
@@ -1022,10 +1024,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     /**
      * Set whether <a href="http://www.slf4j.org/api/org/slf4j/MDC.html">MDC</a> is enabled.
      */
+    @Deprecated(since = "4.19.0")
     public void setUseMDCLogging(String useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
     }
 
+    @Deprecated(since = "4.19.0")
     public String getMDCLoggingKeysPattern() {
         return mdcLoggingKeysPattern;
     }
@@ -1041,6 +1045,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * 1. exact match, returns true 2. wildcard match (pattern ends with a * and the name starts with the pattern),
      * returns true 3. regular expression match, returns true 4. otherwise returns false
      */
+    @Deprecated(since = "4.19.0")
     public void setMDCLoggingKeysPattern(String mdcLoggingKeysPattern) {
         this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
     }

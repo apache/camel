@@ -1518,6 +1518,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return <tt>true</tt> if MDC logging is enabled
      */
+    @Deprecated(since = "4.19.0")
     Boolean isUseMDCLogging();
 
     /**
@@ -1525,6 +1526,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @param useMDCLogging <tt>true</tt> to enable MDC logging, <tt>false</tt> to disable
      */
+    @Deprecated(since = "4.19.0")
     void setUseMDCLogging(Boolean useMDCLogging);
 
     /**
@@ -1542,6 +1544,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * <li>otherwise returns false</li>
      * </ul>
      */
+    @Deprecated(since = "4.19.0")
     String getMDCLoggingKeysPattern();
 
     /**
@@ -1561,6 +1564,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @param pattern the pattern
      */
+    @Deprecated(since = "4.19.0")
     void setMDCLoggingKeysPattern(String pattern);
 
     /**

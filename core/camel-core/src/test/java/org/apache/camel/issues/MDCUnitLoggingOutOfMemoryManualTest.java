@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @Disabled("CAMEL-16034: Manual test")
+@Deprecated(since = "4.19.0")
 public class MDCUnitLoggingOutOfMemoryManualTest extends ContextTestSupport {
 
     @Override

@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Easier transaction configuration as we do not have to setup a transaction error handler
  */
+@Deprecated(since = "4.19.0")
 public class TransactionalClientDataSourceMDCTest extends TransactionalClientDataSourceTest {
 
     @Override
     // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
-    @SuppressWarnings("deprecation")
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

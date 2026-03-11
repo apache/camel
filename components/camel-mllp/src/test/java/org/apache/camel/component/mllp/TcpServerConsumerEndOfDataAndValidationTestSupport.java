@@ -69,6 +69,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     int expectedFailedCount;
     int expectedInvalidCount;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

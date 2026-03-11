@@ -71,6 +71,7 @@ public class MllpTcpServerConsumerThreadPoolTest extends CamelTestSupport {
         mllpPort = AvailablePortFinder.getNextAvailable();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

@@ -72,6 +72,8 @@ public class TcpServerAcceptThread extends Thread {
      * is a load-balancer probe. The test is done before the ConsumerClientSocketThread is created to avoid creating a
      * large number of short lived threads, which is what can occur if the load balancer polling interval is very short.
      */
+    @SuppressWarnings("deprecation")
+    // MDC deprecated since 4.19.0, use camel-mdc instead
     @Override
     public void run() {
         running = true;

@@ -30,13 +30,21 @@ import org.apache.camel.Route;
  */
 public interface UnitOfWork {
 
+    @Deprecated(since = "4.19.0")
     String MDC_BREADCRUMB_ID = "camel.breadcrumbId";
+    @Deprecated(since = "4.19.0")
     String MDC_EXCHANGE_ID = "camel.exchangeId";
+    @Deprecated(since = "4.19.0")
     String MDC_MESSAGE_ID = "camel.messageId";
+    @Deprecated(since = "4.19.0")
     String MDC_CORRELATION_ID = "camel.correlationId";
+    @Deprecated(since = "4.19.0")
     String MDC_ROUTE_ID = "camel.routeId";
+    @Deprecated(since = "4.19.0")
     String MDC_STEP_ID = "camel.stepId";
+    @Deprecated(since = "4.19.0")
     String MDC_CAMEL_CONTEXT_ID = "camel.contextId";
+    @Deprecated(since = "4.19.0")
     String MDC_TRANSACTION_KEY = "camel.transactionKey";
 
     /**

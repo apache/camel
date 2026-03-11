@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@Deprecated(since = "4.19.0")
 public class BreadcrumbDisabledTest extends MDCTest {
 
     @Override

@@ -351,6 +351,11 @@ HttpRequest request = context.getAttribute(AS2ClientManager.HTTP_REQUEST, HttpRe
 HttpRequest request = context.getRequest();
 ----
 
+
+=== MDC older logic (Deprecation)
+
+The older logic used for MDC (enabled via `camel.main.useMdcLogging = true`) is deprecated in favor of `camel-mdc` component.
+
 == Removed deprecated components
 
 The following deprecated components has been removed:

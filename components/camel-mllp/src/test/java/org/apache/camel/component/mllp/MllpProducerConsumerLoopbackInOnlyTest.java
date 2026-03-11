@@ -40,6 +40,7 @@ public class MllpProducerConsumerLoopbackInOnlyTest extends CamelTestSupport {
     @EndpointInject("mock://received-and-processed")
     MockEndpoint receivedAndProcessed;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

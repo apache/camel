@@ -55,6 +55,7 @@ public class MllpTcpServerCharsetTest extends CamelTestSupport {
     @EndpointInject(TARGET_URI)
     MockEndpoint target;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         mllpClient.setMllpHost("localhost");

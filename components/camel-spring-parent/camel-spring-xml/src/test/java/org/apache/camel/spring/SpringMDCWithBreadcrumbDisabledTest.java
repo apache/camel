@@ -25,6 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@Deprecated(since = "4.19.0")
 public class SpringMDCWithBreadcrumbDisabledTest extends SpringMDCTest {
 
     @Override

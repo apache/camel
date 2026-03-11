@@ -127,6 +127,7 @@ public final class DefaultConfigurationConfigurer {
      * @param camelContext the camel context
      * @param config       the configuration
      */
+    @SuppressWarnings("deprecation")
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties<?> config) throws Exception {
         ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
 
@@ -282,7 +283,9 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
         camelContext.setDumpRoutes(config.getDumpRoutes());
+        // Deprecated since 4.19.0
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
+        // Deprecated since 4.19.0
         camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
         camelContext.setTypeConverterStatisticsEnabled(config.isTypeConverterStatisticsEnabled());

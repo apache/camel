@@ -56,6 +56,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
                 "Skipping test running in CI server - Fails sometimes on CI server with address already in use");
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

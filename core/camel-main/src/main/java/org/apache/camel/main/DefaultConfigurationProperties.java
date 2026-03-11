@@ -117,7 +117,9 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean jmxManagementRegisterRoutesCreateByKamelet;
     private boolean jmxManagementRegisterRoutesCreateByTemplate = true;
     private boolean camelEventsTimestampEnabled;
+    @Deprecated(since = "4.19.0")
     private boolean useMdcLogging;
+    @Deprecated(since = "4.19.0")
     private String mdcLoggingKeysPattern;
     private String threadNamePattern;
     private String routeFilterIncludePattern;
@@ -1155,17 +1157,20 @@ public abstract class DefaultConfigurationProperties<T> {
         this.camelEventsTimestampEnabled = camelEventsTimestampEnabled;
     }
 
+    @Deprecated(since = "4.19.0")
     public boolean isUseMdcLogging() {
         return useMdcLogging;
     }
 
     /**
-     * To turn on MDC logging
+     * To turn on MDC logging (deprecated, use camel-mdc component instead)
      */
+    @Deprecated(since = "4.19.0")
     public void setUseMdcLogging(boolean useMdcLogging) {
         this.useMdcLogging = useMdcLogging;
     }
 
+    @Deprecated(since = "4.19.0")
     public String getMdcLoggingKeysPattern() {
         return mdcLoggingKeysPattern;
     }
@@ -1180,7 +1185,10 @@ public abstract class DefaultConfigurationProperties<T> {
      *
      * 1. exact match, returns true 2. wildcard match (pattern ends with a * and the name starts with the pattern),
      * returns true 3. regular expression match, returns true 4. otherwise returns false
+     *
+     * Deprecated, use camel-mdc component instead
      */
+    @Deprecated(since = "4.19.0")
     public void setMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
         this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
     }
@@ -2487,6 +2495,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * To turn on MDC logging
      */
+    @Deprecated(since = "4.19.0")
     public T withUseMdcLogging(boolean useMdcLogging) {
         this.useMdcLogging = useMdcLogging;
         return (T) this;
@@ -2595,6 +2604,7 @@ public abstract class DefaultConfigurationProperties<T> {
      * 1. exact match, returns true 2. wildcard match (pattern ends with a * and the name starts with the pattern),
      * returns true 3. regular expression match, returns true 4. otherwise returns false
      */
+    @Deprecated(since = "4.19.0")
     public T withMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
         this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
         return (T) this;

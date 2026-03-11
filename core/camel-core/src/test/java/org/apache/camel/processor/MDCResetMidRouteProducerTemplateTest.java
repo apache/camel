@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * routing.
  */
 @Disabled
+@Deprecated(since = "4.19.0")
 public class MDCResetMidRouteProducerTemplateTest extends ContextTestSupport {
 
     @Test

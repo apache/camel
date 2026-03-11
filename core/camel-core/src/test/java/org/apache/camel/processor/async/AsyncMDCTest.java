@@ -28,6 +28,7 @@ import static org.apache.camel.spi.UnitOfWork.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Deprecated(since = "4.19.0")
 public class AsyncMDCTest extends ContextTestSupport {
 
     @Test

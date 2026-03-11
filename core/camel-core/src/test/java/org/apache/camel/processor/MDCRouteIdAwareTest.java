@@ -26,6 +26,7 @@ import org.apache.camel.spi.UnitOfWork;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
+@Deprecated(since = "4.19.0")
 public class MDCRouteIdAwareTest extends ContextTestSupport {
 
     @Test

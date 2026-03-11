@@ -61,6 +61,8 @@ public class TcpServerBindThread extends Thread {
      * Bind the TCP ServerSocket within the specified timeout.
      */
     @Override
+    @SuppressWarnings("deprecation")
+    // MDC deprecated since 4.19.0, use camel-mdc instead
     public void run() {
         MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
 

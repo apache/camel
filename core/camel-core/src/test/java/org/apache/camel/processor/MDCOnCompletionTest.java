@@ -28,6 +28,7 @@ import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Deprecated(since = "4.19.0")
 public class MDCOnCompletionTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCOnCompletionTest.class);

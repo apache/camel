@@ -68,6 +68,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
         ackGenerationEx.expectedMessageCount(0);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

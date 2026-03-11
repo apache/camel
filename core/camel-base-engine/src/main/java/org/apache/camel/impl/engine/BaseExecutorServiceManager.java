@@ -468,6 +468,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
                 ThreadFactoryListener.class).ifPresent(this::addThreadFactoryListener);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -481,6 +482,7 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         }
 
         // enrich threads for MDC logging
+        // Deprecated since 4.19.0
         boolean usedMDCLogging = getCamelContext().isUseMDCLogging() != null && getCamelContext().isUseMDCLogging();
         if (usedMDCLogging) {
             threadFactoryListeners.add(new MDCThreadFactoryListener());

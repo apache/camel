@@ -34,6 +34,7 @@ import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Deprecated(since = "4.19.0")
 public class MDCAsyncTest extends ContextTestSupport {
 
     @Test

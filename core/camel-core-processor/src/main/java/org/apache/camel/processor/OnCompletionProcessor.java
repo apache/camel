@@ -215,6 +215,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
      * @param  exchange the current exchange
      * @return          the exchange to be routed in onComplete
      */
+    @SuppressWarnings("deprecation")
     protected Exchange prepareExchange(Exchange exchange) {
         Exchange answer;
 
@@ -288,6 +289,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
             };
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void onComplete(final Exchange exchange) {
             if (shouldSkip(exchange, onFailureOnly)) {
@@ -302,6 +304,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                     LOG.debug("Processing onComplete: {}", copy);
                     doProcess(processor, copy);
                 };
+                // Deprecated since 4.19.0
                 task = prepareMDCParallelTask(camelContext, task);
                 executorService.submit(task);
             } else {
@@ -311,6 +314,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
             }
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void onFailure(final Exchange exchange) {
             if (shouldSkip(exchange, onCompleteOnly)) {
@@ -333,6 +337,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                     // restore exception after processing
                     copy.setException(original);
                 };
+                // Deprecated since 4.19.0
                 task = prepareMDCParallelTask(camelContext, task);
                 executorService.submit(task);
             } else {
@@ -427,6 +432,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                     // NO-OP
                 }
 
+                @SuppressWarnings("deprecation")
                 @Override
                 public void onAfterRoute(Route route, Exchange exchange) {
                     LOG.debug("onAfterRoute from Route {}", route.getRouteId());
@@ -461,6 +467,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
                             LOG.debug("Processing onAfterRoute: {}", copy);
                             doProcess(processor, copy);
                         };
+                        // Deprecated since 4.19.0
                         task = prepareMDCParallelTask(camelContext, task);
                         executorService.submit(task);
                     } else {

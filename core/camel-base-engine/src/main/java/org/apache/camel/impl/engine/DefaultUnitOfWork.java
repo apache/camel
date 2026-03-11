@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
 public class DefaultUnitOfWork implements UnitOfWork {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUnitOfWork.class);
 
-    // instances used by MDCUnitOfWork
     final InflightRepository inflightRepository;
     final StreamCachingStrategy streamCachingStrategy;
     final boolean allowUseOriginalMessage;

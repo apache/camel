@@ -55,6 +55,7 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
     @EndpointInject("mock://on-failure-only")
     MockEndpoint failure;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

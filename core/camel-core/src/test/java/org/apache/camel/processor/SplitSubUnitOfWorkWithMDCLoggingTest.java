@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 /**
  * Test to ensure MDC logging works with sub unit of work.
  */
+@Deprecated(since = "4.19.0")
 public class SplitSubUnitOfWorkWithMDCLoggingTest extends SplitSubUnitOfWorkTest {
 
     @Override

@@ -75,6 +75,7 @@ final class ProcessorHelper {
         return null;
     }
 
+    @Deprecated(since = "4.19.0")
     static Runnable prepareMDCParallelTask(CamelContext camelContext, Runnable runnable) {
         Runnable answer = runnable;
 

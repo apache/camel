@@ -28,15 +28,19 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
     private InflightRepository inflightRepository;
+    @Deprecated(since = "4.19.0")
     private boolean usedMDCLogging;
+    @Deprecated(since = "4.19.0")
     private String mdcLoggingKeysPattern;
     private boolean allowUseOriginalMessage;
     private boolean useBreadcrumb;
 
+    @SuppressWarnings("deprecation")
     @Override
     public UnitOfWork createUnitOfWork(Exchange exchange) {
         UnitOfWork answer;
         if (usedMDCLogging) {
+            // Deprecated since 4.19.0
             answer = new MDCUnitOfWork(
                     exchange, inflightRepository, mdcLoggingKeysPattern, allowUseOriginalMessage, useBreadcrumb);
         } else {

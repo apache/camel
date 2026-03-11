@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Deprecated(since = "4.19.0")
 public class MDCCustomKeysTest extends ContextTestSupport {
 
     private final MdcCheckerProcessor checker1 = new MdcCheckerProcessor("N/A");

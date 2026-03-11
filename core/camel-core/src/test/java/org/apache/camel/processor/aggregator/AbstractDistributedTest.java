@@ -30,6 +30,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
     protected CamelContext context2;
     protected ProducerTemplate template2;
 
+    @SuppressWarnings("deprecation")
     @Override
     @BeforeEach
     public void setUp() throws Exception {

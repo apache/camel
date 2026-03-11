@@ -56,6 +56,7 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

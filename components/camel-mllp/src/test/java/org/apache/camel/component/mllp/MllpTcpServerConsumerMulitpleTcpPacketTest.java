@@ -42,6 +42,7 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
     @EndpointInject("mock://result")
     MockEndpoint result;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

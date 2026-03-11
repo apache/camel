@@ -115,6 +115,8 @@ public class TcpServerConsumerValidationRunnable implements Runnable {
      * Do the initial read on the Socket and try to determine if it has HL7 data, junk, or nothing.
      */
     @Override
+    @SuppressWarnings("deprecation")
+    // MDC deprecated since 4.19.0, use camel-mdc instead
     public void run() {
         String originalThreadName = Thread.currentThread().getName();
         Thread.currentThread().setName(createThreadName());

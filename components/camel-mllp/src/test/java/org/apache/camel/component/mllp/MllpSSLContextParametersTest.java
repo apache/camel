@@ -57,6 +57,7 @@ public class MllpSSLContextParametersTest extends CamelTestSupport {
         return sslContextParameters;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         mllpClient.setMllpHost("localhost");

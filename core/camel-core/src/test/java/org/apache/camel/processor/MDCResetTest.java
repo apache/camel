@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Tests that MDC works as a stack remembering old values when routing between routes.
  */
+@Deprecated(since = "4.19.0")
 public class MDCResetTest extends ContextTestSupport {
 
     @Test

@@ -64,6 +64,7 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
     @EndpointInject("mock://receive-ex")
     MockEndpoint receiveEx;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();

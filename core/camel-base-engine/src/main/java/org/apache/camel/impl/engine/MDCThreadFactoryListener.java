@@ -30,6 +30,7 @@ import org.slf4j.MDC;
  * information earlier such as from the internal work that a consumer performs before routing
  * {@link org.apache.camel.Exchange} where the {@link MDCUnitOfWork} would include this information.
  */
+@Deprecated(since = "4.19.0")
 public class MDCThreadFactoryListener implements ExecutorServiceManager.ThreadFactoryListener {
 
     @Override

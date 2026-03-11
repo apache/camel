@@ -383,6 +383,7 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     protected void schedule(final Runnable runnable, boolean transacted) {
         if (isParallelProcessing()) {
+            @SuppressWarnings("deprecation")
             Runnable task = prepareMDCParallelTask(camelContext, runnable);
             try {
                 executorService.submit(() -> reactiveExecutor.scheduleSync(task));
@@ -411,9 +412,11 @@ public class MulticastProcessor extends BaseProcessorSupport
         final AtomicInteger nbAggregated = new AtomicInteger();
         final AtomicBoolean allSent = new AtomicBoolean();
         final AtomicBoolean done = new AtomicBoolean();
+        @Deprecated(since = "4.19.0")
         final Map<String, String> mdc;
         final ScheduledFuture<?> timeoutTask;
 
+        @SuppressWarnings("deprecation")
         MulticastTask(Exchange original, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback, int capacity,
                       boolean transacted) {
             this.original = original;
@@ -428,6 +431,7 @@ public class MulticastProcessor extends BaseProcessorSupport
             // if MDC is enabled we must make a copy in this constructor when the task
             // is created by the caller thread, and then propagate back when run is called
             // which can happen from another thread
+            // Deprecated since 4.19.0
             if (isParallelProcessing() && original.getContext().isUseMDCLogging()) {
                 this.mdc = MDC.getCopyOfContextMap();
             } else {

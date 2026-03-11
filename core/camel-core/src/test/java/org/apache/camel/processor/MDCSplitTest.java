@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Deprecated(since = "4.19.0")
 public class MDCSplitTest extends ContextTestSupport {
 
     @Test

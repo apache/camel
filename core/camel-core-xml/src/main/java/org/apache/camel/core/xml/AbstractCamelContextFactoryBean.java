@@ -1187,8 +1187,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getAutoStartup();
 
+    @Deprecated(since = "4.19.0")
     public abstract String getUseMDCLogging();
 
+    @Deprecated(since = "4.19.0")
     public abstract String getMDCLoggingKeysPattern();
 
     public abstract String getDumpRoutes();
@@ -1280,6 +1282,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
      * @param  context   the context
      * @throws Exception is thrown if error occurred
      */
+    @SuppressWarnings("deprecation")
     protected void initCamelContext(T context) throws Exception {
         if (getStartupSummaryLevel() != null) {
             context.setStartupSummaryLevel(getStartupSummaryLevel());
@@ -1335,9 +1338,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getAutoStartup() != null) {
             context.setAutoStartup(CamelContextHelper.parseBoolean(context, getAutoStartup()));
         }
+        // Deprecated in 4.19.0
         if (getUseMDCLogging() != null) {
             context.setUseMDCLogging(CamelContextHelper.parseBoolean(context, getUseMDCLogging()));
         }
+        // Deprecated in 4.19.0
         if (getMDCLoggingKeysPattern() != null) {
             context.setMDCLoggingKeysPattern(CamelContextHelper.parseText(context, getMDCLoggingKeysPattern()));
         }

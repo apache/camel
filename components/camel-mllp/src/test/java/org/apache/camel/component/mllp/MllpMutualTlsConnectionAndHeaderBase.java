@@ -173,6 +173,7 @@ public class MllpMutualTlsConnectionAndHeaderBase extends CamelTestSupport {
      * @return           camelContext.
      * @throws Exception if anything goes wrong and then should fail the test.
      */
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         mllpClient.setMllpHost("localhost");

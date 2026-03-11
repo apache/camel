@@ -490,6 +490,7 @@ public class RouteService extends ChildServiceSupport {
         }
     }
 
+    @Deprecated(since = "4.19.0")
     class MDCHelper implements AutoCloseable {
         final Map<String, String> originalContextMap;
 
