@@ -130,6 +130,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("list", new CommandLine(new DependencyList(this)))
                         .addSubcommand("runtime", new CommandLine(new DependencyRuntime(this)))
                         .addSubcommand("update", new CommandLine(new DependencyUpdate(this))))
+                .addSubcommand("diagram", new CommandLine(new Diagram(this)))
                 .addSubcommand("dirty", new CommandLine(new Dirty(this)))
                 .addSubcommand("eval", new CommandLine(new EvalCommand(this))
                         .addSubcommand("expression", new CommandLine(new EvalExpressionCommand(this))))
