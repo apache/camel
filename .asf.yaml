@@ -26,7 +26,9 @@ github:
     - java
   dependabot_alerts:  true
   dependabot_updates: true
-  
+  autolink_jira:
+    - CAMEL
+
   protected_branches:
     # protect main against force push
     main: {}
