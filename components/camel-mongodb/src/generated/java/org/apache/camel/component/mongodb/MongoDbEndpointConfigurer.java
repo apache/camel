@@ -102,6 +102,8 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "srvMaxHosts": target.setSrvMaxHosts(property(camelContext, java.lang.Integer.class, value)); return true;
         case "srvservicename":
         case "srvServiceName": target.setSrvServiceName(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "streamfilter":
         case "streamFilter": target.setStreamFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "tailtrackcollection":
@@ -210,6 +212,8 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "srvMaxHosts": return java.lang.Integer.class;
         case "srvservicename":
         case "srvServiceName": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "streamfilter":
         case "streamFilter": return java.lang.String.class;
         case "tailtrackcollection":
@@ -319,6 +323,8 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "srvMaxHosts": return target.getSrvMaxHosts();
         case "srvservicename":
         case "srvServiceName": return target.getSrvServiceName();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getSslContextParameters();
         case "streamfilter":
         case "streamFilter": return target.getStreamFilter();
         case "tailtrackcollection":

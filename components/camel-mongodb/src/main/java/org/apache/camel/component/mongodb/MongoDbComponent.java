@@ -24,12 +24,13 @@ import java.util.Set;
 import com.mongodb.client.MongoClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("mongodb")
-public class MongoDbComponent extends DefaultComponent {
+public class MongoDbComponent extends DefaultComponent implements SSLContextParametersAware {
 
     public static final Set<MongoDbOperation> WRITE_OPERATIONS = EnumSet.copyOf(
             Arrays.asList(
@@ -40,6 +41,9 @@ public class MongoDbComponent extends DefaultComponent {
 
     @Metadata(autowired = true)
     private MongoClient mongoConnection;
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Enable usage of global SSL context parameters.")
+    private boolean useGlobalSslContextParameters;
 
     public MongoDbComponent() {
         this(null);
@@ -54,6 +58,9 @@ public class MongoDbComponent extends DefaultComponent {
         MongoDbEndpoint endpoint = new MongoDbEndpoint(uri, this);
         endpoint.setConnectionBean(remaining);
         setProperties(endpoint, parameters);
+        if (endpoint.getSslContextParameters() == null) {
+            endpoint.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
         return endpoint;
     }
 
@@ -69,6 +76,19 @@ public class MongoDbComponent extends DefaultComponent {
      */
     public void setMongoConnection(MongoClient mongoConnection) {
         this.mongoConnection = mongoConnection;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public static CamelMongoDbException wrapInCamelMongoDbException(Throwable t) {

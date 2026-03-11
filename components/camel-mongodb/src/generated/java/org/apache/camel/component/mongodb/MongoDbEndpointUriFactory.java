@@ -23,7 +23,7 @@ public class MongoDbEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(56);
+        Set<String> props = new HashSet<>(57);
         props.add("appName");
         props.add("authSource");
         props.add("bridgeErrorHandler");
@@ -68,6 +68,7 @@ public class MongoDbEndpointUriFactory extends org.apache.camel.support.componen
         props.add("socketTimeoutMS");
         props.add("srvMaxHosts");
         props.add("srvServiceName");
+        props.add("sslContextParameters");
         props.add("streamFilter");
         props.add("tailTrackCollection");
         props.add("tailTrackDb");

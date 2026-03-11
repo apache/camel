@@ -141,6 +141,23 @@ public interface MongodbComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MongodbComponentBuilder useGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
     }
 
     class MongodbComponentBuilderImpl
@@ -160,6 +177,7 @@ public interface MongodbComponentBuilderFactory {
             case "bridgeErrorHandler": ((MongoDbComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((MongoDbComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((MongoDbComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "useGlobalSslContextParameters": ((MongoDbComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

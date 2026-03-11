@@ -31,6 +31,8 @@ public class MongoDbComponentConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "mongoconnection":
         case "mongoConnection": target.setMongoConnection(property(camelContext, com.mongodb.client.MongoClient.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -51,6 +53,8 @@ public class MongoDbComponentConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return boolean.class;
         case "mongoconnection":
         case "mongoConnection": return com.mongodb.client.MongoClient.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
         default: return null;
         }
     }
@@ -67,6 +71,8 @@ public class MongoDbComponentConfigurer extends PropertyConfigurerSupport implem
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "mongoconnection":
         case "mongoConnection": return target.getMongoConnection();
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         default: return null;
         }
     }

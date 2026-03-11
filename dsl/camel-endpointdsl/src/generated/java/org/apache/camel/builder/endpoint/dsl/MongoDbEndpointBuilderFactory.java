@@ -462,6 +462,38 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * SSL configuration using a Camel SSLContextParameters object. When
+         * configured, TLS is automatically enabled on the connection.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSL configuration using a Camel SSLContextParameters object. When
+         * configured, TLS is automatically enabled on the connection.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Specifies that all communication with MongoDB instances should use
          * TLS. Supersedes the ssl option. Default: false.
          * 
@@ -1778,6 +1810,38 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * SSL configuration using a Camel SSLContextParameters object. When
+         * configured, TLS is automatically enabled on the connection.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointProducerBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSL configuration using a Camel SSLContextParameters object. When
+         * configured, TLS is automatically enabled on the connection.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointProducerBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
          * Specifies that all communication with MongoDB instances should use
          * TLS. Supersedes the ssl option. Default: false.
          * 
@@ -3020,6 +3084,38 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * SSL configuration using a Camel SSLContextParameters object. When
+         * configured, TLS is automatically enabled on the connection.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSL configuration using a Camel SSLContextParameters object. When
+         * configured, TLS is automatically enabled on the connection.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**

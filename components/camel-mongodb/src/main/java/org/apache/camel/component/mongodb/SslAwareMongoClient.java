@@ -76,7 +76,7 @@ public class SslAwareMongoClient implements MongoClient {
                             builder.invalidHostNameAllowed(true);
                             SSLContext sc = null;
                             try {
-                                sc = SSLContext.getInstance("TLSv1.2");
+                                sc = SSLContext.getInstance("TLS");
                             } catch (NoSuchAlgorithmException e) {
                                 throw new RuntimeException("Error instantiating trust all SSL context.", e);
                             }
