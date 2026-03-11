@@ -22,7 +22,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 
 /**
- * A Main class for booting up Camel in standalone mode packaged as far-jar using the camel-repacker-plugin.
+ * A Main class for booting up Camel in standalone mode packaged as far-jar using the camel-repackager-maven-plugin.
  */
 public class Main extends org.apache.camel.main.Main {
 
