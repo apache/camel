@@ -253,6 +253,9 @@ class OperationVisitor<T> {
             for (String key : operation.getResponses().keySet()) {
                 if ("200".equals(key)) {
                     ApiResponse response = operation.getResponses().get(key);
+                    if (response.getContent() == null) {
+                        continue;
+                    }
                     for (final Entry<String, MediaType> entry : response.getContent().entrySet()) {
                         final MediaType mediaType = entry.getValue();
                         if (dto == null) {
