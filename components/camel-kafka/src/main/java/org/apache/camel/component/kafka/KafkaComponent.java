@@ -17,9 +17,12 @@
 package org.apache.camel.component.kafka;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
@@ -33,8 +36,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component("kafka")
-public class KafkaComponent extends HealthCheckComponent implements SSLContextParametersAware {
+public class KafkaComponent extends HealthCheckComponent implements SSLContextParametersAware, ExtendedStartupListener {
+
     private static final Logger LOG = LoggerFactory.getLogger(KafkaComponent.class);
+
+    private final List<Runnable> pendingConsumers = new CopyOnWriteArrayList<>();
 
     @Metadata
     private KafkaConfiguration configuration = new KafkaConfiguration();
@@ -102,6 +108,10 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
         }
 
         return endpoint;
+    }
+
+    void pendingConsumer(Runnable task) {
+        pendingConsumers.add(task);
     }
 
     public KafkaConfiguration getConfiguration() {
@@ -242,6 +252,26 @@ public class KafkaComponent extends HealthCheckComponent implements SSLContextPa
      */
     public void setSubscribeConsumerTopicMustExists(boolean subscribeConsumerTopicMustExists) {
         this.subscribeConsumerTopicMustExists = subscribeConsumerTopicMustExists;
+    }
+
+    @Override
+    public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        if (alreadyStarted) {
+            startPendingConsumers();
+        }
+    }
+
+    @Override
+    public void onCamelContextFullyStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        startPendingConsumers();
+    }
+
+    private void startPendingConsumers() {
+        if (!pendingConsumers.isEmpty()) {
+            LOG.info("Starting {} pending Kafka consumers as CamelContext is fully started", pendingConsumers.size());
+            pendingConsumers.forEach(Runnable::run);
+            pendingConsumers.clear();
+        }
     }
 
     @Override
