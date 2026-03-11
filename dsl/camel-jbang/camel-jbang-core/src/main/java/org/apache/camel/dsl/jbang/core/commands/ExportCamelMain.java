@@ -424,9 +424,6 @@ class ExportCamelMain extends Export {
         ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.properties"));
         is = ExportCamelMain.class.getResourceAsStream("/log4j2.component.properties");
         ExportHelper.safeCopy(is, srcResourcesDir.resolve("log4j2.component.properties"));
-        // assembly for runner jar
-        is = ExportCamelMain.class.getResourceAsStream("/assembly/runner.xml");
-        ExportHelper.safeCopy(is, srcResourcesDir.resolve("assembly/runner.xml"));
     }
 
     protected void copyGroovyPrecompiled(Path srcResourcesDir) throws Exception {
