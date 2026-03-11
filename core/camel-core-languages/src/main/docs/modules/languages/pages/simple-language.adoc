@@ -685,7 +685,7 @@ from("direct:map")
         .to("log:data");
 ----
 
-However if there are nested JSon such as:
+However, if there are nested JSon such as:
 
 [source,json]
 ----
@@ -723,7 +723,7 @@ library.book[0].year
 
 library.book[1].title
 library.book[1].author
-library.book[2].year
+library.book[1].year
 ----
 
 TIP: You can use `[last]` to refer to the last element in an array.
@@ -740,7 +740,7 @@ library.book[0]?.cheese
 
 The optional marker can also be used sooner in the path, such as `foo?.bar.age` which will not fail if there are no nested _bar_ node in the JSon payload.
 
-The `toJson` function is to convert the payload to JSon as a `String` value. However if the payload is already a `String` then no conversion happens.
+The `toJson` function is to convert the payload to JSon as a `String` value. However, if the payload is already a `String` then no conversion happens.
 So suppose the payload is a `Map` object as follows:
 
 [source,java]
@@ -753,7 +753,6 @@ map.put("id", 123);
 Then `toJson` will output: `{"name":"Jack","id":123}`.
 
 There are also _pretty_ alternatives so when calling `toPrettyJson` will output: TODO:
-
 
 The `xpath` function is for working with XML and using XPath expressions to extract data from XML payloads.
 

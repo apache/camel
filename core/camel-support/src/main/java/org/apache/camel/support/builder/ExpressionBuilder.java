@@ -1374,9 +1374,9 @@ public class ExpressionBuilder {
     /**
      * Creates a source {@link Expression} for languages that can accept input from other sources than the message body.
      *
-     * @param  source Source to use, instead of message body. You can prefix with variable:, header:, or property: to
-     *                specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to
-     *                use default source, which is the message body.
+     * @param  source Source to use, instead of message body. You can prefix with variable:, header:, property:, or
+     *                exchangeProperty: to specify kind of source. Otherwise, the source is assumed to be a variable.
+     *                Use empty or null to use default source, which is the message body.
      * @return        a variable expression if {@code variableName} is not empty, a header expression if
      *                {@code headerName} is not empty, otherwise a property expression if {@code propertyName} is not
      *                empty or finally a body expression.
@@ -1389,6 +1389,8 @@ public class ExpressionBuilder {
             exp = headerExpression(source.substring(7), true);
         } else if (source.startsWith("property:")) {
             exp = exchangePropertyExpression(source.substring(9), true);
+        } else if (source.startsWith("exchangeProperty:")) {
+            exp = exchangePropertyExpression(source.substring(17), true);
         } else {
             if (source.startsWith("variable:")) {
                 source = source.substring(9);
@@ -1405,9 +1407,7 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                // TODO When baseline will be Java 21
-                //                return Thread.currentThread().threadId();
-                return Thread.currentThread().getId();
+                return Thread.currentThread().threadId();
             }
 
             @Override

@@ -4262,6 +4262,13 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getMessage().setBody("Hello World");
         exchange.getMessage().setHeader("books", BOOKS);
         assertExpression("${simpleJsonpath(header:books,library.book[0].title)}", "No Title");
+
+        exchange.setVariable("books2", BOOKS);
+        assertExpression("${simpleJsonpath(variable:books2,library.book[1].title)}", "1984");
+
+        exchange.setProperty("books3", BOOKS);
+        assertExpression("${simpleJsonpath(property:books3,library.book[1].year)}", 1949);
+        assertExpression("${simpleJsonpath(exchangeProperty:books3,library.book[1].author)}", "George Orwell");
     }
 
     @Override

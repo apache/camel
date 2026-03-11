@@ -71,30 +71,13 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * @throws IllegalArgumentException if the path traversal does not exist
      */
     public String pathString(final String path) {
-        boolean optional = path.startsWith("?");
-        JsonObject jo = this;
-        String sub = path;
-        if (path.contains(".")) {
-            // grab until last dot
-            int pos = path.lastIndexOf(".");
-            optional = '?' == path.charAt(pos - 1);
-            sub = path.substring(pos + 1);
-            if (optional) {
-                pos = pos - 1;
-            }
-            java.util.Optional<JsonObject> o = doPath(path.substring(0, pos));
-            if (o.isPresent()) {
-                jo = o.get();
-            } else {
-                optional = true;
-                jo = null;
-            }
+        Object returnable = path(path);
+        if (returnable instanceof Boolean) {
+            returnable = returnable.toString();
+        } else if (returnable instanceof Number) {
+            returnable = returnable.toString();
         }
-        String answer = jo != null ? jo.getString(sub) : null;
-        if (answer == null && !optional) {
-            throw new IllegalArgumentException("JSonObject path " + path + " is null");
-        }
-        return answer;
+        return (String) returnable;
     }
 
     /**
@@ -112,30 +95,15 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * @throws IllegalArgumentException if the path traversal does not exist
      */
     public Integer pathInteger(String path) {
-        boolean optional = path.startsWith("?");
-        JsonObject jo = this;
-        String sub = path;
-        if (path.contains(".")) {
-            // grab until last dot
-            int pos = path.lastIndexOf(".");
-            optional = '?' == path.charAt(pos - 1);
-            sub = path.substring(pos + 1);
-            if (optional) {
-                pos = pos - 1;
-            }
-            java.util.Optional<JsonObject> o = doPath(path.substring(0, pos));
-            if (o.isPresent()) {
-                jo = o.get();
-            } else {
-                optional = true;
-                jo = null;
-            }
+        Object returnable = path(path);
+        if (returnable == null) {
+            return null;
         }
-        Integer answer = jo != null ? jo.getInteger(sub) : null;
-        if (answer == null && !optional) {
-            throw new IllegalArgumentException("JSonObject path " + path + " is null");
+        if (returnable instanceof String) {
+            /* A String can be used to construct a BigDecimal. */
+            returnable = new BigDecimal((String) returnable);
         }
-        return answer;
+        return ((Number) returnable).intValue();
     }
 
     /**
@@ -153,30 +121,11 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * @throws IllegalArgumentException if the path traversal does not exist
      */
     public Boolean pathBoolean(String path) {
-        boolean optional = path.startsWith("?");
-        JsonObject jo = this;
-        String sub = path;
-        if (path.contains(".")) {
-            // grab until last dot
-            int pos = path.lastIndexOf(".");
-            optional = '?' == path.charAt(pos - 1);
-            sub = path.substring(pos + 1);
-            if (optional) {
-                pos = pos - 1;
-            }
-            java.util.Optional<JsonObject> o = doPath(path.substring(0, pos));
-            if (o.isPresent()) {
-                jo = o.get();
-            } else {
-                optional = true;
-                jo = null;
-            }
+        Object returnable = path(path);
+        if (returnable instanceof String) {
+            returnable = Boolean.valueOf((String) returnable);
         }
-        Boolean answer = jo != null ? jo.getBoolean(sub) : null;
-        if (answer == null && !optional) {
-            throw new IllegalArgumentException("JSonObject path " + path + " is null");
-        }
-        return answer;
+        return (Boolean) returnable;
     }
 
     /**
@@ -194,10 +143,14 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * @throws IllegalArgumentException if the path traversal does not exist
      */
     public Object path(final String path) {
+        Object answer = null;
+
         boolean optional = path.startsWith("?");
         JsonObject jo = this;
         String sub = path;
-        if (path.contains(".")) {
+        if (optional && !path.contains(".") && !path.contains("[")) {
+            sub = sub.substring(1);
+        } else if (path.contains(".")) {
             // grab until last dot
             int pos = path.lastIndexOf(".");
             optional = '?' == path.charAt(pos - 1);
@@ -205,15 +158,31 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             if (optional) {
                 pos = pos - 1;
             }
-            java.util.Optional<JsonObject> o = doPath(path.substring(0, pos));
+            java.util.Optional<Object> o = doPath(path.substring(0, pos));
             if (o.isPresent()) {
-                jo = o.get();
+                answer = o.get();
+                if (answer instanceof JsonObject) {
+                    jo = (JsonObject) answer;
+                }
             } else {
                 optional = true;
                 jo = null;
             }
+        } else if (path.contains("[")) {
+            jo = null;
+            java.util.Optional<Object> o = doPath(path);
+            if (o.isPresent()) {
+                answer = o.get();
+                if (answer instanceof JsonObject) {
+                    jo = (JsonObject) answer;
+                }
+            } else {
+                optional = true;
+            }
         }
-        Object answer = jo != null ? jo.get(sub) : null;
+        if (jo != null) {
+            answer = jo.get(sub);
+        }
         if (answer == null && !optional) {
             throw new IllegalArgumentException("JSonObject path " + path + " is null");
         }
@@ -235,11 +204,12 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      * @throws IllegalArgumentException if the path traversal does not exist
      */
     public JsonObject pathJsonObject(final String path) {
-        return doPath(path).orElse(null);
+        var o = doPath(path).orElse(null);
+        return JsonObject.class.cast(o);
     }
 
-    private Optional<JsonObject> doPath(final String path) {
-        Jsonable answer = null;
+    private Optional<Object> doPath(final String path) {
+        Object answer = null;
 
         String[] split = path.splitWithDelimiters("(\\?\\.|\\.)", 0);
         for (int i = 0; i < split.length; i = i + 2) {
@@ -270,9 +240,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             }
             if (pos != -1 && answer instanceof JsonArray arr) {
                 if (pos == Integer.MAX_VALUE) {
-                    answer = (Jsonable) arr.getLast();
+                    answer = arr.getLast();
                 } else if (pos < arr.size()) {
-                    answer = (Jsonable) arr.get(pos);
+                    answer = arr.get(pos);
                 } else {
                     answer = null;
                 }
@@ -283,7 +253,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
                 return Optional.empty();
             }
         }
-        return Optional.of(JsonObject.class.cast(answer));
+        return Optional.ofNullable(answer);
     }
 
     /**
@@ -1027,4 +997,4 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         }
         writable.write('}');
     }
-};
+}

@@ -49,6 +49,13 @@ public class JsonObjectPathTest {
                     }
                     """;
 
+    private static final String COUNTRIES
+            = """
+                    {
+                      "countries": [ "Denmark", "Sweden", "Norway" ]
+                    }
+                    """;
+
     @Test
     public void testPath() throws Exception {
         JsonObject jo = (JsonObject) Jsoner.deserialize(BOOKS);
@@ -56,6 +63,14 @@ public class JsonObjectPathTest {
         JsonObject obj = jo.pathJsonObject("library.book[0]");
         Assertions.assertNotNull(obj);
         Assertions.assertEquals("No Title", obj.getString("title"));
+
+        Assertions.assertNull(obj.path("?cheese"));
+        try {
+            Assertions.assertNull(obj.path("cheese"));
+            fail();
+        } catch (Exception e) {
+            // expected
+        }
 
         obj = jo.pathJsonObject("library.book[1]");
         Assertions.assertNotNull(obj);
@@ -137,6 +152,24 @@ public class JsonObjectPathTest {
         jo = (JsonObject) jo.getJsonObject("library").getJsonArray("book").get(0);
         Assertions.assertEquals("No Title", jo.pathString("title"));
         Assertions.assertEquals(1925, jo.pathInteger("year"));
+    }
+
+    @Test
+    public void testPathArray() throws Exception {
+        JsonObject jo = (JsonObject) Jsoner.deserialize(COUNTRIES);
+        Assertions.assertNotNull(jo);
+
+        Assertions.assertEquals("Denmark", jo.path("countries[0]"));
+        Assertions.assertEquals("Sweden", jo.path("countries[1]"));
+        Assertions.assertEquals("Norway", jo.path("countries[2]"));
+        Assertions.assertEquals("Norway", jo.path("countries[last]"));
+        Assertions.assertNull(jo.path("?countries[3]"));
+        try {
+            jo.path("countries[3]");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
 }
