@@ -33,6 +33,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -163,9 +164,10 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
      * With transaction - sends two duplicate messages, for the second one the DB insert will fail and the rollback will
      * take place. in this case the SQL operation is the last endpoint after the message was sent to the kafka topic.
      */
-    // @Test
     @ParameterizedTest
     @ValueSource(strings = { "transacted=true", "transactionalId=my-foo1", "additionalProperties[transactional.id]=my-foo2" })
+    @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "local-strimzi-container",
+                              disabledReason = "The test is blocked indefinitely.")
     public void transactionProducerWithDBLast(String txParam) throws Exception {
         String startEndpoint = "direct:startTxDBLast";
         contextExtension.getContext().addRoutes(new RouteBuilder() {
@@ -200,8 +202,9 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
      * With transaction - Uses multiple kafka producers to send duplicate messages. One route with transacted=true and
      * the other with no transactions.
      */
-    // @Test
     @Test
+    @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "local-strimzi-container",
+                              disabledReason = "The test is blocked indefinitely.")
     public void transactionMultipleProducersWithDBLast() throws Exception {
         contextExtension.getContext().addRoutes(new RouteBuilder() {
             public void configure() {
@@ -263,6 +266,8 @@ public class KafkaWithDBTransactionIT extends BaseKafkaTestSupport {
      */
     @ParameterizedTest
     @ValueSource(strings = { "transacted=true", "transactionalId=my-bar1", "additionalProperties[transactional.id]=my-bar2" })
+    @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "local-strimzi-container",
+                              disabledReason = "The test is blocked indefinitely.")
     public void transactionProducerWithDBFirst(String txParam) throws Exception {
         String startEndpoint = "direct:startTxDBFirst";
         contextExtension.getContext().addRoutes(new RouteBuilder() {
