@@ -1529,10 +1529,6 @@ public class Run extends CamelCommand {
         List<String> cmds;
         if (spec != null) {
             cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
-            // ensure 'run' subcommand is present when invoked programmatically (e.g. from DiagramCommand)
-            if (cmds.isEmpty() || !cmds.get(0).equals("run")) {
-                cmds.add(0, "run");
-            }
         } else {
             cmds = new ArrayList<>();
             cmds.add("run");
