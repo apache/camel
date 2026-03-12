@@ -22,9 +22,9 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonToken;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
+import tools.jackson.core.JsonToken;
 
 public final class XJConstants {
 

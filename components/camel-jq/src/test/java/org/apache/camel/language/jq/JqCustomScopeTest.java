@@ -18,8 +18,6 @@ package org.apache.camel.language.jq;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
 import net.thisptr.jackson.jq.Expression;
 import net.thisptr.jackson.jq.Function;
 import net.thisptr.jackson.jq.PathOutput;
@@ -31,6 +29,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.BooleanNode;
 
 public class JqCustomScopeTest extends JqTestSupport {
 

@@ -19,7 +19,6 @@ package org.apache.camel.component.salesforce.api;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
 import org.apache.camel.component.salesforce.api.dto.RecentItem;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -27,6 +26,7 @@ import org.apache.camel.component.salesforce.api.dto.SearchResult;
 import org.apache.camel.component.salesforce.api.dto.Version;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.RecentReport;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportInstance;
+import tools.jackson.core.type.TypeReference;
 
 /**
  * Class that holds {@link TypeReference} instances needed for Jackson mapper to support generics.

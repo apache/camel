@@ -20,8 +20,11 @@ package org.apache.camel.component.zeebe.model;
 import java.util.Collections;
 import java.util.HashMap;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +44,7 @@ public class JobWorkerMessageTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    public void marshalTest() {
+    public void marshalTest() throws JSONException {
         JobWorkerMessage message = new JobWorkerMessage();
         message.setWorker("worker");
         message.setRetries(1);
@@ -55,7 +58,7 @@ public class JobWorkerMessageTest {
         message.setType("type");
 
         String messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
-        assertEquals(MARSHAL_TEST_RESULT_1, messageString);
+        JSONAssert.assertEquals(MARSHAL_TEST_RESULT_1, messageString, JSONCompareMode.NON_EXTENSIBLE);
 
         HashMap<String, Object> variables = new HashMap<>();
         variables.put("varA", "test");
@@ -64,7 +67,7 @@ public class JobWorkerMessageTest {
         message.setVariables(variables);
 
         messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
-        assertEquals(MARSHAL_TEST_RESULT_2, messageString);
+        JSONAssert.assertEquals(MARSHAL_TEST_RESULT_2, messageString, JSONCompareMode.NON_EXTENSIBLE);
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("h1", "test1");
@@ -73,7 +76,7 @@ public class JobWorkerMessageTest {
         message.setCustomHeaders(headers);
 
         messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
-        assertEquals(MARSHAL_TEST_RESULT_3, messageString);
+        JSONAssert.assertEquals(MARSHAL_TEST_RESULT_3, messageString, JSONCompareMode.NON_EXTENSIBLE);
     }
 
     @Test

@@ -18,19 +18,22 @@ package org.apache.camel.groovy.xml;
 
 import org.w3c.dom.Document;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import groovy.util.Node;
 import groovy.xml.XmlParser;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson3.JacksonConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.xmlunit.assertj3.XmlAssert;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class GroovyXmlDataFormatTest extends CamelTestSupport {
 
@@ -263,7 +266,7 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
         Assertions.assertInstanceOf(byte[].class, out);
 
         String xml = context.getTypeConverter().convertTo(String.class, out);
-        Assertions.assertEquals(BOOKS, xml);
+        XmlAssert.assertThat(xml).and(BOOKS).ignoreWhitespace().areIdentical();
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -280,7 +283,7 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
         Assertions.assertInstanceOf(byte[].class, out);
 
         String xml = context.getTypeConverter().convertTo(String.class, out);
-        Assertions.assertEquals(BOOKS_NO_ATTR, xml);
+        XmlAssert.assertThat(xml).and(BOOKS_NO_ATTR).ignoreWhitespace().areIdentical();
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -316,9 +319,17 @@ public class GroovyXmlDataFormatTest extends CamelTestSupport {
         Assertions.assertInstanceOf(byte[].class, out);
 
         String xml = context.getTypeConverter().convertTo(String.class, out);
-        Assertions.assertEquals(COUNTRIES, xml);
+        XmlAssert.assertThat(xml).and(COUNTRIES).ignoreWhitespace().areIdentical();
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // Enable Jackson3 type converter
+        context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        return context;
     }
 
     @Override

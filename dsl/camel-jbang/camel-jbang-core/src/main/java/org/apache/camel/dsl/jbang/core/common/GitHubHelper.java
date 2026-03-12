@@ -23,10 +23,10 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.StringJoiner;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public final class GitHubHelper {
 
@@ -112,27 +112,27 @@ public final class GitHubHelper {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(res.body());
             for (JsonNode c : root) {
-                String name = c.get("name").asText();
+                String name = c.get("name").textValue();
                 String ext = FileUtil.onlyExt(name, false);
                 boolean match = wildcard == null || AntPathMatcher.INSTANCE.match(wildcard, name, false);
                 if (match) {
                     if (kamelets != null && "kamelet.yaml".equalsIgnoreCase(ext)) {
-                        String htmlUrl = c.get("html_url").asText();
+                        String htmlUrl = c.get("html_url").textValue();
                         String u = asGithubSingleUrl(htmlUrl);
                         kamelets.add(u);
                     } else if (properties != null && "properties".equalsIgnoreCase(ext)) {
-                        String htmlUrl = c.get("html_url").asText();
+                        String htmlUrl = c.get("html_url").textValue();
                         String u = asGithubSingleUrl(htmlUrl);
                         properties.add(u);
                     } else if (routes != null) {
                         if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
                                 || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
-                            String htmlUrl = c.get("html_url").asText();
+                            String htmlUrl = c.get("html_url").textValue();
                             String u = asGithubSingleUrl(htmlUrl);
                             routes.add(u);
                         }
                     } else if (all != null) {
-                        String htmlUrl = c.get("html_url").asText();
+                        String htmlUrl = c.get("html_url").textValue();
                         String u = asGithubSingleUrl(htmlUrl);
                         all.add(u);
                     }

@@ -19,12 +19,12 @@ package org.apache.camel.maven;
 import java.io.File;
 import java.nio.file.Path;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.jakarta.types.ObjectSchema;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.module.jsonSchema.jakarta.JsonSchema;
+import tools.jackson.module.jsonSchema.jakarta.types.ObjectSchema;
 
 import static org.apache.camel.maven.AbstractSalesforceMojoTest.setup;
 import static org.junit.jupiter.api.Assertions.assertTrue;

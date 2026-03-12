@@ -24,13 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Predictor for the CHAT task, handling conversational LLM inference with automatic history management.

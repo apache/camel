@@ -19,7 +19,6 @@ package org.apache.camel.component.zeebe.processor;
 
 import java.io.InputStream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.zeebe.ZeebeConstants;
@@ -28,6 +27,7 @@ import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.component.zeebe.model.DeploymentRequest;
 import org.apache.camel.component.zeebe.model.DeploymentResponse;
 import org.apache.camel.component.zeebe.model.ProcessDeploymentResponse;
+import tools.jackson.core.JacksonException;
 
 public class DeploymentProcessor extends AbstractBaseProcessor {
     public DeploymentProcessor(ZeebeEndpoint endpoint) {
@@ -55,8 +55,8 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
         } else if (body instanceof String) {
             try {
                 message = objectMapper.readValue((String) body, DeploymentRequest.class);
-            } catch (JsonProcessingException jsonProcessingException) {
-                throw new IllegalArgumentException("Cannot convert body to DeploymentRequestMessage", jsonProcessingException);
+            } catch (JacksonException JacksonException) {
+                throw new IllegalArgumentException("Cannot convert body to DeploymentRequestMessage", JacksonException);
             }
         } else {
             throw new CamelException("Deployment Resource missing");

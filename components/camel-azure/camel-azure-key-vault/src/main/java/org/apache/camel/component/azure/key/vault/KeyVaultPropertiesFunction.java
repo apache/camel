@@ -27,9 +27,6 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -38,6 +35,9 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.AzureVaultConfiguration;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from Azure Key Vault service.
@@ -201,7 +201,7 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
         if (key != null) {
             try {
                 returnValue = getSecretFromSource(key, subkey, defaultValue, version);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeCamelException(
                         "Error getting secret from vault using key: " + key + " due to: " + e.getMessage(), e);
             }
@@ -212,7 +212,7 @@ public class KeyVaultPropertiesFunction extends ServiceSupport implements Proper
 
     private String getSecretFromSource(
             String key, String subkey, String defaultValue, String version)
-            throws JsonProcessingException {
+            throws JacksonException {
         String returnValue;
 
         // capture name of secret

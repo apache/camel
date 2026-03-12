@@ -23,7 +23,9 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.converter.jaxb.JaxbConstants;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.support.MessageHelper;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -100,7 +102,7 @@ public class RestJettyNoContentRestConfigTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJson200ConfigNoContentEnabled() {
+    public void testJson200ConfigNoContentEnabled() throws JSONException {
         Exchange exchange = template.request("http://localhost:" + getPort() + "/country", new Processor() {
             @Override
             public void process(Exchange exchange) {
@@ -109,7 +111,8 @@ public class RestJettyNoContentRestConfigTest extends BaseJettyTest {
         });
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", MessageHelper.extractBodyAsString(exchange.getMessage()));
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}",
+                MessageHelper.extractBodyAsString(exchange.getMessage()), false);
     }
 
     @Test

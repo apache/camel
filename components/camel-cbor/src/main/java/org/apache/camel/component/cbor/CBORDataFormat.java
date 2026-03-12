@@ -29,14 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -49,6 +41,14 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.type.CollectionType;
+import tools.jackson.dataformat.cbor.CBORFactory;
 
 @Dataformat("cbor")
 public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
@@ -359,7 +359,8 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
             // lookup if there is a single default mapper we can use
             if (useDefaultObjectMapper && camelContext != null) {
                 Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
-                set = set.stream().filter(om -> om.getFactory() instanceof CBORFactory).collect(Collectors.toSet());
+                set = set.stream().filter(om -> om.tokenStreamFactory() instanceof CBORFactory)
+                        .collect(Collectors.toSet());
                 if (set.size() == 1) {
                     objectMapper = set.iterator().next();
                     LOG.info(
@@ -383,62 +384,70 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
             setCollectionType(ArrayList.class);
         }
 
-        if (prettyPrint) {
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        }
+        boolean needsRebuild = prettyPrint || enableFeatures != null || disableFeatures != null;
+        if (needsRebuild) {
+            var builder = objectMapper.rebuild();
 
-        if (enableFeatures != null) {
-            Iterator<?> it = ObjectHelper.createIterator(enableFeatures);
-            while (it.hasNext()) {
-                String enable = it.next().toString();
-                // it can be different kind
-                SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
-                if (sf != null) {
-                    objectMapper.enable(sf);
-                    continue;
-                }
-                DeserializationFeature df
-                        = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
-                if (df != null) {
-                    objectMapper.enable(df);
-                    continue;
-                }
-                MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, enable);
-                if (mf != null) {
-                    objectMapper.enable(mf);
-                    continue;
-                }
-                throw new IllegalArgumentException(
-                        "Enable feature: " + enable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+            if (prettyPrint) {
+                builder.enable(SerializationFeature.INDENT_OUTPUT);
             }
-        }
-        if (disableFeatures != null) {
-            Iterator<?> it = ObjectHelper.createIterator(disableFeatures);
-            while (it.hasNext()) {
-                String disable = it.next().toString();
-                // it can be different kind
-                SerializationFeature sf
-                        = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
-                if (sf != null) {
-                    objectMapper.disable(sf);
-                    continue;
+
+            if (enableFeatures != null) {
+                Iterator<?> it = ObjectHelper.createIterator(enableFeatures);
+                while (it.hasNext()) {
+                    String enable = it.next().toString();
+                    // it can be different kind
+                    SerializationFeature sf
+                            = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
+                    if (sf != null) {
+                        builder.enable(sf);
+                        continue;
+                    }
+                    DeserializationFeature df
+                            = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
+                    if (df != null) {
+                        builder.enable(df);
+                        continue;
+                    }
+                    MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, enable);
+                    if (mf != null) {
+                        builder.enable(mf);
+                        continue;
+                    }
+                    throw new IllegalArgumentException(
+                            "Enable feature: " + enable
+                                                       + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
                 }
-                DeserializationFeature df
-                        = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
-                if (df != null) {
-                    objectMapper.disable(df);
-                    continue;
-                }
-                MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, disable);
-                if (mf != null) {
-                    objectMapper.disable(mf);
-                    continue;
-                }
-                throw new IllegalArgumentException(
-                        "Disable feature: " + disable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
             }
+            if (disableFeatures != null) {
+                Iterator<?> it = ObjectHelper.createIterator(disableFeatures);
+                while (it.hasNext()) {
+                    String disable = it.next().toString();
+                    // it can be different kind
+                    SerializationFeature sf
+                            = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
+                    if (sf != null) {
+                        builder.disable(sf);
+                        continue;
+                    }
+                    DeserializationFeature df
+                            = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
+                    if (df != null) {
+                        builder.disable(df);
+                        continue;
+                    }
+                    MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, disable);
+                    if (mf != null) {
+                        builder.disable(mf);
+                        continue;
+                    }
+                    throw new IllegalArgumentException(
+                            "Disable feature: " + disable
+                                                       + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                }
+            }
+
+            objectMapper = builder.build();
         }
     }
 

@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import com.azure.cosmos.ChangeFeedProcessor;
 import com.azure.cosmos.ChangeFeedProcessorBuilder;
 import com.azure.cosmos.CosmosAsyncContainer;
-import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.models.ChangeFeedProcessorOptions;
 import com.azure.cosmos.models.CosmosContainerRequestOptions;
 import com.azure.cosmos.models.CosmosContainerResponse;
@@ -36,11 +35,15 @@ import com.azure.cosmos.models.FeedResponse;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import com.azure.cosmos.models.ThroughputResponse;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tools.jackson.core.StreamWriteFeature;
+import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class CosmosDbContainerOperations {
 
@@ -170,6 +173,16 @@ public class CosmosDbContainerOperations {
                 .flatMapMany(container -> container.queryItems(query, queryRequestOptions, itemType).byPage());
     }
 
+    private ObjectMapper createAndInitializeObjectMapper() {
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .enable(JsonReadFeature.ALLOW_SINGLE_QUOTES)
+                .enable(JsonReadFeature.ALLOW_TRAILING_COMMA)
+                .enable(StreamWriteFeature.STRICT_DUPLICATE_DETECTION)
+                .disable(DeserializationFeature.ACCEPT_FLOAT_AS_INT)
+                .build();
+        return objectMapper;
+    }
+
     public ChangeFeedProcessor captureEventsWithChangeFeed(
             final Mono<CosmosAsyncContainer> leaseContainerMono, final String hostName,
             final Consumer<List<Map<String, ?>>> resultsCallback, final ChangeFeedProcessorOptions changeFeedProcessorOptions) {
@@ -177,7 +190,7 @@ public class CosmosDbContainerOperations {
         CosmosDbUtils.validateIfParameterIsNotEmpty(resultsCallback, PARAM_RESULTS_CALLBACK);
         CosmosDbUtils.validateIfParameterIsNotEmpty(hostName, PARAM_HOST_NAME);
 
-        final ObjectMapper mapper = Utils.getSimpleObjectMapper();
+        final ObjectMapper mapper = createAndInitializeObjectMapper();
 
         return container.zipWith(leaseContainerMono)
                 .map(tupleResults -> {

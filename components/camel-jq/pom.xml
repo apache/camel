@@ -43,8 +43,9 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson</artifactId>
+            <artifactId>camel-jackson3</artifactId>
         </dependency>
+        
         <dependency>
             <groupId>net.thisptr</groupId>
             <artifactId>jackson-jq</artifactId>
@@ -55,6 +56,11 @@
             <artifactId>jackson-jq-extra</artifactId>
             <version>${jackson-jq-version}</version>
         </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
 
         <!-- test dependencies -->
         <dependency>

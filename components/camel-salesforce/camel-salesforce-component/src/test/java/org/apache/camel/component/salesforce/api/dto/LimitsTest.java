@@ -27,10 +27,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,7 +51,8 @@ public class LimitsTest {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Object read = mapper.readerFor(Limits.class)
-                .readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json"));
+                .readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json")
+                        .openStream());
 
         assertThat("Limits should be parsed from JSON", read, instanceOf(Limits.class));
 

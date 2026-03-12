@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.leveldb.serializer.jackson;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.databind.json.JsonMapper;
 
 public class BodyDeserializer extends StdDeserializer<Object> {
     BodyDeserializer() {
@@ -30,9 +29,9 @@ public class BodyDeserializer extends StdDeserializer<Object> {
     }
 
     @Override
-    public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        JsonNode treeNode = p.getCodec().readTree(p);
-        ObjectMapper om = (ObjectMapper) p.getCodec();
+    public Object deserialize(JsonParser p, DeserializationContext ctxt) {
+        JsonNode treeNode = ctxt.readTree(p);
+        ObjectMapper om = JsonMapper.builder().build();
 
         if (treeNode.get("clazz") != null) {
             Class<?> cl = om.readValue(treeNode.get("clazz").toString(), Class.class);

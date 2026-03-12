@@ -20,9 +20,9 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 /**
  * YAML DSL parser that tooling can use to parse Camel source files to check if they can be YAML parsed.
@@ -32,16 +32,18 @@ import com.networknt.schema.ValidationMessage;
  */
 public class YamlParser {
 
-    private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    private final ObjectMapper mapper = YAMLMapper.builder().build();
 
-    public List<ValidationMessage> parse(File file) throws Exception {
+    public List<Error> parse(File file) throws Exception {
         try {
             mapper.readTree(file);
             return Collections.emptyList();
         } catch (Exception e) {
-            ValidationMessage vm = ValidationMessage.builder().type("parser")
-                    .messageSupplier(() -> e.getClass().getName() + ": " + e.getMessage()).build();
-            return List.of(vm);
+            Error error = Error.builder()
+                    .keyword("parser")
+                    .messageSupplier(() -> e.getClass().getName() + ": " + e.getMessage())
+                    .build();
+            return List.of(error);
         }
     }
 

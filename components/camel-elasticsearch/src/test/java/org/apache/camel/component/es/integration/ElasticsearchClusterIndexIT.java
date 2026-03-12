@@ -20,13 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import co.elastic.clients.elasticsearch.core.GetRequest;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.es.ElasticsearchConstants;
 import org.apache.camel.component.es.ElasticsearchOperation;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.elasticsearch.client.Request;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.apache.camel.test.junit6.TestSupport.assertStringContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

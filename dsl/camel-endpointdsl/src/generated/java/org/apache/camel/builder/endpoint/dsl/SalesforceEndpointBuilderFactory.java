@@ -752,15 +752,15 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jackson ObjectMapper to use when serializing/deserializing
          * Salesforce objects.
          * 
-         * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * The option is a: <code>tools.jackson.databind.ObjectMapper</code>
+         * type.
          * 
          * Group: common
          * 
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointConsumerBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        default SalesforceEndpointConsumerBuilder objectMapper(tools.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -769,7 +769,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option will be converted to a
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * <code>tools.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -2342,15 +2342,15 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jackson ObjectMapper to use when serializing/deserializing
          * Salesforce objects.
          * 
-         * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * The option is a: <code>tools.jackson.databind.ObjectMapper</code>
+         * type.
          * 
          * Group: common
          * 
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointProducerBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        default SalesforceEndpointProducerBuilder objectMapper(tools.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -2359,7 +2359,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option will be converted to a
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * <code>tools.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 
@@ -3731,15 +3731,15 @@ public interface SalesforceEndpointBuilderFactory {
          * Custom Jackson ObjectMapper to use when serializing/deserializing
          * Salesforce objects.
          * 
-         * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * The option is a: <code>tools.jackson.databind.ObjectMapper</code>
+         * type.
          * 
          * Group: common
          * 
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default SalesforceEndpointBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        default SalesforceEndpointBuilder objectMapper(tools.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -3748,7 +3748,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Salesforce objects.
          * 
          * The option will be converted to a
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * <code>tools.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: common
          * 

@@ -18,19 +18,27 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
 import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
-final class ZonedDateTimeDeserializer extends InstantDeserializer<ZonedDateTime> {
+final class ZonedDateTimeDeserializer extends ValueDeserializer<ZonedDateTime> {
 
-    static final JsonDeserializer<ZonedDateTime> INSTANCE = new ZonedDateTimeDeserializer();
-
-    private static final long serialVersionUID = 1L;
+    static final ValueDeserializer<ZonedDateTime> INSTANCE = new ZonedDateTimeDeserializer();
 
     private ZonedDateTimeDeserializer() {
-        super(InstantDeserializer.ZONED_DATE_TIME, ISO_OFFSET_DATE_TIME);
+    }
+
+    @Override
+    public ZonedDateTime deserialize(final JsonParser p, final DeserializationContext ctxt) {
+        try {
+            final String text = p.getText();
+            return ZonedDateTime.parse(text, ISO_OFFSET_DATE_TIME);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to deserialize ZonedDateTime", e);
+        }
     }
 
 }

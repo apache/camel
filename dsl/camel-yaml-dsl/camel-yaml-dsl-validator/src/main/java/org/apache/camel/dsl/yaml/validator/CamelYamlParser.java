@@ -21,7 +21,7 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -49,7 +49,7 @@ import org.apache.camel.support.ResourceHelper;
  */
 public class CamelYamlParser {
 
-    public List<ValidationMessage> parse(File file) throws Exception {
+    public List<Error> parse(File file) throws Exception {
         CamelContext camelContext = null;
         try {
             DefaultRegistry registry = new DefaultRegistry();
@@ -98,9 +98,11 @@ public class CamelYamlParser {
                 return Collections.emptyList();
             }
         } catch (Exception e) {
-            ValidationMessage vm = ValidationMessage.builder().type("parser")
-                    .messageSupplier(() -> e.getClass().getName() + ": " + e.getMessage()).build();
-            return List.of(vm);
+            Error error = Error.builder()
+                    .keyword("parser")
+                    .messageSupplier(() -> e.getClass().getName() + ": " + e.getMessage())
+                    .build();
+            return List.of(error);
         } finally {
             if (camelContext != null) {
                 camelContext.stop();

@@ -25,8 +25,6 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -72,6 +70,8 @@ import org.apache.camel.component.telegram.model.payments.SendInvoiceMessage;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Adapts the {@code RestBotAPI} to the {@code TelegramService} interface.
@@ -168,7 +168,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                                             + response.body(),
                         response.statusCode(), response.body());
             }
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeCamelException(
                     "Could not parse the response from " + request.method() + " " + request.uri(), e);
         } catch (IOException e) {

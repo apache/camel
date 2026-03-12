@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.knative.spi;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public final class Knative {
-    public static final ObjectMapper MAPPER = new ObjectMapper().registerModule(new Jdk8Module());
+    public static final ObjectMapper MAPPER = JsonMapper.builder().build();
 
     public static final String MIME_STRUCTURED_CONTENT_MODE = "application/cloudevents+json";
     public static final String MIME_BATCH_CONTENT_MODE = "application/cloudevents-batch+json";

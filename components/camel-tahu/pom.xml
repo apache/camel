@@ -59,7 +59,7 @@
                     <artifactId>commons-io</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <groupId>tools.jackson.core</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
@@ -82,7 +82,7 @@
                     <artifactId>commons-io</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <groupId>tools.jackson.core</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
@@ -105,7 +105,7 @@
                     <artifactId>commons-io</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <groupId>tools.jackson.core</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
@@ -124,7 +124,7 @@
             <version>${paho-version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
@@ -194,7 +194,7 @@
                     <artifactId>commons-io</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <groupId>tools.jackson.core</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>

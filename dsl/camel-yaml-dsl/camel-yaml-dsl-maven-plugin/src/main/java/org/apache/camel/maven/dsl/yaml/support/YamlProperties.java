@@ -16,9 +16,9 @@
  */
 package org.apache.camel.maven.dsl.yaml.support;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.javapoet.AnnotationSpec;
 import org.apache.camel.tooling.util.Strings;
+import tools.jackson.databind.JsonNode;
 
 import static org.apache.camel.maven.dsl.yaml.GenerateYamlSupportMojo.CN_YAML_PROPERTY;
 

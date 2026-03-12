@@ -18,8 +18,6 @@ package org.apache.camel.component.huaweicloud.dms;
 
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSConstants;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSOperations;
@@ -39,6 +37,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public class DMSProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(DMSProducer.class);
@@ -96,9 +96,9 @@ public class DMSProducer extends DefaultProducer {
      *
      * @param  exchange
      * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @throws JacksonException
      */
-    private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JacksonException {
         CreateInstanceRequestBody body = null;
 
         // checking if user inputted exchange body containing instance information. Body must be a CreateInstanceRequestBody or a valid JSON String (Advanced users)
@@ -109,7 +109,7 @@ public class DMSProducer extends DefaultProducer {
             String strBody = (String) exchangeBody;
             try {
                 body = mapper.readValue(strBody, CreateInstanceRequestBody.class);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 LOG.warn(
                         "String request body must be a valid JSON representation of a CreateInstanceRequestBody. Attempting to create an instance from endpoint parameters");
             }
@@ -224,9 +224,9 @@ public class DMSProducer extends DefaultProducer {
      *
      * @param  exchange
      * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @throws JacksonException
      */
-    private void listInstances(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void listInstances(Exchange exchange, ClientConfigurations clientConfigurations) throws JacksonException {
         ListInstancesRequest request = new ListInstancesRequest()
                 .withEngine(clientConfigurations.getEngine());
         ListInstancesResponse response = dmsClient.listInstances(request);
@@ -238,9 +238,9 @@ public class DMSProducer extends DefaultProducer {
      *
      * @param  exchange
      * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @throws JacksonException
      */
-    private void queryInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void queryInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JacksonException {
         // check for instance id, which is mandatory to query an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to query an instance");
@@ -257,9 +257,9 @@ public class DMSProducer extends DefaultProducer {
      *
      * @param  exchange
      * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @throws JacksonException
      */
-    private void updateInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void updateInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JacksonException {
         // check for instance id, which is mandatory to update an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to update an instance");

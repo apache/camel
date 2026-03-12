@@ -19,8 +19,6 @@ package org.apache.camel.component.huaweicloud.obs;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.obs.services.ObsClient;
 import com.obs.services.model.ListObjectsRequest;
 import com.obs.services.model.ObjectListing;
@@ -33,6 +31,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

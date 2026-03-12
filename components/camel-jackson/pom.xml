@@ -45,12 +45,14 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${jackson2-version}</version>
         </dependency>
 
         <!-- testing -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+            <version>${jackson2-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

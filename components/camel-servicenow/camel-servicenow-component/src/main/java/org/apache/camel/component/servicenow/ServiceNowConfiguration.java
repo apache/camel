@@ -24,17 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -43,6 +32,17 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.ext.javatime.deser.LocalDateDeserializer;
+import tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer;
+import tools.jackson.databind.ext.javatime.deser.LocalTimeDeserializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalTimeSerializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 @UriParams
 public class ServiceNowConfiguration implements Cloneable {
@@ -484,23 +484,22 @@ public class ServiceNowConfiguration implements Cloneable {
             final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern(getTimeFormat());
             final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern(getDateTimeFormat());
 
-            this.mapper = new ObjectMapper()
-                    .registerModule(new Jdk8Module())
-                    .registerModule(new JavaTimeModule()
-                            .addSerializer(LocalDate.class, new LocalDateSerializer(dateFormat))
-                            .addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormat))
-                            .addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormat))
-                            .addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormat))
-                            .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormat))
-                            .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormat)))
-                    .configure(
-                            SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-                            false)
-                    .configure(
-                            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-                            false)
-                    .setSerializationInclusion(
-                            JsonInclude.Include.NON_NULL);
+            SimpleModule module = new SimpleModule("ServiceNowDateTimeModule")
+                    .addSerializer(LocalDate.class, new LocalDateSerializer(dateFormat))
+                    .addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormat))
+                    .addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormat))
+                    .addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormat))
+                    .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormat))
+                    .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormat));
+
+            this.mapper = JsonMapper.builder()
+                    .addModule(module)
+                    .disable(
+                            DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    .disable(
+                            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                    .build();
         }
 
         return mapper;

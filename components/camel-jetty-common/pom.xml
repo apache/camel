@@ -114,7 +114,7 @@
         <!-- for testing rest-dsl -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson</artifactId>
+            <artifactId>camel-jackson3</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

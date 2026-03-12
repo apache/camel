@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.SObject;
@@ -38,6 +37,7 @@ import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
+import tools.jackson.databind.ObjectMapper;
 
 public final class ObjectDescriptions {
 

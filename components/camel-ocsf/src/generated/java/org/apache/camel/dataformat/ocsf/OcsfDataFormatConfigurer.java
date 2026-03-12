@@ -24,7 +24,7 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AllowUnmarshallType", boolean.class);
         map.put("CollectionType", java.lang.Class.class);
-        map.put("ObjectMapper", com.fasterxml.jackson.databind.ObjectMapper.class);
+        map.put("ObjectMapper", tools.jackson.databind.ObjectMapper.class);
         map.put("PrettyPrint", boolean.class);
         map.put("UnmarshalType", java.lang.Class.class);
         map.put("UseDefaultObjectMapper", boolean.class);
@@ -41,7 +41,7 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
         case "collectiontype":
         case "collectionType": target.setCollectionType(property(camelContext, java.lang.Class.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": target.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "objectMapper": target.setObjectMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         case "unmarshaltype":
@@ -67,7 +67,7 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
         case "collectiontype":
         case "collectionType": return java.lang.Class.class;
         case "objectmapper":
-        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "objectMapper": return tools.jackson.databind.ObjectMapper.class;
         case "prettyprint":
         case "prettyPrint": return boolean.class;
         case "unmarshaltype":

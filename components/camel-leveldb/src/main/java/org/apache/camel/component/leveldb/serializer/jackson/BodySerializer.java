@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.leveldb.serializer.jackson;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 public class BodySerializer extends StdSerializer<Object> {
     BodySerializer() {
@@ -28,20 +26,20 @@ public class BodySerializer extends StdSerializer<Object> {
     }
 
     @Override
-    public void serialize(Object object, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(Object object, JsonGenerator gen, SerializationContext provider) {
         if (object == null) {
             return;
         }
 
         Package p = object.getClass().getPackage();
         if (p == null || p.getName().equals("java.lang") || p.getName().equals("java.util")) {
-            gen.writeObject(object);
+            gen.writePOJO(object);
         } else {
             gen.writeStartObject();
-            gen.writeFieldName("clazz");
-            gen.writeObject(object.getClass());
-            gen.writeFieldName("data");
-            gen.writeObject(object);
+            gen.writeName("clazz");
+            gen.writePOJO(object.getClass());
+            gen.writeName("data");
+            gen.writePOJO(object);
             gen.writeEndObject();
         }
     }

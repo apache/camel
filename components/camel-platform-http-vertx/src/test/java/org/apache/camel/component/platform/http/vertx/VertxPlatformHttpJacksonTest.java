@@ -18,7 +18,7 @@ package org.apache.camel.component.platform.http.vertx;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jackson.JacksonConstants;
+import org.apache.camel.component.jackson3.JacksonConstants;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;

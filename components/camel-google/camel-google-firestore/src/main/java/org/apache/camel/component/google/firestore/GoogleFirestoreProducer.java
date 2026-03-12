@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
@@ -43,6 +40,9 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Producer for Google Firestore operations.
@@ -358,7 +358,7 @@ public class GoogleFirestoreProducer extends DefaultProducer {
                 try {
                     return OBJECT_MAPPER.readValue(trimmed, new TypeReference<HashMap<String, Object>>() {
                     });
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new InvalidPayloadException(exchange, Map.class, exchange.getIn(), e);
                 }
             }

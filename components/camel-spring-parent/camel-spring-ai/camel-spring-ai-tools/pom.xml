@@ -39,6 +39,12 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-version}</version>
+        </dependency>
+
         <!-- Spring AI core dependencies -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
@@ -55,6 +61,11 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- for testing -->

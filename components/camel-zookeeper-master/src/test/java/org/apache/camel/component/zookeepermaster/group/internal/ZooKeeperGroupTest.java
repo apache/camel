@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.curator.framework.CuratorFramework;
@@ -32,6 +30,8 @@ import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -72,7 +72,10 @@ public class ZooKeeperGroupTest {
     private static void putChildData(ZooKeeperGroup<NodeState> group, String path, String container) throws Exception {
         NodeState node = new NodeState("test", container);
         ByteArrayOutputStream data = new ByteArrayOutputStream();
-        new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).writeValue(data, node);
+        JsonMapper.builder()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build()
+                .writeValue(data, node);
         ChildData<NodeState> child = new ChildData<>(path, new Stat(), data.toByteArray(), node);
         group.putCurrentData(path, child);
     }

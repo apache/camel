@@ -20,8 +20,6 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.victools.jsonschema.generator.Option;
 import com.github.victools.jsonschema.generator.SchemaGenerator;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
@@ -35,6 +33,8 @@ import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Command to generate JSON Schema for Camel components and Java objects.

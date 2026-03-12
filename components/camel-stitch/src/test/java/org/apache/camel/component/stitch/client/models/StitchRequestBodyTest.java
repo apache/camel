@@ -20,9 +20,9 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class StitchRequestBodyTest {
 
     @Test
-    public void testNormalRequestBodyToJson() throws JsonProcessingException {
+    public void testNormalRequestBodyToJson() throws JacksonException {
         final StitchMessage message1 = StitchMessage.builder()
                 .withData("id", 2)
                 .withData("name", "Jake")

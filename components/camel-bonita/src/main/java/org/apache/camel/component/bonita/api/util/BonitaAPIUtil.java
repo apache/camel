@@ -30,7 +30,6 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.filter.JsonClientFilter;
 import org.apache.camel.component.bonita.api.model.FileInput;
@@ -39,6 +38,7 @@ import org.apache.camel.component.bonita.api.model.UploadFileResponse;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.AttachmentBuilder;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
+import tools.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 import static jakarta.ws.rs.client.Entity.entity;
 

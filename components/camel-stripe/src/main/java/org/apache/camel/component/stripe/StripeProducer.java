@@ -19,12 +19,12 @@ package org.apache.camel.component.stripe;
 import java.util.Collections;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.Stripe;
 import com.stripe.model.*;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.ObjectMapper;
 
 public class StripeProducer extends DefaultProducer {
 

@@ -19,20 +19,23 @@ package org.apache.camel.groovy.json;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import groovy.json.JsonSlurper;
 import groovy.util.Node;
 import groovy.xml.XmlParser;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jackson3.JacksonConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class GroovyJSonDataFormatTest extends CamelTestSupport {
 
@@ -271,7 +274,7 @@ public class GroovyJSonDataFormatTest extends CamelTestSupport {
         Assertions.assertInstanceOf(byte[].class, out);
 
         String json = context.getTypeConverter().convertTo(String.class, out);
-        Assertions.assertEquals(BOOKS, json + "\n");
+        JSONAssert.assertEquals(BOOKS, json, true);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -308,9 +311,17 @@ public class GroovyJSonDataFormatTest extends CamelTestSupport {
         Assertions.assertInstanceOf(byte[].class, out);
 
         String json = context.getTypeConverter().convertTo(String.class, out);
-        Assertions.assertEquals(JACKSON_COUNTRIES, json + "\n");
+        JSONAssert.assertEquals(JACKSON_COUNTRIES, json, true);
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // Enable Jackson3 type converter
+        context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        return context;
     }
 
     @Override

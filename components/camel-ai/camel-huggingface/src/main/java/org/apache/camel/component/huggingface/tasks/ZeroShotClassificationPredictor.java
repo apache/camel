@@ -24,12 +24,12 @@ import java.util.stream.StreamSupport;
 import ai.djl.modality.Classifications;
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Predictor for the ZERO_SHOT_CLASSIFICATION task, performing label classification on text without prior training.

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.xj;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.xslt.ResultHandler;
 import org.apache.camel.component.xslt.ResultHandlerFactory;
+import tools.jackson.core.json.JsonFactory;
 
 /**
  * A {@link JsonStringResultHandler} factory

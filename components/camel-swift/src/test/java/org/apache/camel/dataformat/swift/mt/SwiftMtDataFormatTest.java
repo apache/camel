@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prowidesoftware.swift.model.mt.mt1xx.MT103;
 import com.prowidesoftware.swift.model.mt.mt5xx.MT515;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +28,7 @@ import org.apache.camel.model.dataformat.SwiftMtDataFormat;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

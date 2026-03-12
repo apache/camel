@@ -18,15 +18,17 @@ package org.apache.camel.maven.htmlxlsx.process;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 public class XmlToCamelRouteCoverageConverter {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+    private final ObjectMapper objectMapper
+            = JsonMapper.builder().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).build();
 
     private final XmlMapper xmlMapper = new XmlMapper();
 
@@ -40,12 +42,12 @@ public class XmlToCamelRouteCoverageConverter {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
 
             return readValue(json);
-        } catch (JsonProcessingException ex) {
+        } catch (JacksonException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    protected TestResult readValue(String json) throws JsonProcessingException {
+    protected TestResult readValue(String json) throws JacksonException {
 
         return objectMapper.readValue(json, TestResult.class);
     }

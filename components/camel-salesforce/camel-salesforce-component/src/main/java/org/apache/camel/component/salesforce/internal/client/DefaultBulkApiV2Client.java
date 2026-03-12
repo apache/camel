@@ -17,15 +17,12 @@
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
@@ -44,6 +41,8 @@ import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.client.Response;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkApiV2Client {
 
@@ -373,45 +372,38 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
     }
 
     private void marshalRequest(Object input, Request request) throws SalesforceException {
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             objectMapper.writeValue(outputStream, input);
-        } catch (IOException e) {
-            String message = "Error marshaling request: " + e.getMessage();
-            throw new SalesforceException(message, e);
+            request.body(new BytesRequestContent(outputStream.toByteArray()));
+        } catch (RuntimeException e) {
+            throw new SalesforceException("Error marshaling request: " + e.getMessage(), e);
         }
-        request.body(new BytesRequestContent(outputStream.toByteArray()));
     }
 
     private <T> T unmarshalResponse(InputStream response, Request request, Class<T> resultClass)
             throws SalesforceException {
-        T result = null;
-        if (response != null) {
-            try {
+        try {
+            T result = null;
+            if (response != null) {
                 result = objectMapper.readValue(response, resultClass);
-            } catch (IOException e) {
-                throw new SalesforceException(
-                        String.format("Error unmarshalling response for {%s:%s} : %s",
-                                request.getMethod(), request.getURI(), e.getMessage()),
-                        e);
             }
+            return result;
+        } catch (RuntimeException e) {
+            throw new SalesforceException("Error unmarshaling response: " + e.getMessage(), e);
         }
-        return result;
     }
 
     private <T> T unmarshalResponse(InputStream response, Request request, TypeReference<T> typeRef)
             throws SalesforceException {
-        T result = null;
-        if (response != null) {
-            try {
+        try {
+            T result = null;
+            if (response != null) {
                 result = objectMapper.readValue(response, typeRef);
-            } catch (IOException e) {
-                throw new SalesforceException(
-                        String.format("Error unmarshalling response for {%s:%s} : %s",
-                                request.getMethod(), request.getURI(), e.getMessage()),
-                        e);
             }
+            return result;
+        } catch (RuntimeException e) {
+            throw new SalesforceException("Error unmarshaling response: " + e.getMessage(), e);
         }
-        return result;
     }
 }

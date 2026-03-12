@@ -20,8 +20,6 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.mcp.client.McpClient;
@@ -41,6 +39,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class LangChain4jAgentProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jAgentProducer.class);
@@ -204,8 +204,11 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                         String arguments = toolExecutionRequest.arguments();
                         if (arguments != null && !arguments.trim().isEmpty()) {
                             JsonNode jsonNode = objectMapper.readValue(arguments, JsonNode.class);
-                            jsonNode.fieldNames()
-                                    .forEachRemaining(name -> exchange.getMessage().setHeader(name, jsonNode.get(name)));
+                            jsonNode.properties()
+                                    .forEach(propEntry -> {
+                                        String name = propEntry.getKey();
+                                        exchange.getMessage().setHeader(name, jsonNode.get(name));
+                                    });
                         }
 
                         // Set the tool name as a header for route identification

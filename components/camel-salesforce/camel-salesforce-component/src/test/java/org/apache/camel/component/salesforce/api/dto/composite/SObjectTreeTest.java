@@ -19,15 +19,15 @@ package org.apache.camel.component.salesforce.api.dto.composite;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Asset;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectWriter;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,9 +53,10 @@ public class SObjectTreeTest extends CompositeTestBase {
     }
 
     @Test
-    public void shouldSerializeToJson() throws JsonProcessingException {
-        final ObjectMapper mapper = JsonUtils.createObjectMapper();
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+    public void shouldSerializeToJson() throws JacksonException {
+        final ObjectMapper mapper = JsonUtils.createObjectMapper().rebuild()
+                .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+                .build();
 
         final ObjectWriter writer = mapper.writerFor(SObjectTree.class);
 

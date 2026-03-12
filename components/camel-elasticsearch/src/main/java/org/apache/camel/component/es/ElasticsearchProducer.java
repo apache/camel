@@ -44,13 +44,11 @@ import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
-import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.json.jackson.Jackson3JsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
 import co.elastic.clients.transport.rest_client.RestClientOptions;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -70,6 +68,9 @@ import org.elasticsearch.client.sniff.Sniffer;
 import org.elasticsearch.client.sniff.SnifferBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL;
 import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
@@ -140,10 +141,12 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             if (configuration.isDisconnect() && client == null) {
                 startClient();
             }
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            final ObjectMapper mapper = JsonMapper.builder()
+                    .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                    .build();
             RestClientOptions options = new RestClientOptions(RequestOptions.DEFAULT, true);
-            ElasticsearchTransport transport = new RestClientTransport(client, new JacksonJsonpMapper(mapper), options);
+            Jackson3JsonpMapper jsonMapper = new Jackson3JsonpMapper((JsonMapper) mapper);
+            ElasticsearchTransport transport = new RestClientTransport(client, jsonMapper, options);
             // 2. Index and type will be set by:
             // a. If the incoming body is already an action request
             // b. If the body is not an action request we will use headers if they
