@@ -286,6 +286,9 @@ The Kafka client library has been upgraded from 3.9.1 to 4.2.0. This is a major 
 
 * If you had explicitly configured the `partitioner` option to use `org.apache.kafka.clients.producer.internals.DefaultPartitioner` or `org.apache.kafka.clients.producer.UniformStickyPartitioner`, you must remove that configuration as these classes have been removed in Kafka 4.0. The built-in default partitioner (used when no partitioner is set) continues to work.
 
+Camel will now defer starting Kafka consumers during startup of `CamelContext` to after the context is fully started, to ensure
+that any incoming message from Kafka brokers are only received by Camel when everything is fully started.
+
 === camel-google-pubsub-lite
 
 The `camel-google-pubsub-lite` component has been removed. The component was deprecated in Camel 4.10 following Google Cloud Platform's deprecation of the underlying Pub/Sub Lite service.
