@@ -2186,7 +2186,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a java.security.KeyPair directly for public key authentication.
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
          * 
          * The option is a: <code>java.security.KeyPair</code> type.
          * 
@@ -2200,7 +2201,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a java.security.KeyPair directly for public key authentication.
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
          * 
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
@@ -2294,7 +2296,7 @@ public interface MinaSftpEndpointBuilderFactory {
         /**
          * Set the preferred authentications which SFTP endpoint will used. Some
          * example include: password,publickey. If not specified the default
-         * list from MINA SSHD will be used.
+         * list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2308,7 +2310,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte array for public key authentication.
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -2322,7 +2325,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte array for public key authentication.
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -2336,8 +2340,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key file path so that the SFTP endpoint can do public
-         * key authentication.
+         * Set the private key file so that the SFTP endpoint can do private key
+         * verification.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2351,7 +2355,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the passphrase for decrypting an encrypted private key.
+         * Set the private key file passphrase so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2365,8 +2370,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as a classpath: or file: URI (e.g.,
-         * classpath:keys/id_rsa).
+         * Set the private key file (loaded from classpath by default) so that
+         * the SFTP endpoint can do private key verification.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -2384,7 +2389,7 @@ public interface MinaSftpEndpointBuilderFactory {
         }
         /**
          * Set a comma separated list of public key accepted algorithms. If not
-         * specified the default list from MINA SSHD will be used.
+         * specified the default list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4251,7 +4256,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a java.security.KeyPair directly for public key authentication.
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
          * 
          * The option is a: <code>java.security.KeyPair</code> type.
          * 
@@ -4265,7 +4271,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a java.security.KeyPair directly for public key authentication.
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
          * 
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
@@ -4359,7 +4366,7 @@ public interface MinaSftpEndpointBuilderFactory {
         /**
          * Set the preferred authentications which SFTP endpoint will used. Some
          * example include: password,publickey. If not specified the default
-         * list from MINA SSHD will be used.
+         * list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4373,7 +4380,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte array for public key authentication.
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -4387,7 +4395,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte array for public key authentication.
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -4401,8 +4410,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key file path so that the SFTP endpoint can do public
-         * key authentication.
+         * Set the private key file so that the SFTP endpoint can do private key
+         * verification.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4416,7 +4425,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the passphrase for decrypting an encrypted private key.
+         * Set the private key file passphrase so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4430,8 +4440,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as a classpath: or file: URI (e.g.,
-         * classpath:keys/id_rsa).
+         * Set the private key file (loaded from classpath by default) so that
+         * the SFTP endpoint can do private key verification.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -4449,7 +4459,7 @@ public interface MinaSftpEndpointBuilderFactory {
         }
         /**
          * Set a comma separated list of public key accepted algorithms. If not
-         * specified the default list from MINA SSHD will be used.
+         * specified the default list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5869,7 +5879,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a java.security.KeyPair directly for public key authentication.
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
          * 
          * The option is a: <code>java.security.KeyPair</code> type.
          * 
@@ -5883,7 +5894,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a java.security.KeyPair directly for public key authentication.
+         * Sets a key pair of the public and private key so to that the SFTP
+         * endpoint can do public/private key verification.
          * 
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
@@ -5977,7 +5989,7 @@ public interface MinaSftpEndpointBuilderFactory {
         /**
          * Set the preferred authentications which SFTP endpoint will used. Some
          * example include: password,publickey. If not specified the default
-         * list from MINA SSHD will be used.
+         * list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5991,7 +6003,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte array for public key authentication.
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -6005,7 +6018,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte array for public key authentication.
+         * Set the private key as byte so that the SFTP endpoint can do private
+         * key verification.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -6019,8 +6033,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key file path so that the SFTP endpoint can do public
-         * key authentication.
+         * Set the private key file so that the SFTP endpoint can do private key
+         * verification.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6034,7 +6048,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the passphrase for decrypting an encrypted private key.
+         * Set the private key file passphrase so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6048,8 +6063,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as a classpath: or file: URI (e.g.,
-         * classpath:keys/id_rsa).
+         * Set the private key file (loaded from classpath by default) so that
+         * the SFTP endpoint can do private key verification.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -6067,7 +6082,7 @@ public interface MinaSftpEndpointBuilderFactory {
         }
         /**
          * Set a comma separated list of public key accepted algorithms. If not
-         * specified the default list from MINA SSHD will be used.
+         * specified the default list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

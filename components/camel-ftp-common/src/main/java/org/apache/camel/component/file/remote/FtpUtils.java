@@ -139,23 +139,6 @@ public final class FtpUtils {
         }
     }
 
-    public static String absoluteFilePath(FtpConfiguration configuration, String absolutePath, String name) {
-        boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
-        // create a pseudo absolute name
-        String dir = FileUtil.stripTrailingSeparator(absolutePath);
-        String fileName = name;
-        if (configuration.isHandleDirectoryParserAbsoluteResult()) {
-            fileName = FtpUtils.extractDirNameFromAbsolutePath(name);
-        }
-        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + fileName);
-        // if absolute start with a leading separator otherwise let it be
-        // relative
-        if (absolute) {
-            absoluteFileName = "/" + absoluteFileName;
-        }
-        return absoluteFileName;
-    }
-
     public static String absoluteFilePath(String absolutePath, String name) {
         boolean absolute = FileUtil.hasLeadingSeparator(absolutePath);
 

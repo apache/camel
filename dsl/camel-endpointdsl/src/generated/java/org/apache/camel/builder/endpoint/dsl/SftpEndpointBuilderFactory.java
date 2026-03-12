@@ -2269,8 +2269,8 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Set the preferred authentications which SFTP endpoint will used. Some
-         * example include:password,publickey. If not specified the default list
-         * from JSCH will be used.
+         * example include: password,publickey. If not specified the default
+         * list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2362,9 +2362,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a comma separated list of public key accepted algorithms. Some
-         * examples include:
-         * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
+         * Set a comma separated list of public key accepted algorithms. If not
+         * specified the default list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3140,9 +3139,7 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use compression. Specify a level from 1 to 10. Important: You must
-         * manually add the needed JSCH zlib JAR to the classpath for
-         * compression support.
+         * To use compression. Specify a level from 1 to 10.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -3156,9 +3153,7 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use compression. Specify a level from 1 to 10. Important: You must
-         * manually add the needed JSCH zlib JAR to the classpath for
-         * compression support.
+         * To use compression. Specify a level from 1 to 10.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4241,8 +4236,8 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Set the preferred authentications which SFTP endpoint will used. Some
-         * example include:password,publickey. If not specified the default list
-         * from JSCH will be used.
+         * example include: password,publickey. If not specified the default
+         * list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4334,9 +4329,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a comma separated list of public key accepted algorithms. Some
-         * examples include:
-         * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
+         * Set a comma separated list of public key accepted algorithms. If not
+         * specified the default list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4915,9 +4909,7 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use compression. Specify a level from 1 to 10. Important: You must
-         * manually add the needed JSCH zlib JAR to the classpath for
-         * compression support.
+         * To use compression. Specify a level from 1 to 10.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4931,9 +4923,7 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use compression. Specify a level from 1 to 10. Important: You must
-         * manually add the needed JSCH zlib JAR to the classpath for
-         * compression support.
+         * To use compression. Specify a level from 1 to 10.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -5766,8 +5756,8 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Set the preferred authentications which SFTP endpoint will used. Some
-         * example include:password,publickey. If not specified the default list
-         * from JSCH will be used.
+         * example include: password,publickey. If not specified the default
+         * list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5859,9 +5849,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set a comma separated list of public key accepted algorithms. Some
-         * examples include:
-         * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list from JSCH will be used.
+         * Set a comma separated list of public key accepted algorithms. If not
+         * specified the default list will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6125,9 +6114,7 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use compression. Specify a level from 1 to 10. Important: You must
-         * manually add the needed JSCH zlib JAR to the classpath for
-         * compression support.
+         * To use compression. Specify a level from 1 to 10.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -6141,9 +6128,7 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use compression. Specify a level from 1 to 10. Important: You must
-         * manually add the needed JSCH zlib JAR to the classpath for
-         * compression support.
+         * To use compression. Specify a level from 1 to 10.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

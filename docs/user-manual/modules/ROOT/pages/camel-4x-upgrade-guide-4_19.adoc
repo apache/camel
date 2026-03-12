@@ -377,6 +377,23 @@ HttpRequest request = context.getAttribute(AS2ClientManager.HTTP_REQUEST, HttpRe
 HttpRequest request = context.getRequest();
 ----
 
+=== camel-ftp
+
+The `camel-ftp` component has been refactored to extract shared FTP/SFTP code into a new `camel-ftp-common` module.
+Classes such as `BaseSftpConfiguration` and `AbstractSftpConsumer` have been moved from `camel-ftp` to `camel-ftp-common`.
+
+This is an internal refactoring that should not affect most users. However, if you extend these classes directly,
+you will need to add the `camel-ftp-common` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ftp-common</artifactId>
+    <version>${camel.version}</version>
+</dependency>
+----
+
 === camel-quickfix
 
 Upgraded QuickFixJ from 2.3.2 to 3.0.0 in `camel-quickfix` component.

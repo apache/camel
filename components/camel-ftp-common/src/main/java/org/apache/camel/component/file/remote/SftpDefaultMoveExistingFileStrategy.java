@@ -66,7 +66,7 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
         to = completePartialRelativePath(to, onlyName, parent);
 
         // normalize accordingly to configuration
-        to = ((SftpEndpoint) endpoint).getConfiguration().normalizePath(to);
+        to = ((RemoteFileEndpoint<?>) endpoint).getConfiguration().normalizePath(to);
 
         // do we have a sub directory
         String dir = FileUtil.onlyPath(to);

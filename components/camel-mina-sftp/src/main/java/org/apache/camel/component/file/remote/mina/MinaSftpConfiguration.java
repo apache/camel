@@ -17,11 +17,10 @@
 package org.apache.camel.component.file.remote.mina;
 
 import java.net.URI;
-import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.component.file.remote.RemoteFileConfiguration;
+import org.apache.camel.component.file.remote.BaseSftpConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -34,50 +33,17 @@ import org.slf4j.LoggerFactory;
  * MINA SFTP configuration using Apache MINA SSHD library.
  */
 @UriParams
-public class MinaSftpConfiguration extends RemoteFileConfiguration {
+public class MinaSftpConfiguration extends BaseSftpConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinaSftpConfiguration.class);
 
-    public static final int DEFAULT_SFTP_PORT = 22;
-
-    // Known hosts options
-    @UriParam(label = "security", secret = true)
-    private String knownHostsFile;
-    @UriParam(label = "security", defaultValue = "true")
-    private boolean useUserKnownHostsFile = true;
-    @UriParam(label = "security", defaultValue = "false")
-    private boolean autoCreateKnownHostsFile;
-    @UriParam(label = "security", secret = true)
-    @Metadata(supportFileReference = true)
-    private String knownHostsUri;
-    @UriParam(label = "security", secret = true)
-    private byte[] knownHosts;
-    @UriParam(defaultValue = "no", enums = "no,yes", label = "security")
-    private String strictHostKeyChecking = "no";
+    // MINA-specific: custom server key verifier
     @UriParam(label = "security",
               description = "Custom ServerKeyVerifier for host key verification. When provided, this verifier is used "
                             + "exclusively, ignoring strictHostKeyChecking, knownHostsFile, and other host key options.")
     private ServerKeyVerifier serverKeyVerifier;
 
-    // Public key authentication options
-    @UriParam(label = "security", secret = true,
-              description = "Set the private key file path so that the SFTP endpoint can do public key authentication")
-    private String privateKeyFile;
-    @UriParam(label = "security", secret = true,
-              description = "Set the private key as a classpath: or file: URI (e.g., classpath:keys/id_rsa)")
-    @Metadata(supportFileReference = true)
-    private String privateKeyUri;
-    @UriParam(label = "security", secret = true,
-              description = "Set the private key as byte array for public key authentication")
-    private byte[] privateKey;
-    @UriParam(label = "security", secret = true,
-              description = "Set the passphrase for decrypting an encrypted private key")
-    private String privateKeyPassphrase;
-    @UriParam(label = "security", secret = true,
-              description = "Set a java.security.KeyPair directly for public key authentication")
-    private KeyPair keyPair;
-
-    // OpenSSH certificate authentication options (MINA SSHD specific)
+    // MINA-specific: OpenSSH certificate authentication
     @UriParam(label = "security", secret = true,
               description = "Set the OpenSSH certificate file path for certificate-based authentication")
     private String certFile;
@@ -89,39 +55,19 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
               description = "Set the OpenSSH certificate as byte array")
     private byte[] certBytes;
 
-    // Connection options
-    @UriParam(label = "advanced")
-    private int serverAliveInterval;
-    @UriParam(defaultValue = "1", label = "advanced")
-    private int serverAliveCountMax = 1;
-    @UriParam(label = "advanced")
-    private int compression;
+    // MINA-specific: ciphers, key exchange, server host keys as List<String>
     @UriParam(label = "security", javaType = "java.lang.String")
     private List<String> ciphers;
-    @UriParam(label = "security")
-    private String preferredAuthentications;
     @UriParam(label = "security", javaType = "java.lang.String")
     private List<String> keyExchangeProtocols;
     @UriParam(label = "security", javaType = "java.lang.String")
     private List<String> serverHostKeys;
-    @UriParam(label = "security")
-    private String publicKeyAcceptedAlgorithms;
-    @UriParam(label = "advanced")
-    private String bindAddress;
-    @UriParam(label = "advanced")
-    private Integer bulkRequests;
+
+    // MINA-specific: buffer sizes
     @UriParam(label = "advanced")
     private Integer readBufferSize;
     @UriParam(label = "advanced")
     private Integer writeBufferSize;
-
-    // File options
-    @UriParam(label = "producer,advanced")
-    private String chmod;
-    @UriParam(label = "producer,advanced")
-    private String chmodDirectory;
-    @UriParam(label = "advanced")
-    private String filenameEncoding;
 
     public MinaSftpConfiguration() {
         setProtocol("mina-sftp");
@@ -129,80 +75,6 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
 
     public MinaSftpConfiguration(URI uri) {
         super(uri);
-    }
-
-    @Override
-    protected void setDefaultPort() {
-        setPort(DEFAULT_SFTP_PORT);
-    }
-
-    public String getKnownHostsFile() {
-        return knownHostsFile;
-    }
-
-    /**
-     * Sets the known_hosts file, so that the SFTP endpoint can do host key verification.
-     */
-    public void setKnownHostsFile(String knownHostsFile) {
-        this.knownHostsFile = knownHostsFile;
-    }
-
-    public String getKnownHostsUri() {
-        return knownHostsUri;
-    }
-
-    /**
-     * Sets the known_hosts file (loaded from classpath by default), so that the SFTP endpoint can do host key
-     * verification.
-     */
-    public void setKnownHostsUri(String knownHostsUri) {
-        this.knownHostsUri = knownHostsUri;
-    }
-
-    public boolean isUseUserKnownHostsFile() {
-        return useUserKnownHostsFile;
-    }
-
-    /**
-     * If knownHostFile has not been explicit configured then use the host file from
-     * System.getProperty(user.home)/.ssh/known_hosts
-     */
-    public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
-        this.useUserKnownHostsFile = useUserKnownHostsFile;
-    }
-
-    public boolean isAutoCreateKnownHostsFile() {
-        return autoCreateKnownHostsFile;
-    }
-
-    /**
-     * If knownHostFile does not exist, then attempt to auto-create the path and file (beware that the file will be
-     * created by the current user of the running Java process, which may not have file permission).
-     */
-    public void setAutoCreateKnownHostsFile(boolean autoCreateKnownHostsFile) {
-        this.autoCreateKnownHostsFile = autoCreateKnownHostsFile;
-    }
-
-    public byte[] getKnownHosts() {
-        return knownHosts;
-    }
-
-    /**
-     * Sets the known_hosts from the byte array, so that the SFTP endpoint can do host key verification.
-     */
-    public void setKnownHosts(byte[] knownHosts) {
-        this.knownHosts = knownHosts;
-    }
-
-    public String getStrictHostKeyChecking() {
-        return strictHostKeyChecking;
-    }
-
-    /**
-     * Sets whether to use strict host key checking.
-     */
-    public void setStrictHostKeyChecking(String strictHostKeyChecking) {
-        this.strictHostKeyChecking = strictHostKeyChecking;
     }
 
     public ServerKeyVerifier getServerKeyVerifier() {
@@ -217,61 +89,6 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
      */
     public void setServerKeyVerifier(ServerKeyVerifier serverKeyVerifier) {
         this.serverKeyVerifier = serverKeyVerifier;
-    }
-
-    public String getPrivateKeyFile() {
-        return privateKeyFile;
-    }
-
-    /**
-     * Set the private key file path so that the SFTP endpoint can do public key authentication.
-     */
-    public void setPrivateKeyFile(String privateKeyFile) {
-        this.privateKeyFile = privateKeyFile;
-    }
-
-    public String getPrivateKeyUri() {
-        return privateKeyUri;
-    }
-
-    /**
-     * Set the private key as a classpath: or file: URI (e.g., classpath:keys/id_rsa).
-     */
-    public void setPrivateKeyUri(String privateKeyUri) {
-        this.privateKeyUri = privateKeyUri;
-    }
-
-    public byte[] getPrivateKey() {
-        return privateKey;
-    }
-
-    /**
-     * Set the private key as byte array for public key authentication.
-     */
-    public void setPrivateKey(byte[] privateKey) {
-        this.privateKey = privateKey;
-    }
-
-    public String getPrivateKeyPassphrase() {
-        return privateKeyPassphrase;
-    }
-
-    /**
-     * Set the passphrase for decrypting an encrypted private key.
-     */
-    public void setPrivateKeyPassphrase(String privateKeyPassphrase) {
-        this.privateKeyPassphrase = privateKeyPassphrase;
-    }
-
-    public KeyPair getKeyPair() {
-        return keyPair;
-    }
-
-    /**
-     * Set a java.security.KeyPair directly for public key authentication.
-     */
-    public void setKeyPair(KeyPair keyPair) {
-        this.keyPair = keyPair;
     }
 
     public String getCertFile() {
@@ -307,42 +124,6 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
         this.certBytes = certBytes;
     }
 
-    public int getServerAliveInterval() {
-        return serverAliveInterval;
-    }
-
-    /**
-     * Sets the interval (millis) to send a keep-alive message. If zero is specified, any keep-alive message must not be
-     * sent. The default interval is zero.
-     */
-    public void setServerAliveInterval(int serverAliveInterval) {
-        this.serverAliveInterval = serverAliveInterval;
-    }
-
-    public int getServerAliveCountMax() {
-        return serverAliveCountMax;
-    }
-
-    /**
-     * Sets the number of keep-alive messages which may be sent without receiving any messages back from the server. If
-     * this threshold is reached while keep-alive messages are being sent, the connection will be disconnected. The
-     * default value is one.
-     */
-    public void setServerAliveCountMax(int serverAliveCountMax) {
-        this.serverAliveCountMax = serverAliveCountMax;
-    }
-
-    public int getCompression() {
-        return compression;
-    }
-
-    /**
-     * To use compression. Specify a level from 1 to 10.
-     */
-    public void setCompression(int compression) {
-        this.compression = compression;
-    }
-
     public List<String> getCiphers() {
         return ciphers;
     }
@@ -364,18 +145,6 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
      */
     public void setCiphers(String ciphers) {
         this.ciphers = csvToList(ciphers);
-    }
-
-    public String getPreferredAuthentications() {
-        return preferredAuthentications;
-    }
-
-    /**
-     * Set the preferred authentications which SFTP endpoint will used. Some example include: password,publickey. If not
-     * specified the default list from MINA SSHD will be used.
-     */
-    public void setPreferredAuthentications(String preferredAuthentications) {
-        this.preferredAuthentications = preferredAuthentications;
     }
 
     public List<String> getKeyExchangeProtocols() {
@@ -420,46 +189,6 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
         this.serverHostKeys = csvToList(serverHostKeys);
     }
 
-    public String getPublicKeyAcceptedAlgorithms() {
-        return publicKeyAcceptedAlgorithms;
-    }
-
-    /**
-     * Set a comma separated list of public key accepted algorithms. If not specified the default list from MINA SSHD
-     * will be used.
-     */
-    public void setPublicKeyAcceptedAlgorithms(String publicKeyAcceptedAlgorithms) {
-        this.publicKeyAcceptedAlgorithms = publicKeyAcceptedAlgorithms;
-    }
-
-    public String getBindAddress() {
-        return bindAddress;
-    }
-
-    /**
-     * Specifies the address of the local interface against which the connection should bind.
-     */
-    public void setBindAddress(String bindAddress) {
-        this.bindAddress = bindAddress;
-    }
-
-    public Integer getBulkRequests() {
-        return bulkRequests;
-    }
-
-    /**
-     * Specifies how many requests may be outstanding at any one time. Increasing this value may slightly improve file
-     * transfer speed but will increase memory usage.
-     *
-     * @deprecated Use {@link #setReadBufferSize(Integer)} and {@link #setWriteBufferSize(Integer)} instead. Each bulk
-     *             request corresponds to approximately 32KB of buffer. For example, bulkRequests=4 is equivalent to
-     *             readBufferSize=131072 and writeBufferSize=131072.
-     */
-    @Deprecated(since = "4.18")
-    public void setBulkRequests(Integer bulkRequests) {
-        this.bulkRequests = bulkRequests;
-    }
-
     public Integer getReadBufferSize() {
         return readBufferSize;
     }
@@ -488,37 +217,17 @@ public class MinaSftpConfiguration extends RemoteFileConfiguration {
         this.writeBufferSize = writeBufferSize;
     }
 
-    public String getChmod() {
-        return chmod;
-    }
-
     /**
-     * Allows you to set chmod on the stored file. For example chmod=640.
+     * {@inheritDoc}
+     *
+     * @deprecated Use {@link #setReadBufferSize(Integer)} and {@link #setWriteBufferSize(Integer)} instead. Each bulk
+     *             request corresponds to approximately 32KB of buffer. For example, bulkRequests=4 is equivalent to
+     *             readBufferSize=131072 and writeBufferSize=131072.
      */
-    public void setChmod(String chmod) {
-        this.chmod = chmod;
-    }
-
-    public String getChmodDirectory() {
-        return chmodDirectory;
-    }
-
-    /**
-     * Allows you to set chmod during path creation. For example chmod=640.
-     */
-    public void setChmodDirectory(String chmodDirectory) {
-        this.chmodDirectory = chmodDirectory;
-    }
-
-    public String getFilenameEncoding() {
-        return filenameEncoding;
-    }
-
-    /**
-     * Encoding to use for FTP client when parsing filenames. By default, UTF-8 is used.
-     */
-    public void setFilenameEncoding(String filenameEncoding) {
-        this.filenameEncoding = filenameEncoding;
+    @Override
+    @Deprecated(since = "4.18")
+    public void setBulkRequests(Integer bulkRequests) {
+        super.setBulkRequests(bulkRequests);
     }
 
     /**
