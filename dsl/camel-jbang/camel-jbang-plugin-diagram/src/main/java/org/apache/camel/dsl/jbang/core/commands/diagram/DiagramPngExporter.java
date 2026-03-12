@@ -103,24 +103,22 @@ class DiagramPngExporter {
         String hawtioUrl = "http://localhost:" + hawtioPort + "/hawtio";
         String jolokiaUrl = "http://127.0.0.1:" + jolokiaPort + "/jolokia";
 
-        // Wait for Camel to be Running first (if we launched a new process).
-        if (camelLaunch != null) {
-            if (!waitForCamelRunning(camelLaunch)) {
-                return 1;
-            }
-            target = Long.toString(camelLaunch.pid());
-        }
-
-        int attachCode = attachJolokia(target, jolokiaUrl);
-        if (attachCode != 0) {
-            return attachCode;
-        }
-
-        // Start Hawtio after Jolokia is attached. Starting it earlier (in parallel with the Camel
-        // startup wait) caused resource contention between two concurrent JVM startups which slowed
-        // both processes down and led to diagram-stability timeouts, increasing total time.
+        // Start Hawtio in parallel while we wait for Camel to reach Running state.
         HawtioProcess hawtioProcess = startHawtioProcess(hawtioPort);
         try {
+            // Wait for Camel to be Running (if we launched a new process).
+            if (camelLaunch != null) {
+                if (!waitForCamelRunning(camelLaunch)) {
+                    return 1;
+                }
+                target = Long.toString(camelLaunch.pid());
+            }
+
+            int attachCode = attachJolokia(target, jolokiaUrl);
+            if (attachCode != 0) {
+                return attachCode;
+            }
+
             return exportDiagramPng(hawtioUrl, jolokiaUrl, outputPath, hawtioProcess);
         } finally {
             stopProcess(hawtioProcess.process);
@@ -131,8 +129,7 @@ class DiagramPngExporter {
     }
 
     /**
-     * Waits for the launched Camel integration to reach Running state (phase=5). Polls every 200ms (reduced from 500ms)
-     * to minimise startup latency. Hawtio is already starting in parallel while this method runs.
+     * Waits for the launched Camel integration to reach Running state (phase=5).
      */
     private boolean waitForCamelRunning(CamelLaunch launch) throws InterruptedException {
         StopWatch watch = new StopWatch();
@@ -334,6 +331,12 @@ class DiagramPngExporter {
                 // Large viewport ensures React Flow renders all route nodes before screenshotting.
                 // The default 1280x720 clips multi-route diagrams on the right side.
                 page.setViewportSize(3840, 2160);
+                // Disable CSS transitions and animations so React Flow nodes settle immediately.
+                page.addInitScript("(() => { const s = document.createElement('style');"
+                                   + " s.textContent = '* { transition: none !important;"
+                                   + " animation-duration: 0.001s !important;"
+                                   + " animation-delay: 0s !important; }';"
+                                   + " (document.head || document.documentElement).appendChild(s); })();");
                 DiagramPage diagramPage = new DiagramPage(page, scripts, printer, routeId, timeoutSeconds);
                 diagramPage.connectToJolokia(hawtioUrl, jolokiaUrl);
                 diagramPage.openRouteDiagram();

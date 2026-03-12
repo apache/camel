@@ -41,9 +41,7 @@ class DiagramPage {
     private final Printer printer;
     private final String routeId;
     private final long timeoutMs;
-    // Diagram stability should resolve in 2–4s under normal conditions.
-    // 10s is a generous cap that avoids blocking 60s when something goes wrong.
-    private static final long DIAGRAM_STABILITY_TIMEOUT_MS = 10_000L;
+    private static final long DIAGRAM_STABILITY_TIMEOUT_MS = 3_000L;
 
     DiagramPage(Page page, DiagramScripts scripts, Printer printer, String routeId, int timeoutSeconds) {
         this.page = page;
@@ -84,7 +82,6 @@ class DiagramPage {
         } catch (PlaywrightException e) {
             throw new IllegalStateException("Route diagram not available in Hawtio. Ensure Jolokia connection succeeded.", e);
         }
-        waitForDiagramAssets();
         waitForDiagramStable();
         prepareDiagramForScreenshot();
     }
@@ -253,28 +250,24 @@ class DiagramPage {
     }
 
     private void waitForDiagramStable() {
-        // Poll for the state monitor attribute. Locator.waitFor() uses Frame.waitForSelector
-        // internally (not eval), so it works with Chrome's CSP.
-        // Cap at DIAGRAM_STABILITY_TIMEOUT_MS (10s): the diagram is normally stable within 2-4s;
-        // the long timeoutMs (60s) is reserved for endpoint waits, not layout stability.
         try {
             page.locator("html[data-camel-stable='true']").waitFor(
                     new Locator.WaitForOptions().setTimeout(DIAGRAM_STABILITY_TIMEOUT_MS));
         } catch (PlaywrightException e) {
-            // If the state monitor didn't fire, just wait for react-flow nodes to be present
+            // State monitor didn't fire; fall back to react-flow node presence check.
             try {
                 page.locator(".react-flow__node").first()
                         .waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.ATTACHED)
-                                .setTimeout(5000));
+                                .setTimeout(2000));
             } catch (PlaywrightException ignored) {
                 // proceed anyway and attempt screenshot
             }
+            page.waitForTimeout(300);
         }
     }
 
     private void prepareDiagramForScreenshot() {
-        // prepare() is now called automatically by the state monitor in diagram-scripts.js
-        // when diagram nodes first appear. page.evaluate(String) is CSP-blocked in Chrome.
+        // prepare() is called automatically by the state monitor in diagram-scripts.js.
     }
 
     private void normalizeDiagramLayout() {

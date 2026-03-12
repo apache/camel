@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.launcher;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.diagram.DiagramPlugin;
 import org.apache.camel.dsl.jbang.core.commands.generate.GeneratePlugin;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesPlugin;
 import org.apache.camel.dsl.jbang.core.commands.test.TestPlugin;
@@ -31,6 +32,7 @@ public class CamelLauncherMain extends CamelJBangMain {
     @Override
     public void postAddCommands(CommandLine commandLine, String[] args) {
         // install embedded plugins
+        new DiagramPlugin().customize(commandLine, this);
         new GeneratePlugin().customize(commandLine, this);
         new KubernetesPlugin().customize(commandLine, this);
         new TestPlugin().customize(commandLine, this);
