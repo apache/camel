@@ -23,6 +23,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SshEndpoint target = (SshEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authtimeout":
+        case "authTimeout": target.getConfiguration().setAuthTimeout(property(camelContext, long.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -35,12 +37,16 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "certResource": target.getConfiguration().setCertResource(property(camelContext, java.lang.String.class, value)); return true;
         case "certresourcepassword":
         case "certResourcePassword": target.getConfiguration().setCertResourcePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "channelopentimeout":
+        case "channelOpenTimeout": target.getConfiguration().setChannelOpenTimeout(property(camelContext, long.class, value)); return true;
         case "channeltype":
         case "channelType": target.getConfiguration().setChannelType(property(camelContext, java.lang.String.class, value)); return true;
         case "ciphers": target.getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
         case "clientbuilder":
         case "clientBuilder": target.getConfiguration().setClientBuilder(property(camelContext, org.apache.sshd.client.ClientBuilder.class, value)); return true;
         case "compressions": target.getConfiguration().setCompressions(property(camelContext, java.lang.String.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, long.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -49,6 +55,10 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "failonunknownhost":
         case "failOnUnknownHost": target.getConfiguration().setFailOnUnknownHost(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "heartbeatinterval":
+        case "heartbeatInterval": target.getConfiguration().setHeartbeatInterval(property(camelContext, long.class, value)); return true;
+        case "heartbeatreplymaxwait":
+        case "heartbeatReplyMaxWait": target.getConfiguration().setHeartbeatReplyMaxWait(property(camelContext, int.class, value)); return true;
         case "idletimeout":
         case "idleTimeout": target.getConfiguration().setIdleTimeout(property(camelContext, long.class, value)); return true;
         case "initialdelay":
@@ -104,6 +114,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authtimeout":
+        case "authTimeout": return long.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
         case "backoffidlethreshold":
@@ -116,12 +128,16 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "certResource": return java.lang.String.class;
         case "certresourcepassword":
         case "certResourcePassword": return java.lang.String.class;
+        case "channelopentimeout":
+        case "channelOpenTimeout": return long.class;
         case "channeltype":
         case "channelType": return java.lang.String.class;
         case "ciphers": return java.lang.String.class;
         case "clientbuilder":
         case "clientBuilder": return org.apache.sshd.client.ClientBuilder.class;
         case "compressions": return java.lang.String.class;
+        case "connecttimeout":
+        case "connectTimeout": return long.class;
         case "delay": return long.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
@@ -130,6 +146,10 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "failonunknownhost":
         case "failOnUnknownHost": return boolean.class;
         case "greedy": return boolean.class;
+        case "heartbeatinterval":
+        case "heartbeatInterval": return long.class;
+        case "heartbeatreplymaxwait":
+        case "heartbeatReplyMaxWait": return int.class;
         case "idletimeout":
         case "idleTimeout": return long.class;
         case "initialdelay":
@@ -181,6 +201,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SshEndpoint target = (SshEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authtimeout":
+        case "authTimeout": return target.getConfiguration().getAuthTimeout();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
@@ -193,12 +215,16 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "certResource": return target.getConfiguration().getCertResource();
         case "certresourcepassword":
         case "certResourcePassword": return target.getConfiguration().getCertResourcePassword();
+        case "channelopentimeout":
+        case "channelOpenTimeout": return target.getConfiguration().getChannelOpenTimeout();
         case "channeltype":
         case "channelType": return target.getConfiguration().getChannelType();
         case "ciphers": return target.getConfiguration().getCiphers();
         case "clientbuilder":
         case "clientBuilder": return target.getConfiguration().getClientBuilder();
         case "compressions": return target.getConfiguration().getCompressions();
+        case "connecttimeout":
+        case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
@@ -207,6 +233,10 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "failonunknownhost":
         case "failOnUnknownHost": return target.getConfiguration().isFailOnUnknownHost();
         case "greedy": return target.isGreedy();
+        case "heartbeatinterval":
+        case "heartbeatInterval": return target.getConfiguration().getHeartbeatInterval();
+        case "heartbeatreplymaxwait":
+        case "heartbeatReplyMaxWait": return target.getConfiguration().getHeartbeatReplyMaxWait();
         case "idletimeout":
         case "idleTimeout": return target.getConfiguration().getIdleTimeout();
         case "initialdelay":

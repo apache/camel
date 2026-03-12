@@ -23,22 +23,27 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(47);
+        props.add("authTimeout");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
         props.add("bridgeErrorHandler");
         props.add("certResource");
         props.add("certResourcePassword");
+        props.add("channelOpenTimeout");
         props.add("channelType");
         props.add("ciphers");
         props.add("clientBuilder");
         props.add("compressions");
+        props.add("connectTimeout");
         props.add("delay");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("failOnUnknownHost");
         props.add("greedy");
+        props.add("heartbeatInterval");
+        props.add("heartbeatReplyMaxWait");
         props.add("host");
         props.add("idleTimeout");
         props.add("initialDelay");

@@ -30,6 +30,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SshComponent target = (SshComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authtimeout":
+        case "authTimeout": getOrCreateConfiguration(target).setAuthTimeout(property(camelContext, long.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -38,6 +40,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "certResource": getOrCreateConfiguration(target).setCertResource(property(camelContext, java.lang.String.class, value)); return true;
         case "certresourcepassword":
         case "certResourcePassword": getOrCreateConfiguration(target).setCertResourcePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "channelopentimeout":
+        case "channelOpenTimeout": getOrCreateConfiguration(target).setChannelOpenTimeout(property(camelContext, long.class, value)); return true;
         case "channeltype":
         case "channelType": getOrCreateConfiguration(target).setChannelType(property(camelContext, java.lang.String.class, value)); return true;
         case "ciphers": getOrCreateConfiguration(target).setCiphers(property(camelContext, java.lang.String.class, value)); return true;
@@ -45,12 +49,18 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "clientBuilder": getOrCreateConfiguration(target).setClientBuilder(property(camelContext, org.apache.sshd.client.ClientBuilder.class, value)); return true;
         case "compressions": getOrCreateConfiguration(target).setCompressions(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ssh.SshConfiguration.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": getOrCreateConfiguration(target).setConnectTimeout(property(camelContext, long.class, value)); return true;
         case "failonunknownhost":
         case "failOnUnknownHost": getOrCreateConfiguration(target).setFailOnUnknownHost(property(camelContext, boolean.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "heartbeatinterval":
+        case "heartbeatInterval": getOrCreateConfiguration(target).setHeartbeatInterval(property(camelContext, long.class, value)); return true;
+        case "heartbeatreplymaxwait":
+        case "heartbeatReplyMaxWait": getOrCreateConfiguration(target).setHeartbeatReplyMaxWait(property(camelContext, int.class, value)); return true;
         case "idletimeout":
         case "idleTimeout": getOrCreateConfiguration(target).setIdleTimeout(property(camelContext, long.class, value)); return true;
         case "kex": getOrCreateConfiguration(target).setKex(property(camelContext, java.lang.String.class, value)); return true;
@@ -85,6 +95,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authtimeout":
+        case "authTimeout": return long.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -93,6 +105,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "certResource": return java.lang.String.class;
         case "certresourcepassword":
         case "certResourcePassword": return java.lang.String.class;
+        case "channelopentimeout":
+        case "channelOpenTimeout": return long.class;
         case "channeltype":
         case "channelType": return java.lang.String.class;
         case "ciphers": return java.lang.String.class;
@@ -100,12 +114,18 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "clientBuilder": return org.apache.sshd.client.ClientBuilder.class;
         case "compressions": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.ssh.SshConfiguration.class;
+        case "connecttimeout":
+        case "connectTimeout": return long.class;
         case "failonunknownhost":
         case "failOnUnknownHost": return boolean.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "heartbeatinterval":
+        case "heartbeatInterval": return long.class;
+        case "heartbeatreplymaxwait":
+        case "heartbeatReplyMaxWait": return int.class;
         case "idletimeout":
         case "idleTimeout": return long.class;
         case "kex": return java.lang.String.class;
@@ -136,6 +156,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SshComponent target = (SshComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authtimeout":
+        case "authTimeout": return getOrCreateConfiguration(target).getAuthTimeout();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
@@ -144,6 +166,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "certResource": return getOrCreateConfiguration(target).getCertResource();
         case "certresourcepassword":
         case "certResourcePassword": return getOrCreateConfiguration(target).getCertResourcePassword();
+        case "channelopentimeout":
+        case "channelOpenTimeout": return getOrCreateConfiguration(target).getChannelOpenTimeout();
         case "channeltype":
         case "channelType": return getOrCreateConfiguration(target).getChannelType();
         case "ciphers": return getOrCreateConfiguration(target).getCiphers();
@@ -151,12 +175,18 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "clientBuilder": return getOrCreateConfiguration(target).getClientBuilder();
         case "compressions": return getOrCreateConfiguration(target).getCompressions();
         case "configuration": return target.getConfiguration();
+        case "connecttimeout":
+        case "connectTimeout": return getOrCreateConfiguration(target).getConnectTimeout();
         case "failonunknownhost":
         case "failOnUnknownHost": return getOrCreateConfiguration(target).isFailOnUnknownHost();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "heartbeatinterval":
+        case "heartbeatInterval": return getOrCreateConfiguration(target).getHeartbeatInterval();
+        case "heartbeatreplymaxwait":
+        case "heartbeatReplyMaxWait": return getOrCreateConfiguration(target).getHeartbeatReplyMaxWait();
         case "idletimeout":
         case "idleTimeout": return getOrCreateConfiguration(target).getIdleTimeout();
         case "kex": return getOrCreateConfiguration(target).getKex();

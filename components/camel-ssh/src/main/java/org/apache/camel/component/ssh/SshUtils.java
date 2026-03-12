@@ -181,6 +181,21 @@ public class SshUtils {
         if (configuration.getIdleTimeout() > 0) {
             CoreModuleProperties.IDLE_TIMEOUT.set(client, Duration.ofMillis(configuration.getIdleTimeout()));
         }
+        if (configuration.getHeartbeatInterval() > 0) {
+            CoreModuleProperties.HEARTBEAT_INTERVAL.set(client, Duration.ofMillis(configuration.getHeartbeatInterval()));
+        }
+        if (configuration.getHeartbeatReplyMaxWait() > 0) {
+            CoreModuleProperties.HEARTBEAT_NO_REPLY_MAX.set(client, configuration.getHeartbeatReplyMaxWait());
+        }
+        if (configuration.getAuthTimeout() > 0) {
+            CoreModuleProperties.AUTH_TIMEOUT.set(client, Duration.ofMillis(configuration.getAuthTimeout()));
+        }
+        if (configuration.getConnectTimeout() > 0) {
+            CoreModuleProperties.IO_CONNECT_TIMEOUT.set(client, Duration.ofMillis(configuration.getConnectTimeout()));
+        }
+        if (configuration.getChannelOpenTimeout() > 0) {
+            CoreModuleProperties.CHANNEL_OPEN_TIMEOUT.set(client, Duration.ofMillis(configuration.getChannelOpenTimeout()));
+        }
         client.start();
         return client;
     }
