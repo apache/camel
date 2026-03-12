@@ -85,7 +85,7 @@ public class SigningUtilsTest {
         // set up our certificates
         //
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
-        kpg.initialize(1024, new SecureRandom());
+        kpg.initialize(2048, new SecureRandom());
         //
         // certificate we sign against
         //

@@ -453,7 +453,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
         // set up our certificates
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
-        kpg.initialize(1024, new SecureRandom());
+        kpg.initialize(2048, new SecureRandom());
 
         String issueDN = "O=Punkhorn Software, C=US";
         KeyPair issueKP = kpg.generateKeyPair();

@@ -211,7 +211,7 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
     protected Object[] generateNewKeyPairSet(String commonName) throws Exception {
         // set up our certificates
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
-        kpg.initialize(1024, new SecureRandom());
+        kpg.initialize(2048, new SecureRandom());
 
         String issueDN = "O=AS2 Test Issuer, C=US";
         KeyPair issueKeyPair = kpg.generateKeyPair();

@@ -191,7 +191,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
     private HttpCoreContext generateInvalidCrypto(TriFunction<Certificate, KeyPair, Certificate, HttpCoreContext> fn)
             throws Exception {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
-        kpg.initialize(1024, new SecureRandom());
+        kpg.initialize(2048, new SecureRandom());
         String invalidIssueDN = "O=Hackers Unlimited Ltd., C=US";
         var invalidIssueKP = kpg.generateKeyPair();
 
@@ -240,7 +240,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
     protected static void setupKeysAndCertificates() throws Exception {
         // set up our certificates
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
-        kpg.initialize(1024, new SecureRandom());
+        kpg.initialize(2048, new SecureRandom());
 
         String issueDN = "O=Punkhorn Software, C=US";
         issueKP = kpg.generateKeyPair();

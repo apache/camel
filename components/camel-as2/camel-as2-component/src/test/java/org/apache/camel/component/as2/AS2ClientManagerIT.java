@@ -981,7 +981,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         //
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
 
-        kpg.initialize(1024, new SecureRandom());
+        kpg.initialize(2048, new SecureRandom());
 
         String issueDN = "O=Punkhorn Software, C=US";
         KeyPair issueKP = kpg.generateKeyPair();
@@ -1010,7 +1010,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         //
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
 
-        kpg.initialize(1024, new SecureRandom());
+        kpg.initialize(2048, new SecureRandom());
 
         String issueDN = "O=Punkhorn Software, C=US";
         KeyPair issueKP = kpg.generateKeyPair();

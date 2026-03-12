@@ -428,7 +428,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
 
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
 
-        kpg.initialize(1024, new SecureRandom());
+        kpg.initialize(2048, new SecureRandom());
         String hackerIssueDN = "O=Hackers Unlimited Ltd., C=US";
         var hackerIssueKP = kpg.generateKeyPair();
         var hackerissueCert = Utils.makeCertificate(
