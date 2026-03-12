@@ -172,6 +172,21 @@ public interface SshComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Sets the authentication timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param authTimeout the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder authTimeout(long authTimeout) {
+            doSetProperty("authTimeout", authTimeout);
+            return this;
+        }
+    
         
         /**
          * Whether autowiring is enabled. This is used for automatic autowiring
@@ -191,6 +206,21 @@ public interface SshComponentBuilderFactory {
          */
         default SshComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+    
+        /**
+         * Sets the timeout in milliseconds for opening a channel.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param channelOpenTimeout the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder channelOpenTimeout(long channelOpenTimeout) {
+            doSetProperty("channelOpenTimeout", channelOpenTimeout);
             return this;
         }
     
@@ -257,6 +287,54 @@ public interface SshComponentBuilderFactory {
          */
         default SshComponentBuilder configuration(org.apache.camel.component.ssh.SshConfiguration configuration) {
             doSetProperty("configuration", configuration);
+            return this;
+        }
+    
+        /**
+         * Sets the socket connection timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder connectTimeout(long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+    
+        /**
+         * Sets the heartbeat interval in milliseconds. If positive, the
+         * component will send keep-alive messages to prevent the SSH session
+         * from timing out.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param heartbeatInterval the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder heartbeatInterval(long heartbeatInterval) {
+            doSetProperty("heartbeatInterval", heartbeatInterval);
+            return this;
+        }
+    
+        /**
+         * Sets the maximum number of keep-alive messages without reply before
+         * the session is terminated.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param heartbeatReplyMaxWait the value to set
+         * @return the dsl builder
+         */
+        default SshComponentBuilder heartbeatReplyMaxWait(int heartbeatReplyMaxWait) {
+            doSetProperty("heartbeatReplyMaxWait", heartbeatReplyMaxWait);
             return this;
         }
     
@@ -540,11 +618,16 @@ public interface SshComponentBuilderFactory {
             case "bridgeErrorHandler": ((SshComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "pollCommand": getOrCreateConfiguration((SshComponent) component).setPollCommand((java.lang.String) value); return true;
             case "lazyStartProducer": ((SshComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "authTimeout": getOrCreateConfiguration((SshComponent) component).setAuthTimeout((long) value); return true;
             case "autowiredEnabled": ((SshComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "channelOpenTimeout": getOrCreateConfiguration((SshComponent) component).setChannelOpenTimeout((long) value); return true;
             case "channelType": getOrCreateConfiguration((SshComponent) component).setChannelType((java.lang.String) value); return true;
             case "clientBuilder": getOrCreateConfiguration((SshComponent) component).setClientBuilder((org.apache.sshd.client.ClientBuilder) value); return true;
             case "compressions": getOrCreateConfiguration((SshComponent) component).setCompressions((java.lang.String) value); return true;
             case "configuration": ((SshComponent) component).setConfiguration((org.apache.camel.component.ssh.SshConfiguration) value); return true;
+            case "connectTimeout": getOrCreateConfiguration((SshComponent) component).setConnectTimeout((long) value); return true;
+            case "heartbeatInterval": getOrCreateConfiguration((SshComponent) component).setHeartbeatInterval((long) value); return true;
+            case "heartbeatReplyMaxWait": getOrCreateConfiguration((SshComponent) component).setHeartbeatReplyMaxWait((int) value); return true;
             case "idleTimeout": getOrCreateConfiguration((SshComponent) component).setIdleTimeout((long) value); return true;
             case "shellPrompt": getOrCreateConfiguration((SshComponent) component).setShellPrompt((java.lang.String) value); return true;
             case "sleepForShellPrompt": getOrCreateConfiguration((SshComponent) component).setSleepForShellPrompt((long) value); return true;
