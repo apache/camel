@@ -47,10 +47,11 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
                 .withExposedPorts(KAFKA_PORT)
                 .withEnv("KAFKA_NODE_ID", "1")
                 .withEnv("KAFKA_PROCESS_ROLES", "broker,controller")
-                .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093")
+                .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092,BROKER://0.0.0.0:9093,CONTROLLER://0.0.0.0:9094")
                 .withEnv("KAFKA_CONTROLLER_LISTENER_NAMES", "CONTROLLER")
-                .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT")
-                .withEnv("KAFKA_CONTROLLER_QUORUM_VOTERS", "1@localhost:9093")
+                .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT,CONTROLLER:PLAINTEXT")
+                .withEnv("KAFKA_INTER_BROKER_LISTENER_NAME", "BROKER")
+                .withEnv("KAFKA_CONTROLLER_QUORUM_VOTERS", "1@localhost:9094")
                 .withEnv("KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR", "1")
                 .withEnv("KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR", "1")
                 .withEnv("KAFKA_TRANSACTION_STATE_LOG_MIN_ISR", "1")
@@ -63,6 +64,7 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
                                          + "--override listeners=${KAFKA_LISTENERS} "
                                          + "--override advertised.listeners=${KAFKA_ADVERTISED_LISTENERS} "
                                          + "--override listener.security.protocol.map=${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP} "
+                                         + "--override inter.broker.listener.name=${KAFKA_INTER_BROKER_LISTENER_NAME} "
                                          + "--override controller.listener.names=${KAFKA_CONTROLLER_LISTENER_NAMES} "
                                          + "--override controller.quorum.voters=${KAFKA_CONTROLLER_QUORUM_VOTERS} "
                                          + "--override node.id=${KAFKA_NODE_ID} "
@@ -85,7 +87,7 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
     @Override
     public void start() {
         int hostPort = resolveHostPort();
-        withEnv("KAFKA_ADVERTISED_LISTENERS", String.format("PLAINTEXT://%s:%d", getHost(), hostPort));
+        withEnv("KAFKA_ADVERTISED_LISTENERS", String.format("PLAINTEXT://%s:%d,BROKER://localhost:9093", getHost(), hostPort));
         super.start();
     }
 
