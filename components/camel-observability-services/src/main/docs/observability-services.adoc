@@ -104,7 +104,7 @@ To collect the metrics exposed by the application, and, depending on the runtime
 you will need to start your Camel application with a Java agent.
 The Java agent goal is to push those metrics to the OpenTelemetry compatible collector server.
 Follow the instructions
-provided in xref:others:opentelemetry.adoc#OpenTelemetry-JavaAgent[OpenTelemetry Java Agent configuration].
+provided in xref:others:opentelemetry2.adoc#OpenTelemetry-JavaAgent[OpenTelemetry Java Agent configuration].
 
 === JMX configuration
 
