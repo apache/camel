@@ -18,9 +18,19 @@ The server supports two transports:
 * **STDIO** -- The default transport for CLI-based AI tools. The server communicates over stdin/stdout using the MCP
   protocol. All logging goes to stderr to keep stdout clean for protocol messages.
 * **HTTP/SSE** -- An optional transport for web-based clients and remote access scenarios. Useful when running the
-  MCP server as a shared service for a team or in a container.
+  MCP server as a shared service for a team or in a container. Two protocol variants are supported:
+** *SSE* (protocol version `2024-11-05`) -- The legacy HTTP/SSE transport. The client opens a Server-Sent Events
+   stream at `/mcp/sse` and receives a message endpoint URL. All subsequent JSON-RPC requests are POSTed to that
+   endpoint, and responses are delivered through the SSE stream.
+** *Streamable HTTP* (protocol version `2025-03-26`) -- The newer single-endpoint transport. All JSON-RPC messages
+   are POSTed to `/mcp` and responses are returned inline in the HTTP response body. This is simpler to use and
+   is the recommended variant for new integrations.
 
 By default, the HTTP server is disabled. To enable it, set `quarkus.http.host-enabled=true`.
+
+IMPORTANT: The MCP server does **not** expose REST endpoints. You cannot query tools or resources with plain HTTP GET
+requests (e.g., `curl http://localhost:8080/mcp/tools` will return a 404). All communication uses JSON-RPC messages
+over the MCP protocol.
 
 == Available Tools
 
@@ -365,7 +375,53 @@ To start the server with the HTTP/SSE transport enabled:
 jbang -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 org.apache.camel:camel-jbang-mcp:4.18.0:runner
 ----
 
-MCP clients that support HTTP/SSE can then connect to the server at `http://localhost:8080/mcp/sse`.
+If you have built Camel locally, you can also run the uber-JAR directly:
+
+[source,bash]
+----
+java -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 -jar dsl/camel-jbang/camel-jbang-mcp/target/camel-jbang-mcp-4.19.0-SNAPSHOT-runner.jar
+----
+
+The server exposes two HTTP endpoints, corresponding to the two MCP protocol variants:
+
+[cols="1,2,3",options="header"]
+|===
+| Endpoint | Protocol Version | Description
+
+| `/mcp/sse`
+| `2024-11-05` (SSE)
+| Legacy HTTP/SSE transport. The client opens an SSE stream at this URL to receive responses and a message
+  endpoint URL. JSON-RPC requests are POSTed to the message endpoint. Most existing MCP clients support this
+  variant.
+
+| `/mcp`
+| `2025-03-26` (Streamable HTTP)
+| Newer single-endpoint transport. JSON-RPC requests are POSTed directly to this URL and responses are returned
+  inline in the HTTP response body. Simpler to use and recommended for new integrations.
+|===
+
+==== Inspecting the MCP Server
+
+To explore what the Camel MCP server exposes (tools, resources, and prompts), you can use the
+https://github.com/modelcontextprotocol/inspector[MCP Inspector]. This is a web-based UI that connects to any
+MCP server and lets you browse and invoke its capabilities interactively.
+
+Start the Camel MCP server with HTTP enabled as shown above, then run the MCP Inspector:
+
+[source,bash]
+----
+npx @modelcontextprotocol/inspector
+----
+
+Open the Inspector UI at http://localhost:6274/ and configure the connection:
+
+* **Transport Type**: `SSE`
+* **URL**: `http://localhost:8080/mcp/sse`
+* **Connection**: `Via Proxy`
+
+Once connected, you can navigate the available MCP Tools, Resources, and Prompts exposed by the server.
+This is useful for understanding what data the server provides and for testing tool invocations
+before integrating with an AI coding assistant.
 
 == Examples
 
