@@ -16,6 +16,14 @@
  */
 package org.apache.camel.telemetry.decorators;
 
+import java.time.Instant;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.BrowsableEndpoint.BrowseStatus;
+import org.apache.camel.telemetry.Span;
+
 public class SedaSpanDecorator extends AbstractInternalSpanDecorator {
 
     @Override
@@ -26,6 +34,21 @@ public class SedaSpanDecorator extends AbstractInternalSpanDecorator {
     @Override
     public String getComponentClassName() {
         return "org.apache.camel.component.seda.SedaComponent";
+    }
+
+    @Override
+    public void beforeTracingEvent(Span span, Exchange exchange, Endpoint endpoint) {
+        super.beforeTracingEvent(span, exchange, endpoint);
+        if (endpoint instanceof BrowsableEndpoint browsableEndpoint) {
+            BrowseStatus browsStatus = browsableEndpoint.getBrowseStatus(0);
+            span.setTag("seda.queue.size.current", String.valueOf(browsStatus.size()));
+            if (browsStatus.firstTimestamp() != 0) {
+                span.setTag("seda.queue.first.timestamp", Instant.ofEpochMilli(browsStatus.firstTimestamp()).toString());
+            }
+            if (browsStatus.lastTimestamp() != 0) {
+                span.setTag("seda.queue.last.timestamp", Instant.ofEpochMilli(browsStatus.lastTimestamp()).toString());
+            }
+        }
     }
 
 }
