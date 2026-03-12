@@ -82,7 +82,6 @@ public class DefaultCxfMessageMapperTest {
         Exchange camelExchange = mock(Exchange.class);
         when(camelExchange.getProperty(CamelTransportConstants.CXF_EXCHANGE,
                 org.apache.cxf.message.Exchange.class)).thenReturn(new ExchangeImpl());
-        when(camelExchange.hasOut()).thenReturn(false);
         when(camelExchange.getIn()).thenReturn(camelMessage);
         when(camelMessage.getHeaders()).thenReturn(Collections.emptyMap());
         when(camelMessage.getHeader(Exchange.CONTENT_TYPE, String.class)).thenReturn(null);

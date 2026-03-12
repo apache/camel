@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -57,12 +56,14 @@ public class CxfConsumerNamespacePayLoadTest extends CxfConsumerPayloadTest {
         StringEntity entity = new StringEntity(ECHO_REQUEST, ContentType.create("text/xml", "ISO-8859-1"));
         post.setEntity(entity);
 
-        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-             CloseableHttpResponse response = httpclient.execute(post)) {
-            assertEquals(200, response.getCode());
-            String responseBody = EntityUtils.toString(response.getEntity());
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build()) {
+            httpclient.execute(post, response -> {
+                assertEquals(200, response.getCode());
+                String responseBody = EntityUtils.toString(response.getEntity());
 
-            assertEquals(ECHO_RESPONSE, responseBody, "Get a wrong response");
+                assertEquals(ECHO_RESPONSE, responseBody, "Get a wrong response");
+                return null;
+            });
         }
 
     }

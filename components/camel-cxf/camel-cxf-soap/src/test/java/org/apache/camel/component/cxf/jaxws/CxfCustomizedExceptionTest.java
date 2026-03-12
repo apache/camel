@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf.jaxws;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 
 import org.w3c.dom.Document;
@@ -151,8 +151,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
 
     @Test
     public void testInvokingServiceFromHTTPURL() throws Exception {
-        URL url = new URL(routerAddress);
-        URLConnection urlConnection = url.openConnection();
+        URLConnection urlConnection = URI.create(routerAddress).toURL().openConnection();
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);
         urlConnection.setUseCaches(false);

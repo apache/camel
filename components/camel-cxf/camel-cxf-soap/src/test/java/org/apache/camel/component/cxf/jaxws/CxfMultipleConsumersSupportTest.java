@@ -40,6 +40,8 @@ public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
 
     @Test
     public void testMultipleConsumersNotAllowed() throws Exception {
+        testConfiguration().withUseRouteBuilder(false);
+        context.stop();
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -58,6 +60,8 @@ public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
 
     @Test
     public void testNoMultipleConsumers() throws Exception {
+        testConfiguration().withUseRouteBuilder(false);
+        context.stop();
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -79,8 +83,4 @@ public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 }

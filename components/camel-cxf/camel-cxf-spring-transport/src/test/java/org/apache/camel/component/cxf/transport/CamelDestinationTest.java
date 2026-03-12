@@ -26,7 +26,6 @@ import jakarta.xml.ws.WebServiceException;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.transport.CamelDestination.ConsumerProcessor;
@@ -293,7 +292,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
 
         Throwable c = ex.getCause();
         assertNotNull(c);
-        assertTrue(c instanceof NoSuchEndpointException);
+        assertTrue(c instanceof IllegalArgumentException);
     }
 
 }

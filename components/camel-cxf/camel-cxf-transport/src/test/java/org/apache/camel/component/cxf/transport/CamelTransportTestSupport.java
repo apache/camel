@@ -45,7 +45,7 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
     protected Message inMessage;
 
     @Override
-    public void doPostSetup() {
+    public void setupResources() {
         BusFactory bf = BusFactory.newInstance();
         //setup the camel transport for the bus
         bus = bf.createBus();
@@ -61,7 +61,7 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
+    public void cleanupResources() throws Exception {
         bus.shutdown(true);
     }
 

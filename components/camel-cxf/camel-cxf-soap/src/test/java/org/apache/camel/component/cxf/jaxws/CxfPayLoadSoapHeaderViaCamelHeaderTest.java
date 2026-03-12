@@ -72,7 +72,7 @@ public class CxfPayLoadSoapHeaderViaCamelHeaderTest extends CxfPayLoadSoapHeader
                 = "<OrderRequest xmlns=\"http://camel.apache.org/pizza/types\"><Toppings><Topping>topping_value</Topping></Toppings></OrderRequest>";
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(1);
-        sendBody("direct:start", body);
+        template().sendBody("direct:start", body);
         MockEndpoint.assertIsSatisfied(context);
         Document message = mock.getExchanges().get(0).getIn().getMandatoryBody(Document.class);
         Element root = message.getDocumentElement();
