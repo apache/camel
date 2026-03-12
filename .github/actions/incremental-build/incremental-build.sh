@@ -168,12 +168,17 @@ function main() {
     fi
   fi
 
-  # Write the list of tested modules to the step summary
+  # Write the list of tested modules to the step summary and PR comment file
+  local comment_file="incremental-${mode}-comment.md"
   if [[ -n "$pl" && ${buildAll} != "true" ]] ; then
     echo "### Changed modules" >> "$GITHUB_STEP_SUMMARY"
     echo "" >> "$GITHUB_STEP_SUMMARY"
+    echo "<!-- ci-tested-modules -->" > "$comment_file"
+    echo ":test_tube: **CI tested the following changed modules:**" >> "$comment_file"
+    echo "" >> "$comment_file"
     for w in $(echo "$pl" | tr ',' '\n'); do
       echo "- \`$w\`" >> "$GITHUB_STEP_SUMMARY"
+      echo "- \`$w\`" >> "$comment_file"
     done
     echo "" >> "$GITHUB_STEP_SUMMARY"
     # Extract full reactor module list from the build log
@@ -185,14 +190,23 @@ function main() {
         count=$(echo "$reactor_modules" | wc -l | tr -d ' ')
         echo "<details><summary><b>All tested modules ($count)</b></summary>" >> "$GITHUB_STEP_SUMMARY"
         echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$comment_file"
+        echo "<details><summary>Full reactor ($count modules)</summary>" >> "$comment_file"
+        echo "" >> "$comment_file"
         echo "$reactor_modules" | while read -r m; do
           echo "- $m" >> "$GITHUB_STEP_SUMMARY"
+          echo "- $m" >> "$comment_file"
         done
         echo "" >> "$GITHUB_STEP_SUMMARY"
         echo "</details>" >> "$GITHUB_STEP_SUMMARY"
         echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$comment_file"
+        echo "</details>" >> "$comment_file"
       fi
     fi
+  elif [[ ${buildAll} = "true" ]] ; then
+    echo "<!-- ci-tested-modules -->" > "$comment_file"
+    echo ":information_source: CI did not run targeted module tests (all projects built or tests skipped)." >> "$comment_file"
   fi
 
   if [[ ${ret} -ne 0 ]] ; then
