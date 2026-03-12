@@ -22,6 +22,7 @@ import org.apache.camel.language.simple.SimpleExpressionParser;
 /**
  * Expression parser for csimple.
  */
+@Deprecated(since = "4.19")
 public class CSimpleExpressionParser {
 
     public String parseExpression(String expression) {

@@ -1,15 +1,22 @@
-= CSimple jOOR Component
+= CSimple jOOR Component (deprecated)
 :doctitle: CSimple jOOR
 :shortname: csimple-joor
 :artifactid: camel-csimple-joor
 :description: jOOR compiler for csimple language
 :since: 3.7
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: csimple-joor
 
 *Since Camel {since}*
+
+[WARNING]
+====
+The CSimple (compiled simple) language and the camel-csimple-joor component are *deprecated* (since Camel 4.19) and will be removed in a future release.
+Use the xref:languages:simple-language.adoc[Simple] language instead.
+====
 
 The CSimple (compiled simple) expression language can either be source code generated and compiled together
 with your application using the regular Java compiler. Or compiled at runtime using jOOR during bootstrap.

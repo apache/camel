@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 
+@Deprecated(since = "4.19")
 public class CSimpleExpressionReifier extends TypedExpressionReifier<CSimpleExpression> {
 
     public CSimpleExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {

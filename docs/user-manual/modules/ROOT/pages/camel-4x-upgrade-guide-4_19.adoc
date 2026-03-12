@@ -147,6 +147,12 @@ After:
             uri: mock:end
 ----
 
+=== camel-csimple (Deprecation)
+
+The `csimple` (compiled simple) language has been deprecated. Use the `simple` language instead.
+The `camel-csimple-joor` module is also deprecated. The csimple language and related modules
+will be removed in a future release.
+
 === camel-simple
 
 In the simple language then init blocks syntax has changed to require that each variable ends with a semicolon and new line (no trailing comments etc is allowed)

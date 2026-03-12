@@ -23,6 +23,7 @@ import org.apache.camel.Predicate;
 /**
  * CSimple for {@link Expression} or {@link Predicate}.
  */
+@Deprecated(since = "4.19")
 public interface CSimpleExpression extends Expression, Predicate {
 
     /**

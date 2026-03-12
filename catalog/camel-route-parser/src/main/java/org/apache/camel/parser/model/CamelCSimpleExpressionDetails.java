@@ -19,6 +19,7 @@ package org.apache.camel.parser.model;
 /**
  * Details about a parsed and discovered Camel compile simple expression.
  */
+@Deprecated(since = "4.19")
 public class CamelCSimpleExpressionDetails extends LanguageExpressionDetails {
 
     private String csimple;

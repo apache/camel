@@ -73,6 +73,7 @@ import static org.apache.camel.util.StringHelper.between;
 /**
  * A set of helper as static imports for the Camel compiled simple language.
  */
+@Deprecated(since = "4.19")
 public final class CSimpleHelper {
 
     // this is special for the range operator where you define the range as from..to (where from and to are numbers)

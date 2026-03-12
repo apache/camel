@@ -19,6 +19,7 @@ package org.apache.camel.language.csimple;
 /**
  * Generated csimple code.
  */
+@Deprecated(since = "4.19")
 public final class CSimpleGeneratedCode {
 
     private final String fqn;

@@ -12739,6 +12739,7 @@
       "org.apache.camel.model.language.CSimpleExpression" : {
         "title" : "CSimple",
         "description" : "Evaluate a compiled simple expression.",
+        "deprecated" : true,
         "oneOf" : [ {
           "type" : "string"
         }, {

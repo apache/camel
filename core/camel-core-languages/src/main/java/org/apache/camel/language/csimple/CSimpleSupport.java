@@ -24,6 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Base class for source code generateed csimple expressions.
  */
+@Deprecated(since = "4.19")
 public abstract class CSimpleSupport implements CSimpleExpression, CSimpleMethod {
 
     @Override

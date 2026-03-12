@@ -27,9 +27,11 @@ import org.apache.camel.spi.Metadata;
 /**
  * Evaluate a compiled simple expression.
  */
-@Metadata(firstVersion = "3.7.0", label = "language,java", title = "CSimple")
+@Metadata(firstVersion = "3.7.0", label = "language,java", title = "CSimple",
+          deprecationNote = "Use the Simple language instead")
 @XmlRootElement(name = "csimple")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated(since = "4.19")
 public class CSimpleExpression extends TypedExpressionDefinition {
 
     @XmlAttribute
@@ -99,6 +101,7 @@ public class CSimpleExpression extends TypedExpressionDefinition {
      * {@code Builder} is a specific builder for {@link CSimpleExpression}.
      */
     @XmlTransient
+    @Deprecated(since = "4.19")
     public static class Builder extends AbstractBuilder<Builder, CSimpleExpression> {
 
         private String trimResult;

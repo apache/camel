@@ -21,6 +21,7 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * General csimple exception.
  */
+@Deprecated(since = "4.19")
 public class CSimpleException extends RuntimeCamelException {
 
     private final String expression;

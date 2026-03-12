@@ -66,14 +66,20 @@ public final class LanguageBuilderFactory {
 
     /**
      * Uses the CSimple language
+     *
+     * @deprecated use simple instead
      */
+    @Deprecated(since = "4.19")
     public CSimpleExpression.Builder csimple() {
         return new CSimpleExpression.Builder();
     }
 
     /**
      * Uses the CSimple language
+     *
+     * @deprecated use simple instead
      */
+    @Deprecated(since = "4.19")
     public CSimpleExpression.Builder csimple(String expression) {
         var builder = csimple();
         builder.expression(expression);

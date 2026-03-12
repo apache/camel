@@ -148,7 +148,10 @@ public final class Builder {
 
     /**
      * Returns a csimple expression
+     *
+     * @deprecated use {@link #simple(String)} instead
      */
+    @Deprecated(since = "4.19")
     public static ValueBuilder csimple(String value) {
         Expression exp = new CSimpleExpression(value);
         return new ValueBuilder(exp);
@@ -156,7 +159,10 @@ public final class Builder {
 
     /**
      * Returns a csimple expression
+     *
+     * @deprecated use {@link #simple(String, Class)} instead
      */
+    @Deprecated(since = "4.19")
     public static ValueBuilder csimple(String value, Class<?> resultType) {
         CSimpleExpression exp = new CSimpleExpression(value);
         exp.setResultType(resultType);

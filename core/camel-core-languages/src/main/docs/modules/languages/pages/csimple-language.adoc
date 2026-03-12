@@ -1,16 +1,23 @@
-= CSimple Language
+= CSimple Language (deprecated)
 :doctitle: CSimple
 :shortname: csimple
 :artifactid: camel-core-languages
 :description: Evaluate a compiled simple expression.
 :since: 3.7
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: core
 :starter-artifactid: camel-core-starter
 
 *Since Camel {since}*
+
+[WARNING]
+====
+The CSimple (compiled simple) language is *deprecated* (since Camel 4.19) and will be removed in a future release.
+Use the xref:simple-language.adoc[Simple] language instead.
+====
 
 The CSimple language is *compiled* xref:simple-language.adoc[Simple] language.
 

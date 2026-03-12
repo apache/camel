@@ -4,7 +4,7 @@
     "name": "csimple",
     "title": "CSimple",
     "description": "Evaluate a compiled simple expression.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.7.0",
     "label": "language,java",
     "javaType": "org.apache.camel.language.csimple.CSimpleLanguage",

@@ -22,6 +22,7 @@ import org.apache.camel.language.simple.SimplePredicateParser;
 /**
  * Predicate parser for csimple.
  */
+@Deprecated(since = "4.19")
 public class CSimplePredicateParser {
 
     public String parsePredicate(String predicate) {

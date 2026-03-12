@@ -605,14 +605,20 @@ public class ExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Returns a compiled simple expression value builder
+     *
+     * @deprecated use {@link #simple(String)} instead
      */
+    @Deprecated(since = "4.19")
     public T csimple(String value) {
         return delegate.csimple(value);
     }
 
     /**
      * Returns a compile simple expression value builder
+     *
+     * @deprecated use {@link #simple(String, Class)} instead
      */
+    @Deprecated(since = "4.19")
     public T csimple(String value, Class<?> resultType) {
         return delegate.csimple(value, resultType);
     }

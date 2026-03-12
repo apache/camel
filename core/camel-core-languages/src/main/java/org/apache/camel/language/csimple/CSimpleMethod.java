@@ -26,6 +26,7 @@ import org.apache.camel.Message;
  *
  * @see CSimpleExpression
  */
+@Deprecated(since = "4.19")
 public interface CSimpleMethod {
 
     Object evaluate(CamelContext context, Exchange exchange, Message message, Object body)

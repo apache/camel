@@ -4,7 +4,7 @@
     "name": "csimple-joor",
     "title": "CSimple jOOR",
     "description": "jOOR compiler for csimple language",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.7.0",
     "label": "language,java",
     "supportLevel": "Stable",

@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * jOOR compiler for csimple language.
  */
+@Deprecated(since = "4.19")
 @JdkService(CSimpleCompiler.FACTORY)
 public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompiler, CamelContextAware, StaticService {
 

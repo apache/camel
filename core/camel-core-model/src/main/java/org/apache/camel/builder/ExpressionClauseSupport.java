@@ -737,9 +737,11 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates a compiled simple expression
      *
-     * @param  text the expression to be evaluated
-     * @return      the builder to continue processing the DSL
+     * @param      text the expression to be evaluated
+     * @return          the builder to continue processing the DSL
+     * @deprecated      use {@link #simple(String)} instead
      */
+    @Deprecated(since = "4.19")
     public T csimple(String text) {
         return expression(new CSimpleExpression(text));
     }
@@ -747,10 +749,12 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
     /**
      * Evaluates a compiled simple expression
      *
-     * @param  text       the expression to be evaluated
-     * @param  resultType the return type expected by the expression
-     * @return            the builder to continue processing the DSL
+     * @param      text       the expression to be evaluated
+     * @param      resultType the return type expected by the expression
+     * @return                the builder to continue processing the DSL
+     * @deprecated            use {@link #simple(String, Class)} instead
      */
+    @Deprecated(since = "4.19")
     public T csimple(String text, Class<?> resultType) {
         CSimpleExpression exp = new CSimpleExpression(text);
         exp.setResultType(resultType);

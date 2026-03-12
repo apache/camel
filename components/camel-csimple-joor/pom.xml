@@ -29,7 +29,7 @@
 
     <artifactId>camel-csimple-joor</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: csimple jOOR</name>
+    <name>Camel :: csimple jOOR (deprecated)</name>
     <description>jOOR compiler for csimple language</description>
 
     <properties>

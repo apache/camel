@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 /**
  * SPI plugin for custom compilers to use at runtime.
  */
+@Deprecated(since = "4.19")
 public interface CSimpleCompiler {
 
     /**

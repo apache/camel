@@ -31,6 +31,7 @@ import org.apache.camel.util.StringHelper;
  *
  * @see CSimpleGeneratedCode
  */
+@Deprecated(since = "4.19")
 public class CSimpleCodeGenerator implements CamelContextAware {
 
     private static final AtomicInteger UUID = new AtomicInteger();

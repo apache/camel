@@ -1679,7 +1679,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             displayName = "CSimple",
             description = "Evaluate a compiled simple expression.",
-            deprecated = false,
+            deprecated = true,
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),

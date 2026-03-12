@@ -232,7 +232,7 @@ Encrypt and decrypt messages using Java Cryptography Extension (JCE).
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
-Evaluate a compiled simple expression.
+Deprecated: Evaluate a compiled simple expression.
 ]]>
       </xs:documentation>
     </xs:annotation>
