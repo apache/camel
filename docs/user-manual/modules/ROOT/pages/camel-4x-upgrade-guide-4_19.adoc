@@ -381,6 +381,18 @@ HttpRequest request = context.getRequest();
 
 Upgraded QuickFixJ from 2.3.2 to 3.0.0 in `camel-quickfix` component.
 
+=== camel-ssh
+
+Five new configuration properties have been added to the SSH endpoint to expose additional Apache MINA SSHD `CoreModuleProperties`:
+
+- `heartbeatInterval` -- interval for SSH keep-alive heartbeats.
+- `heartbeatReplyMaxWait` -- maximum wait time for a heartbeat reply.
+- `authTimeout` -- timeout for the SSH authentication phase.
+- `connectTimeout` -- timeout for establishing the SSH connection.
+- `channelOpenTimeout` -- timeout for opening an SSH channel.
+
+All properties default to `0`, which means the Apache MINA SSHD defaults are used. This is an additive change with no impact on existing configurations.
+
 === MDC older logic (Deprecation)
 
 The older logic used for MDC (enabled via `camel.main.useMdcLogging = true`) is deprecated in favor of `camel-mdc` component.
