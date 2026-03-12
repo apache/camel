@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +42,18 @@ import org.slf4j.LoggerFactory;
 public class SSLContextParameters extends BaseSSLContextParameters {
 
     protected static final String DEFAULT_SECURE_SOCKET_PROTOCOL = "TLSv1.3";
+
+    /**
+     * The post-quantum hybrid named group to detect for auto-configuration.
+     */
+    private static final String PQC_NAMED_GROUP = "X25519MLKEM768";
+
+    /**
+     * The preferred named group ordering when PQC groups are available. This ordering ensures post-quantum key exchange
+     * is preferred while maintaining classical fallbacks for compatibility.
+     */
+    private static final List<String> PQC_PREFERRED_NAMED_GROUPS
+            = List.of("X25519MLKEM768", "x25519", "secp256r1", "secp384r1");
 
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextParameters.class);
 
@@ -300,6 +313,12 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
         context.init(keyManagers, trustManagers, secureRandom);
 
+        // Auto-configure PQC named groups when available and no user configuration is present
+        boolean autoConfiguredPqc = false;
+        if (this.getNamedGroups() == null && this.getNamedGroupsFilter() == null) {
+            autoConfiguredPqc = applyPqcNamedGroupDefaults(context);
+        }
+
         this.configureSSLContext(context);
 
         // Decorate the context.
@@ -310,7 +329,56 @@ public class SSLContextParameters extends BaseSSLContextParameters {
                         this.getSSLSocketFactoryConfigurers(context),
                         this.getSSLServerSocketFactoryConfigurers(context)));
 
+        // Reset auto-configured PQC named groups so they don't persist on this instance
+        if (autoConfiguredPqc) {
+            this.setNamedGroups(null);
+        }
+
         return context;
+    }
+
+    /**
+     * Auto-configures post-quantum named groups when the JVM supports them and the user hasn't explicitly configured
+     * named groups or named groups filters.
+     * <p/>
+     * When {@code X25519MLKEM768} is available (typically JDK 25+), this method sets the preferred named group ordering
+     * to prioritize post-quantum key exchange, protecting against harvest-now-decrypt-later attacks.
+     *
+     * @param  context the initialized SSLContext to probe for available named groups
+     * @return         {@code true} if PQC named groups were auto-configured, {@code false} otherwise
+     */
+    private boolean applyPqcNamedGroupDefaults(SSLContext context) {
+        SSLEngine probeEngine = context.createSSLEngine();
+        String[] availableGroups = probeEngine.getSSLParameters().getNamedGroups();
+
+        if (availableGroups == null) {
+            return false;
+        }
+
+        List<String> available = Arrays.asList(availableGroups);
+        if (!available.contains(PQC_NAMED_GROUP)) {
+            return false;
+        }
+
+        // Build preferred ordering: PQC preferred groups first (if available), then remaining
+        List<String> ordered = new ArrayList<>();
+        for (String preferred : PQC_PREFERRED_NAMED_GROUPS) {
+            if (available.contains(preferred)) {
+                ordered.add(preferred);
+            }
+        }
+        for (String group : availableGroups) {
+            if (!ordered.contains(group)) {
+                ordered.add(group);
+            }
+        }
+
+        NamedGroupsParameters ngp = new NamedGroupsParameters();
+        ngp.setNamedGroup(ordered);
+        this.setNamedGroups(ngp);
+
+        LOG.info("Auto-configured PQC named groups: {}", ordered);
+        return true;
     }
 
     @Override
