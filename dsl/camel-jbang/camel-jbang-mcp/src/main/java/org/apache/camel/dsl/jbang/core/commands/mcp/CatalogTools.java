@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -33,12 +34,16 @@ import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * MCP Tools for querying the Camel Catalog using Quarkus MCP Server.
  */
 @ApplicationScoped
 public class CatalogTools {
+
+    @ConfigProperty(name = "camel.catalog.repos")
+    Optional<String> catalogRepos;
 
     private CamelCatalog catalog;
 
@@ -307,24 +312,26 @@ public class CatalogTools {
     // Catalog loading
 
     private CamelCatalog loadCatalog(String runtime, String camelVersion) throws Exception {
+        String repos = catalogRepos.orElse(null);
+
         // If a specific version is requested, load that version's catalog
         if (camelVersion != null && !camelVersion.isBlank()) {
             RuntimeType runtimeType = resolveRuntime(runtime);
             if (runtimeType == RuntimeType.springBoot) {
-                return CatalogLoader.loadSpringBootCatalog(null, camelVersion, true);
+                return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, true);
             } else if (runtimeType == RuntimeType.quarkus) {
-                return CatalogLoader.loadQuarkusCatalog(null, camelVersion, null, true);
+                return CatalogLoader.loadQuarkusCatalog(repos, camelVersion, null, true);
             } else {
-                return CatalogLoader.loadCatalog(null, camelVersion, true);
+                return CatalogLoader.loadCatalog(repos, camelVersion, true);
             }
         }
 
         // No specific version, use runtime-specific catalog or default
         RuntimeType runtimeType = resolveRuntime(runtime);
         if (runtimeType == RuntimeType.springBoot) {
-            return CatalogLoader.loadSpringBootCatalog(null, null, true);
+            return CatalogLoader.loadSpringBootCatalog(repos, null, true);
         } else if (runtimeType == RuntimeType.quarkus) {
-            return CatalogLoader.loadQuarkusCatalog(null, RuntimeType.QUARKUS_VERSION, null, true);
+            return CatalogLoader.loadQuarkusCatalog(repos, RuntimeType.QUARKUS_VERSION, null, true);
         }
 
         return catalog;
