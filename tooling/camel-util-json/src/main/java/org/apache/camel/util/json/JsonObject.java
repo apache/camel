@@ -20,12 +20,15 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * JsonObject is a common non-thread safe data format for string to data mappings. The contents of a JsonObject are only
@@ -194,7 +197,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             if (pos != -1 && answer instanceof List<?> arr) {
                 jo = null;
                 if (pos == Integer.MAX_VALUE) {
-                    answer = arr.getLast();
+                    answer = arr.get(arr.size() - 1);
                 } else if (pos < arr.size()) {
                     answer = arr.get(pos);
                 } else {
@@ -230,10 +233,23 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         return JsonObject.class.cast(o);
     }
 
+    private static String[] splitWithDelimiters(String input, String regex) {
+        List<String> parts = new ArrayList<>();
+        Matcher m = Pattern.compile(regex).matcher(input);
+        int lastEnd = 0;
+        while (m.find()) {
+            parts.add(input.substring(lastEnd, m.start()));
+            parts.add(m.group());
+            lastEnd = m.end();
+        }
+        parts.add(input.substring(lastEnd));
+        return parts.toArray(new String[0]);
+    }
+
     private Optional<Object> doPath(final String path) {
         Object answer = null;
 
-        String[] split = path.splitWithDelimiters("(\\?\\.|\\.)", 0);
+        String[] split = splitWithDelimiters(path, "(\\?\\.|\\.)");
         for (int i = 0; i < split.length; i = i + 2) {
             String part = split[i];
             String dot = i > 0 ? split[i - 1] : null;
@@ -262,7 +278,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             }
             if (pos != -1 && answer instanceof List<?> arr) {
                 if (pos == Integer.MAX_VALUE) {
-                    answer = arr.getLast();
+                    answer = arr.get(arr.size() - 1);
                 } else if (pos < arr.size()) {
                     answer = arr.get(pos);
                 } else {
