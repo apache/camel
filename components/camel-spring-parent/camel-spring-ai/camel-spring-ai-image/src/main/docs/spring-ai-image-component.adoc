@@ -193,3 +193,5 @@ The component registers automatic type converters for `Image` objects:
 
 * https://docs.spring.io/spring-ai/reference/api/image.html[Spring AI Image API]
 * xref:spring-ai-chat-component.adoc[Spring AI Chat Component]
+
+include::spring-boot:partial$starter.adoc[]

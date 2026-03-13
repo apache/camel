@@ -20,11 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.inject.Inject;
@@ -83,8 +81,8 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
             try {
                 // Search for target class in the project transitive artifacts to retrieve maven coordinates
                 for (Artifact artifact : project.getArtifacts()) {
-                    if (classExistsInJarFile(
-                            targetClass.substring(targetClass.lastIndexOf(".") + 1),
+                    if (classExistsInDependency(
+                            targetClass.replace('.', '/') + ".class",
                             artifact.getFile())) {
                         infrastructureServiceModel.setVersion(artifact.getVersion());
                         infrastructureServiceModel.setGroupId(artifact.getGroupId());
@@ -127,16 +125,12 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private boolean classExistsInJarFile(String className, File dependency) throws IOException {
+    private boolean classExistsInDependency(String classPath, File dependency) throws IOException {
+        if (dependency.isDirectory()) {
+            return new File(dependency, classPath).exists();
+        }
         try (JarFile jarFile = new JarFile(dependency)) {
-            Enumeration<JarEntry> e = jarFile.entries();
-            while (e.hasMoreElements()) {
-                JarEntry jarEntry = e.nextElement();
-                if (jarEntry.getName().contains(className)) {
-                    return true;
-                }
-            }
-            return false;
+            return jarFile.getEntry(classPath) != null;
         }
     }
 

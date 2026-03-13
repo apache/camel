@@ -65,12 +65,16 @@ public class CatalogTools {
             @ToolArg(description = "Version to query. For Main or Spring Boot: the Camel version (e.g., 4.17.0). "
                                    + "For quarkus: the Quarkus Platform version (e.g., 3.31.3) as returned by "
                                    + "camel_version_list quarkusVersion field. "
-                                   + "If not specified, uses the default catalog version.") String camelVersion) {
+                                   + "If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion. For quarkus runtime, all three coordinates "
+                                   + "are used for BOM resolution. For main and spring-boot, the version is extracted "
+                                   + "and used as the catalog version.") String platformBom) {
 
         int maxResults = limit != null ? limit : 50;
 
         try {
-            CamelCatalog cat = loadCatalog(runtime, camelVersion);
+            CamelCatalog cat = loadCatalog(runtime, camelVersion, platformBom);
 
             List<ComponentInfo> components = findComponentNames(cat).stream()
                     .map(cat::componentModel)
@@ -106,14 +110,18 @@ public class CatalogTools {
             @ToolArg(description = "Version to query. For Main or Spring Boot: the Camel version (e.g., 4.17.0). "
                                    + "For quarkus: the Quarkus Platform version (e.g., 3.31.3) as returned by "
                                    + "camel_version_list quarkusVersion field. "
-                                   + "If not specified, uses the default catalog version.") String camelVersion) {
+                                   + "If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion. For quarkus runtime, all three coordinates "
+                                   + "are used for BOM resolution. For main and spring-boot, the version is extracted "
+                                   + "and used as the catalog version.") String platformBom) {
 
         if (component == null || component.isBlank()) {
             throw new ToolCallException("Component name is required", null);
         }
 
         try {
-            CamelCatalog cat = loadCatalog(runtime, camelVersion);
+            CamelCatalog cat = loadCatalog(runtime, camelVersion, platformBom);
             ComponentModel model = cat.componentModel(component);
             if (model == null) {
                 // Check if it might be a data format or language instead
@@ -311,12 +319,32 @@ public class CatalogTools {
 
     // Catalog loading
 
-    private CamelCatalog loadCatalog(String runtime, String camelVersion) throws Exception {
+    private CamelCatalog loadCatalog(String runtime, String camelVersion, String platformBom) throws Exception {
         String repos = catalogRepos.orElse(null);
+        RuntimeType runtimeType = resolveRuntime(runtime);
+
+        // If platformBom is provided (GAV format), parse and use it
+        if (platformBom != null && !platformBom.isBlank()) {
+            String[] parts = platformBom.split(":");
+            if (parts.length != 3) {
+                throw new ToolCallException(
+                        "platformBom must be in GAV format (groupId:artifactId:version), got: " + platformBom, null);
+            }
+            String groupId = parts[0];
+            String artifactId = parts[1];
+            String version = parts[2];
+
+            if (runtimeType == RuntimeType.quarkus) {
+                return CatalogLoader.loadQuarkusCatalog(repos, version, groupId, artifactId, true);
+            } else if (runtimeType == RuntimeType.springBoot) {
+                return CatalogLoader.loadSpringBootCatalog(repos, version, groupId, true);
+            } else {
+                return CatalogLoader.loadCatalog(repos, version, groupId, true);
+            }
+        }
 
         // If a specific version is requested, load that version's catalog
         if (camelVersion != null && !camelVersion.isBlank()) {
-            RuntimeType runtimeType = resolveRuntime(runtime);
             if (runtimeType == RuntimeType.springBoot) {
                 return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, true);
             } else if (runtimeType == RuntimeType.quarkus) {
@@ -327,7 +355,6 @@ public class CatalogTools {
         }
 
         // No specific version, use runtime-specific catalog or default
-        RuntimeType runtimeType = resolveRuntime(runtime);
         if (runtimeType == RuntimeType.springBoot) {
             return CatalogLoader.loadSpringBootCatalog(repos, null, true);
         } else if (runtimeType == RuntimeType.quarkus) {

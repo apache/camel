@@ -748,7 +748,8 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLEngine controlEngine = controlContext.createSSLEngine();
         String[] controlNamedGroups = controlEngine.getSSLParameters().getNamedGroups();
 
-        // default - no named groups configured, should keep defaults
+        // default - no named groups configured
+        // When PQC groups are available (JDK 25+), auto-configuration reorders named groups
         SSLContextParameters scp = new SSLContextParameters();
         SSLContext context = scp.createSSLContext(null);
 
@@ -756,9 +757,17 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
         SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertArrayEquals(controlNamedGroups, engine.getSSLParameters().getNamedGroups());
-        assertArrayEquals(controlNamedGroups, socket.getSSLParameters().getNamedGroups());
-        assertArrayEquals(controlNamedGroups, serverSocket.getSSLParameters().getNamedGroups());
+        if (Arrays.asList(controlNamedGroups).contains("X25519MLKEM768")) {
+            // PQC auto-configuration reorders groups with X25519MLKEM768 first
+            assertEquals("X25519MLKEM768", engine.getSSLParameters().getNamedGroups()[0]);
+            assertEquals("X25519MLKEM768", socket.getSSLParameters().getNamedGroups()[0]);
+            assertEquals("X25519MLKEM768", serverSocket.getSSLParameters().getNamedGroups()[0]);
+        } else {
+            // No PQC available, should keep JVM defaults
+            assertArrayEquals(controlNamedGroups, engine.getSSLParameters().getNamedGroups());
+            assertArrayEquals(controlNamedGroups, socket.getSSLParameters().getNamedGroups());
+            assertArrayEquals(controlNamedGroups, serverSocket.getSSLParameters().getNamedGroups());
+        }
 
         // empty ngp - sets empty list
         NamedGroupsParameters ngp = new NamedGroupsParameters();
@@ -810,7 +819,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLEngine controlEngine = controlContext.createSSLEngine();
         String[] controlNamedGroups = controlEngine.getSSLParameters().getNamedGroups();
 
-        // default - no filter, keeps defaults
+        // default - no filter, keeps defaults (or PQC-reordered defaults on JDK 25+)
         SSLContextParameters scp = new SSLContextParameters();
         SSLContext context = scp.createSSLContext(null);
 
@@ -818,9 +827,15 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
         SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
-        assertArrayEquals(controlNamedGroups, engine.getSSLParameters().getNamedGroups());
-        assertArrayEquals(controlNamedGroups, socket.getSSLParameters().getNamedGroups());
-        assertArrayEquals(controlNamedGroups, serverSocket.getSSLParameters().getNamedGroups());
+        if (Arrays.asList(controlNamedGroups).contains("X25519MLKEM768")) {
+            assertEquals("X25519MLKEM768", engine.getSSLParameters().getNamedGroups()[0]);
+            assertEquals("X25519MLKEM768", socket.getSSLParameters().getNamedGroups()[0]);
+            assertEquals("X25519MLKEM768", serverSocket.getSSLParameters().getNamedGroups()[0]);
+        } else {
+            assertArrayEquals(controlNamedGroups, engine.getSSLParameters().getNamedGroups());
+            assertArrayEquals(controlNamedGroups, socket.getSSLParameters().getNamedGroups());
+            assertArrayEquals(controlNamedGroups, serverSocket.getSSLParameters().getNamedGroups());
+        }
 
         // empty filter - no includes means no groups match
         FilterParameters filter = new FilterParameters();
@@ -1040,7 +1055,15 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         assertArrayEquals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites());
         assertArrayEquals(controlEngine.getEnabledProtocols(), engine.getEnabledProtocols());
-        assertArrayEquals(controlEngine.getSSLParameters().getNamedGroups(), engine.getSSLParameters().getNamedGroups());
+        // Named groups may be reordered by PQC auto-configuration, but same groups should be present
+        String[] controlGroups = controlEngine.getSSLParameters().getNamedGroups();
+        String[] engineGroups = engine.getSSLParameters().getNamedGroups();
+        if (controlGroups != null && Arrays.asList(controlGroups).contains("X25519MLKEM768")) {
+            assertEquals("X25519MLKEM768", engineGroups[0]);
+            assertEquals(controlGroups.length, engineGroups.length);
+        } else {
+            assertArrayEquals(controlGroups, engineGroups);
+        }
         assertEquals(1, engine.getSSLParameters().getSignatureSchemes().length);
         assertEquals("rsa_pss_rsae_sha256", engine.getSSLParameters().getSignatureSchemes()[0]);
     }
@@ -1128,6 +1151,75 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLContext defaultContext = SSLContext.getDefault();
 
         assertEquals(defaultContext.getProvider().getName(), context.getProvider().getName());
+    }
+
+    @Test
+    public void testPqcNamedGroupsAutoConfigured() throws Exception {
+        SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
+        controlContext.init(null, null, null);
+        SSLEngine controlEngine = controlContext.createSSLEngine();
+        String[] controlNamedGroups = controlEngine.getSSLParameters().getNamedGroups();
+        boolean pqcAvailable = controlNamedGroups != null
+                && Arrays.asList(controlNamedGroups).contains("X25519MLKEM768");
+
+        SSLContextParameters scp = new SSLContextParameters();
+        SSLContext context = scp.createSSLContext(null);
+        SSLEngine engine = context.createSSLEngine();
+        String[] resultGroups = engine.getSSLParameters().getNamedGroups();
+
+        if (pqcAvailable) {
+            // X25519MLKEM768 should be first
+            assertEquals("X25519MLKEM768", resultGroups[0]);
+            // All original groups should still be present
+            List<String> resultList = Arrays.asList(resultGroups);
+            for (String group : controlNamedGroups) {
+                assertTrue(resultList.contains(group), "Expected group " + group + " to be present");
+            }
+        } else {
+            // No PQC, defaults should be unchanged
+            assertArrayEquals(controlNamedGroups, resultGroups);
+        }
+    }
+
+    @Test
+    public void testPqcNamedGroupsUserConfigOverrides() throws Exception {
+        // User-configured named groups should NOT be overridden by PQC auto-config
+        SSLContextParameters scp = new SSLContextParameters();
+        NamedGroupsParameters ngp = new NamedGroupsParameters();
+        ngp.setNamedGroup(Collections.singletonList("secp256r1"));
+        scp.setNamedGroups(ngp);
+
+        SSLContext context = scp.createSSLContext(null);
+        SSLEngine engine = context.createSSLEngine();
+
+        assertEquals(1, engine.getSSLParameters().getNamedGroups().length);
+        assertEquals("secp256r1", engine.getSSLParameters().getNamedGroups()[0]);
+    }
+
+    @Test
+    public void testPqcNamedGroupsFilterOverrides() throws Exception {
+        // User-configured named groups filter should NOT be overridden by PQC auto-config
+        SSLContextParameters scp = new SSLContextParameters();
+        FilterParameters filter = new FilterParameters();
+        filter.getInclude().add("secp.*");
+        scp.setNamedGroupsFilter(filter);
+
+        SSLContext context = scp.createSSLContext(null);
+        SSLEngine engine = context.createSSLEngine();
+
+        for (String group : engine.getSSLParameters().getNamedGroups()) {
+            assertTrue(group.startsWith("secp"), "Expected group starting with 'secp' but got: " + group);
+        }
+    }
+
+    @Test
+    public void testPqcAutoConfigDoesNotPersist() throws Exception {
+        // PQC auto-config should not permanently mutate the SSLContextParameters instance
+        SSLContextParameters scp = new SSLContextParameters();
+        scp.createSSLContext(null);
+
+        // After createSSLContext, namedGroups should be null (reset)
+        assertNull(scp.getNamedGroups());
     }
 
     protected String[] getDefaultCipherSuiteIncludes(String[] availableCipherSuites) {

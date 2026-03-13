@@ -861,6 +861,17 @@ YAML::
 ----
 ====
 
+[NOTE]
+====
+Property placeholders can also be used in `application.properties` files, also with the functions such as ENV as shown:
+
+[source,properties]
+----
+# server name read from ENV and fallback to use localhost as default value
+myserver = {{env:MY_SERVER_NAME:localhost}}
+----
+====
+
 TIP: The boolean function uses the xref:components:languages:simple-language.adoc[Simple] language which has many functions and operators to build the condition.
 
 The service function is for looking up a service which is defined using OS environment variables using the service naming idiom, to refer to a service location using `hostname : port`

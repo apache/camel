@@ -361,6 +361,200 @@ See above
 namedGroupsFilter::
 See above
 
+signatureSchemes::
+This optional property represents a collection of explicitly named
+TLS signature schemes to enable on both the client and server side
+as well as in the SSLEngine. Signature schemes control which signature
+algorithms are available during the TLS handshake, including post-quantum
+signature algorithms such as `ML-DSA`. These values take precedence over
+filters supplied in signatureSchemesFilter. The utility attempts to
+enable the listed signature schemes regardless of whether the JSSE
+provider actually supports them or not. No default filtering is applied
+to signature schemes.
+signatureSchemesFilter::
+This optional property represents a collection of include and exclude
+patterns for signature schemes to enable on both the client and server
+side as well as in the SSLEngine. The patterns are applied over only the
+available signature schemes. The excludes patterns have precedence over
+the includes patterns. No default filtering is applied to signature
+schemes.
+
+== Post-Quantum Cryptography (PQC) TLS Configuration
+
+Starting with Camel 4.19, Apache Camel supports Post-Quantum Cryptography (PQC) at the TLS transport layer.
+This protects connections against _harvest-now-decrypt-later_ attacks, where an adversary captures
+encrypted traffic today with the intent to decrypt it once a cryptographically relevant quantum computer
+becomes available.
+
+=== JDK Requirements
+
+PQC TLS support requires a JDK that implements post-quantum key exchange algorithms.
+JDK 25+ is expected to include support for `X25519MLKEM768`, a hybrid key exchange
+that combines the classical X25519 algorithm with the ML-KEM-768 post-quantum algorithm
+(NIST FIPS 203).
+
+To verify whether your JDK supports PQC named groups, you can inspect the available groups:
+
+[source,java]
+----
+SSLContext ctx = SSLContext.getDefault();
+SSLEngine engine = ctx.createSSLEngine();
+String[] groups = engine.getSSLParameters().getNamedGroups();
+System.out.println(Arrays.toString(groups));
+// Look for X25519MLKEM768 in the output
+----
+
+=== Auto-Configuration (Zero-Config PQC)
+
+When running on a JDK that supports `X25519MLKEM768`, Camel *automatically* configures
+PQC-preferred named groups on all `SSLContextParameters` instances — no configuration is required.
+
+The auto-configuration activates only when:
+
+* The user has *not* explicitly set `namedGroups` or `namedGroupsFilter`
+* The JVM's TLS provider reports `X25519MLKEM768` as an available named group
+
+When activated, Camel sets the following named group ordering:
+
+[source,text]
+----
+X25519MLKEM768, x25519, secp256r1, secp384r1, [remaining JVM defaults...]
+----
+
+This ensures post-quantum key exchange is preferred while maintaining backward compatibility
+with servers that do not yet support PQC. A log message confirms activation:
+
+[source,text]
+----
+INFO  o.a.c.s.j.SSLContextParameters - Auto-configured PQC named groups: [X25519MLKEM768, x25519, secp256r1, secp384r1, ...]
+----
+
+=== Explicit Configuration via application.properties
+
+You can explicitly control PQC TLS settings in `application.properties`:
+
+[source,properties]
+----
+# Enable SSL
+camel.ssl.enabled = true
+
+# Explicit named groups ordering (PQC-first)
+camel.ssl.namedGroups = X25519MLKEM768,x25519,secp256r1,secp384r1
+
+# Explicit signature schemes (if your JDK supports PQC signatures)
+camel.ssl.signatureSchemes = ML-DSA,ECDSA,RSA
+----
+
+You can also use include/exclude filters instead of explicit lists:
+
+[source,properties]
+----
+# Include only PQC and ECDH groups
+camel.ssl.namedGroupsInclude = X25519MLKEM768,x25519,secp256r1
+
+# Exclude specific groups
+camel.ssl.namedGroupsExclude = ffdhe2048
+----
+
+NOTE: When `namedGroups` is set explicitly, include/exclude filters are ignored.
+When neither `namedGroups` nor filters are set, auto-configuration applies.
+
+=== Explicit Configuration via Java DSL
+
+You can also configure PQC TLS programmatically using `SSLContextParameters`:
+
+[source,java]
+----
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("file:/path/to/keystore.jks");
+ksp.setPassword("keystorePassword");
+
+KeyManagersParameters kmp = new KeyManagersParameters();
+kmp.setKeyStore(ksp);
+kmp.setKeyPassword("keyPassword");
+
+// Configure named groups with PQC preference
+NamedGroupsParameters ngp = new NamedGroupsParameters();
+ngp.setNamedGroup(List.of("X25519MLKEM768", "x25519", "secp256r1", "secp384r1"));
+
+SSLContextParameters scp = new SSLContextParameters();
+scp.setKeyManagers(kmp);
+scp.setNamedGroups(ngp);
+
+SSLContext context = scp.createSSLContext();
+----
+
+=== Disabling PQC Auto-Configuration
+
+If you need to disable PQC auto-configuration (for example, for compatibility testing),
+set the named groups explicitly to classical-only values:
+
+[source,properties]
+----
+camel.ssl.namedGroups = x25519,secp256r1,secp384r1
+----
+
+Or use a named groups filter:
+
+[source,properties]
+----
+camel.ssl.namedGroupsExclude = X25519MLKEM768
+----
+
+=== TLS-Layer PQC vs. Application-Layer PQC
+
+Camel provides PQC protection at two distinct layers:
+
+[cols="1,1,1",options="header"]
+|===
+| Aspect | TLS-Layer PQC | Application-Layer PQC (camel-pqc)
+
+| *Scope*
+| Transport security (TLS handshake)
+| Message payload encryption and signing
+
+| *Configuration*
+| `camel.ssl.*` properties or `SSLContextParameters`
+| `camel-pqc` component and `pqc` data format
+
+| *Protects*
+| Data in transit between endpoints
+| Data at rest and message payloads
+
+| *Algorithms*
+| X25519MLKEM768 (hybrid KEM)
+| ML-KEM, ML-DSA, SLH-DSA, LMS, XMSS, Falcon, and more
+
+| *JDK requirement*
+| JDK 25+ (for built-in PQC named groups)
+| JDK 21+ with Bouncy Castle provider
+
+| *User action*
+| Zero-config on JDK 25+ (auto-configured)
+| Requires explicit component configuration
+|===
+
+Both layers are complementary and can be used together for defense in depth:
+
+* *TLS-layer PQC* secures the connection between Camel and external services (brokers, APIs, databases)
+* *Application-layer PQC* (`camel-pqc`) secures the message content itself, independent of transport
+
+For full application-layer PQC documentation, see xref:components::pqc-component.adoc[PQC Component]
+and xref:components:dataformats:pqc-dataformat.adoc[PQC Data Format].
+
+=== Migration from Classical TLS
+
+For users currently running classical TLS, migration to PQC TLS is straightforward:
+
+1. **Upgrade your JDK** to JDK 25+ (or a JDK that supports `X25519MLKEM768`)
+2. **Upgrade Camel** to 4.19 or later
+3. **No configuration changes needed** — PQC named groups are auto-configured
+4. **Verify** that your TLS peers (servers, brokers, load balancers) support PQC key exchange or
+at least accept the classical fallback groups (`x25519`, `secp256r1`)
+
+The hybrid nature of `X25519MLKEM768` ensures that even if the remote peer does not support
+PQC, the handshake gracefully falls back to classical key exchange using the next available group.
+
 == Examples
 
 === Setting Client Authentication on the Server Side

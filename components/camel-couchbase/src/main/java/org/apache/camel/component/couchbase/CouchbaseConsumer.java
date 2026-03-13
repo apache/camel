@@ -21,7 +21,6 @@ import java.util.Queue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.couchbase.client.core.deps.com.fasterxml.jackson.databind.JsonNode;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
@@ -143,7 +142,11 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
                     doc = row.valueAs(Object.class);
                 }
 
-                String key = row.keyAs(JsonNode.class).get().asText();
+                // Use String.class instead of the shaded JsonNode class to avoid conflicts
+                // when Jackson is on the classpath (CAMEL-22090). The Couchbase SDK's
+                // auto-detection of non-shaded Jackson would otherwise cause deserialization
+                // failures when trying to deserialize into the shaded JsonNode class.
+                String key = row.keyAs(String.class).orElse(null);
                 String designDocumentName = endpoint.getDesignDocumentName();
                 String viewName = endpoint.getViewName();
 

@@ -561,15 +561,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
             throw new CamelException(COUCHBASE_URI_ERROR);
         }
 
-        ClusterEnvironment.Builder cfb = ClusterEnvironment.builder();
-        cfb.jsonSerializer(DefaultJsonSerializer.create());
-        if (queryTimeout != DEFAULT_QUERY_TIMEOUT) {
-            cfb.timeoutConfig()
-                    .connectTimeout(Duration.ofMillis(connectTimeout))
-                    .queryTimeout(Duration.ofMillis(queryTimeout));
-        }
-
-        ClusterEnvironment env = cfb.build();
+        ClusterEnvironment env = createClusterEnvironment();
 
         String addHosts = hosts.stream()
                 .map(URI::getHost)
@@ -586,6 +578,29 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
                 .environment(env));
 
         return cluster.bucket(bucket);
+    }
+
+    /**
+     * Creates the {@link ClusterEnvironment} for connecting to Couchbase.
+     * <p>
+     * Explicitly configures the {@link DefaultJsonSerializer} to prevent the Couchbase SDK from auto-detecting Jackson
+     * on the classpath (CAMEL-22090). Without this, when a non-shaded Jackson library is present (e.g., via
+     * camel-jackson, Spring Boot, or Quarkus), the SDK would use {@code JacksonJsonSerializer} backed by the non-shaded
+     * Jackson {@code ObjectMapper}. This causes deserialization failures because the SDK's internal types (such as view
+     * row keys) rely on the shaded Jackson classes bundled within the Couchbase SDK.
+     * <p>
+     * The {@link DefaultJsonSerializer} uses the shaded Jackson {@code ObjectMapper} bundled inside the Couchbase SDK,
+     * ensuring consistent serialization/deserialization regardless of what other Jackson versions are on the classpath.
+     */
+    ClusterEnvironment createClusterEnvironment() {
+        ClusterEnvironment.Builder cfb = ClusterEnvironment.builder();
+        cfb.jsonSerializer(DefaultJsonSerializer.create());
+        if (queryTimeout != DEFAULT_QUERY_TIMEOUT) {
+            cfb.timeoutConfig()
+                    .connectTimeout(Duration.ofMillis(connectTimeout))
+                    .queryTimeout(Duration.ofMillis(queryTimeout));
+        }
+        return cfb.build();
     }
 
     /**
