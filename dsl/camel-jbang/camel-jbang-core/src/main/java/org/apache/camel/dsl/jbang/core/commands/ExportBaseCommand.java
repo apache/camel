@@ -587,6 +587,16 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     || "true".equalsIgnoreCase(prop.getProperty("camel.server.metricsEnabled"))) {
                 answer.add("camel:micrometer-prometheus");
             }
+            // automatic add needed dependencies when opentelemetry is enabled
+            if (prop.stringPropertyNames().stream().anyMatch(k -> k.startsWith("camel.opentelemetry2."))) {
+                answer.add("camel:opentelemetry2");
+            } else if (prop.stringPropertyNames().stream().anyMatch(k -> k.startsWith("camel.opentelemetry."))) {
+                answer.add("camel:opentelemetry");
+            }
+            // automatic add needed dependencies when LRA saga is enabled
+            if (prop.stringPropertyNames().stream().anyMatch(k -> k.startsWith("camel.lra."))) {
+                answer.add("camel:lra");
+            }
         }
 
         if (!skipPlugins) {
