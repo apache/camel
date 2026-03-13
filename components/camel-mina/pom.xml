@@ -77,37 +77,4 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <property>
-                    <name>!quickly</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <!-- This test just show the shutdown error -->
-                                <exclude>**/MinaProducerShutdownTest.*</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <!-- allows the special unittest to be ran via 'mvn compile exec:java' -->
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <configuration>
-                            <mainClass>org.apache.camel.component.mina.MinaProducerShutdownManualIT</mainClass>
-                            <includePluginDependencies>false</includePluginDependencies>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
