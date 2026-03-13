@@ -7,7 +7,7 @@
     "deprecated": false,
     "firstVersion": "4.19.0",
     "label": "core,monitoring",
-    "javaType": "org.apache.camel.component.event.EventComponent",
+    "javaType": "org.apache.camel.component.camelevent.EventComponent",
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-event",
