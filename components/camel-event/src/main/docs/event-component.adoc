@@ -1,0 +1,150 @@
+= Event Component
+:doctitle: Event
+:shortname: event
+:artifactid: camel-event
+:description: Subscribe to Camel internal events such as route started/stopped and exchange completed/failed.
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only consumer is supported
+:core:
+//Manually maintained attributes
+:camel-spring-boot-name: event
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Event component allows you to subscribe to Camel internal events such as route lifecycle events
+and exchange events. The component leverages Camel's existing `EventNotifier` mechanism to receive events
+and dispatch them as exchanges into a route.
+
+== URI format
+
+----
+event:eventTypes[?options]
+----
+
+Where `eventTypes` is a comma-separated list of event types to subscribe to.
+Event types correspond to `CamelEvent.Type` enum values (case-insensitive).
+
+For example:
+
+----
+event:RouteStarted,RouteStopped
+event:ExchangeCompleted,ExchangeFailed?filter=myRoute
+----
+
+// component-configure options: START
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+== Event Types
+
+The following event types are available (corresponding to `org.apache.camel.spi.CamelEvent.Type`):
+
+=== CamelContext Events
+- `CamelContextInitializing`
+- `CamelContextInitialized`
+- `CamelContextStarting`
+- `CamelContextStarted`
+- `CamelContextStopping`
+- `CamelContextStopped`
+- `CamelContextResuming`
+- `CamelContextResumed`
+- `CamelContextSuspending`
+- `CamelContextSuspended`
+- `CamelContextReloading`
+- `CamelContextReloaded`
+- `CamelContextStartupFailure`
+- `CamelContextStopFailure`
+- `CamelContextResumeFailure`
+- `CamelContextReloadFailure`
+
+=== Route Events
+- `RouteAdded`
+- `RouteRemoved`
+- `RouteStarting`
+- `RouteStarted`
+- `RouteStopping`
+- `RouteStopped`
+- `RouteReloaded`
+- `RouteRestarting`
+- `RouteRestartingFailure`
+- `RoutesStarting`
+- `RoutesStarted`
+- `RoutesStopping`
+- `RoutesStopped`
+
+=== Exchange Events
+- `ExchangeCreated`
+- `ExchangeCompleted`
+- `ExchangeFailed`
+- `ExchangeFailureHandling`
+- `ExchangeFailureHandled`
+- `ExchangeRedelivery`
+- `ExchangeSending`
+- `ExchangeSent`
+
+=== Step Events
+- `StepStarted`
+- `StepCompleted`
+- `StepFailed`
+
+=== Service Events
+- `ServiceStartupFailure`
+- `ServiceStopFailure`
+
+== Filtering
+
+You can filter events using the `filter` option. For route events, this filters by route ID.
+For exchange events, this filters by the route ID of the exchange (from route).
+
+For example, to only receive events for routes `myRoute1` and `myRoute2`:
+
+----
+event:RouteStarted,RouteStopped?filter=myRoute1,myRoute2
+----
+
+== Message Headers
+
+The following headers are set on exchanges created by this component:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventType | String | The event type name (e.g., `RouteStarted`)
+| CamelEventTimestamp | Long | The event timestamp (if available)
+| CamelEventRouteId | String | The route ID (for route events only)
+|===
+
+== Message Body
+
+The message body contains the `CamelEvent` object, which can be cast to the specific event
+sub-interface for additional details.
+
+== Examples
+
+Subscribe to route started and stopped events:
+
+[source,java]
+----
+from("event:RouteStarted,RouteStopped")
+    .log("Route ${header.CamelEventRouteId} event: ${header.CamelEventType}");
+----
+
+Subscribe to exchange completed events for a specific route:
+
+[source,java]
+----
+from("event:ExchangeCompleted?filter=myRoute")
+    .log("Exchange completed on route myRoute");
+----

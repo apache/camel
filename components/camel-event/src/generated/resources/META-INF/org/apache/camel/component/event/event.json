@@ -1,0 +1,37 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "event",
+    "title": "Event",
+    "description": "Subscribe to Camel internal events such as route started\/stopped and exchange completed\/failed.",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "label": "core,monitoring",
+    "javaType": "org.apache.camel.component.event.EventComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-event",
+    "version": "4.19.0-SNAPSHOT",
+    "scheme": "event",
+    "extendsScheme": "",
+    "syntax": "event:events",
+    "async": false,
+    "api": false,
+    "consumerOnly": true,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": false
+  },
+  "componentProperties": {
+    "bridgeErrorHandler": { "index": 0, "kind": "property", "displayName": "Bridge Error Handler", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. Important: This is only possible if the 3rd party component allows Camel to be alerted if an exception was thrown. Some components handle this internally only, and therefore bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd party component and make this possible for future releases. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "properties": {
+    "events": { "index": 0, "kind": "path", "displayName": "Events", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Comma-separated list of event types to subscribe to. Event types correspond to CamelEvent.Type enum values (case-insensitive), for example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed." },
+    "filter": { "index": 1, "kind": "parameter", "displayName": "Filter", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Comma-separated list of filters to narrow down events. For route events, this filters by route ID. For exchange events, this filters by the route ID of the exchange." },
+    "bridgeErrorHandler": { "index": 2, "kind": "parameter", "displayName": "Bridge Error Handler", "group": "consumer (advanced)", "label": "consumer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. Important: This is only possible if the 3rd party component allows Camel to be alerted if an exception was thrown. Some components handle this internally only, and therefore bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd party component and make this possible for future releases. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored." },
+    "exceptionHandler": { "index": 3, "kind": "parameter", "displayName": "Exception Handler", "group": "consumer (advanced)", "label": "consumer,advanced", "required": false, "type": "object", "javaType": "org.apache.camel.spi.ExceptionHandler", "optionalPrefix": "consumer.", "deprecated": false, "autowired": false, "secret": false, "description": "To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored." },
+    "exchangePattern": { "index": 4, "kind": "parameter", "displayName": "Exchange Pattern", "group": "consumer (advanced)", "label": "consumer,advanced", "required": false, "type": "enum", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOut" ], "deprecated": false, "autowired": false, "secret": false, "description": "Sets the exchange pattern when the consumer creates an exchange." }
+  }
+}
