@@ -108,10 +108,10 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         }
 
         if ((path == null || path.isEmpty()) && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_PATH))) {
-            path = (String) exchange.getIn().getHeader(Exchange.HTTP_PATH);
+            path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
         }
         if (query == null && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_QUERY))) {
-            query = (String) exchange.getIn().getHeader(Exchange.HTTP_QUERY);
+            query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         }
 
         if (path != null || query != null) {
