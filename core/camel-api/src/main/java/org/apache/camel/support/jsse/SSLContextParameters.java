@@ -349,7 +349,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      */
     private boolean applyPqcNamedGroupDefaults(SSLContext context) {
         SSLEngine probeEngine = context.createSSLEngine();
-        String[] availableGroups = probeEngine.getSSLParameters().getNamedGroups();
+        String[] availableGroups = getNamedGroupsFromParams(probeEngine.getSSLParameters());
 
         if (availableGroups == null) {
             return false;

@@ -119,7 +119,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         SET_SIGNATURE_SCHEMES = sss;
     }
 
-    private static String[] getNamedGroupsFromParams(SSLParameters params) {
+    static String[] getNamedGroupsFromParams(SSLParameters params) {
         if (GET_NAMED_GROUPS == null) {
             return null;
         }
