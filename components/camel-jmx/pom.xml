@@ -89,10 +89,11 @@
                     <execution>
                         <id>copy-generated-resources-jaxb</id>
                         <goals>
-                            <goal>resources</goal>
+                            <goal>copy-resources</goal>
                         </goals>
                         <phase>process-classes</phase>
                         <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/target/generated/camel/jaxb</directory>
