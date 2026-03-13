@@ -1382,6 +1382,12 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-event</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-exec</artifactId>
                 <version>${project.version}</version>
             </dependency>
