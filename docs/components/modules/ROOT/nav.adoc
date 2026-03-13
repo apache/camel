@@ -134,6 +134,7 @@
 ** xref:ehcache-component.adoc[Ehcache]
 ** xref:elasticsearch-component.adoc[Elasticsearch]
 ** xref:elasticsearch-rest-client-component.adoc[Elasticsearch Low level Rest Client]
+** xref:event-component.adoc[Event]
 ** xref:exec-component.adoc[Exec]
 ** xref:fhir-component.adoc[FHIR]
 ** xref:file-component.adoc[File]

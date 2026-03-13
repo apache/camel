@@ -1521,6 +1521,20 @@ public interface ComponentsBuilderFactory {
         return ElasticsearchRestClientComponentBuilderFactory.elasticsearchRestClient();
     }
     /**
+     * Event (camel-event)
+     * Subscribe to Camel internal events such as route started/stopped and
+     * exchange completed/failed.
+     * 
+     * Category: core,monitoring
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-event
+     * 
+     * @return the dsl builder
+     */
+    static EventComponentBuilderFactory.EventComponentBuilder event() {
+        return EventComponentBuilderFactory.event();
+    }
+    /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
      * 
