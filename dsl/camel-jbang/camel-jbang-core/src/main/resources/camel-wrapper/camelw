@@ -1,0 +1,160 @@
+#!/bin/sh
+# ----------------------------------------------------------------------------
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+# ----------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------
+# Apache Camel Wrapper startup script
+#
+# Required ENV vars:
+# ------------------
+#   JAVA_HOME - location of a JDK home dir
+#
+# Optional ENV vars
+# -----------------
+#   CAMEL_OPTS - parameters passed to the Java VM when running Camel
+# ----------------------------------------------------------------------------
+
+# OS specific support
+cygwin=false
+darwin=false
+mingw=false
+case "$(uname)" in
+CYGWIN*) cygwin=true ;;
+MINGW*) mingw=true ;;
+Darwin*)
+  darwin=true
+  if [ -z "$JAVA_HOME" ]; then
+    if [ -x "/usr/libexec/java_home" ]; then
+      JAVA_HOME="$(/usr/libexec/java_home)"
+      export JAVA_HOME
+    else
+      JAVA_HOME="/Library/Java/Home"
+      export JAVA_HOME
+    fi
+  fi
+  ;;
+esac
+
+if [ -z "$JAVA_HOME" ]; then
+  if [ -r /etc/gentoo-release ]; then
+    JAVA_HOME=$(java-config --jre-home)
+  fi
+fi
+
+# Resolve the script directory
+if [ -z "$CAMEL_WRAPPER_DIR" ]; then
+  # resolve links - $0 may be a softlink
+  PRG="$0"
+  while [ -h "$PRG" ]; do
+    ls=$(ls -ld "$PRG")
+    link=$(expr "$ls" : '.*-> \(.*\)$')
+    if expr "$link" : '/.*' > /dev/null; then
+      PRG="$link"
+    else
+      PRG=$(dirname "$PRG")/"$link"
+    fi
+  done
+  CAMEL_WRAPPER_DIR=$(dirname "$PRG")
+  CAMEL_WRAPPER_DIR=$(cd "$CAMEL_WRAPPER_DIR" && pwd)
+fi
+
+# Read properties file
+CAMEL_PROPERTIES="$CAMEL_WRAPPER_DIR/.camel/camel-wrapper.properties"
+if [ ! -f "$CAMEL_PROPERTIES" ]; then
+  echo "Error: Could not find $CAMEL_PROPERTIES" >&2
+  echo "Please run 'camel wrapper' to set up the Camel wrapper." >&2
+  exit 1
+fi
+
+# Parse properties
+CAMEL_VERSION=$(grep '^camel.version=' "$CAMEL_PROPERTIES" | cut -d'=' -f2-)
+DISTRIBUTION_URL=$(grep '^distributionUrl=' "$CAMEL_PROPERTIES" | cut -d'=' -f2-)
+
+if [ -z "$CAMEL_VERSION" ]; then
+  echo "Error: camel.version not found in $CAMEL_PROPERTIES" >&2
+  exit 1
+fi
+
+if [ -z "$DISTRIBUTION_URL" ]; then
+  echo "Error: distributionUrl not found in $CAMEL_PROPERTIES" >&2
+  exit 1
+fi
+
+# Determine the Java command to use
+if [ -n "$JAVA_HOME" ]; then
+  if [ -x "$JAVA_HOME/jre/sh/java" ]; then
+    JAVACMD="$JAVA_HOME/jre/sh/java"
+  else
+    JAVACMD="$JAVA_HOME/bin/java"
+  fi
+  if [ ! -x "$JAVACMD" ]; then
+    echo "Error: JAVA_HOME is set to an invalid directory: $JAVA_HOME" >&2
+    echo "Please set the JAVA_HOME variable in your environment to match the" >&2
+    echo "location of your Java installation." >&2
+    exit 1
+  fi
+else
+  JAVACMD="java"
+  command -v java >/dev/null 2>&1 || {
+    echo "Error: JAVA_HOME is not set and 'java' command not found in PATH." >&2
+    echo "Please set the JAVA_HOME variable in your environment to match the" >&2
+    echo "location of your Java installation." >&2
+    exit 1
+  }
+fi
+
+# Set up the cache directory for the launcher jar
+CAMEL_CACHE_DIR="${HOME}/.camel/wrapper"
+CAMEL_LAUNCHER_JAR="$CAMEL_CACHE_DIR/camel-launcher-${CAMEL_VERSION}.jar"
+
+# Download the launcher jar if it doesn't exist
+if [ ! -f "$CAMEL_LAUNCHER_JAR" ]; then
+  mkdir -p "$CAMEL_CACHE_DIR"
+  echo "Downloading Camel Launcher ${CAMEL_VERSION}..."
+
+  if command -v curl > /dev/null 2>&1; then
+    curl -fsSL -o "$CAMEL_LAUNCHER_JAR" "$DISTRIBUTION_URL" || {
+      echo "Error: Failed to download Camel Launcher from $DISTRIBUTION_URL" >&2
+      rm -f "$CAMEL_LAUNCHER_JAR"
+      exit 1
+    }
+  elif command -v wget > /dev/null 2>&1; then
+    wget -q -O "$CAMEL_LAUNCHER_JAR" "$DISTRIBUTION_URL" || {
+      echo "Error: Failed to download Camel Launcher from $DISTRIBUTION_URL" >&2
+      rm -f "$CAMEL_LAUNCHER_JAR"
+      exit 1
+    }
+  else
+    echo "Error: Neither curl nor wget found. Please install one of them." >&2
+    exit 1
+  fi
+
+  echo "Camel Launcher ${CAMEL_VERSION} downloaded successfully."
+fi
+
+# For Cygwin/MinGW, switch paths to Windows format
+if $cygwin; then
+  CAMEL_LAUNCHER_JAR=$(cygpath --path --windows "$CAMEL_LAUNCHER_JAR")
+fi
+
+# Run the Camel launcher
+exec "$JAVACMD" \
+  $CAMEL_OPTS \
+  -jar "$CAMEL_LAUNCHER_JAR" \
+  "$@"

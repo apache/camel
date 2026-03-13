@@ -206,6 +206,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("get", new CommandLine(new VersionGet(this)))
                         .addSubcommand("list", new CommandLine(new VersionList(this)))
                         .addSubcommand("set", new CommandLine(new VersionSet(this))))
+                .addSubcommand("wrapper", new CommandLine(new WrapperCommand(this)))
                 .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
 
         postAddCommands(commandLine, args);

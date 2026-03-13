@@ -368,6 +368,7 @@
                                     <exclude>camel-sbom/*.xml</exclude>
                                     <exclude>doap.rdf</exclude>
                                     <exclude>mvnw*</exclude>
+                                    <exclude>**/camelw</exclude>
                                     <exclude>**/FileSplitXPathCharsetTest-input.xml</exclude>
                                     <exclude>**/.camel-jbang-run/**</exclude>
                                     <exclude>**/camel-jbang-run.properties</exclude>
