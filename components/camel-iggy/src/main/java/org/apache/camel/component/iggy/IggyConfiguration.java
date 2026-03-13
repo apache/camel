@@ -19,6 +19,7 @@ package org.apache.camel.component.iggy;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.iggy.message.Partitioning;
 import org.apache.iggy.topic.CompressionAlgorithm;
 
@@ -85,6 +86,10 @@ public class IggyConfiguration implements Cloneable {
     @UriParam(label = "security",
               description = "Path to the TLS certificate file for the connection to the Iggy server")
     private String tlsCertificatePath;
+    @UriParam(label = "security",
+              description = "SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance."
+                            + " This takes precedence over tlsEnabled and tlsCertificatePath when configured.")
+    private SSLContextParameters sslContextParameters;
 
     public IggyConfiguration copy() {
         try {
@@ -304,5 +309,17 @@ public class IggyConfiguration implements Cloneable {
      */
     public void setTlsCertificatePath(String tlsCertificatePath) {
         this.tlsCertificatePath = tlsCertificatePath;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. This takes precedence
+     * over tlsEnabled and tlsCertificatePath when configured.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 }

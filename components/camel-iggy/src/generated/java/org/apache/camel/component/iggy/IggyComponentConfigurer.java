@@ -71,6 +71,8 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "replicationFactor": getOrCreateConfiguration(target).setReplicationFactor(property(camelContext, java.lang.Short.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": getOrCreateConfiguration(target).setShutdownTimeout(property(camelContext, int.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": getOrCreateConfiguration(target).setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "startingoffset":
         case "startingOffset": getOrCreateConfiguration(target).setStartingOffset(property(camelContext, java.lang.Long.class, value)); return true;
         case "streamid":
@@ -81,6 +83,8 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "tlsCertificatePath": getOrCreateConfiguration(target).setTlsCertificatePath(property(camelContext, java.lang.String.class, value)); return true;
         case "tlsenabled":
         case "tlsEnabled": getOrCreateConfiguration(target).setTlsEnabled(property(camelContext, boolean.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -130,6 +134,8 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "replicationFactor": return java.lang.Short.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return int.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "startingoffset":
         case "startingOffset": return java.lang.Long.class;
         case "streamid":
@@ -140,6 +146,8 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "tlsCertificatePath": return java.lang.String.class;
         case "tlsenabled":
         case "tlsEnabled": return boolean.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -190,6 +198,8 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "replicationFactor": return getOrCreateConfiguration(target).getReplicationFactor();
         case "shutdowntimeout":
         case "shutdownTimeout": return getOrCreateConfiguration(target).getShutdownTimeout();
+        case "sslcontextparameters":
+        case "sslContextParameters": return getOrCreateConfiguration(target).getSslContextParameters();
         case "startingoffset":
         case "startingOffset": return getOrCreateConfiguration(target).getStartingOffset();
         case "streamid":
@@ -200,6 +210,8 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "tlsCertificatePath": return getOrCreateConfiguration(target).getTlsCertificatePath();
         case "tlsenabled":
         case "tlsEnabled": return getOrCreateConfiguration(target).isTlsEnabled();
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }

@@ -19,15 +19,19 @@ package org.apache.camel.component.iggy;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("iggy")
-public class IggyComponent extends DefaultComponent {
+public class IggyComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata
     private IggyConfiguration configuration = new IggyConfiguration();
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -36,6 +40,10 @@ public class IggyComponent extends DefaultComponent {
         IggyEndpoint endpoint = new IggyEndpoint(uri, this, config);
         endpoint.setTopicName(remaining);
         setProperties(endpoint, parameters);
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
 
         return endpoint;
     }
@@ -49,5 +57,18 @@ public class IggyComponent extends DefaultComponent {
      */
     public void setConfiguration(IggyConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

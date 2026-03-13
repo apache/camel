@@ -65,6 +65,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replicationFactor": target.getConfiguration().setReplicationFactor(property(camelContext, java.lang.Short.class, value)); return true;
         case "shutdowntimeout":
         case "shutdownTimeout": target.getConfiguration().setShutdownTimeout(property(camelContext, int.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "startingoffset":
         case "startingOffset": target.getConfiguration().setStartingOffset(property(camelContext, java.lang.Long.class, value)); return true;
         case "streamid":
@@ -125,6 +127,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replicationFactor": return java.lang.Short.class;
         case "shutdowntimeout":
         case "shutdownTimeout": return int.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "startingoffset":
         case "startingOffset": return java.lang.Long.class;
         case "streamid":
@@ -186,6 +190,8 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replicationFactor": return target.getConfiguration().getReplicationFactor();
         case "shutdowntimeout":
         case "shutdownTimeout": return target.getConfiguration().getShutdownTimeout();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "startingoffset":
         case "startingOffset": return target.getConfiguration().getStartingOffset();
         case "streamid":

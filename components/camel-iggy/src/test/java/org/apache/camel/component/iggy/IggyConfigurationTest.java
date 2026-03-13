@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.iggy;
 
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -67,6 +69,50 @@ public class IggyConfigurationTest {
                     IggyEndpoint.class);
             assertTrue(endpoint.getConfiguration().isTlsEnabled());
             assertEquals("/path/to/cert.pem", endpoint.getConfiguration().getTlsCertificatePath());
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testSslContextParametersDefault() {
+        IggyConfiguration configuration = new IggyConfiguration();
+        assertNull(configuration.getSslContextParameters());
+    }
+
+    @Test
+    public void testSslContextParameters() {
+        IggyConfiguration configuration = new IggyConfiguration();
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        configuration.setSslContextParameters(sslContextParameters);
+        assertNotNull(configuration.getSslContextParameters());
+        assertEquals(sslContextParameters, configuration.getSslContextParameters());
+    }
+
+    @Test
+    public void testSslContextParametersCopy() {
+        IggyConfiguration configuration = new IggyConfiguration();
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        configuration.setSslContextParameters(sslContextParameters);
+
+        IggyConfiguration copy = configuration.copy();
+        assertNotNull(copy.getSslContextParameters());
+        assertEquals(sslContextParameters, copy.getSslContextParameters());
+    }
+
+    @Test
+    public void testSslContextParametersEndpointUri() throws Exception {
+        org.apache.camel.impl.DefaultCamelContext context = new org.apache.camel.impl.DefaultCamelContext();
+        context.start();
+        try {
+            SSLContextParameters sslContextParameters = new SSLContextParameters();
+            context.getRegistry().bind("sslContextParameters", sslContextParameters);
+
+            IggyEndpoint endpoint = context.getEndpoint(
+                    "iggy:myTopic?sslContextParameters=#sslContextParameters&streamName=myStream&username=user&password=pass",
+                    IggyEndpoint.class);
+            assertNotNull(endpoint.getConfiguration().getSslContextParameters());
+            assertEquals(sslContextParameters, endpoint.getConfiguration().getSslContextParameters());
         } finally {
             context.stop();
         }
