@@ -148,3 +148,24 @@ Subscribe to exchange completed events for a specific route:
 from("event:ExchangeCompleted?filter=myRoute")
     .log("Exchange completed on route myRoute");
 ----
+
+== Distributed Events
+
+The Event component captures events within a single CamelContext (JVM). To propagate events across
+multiple Camel instances, use standard Camel routes to forward events to a messaging system:
+
+[source,java]
+----
+// Producer side: capture local events and publish to Kafka
+from("event:RouteStarted,RouteStopped,ExchangeFailed")
+    .setBody(simple("${header.CamelEventType}: ${header.CamelEventRouteId} at ${header.CamelEventTimestamp}"))
+    .to("kafka:camel-events");
+
+// Consumer side (same or different JVM): process distributed events
+from("kafka:camel-events")
+    .to("log:distributed-events");
+----
+
+This approach is transport-agnostic — you can use Kafka, JMS, AMQP, NATS, or any other
+Camel messaging component. It gives you full control over event serialization, filtering,
+and routing logic.
