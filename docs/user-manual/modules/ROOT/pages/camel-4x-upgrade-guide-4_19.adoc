@@ -27,6 +27,19 @@ The cloud integration from the following components has been removed: `camel-con
 
 === camel-core
 
+==== PQC TLS Auto-Configuration
+
+When running on a JDK that supports `X25519MLKEM768` (typically JDK 25+), Camel now automatically
+configures post-quantum hybrid named groups on all `SSLContextParameters` instances. The preferred
+group ordering is: `X25519MLKEM768`, `x25519`, `secp256r1`, `secp384r1`, followed by the remaining
+JVM defaults.
+
+This auto-configuration activates only when the user has not explicitly set `namedGroups` or
+`namedGroupsFilter`. No changes are required for existing applications — the hybrid key exchange
+is backward-compatible with peers that do not support PQC.
+
+See xref:camel-configuration-utilities.adoc[JSSE Utility] for full details on PQC TLS configuration.
+
 The WireTap EIP has removed the `pattern` option from its model (not in use) as wiretap always
 uses `InOnly` pattern.
 
