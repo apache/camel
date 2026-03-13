@@ -71,6 +71,10 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamId": target.getConfiguration().setStreamId(property(camelContext, java.lang.Long.class, value)); return true;
         case "streamname":
         case "streamName": target.getConfiguration().setStreamName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tlscertificatepath":
+        case "tlsCertificatePath": target.getConfiguration().setTlsCertificatePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "tlsenabled":
+        case "tlsEnabled": target.getConfiguration().setTlsEnabled(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -127,6 +131,10 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamId": return java.lang.Long.class;
         case "streamname":
         case "streamName": return java.lang.String.class;
+        case "tlscertificatepath":
+        case "tlsCertificatePath": return java.lang.String.class;
+        case "tlsenabled":
+        case "tlsEnabled": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -184,6 +192,10 @@ public class IggyEndpointConfigurer extends PropertyConfigurerSupport implements
         case "streamId": return target.getConfiguration().getStreamId();
         case "streamname":
         case "streamName": return target.getConfiguration().getStreamName();
+        case "tlscertificatepath":
+        case "tlsCertificatePath": return target.getConfiguration().getTlsCertificatePath();
+        case "tlsenabled":
+        case "tlsEnabled": return target.getConfiguration().isTlsEnabled();
         case "username": return target.getConfiguration().getUsername();
         default: return null;
         }

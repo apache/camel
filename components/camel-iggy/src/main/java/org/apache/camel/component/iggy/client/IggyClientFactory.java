@@ -30,22 +30,41 @@ public class IggyClientFactory extends BasePooledObjectFactory<IggyBaseClient> {
     private final String username;
     private final String password;
     private final String transport;
+    private final boolean tlsEnabled;
+    private final String tlsCertificatePath;
 
-    public IggyClientFactory(String host, int port, String username, String password, String transport) {
+    public IggyClientFactory(String host, int port, String username, String password, String transport,
+                             boolean tlsEnabled, String tlsCertificatePath) {
         this.host = host;
         this.port = port;
         this.username = username;
         this.password = password;
         this.transport = transport;
+        this.tlsEnabled = tlsEnabled;
+        this.tlsCertificatePath = tlsCertificatePath;
     }
 
     @Override
     public IggyBaseClient create() throws Exception {
         IggyBaseClient iggyBaseClient;
         if ("TCP".equalsIgnoreCase(transport)) {
-            iggyBaseClient = IggyTcpClient.builder().host(host).port(port).credentials(username, password).buildAndLogin();
+            var builder = IggyTcpClient.builder().host(host).port(port).credentials(username, password);
+            if (tlsEnabled) {
+                builder.enableTls();
+                if (tlsCertificatePath != null) {
+                    builder.tlsCertificate(tlsCertificatePath);
+                }
+            }
+            iggyBaseClient = builder.buildAndLogin();
         } else if ("HTTP".equalsIgnoreCase(transport)) {
-            iggyBaseClient = IggyHttpClient.builder().host(host).port(port).credentials(username, password).buildAndLogin();
+            var builder = IggyHttpClient.builder().host(host).port(port).credentials(username, password);
+            if (tlsEnabled) {
+                builder.enableTls();
+                if (tlsCertificatePath != null) {
+                    builder.tlsCertificate(tlsCertificatePath);
+                }
+            }
+            iggyBaseClient = builder.buildAndLogin();
         } else {
             throw new IllegalArgumentException("Only HTTP or TCP transports are supported");
         }

@@ -77,6 +77,10 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "streamId": getOrCreateConfiguration(target).setStreamId(property(camelContext, java.lang.Long.class, value)); return true;
         case "streamname":
         case "streamName": getOrCreateConfiguration(target).setStreamName(property(camelContext, java.lang.String.class, value)); return true;
+        case "tlscertificatepath":
+        case "tlsCertificatePath": getOrCreateConfiguration(target).setTlsCertificatePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "tlsenabled":
+        case "tlsEnabled": getOrCreateConfiguration(target).setTlsEnabled(property(camelContext, boolean.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -132,6 +136,10 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "streamId": return java.lang.Long.class;
         case "streamname":
         case "streamName": return java.lang.String.class;
+        case "tlscertificatepath":
+        case "tlsCertificatePath": return java.lang.String.class;
+        case "tlsenabled":
+        case "tlsEnabled": return boolean.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -188,6 +196,10 @@ public class IggyComponentConfigurer extends PropertyConfigurerSupport implement
         case "streamId": return getOrCreateConfiguration(target).getStreamId();
         case "streamname":
         case "streamName": return getOrCreateConfiguration(target).getStreamName();
+        case "tlscertificatepath":
+        case "tlsCertificatePath": return getOrCreateConfiguration(target).getTlsCertificatePath();
+        case "tlsenabled":
+        case "tlsEnabled": return getOrCreateConfiguration(target).isTlsEnabled();
         case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }

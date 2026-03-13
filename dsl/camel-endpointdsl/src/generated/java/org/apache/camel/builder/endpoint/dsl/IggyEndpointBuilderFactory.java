@@ -587,6 +587,51 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Path to the TLS certificate file for the connection to the Iggy
+         * server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param tlsCertificatePath the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointConsumerBuilder tlsCertificatePath(String tlsCertificatePath) {
+            doSetProperty("tlsCertificatePath", tlsCertificatePath);
+            return this;
+        }
+        /**
+         * Whether to enable TLS for the connection to the Iggy server.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param tlsEnabled the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointConsumerBuilder tlsEnabled(boolean tlsEnabled) {
+            doSetProperty("tlsEnabled", tlsEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable TLS for the connection to the Iggy server.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param tlsEnabled the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointConsumerBuilder tlsEnabled(String tlsEnabled) {
+            doSetProperty("tlsEnabled", tlsEnabled);
+            return this;
+        }
+        /**
          * Iggy username.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1099,6 +1144,51 @@ public interface IggyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Path to the TLS certificate file for the connection to the Iggy
+         * server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param tlsCertificatePath the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointProducerBuilder tlsCertificatePath(String tlsCertificatePath) {
+            doSetProperty("tlsCertificatePath", tlsCertificatePath);
+            return this;
+        }
+        /**
+         * Whether to enable TLS for the connection to the Iggy server.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param tlsEnabled the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointProducerBuilder tlsEnabled(boolean tlsEnabled) {
+            doSetProperty("tlsEnabled", tlsEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable TLS for the connection to the Iggy server.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param tlsEnabled the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointProducerBuilder tlsEnabled(String tlsEnabled) {
+            doSetProperty("tlsEnabled", tlsEnabled);
+            return this;
+        }
+        /**
          * Iggy username.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1505,6 +1595,51 @@ public interface IggyEndpointBuilderFactory {
          */
         default IggyEndpointBuilder streamName(String streamName) {
             doSetProperty("streamName", streamName);
+            return this;
+        }
+        /**
+         * Path to the TLS certificate file for the connection to the Iggy
+         * server.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param tlsCertificatePath the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointBuilder tlsCertificatePath(String tlsCertificatePath) {
+            doSetProperty("tlsCertificatePath", tlsCertificatePath);
+            return this;
+        }
+        /**
+         * Whether to enable TLS for the connection to the Iggy server.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param tlsEnabled the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointBuilder tlsEnabled(boolean tlsEnabled) {
+            doSetProperty("tlsEnabled", tlsEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable TLS for the connection to the Iggy server.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param tlsEnabled the value to set
+         * @return the dsl builder
+         */
+        default IggyEndpointBuilder tlsEnabled(String tlsEnabled) {
+            doSetProperty("tlsEnabled", tlsEnabled);
             return this;
         }
         /**
