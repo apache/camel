@@ -94,8 +94,6 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     public static final String SUMMARY_AS_JSON = "summaryAsJson";
 
-    private final VersionHelper version = new VersionHelper();
-
     // 3rd party components/data-formats
     private final Map<String, String> extraComponents = new HashMap<>();
     private final Map<String, String> extraComponentsJSonSchema = new HashMap<>();
@@ -199,7 +197,7 @@ public class DefaultCamelCatalog extends AbstractCachingCamelCatalog implements 
 
     @Override
     public String getCatalogVersion() {
-        return version.getVersion();
+        return versionManager.getLoadedVersion();
     }
 
     @Override
