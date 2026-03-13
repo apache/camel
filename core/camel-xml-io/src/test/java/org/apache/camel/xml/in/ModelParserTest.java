@@ -449,6 +449,52 @@ public class ModelParserTest {
         assertTrue(e.getMessage().startsWith("Unexpected attribute '{}ref'"));
     }
 
+    @Test
+    public void testMethodAfterStepsInWhenClauseShouldFail() throws Exception {
+        String routesXml = "<routes xmlns=\"http://camel.apache.org/schema/xml-io\">"
+                           + "  <route>"
+                           + "    <from uri=\"direct:start\"/>"
+                           + "    <choice>"
+                           + "      <when>"
+                           + "        <simple>${header.foo} == 'bar'</simple>"
+                           + "        <log message=\"Condition met\"/>"
+                           + "        <method ref=\"someBean\" method=\"processFooBar\"/>"
+                           + "      </when>"
+                           + "      <otherwise>"
+                           + "        <to uri=\"mock:other\"/>"
+                           + "      </otherwise>"
+                           + "    </choice>"
+                           + "  </route>"
+                           + "</routes>";
+        Exception e = assertThrows(Exception.class, () -> {
+            new ModelParser(new StringReader(routesXml)).parseRoutesDefinition();
+        });
+        assertTrue(e.getMessage().contains("already has a predicate")
+                || e.getCause().getMessage().contains("already has a predicate"),
+                "Error message should indicate that the when clause already has a predicate: " + e.getMessage());
+    }
+
+    @Test
+    public void testMethodAsPredicateInWhenClauseShouldWork() throws Exception {
+        String routesXml = "<routes xmlns=\"http://camel.apache.org/schema/xml-io\">"
+                           + "  <route>"
+                           + "    <from uri=\"direct:start\"/>"
+                           + "    <choice>"
+                           + "      <when>"
+                           + "        <method ref=\"someBean\" method=\"isFoo\"/>"
+                           + "        <to uri=\"mock:foo\"/>"
+                           + "      </when>"
+                           + "      <otherwise>"
+                           + "        <to uri=\"mock:other\"/>"
+                           + "      </otherwise>"
+                           + "    </choice>"
+                           + "  </route>"
+                           + "</routes>";
+        RoutesDefinition routes = new ModelParser(new StringReader(routesXml)).parseRoutesDefinition().orElse(null);
+        assertNotNull(routes);
+        assertEquals(1, routes.getRoutes().size());
+    }
+
     private Path getResourceFolder() {
         final URL resource = getClass().getClassLoader().getResource("barInterceptorRoute.xml");
         assert resource != null : "Cannot find barInterceptorRoute.xml";

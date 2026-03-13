@@ -75,4 +75,32 @@ public abstract class BasicOutputExpressionNode extends BasicExpressionNode<Basi
     public void addOutput(ProcessorDefinition<?> output) {
         this.outputs.add(output);
     }
+
+    @Override
+    public void setExpression(ExpressionDefinition expression) {
+        // Detect when an expression element (e.g. <method>) appears after processing steps
+        // inside a when/filter clause in XML/YAML DSL. This is almost certainly a user mistake
+        // where they intended to use <bean> (processor) instead of <method> (expression/predicate).
+        // We skip this check when the existing expression wraps an ExpressionClause (Java DSL),
+        // because preCreateProcessor() legitimately re-sets the expression after resolving it.
+        if (expression != null && getExpression() != null && !outputs.isEmpty()) {
+            ExpressionDefinition existing = getExpression();
+            boolean isExpressionClause
+                    = existing.getExpressionValue() instanceof org.apache.camel.builder.ExpressionClause
+                            || existing.getPredicate() instanceof org.apache.camel.builder.ExpressionClause;
+            if (!isExpressionClause) {
+                String lang = expression.getLanguage() != null
+                        ? expression.getLanguage() : expression.getClass().getSimpleName();
+                throw new IllegalArgumentException(
+                        "The " + getShortName() + " already has a predicate (" + existing
+                                                   + ") and " + outputs.size() + " output(s). "
+                                                   + "The expression '" + lang
+                                                   + "' is being parsed as an expression/predicate but appears after processing steps. "
+                                                   + "If you intended to call a bean method as a processing step, use <bean> instead of <method>. "
+                                                   + "An expression element must be the first child of <" + getShortName()
+                                                   + ">.");
+            }
+        }
+        super.setExpression(expression);
+    }
 }
