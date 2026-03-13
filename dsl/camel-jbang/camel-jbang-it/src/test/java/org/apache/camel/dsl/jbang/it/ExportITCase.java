@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.it;
 import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.apache.camel.dsl.jbang.it.support.JiraIssue;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -142,5 +143,17 @@ public class ExportITCase extends JBangTestSupport {
                 String.format("<quarkus.platform.group-id>%s</quarkus.platform.group-id>", quarkusGid));
         assertFileInDataFolderContains("pom.xml",
                 String.format("<quarkus.platform.version>%s</quarkus.platform.version>", quarkusVersion));
+    }
+
+    @Test
+    @Tag("quarkus")
+    @JiraIssue("CAMEL-23192")
+    public void testGeneratedDockerfilesOnExportQuarkus() {
+        execute(String.format("export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
+                mountPoint()));
+        assertFileInDataFolderExists("src/main/docker/Dockerfile.jvm");
+        assertFileInDataFolderExists("src/main/docker/Dockerfile.legacy-jar");
+        assertFileInDataFolderExists("src/main/docker/Dockerfile.native");
+        assertFileInDataFolderExists("src/main/docker/Dockerfile.native-micro");
     }
 }
