@@ -57,6 +57,7 @@ import org.apache.camel.xml.io.XmlPullParserLocationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -451,45 +452,47 @@ public class ModelParserTest {
 
     @Test
     public void testMethodAfterStepsInWhenClauseShouldFail() throws Exception {
-        String routesXml = "<routes xmlns=\"http://camel.apache.org/schema/xml-io\">"
-                           + "  <route>"
-                           + "    <from uri=\"direct:start\"/>"
-                           + "    <choice>"
-                           + "      <when>"
-                           + "        <simple>${header.foo} == 'bar'</simple>"
-                           + "        <log message=\"Condition met\"/>"
-                           + "        <method ref=\"someBean\" method=\"processFooBar\"/>"
-                           + "      </when>"
-                           + "      <otherwise>"
-                           + "        <to uri=\"mock:other\"/>"
-                           + "      </otherwise>"
-                           + "    </choice>"
-                           + "  </route>"
-                           + "</routes>";
+        String routesXml = """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                  <route>
+                    <from uri="direct:start"/>
+                    <choice>
+                      <when>
+                        <simple>${header.foo} == 'bar'</simple>
+                        <log message="Condition met"/>
+                        <method ref="someBean" method="processFooBar"/>
+                      </when>
+                      <otherwise>
+                        <to uri="mock:other"/>
+                      </otherwise>
+                    </choice>
+                  </route>
+                </routes>
+                """;
         Exception e = assertThrows(Exception.class, () -> {
             new ModelParser(new StringReader(routesXml)).parseRoutesDefinition();
         });
-        assertTrue(e.getMessage().contains("already has a predicate")
-                || e.getCause().getMessage().contains("already has a predicate"),
-                "Error message should indicate that the when clause already has a predicate: " + e.getMessage());
+        assertThat(e).hasStackTraceContaining("already has a predicate");
     }
 
     @Test
     public void testMethodAsPredicateInWhenClauseShouldWork() throws Exception {
-        String routesXml = "<routes xmlns=\"http://camel.apache.org/schema/xml-io\">"
-                           + "  <route>"
-                           + "    <from uri=\"direct:start\"/>"
-                           + "    <choice>"
-                           + "      <when>"
-                           + "        <method ref=\"someBean\" method=\"isFoo\"/>"
-                           + "        <to uri=\"mock:foo\"/>"
-                           + "      </when>"
-                           + "      <otherwise>"
-                           + "        <to uri=\"mock:other\"/>"
-                           + "      </otherwise>"
-                           + "    </choice>"
-                           + "  </route>"
-                           + "</routes>";
+        String routesXml = """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                  <route>
+                    <from uri="direct:start"/>
+                    <choice>
+                      <when>
+                        <method ref="someBean" method="isFoo"/>
+                        <to uri="mock:foo"/>
+                      </when>
+                      <otherwise>
+                        <to uri="mock:other"/>
+                      </otherwise>
+                    </choice>
+                  </route>
+                </routes>
+                """;
         RoutesDefinition routes = new ModelParser(new StringReader(routesXml)).parseRoutesDefinition().orElse(null);
         assertNotNull(routes);
         assertEquals(1, routes.getRoutes().size());
