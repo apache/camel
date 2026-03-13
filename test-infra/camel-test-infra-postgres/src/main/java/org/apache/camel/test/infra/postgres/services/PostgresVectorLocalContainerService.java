@@ -14,21 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.postgres.services;
 
-package org.apache.camel.test.infra.postgres.common;
+public class PostgresVectorLocalContainerService extends PostgresVectorLocalContainerInfraService
+        implements PostgresService {
 
-public final class PostgresProperties {
-    public static final String SERVICE_ADDRESS = "postgres.service.address";
-    public static final String HOST = "postgres.service.host";
-    public static final String PORT = "postgres.service.port";
-    public static final String USERNAME = "postgres.user.name";
-    public static final String PASSWORD = "postgres.user.password";
-    public static final String POSTGRES_CONTAINER = "postgres.container";
-    public static final String POSTGRES_VECTOR_CONTAINER = "postgres.vector.container";
+    public PostgresVectorLocalContainerService() {
+        super();
+    }
 
-    public static final int DEFAULT_PORT = 5432;
-
-    private PostgresProperties() {
-
+    public PostgresVectorLocalContainerService(String imageName) {
+        super(imageName);
     }
 }

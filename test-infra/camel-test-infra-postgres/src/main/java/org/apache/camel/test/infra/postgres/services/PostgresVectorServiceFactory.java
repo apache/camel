@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.postgres.services;
 
-package org.apache.camel.test.infra.postgres.common;
+import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
-public final class PostgresProperties {
-    public static final String SERVICE_ADDRESS = "postgres.service.address";
-    public static final String HOST = "postgres.service.host";
-    public static final String PORT = "postgres.service.port";
-    public static final String USERNAME = "postgres.user.name";
-    public static final String PASSWORD = "postgres.user.password";
-    public static final String POSTGRES_CONTAINER = "postgres.container";
-    public static final String POSTGRES_VECTOR_CONTAINER = "postgres.vector.container";
+public final class PostgresVectorServiceFactory {
 
-    public static final int DEFAULT_PORT = 5432;
+    private PostgresVectorServiceFactory() {
+    }
 
-    private PostgresProperties() {
+    public static SimpleTestServiceBuilder<PostgresService> builder() {
+        return new SimpleTestServiceBuilder<>("postgres");
+    }
 
+    public static PostgresService createService() {
+        return builder().addLocalMapping(PostgresVectorLocalContainerService::new)
+                .addRemoteMapping(PostgresServiceFactory.PostgresRemoteService::new)
+                .build();
     }
 }
