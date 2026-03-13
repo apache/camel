@@ -19,6 +19,9 @@ package org.apache.camel.component.couchbase;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.couchbase.client.java.codec.DefaultJsonSerializer;
+import com.couchbase.client.java.codec.JsonSerializer;
+import com.couchbase.client.java.env.ClusterEnvironment;
 import org.apache.camel.Processor;
 import org.junit.jupiter.api.Test;
 
@@ -168,5 +171,28 @@ public class CouchbaseEndpointTest {
         assertEquals(1L, endpoint.getQueryTimeout());
 
         endpoint.setDescending(false);
+    }
+
+    /**
+     * Verifies that the ClusterEnvironment is configured with DefaultJsonSerializer to prevent the Couchbase SDK from
+     * auto-detecting non-shaded Jackson on the classpath (CAMEL-22090). When non-shaded Jackson is present (e.g., via
+     * camel-jackson, Spring Boot, or Quarkus), auto-detection would cause the SDK to use JacksonJsonSerializer, leading
+     * to deserialization failures for SDK internal types that depend on shaded Jackson classes.
+     */
+    @Test
+    public void testClusterEnvironmentUsesDefaultJsonSerializer() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        ClusterEnvironment env = endpoint.createClusterEnvironment();
+        try {
+            JsonSerializer serializer = env.jsonSerializer();
+            // The serializer must not be JacksonJsonSerializer since that would fail
+            // when a non-shaded Jackson is on the classpath. It should be wrapped in
+            // JsonValueSerializerWrapper which delegates to DefaultJsonSerializer.
+            assertEquals("com.couchbase.client.java.codec.JsonValueSerializerWrapper",
+                    serializer.getClass().getName(),
+                    "ClusterEnvironment should wrap DefaultJsonSerializer in JsonValueSerializerWrapper");
+        } finally {
+            env.shutdown();
+        }
     }
 }
