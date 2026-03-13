@@ -305,7 +305,7 @@
                         <goals>
                             <goal>jandex</goal>
                         </goals>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                         <configuration>
                             <fileSets>
                                 <fileSet>
@@ -611,7 +611,7 @@
                         <goals>
                             <goal>test-infra-generate-metadata</goal>
                         </goals>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                     </execution>
                 </executions>
             </plugin>

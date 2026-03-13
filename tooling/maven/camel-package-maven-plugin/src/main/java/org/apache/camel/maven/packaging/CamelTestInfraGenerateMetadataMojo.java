@@ -83,7 +83,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
             try {
                 // Search for target class in the project transitive artifacts to retrieve maven coordinates
                 for (Artifact artifact : project.getArtifacts()) {
-                    if (classExistsInJarFile(
+                    if (classExistsInDependency(
                             targetClass.substring(targetClass.lastIndexOf(".") + 1),
                             artifact.getFile())) {
                         infrastructureServiceModel.setVersion(artifact.getVersion());
@@ -127,7 +127,10 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         }
     }
 
-    private boolean classExistsInJarFile(String className, File dependency) throws IOException {
+    private boolean classExistsInDependency(String className, File dependency) throws IOException {
+        if (dependency.isDirectory()) {
+            return classExistsInDirectory(className, dependency);
+        }
         try (JarFile jarFile = new JarFile(dependency)) {
             Enumeration<JarEntry> e = jarFile.entries();
             while (e.hasMoreElements()) {
@@ -138,6 +141,23 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
             }
             return false;
         }
+    }
+
+    private boolean classExistsInDirectory(String className, File directory) {
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return false;
+        }
+        for (File file : files) {
+            if (file.isDirectory()) {
+                if (classExistsInDirectory(className, file)) {
+                    return true;
+                }
+            } else if (file.getName().contains(className)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private class InfrastructureServiceModel {
