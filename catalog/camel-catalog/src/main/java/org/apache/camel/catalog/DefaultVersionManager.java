@@ -20,11 +20,10 @@ import java.io.InputStream;
 
 public class DefaultVersionManager implements VersionManager {
 
-    private final CamelCatalog camelCatalog;
+    private final VersionHelper version = new VersionHelper();
     private ClassLoader classLoader;
 
     public DefaultVersionManager(CamelCatalog camelCatalog) {
-        this.camelCatalog = camelCatalog;
     }
 
     @Override
@@ -39,7 +38,7 @@ public class DefaultVersionManager implements VersionManager {
 
     @Override
     public String getLoadedVersion() {
-        return camelCatalog.getCatalogVersion();
+        return version.getVersion();
     }
 
     @Override

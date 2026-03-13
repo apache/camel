@@ -1704,4 +1704,110 @@ public class CamelCatalogTest {
                 f.getDescription());
     }
 
+    @Test
+    public void testDefaultCatalogVersionMatchesLoadedVersion() {
+        // Default catalog: getCatalogVersion() and getLoadedVersion() should return the same value
+        CamelCatalog cat = new DefaultCamelCatalog();
+        String catalogVersion = cat.getCatalogVersion();
+        String loadedVersion = cat.getLoadedVersion();
+        assertNotNull(catalogVersion);
+        assertNotNull(loadedVersion);
+        assertEquals(catalogVersion, loadedVersion);
+    }
+
+    @Test
+    public void testCatalogVersionRespectsCustomVersionManager() {
+        // When a custom VersionManager reports a different loaded version,
+        // getCatalogVersion() should return that version (not the built-in one)
+        CamelCatalog cat = new DefaultCamelCatalog();
+        String builtInVersion = cat.getCatalogVersion();
+
+        cat.setVersionManager(new VersionManager() {
+            @Override
+            public void setClassLoader(ClassLoader classLoader) {
+            }
+
+            @Override
+            public ClassLoader getClassLoader() {
+                return CamelCatalogTest.class.getClassLoader();
+            }
+
+            @Override
+            public String getLoadedVersion() {
+                return "4.10.0";
+            }
+
+            @Override
+            public boolean loadVersion(String version) {
+                return "4.10.0".equals(version);
+            }
+
+            @Override
+            public String getRuntimeProviderLoadedVersion() {
+                return null;
+            }
+
+            @Override
+            public boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version) {
+                return false;
+            }
+
+            @Override
+            public InputStream getResourceAsStream(String name) {
+                return CamelCatalogTest.class.getClassLoader().getResourceAsStream(name);
+            }
+        });
+
+        assertEquals("4.10.0", cat.getCatalogVersion());
+        assertEquals("4.10.0", cat.getLoadedVersion());
+        // Sanity: verify we're not accidentally matching the built-in version
+        assertFalse("4.10.0".equals(builtInVersion), "Test is only meaningful if 4.10.0 differs from built-in version");
+    }
+
+    @Test
+    public void testSummaryJsonUsesLoadedVersion() {
+        // summaryAsJson() uses getLoadedVersion() — verify it reflects the custom version
+        CamelCatalog cat = new DefaultCamelCatalog();
+
+        cat.setVersionManager(new VersionManager() {
+            @Override
+            public void setClassLoader(ClassLoader classLoader) {
+            }
+
+            @Override
+            public ClassLoader getClassLoader() {
+                return CamelCatalogTest.class.getClassLoader();
+            }
+
+            @Override
+            public String getLoadedVersion() {
+                return "99.0.0-test";
+            }
+
+            @Override
+            public boolean loadVersion(String version) {
+                return "99.0.0-test".equals(version);
+            }
+
+            @Override
+            public String getRuntimeProviderLoadedVersion() {
+                return null;
+            }
+
+            @Override
+            public boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version) {
+                return false;
+            }
+
+            @Override
+            public InputStream getResourceAsStream(String name) {
+                return CamelCatalogTest.class.getClassLoader().getResourceAsStream(name);
+            }
+        });
+
+        String json = cat.summaryAsJson();
+        assertNotNull(json);
+        assertTrue(json.contains("99.0.0-test"), "summaryAsJson should contain the custom version");
+    }
+
 }
