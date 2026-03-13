@@ -1407,7 +1407,7 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                return Thread.currentThread().threadId();
+                return Thread.currentThread().getId();
             }
 
             @Override

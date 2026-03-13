@@ -163,7 +163,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
         VIRTUAL {
             @Override
             ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
-                return Executors.newThreadPerTaskExecutor(threadFactory);
+                return newThreadPerTaskExecutor(threadFactory);
             }
 
             @Override
@@ -173,7 +173,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
                     RejectedExecutionHandler rejectedExecutionHandler,
                     ThreadFactory threadFactory)
                     throws IllegalArgumentException {
-                return Executors.newThreadPerTaskExecutor(threadFactory);
+                return newThreadPerTaskExecutor(threadFactory);
             }
 
             @Override
@@ -196,6 +196,17 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             }
             return maxPoolSize > 1 && threadFactory instanceof ThreadFactoryTypeAware factoryTypeAware
                     && factoryTypeAware.isVirtual() ? ThreadPoolFactoryType.VIRTUAL : ThreadPoolFactoryType.PLATFORM;
+        }
+
+        @SuppressWarnings("unchecked")
+        private static ExecutorService newThreadPerTaskExecutor(ThreadFactory threadFactory) {
+            try {
+                return (ExecutorService) Executors.class
+                        .getMethod("newThreadPerTaskExecutor", ThreadFactory.class)
+                        .invoke(null, threadFactory);
+            } catch (Exception e) {
+                throw new UnsupportedOperationException("newThreadPerTaskExecutor requires JDK 21+", e);
+            }
         }
 
         abstract ExecutorService newCachedThreadPool(ThreadFactory threadFactory);
