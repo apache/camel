@@ -17,6 +17,7 @@
 package org.apache.camel.component.dns.types;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.camel.Converter;
 import org.xbill.DNS.DClass;
@@ -53,11 +54,11 @@ public final class DnsRecordConverter {
         Message query = Message.newQuery(rec);
         Message response = res.send(query);
 
-        Record[] answers = response.getSectionArray(Section.ANSWER);
-        if (answers.length == 0) {
+        List<Record> answers = response.getSection(Section.ANSWER);
+        if (answers.isEmpty()) {
             return null;
         } else {
-            return answers[0];
+            return answers.get(0);
         }
     }
 

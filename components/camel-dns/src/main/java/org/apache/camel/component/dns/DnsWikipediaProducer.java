@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dns;
 
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
@@ -48,9 +50,9 @@ public class DnsWikipediaProducer extends DefaultProducer {
         Record rec = Record.newRecord(name, type, DClass.IN);
         Message query = Message.newQuery(rec);
         Message response = resolver.send(query);
-        Record[] records = response.getSectionArray(Section.ANSWER);
-        if (records.length > 0) {
-            exchange.getIn().setBody(records[0].rdataToString());
+        List<Record> records = response.getSection(Section.ANSWER);
+        if (!records.isEmpty()) {
+            exchange.getIn().setBody(records.get(0).rdataToString());
         } else {
             exchange.getIn().setBody(null);
         }
