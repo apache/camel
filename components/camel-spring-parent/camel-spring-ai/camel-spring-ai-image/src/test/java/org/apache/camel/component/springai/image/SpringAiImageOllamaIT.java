@@ -86,7 +86,7 @@ public class SpringAiImageOllamaIT extends CamelTestSupport {
                 java.util.List.of(MediaType.APPLICATION_JSON, MediaType.valueOf("application/x-ndjson")));
 
         RestClient.Builder restClientBuilder = RestClient.builder()
-                .messageConverters(converters -> converters.addFirst(ndjsonConverter));
+                .messageConverters(converters -> converters.add(0, ndjsonConverter));
 
         OpenAiImageApi imageApi = OpenAiImageApi.builder()
                 .baseUrl(OLLAMA.baseUrl())
