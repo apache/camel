@@ -1,0 +1,8 @@
+Feature: {{ .Name }}
+
+  Background:
+    Given variables
+      | message | "Citrus rocks!" |
+
+  Scenario: Print message
+    Then print '${message}'

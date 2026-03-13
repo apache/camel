@@ -1,0 +1,21 @@
+import org.citrusframework.TestActionSupport;
+import org.citrusframework.TestCaseRunner;
+import org.citrusframework.annotations.CitrusResource;
+
+
+public class {{ .Name }} implements Runnable, TestActionSupport {
+
+    @CitrusResource
+    TestCaseRunner t;
+
+    @Override
+    public void run() {
+        t.given(
+            createVariables().variable("message", "Citrus rocks!")
+        );
+
+        t.then(
+            echo().message("${message}")
+        );
+    }
+}

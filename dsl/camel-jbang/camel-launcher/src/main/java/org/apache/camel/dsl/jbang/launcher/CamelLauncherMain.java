@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.launcher;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.generate.GeneratePlugin;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesPlugin;
+import org.apache.camel.dsl.jbang.core.commands.test.TestPlugin;
 import org.apache.camel.dsl.jbang.core.commands.validate.ValidatePlugin;
 import picocli.CommandLine;
 
@@ -32,6 +33,7 @@ public class CamelLauncherMain extends CamelJBangMain {
         // install embedded plugins
         new GeneratePlugin().customize(commandLine, this);
         new KubernetesPlugin().customize(commandLine, this);
+        new TestPlugin().customize(commandLine, this);
         new ValidatePlugin().customize(commandLine, this);
     }
 
