@@ -17,6 +17,7 @@
 package org.apache.camel.support.jsse;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -95,6 +96,72 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
     private static final String SSL_SERVER_SOCKET_SIGNATURE_SCHEME_LOG_MSG
             = createSignatureSchemeLogMessage("SSLServerSocket");
+
+    // Reflection handles for JDK 19/20 SSLParameters methods (not available on JDK 17)
+    private static final Method GET_NAMED_GROUPS;
+    private static final Method SET_NAMED_GROUPS;
+    private static final Method GET_SIGNATURE_SCHEMES;
+    private static final Method SET_SIGNATURE_SCHEMES;
+
+    static {
+        Method gng = null, sng = null, gss = null, sss = null;
+        try {
+            gng = SSLParameters.class.getMethod("getNamedGroups");
+            sng = SSLParameters.class.getMethod("setNamedGroups", String[].class);
+            gss = SSLParameters.class.getMethod("getSignatureSchemes");
+            sss = SSLParameters.class.getMethod("setSignatureSchemes", String[].class);
+        } catch (NoSuchMethodException e) {
+            // JDK < 19/20 — these methods don't exist, features will be silently skipped
+        }
+        GET_NAMED_GROUPS = gng;
+        SET_NAMED_GROUPS = sng;
+        GET_SIGNATURE_SCHEMES = gss;
+        SET_SIGNATURE_SCHEMES = sss;
+    }
+
+    private static String[] getNamedGroupsFromParams(SSLParameters params) {
+        if (GET_NAMED_GROUPS == null) {
+            return null;
+        }
+        try {
+            return (String[]) GET_NAMED_GROUPS.invoke(params);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static void setNamedGroupsOnParams(SSLParameters params, String[] namedGroups) {
+        if (SET_NAMED_GROUPS == null) {
+            return;
+        }
+        try {
+            SET_NAMED_GROUPS.invoke(params, (Object) namedGroups);
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    private static String[] getSignatureSchemesFromParams(SSLParameters params) {
+        if (GET_SIGNATURE_SCHEMES == null) {
+            return null;
+        }
+        try {
+            return (String[]) GET_SIGNATURE_SCHEMES.invoke(params);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static void setSignatureSchemesOnParams(SSLParameters params, String[] signatureSchemes) {
+        if (SET_SIGNATURE_SCHEMES == null) {
+            return;
+        }
+        try {
+            SET_SIGNATURE_SCHEMES.invoke(params, (Object) signatureSchemes);
+        } catch (Exception e) {
+            // ignore
+        }
+    }
 
     /**
      * The optional explicitly configured cipher suites for this configuration.
@@ -536,7 +603,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                         filteredSecureSocketProtocols.toArray(new String[0]));
 
                 String[] namedGroups = resolveNamedGroups(
-                        engine.getSSLParameters().getNamedGroups(),
+                        getNamedGroupsFromParams(engine.getSSLParameters()),
                         enabledNamedGroups, enabledNamedGroupsPatterns);
                 if (namedGroups != null) {
                     if (LOG.isDebugEnabled()) {
@@ -544,16 +611,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                                 engine,
                                 enabledNamedGroups,
                                 enabledNamedGroupsPatterns,
-                                engine.getSSLParameters().getNamedGroups(),
+                                getNamedGroupsFromParams(engine.getSSLParameters()),
                                 namedGroups);
                     }
                     SSLParameters params = engine.getSSLParameters();
-                    params.setNamedGroups(namedGroups);
+                    setNamedGroupsOnParams(params, namedGroups);
                     engine.setSSLParameters(params);
                 }
 
                 String[] signatureSchemes = resolveSignatureSchemes(
-                        engine.getSSLParameters().getSignatureSchemes(),
+                        getSignatureSchemesFromParams(engine.getSSLParameters()),
                         enabledSignatureSchemes, enabledSignatureSchemesPatterns);
                 if (signatureSchemes != null) {
                     if (LOG.isDebugEnabled()) {
@@ -561,11 +628,11 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                                 engine,
                                 enabledSignatureSchemes,
                                 enabledSignatureSchemesPatterns,
-                                engine.getSSLParameters().getSignatureSchemes(),
+                                getSignatureSchemesFromParams(engine.getSSLParameters()),
                                 signatureSchemes);
                     }
                     SSLParameters params = engine.getSSLParameters();
-                    params.setSignatureSchemes(signatureSchemes);
+                    setSignatureSchemesOnParams(params, signatureSchemes);
                     engine.setSSLParameters(params);
                 }
 
@@ -762,7 +829,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                         filteredSecureSocketProtocols.toArray(new String[0]));
 
                 String[] namedGroups = resolveNamedGroups(
-                        socket.getSSLParameters().getNamedGroups(),
+                        getNamedGroupsFromParams(socket.getSSLParameters()),
                         enabledNamedGroups, enabledNamedGroupsPatterns);
                 if (namedGroups != null) {
                     if (LOG.isDebugEnabled()) {
@@ -770,16 +837,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                                 socket,
                                 enabledNamedGroups,
                                 enabledNamedGroupsPatterns,
-                                socket.getSSLParameters().getNamedGroups(),
+                                getNamedGroupsFromParams(socket.getSSLParameters()),
                                 namedGroups);
                     }
                     SSLParameters params = socket.getSSLParameters();
-                    params.setNamedGroups(namedGroups);
+                    setNamedGroupsOnParams(params, namedGroups);
                     socket.setSSLParameters(params);
                 }
 
                 String[] signatureSchemes = resolveSignatureSchemes(
-                        socket.getSSLParameters().getSignatureSchemes(),
+                        getSignatureSchemesFromParams(socket.getSSLParameters()),
                         enabledSignatureSchemes, enabledSignatureSchemesPatterns);
                 if (signatureSchemes != null) {
                     if (LOG.isDebugEnabled()) {
@@ -787,11 +854,11 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                                 socket,
                                 enabledSignatureSchemes,
                                 enabledSignatureSchemesPatterns,
-                                socket.getSSLParameters().getSignatureSchemes(),
+                                getSignatureSchemesFromParams(socket.getSSLParameters()),
                                 signatureSchemes);
                     }
                     SSLParameters params = socket.getSSLParameters();
-                    params.setSignatureSchemes(signatureSchemes);
+                    setSignatureSchemesOnParams(params, signatureSchemes);
                     socket.setSSLParameters(params);
                 }
 
@@ -913,7 +980,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                         filteredSecureSocketProtocols.toArray(new String[0]));
 
                 String[] namedGroups = resolveNamedGroups(
-                        socket.getSSLParameters().getNamedGroups(),
+                        getNamedGroupsFromParams(socket.getSSLParameters()),
                         enabledNamedGroups, enabledNamedGroupsPatterns);
                 if (namedGroups != null) {
                     if (LOG.isDebugEnabled()) {
@@ -921,16 +988,16 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                                 socket,
                                 enabledNamedGroups,
                                 enabledNamedGroupsPatterns,
-                                socket.getSSLParameters().getNamedGroups(),
+                                getNamedGroupsFromParams(socket.getSSLParameters()),
                                 namedGroups);
                     }
                     SSLParameters params = socket.getSSLParameters();
-                    params.setNamedGroups(namedGroups);
+                    setNamedGroupsOnParams(params, namedGroups);
                     socket.setSSLParameters(params);
                 }
 
                 String[] signatureSchemes = resolveSignatureSchemes(
-                        socket.getSSLParameters().getSignatureSchemes(),
+                        getSignatureSchemesFromParams(socket.getSSLParameters()),
                         enabledSignatureSchemes, enabledSignatureSchemesPatterns);
                 if (signatureSchemes != null) {
                     if (LOG.isDebugEnabled()) {
@@ -938,11 +1005,11 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                                 socket,
                                 enabledSignatureSchemes,
                                 enabledSignatureSchemesPatterns,
-                                socket.getSSLParameters().getSignatureSchemes(),
+                                getSignatureSchemesFromParams(socket.getSSLParameters()),
                                 signatureSchemes);
                     }
                     SSLParameters params = socket.getSSLParameters();
-                    params.setSignatureSchemes(signatureSchemes);
+                    setSignatureSchemesOnParams(params, signatureSchemes);
                     socket.setSSLParameters(params);
                 }
 
