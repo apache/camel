@@ -44,7 +44,9 @@ public class ManagedVirtualThreadExecutorTest extends ManagementTestSupport {
         CamelContext ctx = super.createCamelContext();
         // register the virtual thread executor during context creation (before it starts)
         // so that shouldRegister returns true
-        vte = Executors.newVirtualThreadPerTaskExecutor();
+        vte = (ExecutorService) Executors.class
+                .getMethod("newVirtualThreadPerTaskExecutor")
+                .invoke(null);
         for (LifecycleStrategy lifecycle : ctx.getLifecycleStrategies()) {
             lifecycle.onThreadPoolAdd(ctx, vte, "myVirtualPool", "test", null, null);
         }
