@@ -1233,6 +1233,7 @@ Supported plugins:
  NAME        COMMAND     DEPENDENCY                                      DESCRIPTION
  kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  Run Camel applications on Kubernetes
  generate    generate    org.apache.camel:camel-jbang-plugin-generate    Generate code such as DTOs
+ diagram     diagram     org.apache.camel:camel-jbang-plugin-diagram     Visualize Camel routes using Hawtio
 ----
 
 In case you want to enable a plugin and its functionality, you can add it as follows:
@@ -2486,14 +2487,23 @@ from doing JVM process communication to the running Camel integration.
 
 === Visualizing routes with diagram
 
-The `camel diagram` command uses Hawtio to visualize Camel routes. You can run route files in the background and open Hawtio in a browser:
+The `camel diagram` command uses Hawtio to visualize Camel routes.
+
+NOTE: The diagram command is a plugin that must be installed first:
+
+[source,bash]
+----
+camel plugin add diagram
+----
+
+Once installed, you can run route files in the background and open Hawtio in a browser:
 
 [source,bash]
 ----
 camel diagram routes.yaml
 ----
 
-To attach to an existing integration:
+To attach to an existing integration that is already running:
 
 [source,bash]
 ----
@@ -2502,15 +2512,31 @@ camel diagram --name my-integration
 
 By default Camel JBang stops the background integration when you exit Hawtio; use `--keep-running` to leave it running.
 
-You can export a PNG snapshot using Playwright (requires a Chromium browser binary and executable path configured):
+You can export a PNG snapshot using Playwright (requires a Chromium-based browser):
 
 [source,bash]
 ----
 camel diagram routes.yaml --output=routes.png --playwright-browser-path=/path/to/chrome
 ----
 
+On macOS with Google Chrome installed, the command looks like:
+
+[source,bash]
+----
+camel diagram routes.yaml --output=routes.png --playwright-browser-path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+----
+
+On Linux with Chromium:
+
+[source,bash]
+----
+camel diagram routes.yaml --output=routes.png --playwright-browser-path=/usr/bin/chromium-browser
+----
+
 When using `--output`, Hawtio runs headless and the PNG is captured automatically.
-NOTE: PNG export currently supports Chromium only. Use `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` or `--playwright-browser-path`.
+
+NOTE: PNG export currently supports Chromium-based browsers only (Google Chrome, Chromium, Microsoft Edge).
+The `--playwright-browser-path` option (or the `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` environment variable) must point to the browser executable.
 
 === Scripting from terminal using pipes
 
