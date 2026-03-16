@@ -142,14 +142,19 @@ main() {
   echo ""
 
   # Map properties -> GAV coordinates for toolbox lookup
+  # For properties not used in parent's dependencyManagement, fall back
+  # to grepping for ${property} in module pom.xml files directly
   local all_gavs=""
+  local fallback_props=""
   while read -r prop; do
     [ -z "$prop" ] && continue
 
     local gavs
     gavs=$(find_gav_for_property "$prop")
     if [ -z "$gavs" ]; then
-      echo "  Property '$prop': no managed artifacts found"
+      echo "  Property '$prop': not in dependencyManagement, will search modules directly"
+      fallback_props="${fallback_props:+${fallback_props}
+}${prop}"
       continue
     fi
 
@@ -162,53 +167,86 @@ main() {
     done <<< "$gavs"
   done <<< "$changed_props"
 
-  if [ -z "$all_gavs" ]; then
+  if [ -z "$all_gavs" ] && [ -z "$fallback_props" ]; then
     echo ""
     echo "No managed artifacts found for changed properties"
     exit 0
   fi
 
-  echo ""
-  echo "Searching for affected modules using Maveniverse Toolbox..."
-
-  # Use toolbox tree-find to find affected modules
   local all_module_ids=""
   local seen_modules=""
 
-  # Deduplicate GAVs
-  local unique_gavs
-  unique_gavs=$(echo "$all_gavs" | sort -u)
+  # Step 1: Use Toolbox tree-find for properties with managed artifacts
+  if [ -n "$all_gavs" ]; then
+    echo ""
+    echo "Searching for affected modules using Maveniverse Toolbox..."
 
-  while read -r gav; do
-    [ -z "$gav" ] && continue
+    local unique_gavs
+    unique_gavs=$(echo "$all_gavs" | sort -u)
 
-    local matcher_spec search_pattern
-    if [[ "$gav" == bom:* ]]; then
-      # BOM import: search by groupId wildcard
-      local groupId="${gav#bom:}"
-      matcher_spec="artifact(${groupId}:*)"
-      search_pattern="${groupId}:"
-      echo "  Searching for modules using ${groupId}:* (BOM)..."
-    else
-      matcher_spec="artifact(${gav})"
-      search_pattern="${gav}"
-      echo "  Searching for modules using ${gav}..."
-    fi
+    while read -r gav; do
+      [ -z "$gav" ] && continue
 
-    local modules
-    modules=$(find_modules_with_toolbox "$mavenBinary" "$matcher_spec" "$search_pattern")
-    if [ -n "$modules" ]; then
-      while read -r mod; do
-        [ -z "$mod" ] && continue
-        # Deduplicate
-        if ! echo "$seen_modules" | grep -qx "$mod"; then
-          seen_modules="${seen_modules:+${seen_modules}
+      local matcher_spec search_pattern
+      if [[ "$gav" == bom:* ]]; then
+        # BOM import: search by groupId wildcard
+        local groupId="${gav#bom:}"
+        matcher_spec="artifact(${groupId}:*)"
+        search_pattern="${groupId}:"
+        echo "  Searching for modules using ${groupId}:* (BOM)..."
+      else
+        matcher_spec="artifact(${gav})"
+        search_pattern="${gav}"
+        echo "  Searching for modules using ${gav}..."
+      fi
+
+      local modules
+      modules=$(find_modules_with_toolbox "$mavenBinary" "$matcher_spec" "$search_pattern")
+      if [ -n "$modules" ]; then
+        while read -r mod; do
+          [ -z "$mod" ] && continue
+          if ! echo "$seen_modules" | grep -qx "$mod"; then
+            seen_modules="${seen_modules:+${seen_modules}
 }${mod}"
-          all_module_ids="${all_module_ids:+${all_module_ids},}:${mod}"
-        fi
-      done <<< "$modules"
-    fi
-  done <<< "$unique_gavs"
+            all_module_ids="${all_module_ids:+${all_module_ids},}:${mod}"
+          fi
+        done <<< "$modules"
+      fi
+    done <<< "$unique_gavs"
+  fi
+
+  # Step 2: Fallback for properties used directly in module pom.xml files
+  # (not through parent's dependencyManagement)
+  if [ -n "$fallback_props" ]; then
+    echo ""
+    echo "Searching for modules referencing properties directly..."
+
+    while read -r prop; do
+      [ -z "$prop" ] && continue
+
+      local matches
+      matches=$(grep -rl "\${${prop}}" --include="pom.xml" . 2>/dev/null | \
+        grep -v "^\./parent/pom.xml" | \
+        grep -v "/target/" | \
+        grep -v "\.claude/worktrees" || true)
+
+      if [ -n "$matches" ]; then
+        echo "  Property '\${${prop}}' referenced by:"
+        while read -r pom_file; do
+          [ -z "$pom_file" ] && continue
+          # Extract artifactId from the module's pom.xml
+          local mod_artifact
+          mod_artifact=$(sed -n '/<parent>/,/<\/parent>/!{ s/.*<artifactId>\([^<]*\)<\/artifactId>.*/\1/p }' "$pom_file" | head -1)
+          if [ -n "$mod_artifact" ] && ! echo "$seen_modules" | grep -qx "$mod_artifact"; then
+            echo "    - $mod_artifact"
+            seen_modules="${seen_modules:+${seen_modules}
+}${mod_artifact}"
+            all_module_ids="${all_module_ids:+${all_module_ids},}:${mod_artifact}"
+          fi
+        done <<< "$matches"
+      fi
+    done <<< "$fallback_props"
+  fi
 
   if [ -z "$all_module_ids" ]; then
     echo ""
