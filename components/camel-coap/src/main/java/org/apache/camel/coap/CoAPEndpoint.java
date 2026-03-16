@@ -493,7 +493,7 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         }
 
         if (getConfiguredCipherSuites() != null) {
-            LOGGER.debug("There are configured cipher suites: {}", getConfiguredCipherSuites());
+            LOGGER.debug("There are configured cipher suites: {}", Arrays.toString(getConfiguredCipherSuites()));
             builder.set(DTLS_CIPHER_SUITES, CipherSuite.getTypesByNames(getConfiguredCipherSuites()));
         }
 

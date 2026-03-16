@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.geocoder;
 
+import java.util.Arrays;
+
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.GeocodingApiRequest;
@@ -41,7 +43,7 @@ public class GeoCoderProxyManualIT extends GeoCoderApiKeyTestBase {
         GeocodingApiRequest geocodingApiRequest = GeocodingApi.reverseGeocode(context, new LatLng(45.4643, 9.1895));
         GeocodingResult[] results = geocodingApiRequest.await();
 
-        LOG.info("Response {}", results);
+        LOG.info("Response {}", Arrays.toString(results));
     }
 
     @Test
@@ -55,7 +57,7 @@ public class GeoCoderProxyManualIT extends GeoCoderApiKeyTestBase {
         GeocodingApiRequest geocodingApiRequest = GeocodingApi.reverseGeocode(context, new LatLng(45.4643, 9.1895));
         GeocodingResult[] results = geocodingApiRequest.await();
 
-        LOG.info("Response {}", results);
+        LOG.info("Response {}", Arrays.toString(results));
     }
 
 }

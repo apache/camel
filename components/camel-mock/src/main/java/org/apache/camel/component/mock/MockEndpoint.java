@@ -1019,6 +1019,19 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     /**
+     * Sets an expectation that the given String body values are received by this endpoint in the specified order.
+     * <p/>
+     * <b>Important:</b> The number of bodies must match the expected number of messages, so if you expect three
+     * messages, then there must be three bodies.
+     * <p/>
+     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
+     */
+    public void expectedBodiesReceived(String... bodies) {
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
+        expectedBodiesReceived(bodyList);
+    }
+
+    /**
      * Adds an expectation that the given body value are received by this endpoint
      */
     public AssertionClause expectedBodyReceived() {

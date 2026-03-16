@@ -55,7 +55,7 @@ public class ZooKeeperManagedEndpointIT extends ZooKeeperITSupport {
 
         getMBeanServer().invoke(zepName, "clearServers",
                 null,
-                JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers", null)));
+                JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers")));
         getMBeanServer().invoke(zepName, "addServer",
                 new Object[] { "someserver:12345" },
                 JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("addServer", new Class[] { String.class })));

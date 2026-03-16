@@ -17,6 +17,7 @@
 package org.apache.camel.support.jsse;
 
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 
 import javax.net.ssl.X509TrustManager;
 
@@ -43,12 +44,12 @@ public class TrustAllTrustManager implements X509TrustManager {
 
     @Override
     public void checkClientTrusted(X509Certificate[] certs, String authType) {
-        LOG.debug("Trusting client certificate: {}", certs);
+        LOG.debug("Trusting client certificate: {}", Arrays.toString(certs));
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] certs, String authType) {
-        LOG.debug("Trusting server certificate: {}", certs);
+        LOG.debug("Trusting server certificate: {}", Arrays.toString(certs));
     }
 
     @Override

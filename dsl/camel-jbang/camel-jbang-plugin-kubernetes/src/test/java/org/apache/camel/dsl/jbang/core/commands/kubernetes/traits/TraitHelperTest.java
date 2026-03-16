@@ -47,7 +47,7 @@ public class TraitHelperTest {
         Assertions.assertEquals(3, resultEmptyDefault.length);
         Assertions.assertArrayEquals(overridesGroup, resultEmptyDefault);
 
-        String[] resultNull = TraitHelper.mergeTraits(null);
+        String[] resultNull = TraitHelper.mergeTraits();
         Assertions.assertNotNull(resultNull);
     }
 
