@@ -256,10 +256,12 @@ jobs:
           - [ ] No breaking changes in the updated version
           - [ ] Tests pass with the new version
 
-          Run the following to verify:
+          Run the following to rebuild the test infra:
           \`\`\`bash
           mvn clean verify -pl $MODULE_NAME
           \`\`\`
+
+          Then test the impacted components.
 
           ---
 
