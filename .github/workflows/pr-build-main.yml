@@ -50,7 +50,8 @@ jobs:
   build:
     if: github.repository == 'apache/camel'
     permissions:
-      issues: write
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
