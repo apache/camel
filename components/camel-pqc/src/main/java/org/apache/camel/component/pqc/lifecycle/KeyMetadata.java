@@ -45,9 +45,13 @@ public class KeyMetadata implements Serializable {
     }
 
     public KeyMetadata(String keyId, String algorithm) {
+        this(keyId, algorithm, Instant.now());
+    }
+
+    public KeyMetadata(String keyId, String algorithm, Instant createdAt) {
         this.keyId = keyId;
         this.algorithm = algorithm;
-        this.createdAt = Instant.now();
+        this.createdAt = createdAt;
         this.lastUsedAt = createdAt;
         this.usageCount = 0;
         this.status = KeyStatus.ACTIVE;
@@ -67,6 +71,10 @@ public class KeyMetadata implements Serializable {
 
     public Instant getLastUsedAt() {
         return lastUsedAt;
+    }
+
+    public void setLastUsedAt(Instant lastUsedAt) {
+        this.lastUsedAt = lastUsedAt;
     }
 
     public void updateLastUsed() {
@@ -92,6 +100,10 @@ public class KeyMetadata implements Serializable {
 
     public long getUsageCount() {
         return usageCount;
+    }
+
+    public void setUsageCount(long usageCount) {
+        this.usageCount = usageCount;
     }
 
     public KeyStatus getStatus() {
