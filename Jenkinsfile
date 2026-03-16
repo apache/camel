@@ -50,7 +50,7 @@ pipeline {
     parameters {
         booleanParam(name: 'VIRTUAL_THREAD', defaultValue: false, description: 'Perform the build using virtual threads')
         choice(name: 'PLATFORM_FILTER', choices: ['all', 'ppc64le', 's390x', 'ubuntu-avx'], description: 'Run on specific platform')
-        choice(name: 'JDK_FILTER', choices: ['all', 'jdk_21_latest', 'jdk_25_latest'], description: 'Run on specific jdk')
+        choice(name: 'JDK_FILTER', choices: ['all', 'jdk_17_latest' ,'jdk_21_latest', 'jdk_25_latest'], description: 'Run on specific jdk')
     }
     agent none
     stages {
@@ -71,7 +71,7 @@ pipeline {
                 axes {
                     axis {
                         name 'JDK_NAME'
-                        values 'jdk_21_latest', 'jdk_25_latest'
+                        values 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'
                     }
                     axis {
                         name 'PLATFORM'
@@ -79,6 +79,26 @@ pipeline {
                     }
                 }
                 excludes {
+                    exclude {
+                        axis {
+                            name 'JDK_NAME'
+                            values 'jdk_21_latest'
+                        }
+                        axis {
+                            name 'PLATFORM'
+                            values 'ppc64le'
+                        }
+                    }
+                    exclude {
+                        axis {
+                            name 'JDK_NAME'
+                            values 'jdk_21_latest'
+                        }
+                        axis {
+                            name 'PLATFORM'
+                            values 's390x'
+                        }
+                    }
                     exclude {
                         axis {
                             name 'JDK_NAME'
