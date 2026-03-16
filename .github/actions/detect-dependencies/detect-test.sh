@@ -16,22 +16,22 @@
 #
 
 # Detects property changes in parent/pom.xml, maps them to the managed
-# artifacts that use those properties, then finds which modules depend
-# on those artifacts and runs their tests.
+# artifacts that use those properties, then uses Maveniverse Toolbox to
+# find which modules depend on those artifacts (including transitive
+# dependencies) and runs their tests.
 #
-# Previous approach searched for ${property-name} in module pom.xml files,
-# but that never matches because modules inherit managed versions from the
-# parent without referencing the property directly.
-#
-# New approach:
+# Approach:
 #   1. Diff parent/pom.xml to find changed property names
-#   2. Parse parent/pom.xml to map property -> artifactId(s)
-#   3. Search module pom.xml files for those artifactIds
+#   2. Parse parent/pom.xml to map property -> groupId:artifactId
+#      (detecting BOM imports vs regular dependencies)
+#   3. Use toolbox:tree-find to find all modules depending on those
+#      artifacts (direct + transitive)
 #   4. Run tests for affected modules
 
 set -euo pipefail
 
 MAX_MODULES=50
+TOOLBOX_PLUGIN="eu.maveniverse.maven.plugins:toolbox"
 
 # Detect which properties changed in parent/pom.xml compared to the base branch.
 # Returns one property name per line.
@@ -39,52 +39,79 @@ detect_changed_properties() {
   local base_branch="$1"
 
   git diff "${base_branch}" -- parent/pom.xml | \
-    grep -E '^[+-]\s*<[^>]+>[^<]*</[^>]+>' | \
+    grep -E '^[+-][[:space:]]*<[^>]+>[^<]*</[^>]+>' | \
     grep -vE '^\+\+\+|^---' | \
-    sed -E 's/^[+-]\s*<([^>]+)>.*/\1/' | \
+    sed -E 's/^[+-][[:space:]]*<([^>]+)>.*/\1/' | \
     sort -u || true
 }
 
-# Given a property name, find which artifactIds in parent/pom.xml use it
-# as their <version>. Looks for patterns like:
-#   <artifactId>some-artifact</artifactId>
-#   <version>${property-name}</version>
-# Returns one artifactId per line.
-find_artifacts_for_property() {
+# Given a property name, find which groupId:artifactId pairs in
+# parent/pom.xml use it as their <version>.
+# Also detects if the artifact is a BOM import (<type>pom</type> +
+# <scope>import</scope>), in which case it outputs "bom:groupId"
+# so the caller can search by groupId wildcard.
+# Returns one entry per line: either "groupId:artifactId" or "bom:groupId".
+find_gav_for_property() {
   local property="$1"
   local parent_pom="parent/pom.xml"
 
-  # Find line numbers where <version>${property}</version> appears
-  grep -n "<version>\${${property}}</version>" "$parent_pom" 2>/dev/null | \
-    while IFS=: read -r line_num _; do
-      # Search backwards from that line for the nearest <artifactId>
-      sed -n "1,${line_num}p" "$parent_pom" | \
-        grep '<artifactId>' | tail -1 | \
-        sed 's/.*<artifactId>\([^<]*\)<\/artifactId>.*/\1/'
-    done | sort -u
+  local matches
+  matches=$(grep -n "<version>\${${property}}</version>" "$parent_pom" 2>/dev/null || true)
+
+  if [ -z "$matches" ]; then
+    return
+  fi
+
+  echo "$matches" | while IFS=: read -r line_num _; do
+    local block
+    block=$(sed -n "1,${line_num}p" "$parent_pom")
+    local artifactId
+    artifactId=$(echo "$block" | grep '<artifactId>' | tail -1 | sed 's/.*<artifactId>\([^<]*\)<\/artifactId>.*/\1/')
+    local groupId
+    groupId=$(echo "$block" | grep '<groupId>' | tail -1 | sed 's/.*<groupId>\([^<]*\)<\/groupId>.*/\1/')
+
+    # Check if this is a BOM import by looking at lines after the version
+    local after_version
+    after_version=$(sed -n "$((line_num+1)),$((line_num+3))p" "$parent_pom")
+    if echo "$after_version" | grep -q '<type>pom</type>' && echo "$after_version" | grep -q '<scope>import</scope>'; then
+      echo "bom:${groupId}"
+    else
+      echo "${groupId}:${artifactId}"
+    fi
+  done | sort -u
 }
 
-# Given an artifactId, find which module pom.xml files reference it
-# (as a dependency, not just in exclusions or comments).
-# Returns module directories, one per line.
-find_modules_using_artifact() {
-  local artifact="$1"
-  local modules=()
+# Use Maveniverse Toolbox tree-find to discover all modules that depend
+# on a given artifact (including transitive dependencies).
+# Returns one module artifactId per line.
+find_modules_with_toolbox() {
+  local mavenBinary="$1"
+  local matcher_spec="$2"
+  local search_pattern="$3"
 
-  # Search for <artifactId>artifact</artifactId> in pom.xml files
-  # Exclude parent/pom.xml, target dirs, and worktrees
-  grep -rl "<artifactId>${artifact}</artifactId>" --include="pom.xml" . 2>/dev/null | \
-    grep -v "^\./parent/pom.xml" | \
-    grep -v "/target/" | \
-    grep -v "\.claude/worktrees" | \
-    while read -r pom_file; do
-      # Verify it's actually a dependency reference (not just an exclusion)
-      # by checking that <artifactId>artifact</artifactId> appears inside a
-      # <dependency> block (not only inside an <exclusion> block).
-      # Simple heuristic: if the artifact appears, the module is likely affected.
-      # Exclusion-only references are rare enough that false positives are acceptable.
-      dirname "$pom_file" | sed 's|^\./||'
-    done | sort -u
+  local output
+  output=$($mavenBinary -B ${TOOLBOX_PLUGIN}:tree-find \
+    -DartifactMatcherSpec="${matcher_spec}" 2>&1 || true)
+
+  if echo "$output" | grep -q 'BUILD FAILURE'; then
+    echo "  WARNING: toolbox tree-find failed, skipping" >&2
+    return
+  fi
+
+  # Parse output: track current module from "Paths found in project" lines,
+  # then when a dependency match is found, output that module's artifactId.
+  # Note: mvnd strips [module] prefixes when output is captured to a
+  # variable, so we track the current module from "Paths found" headers.
+  echo "$output" | awk -v pattern="$search_pattern" '
+    /Paths found in project/ {
+      split($0, a, "project ")
+      split(a[2], b, ":")
+      current = b[2]
+    }
+    index($0, pattern) && /->/ {
+      print current
+    }
+  ' | sort -u
 }
 
 main() {
@@ -92,7 +119,7 @@ main() {
   local base_branch=${1}
   local mavenBinary=${2}
   local log="detect-dependencies.log"
-  local exclusionList="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-lucene,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-csimple-maven-plugin,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel"
+  local exclusionList="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-lucene,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-csimple-maven-plugin,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel,!:coverage"
 
   git fetch origin "$base_branch":"$base_branch" 2>/dev/null || true
 
@@ -114,56 +141,88 @@ main() {
   echo "$changed_props"
   echo ""
 
-  # Map properties -> artifacts -> modules
-  local all_artifacts=""
-  local all_modules=""
-  local seen_modules=""
-
+  # Map properties -> GAV coordinates for toolbox lookup
+  local all_gavs=""
   while read -r prop; do
     [ -z "$prop" ] && continue
 
-    local artifacts
-    artifacts=$(find_artifacts_for_property "$prop")
-    if [ -z "$artifacts" ]; then
+    local gavs
+    gavs=$(find_gav_for_property "$prop")
+    if [ -z "$gavs" ]; then
       echo "  Property '$prop': no managed artifacts found"
       continue
     fi
 
     echo "  Property '$prop' manages:"
-    while read -r artifact; do
-      [ -z "$artifact" ] && continue
-      echo "    - $artifact"
-      all_artifacts="${all_artifacts:+${all_artifacts},}${artifact}"
-
-      local modules
-      modules=$(find_modules_using_artifact "$artifact")
-      if [ -n "$modules" ]; then
-        while read -r mod; do
-          [ -z "$mod" ] && continue
-          # Deduplicate
-          if ! echo "$seen_modules" | grep -qx "$mod"; then
-            seen_modules="${seen_modules:+${seen_modules}
-}${mod}"
-            all_modules="${all_modules:+${all_modules},}${mod}"
-          fi
-        done <<< "$modules"
-      fi
-    done <<< "$artifacts"
+    while read -r gav; do
+      [ -z "$gav" ] && continue
+      echo "    - $gav"
+      all_gavs="${all_gavs:+${all_gavs}
+}${gav}"
+    done <<< "$gavs"
   done <<< "$changed_props"
 
-  if [ -z "$all_modules" ]; then
+  if [ -z "$all_gavs" ]; then
     echo ""
-    echo "No modules reference the changed artifacts"
+    echo "No managed artifacts found for changed properties"
+    exit 0
+  fi
+
+  echo ""
+  echo "Searching for affected modules using Maveniverse Toolbox..."
+
+  # Use toolbox tree-find to find affected modules
+  local all_module_ids=""
+  local seen_modules=""
+
+  # Deduplicate GAVs
+  local unique_gavs
+  unique_gavs=$(echo "$all_gavs" | sort -u)
+
+  while read -r gav; do
+    [ -z "$gav" ] && continue
+
+    local matcher_spec search_pattern
+    if [[ "$gav" == bom:* ]]; then
+      # BOM import: search by groupId wildcard
+      local groupId="${gav#bom:}"
+      matcher_spec="artifact(${groupId}:*)"
+      search_pattern="${groupId}:"
+      echo "  Searching for modules using ${groupId}:* (BOM)..."
+    else
+      matcher_spec="artifact(${gav})"
+      search_pattern="${gav}"
+      echo "  Searching for modules using ${gav}..."
+    fi
+
+    local modules
+    modules=$(find_modules_with_toolbox "$mavenBinary" "$matcher_spec" "$search_pattern")
+    if [ -n "$modules" ]; then
+      while read -r mod; do
+        [ -z "$mod" ] && continue
+        # Deduplicate
+        if ! echo "$seen_modules" | grep -qx "$mod"; then
+          seen_modules="${seen_modules:+${seen_modules}
+}${mod}"
+          all_module_ids="${all_module_ids:+${all_module_ids},}:${mod}"
+        fi
+      done <<< "$modules"
+    fi
+  done <<< "$unique_gavs"
+
+  if [ -z "$all_module_ids" ]; then
+    echo ""
+    echo "No modules depend on the changed artifacts"
     exit 0
   fi
 
   # Count modules
   local module_count
-  module_count=$(echo "$all_modules" | tr ',' '\n' | wc -l | tr -d ' ')
+  module_count=$(echo "$all_module_ids" | tr ',' '\n' | wc -l | tr -d ' ')
 
   echo ""
   echo "Found ${module_count} modules affected by parent/pom.xml property changes:"
-  echo "$all_modules" | tr ',' '\n' | while read -r m; do
+  echo "$all_module_ids" | tr ',' '\n' | while read -r m; do
     echo "  - $m"
   done
   echo ""
@@ -171,18 +230,18 @@ main() {
   if [ "${module_count}" -gt "${MAX_MODULES}" ]; then
     echo "Too many affected modules (${module_count} > ${MAX_MODULES}), skipping targeted tests"
 
-    write_comment "$changed_props" "$all_modules" "$module_count" "skip"
+    write_comment "$changed_props" "$all_module_ids" "$module_count" "skip"
     exit 0
   fi
 
   echo "Running targeted tests for affected modules..."
-  $mavenBinary -l $log $MVND_OPTS test -pl "$all_modules" -am -pl "$exclusionList"
+  $mavenBinary -l $log $MVND_OPTS test -pl "${all_module_ids},${exclusionList}" -amd
   local ret=$?
 
   if [ ${ret} -eq 0 ]; then
-    write_comment "$changed_props" "$all_modules" "$module_count" "pass"
+    write_comment "$changed_props" "$all_module_ids" "$module_count" "pass"
   else
-    write_comment "$changed_props" "$all_modules" "$module_count" "fail"
+    write_comment "$changed_props" "$all_module_ids" "$module_count" "fail"
   fi
 
   # Write step summary
@@ -191,7 +250,7 @@ main() {
     echo "" >> "$GITHUB_STEP_SUMMARY"
     echo "Changed properties: $(echo "$changed_props" | tr '\n' ', ' | sed 's/,$//')" >> "$GITHUB_STEP_SUMMARY"
     echo "" >> "$GITHUB_STEP_SUMMARY"
-    echo "$all_modules" | tr ',' '\n' | while read -r m; do
+    echo "$all_module_ids" | tr ',' '\n' | while read -r m; do
       echo "- \`$m\`" >> "$GITHUB_STEP_SUMMARY"
     done
 
@@ -230,7 +289,7 @@ write_comment() {
   echo "" >> "$comment_file"
   echo "Changed properties: $(echo "$changed_props" | tr '\n' ', ' | sed 's/,$//')" >> "$comment_file"
   echo "" >> "$comment_file"
-  echo "<details><summary>Tested modules (${module_count})</summary>" >> "$comment_file"
+  echo "<details><summary>Affected modules (${module_count})</summary>" >> "$comment_file"
   echo "" >> "$comment_file"
   echo "$modules" | tr ',' '\n' | while read -r m; do
     echo "- \`$m\`" >> "$comment_file"
