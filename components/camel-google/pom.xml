@@ -46,6 +46,8 @@
         <module>camel-google-storage</module>
         <module>camel-google-vertexai</module>
         <module>camel-google-vision</module>
+        <module>camel-google-speech-to-text</module>
+        <module>camel-google-text-to-speech</module>
     </modules>
 
 </project>

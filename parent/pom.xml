@@ -220,6 +220,8 @@
         <google-cloud-storage-version>2.64.0</google-cloud-storage-version>
         <google-cloud-aiplatform-version>3.88.0</google-cloud-aiplatform-version>
         <google-cloud-vision-version>3.85.0</google-cloud-vision-version>
+        <google-cloud-speech-version>4.53.0</google-cloud-speech-version>
+        <google-cloud-texttospeech-version>2.63.0</google-cloud-texttospeech-version>
         <google-genai-version>1.43.0</google-genai-version>
         <graaljs-version>25.0.2</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
@@ -1528,7 +1530,17 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-google-speech-to-text</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-google-storage</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-google-text-to-speech</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -1,0 +1,44 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "google-speech-to-text",
+    "title": "Google Cloud Speech To Text",
+    "description": "Transcribe audio to text using Google Cloud Speech-to-Text API",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "label": "cloud,ai",
+    "javaType": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-speech-to-text",
+    "version": "4.19.0-SNAPSHOT",
+    "scheme": "google-speech-to-text",
+    "extendsScheme": "",
+    "syntax": "google-speech-to-text:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "GoogleCloudSpeechToTextOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextOperations", "enum": [ "recognize" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform", "constantName": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextConstants#OPERATION" },
+    "GoogleCloudSpeechToTextResponseObject": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "com.google.cloud.speech.v1.RecognizeResponse", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The response object resulting from the Google Cloud Speech-to-Text API invocation", "constantName": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextConstants#RESPONSE_OBJECT" }
+  },
+  "properties": {
+    "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "common", "label": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextConfiguration", "configurationField": "configuration", "description": "The operation name" },
+    "serviceAccountKey": { "index": 1, "kind": "parameter", "displayName": "Service Account Key", "group": "common", "label": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextConfiguration", "configurationField": "configuration", "description": "Service account key to authenticate an application as a service account" },
+    "encoding": { "index": 2, "kind": "parameter", "displayName": "Encoding", "group": "producer", "label": "producer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "LINEAR16", "configurationClass": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextConfiguration", "configurationField": "configuration", "description": "The encoding of the audio data. Supported values: LINEAR16, FLAC, MULAW, AMR, AMR_WB, OGG_OPUS, SPEEX_WITH_HEADER_BYTE, WEBM_OPUS, MP3" },
+    "languageCode": { "index": 3, "kind": "parameter", "displayName": "Language Code", "group": "producer", "label": "producer", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "en-US", "configurationClass": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextConfiguration", "configurationField": "configuration", "description": "The language of the audio data as a BCP-47 language tag (e.g., en-US, fr-FR)" },
+    "pojoRequest": { "index": 4, "kind": "parameter", "displayName": "Pojo Request", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "configurationClass": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextConfiguration", "configurationField": "configuration", "description": "Specifies if the request is a pojo request" },
+    "sampleRateHertz": { "index": 5, "kind": "parameter", "displayName": "Sample Rate Hertz", "group": "producer", "label": "producer", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextConfiguration", "configurationField": "configuration", "description": "The sample rate in Hertz of the audio data. Valid values range from 8000 to 48000" },
+    "lazyStartProducer": { "index": 6, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "client": { "index": 7, "kind": "parameter", "displayName": "Client", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "com.google.cloud.speech.v1.SpeechClient", "deprecated": false, "deprecationNote": "", "autowired": true, "secret": false, "configurationClass": "org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextConfiguration", "configurationField": "configuration", "description": "The client to use during service invocation." }
+  }
+}

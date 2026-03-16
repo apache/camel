@@ -1,0 +1,201 @@
+= Google Cloud Text To Speech Component
+:doctitle: Google Cloud Text To Speech
+:shortname: google-text-to-speech
+:artifactid: camel-google-text-to-speech
+:description: Synthesize speech from text using the Google Cloud Text-to-Speech API
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Google
+:camel-spring-boot-name: google-text-to-speech
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google Cloud Text-to-Speech component provides access to https://cloud.google.com/text-to-speech[Google Cloud Text-to-Speech API] via
+the https://github.com/googleapis/java-texttospeech[Google Cloud Text-to-Speech Client for Java].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-text-to-speech</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+------------------------------------------------------
+
+[[GoogleTextToSpeech-AuthenticationConfiguration]]
+
+== Authentication Configuration
+
+Google Cloud Text-to-Speech component authentication is targeted for use with the GCP Service Accounts.
+For more information, please refer to https://github.com/googleapis/google-cloud-java#authentication[Google Cloud Authentication].
+
+When you have the **service account key**, you can provide authentication credentials to your application code.
+Google security credentials can be set through the component endpoint:
+
+[source,java]
+--------------------------------------------------------
+String endpoint = "google-text-to-speech://synthesize?serviceAccountKey=/home/user/Downloads/my-key.json";
+--------------------------------------------------------
+
+Or by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS` :
+
+--------------------------------------------------------
+export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
+--------------------------------------------------------
+
+
+== URI Format
+
+--------------------------------------------------------
+google-text-to-speech://operation[?options]
+--------------------------------------------------------
+
+You can append query options to the URI in the following format,
+`?options=value&option2=value&...`
+
+For example, in order to synthesize speech from text, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .to("google-text-to-speech://synthesize?serviceAccountKey=/home/user/Downloads/my-key.json");
+--------------------------------------------------------------------------------
+
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Message body
+
+For the `synthesize` operation, the message body should contain the text to synthesize as a `String`.
+
+For the `listVoices` operation, the message body is ignored.
+
+When `pojoRequest=true`, the body should be a `com.google.cloud.texttospeech.v1.SynthesizeSpeechRequest` instance instead.
+
+=== Google Cloud Text-to-Speech Producer operations
+
+Google Cloud Text-to-Speech component provides the following operations on the producer side:
+
+- synthesize
+- listVoices
+
+The operation is specified as part of the endpoint URI (e.g., `google-text-to-speech://synthesize`).
+You can override the operation at runtime by setting the `GoogleCloudTextToSpeechOperation` message header.
+
+=== Advanced component configuration
+
+If you need to have more control over the `TextToSpeechClient` instance configuration, you can create your own instance and refer to it in your Camel google-text-to-speech component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .to("google-text-to-speech://synthesize?client=#myTextToSpeechClient");
+--------------------------------------------------------------------------------
+
+=== Google Cloud Text-to-Speech Producer Operation examples
+
+- `synthesize`: this operation converts text to speech audio
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setBody("Hello, how are you today?");
+    })
+    .to("google-text-to-speech://synthesize?serviceAccountKey=/home/user/Downloads/my-key.json&languageCode=en-US&audioEncoding=MP3")
+    .log("body:${body}")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return a `byte[]` containing the synthesized audio content.
+
+- `synthesize` with voice customization:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setBody("Bonjour, comment allez-vous?");
+    })
+    .to("google-text-to-speech://synthesize?serviceAccountKey=/home/user/Downloads/my-key.json&languageCode=fr-FR&voiceName=fr-FR-Wavenet-A&audioEncoding=OGG_OPUS&speakingRate=1.2&pitch=-2.0")
+    .log("body:${body}")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return a `byte[]` with the audio in OGG_OPUS format using a specific French voice.
+
+- `listVoices`: this operation lists available voices
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .to("google-text-to-speech://listVoices?serviceAccountKey=/home/user/Downloads/my-key.json&languageCode=en-US")
+    .log("body:${body}")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return a `List<Voice>` with the available voices for the specified language.
+
+- Using POJO request for full control:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+        SynthesisInput input = SynthesisInput.newBuilder()
+            .setText("Hello world")
+            .build();
+        VoiceSelectionParams voice = VoiceSelectionParams.newBuilder()
+            .setLanguageCode("en-US")
+            .setName("en-US-Wavenet-D")
+            .build();
+        AudioConfig audioConfig = AudioConfig.newBuilder()
+            .setAudioEncoding(AudioEncoding.MP3)
+            .build();
+        SynthesizeSpeechRequest request = SynthesizeSpeechRequest.newBuilder()
+            .setInput(input)
+            .setVoice(voice)
+            .setAudioConfig(audioConfig)
+            .build();
+        exchange.getIn().setBody(request);
+    })
+    .to("google-text-to-speech://synthesize?serviceAccountKey=/home/user/Downloads/my-key.json&pojoRequest=true")
+    .log("body:${body}")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+When using `pojoRequest=true`, the body should be a `SynthesizeSpeechRequest` and the audio bytes are returned as body.
+
+- Overriding the operation at runtime via header:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .process(exchange -> {
+        exchange.getIn().setBody("Hello world");
+        exchange.getIn().setHeader(GoogleCloudTextToSpeechConstants.OPERATION, GoogleCloudTextToSpeechOperations.synthesize);
+    })
+    .to("google-text-to-speech://listVoices?serviceAccountKey=/home/user/Downloads/my-key.json")
+    .log("body:${body}")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+
+include::spring-boot:partial$starter.adoc[]

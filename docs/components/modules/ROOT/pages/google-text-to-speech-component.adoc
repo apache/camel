@@ -1,0 +1,1 @@
+../../../../../components/camel-google/camel-google-text-to-speech/src/main/docs/google-text-to-speech-component.adoc

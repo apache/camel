@@ -6236,6 +6236,46 @@ public class StaticEndpointBuilders {
         return GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Google Cloud Speech To Text (camel-google-speech-to-text)
+     * Transcribe audio to text using Google Cloud Speech-to-Text API
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-speech-to-text
+     * 
+     * Syntax: <code>google-speech-to-text:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation name
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static GoogleCloudSpeechToTextEndpointBuilderFactory.GoogleCloudSpeechToTextEndpointBuilder googleSpeechToText(String path) {
+        return googleSpeechToText("google-speech-to-text", path);
+    }
+    /**
+     * Google Cloud Speech To Text (camel-google-speech-to-text)
+     * Transcribe audio to text using Google Cloud Speech-to-Text API
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-speech-to-text
+     * 
+     * Syntax: <code>google-speech-to-text:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static GoogleCloudSpeechToTextEndpointBuilderFactory.GoogleCloudSpeechToTextEndpointBuilder googleSpeechToText(String componentName, String path) {
+        return GoogleCloudSpeechToTextEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Google Storage (camel-google-storage)
      * Store and retrieve objects from Google Cloud Storage Service using the
      * google-cloud-storage library.
@@ -6276,6 +6316,46 @@ public class StaticEndpointBuilders {
      */
     public static GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(String componentName, String path) {
         return GoogleCloudStorageEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Google Cloud Text To Speech (camel-google-text-to-speech)
+     * Synthesize speech from text using the Google Cloud Text-to-Speech API
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-text-to-speech
+     * 
+     * Syntax: <code>google-text-to-speech:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation name
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static GoogleCloudTextToSpeechEndpointBuilderFactory.GoogleCloudTextToSpeechEndpointBuilder googleTextToSpeech(String path) {
+        return googleTextToSpeech("google-text-to-speech", path);
+    }
+    /**
+     * Google Cloud Text To Speech (camel-google-text-to-speech)
+     * Synthesize speech from text using the Google Cloud Text-to-Speech API
+     * 
+     * Category: cloud,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-google-text-to-speech
+     * 
+     * Syntax: <code>google-text-to-speech:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static GoogleCloudTextToSpeechEndpointBuilderFactory.GoogleCloudTextToSpeechEndpointBuilder googleTextToSpeech(String componentName, String path) {
+        return GoogleCloudTextToSpeechEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Google Vertex AI (camel-google-vertexai)
