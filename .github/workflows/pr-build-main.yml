@@ -143,7 +143,9 @@ jobs:
               core.warning(`Failed to post CI test summary comment: ${error.message}`);
             }
       - name: mvn test parent pom dependencies changed
+        if: always() && !matrix.experimental
         uses: ./.github/actions/detect-dependencies
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           base-ref: ${{ github.base_ref || 'main' }}
+          skip-mvnd-install: 'true'
