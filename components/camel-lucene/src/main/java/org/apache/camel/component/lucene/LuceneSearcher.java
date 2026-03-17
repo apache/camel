@@ -30,7 +30,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.TopScoreDocCollectorManager;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.slf4j.Logger;
@@ -90,10 +90,10 @@ public class LuceneSearcher {
 
         QueryParser parser = new QueryParser("contents", analyzer);
         Query query = parser.parse(searchPhrase);
-        TopScoreDocCollectorManager collectorManager
-                = new TopScoreDocCollectorManager(maxNumberOfHits, totalHitsThreshold);
-        TopDocs topDocs = indexSearcher.search(query, collectorManager);
-        hits = topDocs.scoreDocs;
+        TopScoreDocCollector collector
+                = new TopScoreDocCollectorManager(maxNumberOfHits, totalHitsThreshold).newCollector();
+        indexSearcher.search(query, collector);
+        hits = collector.topDocs().scoreDocs;
 
         LOG.trace("*** Search generated {} hits ***", hits.length);
         return hits.length;
