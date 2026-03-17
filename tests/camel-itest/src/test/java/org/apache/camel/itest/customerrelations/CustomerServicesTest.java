@@ -28,12 +28,14 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Timeout(60)
 public class CustomerServicesTest {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();

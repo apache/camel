@@ -26,10 +26,12 @@ import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Timeout(60)
 public class RemoveEndpointsTest extends CamelTestSupport {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();

@@ -44,7 +44,7 @@ public final class JmsServiceExtension implements Extension {
     private static final Lock LOCK = new ReentrantLock();
     private static JmsServiceExtension instance;
 
-    private final JmsComponent amq;
+    private final ConnectionFactory connectionFactory;
 
     private JmsServiceExtension() throws JMSException {
         EmbeddedActiveMQ embeddedBrokerService = new EmbeddedActiveMQ();
@@ -74,16 +74,19 @@ public final class JmsServiceExtension implements Extension {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        LOG.info("Creating a new reusable AMQ component");
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory(brokerURL);
-
-        amq = jmsComponentAutoAcknowledge(connectionFactory);
+        LOG.info("Creating a shared ConnectionFactory for the embedded broker");
+        connectionFactory = CamelJmsTestHelper.createConnectionFactory(brokerURL);
 
         connectionFactory.createConnection();
     }
 
+    /**
+     * Returns a new {@link JmsComponent} wrapping the shared {@link ConnectionFactory} each time. This avoids sharing a
+     * single component instance across tests, which can cause blocking when one test's CamelContext shuts down and
+     * stops the shared component.
+     */
     public JmsComponent getComponent() {
-        return amq;
+        return jmsComponentAutoAcknowledge(connectionFactory);
     }
 
     public static JmsServiceExtension createExtension() {

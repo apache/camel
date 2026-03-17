@@ -30,6 +30,7 @@ import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * JMS with JDBC idempotent consumer test.
  */
+@Timeout(60)
 public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSupport {
 
     @RegisterExtension

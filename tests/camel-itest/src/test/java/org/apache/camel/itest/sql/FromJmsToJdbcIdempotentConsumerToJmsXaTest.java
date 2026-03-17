@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * JMS with JDBC idempotent consumer test using XA.
  */
+@Timeout(60)
 public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends FromJmsToJdbcIdempotentConsumerToJmsTest {
 
     @RegisterExtension

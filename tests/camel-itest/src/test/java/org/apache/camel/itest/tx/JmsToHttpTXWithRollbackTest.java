@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @CamelSpringTest
 @ContextConfiguration
+@Timeout(60)
 public class JmsToHttpTXWithRollbackTest {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();

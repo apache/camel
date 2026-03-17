@@ -22,6 +22,7 @@ import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CamelSpringTest
 @ContextConfiguration
+@Timeout(60)
 public class JmsToCxfInOutTest {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();

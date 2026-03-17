@@ -28,8 +28,10 @@ import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+@Timeout(60)
 public class ShiroOverJmsTest extends CamelTestSupport {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();

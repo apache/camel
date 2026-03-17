@@ -33,6 +33,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Doing request/reply over Netty with async processing.
  */
+@Timeout(60)
 public class NettyAsyncRequestReplyTest extends CamelTestSupport {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
