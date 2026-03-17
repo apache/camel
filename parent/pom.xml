@@ -255,7 +255,7 @@
         <huaweicloud-obs-version>3.25.10</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.1.188</huaweicloud-sdk-version>
         <ibm-cos-sdk-version>2.15.0</ibm-cos-sdk-version>
-        <ibm-secrets-manager-version>2.0.22</ibm-secrets-manager-version>
+        <ibm-secrets-manager-version>2.0.28</ibm-secrets-manager-version>
         <ibm-watson-sdk-version>16.2.0</ibm-watson-sdk-version>
         <ibm-watsonx-ai-sdk-version>0.19.0</ibm-watsonx-ai-sdk-version>
         <ical4j-version>4.2.3</ical4j-version>
