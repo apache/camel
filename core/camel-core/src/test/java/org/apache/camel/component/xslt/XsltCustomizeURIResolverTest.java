@@ -18,6 +18,8 @@ package org.apache.camel.component.xslt;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -45,6 +47,9 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
 
         mock.message(0).body().contains(EXPECTED_XML_CONSTANT);
 
+        String body = Files.readString(Path.of("src/test/data/staff.xml"));
+        template.sendBody("direct:start", body);
+
         assertMockEndpointsSatisfied();
     }
 
@@ -53,7 +58,7 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
+                from("direct:start")
                         .to("xslt:org/apache/camel/component/xslt/include_not_existing_resource.xsl?uriResolver=#customURIResolver")
                         .to("mock:resultURIResolverDirect");
             }

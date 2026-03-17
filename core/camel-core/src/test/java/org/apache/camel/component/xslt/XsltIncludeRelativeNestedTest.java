@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,6 +33,10 @@ public class XsltIncludeRelativeNestedTest extends ContextTestSupport {
     public void testXsltIncludeRelativeNested() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+
+        String body = Files.readString(Path.of("src/test/data/staff.xml"));
+        template.sendBody("direct:start", body);
+
         assertMockEndpointsSatisfied();
     }
 
@@ -38,7 +45,7 @@ public class XsltIncludeRelativeNestedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:src/test/data/?fileName=staff.xml&noop=true&initialDelay=0&delay=10")
+                from("direct:start")
                         .to("xslt:org/apache/camel/component/xslt/staff_include_relative_nested.xsl")
                         .to("log:foo").to("mock:result");
             }

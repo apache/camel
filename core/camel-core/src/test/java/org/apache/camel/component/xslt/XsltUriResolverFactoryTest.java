@@ -80,7 +80,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
         sendBody(directStart, payloud);
 
         // wait until endpoint is resolved
-        await().atMost(1, TimeUnit.SECONDS).until(() -> resolveMandatoryEndpoint(endpointUri, XsltEndpoint.class) != null);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> resolveMandatoryEndpoint(endpointUri, XsltEndpoint.class) != null);
 
         assertMockEndpointsSatisfied();
 

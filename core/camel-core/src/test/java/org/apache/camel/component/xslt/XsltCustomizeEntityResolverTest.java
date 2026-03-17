@@ -17,6 +17,8 @@
 package org.apache.camel.component.xslt;
 
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -42,6 +44,9 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
 
         mock.message(0).body().contains(EXPECTED_XML_CONSTANT);
 
+        String body = Files.readString(Path.of("src/test/data/xml_with_entity.xml"));
+        template.sendBody("direct:start", body);
+
         assertMockEndpointsSatisfied();
     }
 
@@ -50,7 +55,7 @@ public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("file:src/test/data/?fileName=xml_with_entity.xml&noop=true&initialDelay=0&delay=10")
+                from("direct:start")
                         .to("xslt:xslt/common/copy.xsl?output=string&entityResolver=#customEntityResolver")
                         .to("mock:resultURIResolverDirect");
             }

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +33,9 @@ public class XsltMessageTerminateTest extends ContextTestSupport {
     public void testXsltTerminate() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
+
+        String body = Files.readString(Path.of("src/test/data/terminate.xml"));
+        template.sendBody("direct:start", body);
 
         assertMockEndpointsSatisfied();
 
@@ -53,7 +59,7 @@ public class XsltMessageTerminateTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("file:src/test/data/?fileName=terminate.xml&noop=true&initialDelay=0&delay=10")
+                from("direct:start")
                         .to("xslt:org/apache/camel/component/xslt/terminate.xsl").to("log:foo")
                         .to("mock:result");
             }
