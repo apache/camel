@@ -55,7 +55,17 @@ function main() {
 
   echo "Searching for affected projects"
   local projects
-  projects=$(curl -s "https://patch-diff.githubusercontent.com/raw/${repository}/pull/${prId}.diff" | sed -n -e '/^diff --git a/p' | awk '{print $3}' | cut -b 3- | sed 's|\(.*\)/.*|\1|' | uniq | sort)
+  local diff_output
+  diff_output=$(curl -s -w "\n%{http_code}" -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github.v3.diff" "https://api.github.com/repos/${repository}/pulls/${prId}")
+  local http_code
+  http_code=$(echo "$diff_output" | tail -n 1)
+  local diff_body
+  diff_body=$(echo "$diff_output" | sed '$d')
+  if [[ "$http_code" -lt 200 || "$http_code" -ge 300 || -z "$diff_body" ]] ; then
+    echo "WARNING: Failed to fetch PR diff (HTTP $http_code). Falling back to full build."
+    diff_body=""
+  fi
+  projects=$(echo "$diff_body" | sed -n -e '/^diff --git a/p' | awk '{print $3}' | cut -b 3- | sed 's|\(.*\)/.*|\1|' | uniq | sort)
   local pl=""
   local lastProjectRoot=""
   local buildAll=false
