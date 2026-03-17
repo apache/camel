@@ -111,7 +111,7 @@ function main() {
         for w in $pl; do
           echo "$w"
         done
-        totalTestableProjects=$(./mvnw -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
+        totalTestableProjects=$(./mvnw -B -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "Launching fast build command against the projects ${pl}, their dependencies and the projects that depend on them"
@@ -146,7 +146,7 @@ function main() {
         echo "The test-dependents label has been detected thus the projects that depend on affected projects will be tested"
         totalTestableProjects=0
       else
-        totalTestableProjects=$(./mvnw -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
+        totalTestableProjects=$(./mvnw -B -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "There are too many projects to test so only the affected projects are tested:"
