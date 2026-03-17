@@ -463,6 +463,79 @@ In the route above, the following message
 Would have failed the JSonPath expression `person.middlename` because the JSon payload
 does not have a `middlename` field. To remedy this we have suppressed the exception.
 
+== Schema Variants
+
+The YAML DSL provides two JSON Schema variants for validation:
+
+=== Classic Schema (`camelYamlDsl.json`)
+
+The default schema supports several convenient shorthands to make YAML routes more concise:
+
+* *String shorthands*: Some EIPs like `log` accept a plain string instead of an object.
+For example, `log: "$\{body}"` is equivalent to `log: { message: "$\{body}" }`.
+
+* *Implicit expressions*: Expression-aware EIPs like `filter`, `setBody`, and `split` allow
+the expression language to be specified directly without the `expression` wrapper.
+For example, `setBody: { simple: "Hello" }` is equivalent to `setBody: { expression: { simple: { expression: "Hello" } } }`.
+
+While these shorthands make hand-written YAML more concise, they also increase the complexity of the
+JSON Schema with `oneOf`, `anyOf`, and `not` constructs. This can cause problems for tooling such as
+IDE auto-completion, schema-based code generators, and AI assistants that struggle with these patterns.
+
+=== Strict Schema (`camelYamlDsl-strict.json`)
+
+The strict schema removes all implicit patterns:
+
+* No string shorthands: EIPs like `log` must use the object form with explicit properties.
+* No implicit expressions: Expression-aware EIPs require the `expression` wrapper.
+* No `oneOf`/`anyOf`/`not` constructs: The schema uses only simple `type: object` with `properties`.
+
+This results in a schema that is approximately 25% smaller and significantly easier for tooling to process.
+
+.Classic (implicit) form
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:yaml
+      steps:
+        - setBody:
+            simple: "Hello Camel from ${routeId}"
+        - log: "${body}"
+----
+
+.Strict (explicit) form
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:yaml
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Hello Camel from ${routeId}"
+        - log:
+            message: "${body}"
+----
+
+Both forms are accepted by the Camel runtime. The classic schema validates both forms, while the
+strict schema only validates the explicit form.
+
+The strict schema is intended for use by tooling (IDEs, code generators, AI assistants) that benefits from
+a simpler, more predictable schema structure. The classic schema remains the default for human-authored YAML.
+
+The `YamlValidator` class supports both schemas:
+
+[source,java]
+----
+// Classic validation (default)
+YamlValidator validator = new YamlValidator();
+
+// Strict validation
+YamlValidator strictValidator = new YamlValidator(true);
+----
+
 == External examples
 
 You can find a set of examples using `main-yaml` in https://github.com/apache/camel-examples[Camel Examples]

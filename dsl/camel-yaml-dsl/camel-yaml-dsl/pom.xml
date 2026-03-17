@@ -289,6 +289,19 @@
                             <outputFile>src/generated/resources/schema/camelYamlDsl.json</outputFile>
                         </configuration>
                     </execution>
+                    <!-- strict camelCase -->
+                    <execution>
+                        <id>generate-yaml-schema-strict</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate-yaml-schema</goal>
+                        </goals>
+                        <configuration>
+                            <additionalProperties>false</additionalProperties>
+                            <strict>true</strict>
+                            <outputFile>src/generated/resources/schema/camelYamlDsl-strict.json</outputFile>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

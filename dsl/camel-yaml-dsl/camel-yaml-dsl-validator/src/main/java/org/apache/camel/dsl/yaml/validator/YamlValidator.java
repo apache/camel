@@ -39,9 +39,23 @@ public class YamlValidator {
 
     private static final String DRAFT = "http://json-schema.org/draft-04/schema#";
     private static final String LOCATION = "/schema/camelYamlDsl.json";
+    private static final String LOCATION_STRICT = "/schema/camelYamlDsl-strict.json";
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    private final boolean strict;
     private JsonSchema schema;
+
+    public YamlValidator() {
+        this(false);
+    }
+
+    public YamlValidator(boolean strict) {
+        this.strict = strict;
+    }
+
+    public boolean isStrict() {
+        return strict;
+    }
 
     public List<ValidationMessage> validate(File file) throws Exception {
         if (schema == null) {
@@ -58,7 +72,8 @@ public class YamlValidator {
     }
 
     public void init() throws Exception {
-        var model = mapper.readTree(YamlValidator.class.getResourceAsStream(LOCATION));
+        String location = strict ? LOCATION_STRICT : LOCATION;
+        var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         var factory = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(model));
         var config = SchemaValidatorsConfig.builder().locale(Locale.ENGLISH).build();
         // include deprecated as an unknown keyword so the validator does not WARN log about this
