@@ -105,6 +105,15 @@ public class PQCConfiguration implements Cloneable {
     @Metadata(label = "advanced", autowired = true)
     private KeyLifecycleManager keyLifecycleManager;
 
+    @UriParam(defaultValue = "true",
+              description = "Whether to enforce key status checks before cryptographic operations. "
+                            + "When enabled, REVOKED keys are rejected for all operations, "
+                            + "EXPIRED keys are rejected for signing/encapsulation but allowed for verification/extraction, "
+                            + "and DEPRECATED keys produce a warning but still function. "
+                            + "Requires a KeyLifecycleManager and a CamelPQCKeyId header to be set.")
+    @Metadata(label = "advanced")
+    private boolean strictKeyLifecycle = true;
+
     public PQCOperations getOperation() {
         return operation;
     }
@@ -314,6 +323,20 @@ public class PQCConfiguration implements Cloneable {
      */
     public void setKeyLifecycleManager(KeyLifecycleManager keyLifecycleManager) {
         this.keyLifecycleManager = keyLifecycleManager;
+    }
+
+    public boolean isStrictKeyLifecycle() {
+        return strictKeyLifecycle;
+    }
+
+    /**
+     * Whether to enforce key status checks before cryptographic operations. When enabled, REVOKED keys are rejected for
+     * all operations, EXPIRED keys are rejected for signing/encapsulation but allowed for verification/extraction, and
+     * DEPRECATED keys produce a warning but still function. Requires a KeyLifecycleManager and a CamelPQCKeyId header
+     * to be set.
+     */
+    public void setStrictKeyLifecycle(boolean strictKeyLifecycle) {
+        this.strictKeyLifecycle = strictKeyLifecycle;
     }
 
     // *************************************************

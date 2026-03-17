@@ -509,6 +509,46 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enforce key status checks before cryptographic operations.
+         * When enabled, REVOKED keys are rejected for all operations, EXPIRED
+         * keys are rejected for signing/encapsulation but allowed for
+         * verification/extraction, and DEPRECATED keys produce a warning but
+         * still function. Requires a KeyLifecycleManager and a CamelPQCKeyId
+         * header to be set.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param strictKeyLifecycle the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder strictKeyLifecycle(boolean strictKeyLifecycle) {
+            doSetProperty("strictKeyLifecycle", strictKeyLifecycle);
+            return this;
+        }
+        /**
+         * Whether to enforce key status checks before cryptographic operations.
+         * When enabled, REVOKED keys are rejected for all operations, EXPIRED
+         * keys are rejected for signing/encapsulation but allowed for
+         * verification/extraction, and DEPRECATED keys produce a warning but
+         * still function. Requires a KeyLifecycleManager and a CamelPQCKeyId
+         * header to be set.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param strictKeyLifecycle the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder strictKeyLifecycle(String strictKeyLifecycle) {
+            doSetProperty("strictKeyLifecycle", strictKeyLifecycle);
+            return this;
+        }
+        /**
          * In case we are using KEM operations, we need a Symmetric algorithm to
          * be defined for the flow to work.
          * 

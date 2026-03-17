@@ -41,11 +41,15 @@ import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
 import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sign or verify a payload
  */
 public class PQCProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PQCProducer.class);
 
     private Signature signer;
     private KeyGenerator keyGenerator;
@@ -62,7 +66,9 @@ public class PQCProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        switch (determineOperation(exchange)) {
+        PQCOperations operation = determineOperation(exchange);
+        enforceKeyStatus(exchange, operation);
+        switch (operation) {
             case sign:
                 signature(exchange);
                 break;
@@ -141,6 +147,98 @@ public class PQCProducer extends DefaultProducer {
 
     protected PQCConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
+    }
+
+    /**
+     * Enforces key status checks before cryptographic operations when strict key lifecycle mode is enabled. Looks up
+     * the key metadata via the configured {@link KeyLifecycleManager} using the {@code CamelPQCKeyId} header.
+     *
+     * <ul>
+     * <li>REVOKED keys are rejected for all operations (sign, verify, encapsulate, extract).</li>
+     * <li>EXPIRED keys are rejected for signing/encapsulation but allowed for verification/extraction.</li>
+     * <li>DEPRECATED keys produce a WARN log but still function (transition period).</li>
+     * <li>ACTIVE and PENDING_ROTATION keys are always allowed.</li>
+     * </ul>
+     */
+    private void enforceKeyStatus(Exchange exchange, PQCOperations operation) throws Exception {
+        if (!getConfiguration().isStrictKeyLifecycle()) {
+            return;
+        }
+
+        KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
+        if (klm == null) {
+            return;
+        }
+
+        if (!isCryptographicOperation(operation)) {
+            return;
+        }
+
+        String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
+        if (ObjectHelper.isEmpty(keyId)) {
+            return;
+        }
+
+        KeyMetadata metadata = klm.getKeyMetadata(keyId);
+        if (metadata == null) {
+            return;
+        }
+
+        KeyMetadata.KeyStatus status = metadata.getStatus();
+
+        switch (status) {
+            case REVOKED:
+                throw new IllegalStateException(
+                        "Key '" + keyId + "' has been revoked and cannot be used for any cryptographic operation. "
+                                                + "Reason: " + (metadata.getDescription() != null
+                                                        ? metadata.getDescription() : "not specified"));
+            case EXPIRED:
+                if (isProducingOperation(operation)) {
+                    throw new IllegalStateException(
+                            "Key '" + keyId + "' has expired and cannot be used for " + operation
+                                                    + ". Expired keys can only be used for verification or extraction operations.");
+                }
+                LOG.info("Using expired key '{}' for {} operation (verification/extraction of existing data)", keyId,
+                        operation);
+                break;
+            case DEPRECATED:
+                LOG.warn("Key '{}' is deprecated. Consider rotating to an active key. Operation: {}", keyId, operation);
+                break;
+            case ACTIVE:
+            case PENDING_ROTATION:
+            default:
+                break;
+        }
+    }
+
+    private boolean isCryptographicOperation(PQCOperations operation) {
+        switch (operation) {
+            case sign:
+            case verify:
+            case hybridSign:
+            case hybridVerify:
+            case generateSecretKeyEncapsulation:
+            case extractSecretKeyEncapsulation:
+            case extractSecretKeyFromEncapsulation:
+            case hybridGenerateSecretKeyEncapsulation:
+            case hybridExtractSecretKeyEncapsulation:
+            case hybridExtractSecretKeyFromEncapsulation:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean isProducingOperation(PQCOperations operation) {
+        switch (operation) {
+            case sign:
+            case hybridSign:
+            case generateSecretKeyEncapsulation:
+            case hybridGenerateSecretKeyEncapsulation:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

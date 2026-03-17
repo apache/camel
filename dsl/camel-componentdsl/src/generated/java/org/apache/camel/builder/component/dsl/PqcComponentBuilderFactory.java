@@ -388,6 +388,28 @@ public interface PqcComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to enforce key status checks before cryptographic operations.
+         * When enabled, REVOKED keys are rejected for all operations, EXPIRED
+         * keys are rejected for signing/encapsulation but allowed for
+         * verification/extraction, and DEPRECATED keys produce a warning but
+         * still function. Requires a KeyLifecycleManager and a CamelPQCKeyId
+         * header to be set.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param strictKeyLifecycle the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder strictKeyLifecycle(boolean strictKeyLifecycle) {
+            doSetProperty("strictKeyLifecycle", strictKeyLifecycle);
+            return this;
+        }
+    
         /**
          * In case we are using KEM operations, we need a Symmetric algorithm to
          * be defined for the flow to work.
@@ -499,6 +521,7 @@ public interface PqcComponentBuilderFactory {
             case "signatureAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;
             case "signer": getOrCreateConfiguration((PQCComponent) component).setSigner((java.security.Signature) value); return true;
             case "storeExtractedSecretKeyAsHeader": getOrCreateConfiguration((PQCComponent) component).setStoreExtractedSecretKeyAsHeader((boolean) value); return true;
+            case "strictKeyLifecycle": getOrCreateConfiguration((PQCComponent) component).setStrictKeyLifecycle((boolean) value); return true;
             case "symmetricKeyAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSymmetricKeyAlgorithm((java.lang.String) value); return true;
             case "symmetricKeyLength": getOrCreateConfiguration((PQCComponent) component).setSymmetricKeyLength((int) value); return true;
             case "healthCheckConsumerEnabled": ((PQCComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;

@@ -23,7 +23,7 @@ public class PQCEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(22);
         props.add("classicalKEMAlgorithm");
         props.add("classicalKeyAgreement");
         props.add("classicalKeyPair");
@@ -43,6 +43,7 @@ public class PQCEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("signatureAlgorithm");
         props.add("signer");
         props.add("storeExtractedSecretKeyAsHeader");
+        props.add("strictKeyLifecycle");
         props.add("symmetricKeyAlgorithm");
         props.add("symmetricKeyLength");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
