@@ -28,7 +28,6 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
@@ -65,13 +64,10 @@ public class DiagnoseTools {
             = Pattern.compile("route[:\\s]+['\"]?([a-zA-Z0-9_-]+)['\"]?", Pattern.CASE_INSENSITIVE);
 
     @Inject
+    CatalogService catalogService;
+
+    @Inject
     DiagnoseData diagnoseData;
-
-    private final CamelCatalog catalog;
-
-    public DiagnoseTools() {
-        this.catalog = new DefaultCamelCatalog();
-    }
 
     /**
      * Tool to diagnose Camel errors from stack traces or error messages.
@@ -82,13 +78,19 @@ public class DiagnoseTools {
                         + "Covers the most common Camel exceptions including NoSuchEndpointException, "
                         + "ResolveEndpointFailedException, FailedToCreateRouteException, and more.")
     public String camel_error_diagnose(
-            @ToolArg(description = "The Camel stack trace or error message to diagnose") String error) {
+            @ToolArg(description = "The Camel stack trace or error message to diagnose") String error,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         if (error == null || error.isBlank()) {
             throw new ToolCallException("Error message or stack trace is required", null);
         }
 
         try {
+            CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
             JsonObject result = new JsonObject();
 
             // Identify matching exceptions
@@ -105,7 +107,7 @@ public class DiagnoseTools {
             result.put("identifiedExceptions", exceptionsJson);
 
             // Identify components from the error
-            List<String> componentNames = extractComponentNames(error);
+            List<String> componentNames = extractComponentNames(error, catalog);
             JsonArray componentsJson = new JsonArray();
             for (String comp : componentNames) {
                 ComponentModel model = catalog.componentModel(comp);
@@ -121,7 +123,7 @@ public class DiagnoseTools {
             result.put("identifiedComponents", componentsJson);
 
             // Identify EIPs from the error
-            List<String> eipNames = extractEipNames(error);
+            List<String> eipNames = extractEipNames(error, catalog);
             JsonArray eipsJson = new JsonArray();
             for (String eip : eipNames) {
                 EipModel model = catalog.eipModel(eip);
@@ -175,7 +177,7 @@ public class DiagnoseTools {
     /**
      * Extract component names from endpoint URIs and other patterns in the error text.
      */
-    private List<String> extractComponentNames(String error) {
+    private List<String> extractComponentNames(String error, CamelCatalog catalog) {
         List<String> found = new ArrayList<>();
 
         // Try endpoint URI pattern
@@ -210,7 +212,7 @@ public class DiagnoseTools {
     /**
      * Extract EIP names from the error text.
      */
-    private List<String> extractEipNames(String error) {
+    private List<String> extractEipNames(String error, CamelCatalog catalog) {
         List<String> found = new ArrayList<>();
         String lowerError = error.toLowerCase();
 

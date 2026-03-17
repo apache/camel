@@ -31,8 +31,11 @@ class CatalogToolsTest {
     private static final String BUILTIN_VERSION = new DefaultCamelCatalog().getCatalogVersion();
 
     private CatalogTools createTools(String repos) {
+        CatalogService catalogService = new CatalogService();
+        catalogService.catalogRepos = Optional.ofNullable(repos);
+
         CatalogTools tools = new CatalogTools();
-        tools.catalogRepos = Optional.ofNullable(repos);
+        tools.catalogService = catalogService;
         return tools;
     }
 

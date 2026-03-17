@@ -18,23 +18,19 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * MCP Tools for querying the Camel Catalog using Quarkus MCP Server.
@@ -42,14 +38,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class CatalogTools {
 
-    @ConfigProperty(name = "camel.catalog.repos")
-    Optional<String> catalogRepos;
-
-    private CamelCatalog catalog;
-
-    public CatalogTools() {
-        this.catalog = new DefaultCamelCatalog(true);
-    }
+    @Inject
+    CatalogService catalogService;
 
     /**
      * Tool to list available Camel components.
@@ -74,7 +64,7 @@ public class CatalogTools {
         int maxResults = limit != null ? limit : 50;
 
         try {
-            CamelCatalog cat = loadCatalog(runtime, camelVersion, platformBom);
+            CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
 
             List<ComponentInfo> components = findComponentNames(cat).stream()
                     .map(cat::componentModel)
@@ -121,7 +111,7 @@ public class CatalogTools {
         }
 
         try {
-            CamelCatalog cat = loadCatalog(runtime, camelVersion, platformBom);
+            CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
             ComponentModel model = cat.componentModel(component);
             if (model == null) {
                 // Check if it might be a data format or language instead
@@ -168,13 +158,19 @@ public class CatalogTools {
                         "(e.g., json, xml, csv, avro, protobuf).")
     public DataFormatListResult camel_catalog_dataformats(
             @ToolArg(description = "Filter by name") String filter,
-            @ToolArg(description = "Maximum results (default: 50)") Integer limit) {
+            @ToolArg(description = "Maximum results (default: 50)") Integer limit,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         int maxResults = limit != null ? limit : 50;
 
         try {
-            List<DataFormatInfo> dataFormats = catalog.findDataFormatNames().stream()
-                    .map(catalog::dataFormatModel)
+            CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
+            List<DataFormatInfo> dataFormats = cat.findDataFormatNames().stream()
+                    .map(cat::dataFormatModel)
                     .filter(m -> m != null)
                     .filter(m -> matchesFilter(m.getName(), m.getTitle(), m.getDescription(), filter))
                     .limit(maxResults)
@@ -194,11 +190,17 @@ public class CatalogTools {
     @Tool(description = "List available Camel expression languages " +
                         "(e.g., simple, jsonpath, xpath, groovy, jq).")
     public LanguageListResult camel_catalog_languages(
-            @ToolArg(description = "Filter by name") String filter) {
+            @ToolArg(description = "Filter by name") String filter,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         try {
-            List<LanguageInfo> languages = catalog.findLanguageNames().stream()
-                    .map(catalog::languageModel)
+            CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
+            List<LanguageInfo> languages = cat.findLanguageNames().stream()
+                    .map(cat::languageModel)
                     .filter(m -> m != null)
                     .filter(m -> matchesFilter(m.getName(), m.getTitle(), m.getDescription(), filter))
                     .map(this::toLanguageInfo)
@@ -217,14 +219,20 @@ public class CatalogTools {
     @Tool(description = "Get detailed documentation for a Camel data format including all options, "
                         + "Maven coordinates, and configuration parameters.")
     public DataFormatDetailResult camel_catalog_dataformat_doc(
-            @ToolArg(description = "Data format name (e.g., json-jackson, avro, csv, protobuf, jaxb)") String dataformat) {
+            @ToolArg(description = "Data format name (e.g., json-jackson, avro, csv, protobuf, jaxb)") String dataformat,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         if (dataformat == null || dataformat.isBlank()) {
             throw new ToolCallException("Data format name is required", null);
         }
 
         try {
-            DataFormatModel model = catalog.dataFormatModel(dataformat);
+            CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
+            DataFormatModel model = cat.dataFormatModel(dataformat);
             if (model == null) {
                 throw new ToolCallException("Data format not found: " + dataformat, null);
             }
@@ -245,14 +253,20 @@ public class CatalogTools {
     @Tool(description = "Get detailed documentation for a Camel expression language including all options, "
                         + "Maven coordinates, and configuration parameters.")
     public LanguageDetailResult camel_catalog_language_doc(
-            @ToolArg(description = "Language name (e.g., simple, jsonpath, xpath, jq, groovy)") String language) {
+            @ToolArg(description = "Language name (e.g., simple, jsonpath, xpath, jq, groovy)") String language,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         if (language == null || language.isBlank()) {
             throw new ToolCallException("Language name is required", null);
         }
 
         try {
-            LanguageModel model = catalog.languageModel(language);
+            CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
+            LanguageModel model = cat.languageModel(language);
             if (model == null) {
                 throw new ToolCallException("Language not found: " + language, null);
             }
@@ -273,11 +287,17 @@ public class CatalogTools {
                         "filter, choice, multicast, circuit-breaker, etc.")
     public EipListResult camel_catalog_eips(
             @ToolArg(description = "Filter by name") String filter,
-            @ToolArg(description = "Filter by category (e.g., routing, transformation, error handling)") String label) {
+            @ToolArg(description = "Filter by category (e.g., routing, transformation, error handling)") String label,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         try {
-            List<EipInfo> eips = catalog.findModelNames().stream()
-                    .map(catalog::eipModel)
+            CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
+            List<EipInfo> eips = cat.findModelNames().stream()
+                    .map(cat::eipModel)
                     .filter(m -> m != null)
                     .filter(m -> matchesFilter(m.getName(), m.getTitle(), m.getDescription(), filter))
                     .filter(m -> matchesLabel(m.getLabel(), label))
@@ -296,14 +316,20 @@ public class CatalogTools {
      */
     @Tool(description = "Get detailed documentation for a Camel EIP (Enterprise Integration Pattern).")
     public EipDetailResult camel_catalog_eip_doc(
-            @ToolArg(description = "EIP name (e.g., split, aggregate, choice, filter)") String eip) {
+            @ToolArg(description = "EIP name (e.g., split, aggregate, choice, filter)") String eip,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         if (eip == null || eip.isBlank()) {
             throw new ToolCallException("EIP name is required", null);
         }
 
         try {
-            EipModel model = catalog.eipModel(eip);
+            CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
+            EipModel model = cat.eipModel(eip);
             if (model == null) {
                 throw new ToolCallException("EIP not found: " + eip, null);
             }
@@ -314,65 +340,6 @@ public class CatalogTools {
         } catch (Throwable e) {
             throw new ToolCallException(
                     "EIP not found: " + eip + " (" + e.getClass().getName() + "): " + e.getMessage(), null);
-        }
-    }
-
-    // Catalog loading
-
-    private CamelCatalog loadCatalog(String runtime, String camelVersion, String platformBom) throws Exception {
-        String repos = catalogRepos.orElse(null);
-        RuntimeType runtimeType = resolveRuntime(runtime);
-
-        // If platformBom is provided (GAV format), parse and use it
-        if (platformBom != null && !platformBom.isBlank()) {
-            String[] parts = platformBom.split(":");
-            if (parts.length != 3) {
-                throw new ToolCallException(
-                        "platformBom must be in GAV format (groupId:artifactId:version), got: " + platformBom, null);
-            }
-            String groupId = parts[0];
-            String artifactId = parts[1];
-            String version = parts[2];
-
-            if (runtimeType == RuntimeType.quarkus) {
-                return CatalogLoader.loadQuarkusCatalog(repos, version, groupId, artifactId, true);
-            } else if (runtimeType == RuntimeType.springBoot) {
-                return CatalogLoader.loadSpringBootCatalog(repos, version, groupId, true);
-            } else {
-                return CatalogLoader.loadCatalog(repos, version, groupId, true);
-            }
-        }
-
-        // If a specific version is requested, load that version's catalog
-        if (camelVersion != null && !camelVersion.isBlank()) {
-            if (runtimeType == RuntimeType.springBoot) {
-                return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, true);
-            } else if (runtimeType == RuntimeType.quarkus) {
-                return CatalogLoader.loadQuarkusCatalog(repos, camelVersion, null, true);
-            } else {
-                return CatalogLoader.loadCatalog(repos, camelVersion, true);
-            }
-        }
-
-        // No specific version, use runtime-specific catalog or default
-        if (runtimeType == RuntimeType.springBoot) {
-            return CatalogLoader.loadSpringBootCatalog(repos, null, true);
-        } else if (runtimeType == RuntimeType.quarkus) {
-            return CatalogLoader.loadQuarkusCatalog(repos, RuntimeType.QUARKUS_VERSION, null, true);
-        }
-
-        return catalog;
-    }
-
-    private RuntimeType resolveRuntime(String runtime) {
-        if (runtime == null || runtime.isBlank() || "main".equalsIgnoreCase(runtime)) {
-            return RuntimeType.main;
-        }
-        try {
-            return RuntimeType.fromValue(runtime);
-        } catch (IllegalArgumentException e) {
-            throw new ToolCallException(
-                    "Unsupported runtime: " + runtime + ". Supported values are: main, spring-boot, quarkus", null);
         }
     }
 

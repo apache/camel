@@ -31,6 +31,9 @@ class DiagnoseToolsTest {
 
     DiagnoseToolsTest() {
         tools = new DiagnoseTools();
+        CatalogService catalogService = new CatalogService();
+        catalogService.catalogRepos = java.util.Optional.empty();
+        tools.catalogService = catalogService;
         tools.diagnoseData = new DiagnoseData();
     }
 
@@ -38,14 +41,14 @@ class DiagnoseToolsTest {
 
     @Test
     void nullErrorThrows() {
-        assertThatThrownBy(() -> tools.camel_error_diagnose(null))
+        assertThatThrownBy(() -> tools.camel_error_diagnose(null, null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("required");
     }
 
     @Test
     void blankErrorThrows() {
-        assertThatThrownBy(() -> tools.camel_error_diagnose("   "))
+        assertThatThrownBy(() -> tools.camel_error_diagnose("   ", null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("required");
     }
@@ -56,7 +59,7 @@ class DiagnoseToolsTest {
     void identifiesNoSuchEndpointException() throws Exception {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: kafak:myTopic";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 
@@ -70,7 +73,7 @@ class DiagnoseToolsTest {
                        + "Failed to resolve endpoint: kafka:myTopic?unknownOption=value due to: "
                        + "There are 1 parameters that couldn't be set on the endpoint.";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 
@@ -83,7 +86,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.FailedToCreateRouteException: "
                        + "Failed to create route route1: Route(route1)[From[direct:start] -> [To[log:out]]]";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 
@@ -97,7 +100,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.FailedToCreateRouteException: Failed to create route\n"
                        + "Caused by: org.apache.camel.ResolveEndpointFailedException: Failed to resolve endpoint";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 
@@ -110,7 +113,7 @@ class DiagnoseToolsTest {
                        + "No type converter available to convert from type: java.lang.String "
                        + "to the required type: java.io.InputStream";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 
@@ -123,7 +126,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.ExchangeTimedOutException: "
                        + "The OUT message was not received within: 30000 millis";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 
@@ -136,7 +139,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.component.direct.DirectConsumerNotAvailableException: "
                        + "No consumers available on endpoint: direct://myEndpoint";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 
@@ -149,7 +152,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.PropertyBindingException: "
                        + "Error binding property (brokerz=localhost:9092) with name: brokerz on bean";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 
@@ -162,7 +165,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.NoSuchBeanException: "
                        + "No bean could be found in the registry for: myProcessor";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 
@@ -177,7 +180,7 @@ class DiagnoseToolsTest {
         String error = "org.apache.camel.ResolveEndpointFailedException: "
                        + "Failed to resolve endpoint: kafka:myTopic?brokers=localhost:9092";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray components = result.getCollection("identifiedComponents");
 
@@ -192,7 +195,7 @@ class DiagnoseToolsTest {
     void identifiesDirectComponent() throws Exception {
         String error = "No consumers available on endpoint: direct://start";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray components = result.getCollection("identifiedComponents");
 
@@ -208,7 +211,7 @@ class DiagnoseToolsTest {
     void resultContainsCommonCauses() throws Exception {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: xyz:test";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
         JsonObject first = (JsonObject) exceptions.get(0);
@@ -221,7 +224,7 @@ class DiagnoseToolsTest {
     void resultContainsSuggestedFixes() throws Exception {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: xyz:test";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
         JsonObject first = (JsonObject) exceptions.get(0);
@@ -234,7 +237,7 @@ class DiagnoseToolsTest {
     void resultContainsDocumentationLinks() throws Exception {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: xyz:test";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
         JsonObject first = (JsonObject) exceptions.get(0);
@@ -248,7 +251,7 @@ class DiagnoseToolsTest {
     void resultContainsSummary() throws Exception {
         String error = "org.apache.camel.NoSuchEndpointException: No endpoint";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonObject summary = result.getMap("summary");
 
@@ -261,7 +264,7 @@ class DiagnoseToolsTest {
     void componentDocumentationUrlPresent() throws Exception {
         String error = "Failed to resolve endpoint: kafka:myTopic";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray components = result.getCollection("identifiedComponents");
 
@@ -277,7 +280,7 @@ class DiagnoseToolsTest {
     void unrecognizedErrorReturnsDiagnosedFalse() throws Exception {
         String error = "Some random error that is not a Camel exception";
 
-        String json = tools.camel_error_diagnose(error);
+        String json = tools.camel_error_diagnose(error, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonObject summary = result.getMap("summary");
 
@@ -301,7 +304,7 @@ class DiagnoseToolsTest {
                         \tat org.apache.camel.component.direct.DirectComponent.createEndpoint(DirectComponent.java:62)
                         """;
 
-        String json = tools.camel_error_diagnose(stackTrace);
+        String json = tools.camel_error_diagnose(stackTrace, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray exceptions = result.getCollection("identifiedExceptions");
 

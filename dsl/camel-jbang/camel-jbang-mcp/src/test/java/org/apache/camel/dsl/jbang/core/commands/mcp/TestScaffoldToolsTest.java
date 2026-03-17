@@ -33,21 +33,28 @@ class TestScaffoldToolsTest {
 
     TestScaffoldToolsTest() {
         tools = new TestScaffoldTools();
+        tools.catalogService = createCatalogService();
         tools.testInfraData = new TestInfraData();
+    }
+
+    private static CatalogService createCatalogService() {
+        CatalogService service = new CatalogService();
+        service.catalogRepos = java.util.Optional.empty();
+        return service;
     }
 
     // ---- Input validation ----
 
     @Test
     void nullRouteThrows() {
-        assertThatThrownBy(() -> tools.camel_route_test_scaffold(null, null, null))
+        assertThatThrownBy(() -> tools.camel_route_test_scaffold(null, null, null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("required");
     }
 
     @Test
     void blankRouteThrows() {
-        assertThatThrownBy(() -> tools.camel_route_test_scaffold("   ", "yaml", "main"))
+        assertThatThrownBy(() -> tools.camel_route_test_scaffold("   ", "yaml", "main", null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("required");
     }
@@ -190,7 +197,7 @@ class TestScaffoldToolsTest {
                         - to: log:done
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "main");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         assertThat(result.getString("runtime")).isEqualTo("main");
@@ -213,7 +220,7 @@ class TestScaffoldToolsTest {
                         - to: kafka:orders
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "main");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         String testCode = result.getString("testCode");
@@ -232,7 +239,7 @@ class TestScaffoldToolsTest {
                         - to: log:done
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "main");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         JsonArray mocks = result.getCollection("mockEndpoints");
@@ -250,7 +257,7 @@ class TestScaffoldToolsTest {
                         - to: seda:async
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "main");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         JsonArray mocks = result.getCollection("mockEndpoints");
@@ -269,7 +276,7 @@ class TestScaffoldToolsTest {
                         - to: kafka:orders
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "spring-boot");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "spring-boot", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         assertThat(result.getString("runtime")).isEqualTo("spring-boot");
@@ -293,7 +300,7 @@ class TestScaffoldToolsTest {
                         - to: log:done
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "main");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         JsonArray infra = result.getCollection("testInfraServices");
@@ -316,7 +323,7 @@ class TestScaffoldToolsTest {
                 </route>
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "xml", "main");
+        String json = tools.camel_route_test_scaffold(route, "xml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         JsonArray infra = result.getCollection("testInfraServices");
@@ -335,7 +342,7 @@ class TestScaffoldToolsTest {
                         - to: mongodb:myDb?collection=orders
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "main");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         JsonArray infra = result.getCollection("testInfraServices");
@@ -357,7 +364,7 @@ class TestScaffoldToolsTest {
                         - to: activemq:queue:output
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "main");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         JsonArray infra = result.getCollection("testInfraServices");
@@ -378,7 +385,7 @@ class TestScaffoldToolsTest {
                         - to: kafka:orders
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "main");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         JsonArray deps = result.getCollection("mavenDependencies");
@@ -398,7 +405,7 @@ class TestScaffoldToolsTest {
                         - to: kafka:orders
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "spring-boot");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "spring-boot", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         JsonArray deps = result.getCollection("mavenDependencies");
@@ -421,7 +428,7 @@ class TestScaffoldToolsTest {
                         - to: log:done
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "yaml", "main");
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonObject summary = result.getMap("summary");
 
@@ -444,7 +451,7 @@ class TestScaffoldToolsTest {
                         - to: log:done
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, null, null);
+        String json = tools.camel_route_test_scaffold(route, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         assertThat(result.getString("format")).isEqualTo("yaml");
@@ -463,7 +470,7 @@ class TestScaffoldToolsTest {
                 </route>
                 """;
 
-        String json = tools.camel_route_test_scaffold(route, "xml", "main");
+        String json = tools.camel_route_test_scaffold(route, "xml", "main", null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
 
         String testCode = result.getString("testCode");

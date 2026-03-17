@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
@@ -40,11 +40,8 @@ import org.apache.camel.util.json.JsonObject;
 @ApplicationScoped
 public class ExplainTools {
 
-    private final CamelCatalog catalog;
-
-    public ExplainTools() {
-        this.catalog = new DefaultCamelCatalog();
-    }
+    @Inject
+    CatalogService catalogService;
 
     /**
      * Tool to get enriched context for a Camel route.
@@ -55,13 +52,19 @@ public class ExplainTools {
                         "Use this context to understand and explain the route.")
     public String camel_route_context(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
-            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format) {
+            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         if (route == null || route.isBlank()) {
             throw new ToolCallException("Route content is required", null);
         }
 
         try {
+            CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
             String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
 
             JsonObject result = new JsonObject();
@@ -69,7 +72,7 @@ public class ExplainTools {
             result.put("route", route);
 
             // Extract and document components
-            List<String> componentNames = extractComponents(route);
+            List<String> componentNames = extractComponents(route, catalog);
             JsonArray components = new JsonArray();
             for (String comp : componentNames) {
                 ComponentModel model = catalog.componentModel(comp);
@@ -88,7 +91,7 @@ public class ExplainTools {
             result.put("components", components);
 
             // Extract and document EIPs
-            List<String> eipNames = extractEips(route);
+            List<String> eipNames = extractEips(route, catalog);
             JsonArray eips = new JsonArray();
             for (String eip : eipNames) {
                 EipModel model = catalog.eipModel(eip);
@@ -121,7 +124,7 @@ public class ExplainTools {
     /**
      * Extract component names from route content.
      */
-    private List<String> extractComponents(String route) {
+    private List<String> extractComponents(String route, CamelCatalog catalog) {
         List<String> found = new ArrayList<>();
         String lowerRoute = route.toLowerCase();
 
@@ -137,7 +140,7 @@ public class ExplainTools {
     /**
      * Extract EIP names from route content.
      */
-    private List<String> extractEips(String route) {
+    private List<String> extractEips(String route, CamelCatalog catalog) {
         List<String> found = new ArrayList<>();
         String lowerRoute = route.toLowerCase();
 

@@ -31,6 +31,9 @@ class DependencyCheckToolsTest {
 
     DependencyCheckToolsTest() {
         tools = new DependencyCheckTools();
+        CatalogService catalogService = new CatalogService();
+        catalogService.catalogRepos = java.util.Optional.empty();
+        tools.catalogService = catalogService;
         tools.dependencyData = new DependencyData();
     }
 
@@ -140,14 +143,14 @@ class DependencyCheckToolsTest {
 
     @Test
     void nullPomThrows() {
-        assertThatThrownBy(() -> tools.camel_dependency_check(null, null))
+        assertThatThrownBy(() -> tools.camel_dependency_check(null, null, null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("required");
     }
 
     @Test
     void blankPomThrows() {
-        assertThatThrownBy(() -> tools.camel_dependency_check("   ", null))
+        assertThatThrownBy(() -> tools.camel_dependency_check("   ", null, null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("required");
     }
@@ -156,7 +159,7 @@ class DependencyCheckToolsTest {
 
     @Test
     void resultContainsProjectInfo() throws Exception {
-        String json = tools.camel_dependency_check(POM_WITH_BOM, null);
+        String json = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonObject projectInfo = result.getMap("projectInfo");
 
@@ -167,7 +170,7 @@ class DependencyCheckToolsTest {
 
     @Test
     void detectsSpringBootRuntime() throws Exception {
-        String json = tools.camel_dependency_check(POM_SPRING_BOOT, null);
+        String json = tools.camel_dependency_check(POM_SPRING_BOOT, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonObject projectInfo = result.getMap("projectInfo");
 
@@ -178,7 +181,7 @@ class DependencyCheckToolsTest {
 
     @Test
     void detectsOutdatedVersion() throws Exception {
-        String json = tools.camel_dependency_check(POM_WITH_BOM, null);
+        String json = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonObject versionStatus = result.getMap("versionStatus");
 
@@ -190,7 +193,7 @@ class DependencyCheckToolsTest {
 
     @Test
     void versionStatusContainsCatalogVersion() throws Exception {
-        String json = tools.camel_dependency_check(POM_WITH_BOM, null);
+        String json = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonObject versionStatus = result.getMap("versionStatus");
 
@@ -204,7 +207,7 @@ class DependencyCheckToolsTest {
         // POM without BOM has only camel-core, route uses kafka
         String route = "from:\n  uri: kafka:myTopic\n  steps:\n    - to: log:out";
 
-        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, route);
+        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, route, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray missing = (JsonArray) result.get("missingDependencies");
 
@@ -219,7 +222,7 @@ class DependencyCheckToolsTest {
         // POM_WITH_BOM already has camel-kafka
         String route = "from:\n  uri: kafka:myTopic\n  steps:\n    - to: log:out";
 
-        String json = tools.camel_dependency_check(POM_WITH_BOM, route);
+        String json = tools.camel_dependency_check(POM_WITH_BOM, route, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray missing = (JsonArray) result.get("missingDependencies");
 
@@ -234,7 +237,7 @@ class DependencyCheckToolsTest {
     void missingDepContainsSnippet() throws Exception {
         String route = "from:\n  uri: kafka:myTopic\n  steps:\n    - to: log:out";
 
-        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, route);
+        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, route, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray missing = (JsonArray) result.get("missingDependencies");
 
@@ -253,7 +256,7 @@ class DependencyCheckToolsTest {
 
     @Test
     void noMissingDepsWithoutRoutes() throws Exception {
-        String json = tools.camel_dependency_check(POM_WITH_BOM, null);
+        String json = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray missing = (JsonArray) result.get("missingDependencies");
 
@@ -265,7 +268,7 @@ class DependencyCheckToolsTest {
         // timer, log, direct are core components - should not be reported as missing
         String route = "from:\n  uri: timer:tick\n  steps:\n    - to: log:out";
 
-        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, route);
+        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, route, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray missing = (JsonArray) result.get("missingDependencies");
 
@@ -279,7 +282,7 @@ class DependencyCheckToolsTest {
 
     @Test
     void detectsVersionConflictWithBom() throws Exception {
-        String json = tools.camel_dependency_check(POM_WITH_CONFLICT, null);
+        String json = tools.camel_dependency_check(POM_WITH_CONFLICT, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray conflicts = (JsonArray) result.get("versionConflicts");
 
@@ -293,7 +296,7 @@ class DependencyCheckToolsTest {
     @Test
     void noConflictWithPropertyPlaceholderVersion() throws Exception {
         // POM_WITH_BOM uses ${camel.version} - not a conflict
-        String json = tools.camel_dependency_check(POM_WITH_BOM, null);
+        String json = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray conflicts = (JsonArray) result.get("versionConflicts");
 
@@ -303,7 +306,7 @@ class DependencyCheckToolsTest {
     @Test
     void noConflictWithoutBom() throws Exception {
         // No BOM means explicit versions are expected
-        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, null);
+        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray conflicts = (JsonArray) result.get("versionConflicts");
 
@@ -314,7 +317,7 @@ class DependencyCheckToolsTest {
 
     @Test
     void recommendsUpgradeWhenOutdated() throws Exception {
-        String json = tools.camel_dependency_check(POM_WITH_BOM, null);
+        String json = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray recommendations = (JsonArray) result.get("recommendations");
 
@@ -326,7 +329,7 @@ class DependencyCheckToolsTest {
 
     @Test
     void recommendsBomWhenMissing() throws Exception {
-        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, null);
+        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray recommendations = (JsonArray) result.get("recommendations");
 
@@ -340,7 +343,7 @@ class DependencyCheckToolsTest {
     void recommendsMissingDeps() throws Exception {
         String route = "from:\n  uri: kafka:myTopic\n  steps:\n    - to: log:out";
 
-        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, route);
+        String json = tools.camel_dependency_check(POM_WITHOUT_BOM, route, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonArray recommendations = (JsonArray) result.get("recommendations");
 
@@ -356,7 +359,7 @@ class DependencyCheckToolsTest {
     void summaryShowsHealthyWhenNoIssues() throws Exception {
         // Use a pom with current catalog version to avoid outdated flag
         // Since we can't easily match the catalog version, we just check structure
-        String json = tools.camel_dependency_check(POM_WITH_BOM, null);
+        String json = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonObject summary = result.getMap("summary");
 
@@ -370,7 +373,7 @@ class DependencyCheckToolsTest {
     void summaryCountsAllIssues() throws Exception {
         String route = "from:\n  uri: kafka:myTopic\n  steps:\n    - to: log:out";
 
-        String json = tools.camel_dependency_check(POM_WITH_CONFLICT, route);
+        String json = tools.camel_dependency_check(POM_WITH_CONFLICT, route, null, null, null);
         JsonObject result = (JsonObject) Jsoner.deserialize(json);
         JsonObject summary = result.getMap("summary");
 

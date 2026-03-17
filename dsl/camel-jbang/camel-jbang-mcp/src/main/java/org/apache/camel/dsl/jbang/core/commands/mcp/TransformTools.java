@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import com.networknt.schema.ValidationMessage;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -50,12 +50,10 @@ import org.apache.camel.xml.in.ModelParser;
 @ApplicationScoped
 public class TransformTools {
 
-    private final CamelCatalog catalog;
-    private YamlValidator yamlValidator;
+    @Inject
+    CatalogService catalogService;
 
-    public TransformTools() {
-        this.catalog = new DefaultCamelCatalog(true);
-    }
+    private YamlValidator yamlValidator;
 
     /**
      * Tool to validate a Camel route or endpoint URI.
@@ -64,13 +62,19 @@ public class TransformTools {
                         "Checks syntax, required options, and valid parameter names.")
     public ValidationResult camel_validate_route(
             @ToolArg(description = "Camel endpoint URI to validate (e.g., 'kafka:myTopic?brokers=localhost:9092')") String uri,
-            @ToolArg(description = "YAML route definition to validate") String route) {
+            @ToolArg(description = "YAML route definition to validate") String route,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         if (uri == null && route == null) {
             throw new ToolCallException("Either 'uri' or 'route' is required", null);
         }
 
         try {
+            CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
             ValidationResult result = new ValidationResult();
 
             if (uri != null) {
@@ -120,7 +124,7 @@ public class TransformTools {
                 result.note = "Full route validation requires loading the route into a CamelContext. " +
                               "Use 'camel run --validate' for complete validation.";
 
-                List<String> uris = extractUrisFromRoute(route);
+                List<String> uris = extractUrisFromRoute(route, catalog);
                 if (!uris.isEmpty()) {
                     Map<String, Boolean> uriValidations = new HashMap<>();
                     boolean allValid = true;
@@ -301,7 +305,7 @@ public class TransformTools {
     /**
      * Extract endpoint URIs from a YAML route definition.
      */
-    private List<String> extractUrisFromRoute(String route) {
+    private List<String> extractUrisFromRoute(String route, CamelCatalog catalog) {
         List<String> uris = new ArrayList<>();
 
         String[] lines = route.split("\n");

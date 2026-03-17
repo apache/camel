@@ -26,7 +26,6 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -41,13 +40,10 @@ import org.apache.camel.util.json.JsonObject;
 public class HardenTools {
 
     @Inject
+    CatalogService catalogService;
+
+    @Inject
     SecurityData securityData;
-
-    private final CamelCatalog catalog;
-
-    public HardenTools() {
-        this.catalog = new DefaultCamelCatalog();
-    }
 
     /**
      * Tool to get security hardening context for a Camel route.
@@ -58,13 +54,19 @@ public class HardenTools {
                         "hardening recommendations for the route.")
     public String camel_route_harden_context(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
-            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format) {
+            @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         if (route == null || route.isBlank()) {
             throw new ToolCallException("Route content is required", null);
         }
 
         try {
+            CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
             String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
 
             JsonObject result = new JsonObject();

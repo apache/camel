@@ -30,7 +30,6 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -65,13 +64,10 @@ public class TestScaffoldTools {
     private static final Pattern XML_TOD = Pattern.compile("<toD\\s+uri=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE);
 
     @Inject
+    CatalogService catalogService;
+
+    @Inject
     TestInfraData testInfraData;
-
-    private final CamelCatalog catalog;
-
-    public TestScaffoldTools() {
-        this.catalog = new DefaultCamelCatalog();
-    }
 
     /**
      * Tool to generate a JUnit 5 test skeleton for a Camel route.
@@ -84,13 +80,26 @@ public class TestScaffoldTools {
     public String camel_route_test_scaffold(
             @ToolArg(description = "The Camel route definition (YAML or XML)") String route,
             @ToolArg(description = "Route format: yaml or xml (default: yaml)") String format,
-            @ToolArg(description = "Target runtime: main or spring-boot (default: main)") String runtime) {
+            @ToolArg(description = "Target runtime: main or spring-boot (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use for catalog lookups (e.g., 4.17.0). "
+                                   + "If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion for catalog lookups.") String platformBom) {
 
         if (route == null || route.isBlank()) {
             throw new ToolCallException("Route content is required", null);
         }
 
         try {
+            boolean hasVersion = camelVersion != null && !camelVersion.isBlank();
+            boolean hasBom = platformBom != null && !platformBom.isBlank();
+            CamelCatalog catalog;
+            if (hasVersion || hasBom) {
+                catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+            } else {
+                catalog = catalogService.getDefaultCatalog();
+            }
+
             String resolvedFormat = resolveFormat(format);
             String resolvedRuntime = resolveRuntime(runtime);
 
@@ -118,7 +127,7 @@ public class TestScaffoldTools {
                     : generateMainTest(fromEndpoints, mockEndpoints, infraServices);
 
             // Build JSON result
-            return buildResult(testCode, resolvedFormat, resolvedRuntime,
+            return buildResult(catalog, testCode, resolvedFormat, resolvedRuntime,
                     allSchemes, fromEndpoints, toEndpoints, mockEndpoints, infraServices);
 
         } catch (ToolCallException e) {
@@ -509,7 +518,7 @@ public class TestScaffoldTools {
     // ---- JSON result builder ----
 
     private String buildResult(
-            String testCode, String format, String runtime,
+            CamelCatalog catalog, String testCode, String format, String runtime,
             List<String> allSchemes, List<String> fromEndpoints, List<String> toEndpoints,
             List<String> mockEndpoints, List<TestInfraData.TestInfraInfo> infraServices) {
 

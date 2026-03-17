@@ -25,7 +25,6 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -40,13 +39,10 @@ import org.apache.camel.util.json.JsonObject;
 public class DependencyCheckTools {
 
     @Inject
+    CatalogService catalogService;
+
+    @Inject
     DependencyData dependencyData;
-
-    private final CamelCatalog catalog;
-
-    public DependencyCheckTools() {
-        this.catalog = new DefaultCamelCatalog();
-    }
 
     /**
      * Tool to check Camel dependency hygiene for a project.
@@ -59,13 +55,19 @@ public class DependencyCheckTools {
     public String camel_dependency_check(
             @ToolArg(description = "The pom.xml file content") String pomContent,
             @ToolArg(description = "Route definitions (YAML, XML, or Java DSL) to check for missing component dependencies. "
-                                   + "Multiple routes can be provided concatenated.") String routes) {
+                                   + "Multiple routes can be provided concatenated.") String routes,
+            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
+            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
+                                   + "When provided, overrides camelVersion.") String platformBom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);
         }
 
         try {
+            CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
+
             MigrationData.PomAnalysis pom = MigrationData.parsePomContent(pomContent);
 
             JsonObject result = new JsonObject();
@@ -79,13 +81,13 @@ public class DependencyCheckTools {
             result.put("projectInfo", projectInfo);
 
             // 1. Check for outdated Camel version
-            JsonObject versionCheck = checkVersionStatus(pom);
+            JsonObject versionCheck = checkVersionStatus(pom, catalog);
             result.put("versionStatus", versionCheck);
 
             // 2. Check for missing dependencies from routes
             JsonArray missingDeps = new JsonArray();
             if (routes != null && !routes.isBlank()) {
-                missingDeps = checkMissingDependencies(routes, pom.dependencies());
+                missingDeps = checkMissingDependencies(routes, pom.dependencies(), catalog);
             }
             result.put("missingDependencies", missingDeps);
 
@@ -120,7 +122,7 @@ public class DependencyCheckTools {
     /**
      * Check if the project's Camel version is outdated compared to the catalog version.
      */
-    private JsonObject checkVersionStatus(MigrationData.PomAnalysis pom) {
+    private JsonObject checkVersionStatus(MigrationData.PomAnalysis pom, CamelCatalog catalog) {
         JsonObject check = new JsonObject();
         String catalogVersion = catalog.getCatalogVersion();
         check.put("catalogVersion", catalogVersion);
@@ -158,7 +160,7 @@ public class DependencyCheckTools {
     /**
      * Check for components used in routes that are missing from the project's dependencies.
      */
-    private JsonArray checkMissingDependencies(String routes, List<String> existingDeps) {
+    private JsonArray checkMissingDependencies(String routes, List<String> existingDeps, CamelCatalog catalog) {
         JsonArray missing = new JsonArray();
         String lowerRoutes = routes.toLowerCase();
 
