@@ -62,4 +62,10 @@ public interface EventbridgeConstants {
     @Metadata(label = "putEvent putTargets removeTargets",
               description = "The number of failed entries in the response.", javaType = "Integer")
     String FAILED_ENTRY_COUNT = "CamelAwsEventbridgeFailedEntryCount";
+
+    // Consumer constants
+    @Metadata(label = "consumer", description = "The SQS message ID.", javaType = "String")
+    String MESSAGE_ID = "CamelAwsEventbridgeMessageId";
+    @Metadata(label = "consumer", description = "The SQS receipt handle for message deletion.", javaType = "String")
+    String RECEIPT_HANDLE = "CamelAwsEventbridgeReceiptHandle";
 }

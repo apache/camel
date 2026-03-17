@@ -32,9 +32,15 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "autocreatequeue":
+        case "autoCreateQueue": getOrCreateConfiguration(target).setAutoCreateQueue(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration.class, value)); return true;
+        case "deletequeueonshutdown":
+        case "deleteQueueOnShutdown": getOrCreateConfiguration(target).setDeleteQueueOnShutdown(property(camelContext, boolean.class, value)); return true;
         case "eventpatternfile":
         case "eventPatternFile": getOrCreateConfiguration(target).setEventPatternFile(property(camelContext, java.lang.String.class, value)); return true;
         case "eventbridgeclient":
@@ -45,6 +51,8 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": getOrCreateConfiguration(target).setMaxMessagesPerPoll(property(camelContext, int.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
@@ -58,7 +66,11 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "proxyPort": getOrCreateConfiguration(target).setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
+        case "queueurl":
+        case "queueUrl": getOrCreateConfiguration(target).setQueueUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "rulename":
+        case "ruleName": getOrCreateConfiguration(target).setRuleName(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontoken":
@@ -73,6 +85,10 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "useProfileCredentialsProvider": getOrCreateConfiguration(target).setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usesessioncredentials":
         case "useSessionCredentials": getOrCreateConfiguration(target).setUseSessionCredentials(property(camelContext, boolean.class, value)); return true;
+        case "visibilitytimeout":
+        case "visibilityTimeout": getOrCreateConfiguration(target).setVisibilityTimeout(property(camelContext, int.class, value)); return true;
+        case "waittimeseconds":
+        case "waitTimeSeconds": getOrCreateConfiguration(target).setWaitTimeSeconds(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -87,9 +103,15 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
+        case "autocreatequeue":
+        case "autoCreateQueue": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration.class;
+        case "deletequeueonshutdown":
+        case "deleteQueueOnShutdown": return boolean.class;
         case "eventpatternfile":
         case "eventPatternFile": return java.lang.String.class;
         case "eventbridgeclient":
@@ -100,6 +122,8 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
         case "operation": return org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
@@ -113,7 +137,11 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "proxyPort": return java.lang.Integer.class;
         case "proxyprotocol":
         case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "queueurl":
+        case "queueUrl": return java.lang.String.class;
         case "region": return java.lang.String.class;
+        case "rulename":
+        case "ruleName": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "sessiontoken":
@@ -128,6 +156,10 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "useProfileCredentialsProvider": return boolean.class;
         case "usesessioncredentials":
         case "useSessionCredentials": return boolean.class;
+        case "visibilitytimeout":
+        case "visibilityTimeout": return int.class;
+        case "waittimeseconds":
+        case "waitTimeSeconds": return int.class;
         default: return null;
         }
     }
@@ -138,9 +170,15 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
+        case "autocreatequeue":
+        case "autoCreateQueue": return getOrCreateConfiguration(target).isAutoCreateQueue();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
+        case "deletequeueonshutdown":
+        case "deleteQueueOnShutdown": return getOrCreateConfiguration(target).isDeleteQueueOnShutdown();
         case "eventpatternfile":
         case "eventPatternFile": return getOrCreateConfiguration(target).getEventPatternFile();
         case "eventbridgeclient":
@@ -151,6 +189,8 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return getOrCreateConfiguration(target).getMaxMessagesPerPoll();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "overrideendpoint":
         case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
@@ -164,7 +204,11 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "proxyPort": return getOrCreateConfiguration(target).getProxyPort();
         case "proxyprotocol":
         case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
+        case "queueurl":
+        case "queueUrl": return getOrCreateConfiguration(target).getQueueUrl();
         case "region": return getOrCreateConfiguration(target).getRegion();
+        case "rulename":
+        case "ruleName": return getOrCreateConfiguration(target).getRuleName();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "sessiontoken":
@@ -179,6 +223,10 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "useProfileCredentialsProvider": return getOrCreateConfiguration(target).isUseProfileCredentialsProvider();
         case "usesessioncredentials":
         case "useSessionCredentials": return getOrCreateConfiguration(target).isUseSessionCredentials();
+        case "visibilitytimeout":
+        case "visibilityTimeout": return getOrCreateConfiguration(target).getVisibilityTimeout();
+        case "waittimeseconds":
+        case "waitTimeSeconds": return getOrCreateConfiguration(target).getWaitTimeSeconds();
         default: return null;
         }
     }

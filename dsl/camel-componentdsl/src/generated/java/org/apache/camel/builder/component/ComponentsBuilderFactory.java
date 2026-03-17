@@ -363,7 +363,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * AWS Eventbridge (camel-aws2-eventbridge)
-     * Send events to AWS Eventbridge cluster instances.
+     * Manage AWS EventBridge cluster instances and consume events via
+     * SQS-backed polling.
      * 
      * Category: cloud,management
      * Since: 3.6

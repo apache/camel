@@ -2,11 +2,11 @@
 :doctitle: AWS Eventbridge
 :shortname: aws2-eventbridge
 :artifactid: camel-aws2-eventbridge
-:description: Send events to AWS Eventbridge cluster instances.
+:description: Manage AWS EventBridge cluster instances and consume events via SQS-backed polling.
 :since: 3.6
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Only producer is supported
+:component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: AWS
 :camel-spring-boot-name: aws2-eventbridge
@@ -285,6 +285,114 @@ this operation will return a list of entries with related ID sent to servicebus.
 
 To update a rule, you'll need to perform the putRule operation again.
 There is no explicit update rule operation in the Java SDK.
+
+== Consuming Events from EventBridge
+
+Since Camel 4.19, the component supports consuming events from EventBridge rules using an SQS-backed polling pattern.
+
+AWS EventBridge is an event router, not a message queue — it does not provide a pull-based API.
+The consumer works by wiring an SQS queue as a target of the specified EventBridge rule and then polling that queue for events.
+This is the standard AWS pattern for programmatically consuming EventBridge events.
+
+=== How It Works
+
+1. On startup the consumer creates an SQS queue (unless you provide one via `queueUrl`).
+2. It sets an SQS queue policy that allows EventBridge to send messages.
+3. It adds the queue as a target of the EventBridge rule specified by `ruleName`.
+4. It polls the SQS queue on schedule, delivering each event into the Camel route.
+5. Successfully processed messages are deleted from the queue; failed messages remain for retry.
+6. On shutdown the target is removed and the auto-created queue is deleted (configurable).
+
+=== Consumer Configuration Options
+
+[width="100%",cols="2,1,1,4",options="header"]
+|===
+|Option |Default |Type |Description
+
+|`ruleName`
+|
+|String
+|**Required.** The EventBridge rule name to consume events from.
+
+|`queueUrl`
+|
+|String
+|URL of an existing SQS queue to use. If omitted, a queue is auto-created.
+
+|`autoCreateQueue`
+|`true`
+|boolean
+|Whether to auto-create an SQS queue and wire it as the rule target.
+
+|`deleteQueueOnShutdown`
+|`true`
+|boolean
+|Whether to delete the auto-created queue and remove the EventBridge target on shutdown.
+
+|`maxMessagesPerPoll`
+|`10`
+|int
+|Maximum number of SQS messages to receive per poll cycle.
+
+|`waitTimeSeconds`
+|`20`
+|int
+|SQS long-polling wait time in seconds.
+
+|`visibilityTimeout`
+|`30`
+|int
+|Seconds that received messages are hidden from subsequent polls.
+|===
+
+Standard `ScheduledPollConsumer` options (`delay`, `initialDelay`, `greedy`, etc.) are also available.
+
+=== Consumer Example — Auto-Created Queue
+
+[source,java]
+--------------------------------------------------------------------------------
+from("aws2-eventbridge://default?ruleName=my-rule&delay=5000")
+    .log("Received EventBridge event: ${body}")
+    .to("direct:process");
+--------------------------------------------------------------------------------
+
+The consumer auto-creates an SQS queue, wires it to the `my-rule` EventBridge rule, and polls every 5 seconds.
+
+=== Consumer Example — User-Provided Queue
+
+[source,java]
+--------------------------------------------------------------------------------
+from("aws2-eventbridge://default?ruleName=my-rule"
+     + "&autoCreateQueue=false"
+     + "&queueUrl=https://sqs.us-east-1.amazonaws.com/123456789012/my-queue")
+    .log("Received: ${body}")
+    .to("direct:process");
+--------------------------------------------------------------------------------
+
+Use this when you manage the SQS queue and its policy yourself.
+
+=== Consumer Example — Combined Producer and Consumer
+
+[source,java]
+--------------------------------------------------------------------------------
+// First create the rule
+from("direct:setup")
+    .to("aws2-eventbridge://default?operation=putRule"
+        + "&eventPatternFile=file:eventpattern.json");
+
+// Consume events matching the rule
+from("aws2-eventbridge://default?ruleName=my-rule&delay=2000")
+    .log("Event: ${body}")
+    .to("mock:events");
+--------------------------------------------------------------------------------
+
+=== IAM Permissions
+
+The consumer's IAM principal needs the following permissions:
+
+- `events:PutTargets` and `events:RemoveTargets` on the EventBridge rule
+- `sqs:CreateQueue`, `sqs:DeleteQueue`, `sqs:SetQueueAttributes`, `sqs:GetQueueAttributes` (if auto-creating)
+- `sqs:ReceiveMessage`, `sqs:DeleteMessage` on the SQS queue
 
 == Dependencies
 

@@ -23,23 +23,26 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.eventbridge.client.EventbridgeClientFactory;
 import org.apache.camel.spi.*;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
 /**
- * Send events to AWS Eventbridge cluster instances.
+ * Manage AWS EventBridge cluster instances and consume events via SQS-backed polling.
  */
 @UriEndpoint(firstVersion = "3.6.0", scheme = "aws2-eventbridge", title = "AWS Eventbridge",
-             syntax = "aws2-eventbridge://eventbusNameOrArn", producerOnly = true, category = {
+             syntax = "aws2-eventbridge://eventbusNameOrArn", category = {
                      Category.CLOUD,
                      Category.MANAGEMENT },
              headersClass = EventbridgeConstants.class)
-public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+public class EventbridgeEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private EventBridgeClient eventbridgeClient;
+    private SqsClient sqsClient;
 
     @UriPath(description = "Event bus name or ARN")
     @Metadata(required = true)
@@ -59,7 +62,12 @@ public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServ
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
+        if (ObjectHelper.isEmpty(configuration.getRuleName())) {
+            throw new IllegalArgumentException("ruleName is required for EventBridge consumer");
+        }
+        EventbridgeConsumer consumer = new EventbridgeConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
@@ -83,6 +91,10 @@ public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServ
                 eventbridgeClient.close();
             }
         }
+        if (sqsClient != null) {
+            sqsClient.close();
+            sqsClient = null;
+        }
         super.doStop();
     }
 
@@ -92,6 +104,17 @@ public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServ
 
     public EventBridgeClient getEventbridgeClient() {
         return eventbridgeClient;
+    }
+
+    /**
+     * Returns the SQS client used by the consumer, creating one if necessary. Uses the same credentials and region as
+     * the EventBridge client.
+     */
+    public synchronized SqsClient getSqsClient() {
+        if (sqsClient == null) {
+            sqsClient = AwsClientBuilderUtil.buildClient(configuration, SqsClient::builder);
+        }
+        return sqsClient;
     }
 
     @Override

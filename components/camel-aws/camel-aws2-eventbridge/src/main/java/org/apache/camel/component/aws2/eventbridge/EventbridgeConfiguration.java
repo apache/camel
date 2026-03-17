@@ -67,6 +67,28 @@ public class EventbridgeConfiguration implements Cloneable, AwsCommonConfigurati
     private boolean useSessionCredentials;
     @UriParam(label = "security")
     private String profileCredentialsName;
+    @UriParam(label = "consumer",
+              description = "The EventBridge rule name to consume events from. Required for consumer.")
+    private String ruleName;
+    @UriParam(label = "consumer",
+              description = "The URL of an existing SQS queue to use as EventBridge target. "
+                            + "If not specified, a queue is auto-created when autoCreateQueue is true.")
+    private String queueUrl;
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether to auto-create an SQS queue and wire it as an EventBridge rule target.")
+    private boolean autoCreateQueue = true;
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Whether to delete the auto-created SQS queue and remove the EventBridge target on shutdown.")
+    private boolean deleteQueueOnShutdown = true;
+    @UriParam(label = "consumer", defaultValue = "10",
+              description = "The maximum number of messages to receive per poll from SQS.")
+    private int maxMessagesPerPoll = 10;
+    @UriParam(label = "consumer", defaultValue = "20",
+              description = "The duration (in seconds) for which the SQS receive call waits for messages (long polling).")
+    private int waitTimeSeconds = 20;
+    @UriParam(label = "consumer", defaultValue = "30",
+              description = "The duration (in seconds) that received SQS messages are hidden from subsequent receive requests.")
+    private int visibilityTimeout = 30;
 
     public EventBridgeClient getEventbridgeClient() {
         return eventbridgeClient;
@@ -281,6 +303,84 @@ public class EventbridgeConfiguration implements Cloneable, AwsCommonConfigurati
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
     }
+
+    public String getRuleName() {
+        return ruleName;
+    }
+
+    /**
+     * The EventBridge rule name to consume events from
+     */
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
+    }
+
+    public String getQueueUrl() {
+        return queueUrl;
+    }
+
+    /**
+     * The URL of an existing SQS queue to use as EventBridge target
+     */
+    public void setQueueUrl(String queueUrl) {
+        this.queueUrl = queueUrl;
+    }
+
+    public boolean isAutoCreateQueue() {
+        return autoCreateQueue;
+    }
+
+    /**
+     * Whether to auto-create an SQS queue and wire it as an EventBridge rule target
+     */
+    public void setAutoCreateQueue(boolean autoCreateQueue) {
+        this.autoCreateQueue = autoCreateQueue;
+    }
+
+    public boolean isDeleteQueueOnShutdown() {
+        return deleteQueueOnShutdown;
+    }
+
+    /**
+     * Whether to delete the auto-created SQS queue and remove the EventBridge target on shutdown
+     */
+    public void setDeleteQueueOnShutdown(boolean deleteQueueOnShutdown) {
+        this.deleteQueueOnShutdown = deleteQueueOnShutdown;
+    }
+
+    public int getMaxMessagesPerPoll() {
+        return maxMessagesPerPoll;
+    }
+
+    /**
+     * The maximum number of messages to receive per poll from SQS
+     */
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public int getWaitTimeSeconds() {
+        return waitTimeSeconds;
+    }
+
+    /**
+     * The duration (in seconds) for which the SQS receive call waits for messages (long polling)
+     */
+    public void setWaitTimeSeconds(int waitTimeSeconds) {
+        this.waitTimeSeconds = waitTimeSeconds;
+    }
+
+    public int getVisibilityTimeout() {
+        return visibilityTimeout;
+    }
+
+    /**
+     * The duration (in seconds) that received SQS messages are hidden from subsequent receive requests
+     */
+    public void setVisibilityTimeout(int visibilityTimeout) {
+        this.visibilityTimeout = visibilityTimeout;
+    }
+
     // *************************************************
     //
     // *************************************************
