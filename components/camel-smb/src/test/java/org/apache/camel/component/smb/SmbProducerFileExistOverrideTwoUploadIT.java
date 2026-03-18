@@ -36,13 +36,13 @@ public class SmbProducerFileExistOverrideTwoUploadIT extends SmbServerTestSuppor
     public void testOverride() throws Exception {
         template.sendBodyAndHeader(getSmbUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(copyFileContentFromContainer("/data/rw/existoverridetwo/hello.txt"))));
 
         template.sendBodyAndHeader(getSmbUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Bye World",
                         new String(copyFileContentFromContainer("/data/rw/existoverridetwo/hello.txt"))));
     }

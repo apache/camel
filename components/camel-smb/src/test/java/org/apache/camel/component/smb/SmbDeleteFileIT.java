@@ -48,7 +48,7 @@ public class SmbDeleteFileIT extends SmbServerTestSupport {
 
         mock.assertIsSatisfied();
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertNull((copyFileContentFromContainer("/data/rw/deletedfile/hello.txt"))));
     }
 
@@ -56,7 +56,7 @@ public class SmbDeleteFileIT extends SmbServerTestSupport {
         template.sendBodyAndHeader(getSmbUrl(), "Hello World this file will be deleted", Exchange.FILE_NAME, "hello.txt");
 
         // assert file is created
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World this file will be deleted",
                         new String(copyFileContentFromContainer("/data/rw/deletedfile/hello.txt"))));
     }

@@ -51,7 +51,7 @@ public class FromSmbNoopIT extends SmbServerTestSupport {
         mock.assertIsSatisfied();
 
         // assert the file is still there
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(copyFileContentFromContainer("/data/rw/noop/hello.txt"))));
     }

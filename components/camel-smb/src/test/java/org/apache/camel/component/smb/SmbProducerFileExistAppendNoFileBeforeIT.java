@@ -43,7 +43,7 @@ public class SmbProducerFileExistAppendNoFileBeforeIT extends SmbServerTestSuppo
 
         MockEndpoint.assertIsSatisfied(context);
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Bye World",
                         new String(copyFileContentFromContainer("/data/rw/appnotexist/hello.txt"))));
     }

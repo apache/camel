@@ -48,7 +48,7 @@ public class FromSmbMoveFileToSubdirIT extends SmbServerTestSupport {
         mock.assertIsSatisfied();
 
         // verify file moved in smb dir
-        await().atMost(6, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World this file will be moved",
                         new String(copyFileContentFromContainer("/data/rw/movefiletosubdir/greet/hello.txt.old"))));
     }

@@ -39,7 +39,11 @@ public abstract class SmbServerTestSupport extends CamelTestSupport {
     public static SmbService service = SmbServiceFactory.createSingletonService();
 
     public byte[] copyFileContentFromContainer(String fileName) {
-        return service.copyFileFromContainer(fileName, IOUtils::toByteArray);
+        byte[] bytes = service.copyFileFromContainer(fileName, IOUtils::toByteArray);
+        if (bytes == null) {
+            throw new AssertionError("File not found in container: " + fileName);
+        }
+        return bytes;
     }
 
     public void sendFile(String url, Object body, String fileName) {

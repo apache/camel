@@ -126,15 +126,15 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
                         .toF("smb:%s/%s?username=%s&password=%s", service.address(), service.shareName(),
                                 service.userName(), service.password());
 
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_override.doc", service.address(),
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_override.doc&initialDelay=3000", service.address(),
                         service.shareName(),
                         service.userName(), service.password())
                         .to("mock:received_override");
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_ignore.doc", service.address(),
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_ignore.doc&initialDelay=3000", service.address(),
                         service.shareName(),
                         service.userName(), service.password())
                         .to("mock:received_ignore");
-                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_send.doc", service.address(),
+                fromF("smb:%s/%s?username=%s&password=%s&searchPattern=*_send.doc&initialDelay=3000", service.address(),
                         service.shareName(),
                         service.userName(), service.password())
                         .to("mock:received_send");

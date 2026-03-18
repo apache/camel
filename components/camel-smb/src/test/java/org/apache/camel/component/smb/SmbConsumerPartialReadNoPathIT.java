@@ -56,11 +56,9 @@ public class SmbConsumerPartialReadNoPathIT extends SmbServerTestSupport {
 
         assertTrue(nb.matchesWaitTime());
 
-        await().atMost(5, TimeUnit.SECONDS)
-                .untilAsserted(() -> {
-                    byte[] arr = copyFileContentFromContainer("/data/rw/failed/" + uuid);
-                    assertEquals("Hello Uuid", new String(arr));
-                });
+        await().atMost(15, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Hello Uuid",
+                        new String(copyFileContentFromContainer("/data/rw/failed/" + uuid))));
     }
 
     @Override

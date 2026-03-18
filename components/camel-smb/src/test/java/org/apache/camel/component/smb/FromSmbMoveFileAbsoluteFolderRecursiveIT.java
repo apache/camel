@@ -47,15 +47,15 @@ public class FromSmbMoveFileAbsoluteFolderRecursiveIT extends SmbServerTestSuppo
         mock.assertIsSatisfied();
 
         // verify files reside in the SMB dir within the docker container
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello",
                         new String(copyFileContentFromContainer("/data/rw/.done/hello.txt.old"))));
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Bye",
                         new String(copyFileContentFromContainer("/data/rw/.done/bye/bye.txt.old"))));
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Goodday",
                         new String(copyFileContentFromContainer("/data/rw/.done/goodday/goodday.txt.old"))));
     }

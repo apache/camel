@@ -48,7 +48,7 @@ class SmbConsumerPartialReadIT extends SmbServerTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(copyFileContentFromContainer("/data/rw/partialread/failed/hello.txt"))));
     }

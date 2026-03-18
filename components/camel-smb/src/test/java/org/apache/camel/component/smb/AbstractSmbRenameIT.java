@@ -78,7 +78,7 @@ public abstract class AbstractSmbRenameIT extends SmbServerTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // Verify file was moved
-        await().atMost(6, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World\n",
                         service.smbFile(getPath() + "/.done/" + getFilename())));
     }

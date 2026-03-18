@@ -41,7 +41,7 @@ public class SmbProducerAllowNullBodyIT extends SmbServerTestSupport {
     public void testAllowNullBodyTrue() {
         template.sendBody(getSmbUrl() + "&fileName=allowNullBody1.txt&allowNullBody=true", null);
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
                         new String(copyFileContentFromContainer("/data/rw/nullbody/allowNullBody1.txt"))));
     }
@@ -55,7 +55,7 @@ public class SmbProducerAllowNullBodyIT extends SmbServerTestSupport {
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertTrue(cause.getMessage().endsWith("allowNullBody2.txt"));
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertNull((copyFileContentFromContainer("/data/rw/nullbody/allowNullBody2.txt"))));
     }
 

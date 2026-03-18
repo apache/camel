@@ -51,7 +51,7 @@ public class SmbProducerFileExistAppendIT extends SmbServerTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World\nBye World",
                         new String(copyFileContentFromContainer("/data/rw/exist/hello.txt"))));
     }

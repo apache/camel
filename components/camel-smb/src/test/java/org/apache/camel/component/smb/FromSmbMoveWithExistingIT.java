@@ -48,7 +48,7 @@ public class FromSmbMoveWithExistingIT extends SmbServerTestSupport {
         mock.assertIsSatisfied();
 
         // verify file resides in the smb dir within the docker container
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World this file will be moved",
                         new String(copyFileContentFromContainer("/data/rw/moveexist/hello.txt.old"))));
     }

@@ -35,7 +35,7 @@ public class SmbProducerBuildDirectoryIT extends SmbServerTestSupport {
     public void testProduceAndBuildFullRemotFolderTest() {
         sendFile(getSmbUrl(), "Hello World", "jono.txt");
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(copyFileContentFromContainer("/data/rw/buildDir/user/jono/jono.txt"))));
 

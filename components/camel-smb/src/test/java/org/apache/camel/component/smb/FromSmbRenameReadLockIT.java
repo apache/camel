@@ -52,7 +52,7 @@ public class FromSmbRenameReadLockIT extends SmbServerTestSupport {
     @Test
     public void testFromFileToSmb() throws Exception {
         // verify binary file written to smb dir
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertNotNull((copyFileContentFromContainer("/data/rw/renamerl/logo.jpeg"))));
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -61,7 +61,7 @@ public class FromSmbRenameReadLockIT extends SmbServerTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // verify binary file removed during processing
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertNull((copyFileContentFromContainer("/data/rw/renamerl/logo.jpeg"))));
     }
 

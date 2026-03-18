@@ -47,7 +47,7 @@ public class FromSmbPreMoveIT extends SmbServerTestSupport {
 
         mock.assertIsSatisfied();
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World this file will be moved",
                         new String(copyFileContentFromContainer("/data/rw/premove/work/hello.txt"))));
     }

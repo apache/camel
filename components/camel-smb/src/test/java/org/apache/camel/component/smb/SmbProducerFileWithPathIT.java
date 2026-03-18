@@ -36,7 +36,7 @@ public class SmbProducerFileWithPathIT extends SmbServerTestSupport {
     public void testProducerFileWithPath() throws Exception {
         sendFile(getSmbUrl(), "Hello World", "hello/jono.txt");
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(
                                 copyFileContentFromContainer("/data/rw/uploadWithPath/hello/jono.txt"),

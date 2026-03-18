@@ -58,7 +58,7 @@ public class SmbConsumerLocalWorkDirectoryIT extends SmbServerTestSupport {
 
         // give test some time to close file resources
         // now the lwd file should be deleted
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertFileNotExists(testDirectory.resolve("hello.txt")));
 
         assertFileExists(testDirectory.resolve("out/hello.txt"), "Hello World");

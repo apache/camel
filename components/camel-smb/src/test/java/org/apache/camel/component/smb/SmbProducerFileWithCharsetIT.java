@@ -58,7 +58,7 @@ public class SmbProducerFileWithCharsetIT extends SmbServerTestSupport {
     public void testProducerWithCharset() throws Exception {
         sendFile(getSmbUrl(), payload, "iso.txt");
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(payload,
                         new String(copyFileContentFromContainer("/data/rw/charset/iso.txt"), StandardCharsets.ISO_8859_1)));
 

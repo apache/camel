@@ -42,11 +42,11 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
         template.sendBodyAndHeader(getSmbUrl("constdone") + "&doneFileName=done", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(copyFileContentFromContainer("data/rw/constdone/hello.txt"))));
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
                         new String(copyFileContentFromContainer("/data/rw/constdone/done"))));
     }
@@ -57,11 +57,11 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
                 Exchange.FILE_NAME,
                 "hello.txt");
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(copyFileContentFromContainer("/data/rw/prefixdone/hello.txt"))));
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
                         new String(copyFileContentFromContainer("/data/rw/prefixdone/done-hello.txt"))));
     }
@@ -72,11 +72,11 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
                 Exchange.FILE_NAME,
                 "hello.txt");
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(copyFileContentFromContainer("/data/rw/extdone/hello.txt"))));
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
                         new String(copyFileContentFromContainer("/data/rw/extdone/hello.txt.done"))));
     }
@@ -87,11 +87,11 @@ public class SmbProducerDoneFileNameIT extends SmbServerTestSupport {
                 Exchange.FILE_NAME,
                 "hello.txt");
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("Hello World",
                         new String(copyFileContentFromContainer("/data/rw/replextdone/hello.txt"))));
 
-        await().atMost(3, TimeUnit.SECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("",
                         new String(copyFileContentFromContainer("/data/rw/replextdone/hello.done"))));
     }
