@@ -30,6 +30,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
@@ -78,6 +79,56 @@ import org.slf4j.LoggerFactory;
 public class DoclingProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoclingProducer.class);
+
+    /**
+     * Recognized docling CLI flags. Only these flags are permitted in custom arguments (allowlist approach). Flags
+     * managed by the producer ({@code --output}, {@code -o}) are excluded and checked separately.
+     */
+    private static final Set<String> ALLOWED_DOCLING_FLAGS = Set.of(
+            // Input/output format
+            "--from", "--to",
+            // Pipeline
+            "--pipeline", "--vlm-model", "--asr-model",
+            // OCR
+            "--ocr", "--no-ocr", "--force-ocr", "--no-force-ocr",
+            "--ocr-engine", "--ocr-lang", "--psm",
+            // Tables
+            "--tables", "--no-tables", "--table-mode",
+            // PDF
+            "--pdf-backend", "--pdf-password",
+            // Enrichment
+            "--enrich-code", "--no-enrich-code",
+            "--enrich-formula", "--no-enrich-formula",
+            "--enrich-picture-classes", "--no-enrich-picture-classes",
+            "--enrich-picture-description", "--no-enrich-picture-description",
+            "--enrich-chart-extraction", "--no-enrich-chart-extraction",
+            // Output formatting
+            "--image-export-mode",
+            "--show-layout", "--no-show-layout",
+            // Advanced
+            "--headers", "--artifacts-path",
+            "--enable-remote-services", "--no-enable-remote-services",
+            "--allow-external-plugins", "--no-allow-external-plugins",
+            "--show-external-plugins", "--no-show-external-plugins",
+            "--document-timeout", "--device", "--num-threads", "--page-batch-size",
+            // Debug
+            "--verbose",
+            "--debug-visualize-cells", "--no-debug-visualize-cells",
+            "--debug-visualize-ocr", "--no-debug-visualize-ocr",
+            "--debug-visualize-layout", "--no-debug-visualize-layout",
+            "--debug-visualize-tables", "--no-debug-visualize-tables",
+            // Performance / error handling
+            "--abort-on-error", "--no-abort-on-error",
+            "--profiling", "--no-profiling",
+            "--save-profiling", "--no-save-profiling",
+            // Info
+            "--version", "--help", "--logo");
+
+    /**
+     * Flags managed by the producer that must not be overridden through custom arguments. The output directory is
+     * controlled by the producer via endpoint configuration or the {@link DoclingHeaders#OUTPUT_FILE_PATH} header.
+     */
+    private static final Set<String> PRODUCER_MANAGED_FLAGS = Set.of("--output", "-o");
 
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
@@ -1685,14 +1736,10 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     /**
-     * Validates custom CLI arguments to ensure they do not conflict with producer-managed options such as the output
-     * directory.
+     * Validates custom CLI arguments using an allowlist approach. Only recognized docling CLI flags are permitted.
+     * Producer-managed flags, shell metacharacters, and path traversal sequences are rejected.
      */
     private void validateCustomArguments(List<String> customArgs) {
-        // The output directory is managed by the producer via endpoint configuration
-        // or the OUTPUT_FILE_PATH header, so it must not be overridden through custom arguments.
-        List<String> blockedFlags = List.of("--output", "-o");
-
         for (int i = 0; i < customArgs.size(); i++) {
             String arg = customArgs.get(i);
 
@@ -1700,20 +1747,88 @@ public class DoclingProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Custom argument at index " + i + " is null");
             }
 
-            String argLower = arg.toLowerCase();
-            for (String blocked : blockedFlags) {
-                if (argLower.equals(blocked) || argLower.startsWith(blocked + "=")) {
-                    throw new IllegalArgumentException(
-                            "Custom argument '" + blocked
-                                                       + "' is not allowed because the output directory is managed by the producer. "
-                                                       + "Use the " + DoclingHeaders.OUTPUT_FILE_PATH
-                                                       + " header or endpoint configuration instead.");
-                }
-            }
+            rejectShellMetacharacters(arg, i);
 
-            if (arg.contains("../") || arg.contains("..\\")) {
-                throw new IllegalArgumentException(
-                        "Custom argument at index " + i + " contains a relative path traversal sequence");
+            if (arg.startsWith("--")) {
+                validateLongFlag(arg, i);
+            } else if (arg.startsWith("-")) {
+                validateShortFlag(arg, i);
+            } else {
+                validatePathSafety(arg, i);
+            }
+        }
+    }
+
+    private void validateLongFlag(String arg, int index) {
+        String flag = arg.contains("=") ? arg.substring(0, arg.indexOf('=')) : arg;
+        String flagLower = flag.toLowerCase();
+
+        if (PRODUCER_MANAGED_FLAGS.contains(flagLower)) {
+            throw new IllegalArgumentException(
+                    "Custom argument '" + flag
+                                               + "' is not allowed because the output directory is managed by the producer. "
+                                               + "Use the " + DoclingHeaders.OUTPUT_FILE_PATH
+                                               + " header or endpoint configuration instead.");
+        }
+
+        if (!ALLOWED_DOCLING_FLAGS.contains(flagLower)) {
+            throw new IllegalArgumentException(
+                    "Custom argument '" + flag
+                                               + "' is not a recognized docling CLI flag. "
+                                               + "Only known docling flags are permitted as custom arguments.");
+        }
+
+        if (arg.contains("=")) {
+            String value = arg.substring(arg.indexOf('=') + 1);
+            validatePathSafety(value, index);
+        }
+    }
+
+    private void validateShortFlag(String arg, int index) {
+        String flagLower = arg.toLowerCase();
+
+        // Allow -v, -vv, -vvv (verbosity levels)
+        if (flagLower.matches("-v+")) {
+            return;
+        }
+
+        if (PRODUCER_MANAGED_FLAGS.contains(flagLower)) {
+            throw new IllegalArgumentException(
+                    "Custom argument '" + arg
+                                               + "' is not allowed because the output directory is managed by the producer. "
+                                               + "Use the " + DoclingHeaders.OUTPUT_FILE_PATH
+                                               + " header or endpoint configuration instead.");
+        }
+
+        throw new IllegalArgumentException(
+                "Custom argument '" + arg
+                                           + "' is not a recognized docling CLI flag. "
+                                           + "Only known docling flags are permitted as custom arguments.");
+    }
+
+    private static void rejectShellMetacharacters(String arg, int index) {
+        if (arg.contains(";") || arg.contains("|") || arg.contains("`") || arg.contains("$(")) {
+            throw new IllegalArgumentException(
+                    "Custom argument at index " + index
+                                               + " contains a disallowed character or pattern. "
+                                               + "Shell metacharacters (;, |, `, $()) are not permitted.");
+        }
+    }
+
+    private static void validatePathSafety(String value, int index) {
+        if (value.contains("../") || value.contains("..\\")) {
+            throw new IllegalArgumentException(
+                    "Custom argument at index " + index + " contains a relative path traversal sequence");
+        }
+        // Normalize path-like values to detect traversal via redundant separators
+        if (value.contains("/") || value.contains("\\")) {
+            Path normalized = Paths.get(value).normalize();
+            for (Path component : normalized) {
+                if ("..".equals(component.toString())) {
+                    throw new IllegalArgumentException(
+                            "Custom argument at index " + index
+                                                       + " resolves to a path containing traversal after normalization");
+                }
             }
         }
     }

@@ -375,6 +375,59 @@ YAML::
 ----
 ====
 
+=== Custom argument validation
+
+When passing custom CLI arguments via the `CamelDoclingCustomArguments` header, the component enforces an **allowlist** of recognized docling CLI flags.
+Only the following flags are permitted:
+
+[width="100%",cols="2,4",options="header"]
+|===
+| Category | Allowed flags
+
+| Input/output format
+| `--from`, `--to`
+
+| Pipeline
+| `--pipeline`, `--vlm-model`, `--asr-model`
+
+| OCR
+| `--ocr`, `--no-ocr`, `--force-ocr`, `--no-force-ocr`, `--ocr-engine`, `--ocr-lang`, `--psm`
+
+| Tables
+| `--tables`, `--no-tables`, `--table-mode`
+
+| PDF
+| `--pdf-backend`, `--pdf-password`
+
+| Enrichment
+| `--enrich-code`, `--no-enrich-code`, `--enrich-formula`, `--no-enrich-formula`, `--enrich-picture-classes`, `--no-enrich-picture-classes`, `--enrich-picture-description`, `--no-enrich-picture-description`, `--enrich-chart-extraction`, `--no-enrich-chart-extraction`
+
+| Output formatting
+| `--image-export-mode`, `--show-layout`, `--no-show-layout`
+
+| Advanced
+| `--headers`, `--artifacts-path`, `--enable-remote-services`, `--no-enable-remote-services`, `--allow-external-plugins`, `--no-allow-external-plugins`, `--show-external-plugins`, `--no-show-external-plugins`, `--document-timeout`, `--device`, `--num-threads`, `--page-batch-size`
+
+| Debug
+| `--verbose`, `-v` / `-vv` / `-vvv`, `--debug-visualize-cells`, `--no-debug-visualize-cells`, `--debug-visualize-ocr`, `--no-debug-visualize-ocr`, `--debug-visualize-layout`, `--no-debug-visualize-layout`, `--debug-visualize-tables`, `--no-debug-visualize-tables`
+
+| Performance
+| `--abort-on-error`, `--no-abort-on-error`, `--profiling`, `--no-profiling`, `--save-profiling`, `--no-save-profiling`
+
+| Info
+| `--version`, `--help`, `--logo`
+
+|===
+
+The `--output` (`-o`) flag is **not permitted** because the output directory is managed by the producer.
+Use the `CamelDoclingOutputFilePath` header or endpoint configuration instead.
+
+Additionally, the following are rejected:
+
+- **Shell metacharacters**: `;`, `|`, `` ` ``, `$()` — blocked as defense-in-depth even though ProcessBuilder does not interpret them.
+- **Path traversal**: `../`, `..\`, and paths that resolve to traversal after normalization.
+- **Unknown flags**: any flag not in the allowlist above.
+
 === Extracting document metadata
 
 [tabs]

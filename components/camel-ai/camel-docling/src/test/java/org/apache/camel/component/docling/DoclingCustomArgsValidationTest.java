@@ -89,7 +89,7 @@ class DoclingCustomArgsValidationTest extends CamelTestSupport {
         CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
             template.requestBodyAndHeaders("direct:cli-convert",
                     inputFile.toString(),
-                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("--some-flag", "../../etc/passwd")));
+                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("--artifacts-path", "../../etc/passwd")));
         });
 
         assertInstanceOf(IllegalArgumentException.class, ex.getCause());
@@ -143,6 +143,126 @@ class DoclingCustomArgsValidationTest extends CamelTestSupport {
 
         assertFalse(ex.getCause() instanceof IllegalArgumentException,
                 "No custom arguments should not trigger argument validation");
+    }
+
+    // -- Shell metacharacter injection tests --
+
+    @Test
+    void customArgsWithSemicolonAreRejected() throws Exception {
+        Path inputFile = createInputFile();
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("--verbose", "; rm -rf /")));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("disallowed"));
+    }
+
+    @Test
+    void customArgsWithPipeAreRejected() throws Exception {
+        Path inputFile = createInputFile();
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("--verbose", "| cat /etc/passwd")));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("disallowed"));
+    }
+
+    @Test
+    void customArgsWithBacktickAreRejected() throws Exception {
+        Path inputFile = createInputFile();
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("--verbose", "`whoami`")));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("disallowed"));
+    }
+
+    @Test
+    void customArgsWithCommandSubstitutionAreRejected() throws Exception {
+        Path inputFile = createInputFile();
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("--verbose", "$(id)")));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("disallowed"));
+    }
+
+    // -- Allowlist enforcement tests --
+
+    @Test
+    void customArgsWithUnknownFlagAreRejected() throws Exception {
+        Path inputFile = createInputFile();
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("--unknown-flag")));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("not a recognized docling CLI flag"));
+    }
+
+    @Test
+    void customArgsWithUnknownShortFlagAreRejected() throws Exception {
+        Path inputFile = createInputFile();
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("-x")));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("not a recognized docling CLI flag"));
+    }
+
+    @Test
+    void customArgsWithVerbosityLevelsAreAccepted() throws Exception {
+        Path inputFile = createInputFile();
+
+        // -v and -vv should pass validation (verbosity levels)
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS, List.of("-vv")));
+        });
+
+        assertFalse(ex.getCause() instanceof IllegalArgumentException,
+                "-vv should pass validation; failure should come from process execution");
+    }
+
+    @Test
+    void customArgsWithNormalizedPathTraversalAreRejected() throws Exception {
+        Path inputFile = createInputFile();
+
+        // Path traversal that would be caught only after normalization
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:cli-convert",
+                    inputFile.toString(),
+                    java.util.Map.of(DoclingHeaders.CUSTOM_ARGUMENTS,
+                            List.of("--artifacts-path", "/safe/path/subdir/../../etc/passwd")));
+        });
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("path traversal") ||
+                ex.getCause().getMessage().contains("traversal after normalization"));
     }
 
     private Path createInputFile() throws Exception {
