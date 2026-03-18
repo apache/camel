@@ -67,7 +67,10 @@ public class SpringAiChatParameterOverrideIT extends OllamaTestSupport {
 
         String response = exchange.getMessage().getBody(String.class);
         assertThat(response).isNotNull();
-        assertThat(response).isNotEmpty();
+        assertThat(response.split("\\s+")).hasSizeGreaterThan(1);
+
+        Integer totalTokens = exchange.getMessage().getHeader(SpringAiChatConstants.TOTAL_TOKEN_COUNT, Integer.class);
+        assertThat(totalTokens).isNotNull().isGreaterThan(0);
     }
 
     @Test
