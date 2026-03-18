@@ -17,18 +17,12 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
-import java.util.stream.Stream;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HomeHelper;
@@ -126,53 +120,6 @@ public final class LauncherHelper {
     }
 
     /**
-     * Resolves the Jolokia agent javaagent jar from the local Maven repository (~/.m2). Returns {@code null} if the
-     * agent jar is not found.
-     */
-    public static File findJolokiaAgentJar() {
-        // Try to find the exact version via embedded pom.properties
-        String version = null;
-        ClassLoader loader = LauncherHelper.class.getClassLoader();
-        if (loader == null) {
-            loader = ClassLoader.getSystemClassLoader();
-        }
-        try (InputStream is = loader.getResourceAsStream(
-                "META-INF/maven/org.jolokia/jolokia-agent-jvm/pom.properties")) {
-            if (is != null) {
-                Properties props = new Properties();
-                props.load(is);
-                version = props.getProperty("version");
-            }
-        } catch (Exception ignored) {
-        }
-        Path m2Base = Path.of(System.getProperty("user.home"), ".m2", "repository", "org", "jolokia", "jolokia-agent-jvm");
-        if (!Files.isDirectory(m2Base)) {
-            return null;
-        }
-        if (version != null && !version.isBlank()) {
-            Path candidate = m2Base.resolve(version).resolve("jolokia-agent-jvm-" + version + "-javaagent.jar");
-            if (Files.exists(candidate)) {
-                return candidate.toFile();
-            }
-        }
-        // Scan all version directories and return the newest one
-        try (Stream<Path> stream = Files.list(m2Base)) {
-            return stream.filter(Files::isDirectory)
-                    .map(dir -> {
-                        String v = dir.getFileName().toString();
-                        Path jar = dir.resolve("jolokia-agent-jvm-" + v + "-javaagent.jar");
-                        return new JarCandidate(v, jar);
-                    })
-                    .filter(c -> Files.exists(c.path))
-                    .max(Comparator.comparing(c -> c.version, VersionHelper::compare))
-                    .map(c -> c.path.toFile())
-                    .orElse(null);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
      * Normalizes a JAR path URL string (possibly a Spring Boot {@code nested:} or {@code jar:} URL) to a plain
      * filesystem path ending with {@code .jar}.
      */
@@ -197,19 +144,7 @@ public final class LauncherHelper {
         int jarIndex = normalized.toLowerCase(Locale.ROOT).lastIndexOf(".jar");
         if (jarIndex > 0) {
             normalized = normalized.substring(0, jarIndex + 4);
-        } else {
-            return null;
         }
         return URLDecoder.decode(normalized, StandardCharsets.UTF_8);
-    }
-
-    private static final class JarCandidate {
-        private final String version;
-        private final Path path;
-
-        private JarCandidate(String version, Path path) {
-            this.version = version;
-            this.path = path;
-        }
     }
 }

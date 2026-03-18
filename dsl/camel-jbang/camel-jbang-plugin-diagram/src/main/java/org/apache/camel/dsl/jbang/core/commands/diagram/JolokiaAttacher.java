@@ -17,15 +17,17 @@
 package org.apache.camel.dsl.jbang.core.commands.diagram;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import com.sun.tools.attach.VirtualMachine;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
@@ -102,32 +104,81 @@ final class JolokiaAttacher {
     }
 
     private File resolveAgentJar() {
-        File agentJar = LauncherHelper.findJolokiaAgentJar();
+        File agentJar = findJolokiaAgentJar();
         if (agentJar != null) {
             return agentJar;
         }
         throw new IllegalStateException("Jolokia agent jar not found in ~/.m2 repository");
     }
 
-    private int findAvailablePort(int fromPort, int toPort) {
-        for (int port = fromPort; port <= toPort; port++) {
-            if (isPortFree(port)) {
-                return port;
+    private File findJolokiaAgentJar() {
+        // Try to find the exact version via embedded pom.properties
+        String version = null;
+        ClassLoader loader = JolokiaAttacher.class.getClassLoader();
+        if (loader == null) {
+            loader = ClassLoader.getSystemClassLoader();
+        }
+        try (InputStream is = loader.getResourceAsStream(
+                "META-INF/maven/org.jolokia/jolokia-agent-jvm/pom.properties")) {
+            if (is != null) {
+                Properties props = new Properties();
+                props.load(is);
+                version = props.getProperty("version");
+            }
+        } catch (Exception ignored) {
+        }
+        Path m2Base = Path.of(System.getProperty("user.home"), ".m2", "repository", "org", "jolokia", "jolokia-agent-jvm");
+        if (!Files.isDirectory(m2Base)) {
+            return null;
+        }
+        if (version != null && !version.isBlank()) {
+            Path candidate = m2Base.resolve(version).resolve("jolokia-agent-jvm-" + version + "-javaagent.jar");
+            if (Files.exists(candidate)) {
+                return candidate.toFile();
             }
         }
-        throw new IllegalStateException("Cannot find free port");
-    }
-
-    private boolean isPortFree(int port) {
-        try (var socket = new java.net.ServerSocket()) {
-            socket.setReuseAddress(true);
-            socket.bind(new java.net.InetSocketAddress((java.net.InetAddress) null, port), 1);
-            return true;
+        // Scan all version directories and return the newest one
+        try (Stream<Path> stream = Files.list(m2Base)) {
+            return stream.filter(Files::isDirectory)
+                    .map(dir -> {
+                        String v = dir.getFileName().toString();
+                        Path jar = dir.resolve("jolokia-agent-jvm-" + v + "-javaagent.jar");
+                        return new JarCandidate(v, jar);
+                    })
+                    .filter(c -> Files.exists(c.path))
+                    .max(Comparator.comparing(c -> c.version, this::compareVersions))
+                    .map(c -> c.path.toFile())
+                    .orElse(null);
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 
+    private int compareVersions(String a, String b) {
+        String[] pa = a.split("[.\\-]");
+        String[] pb = b.split("[.\\-]");
+        for (int i = 0; i < Math.max(pa.length, pb.length); i++) {
+            String sa = i < pa.length ? pa[i] : "0";
+            String sb = i < pb.length ? pb[i] : "0";
+            try {
+                int cmp = Integer.compare(Integer.parseInt(sa), Integer.parseInt(sb));
+                if (cmp != 0) {
+                    return cmp;
+                }
+            } catch (NumberFormatException e) {
+                int cmp = sa.compareTo(sb);
+                if (cmp != 0) {
+                    return cmp;
+                }
+            }
+        }
+        return 0;
+    }
+
+    // PID-finding logic is intentionally duplicated from ProcessBaseCommand.findPids().
+    // ProcessBaseCommand is package-private in camel-jbang-core and cannot be accessed
+    // from this plugin module. Extracting to ProcessHelper (a public utility) would add
+    // camel-jbang-core changes beyond the scope of this plugin.
     private List<Long> findPids(String name) {
         List<Long> pids = new ArrayList<>();
         if (name == null || name.isBlank()) {
@@ -181,5 +232,34 @@ final class JolokiaAttacher {
             // ignore
         }
         return null;
+    }
+
+    private static final class JarCandidate {
+        private final String version;
+        private final Path path;
+
+        private JarCandidate(String version, Path path) {
+            this.version = version;
+            this.path = path;
+        }
+    }
+
+    private int findAvailablePort(int fromPort, int toPort) {
+        for (int port = fromPort; port <= toPort; port++) {
+            if (isPortFree(port)) {
+                return port;
+            }
+        }
+        throw new IllegalStateException("Cannot find free port");
+    }
+
+    private boolean isPortFree(int port) {
+        try (var socket = new java.net.ServerSocket()) {
+            socket.setReuseAddress(true);
+            socket.bind(new java.net.InetSocketAddress((java.net.InetAddress) null, port), 1);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

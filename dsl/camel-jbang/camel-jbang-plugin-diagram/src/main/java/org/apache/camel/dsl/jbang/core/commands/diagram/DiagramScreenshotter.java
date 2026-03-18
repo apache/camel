@@ -19,39 +19,105 @@ package org.apache.camel.dsl.jbang.core.commands.diagram;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Page.NavigateOptions;
 import com.microsoft.playwright.Page.ScreenshotOptions;
+import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.ViewportSize;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import com.microsoft.playwright.options.WaitUntilState;
-import org.apache.camel.dsl.jbang.core.common.Printer;
-import org.apache.camel.util.json.JsonObject;
 
-class DiagramPage {
+/**
+ * Standalone entry point for PNG screenshot capture. Spawned as a child JVM process by {@link DiagramPngExporter} with
+ * Playwright JARs on the classpath — so Playwright is never loaded in the parent (camel-launcher fat JAR) process.
+ * <p>
+ * Arguments: hawtioUrl jolokiaUrl outputPath routeId|- execPath timeoutSeconds
+ */
+final class DiagramScreenshotter {
 
-    private final Page page;
-    private final DiagramScripts scripts;
-    private final Printer printer;
-    private final String routeId;
-    private final long timeoutMs;
     private static final long DIAGRAM_STABILITY_TIMEOUT_MS = 3_000L;
 
-    DiagramPage(Page page, DiagramScripts scripts, Printer printer, String routeId, int timeoutSeconds) {
-        this.page = page;
-        this.scripts = scripts;
-        this.printer = printer;
+    public static void main(String[] args) {
+        if (args.length < 6) {
+            System.err.println(
+                    "Usage: DiagramScreenshotter <hawtioUrl> <jolokiaUrl> <outputPath> <routeId|-> <execPath> <timeoutSeconds>");
+            System.exit(1);
+        }
+        String hawtioUrl = args[0];
+        String jolokiaUrl = args[1];
+        Path outputPath = Path.of(args[2]);
+        String routeId = "-".equals(args[3]) ? null : args[3];
+        String execPath = args[4];
+        int timeoutSeconds = Integer.parseInt(args[5]);
+
+        try {
+            new DiagramScreenshotter(hawtioUrl, jolokiaUrl, outputPath, routeId, execPath, timeoutSeconds).run();
+            System.exit(0);
+        } catch (Exception e) {
+            System.err.println("Screenshot failed: " + e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    private final String hawtioUrl;
+    private final String jolokiaUrl;
+    private final Path outputPath;
+    private final String routeId;
+    private final String execPath;
+    private final long timeoutMs;
+
+    DiagramScreenshotter(String hawtioUrl, String jolokiaUrl, Path outputPath,
+                         String routeId, String execPath, int timeoutSeconds) {
+        this.hawtioUrl = hawtioUrl;
+        this.jolokiaUrl = jolokiaUrl;
+        this.outputPath = outputPath;
         this.routeId = routeId;
+        this.execPath = execPath;
         this.timeoutMs = (long) timeoutSeconds * 1000;
     }
 
-    void connectToJolokia(String hawtioUrl, String jolokiaUrl) {
-        String connectionId = generateConnectionId();
+    private void run() throws Exception {
+        DiagramScripts scripts = new DiagramScripts();
+        Playwright.CreateOptions createOptions = new Playwright.CreateOptions();
+        createOptions.setEnv(Map.of("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1"));
+        try (Playwright playwright = Playwright.create(createOptions)) {
+            BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
+                    .setHeadless(true)
+                    .setExecutablePath(Paths.get(execPath))
+                    .setArgs(List.of(
+                            "--no-sandbox",
+                            "--disable-dev-shm-usage",
+                            "--disable-extensions",
+                            "--disable-background-networking",
+                            "--disable-translate",
+                            "--no-first-run",
+                            "--disable-default-apps"));
+            try (Browser browser = playwright.chromium().launch(launchOptions)) {
+                Page page = browser.newPage();
+                page.setViewportSize(3840, 2160);
+                page.addInitScript("(() => { const s = document.createElement('style');"
+                                   + " s.textContent = '* { transition: none !important;"
+                                   + " animation-duration: 0.001s !important;"
+                                   + " animation-delay: 0s !important; }';"
+                                   + " (document.head || document.documentElement).appendChild(s); })();");
+                connectToJolokia(page, scripts);
+                openRouteDiagram(page);
+                captureDiagramScreenshot(page);
+            }
+        }
+    }
+
+    private void connectToJolokia(Page page, DiagramScripts scripts) {
+        String connectionId = "c" + UUID.randomUUID();
         String connectionsJson = buildConnectionJson(connectionId, jolokiaUrl);
         String connectScript = scripts.load("diagram-connect.js")
                 .replace("__CONNECTIONS__", escapeJavaScript(connectionsJson));
@@ -60,31 +126,28 @@ class DiagramPage {
         waitForEndpoint(jolokiaProbe);
         page.addInitScript(scripts.load("diagram-scripts.js"));
         page.addInitScript(connectScript);
-        // Navigate to Hawtio with the pre-configured connection. The init script sets up
-        // localStorage/sessionStorage before page scripts run, so Hawtio auto-connects.
-        // Connection success is verified implicitly when openRouteDiagram() waits for route nodes.
         page.navigate(hawtioUrl + "?con=" + connectionId + "#/camel/routes",
                 new NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
     }
 
-    void openRouteDiagram() {
-        // Navigate to the route diagram view - it renders all routes as react-flow nodes.
-        // For --route-id, we crop the screenshot to that route's nodes via computeClipForRoute().
-        navigateToHash("#/camel/routeDiagram");
+    private void openRouteDiagram(Page page) {
+        // Navigate to the route diagram view - renders all routes as react-flow nodes.
+        navigateToHash(page, "#/camel/routeDiagram");
         try {
             page.locator(".react-flow__node, .react-flow__nodes, svg").first().waitFor(
                     new Locator.WaitForOptions().setTimeout(20000));
         } catch (PlaywrightException e) {
-            throw new IllegalStateException("Route diagram not available in Hawtio. Ensure Jolokia connection succeeded.", e);
+            throw new IllegalStateException(
+                    "Route diagram not available in Hawtio. Ensure Jolokia connection succeeded.", e);
         }
-        waitForDiagramStable();
+        waitForDiagramStable(page);
     }
 
-    void captureDiagramScreenshot(Path outputPath) {
+    private void captureDiagramScreenshot(Page page) {
         // Normalize the diagram layout to fit all route nodes before capturing.
         // The stability wait already happened in openRouteDiagram.
-        normalizeDiagramLayout();
-        if (captureDiagramClip(outputPath)) {
+        normalizeDiagramLayout(page);
+        if (captureDiagramClip(page)) {
             return;
         }
         Locator container = page.locator("#camel-route-diagram-outer-div");
@@ -101,25 +164,24 @@ class DiagramPage {
                     container.first().screenshot(new Locator.ScreenshotOptions().setPath(outputPath));
                     return;
                 } catch (PlaywrightException e) {
-                    printer.printErr(
-                            "Diagram container changed while rendering, capturing full page instead: " + e.getMessage());
+                    System.err.println("Diagram container changed while rendering, capturing full page instead: "
+                                       + e.getMessage());
                 }
             }
         }
-        // Full-page fallback: captures whatever Hawtio is showing.
+        // Full-page fallback: captures whatever Hawtio is showing, which is useful for debugging.
         // Avoid the svg.first() shortcut — the first SVG on the page is often a tiny icon.
         page.screenshot(new ScreenshotOptions().setPath(outputPath).setFullPage(true));
     }
 
-    private void navigateToHash(String hash) {
-        // Use page.navigate() for SPA hash changes instead of page.evaluate() which is CSP-blocked.
+    private void navigateToHash(Page page, String hash) {
         String currentUrl = page.url();
         String baseUrl = currentUrl.contains("#") ? currentUrl.substring(0, currentUrl.indexOf('#')) : currentUrl;
         page.navigate(baseUrl + hash, new NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
         page.waitForURL(url -> url.contains(hash));
     }
 
-    private void waitForDiagramStable() {
+    private void waitForDiagramStable(Page page) {
         try {
             page.locator("html[data-camel-stable='true']").waitFor(
                     new Locator.WaitForOptions().setTimeout(DIAGRAM_STABILITY_TIMEOUT_MS));
@@ -145,10 +207,7 @@ class DiagramPage {
         }
     }
 
-    private void normalizeDiagramLayout() {
-        // Resize the diagram container to exactly fit all route nodes (no clipping, no whitespace).
-        // page.evaluate() uses CDP and is not blocked by Hawtio's CSP in most configurations.
-        // If it does fail, the 3840px viewport ensures all routes are rendered as a fallback.
+    private void normalizeDiagramLayout(Page page) {
         try {
             page.evaluate("() => { if (window.camelDiagram) window.camelDiagram.normalize(); }");
         } catch (Exception ignored) {
@@ -156,12 +215,12 @@ class DiagramPage {
         }
     }
 
-    private boolean captureDiagramClip(Path outputPath) {
+    private boolean captureDiagramClip(Page page) {
         try {
             // For a specific route, compute the clip covering only that route's nodes.
             // For all routes, compute the clip covering the full diagram.
             String evalScript = (routeId != null && !routeId.isBlank())
-                    ? "() => window.camelDiagram.computeClipForRoute('" + routeId.replace("'", "\\'") + "')"
+                    ? "() => window.camelDiagram.computeClipForRoute(" + escapeJs(routeId) + ")"
                     : "() => window.camelDiagram.computeClip()";
             Object clip = page.evaluate(evalScript);
             if (clip == null && routeId != null && !routeId.isBlank()) {
@@ -177,7 +236,7 @@ class DiagramPage {
             if (x == null || y == null || width == null || height == null || width <= 0 || height <= 0) {
                 return false;
             }
-            ensureViewportForClip(x + width, y + height);
+            ensureViewportForClip(page, x + width, y + height);
             page.screenshot(new ScreenshotOptions().setPath(outputPath).setClip(x, y, width, height));
             return true;
         } catch (IllegalStateException e) {
@@ -187,7 +246,11 @@ class DiagramPage {
         }
     }
 
-    private void ensureViewportForClip(double requiredWidth, double requiredHeight) {
+    private static String escapeJs(String s) {
+        return "'" + s.replace("\\", "\\\\").replace("'", "\\'") + "'";
+    }
+
+    private void ensureViewportForClip(Page page, double requiredWidth, double requiredHeight) {
         if (requiredWidth <= 0 || requiredHeight <= 0) {
             return;
         }
@@ -211,8 +274,8 @@ class DiagramPage {
                 conn.setReadTimeout(1000);
                 conn.setRequestMethod("GET");
                 int code = conn.getResponseCode();
-                // Accept any non-404 response including 4xx: Hawtio's CORS/auth responses indicate the server
-                // is up even if the specific endpoint requires authentication or returns a method error.
+                // Accept any non-404 response including 4xx: Hawtio's CORS/auth responses indicate
+                // the server is up even if the specific endpoint requires authentication.
                 if (code >= 200 && code < 500 && code != 404) {
                     return;
                 }
@@ -239,10 +302,6 @@ class DiagramPage {
         return null;
     }
 
-    private String generateConnectionId() {
-        return "c" + UUID.randomUUID();
-    }
-
     private String buildConnectionJson(String connectionId, String jolokiaUrl) {
         URI uri = URI.create(jolokiaUrl);
         String scheme = uri.getScheme() != null ? uri.getScheme() : "http";
@@ -255,16 +314,12 @@ class DiagramPage {
         if (path == null || path.isBlank()) {
             path = "/jolokia";
         }
-        JsonObject conn = new JsonObject();
-        conn.put("id", connectionId);
-        conn.put("name", "local");
-        conn.put("scheme", scheme);
-        conn.put("host", host);
-        conn.put("port", port);
-        conn.put("path", path);
-        JsonObject root = new JsonObject();
-        root.put(connectionId, conn);
-        return root.toJson();
+        // Build the Jolokia connection JSON manually to avoid a camel-util-json dependency
+        // in this standalone subprocess entry point.
+        String conn = "{\"id\":\"" + connectionId + "\",\"name\":\"local\","
+                      + "\"scheme\":\"" + scheme + "\",\"host\":\"" + host + "\","
+                      + "\"port\":" + port + ",\"path\":\"" + path + "\"}";
+        return "{\"" + connectionId + "\":" + conn + "}";
     }
 
     private String escapeJavaScript(String value) {

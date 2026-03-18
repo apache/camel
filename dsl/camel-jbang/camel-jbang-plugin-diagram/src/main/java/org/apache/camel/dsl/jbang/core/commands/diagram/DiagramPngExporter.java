@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.diagram;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,25 +27,31 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType;
-import com.microsoft.playwright.Playwright;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.RunHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.main.download.DependencyDownloaderClassLoader;
+import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 class DiagramPngExporter {
+
+    /**
+     * Playwright version to download on demand. Must match playwright-version property in the parent POM.
+     */
+    private static final String PLAYWRIGHT_VERSION = "1.58.0";
 
     /**
      * Holds metadata for a Camel integration process that has been launched but may not yet have reached Running state.
@@ -118,6 +125,10 @@ class DiagramPngExporter {
             if (attachCode != 0) {
                 return attachCode;
             }
+
+            // Ensure Hawtio is ready before spawning the subprocess — the subprocess will
+            // proceed immediately without needing to wait for the endpoint itself.
+            waitForHawtio(hawtioUrl, hawtioProcess);
 
             return exportDiagramPng(hawtioUrl, jolokiaUrl, outputPath, hawtioProcess);
         } finally {
@@ -238,6 +249,35 @@ class DiagramPngExporter {
         return 1;
     }
 
+    /**
+     * Waits for the Hawtio HTTP server to be available. This is called in the parent process so that the Playwright
+     * subprocess can connect immediately without waiting.
+     */
+    private void waitForHawtio(String hawtioUrl, HawtioProcess hawtioProcess) throws InterruptedException {
+        for (int i = 0; i < 60; i++) {
+            if (!hawtioProcess.process.isAlive()) {
+                return; // subprocess will detect Hawtio not running
+            }
+            HttpURLConnection conn = null;
+            try {
+                conn = (HttpURLConnection) URI.create(hawtioUrl).toURL().openConnection();
+                conn.setConnectTimeout(500);
+                conn.setReadTimeout(500);
+                conn.setRequestMethod("GET");
+                int code = conn.getResponseCode();
+                if (code >= 200 && code < 500 && code != 404) {
+                    return;
+                }
+            } catch (Exception ignored) {
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+            Thread.sleep(500);
+        }
+    }
+
     private void detachJolokia() {
         try {
             if (jolokiaPid <= 0) {
@@ -311,49 +351,116 @@ class DiagramPngExporter {
         String execPath = resolveBrowserPath();
         if (execPath == null) {
             printer.printErr("Playwright browser executable path not configured. "
-                             + "Set --playwright-browser-path or PLAYWRIGHT_*_EXECUTABLE_PATH.");
+                             + "Set --playwright-browser-path or PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH.");
             return 1;
         }
-        DiagramScripts scripts = new DiagramScripts();
-        Playwright.CreateOptions createOptions = new Playwright.CreateOptions();
-        if (execPath != null && !execPath.isBlank()) {
-            // Skip Playwright's own browser download when a custom binary path is provided
-            createOptions.setEnv(Map.of("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1"));
+
+        if (!isPlaywrightCached()) {
+            printer.println("Downloading Playwright (one-time setup, cached in ~/.m2)...");
         }
-        try (Playwright playwright = Playwright.create(createOptions)) {
-            BrowserType browserType = selectBrowser(playwright);
-            BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
-                    .setHeadless(true)
-                    .setExecutablePath(Paths.get(execPath))
-                    .setArgs(List.of("--no-sandbox", "--disable-dev-shm-usage"));
-            try (Browser browserInstance = browserType.launch(launchOptions)) {
-                var page = browserInstance.newPage();
-                // Large viewport ensures React Flow renders all route nodes before screenshotting.
-                // The default 1280x720 clips multi-route diagrams on the right side.
-                page.setViewportSize(3840, 2160);
-                // Disable CSS transitions and animations so React Flow nodes settle immediately.
-                page.addInitScript("(() => { const s = document.createElement('style');"
-                                   + " s.textContent = '* { transition: none !important;"
-                                   + " animation-duration: 0.001s !important;"
-                                   + " animation-delay: 0s !important; }';"
-                                   + " (document.head || document.documentElement).appendChild(s); })();");
-                DiagramPage diagramPage = new DiagramPage(page, scripts, printer, routeId, timeoutSeconds);
-                diagramPage.connectToJolokia(hawtioUrl, jolokiaUrl);
-                diagramPage.openRouteDiagram();
-                diagramPage.captureDiagramScreenshot(outputPath);
-            }
-        } catch (Exception e) {
-            if (hawtioProcess != null && !hawtioProcess.process.isAlive()) {
-                throw new IllegalStateException(
-                        "Hawtio terminated before startup." + formatHawtioOutput(hawtioProcess.output), e);
-            }
-            throw e;
+        List<Path> playwrightJars = downloadPlaywrightJars();
+        Path pluginJar = resolvePluginJarPath();
+
+        List<String> cmd = new ArrayList<>();
+        cmd.add(getJavaExecutable());
+        // Use only tier-1 JIT to reduce cold-start overhead for this short-lived subprocess.
+        cmd.add("-XX:TieredStopAtLevel=1");
+        cmd.add("-cp");
+        cmd.add(buildClassPath(playwrightJars, pluginJar));
+        cmd.add("org.apache.camel.dsl.jbang.core.commands.diagram.DiagramScreenshotter");
+        cmd.add(hawtioUrl);
+        cmd.add(jolokiaUrl);
+        cmd.add(outputPath.toAbsolutePath().toString());
+        cmd.add(routeId != null && !routeId.isBlank() ? routeId : "-");
+        cmd.add(execPath);
+        cmd.add(String.valueOf(timeoutSeconds));
+
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.inheritIO();
+        Process process = pb.start();
+        int exitCode = process.waitFor();
+        if (exitCode != 0 && hawtioProcess != null && !hawtioProcess.process.isAlive()) {
+            throw new IllegalStateException(
+                    "Hawtio terminated before startup." + formatHawtioOutput(hawtioProcess.output));
         }
-        return 0;
+        if (exitCode != 0) {
+            throw new IllegalStateException("PNG export failed (exit code " + exitCode + ").");
+        }
+        return exitCode;
     }
 
-    private BrowserType selectBrowser(Playwright playwright) {
-        return playwright.chromium();
+    /**
+     * Returns true if the Playwright JAR is already present in the local Maven repository, meaning no network download
+     * is needed.
+     */
+    private boolean isPlaywrightCached() {
+        String home = System.getProperty("user.home", "");
+        Path jar = Path.of(home, ".m2", "repository", "com", "microsoft", "playwright",
+                "playwright", PLAYWRIGHT_VERSION, "playwright-" + PLAYWRIGHT_VERSION + ".jar");
+        return Files.exists(jar);
+    }
+
+    /**
+     * Downloads Playwright and its transitive dependencies on demand via Maven, returning the local JAR paths.
+     */
+    private List<Path> downloadPlaywrightJars() throws Exception {
+        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(null);
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+            downloader.setClassLoader(cl);
+            downloader.start();
+            downloader.downloadDependency("com.microsoft.playwright", "playwright", PLAYWRIGHT_VERSION);
+        }
+        return Arrays.stream(cl.getURLs())
+                .map(url -> {
+                    try {
+                        return Path.of(url.toURI());
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(p -> p != null)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the Path to the plugin JAR so the subprocess classloader can load {@link DiagramScreenshotter}. When
+     * running inside a Spring Boot fat JAR, the code source location is a nested {@code nested:} URL; in that case the
+     * JAR bytes are extracted to a temp file.
+     */
+    private Path resolvePluginJarPath() throws Exception {
+        URL location = DiagramPngExporter.class.getProtectionDomain().getCodeSource().getLocation();
+        String loc = location.toString();
+        if (loc.startsWith("nested:") || (loc.contains("!/") && !loc.startsWith("file:"))) {
+            // Running inside Spring Boot fat JAR — extract the nested plugin JAR to a temp file
+            Path tempJar = Files.createTempFile("camel-diagram-plugin", ".jar");
+            tempJar.toFile().deleteOnExit();
+            try (InputStream is = location.openStream()) {
+                Files.copy(is, tempJar, StandardCopyOption.REPLACE_EXISTING);
+            }
+            return tempJar;
+        }
+        return Path.of(location.toURI());
+    }
+
+    private String buildClassPath(List<Path> playwrightJars, Path pluginJar) {
+        return playwrightJars.stream()
+                .map(Path::toString)
+                .collect(Collectors.joining(File.pathSeparator))
+               + File.pathSeparator + pluginJar;
+    }
+
+    private static String getJavaExecutable() {
+        String javaHome = System.getProperty("java.home");
+        if (javaHome != null) {
+            String exe = javaHome + File.separator + "bin" + File.separator + "java";
+            if (System.getProperty("os.name", "").toLowerCase().contains("win")) {
+                exe += ".exe";
+            }
+            if (new File(exe).exists()) {
+                return exe;
+            }
+        }
+        return "java";
     }
 
     private String resolveBrowserPath() {

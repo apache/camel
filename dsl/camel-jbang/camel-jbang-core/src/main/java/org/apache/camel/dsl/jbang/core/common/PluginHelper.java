@@ -438,8 +438,8 @@ public final class PluginHelper {
                     Files.copy(is, tempJar, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 }
                 try (JarFile nestedJar = new JarFile(tempJar.toFile())) {
-                    // Intentionally not closed — class loader must remain open for the full
-                    // command lifecycle (picocli may load inner classes or annotations lazily).
+                    // Intentionally not closed — the class loader must remain open for the full
+                    // command lifecycle as picocli may load plugin classes or annotations lazily.
                     URLClassLoader pluginLoader = new URLClassLoader(new URL[] { tempJar.toUri().toURL() }, classLoader);
                     Enumeration<JarEntry> nestedEntries = nestedJar.entries();
                     while (nestedEntries.hasMoreElements()) {

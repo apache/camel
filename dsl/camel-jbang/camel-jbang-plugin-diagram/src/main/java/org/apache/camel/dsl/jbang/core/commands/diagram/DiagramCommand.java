@@ -21,7 +21,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.Stack;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -41,7 +40,7 @@ import picocli.CommandLine;
 public class DiagramCommand extends CamelCommand {
 
     @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then use --name to attach to a running integration.",
-                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
+                            arity = "0..*", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     Path[] filePaths; // Defined only for file path completion; the field never used
     List<String> files = new ArrayList<>();
 
@@ -58,7 +57,7 @@ public class DiagramCommand extends CamelCommand {
                         description = "Port number to use for Hawtio web console (port 8888 by default)", defaultValue = "8888")
     int port = 8888;
 
-    @CommandLine.Option(names = { "--openUrl" },
+    @CommandLine.Option(names = { "--openUrl", "--open-url" },
                         description = "To automatic open Hawtio web console in the web browser", defaultValue = "true")
     boolean openUrl = true;
 
@@ -136,11 +135,16 @@ public class DiagramCommand extends CamelCommand {
                 DiagramPngExporter exporter = new DiagramPngExporter(
                         getMain(), printer(), output, browser, playwrightBrowserPath, routeId, jolokiaPort, port, keepRunning,
                         false, timeout, camelLaunch);
-                exit = exporter.export(target);
+                try {
+                    exit = exporter.export(target);
+                } catch (IllegalStateException e) {
+                    printer().printErr(e.getMessage());
+                    return 1;
+                }
                 return exit;
             }
 
-            Hawtio hawtio = new Hawtio(getMain());
+            Hawtio hawtio = new DiagramHawtio(getMain(), printer(), target);
             List<String> hawtioArgs = new ArrayList<>();
             if (target != null && !target.isBlank()) {
                 hawtioArgs.add(target);
@@ -177,9 +181,7 @@ public class DiagramCommand extends CamelCommand {
         cmd.addAll(files);
 
         // Temp log to capture startup output for error reporting
-        Path logPath = CommandLineHelper.getCamelDir().resolve(new Random().nextLong() + "-diagram-run.log"); // NOSONAR
-        Files.createDirectories(logPath.getParent());
-        Files.createFile(logPath);
+        Path logPath = Files.createTempFile(CommandLineHelper.getCamelDir(), "diagram-run", ".log");
         logPath.toFile().deleteOnExit();
 
         ProcessBuilder pb = new ProcessBuilder(cmd);

@@ -2514,6 +2514,9 @@ By default Camel JBang stops the background integration when you exit Hawtio; us
 
 You can export a PNG snapshot using Playwright (requires a Chromium-based browser):
 
+NOTE: The Playwright library is downloaded automatically on first use and cached in your local Maven repository (`~/.m2`).
+No manual installation is required — only a Chromium-based browser executable is needed.
+
 [source,bash]
 ----
 camel diagram routes.yaml --output=routes.png --playwright-browser-path=/path/to/chrome

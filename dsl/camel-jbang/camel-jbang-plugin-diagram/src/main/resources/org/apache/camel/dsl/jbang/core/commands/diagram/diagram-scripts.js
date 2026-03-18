@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// Tested with Hawtio 4.x (PatternFly v5) — CSS selectors are coupled to this version's DOM structure.
 (() => {
   const diagram = {};
 
@@ -310,8 +311,63 @@
     return { x, y, width, height };
   };
 
+  // Compute a screenshot clip covering only the nodes that belong to a specific route.
+  // Hawtio renders all routes sequentially in the diagram — each route's "from" node
+  // has the route ID embedded in its text as "(ID: routeId)". Nodes for a route span
+  // from that "from" node up to (but not including) the next route's "from" node.
+  diagram.computeClipForRoute = (routeId) => {
+    const allNodes = Array.from(
+      document.querySelectorAll('#camel-route-diagram-outer-div .react-flow__node')
+    );
+    if (allNodes.length === 0) return null;
+
+    // Find the "from" node for this route — its text contains "(ID: routeId)".
+    // In Camel, the from step's ID equals the route ID, making this unambiguous.
+    const fromIdx = allNodes.findIndex((n) => {
+      const text = n.textContent || '';
+      return text.includes('(ID: ' + routeId + ')');
+    });
+    if (fromIdx < 0) return null;
+
+    // Find the next route's "from" node to bound this route's node range.
+    // A "from" node text contains "From " (after optional leading digits/badges)
+    // and has "(ID: someId)" where the ID is different from the current routeId.
+    let nextFromIdx = allNodes.length;
+    for (let i = fromIdx + 1; i < allNodes.length; i++) {
+      const text = allNodes[i].textContent || '';
+      if (/From\s+\S/.test(text) && text.includes('(ID: ') && !text.includes('(ID: ' + routeId + ')')) {
+        nextFromIdx = i;
+        break;
+      }
+    }
+
+    const routeNodes = allNodes.slice(fromIdx, nextFromIdx);
+    if (routeNodes.length === 0) return null;
+
+    const scrollX = window.scrollX || window.pageXOffset || 0;
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    routeNodes.forEach((node) => {
+      const rect = node.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        minX = Math.min(minX, rect.left + scrollX);
+        minY = Math.min(minY, rect.top + scrollY);
+        maxX = Math.max(maxX, rect.right + scrollX);
+        maxY = Math.max(maxY, rect.bottom + scrollY);
+      }
+    });
+    if (!isFinite(minX) || !isFinite(minY) || maxX <= minX || maxY <= minY) return null;
+
+    const padding = 24;
+    return {
+      x: Math.max(0, minX - padding),
+      y: Math.max(0, minY - padding),
+      width: maxX - minX + 2 * padding,
+      height: maxY - minY + 2 * padding
+    };
+  };
+
   diagram.isStable = () => {
-    const nodes = Array.from(document.querySelectorAll('.react-flow__node'));
     if (!nodes.length) {
       return false;
     }
@@ -353,7 +409,7 @@
       state.at = now;
       return false;
     }
-    return now - state.at > 200;
+    return now - state.at > 250;
   };
 
   diagram.isRouteSelected = (routeId) => {
@@ -363,6 +419,14 @@
           (button) => button.textContent && button.textContent.trim() === routeId
         )
     );
+  };
+
+  // Reset stability tracking state so that a fresh stability measurement begins.
+  // Call this after changing the selected route to avoid stale state from the
+  // previous route's diagram triggering a premature "stable" signal.
+  diagram.resetState = () => {
+    window.__camelDiagramState = null;
+    document.documentElement.removeAttribute('data-camel-stable');
   };
 
   diagram.isRoutesFolderSelected = () => {
