@@ -84,7 +84,7 @@ public class CoAPRestVerbTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("coap").host("localhost").port(PORT);
+                restConfiguration().component("coap").host("localhost").port(PORT.getPort());
 
                 rest()
                         .get("/users").to("direct:users")

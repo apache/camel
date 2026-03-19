@@ -39,7 +39,7 @@ public class CoAPRestContextPathTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().host("localhost").port(PORT).contextPath("/rest/services");
+                restConfiguration().host("localhost").port(PORT.getPort()).contextPath("/rest/services");
 
                 rest("/test").get("/a").to("direct:a");
                 from("direct:a").setBody(constant("GET: /test/a"));
