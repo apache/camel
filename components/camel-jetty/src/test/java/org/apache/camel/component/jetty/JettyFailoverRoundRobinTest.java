@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -37,14 +36,6 @@ public class JettyFailoverRoundRobinTest extends CamelTestSupport {
     AvailablePortFinder.Port port3 = AvailablePortFinder.find();
     @RegisterExtension
     AvailablePortFinder.Port port4 = AvailablePortFinder.find();
-
-    @AfterEach
-    void cleanupPorts() {
-        port1.release();
-        port2.release();
-        port3.release();
-        port4.release();
-    }
 
     @Test
     void testJettyFailoverRoundRobin() throws Exception {
