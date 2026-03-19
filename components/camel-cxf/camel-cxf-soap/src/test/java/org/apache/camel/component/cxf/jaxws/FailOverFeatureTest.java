@@ -33,6 +33,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -41,12 +42,13 @@ public class FailOverFeatureTest {
     private static int port1 = CXFTestSupport.getPort1();
     private static int port2 = CXFTestSupport.getPort2();
     private static int port3 = CXFTestSupport.getPort3();
-    private static int port4 = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     private static final String SERVICE_ADDRESS = "http://localhost:" + port1 + "/FailOverFeatureTest";
     private static final String PAYLOAD_PROXY_ADDRESS = "http://localhost:" + port2 + "/FailOverFeatureTest/proxy";
     private static final String POJO_PROXY_ADDRESS = "http://localhost:" + port3 + "/FailOverFeatureTest/proxy";
-    private static final String NONE_EXIST_ADDRESS = "http://localhost:" + port4 + "/FailOverFeatureTest";
+    private static final String NONE_EXIST_ADDRESS = "http://localhost:" + port4.getPort() + "/FailOverFeatureTest";
     private static Server server;
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;

@@ -37,13 +37,17 @@ public class FtpServiceExtension implements BeforeAllCallback, AfterAllCallback 
 
     public FtpServiceExtension() {
         if (ftpPort == 0) {
-            ftpPort = AvailablePortFinder.getNextAvailable();
+            try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+                ftpPort = p.getPort();
+            }
         }
     }
 
     public FtpServiceExtension(String property) {
         if (ftpPort == 0) {
-            ftpPort = AvailablePortFinder.getNextAvailable();
+            try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+                ftpPort = p.getPort();
+            }
         }
 
         //set them as system properties so Spring can use the property placeholder

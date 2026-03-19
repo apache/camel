@@ -18,23 +18,19 @@ package org.apache.camel.component.vertx;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VertxBaseTestSupport extends CamelTestSupport {
 
-    protected static int port;
+    @RegisterExtension
+    static AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
-
     protected int getPort() {
-        return port;
+        return port.getPort();
     }
 
 }

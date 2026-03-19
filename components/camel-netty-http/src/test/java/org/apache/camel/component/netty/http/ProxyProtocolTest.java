@@ -48,6 +48,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
@@ -62,9 +63,11 @@ public class ProxyProtocolTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProxyProtocolTest.class);
 
-    private static final int ORIGIN_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port originPort = AvailablePortFinder.find();
 
-    private static final int PROXY_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port proxyPort = AvailablePortFinder.find();
 
     private DefaultCamelContext context;
 
@@ -84,7 +87,7 @@ public class ProxyProtocolTest {
 
                 // origin service that serves `"origin server"` on
                 // http://localhost:originPort/path
-                from("netty-http:http://localhost:" + ORIGIN_PORT + "/path")
+                from("netty-http:http://localhost:" + originPort.getPort() + "/path")
                         .process(ProxyProtocolTest::origin);
             }
         });
@@ -160,29 +163,32 @@ public class ProxyProtocolTest {
     }
 
     public static Iterable<Object[]> routeOptions() {
-        final Function<RouteBuilder, RouteDefinition> single = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
-                .process(ProxyProtocolTest::uppercase)
-                .to("netty-http:http://localhost:" + ORIGIN_PORT)
-                .process(ProxyProtocolTest::uppercase);
+        final Function<RouteBuilder, RouteDefinition> single
+                = r -> r.from("netty-http:proxy://localhost:" + proxyPort.getPort())
+                        .process(ProxyProtocolTest::uppercase)
+                        .to("netty-http:http://localhost:" + originPort.getPort())
+                        .process(ProxyProtocolTest::uppercase);
 
-        final Function<RouteBuilder, RouteDefinition> dynamicPath = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
-                .process(ProxyProtocolTest::uppercase)
-                .toD("netty-http:http://localhost:" + ORIGIN_PORT + "/${headers." + Exchange.HTTP_PATH + "}")
-                .process(ProxyProtocolTest::uppercase);
+        final Function<RouteBuilder, RouteDefinition> dynamicPath
+                = r -> r.from("netty-http:proxy://localhost:" + proxyPort.getPort())
+                        .process(ProxyProtocolTest::uppercase)
+                        .toD("netty-http:http://localhost:" + originPort.getPort() + "/${headers." + Exchange.HTTP_PATH + "}")
+                        .process(ProxyProtocolTest::uppercase);
 
-        final Function<RouteBuilder, RouteDefinition> dynamicUrl = r -> r.from("netty-http:proxy://localhost:" + PROXY_PORT)
-                .process(ProxyProtocolTest::uppercase)
-                .toD("netty-http:"
-                     + "${headers." + Exchange.HTTP_SCHEME + "}://"
-                     + "${headers." + Exchange.HTTP_HOST + "}:"
-                     + "${headers." + Exchange.HTTP_PORT + "}/"
-                     + "${headers." + Exchange.HTTP_PATH + "}")
-                .process(ProxyProtocolTest::uppercase);
+        final Function<RouteBuilder, RouteDefinition> dynamicUrl
+                = r -> r.from("netty-http:proxy://localhost:" + proxyPort.getPort())
+                        .process(ProxyProtocolTest::uppercase)
+                        .toD("netty-http:"
+                             + "${headers." + Exchange.HTTP_SCHEME + "}://"
+                             + "${headers." + Exchange.HTTP_HOST + "}:"
+                             + "${headers." + Exchange.HTTP_PORT + "}/"
+                             + "${headers." + Exchange.HTTP_PATH + "}")
+                        .process(ProxyProtocolTest::uppercase);
 
         return Arrays.asList(
                 new Object[] { single, "http://test/path" },
                 new Object[] { dynamicPath, "http://test/path" },
-                new Object[] { dynamicUrl, "http://localhost:" + ORIGIN_PORT + "/path" });
+                new Object[] { dynamicUrl, "http://localhost:" + originPort.getPort() + "/path" });
     }
 
     @BeforeAll
@@ -232,7 +238,7 @@ public class ProxyProtocolTest {
     }
 
     private static InputStream request(final String url) throws IOException {
-        final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", PROXY_PORT));
+        final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", proxyPort.getPort()));
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(proxy);
         // when debugging comment out the following two lines otherwise
@@ -246,7 +252,7 @@ public class ProxyProtocolTest {
 
     private static InputStream request(final String url, final String payload, final String contentType)
             throws IOException {
-        final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", PROXY_PORT));
+        final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", proxyPort.getPort()));
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(proxy);
         connection.addRequestProperty("Content-Type", contentType);

@@ -27,7 +27,6 @@ import org.apache.camel.component.clickup.util.ClickUpTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -50,7 +49,6 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
 
     @BeforeAll
     public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
     }
 
     @Test

@@ -30,7 +30,9 @@ public class SshComponentTestSupport extends CamelTestSupport {
 
     @Override
     public void doPreSetup() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
+        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+            port = p.getPort();
+        }
 
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);

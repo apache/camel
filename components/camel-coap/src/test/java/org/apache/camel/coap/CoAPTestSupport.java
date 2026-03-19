@@ -21,10 +21,12 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.elements.config.Configuration;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class CoAPTestSupport extends CamelTestSupport {
 
-    protected static final int PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
     @Override
     public void doPostSetup() {
@@ -32,7 +34,7 @@ public class CoAPTestSupport extends CamelTestSupport {
     }
 
     protected CoapClient createClient(String path) {
-        return createClient(path, PORT);
+        return createClient(path, PORT.getPort());
     }
 
     protected CoapClient createClient(String path, int port) {

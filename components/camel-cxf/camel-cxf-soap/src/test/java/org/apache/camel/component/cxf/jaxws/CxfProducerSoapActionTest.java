@@ -27,19 +27,21 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfProducerSoapActionTest extends CamelTestSupport {
 
-    private static int port = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port port = AvailablePortFinder.find();
     private static final String SOAP_ACTION = "http://camel.apache.org/order/Order";
     private static final String OPERATION_NAMESPACE = "http://camel.apache.org/order";
     private static final String OPERATION_NAME = "order";
     private static final String DIRECT_START = "direct:start";
     private static final String CXF_ENDPOINT
-            = "cxf:http://localhost:" + port + "/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
+            = "cxf:http://localhost:" + port.getPort() + "/order?wsdlURL=classpath:order.wsdl&loggingFeatureEnabled=true";
     private static final String REQUEST_MESSAGE = "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                                   + "<Body/>" + "</Envelope>";
 

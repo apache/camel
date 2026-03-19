@@ -38,7 +38,9 @@ class AS2AsyncMDNServerConnectionTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
+        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+            port = p.getPort();
+        }
         connection = new AS2AsyncMDNServerConnection(port, null);
     }
 

@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -87,7 +86,6 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
 
     @Override
     protected void doPreSetup() {
-        port = AvailablePortFinder.getNextAvailable();
     }
 
     protected WhatsAppApiConfig getWhatsAppApiConfig() {

@@ -23,9 +23,11 @@ import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class WebsocketCamelRouterTestSupport extends CamelTestSupport {
-    protected static final int PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    protected static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
     // This test needs to run with its own lifecycle management, so we cannot use extensions
     private JettyEmbeddedService service;
@@ -34,7 +36,7 @@ public abstract class WebsocketCamelRouterTestSupport extends CamelTestSupport {
     void setupJetty() {
         final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder
                 .emptyTemplate()
-                .withPort(PORT)
+                .withPort(PORT.getPort())
                 .withContextPath(JettyConfiguration.ROOT_CONTEXT_PATH)
                 .withWebSocketConfiguration()
                 .addServletConfiguration(new JettyConfiguration.WebSocketContextHandlerConfiguration.ServletConfiguration<>(

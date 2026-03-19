@@ -29,6 +29,7 @@ import javax.management.remote.JMXServiceURL;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Tests against a "remote" JMX server. Creates an RMI Registry on or near port 39000 and registers the simple mbean
@@ -51,10 +52,12 @@ public class JMXRemoteTest extends SimpleBeanFixture {
 
     @Override
     protected void initServer() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        registry = LocateRegistry.createRegistry(port);
+        @RegisterExtension
 
-        url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + port + "/" + DOMAIN);
+        AvailablePortFinder.Port port = AvailablePortFinder.find();
+        registry = LocateRegistry.createRegistry(port.getPort());
+
+        url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + port.getPort() + "/" + DOMAIN);
         // create MBean server
         server = MBeanServerFactory.createMBeanServer(DOMAIN);
         // create JMXConnectorServer MBean

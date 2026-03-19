@@ -26,13 +26,15 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.util.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Copy of org.apache.http.localserver.LocalTestServer to use a specific port.
  */
 public class HttpTestServer {
 
-    public static final int PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    public static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
     /** The request handler registry. */
     private final ServerBootstrap bootstrap;
@@ -42,7 +44,7 @@ public class HttpTestServer {
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
-        System.setProperty("HttpTestServer.Port", Integer.toString(PORT));
+        System.setProperty("HttpTestServer.Port", Integer.toString(PORT.getPort()));
     }
 
     /**
@@ -57,7 +59,7 @@ public class HttpTestServer {
                 .setTcpNoDelay(true)
                 .build();
         this.bootstrap = ServerBootstrap.bootstrap()
-                .setListenerPort(PORT)
+                .setListenerPort(PORT.getPort())
                 .setConnectionReuseStrategy(newConnectionReuseStrategy())
                 .setSocketConfig(socketConfig);
     }

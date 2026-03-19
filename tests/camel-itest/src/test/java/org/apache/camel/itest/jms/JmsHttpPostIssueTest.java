@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -61,7 +60,6 @@ public class JmsHttpPostIssueTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             public void configure() {

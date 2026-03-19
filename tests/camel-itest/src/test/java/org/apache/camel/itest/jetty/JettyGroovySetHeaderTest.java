@@ -18,7 +18,6 @@ package org.apache.camel.itest.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +44,6 @@ public class JettyGroovySetHeaderTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override

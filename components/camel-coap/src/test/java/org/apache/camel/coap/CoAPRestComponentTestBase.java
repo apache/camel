@@ -33,11 +33,13 @@ import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.elements.config.Configuration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract class CoAPRestComponentTestBase extends CamelTestSupport {
-    static int coapport = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port coapport = AvailablePortFinder.find();
 
     @Produce("direct:start")
     protected ProducerTemplate sender;
@@ -48,7 +50,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         CoapClient client;
         CoapResponse rsp;
 
-        client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/TestResource/Ducky");
+        client = new CoapClient(getProtocol() + "://localhost:" + coapport.getPort() + "/TestResource/Ducky");
         decorateClient(client);
         rsp = client.get();
         assertEquals(ResponseCode.CONTENT, rsp.getCode());
@@ -57,7 +59,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         assertEquals(ResponseCode.CONTENT, rsp.getCode());
         assertEquals("Hello Ducky: data", rsp.getResponseText());
 
-        client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/TestParams?id=Ducky");
+        client = new CoapClient(getProtocol() + "://localhost:" + coapport.getPort() + "/TestParams?id=Ducky");
         decorateClient(client);
         client.setTimeout(1000000L);
         rsp = client.get();
@@ -72,7 +74,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     @Test
     void testCoAPMethodNotAllowedResponse() throws Exception {
         Configuration.createStandardWithoutFile();
-        CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/TestResource/Ducky");
+        CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport.getPort() + "/TestResource/Ducky");
         decorateClient(client);
         client.setTimeout(1000000L);
         CoapResponse rsp = client.delete();
@@ -82,7 +84,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     @Test
     void testCoAPNotFoundResponse() throws Exception {
         Configuration.createStandardWithoutFile();
-        CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport + "/foo/bar/cheese");
+        CoapClient client = new CoapClient(getProtocol() + "://localhost:" + coapport.getPort() + "/foo/bar/cheese");
         decorateClient(client);
         client.setTimeout(1000000L);
         CoapResponse rsp = client.get();
@@ -125,7 +127,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
             @Override
             public void configure() {
                 RestConfigurationDefinition restConfig
-                        = restConfiguration().scheme(getProtocol()).host("localhost").port(coapport);
+                        = restConfiguration().scheme(getProtocol()).host("localhost").port(coapport.getPort());
                 decorateRestConfiguration(restConfig);
 
                 rest("/TestParams").get().to("direct:get1").post().to("direct:post1");
@@ -144,7 +146,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
                     exchange.getMessage().setHeader(CoAPConstants.CONTENT_TYPE, ct);
                 });
 
-                from("direct:start").toF(getClientURI(), coapport).to("mock:result");
+                from("direct:start").toF(getClientURI(), coapport.getPort()).to("mock:result");
             }
         };
     }

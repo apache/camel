@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
@@ -77,7 +76,6 @@ public class JettyVelocityTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             public void configure() {

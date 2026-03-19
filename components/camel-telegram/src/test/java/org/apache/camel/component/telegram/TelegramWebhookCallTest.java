@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -53,7 +52,6 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
 
     @Override
     protected void doPreSetup() {
-        port = AvailablePortFinder.getNextAvailable();
     }
 
     @Override

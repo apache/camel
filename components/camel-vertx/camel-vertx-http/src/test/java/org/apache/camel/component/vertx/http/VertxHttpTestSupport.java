@@ -26,13 +26,15 @@ import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.impl.btc.BlockedThreadEvent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class VertxHttpTestSupport extends CamelTestSupport {
 
-    protected final int port = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     protected String getTestServerUrl() {
-        return String.format("http://localhost:%d", port);
+        return String.format("http://localhost:%d", port.getPort());
     }
 
     protected String getTestServerUri() {
@@ -40,11 +42,11 @@ public class VertxHttpTestSupport extends CamelTestSupport {
     }
 
     protected String getProducerUri() {
-        return String.format("vertx-http:http://localhost:%d", port);
+        return String.format("vertx-http:http://localhost:%d", port.getPort());
     }
 
     protected int getPort() {
-        return port;
+        return port.getPort();
     }
 
     protected Vertx createVertxWithThreadBlockedHandler(Handler<BlockedThreadEvent> handler) {

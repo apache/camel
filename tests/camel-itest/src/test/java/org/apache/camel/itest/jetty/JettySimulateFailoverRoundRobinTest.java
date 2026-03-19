@@ -28,24 +28,32 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
 
-    private static int port1 = AvailablePortFinder.getNextAvailable();
-    private static int port2 = AvailablePortFinder.getNextAvailable();
-    private static int port3 = AvailablePortFinder.getNextAvailable();
-    private static int port4 = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+    @RegisterExtension
 
-    private String bad = "jetty:http://localhost:" + port1 + "/bad";
-    private String bad2 = "jetty:http://localhost:" + port2 + "/bad2";
-    private String good = "jetty:http://localhost:" + port3 + "/good";
-    private String good2 = "jetty:http://localhost:" + port4 + "/good2";
-    private String hbad = "http://localhost:" + port1 + "/bad";
-    private String hbad2 = "http://localhost:" + port2 + "/bad2";
-    private String hgood = "http://localhost:" + port3 + "/good";
-    private String hgood2 = "http://localhost:" + port4 + "/good2";
+    static AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @RegisterExtension
+
+    static AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+    @RegisterExtension
+
+    static AvailablePortFinder.Port port4 = AvailablePortFinder.find();
+
+    private String bad = "jetty:http://localhost:" + port1.getPort() + "/bad";
+    private String bad2 = "jetty:http://localhost:" + port2.getPort() + "/bad2";
+    private String good = "jetty:http://localhost:" + port3.getPort() + "/good";
+    private String good2 = "jetty:http://localhost:" + port4.getPort() + "/good2";
+    private String hbad = "http://localhost:" + port1.getPort() + "/bad";
+    private String hbad2 = "http://localhost:" + port2.getPort() + "/bad2";
+    private String hgood = "http://localhost:" + port3.getPort() + "/good";
+    private String hgood2 = "http://localhost:" + port4.getPort() + "/good2";
 
     @Test
     void testJettySimulateFailoverRoundRobin() throws Exception {

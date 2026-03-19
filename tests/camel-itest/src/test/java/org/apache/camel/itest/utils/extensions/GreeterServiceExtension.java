@@ -34,7 +34,9 @@ public class GreeterServiceExtension implements BeforeAllCallback, AfterAllCallb
     private static final int PORT;
 
     static {
-        PORT = AvailablePortFinder.getNextAvailable();
+        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+            PORT = p.getPort();
+        }
         GREETER = new GreeterImpl();
 
         ADDRESS = "http://localhost:" + PORT + "/SoapContext/SoapPort";

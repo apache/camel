@@ -33,11 +33,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class HttpProducerSessionTest extends CamelTestSupport {
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
     private final JettyConfiguration jettyConfiguration = JettyConfigurationBuilder
             .emptyTemplate()
-            .withPort(PORT)
+            .withPort(PORT.getPort())
             .withContextPath("/session")
             .withContextHandlerConfiguration()
             .withCustomizer(HttpProducerSessionTest::customizer)
@@ -88,7 +89,7 @@ public class HttpProducerSessionTest extends CamelTestSupport {
 
     private String getTestServerEndpointSessionUrl() {
         // session handling will not work for localhost
-        return "http://localhost:" + PORT + "/session/";
+        return "http://localhost:" + PORT.getPort() + "/session/";
     }
 
     @Override

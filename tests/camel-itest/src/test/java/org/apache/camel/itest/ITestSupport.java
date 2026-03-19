@@ -24,12 +24,21 @@ import org.apache.camel.test.AvailablePortFinder;
  */
 public final class ITestSupport {
 
-    static final int PORT1 = AvailablePortFinder.getNextAvailable();
-    static final int PORT2 = AvailablePortFinder.getNextAvailable();
-    static final int PORT3 = AvailablePortFinder.getNextAvailable();
-    static final int PORT4 = AvailablePortFinder.getNextAvailable();
+    static final int PORT1;
+    static final int PORT2;
+    static final int PORT3;
+    static final int PORT4;
 
     static {
+        try (AvailablePortFinder.Port p1 = AvailablePortFinder.find();
+             AvailablePortFinder.Port p2 = AvailablePortFinder.find();
+             AvailablePortFinder.Port p3 = AvailablePortFinder.find();
+             AvailablePortFinder.Port p4 = AvailablePortFinder.find()) {
+            PORT1 = p1.getPort();
+            PORT2 = p2.getPort();
+            PORT3 = p3.getPort();
+            PORT4 = p4.getPort();
+        }
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
         System.setProperty("ITestSupport.port1", Integer.toString(PORT1));
@@ -42,7 +51,10 @@ public final class ITestSupport {
     }
 
     public static int getPort(String name) {
-        int port = AvailablePortFinder.getNextAvailable();
+        int port;
+        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+            port = p.getPort();
+        }
         System.setProperty(name, Integer.toString(port));
         return port;
     }

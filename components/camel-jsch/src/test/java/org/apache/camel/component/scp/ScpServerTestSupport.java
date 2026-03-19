@@ -44,8 +44,8 @@ import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.sftp.server.SftpSubsystemFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,8 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(ScpServerTestSupport.class);
     protected static final String SCP_ROOT_DIR = "target/test-classes/scp";
     protected static final String KNOWN_HOSTS = "known_hosts";
-    protected static int port;
+    @RegisterExtension
+    protected static AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     protected Consumer<SshServer> serverConfigurer;
 
@@ -75,16 +76,11 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     }
 
     protected int getPort() {
-        return port;
+        return port.getPort();
     }
 
     protected SshServer getSshd() {
         return sshd;
-    }
-
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
     }
 
     @Override

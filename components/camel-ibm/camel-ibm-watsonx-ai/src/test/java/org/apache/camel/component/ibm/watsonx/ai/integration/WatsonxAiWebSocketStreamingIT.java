@@ -35,6 +35,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +67,8 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
 
     private static final String MODEL_ID = "ibm/granite-4-h-small";
 
-    private final int port = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
     private Vertx vertx;
 
     @AfterEach
@@ -96,7 +98,7 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/chat", port)
+                fromF("vertx-websocket:localhost:%d/chat", port.getPort())
                         .routeId("websocket-chat-stream")
                         // Store connection key for sending responses back to this specific client
                         .setProperty("connectionKey", header(VertxWebsocketConstants.CONNECTION_KEY))
@@ -107,7 +109,7 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
                             // Stream consumer that sends each token as a WebSocket message
                             Consumer<String> streamHandler = chunk -> {
                                 producer.sendBodyAndHeader(
-                                        "vertx-websocket:localhost:" + port + "/chat",
+                                        "vertx-websocket:localhost:" + port.getPort() + "/chat",
                                         chunk,
                                         VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
                             };
@@ -124,7 +126,7 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
                             String connectionKey = exchange.getProperty("connectionKey", String.class);
                             ProducerTemplate producer = exchange.getContext().createProducerTemplate();
                             producer.sendBodyAndHeader(
-                                    "vertx-websocket:localhost:" + port + "/chat",
+                                    "vertx-websocket:localhost:" + port.getPort() + "/chat",
                                     "[DONE]",
                                     VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
                         });
@@ -137,7 +139,7 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
         List<String> receivedMessages = new CopyOnWriteArrayList<>();
         CountDownLatch doneLatch = new CountDownLatch(1);
 
-        WebSocket webSocket = openWebSocketConnection("localhost", port, "/chat", message -> {
+        WebSocket webSocket = openWebSocketConnection("localhost", port.getPort(), "/chat", message -> {
             LOG.info("Received WebSocket message: {}", message);
             receivedMessages.add(message);
             if ("[DONE]".equals(message)) {
@@ -170,7 +172,7 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/explain", port)
+                fromF("vertx-websocket:localhost:%d/explain", port.getPort())
                         .routeId("websocket-explain-stream")
                         .setProperty("connectionKey", header(VertxWebsocketConstants.CONNECTION_KEY))
                         .process(exchange -> {
@@ -179,7 +181,7 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
 
                             Consumer<String> streamHandler = chunk -> {
                                 producer.sendBodyAndHeader(
-                                        "vertx-websocket:localhost:" + port + "/explain",
+                                        "vertx-websocket:localhost:" + port.getPort() + "/explain",
                                         chunk,
                                         VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
                             };
@@ -193,7 +195,7 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
                             String connectionKey = exchange.getProperty("connectionKey", String.class);
                             ProducerTemplate producer = exchange.getContext().createProducerTemplate();
                             producer.sendBodyAndHeader(
-                                    "vertx-websocket:localhost:" + port + "/explain",
+                                    "vertx-websocket:localhost:" + port.getPort() + "/explain",
                                     "[DONE]",
                                     VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
                         });
@@ -205,7 +207,7 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
         List<String> receivedMessages = new CopyOnWriteArrayList<>();
         CountDownLatch doneLatch = new CountDownLatch(1);
 
-        WebSocket webSocket = openWebSocketConnection("localhost", port, "/explain", message -> {
+        WebSocket webSocket = openWebSocketConnection("localhost", port.getPort(), "/explain", message -> {
             LOG.info("Received: {}", message);
             receivedMessages.add(message);
             if ("[DONE]".equals(message)) {

@@ -33,6 +33,7 @@ import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.wildfly.security.WildFlyElytronBaseProvider;
 import org.wildfly.security.auth.permission.LoginPermission;
 import org.wildfly.security.auth.realm.token.TokenSecurityRealm;
@@ -46,7 +47,8 @@ import org.wildfly.security.permission.PermissionVerifier;
  */
 public abstract class BaseElytronTest extends CamelTestSupport {
 
-    private static volatile int port;
+    @RegisterExtension
+    static AvailablePortFinder.Port port = AvailablePortFinder.find();
     private static KeyPair keyPair;
 
     private final AtomicInteger counter = new AtomicInteger(1);
@@ -59,7 +61,6 @@ public abstract class BaseElytronTest extends CamelTestSupport {
 
     @BeforeAll
     public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
         keyPair = null;
 
         URL location = ElytronSecurityProvider.class.getProtectionDomain().getCodeSource().getLocation();
@@ -74,7 +75,7 @@ public abstract class BaseElytronTest extends CamelTestSupport {
     }
 
     protected static int getPort() {
-        return port;
+        return port.getPort();
     }
 
     @BindToRegistry("prop")

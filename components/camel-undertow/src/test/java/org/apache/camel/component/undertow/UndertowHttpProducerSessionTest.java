@@ -26,22 +26,18 @@ import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class UndertowHttpProducerSessionTest extends CamelTestSupport {
-    private static volatile int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @BindToRegistry("instanceCookieHandler")
     private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
 
     @BindToRegistry("exchangeCookieHandler")
     private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
-
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
 
     @Test
     public void testNoSession() throws Exception {
@@ -69,7 +65,7 @@ public class UndertowHttpProducerSessionTest extends CamelTestSupport {
 
     private String getTestServerEndpointSessionUrl() {
         // session handling will not work for localhost
-        return "http://127.0.0.1:" + port + "/session";
+        return "http://127.0.0.1:" + port.getPort() + "/session";
     }
 
     private String getTestServerEndpointSessionUri() {

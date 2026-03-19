@@ -32,10 +32,12 @@ import org.apache.sshd.server.SshServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SshIdleTimeoutTest extends SshComponentTestSupport {
 
-    private int delayedPort = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port delayedPort = AvailablePortFinder.find();
     private SshServer delayedSshd;
 
     @AfterEach
@@ -102,7 +104,7 @@ public class SshIdleTimeoutTest extends SshComponentTestSupport {
 
     private void startDelayedServer() throws Exception {
         delayedSshd = SshServer.setUpDefaultServer();
-        delayedSshd.setPort(delayedPort);
+        delayedSshd.setPort(delayedPort.getPort());
         delayedSshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get("src/test/resources/hostkey.pem")));
         delayedSshd.setCommandFactory(new DelayedEchoCommandFactory(1000));
         delayedSshd.setPasswordAuthenticator((username, password, session) -> true);
@@ -150,9 +152,9 @@ public class SshIdleTimeoutTest extends SshComponentTestSupport {
                         .to("mock:result");
 
                 from("direct:sshWithShortIdleTimeout")
-                        .to("ssh://smx:smx@localhost:" + delayedPort + "?timeout=5000&idleTimeout=500");
+                        .to("ssh://smx:smx@localhost:" + delayedPort.getPort() + "?timeout=5000&idleTimeout=500");
                 from("direct:sshWithLongIdleTimeout")
-                        .to("ssh://smx:smx@localhost:" + delayedPort + "?timeout=5000&idleTimeout=5000");
+                        .to("ssh://smx:smx@localhost:" + delayedPort.getPort() + "?timeout=5000&idleTimeout=5000");
             }
         };
     }

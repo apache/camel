@@ -32,7 +32,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.spring.security.keycloak.KeycloakRealmRoleConverter;
 import org.apache.camel.component.spring.security.keycloak.KeycloakUsernameSubClaimAdapter;
 import org.apache.camel.component.undertow.UndertowComponent;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -49,7 +48,6 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
 
     @BeforeAll
     public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
     }
 
     protected static int getPort() {

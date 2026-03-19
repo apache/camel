@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -45,8 +46,9 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 @Tags({ @Tag("exclusive") })
 public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTestSupport {
 
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
-    public static ArtemisService service = new ArtemisVMService.ReusableArtemisVMService(PORT);
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    public static ArtemisService service = new ArtemisVMService.ReusableArtemisVMService(PORT.getPort());
 
     private final Long recoveryInterval = 1000L;
 
@@ -69,7 +71,7 @@ public final class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends C
     }
 
     private static void createBroker() {
-        service = new ArtemisVMService.ReusableArtemisVMService(PORT);
+        service = new ArtemisVMService.ReusableArtemisVMService(PORT.getPort());
         service.initialize();
     }
 

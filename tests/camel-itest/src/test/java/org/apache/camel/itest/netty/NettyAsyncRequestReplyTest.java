@@ -29,7 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -101,7 +100,6 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                port = AvailablePortFinder.getNextAvailable();
 
                 from("netty:tcp://localhost:" + port + "?textline=true&sync=true&reuseAddress=true&synchronous=false")
                         .to("activemq:queue:NettyAsyncRequestReplyTest")

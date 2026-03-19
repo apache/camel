@@ -26,18 +26,20 @@ import com.pubnub.internal.java.PubNubForJavaImpl;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static com.pubnub.api.enums.PNHeartbeatNotificationOptions.NONE;
 
 public class PubNubTestBase extends CamelTestSupport {
 
-    private final int port = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @BindToRegistry("pubnub")
     private PubNub pubnub = createPubNubInstance();
 
-    private WireMockServer wireMockServer = new WireMockServer(options().port(port));
+    private WireMockServer wireMockServer = new WireMockServer(options().port(port.getPort()));
 
     @Override
     protected void setupResources() {
@@ -61,7 +63,7 @@ public class PubNubTestBase extends CamelTestSupport {
             config = PNConfiguration.builder(new UserId("myUUID"), "mySubscribeKey")
                     .publishKey("myPublishKey")
                     .secure(false)
-                    .origin("localhost" + ":" + port)
+                    .origin("localhost" + ":" + port.getPort())
                     .logVerbosity(PNLogVerbosity.NONE)
                     .heartbeatNotificationOptions(NONE)
                     .build();

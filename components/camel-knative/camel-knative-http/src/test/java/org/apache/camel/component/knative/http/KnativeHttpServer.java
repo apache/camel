@@ -56,7 +56,7 @@ public class KnativeHttpServer extends ServiceSupport {
     private HttpServer server;
 
     public KnativeHttpServer(CamelContext context) {
-        this(context, "localhost", AvailablePortFinder.getNextAvailable(), "/", null);
+        this(context, "localhost", AvailablePortFinder.find().getPort(), "/", null);
     }
 
     public KnativeHttpServer(CamelContext context, int port) {
@@ -68,7 +68,7 @@ public class KnativeHttpServer extends ServiceSupport {
     }
 
     public KnativeHttpServer(CamelContext context, Handler<RoutingContext> handler) {
-        this(context, "localhost", AvailablePortFinder.getNextAvailable(), "/", handler);
+        this(context, "localhost", AvailablePortFinder.find().getPort(), "/", handler);
     }
 
     public KnativeHttpServer(CamelContext context, String host, int port, String path) {
@@ -76,11 +76,11 @@ public class KnativeHttpServer extends ServiceSupport {
     }
 
     public KnativeHttpServer(CamelContext context, String host, String path) {
-        this(context, host, AvailablePortFinder.getNextAvailable(), path, null);
+        this(context, host, AvailablePortFinder.find().getPort(), path, null);
     }
 
     public KnativeHttpServer(CamelContext context, String host, String path, Handler<RoutingContext> handler) {
-        this(context, host, AvailablePortFinder.getNextAvailable(), path, handler);
+        this(context, host, AvailablePortFinder.find().getPort(), path, handler);
     }
 
     public KnativeHttpServer(CamelContext context, String host, int port, String path, Handler<RoutingContext> handler) {

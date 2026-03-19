@@ -242,10 +242,11 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
     }
 
     private String getAvailableUrl(String pathEnd) {
-        int availablePort = AvailablePortFinder.getNextAvailable();
-        String url = "http://localhost:" + availablePort
-                     + "/" + getClass().getSimpleName();
-        return url + "/" + pathEnd;
+        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+            String url = "http://localhost:" + p.getPort()
+                         + "/" + getClass().getSimpleName();
+            return url + "/" + pathEnd;
+        }
     }
 
     private String constructSoapMessage(String content) {
