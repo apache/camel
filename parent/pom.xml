@@ -4347,14 +4347,14 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <argLine>@{camel.surefire.fork.vmargs}</argLine>
+                            <argLine>@{camel.surefire.fork.vmargs} @{argLine}</argLine>
                         </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <argLine>@{camel.failsafe.fork.vmargs}</argLine>
+                            <argLine>@{camel.failsafe.fork.vmargs} @{argLine}</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -4402,7 +4402,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <argLine>${camel.surefire.fork.vmargs}</argLine>
+                            <argLine>${camel.surefire.fork.vmargs} @{argLine}</argLine>
                             <childDelegation>false</childDelegation>
                             <useFile>true</useFile>
                             <failIfNoTests>false</failIfNoTests>
@@ -4478,14 +4478,14 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <argLine>${camel.surefire.fork.vmargs} ${jacocoAgent}</argLine>
+                            <argLine>${camel.surefire.fork.vmargs} ${jacocoAgent} @{argLine}</argLine>
                         </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <argLine>${camel.failsafe.fork.vmargs} ${jacocoAgent}</argLine>
+                            <argLine>${camel.failsafe.fork.vmargs} ${jacocoAgent} @{argLine}</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
