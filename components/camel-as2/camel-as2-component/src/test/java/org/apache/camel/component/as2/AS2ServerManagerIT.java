@@ -239,7 +239,7 @@ public class AS2ServerManagerIT extends AS2ServerManagerITBase {
                 "EDI message does not match");
     }
 
-    private static AS2ClientConnection getAs2ClientConnection() throws IOException {
+    private AS2ClientConnection getAs2ClientConnection() throws IOException {
         AS2ClientConnection clientConnection
                 = new AS2ClientConnection(
                         AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, targetPort.getPort(), HTTP_SOCKET_TIMEOUT,
