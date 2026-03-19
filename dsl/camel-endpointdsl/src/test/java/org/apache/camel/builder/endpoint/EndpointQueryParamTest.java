@@ -20,7 +20,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 class EndpointQueryParamTest extends BaseEndpointDslTest {
     @Override
@@ -28,8 +27,6 @@ class EndpointQueryParamTest extends BaseEndpointDslTest {
         return new EndpointRouteBuilder() {
             @Override
             public void configure() {
-                @RegisterExtension
-
                 AvailablePortFinder.Port port = AvailablePortFinder.find();
                 restConfiguration().component("jetty").host("localhost").port(port.getPort());
                 rest().get("path/xyz")
