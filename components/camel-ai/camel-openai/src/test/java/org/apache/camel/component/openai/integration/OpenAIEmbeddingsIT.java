@@ -28,6 +28,7 @@ import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -55,6 +56,8 @@ public class OpenAIEmbeddingsIT extends CamelTestSupport {
         if (apiKey == null || apiKey.isEmpty()) {
             apiKey = "dummy";
         }
+        Assumptions.assumeTrue(ObjectHelper.isNotEmpty(embeddingModel),
+                "Embedding model not available. Set the ollama.embedding.model system property or use a container with embedding support.");
     }
 
     @Override
@@ -101,6 +104,7 @@ public class OpenAIEmbeddingsIT extends CamelTestSupport {
         Exchange result = template.request("direct:embedding",
                 e -> e.getIn().setBody("Apache Camel is an integration framework"));
 
+        assertThat(result.getException()).as("Exchange should not have an exception").isNull();
         mockResponse.assertIsSatisfied();
 
         assertThat(result).isNotNull();
@@ -128,6 +132,7 @@ public class OpenAIEmbeddingsIT extends CamelTestSupport {
         Exchange result = template.request("direct:embeddingWithEncodingFormatFloat",
                 e -> e.getIn().setBody("Apache Camel is an integration framework"));
 
+        assertThat(result.getException()).as("Exchange should not have an exception").isNull();
         mockResponse.assertIsSatisfied();
 
         assertThat(result).isNotNull();
@@ -157,6 +162,7 @@ public class OpenAIEmbeddingsIT extends CamelTestSupport {
         Exchange result = template.request("direct:embedding",
                 e -> e.getIn().setBody(inputs));
 
+        assertThat(result.getException()).as("Exchange should not have an exception").isNull();
         mockResponse.assertIsSatisfied();
 
         assertThat(result).isNotNull();
@@ -182,6 +188,8 @@ public class OpenAIEmbeddingsIT extends CamelTestSupport {
         Exchange result1 = template.request("direct:embedding",
                 e -> e.getIn().setBody("Apache Camel is an integration framework"));
 
+        assertThat(result1.getException()).as("Exchange should not have an exception").isNull();
+
         @SuppressWarnings("unchecked")
         List<Float> embedding1 = (List<Float>) result1.getMessage().getBody();
         assertThat(embedding1).isNotEmpty();
@@ -191,6 +199,8 @@ public class OpenAIEmbeddingsIT extends CamelTestSupport {
             e.getIn().setBody("Camel is used for enterprise integration patterns");
             e.getIn().setHeader(OpenAIConstants.REFERENCE_EMBEDDING, embedding1);
         });
+
+        assertThat(result2.getException()).as("Exchange should not have an exception").isNull();
 
         @SuppressWarnings("unchecked")
         List<Float> embedding2 = (List<Float>) result2.getMessage().getBody();
