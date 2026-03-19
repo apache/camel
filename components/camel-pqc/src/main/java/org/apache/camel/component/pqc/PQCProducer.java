@@ -18,7 +18,10 @@ package org.apache.camel.component.pqc;
 
 import java.security.*;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
@@ -50,6 +53,51 @@ import org.slf4j.LoggerFactory;
 public class PQCProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(PQCProducer.class);
+
+    // Valid symmetric key lengths per algorithm for startup validation.
+    // RC5 is excluded because it supports arbitrary key lengths (0-2040 bits).
+    private static final Map<String, int[]> VALID_SYMMETRIC_KEY_LENGTHS = Map.ofEntries(
+            Map.entry(PQCSymmetricAlgorithms.AES.name(), new int[] { 128, 192, 256 }),
+            Map.entry(PQCSymmetricAlgorithms.RC2.name(), new int[] { 40, 64, 128 }),
+            Map.entry(PQCSymmetricAlgorithms.ARIA.name(), new int[] { 128, 192, 256 }),
+            Map.entry(PQCSymmetricAlgorithms.CAMELLIA.name(), new int[] { 128, 192, 256 }),
+            Map.entry(PQCSymmetricAlgorithms.CAST5.name(), new int[] { 40, 64, 128 }),
+            Map.entry(PQCSymmetricAlgorithms.CAST6.name(), new int[] { 128, 160, 192, 224, 256 }),
+            Map.entry(PQCSymmetricAlgorithms.CHACHA7539.name(), new int[] { 256 }),
+            Map.entry(PQCSymmetricAlgorithms.DSTU7624.name(), new int[] { 128, 256, 512 }),
+            Map.entry(PQCSymmetricAlgorithms.GOST28147.name(), new int[] { 256 }),
+            Map.entry(PQCSymmetricAlgorithms.GOST3412_2015.name(), new int[] { 256 }),
+            Map.entry(PQCSymmetricAlgorithms.GRAIN128.name(), new int[] { 128 }),
+            Map.entry(PQCSymmetricAlgorithms.HC128.name(), new int[] { 128 }),
+            Map.entry(PQCSymmetricAlgorithms.HC256.name(), new int[] { 256 }),
+            Map.entry(PQCSymmetricAlgorithms.SALSA20.name(), new int[] { 128, 256 }),
+            Map.entry(PQCSymmetricAlgorithms.SEED.name(), new int[] { 128 }),
+            Map.entry(PQCSymmetricAlgorithms.SM4.name(), new int[] { 128 }),
+            Map.entry(PQCSymmetricAlgorithms.DESEDE.name(), new int[] { 128, 192 }));
+
+    // Signature algorithms not part of NIST FIPS 204/205 post-quantum standards.
+    // XMSS/XMSSMT are NIST SP 800-208 but are stateful and not in FIPS 204/205.
+    private static final Set<String> NON_FIPS_PQ_SIGNATURES = Set.of(
+            PQCSignatureAlgorithms.XMSS.name(),
+            PQCSignatureAlgorithms.XMSSMT.name(),
+            PQCSignatureAlgorithms.DILITHIUM.name(),
+            PQCSignatureAlgorithms.FALCON.name(),
+            PQCSignatureAlgorithms.PICNIC.name(),
+            PQCSignatureAlgorithms.SNOVA.name(),
+            PQCSignatureAlgorithms.MAYO.name(),
+            PQCSignatureAlgorithms.SPHINCSPLUS.name());
+
+    // KEM algorithms not part of NIST FIPS 203 post-quantum standard.
+    private static final Set<String> NON_FIPS_PQ_KEMS = Set.of(
+            PQCKeyEncapsulationAlgorithms.BIKE.name(),
+            PQCKeyEncapsulationAlgorithms.HQC.name(),
+            PQCKeyEncapsulationAlgorithms.CMCE.name(),
+            PQCKeyEncapsulationAlgorithms.SABER.name(),
+            PQCKeyEncapsulationAlgorithms.FRODO.name(),
+            PQCKeyEncapsulationAlgorithms.NTRU.name(),
+            PQCKeyEncapsulationAlgorithms.NTRULPRime.name(),
+            PQCKeyEncapsulationAlgorithms.SNTRUPrime.name(),
+            PQCKeyEncapsulationAlgorithms.KYBER.name());
 
     private Signature signer;
     private KeyGenerator keyGenerator;
@@ -249,6 +297,7 @@ public class PQCProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        validateConfiguration();
 
         if (getConfiguration().getOperation().equals(PQCOperations.sign)
                 || getConfiguration().getOperation().equals(PQCOperations.verify)) {
@@ -760,6 +809,114 @@ public class PQCProducer extends DefaultProducer {
         KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
         if (klm != null) {
             klm.deleteKey(keyId);
+        }
+    }
+
+    // ========== Configuration Validation ==========
+
+    /**
+     * Validates the producer configuration at startup to catch invalid or non-recommended algorithm combinations and
+     * key sizes early, before any cryptographic operation is attempted.
+     */
+    private void validateConfiguration() {
+        PQCConfiguration config = getConfiguration();
+        PQCOperations op = config.getOperation();
+
+        validateSymmetricKeyLength(config, op);
+        warnHybridCombinations(config, op);
+        logNistRecommendations(config);
+    }
+
+    private void validateSymmetricKeyLength(PQCConfiguration config, PQCOperations op) {
+        if (!isKEMOperation(op)) {
+            return;
+        }
+        String symAlg = config.getSymmetricKeyAlgorithm();
+        if (ObjectHelper.isEmpty(symAlg)) {
+            return;
+        }
+        int keyLen = config.getSymmetricKeyLength();
+        int[] validLengths = VALID_SYMMETRIC_KEY_LENGTHS.get(symAlg);
+        if (validLengths != null) {
+            boolean valid = false;
+            for (int len : validLengths) {
+                if (len == keyLen) {
+                    valid = true;
+                    break;
+                }
+            }
+            if (!valid) {
+                throw new IllegalArgumentException(
+                        "Invalid symmetric key length " + keyLen + " for algorithm " + symAlg
+                                                   + ". Valid key lengths: " + Arrays.toString(validLengths));
+            }
+        }
+    }
+
+    private void warnHybridCombinations(PQCConfiguration config, PQCOperations op) {
+        if (op == PQCOperations.hybridSign || op == PQCOperations.hybridVerify) {
+            String classicalAlg = config.getClassicalSignatureAlgorithm();
+            if (ObjectHelper.isNotEmpty(classicalAlg)) {
+                try {
+                    PQCClassicalSignatureAlgorithms classical = PQCClassicalSignatureAlgorithms.valueOf(classicalAlg);
+                    if (classical.isRSA()) {
+                        LOG.warn("Using RSA ({}) in hybrid signature mode. ECDSA or EdDSA (Ed25519/Ed448) "
+                                 + "is recommended for new hybrid deployments due to smaller signature sizes "
+                                 + "and better performance.",
+                                classicalAlg);
+                    }
+                } catch (IllegalArgumentException e) {
+                    // Unknown classical algorithm - will fail later during init
+                }
+            }
+            String pqcAlg = config.getSignatureAlgorithm();
+            if (ObjectHelper.isNotEmpty(pqcAlg) && NON_FIPS_PQ_SIGNATURES.contains(pqcAlg)) {
+                LOG.warn("PQC signature algorithm {} is not part of NIST FIPS 204/205. Consider using "
+                         + "ML-DSA (FIPS 204) or SLH-DSA (FIPS 205) for production hybrid deployments.",
+                        pqcAlg);
+            }
+        }
+
+        if (op == PQCOperations.hybridGenerateSecretKeyEncapsulation
+                || op == PQCOperations.hybridExtractSecretKeyEncapsulation
+                || op == PQCOperations.hybridExtractSecretKeyFromEncapsulation) {
+            String pqcAlg = config.getKeyEncapsulationAlgorithm();
+            if (ObjectHelper.isNotEmpty(pqcAlg) && NON_FIPS_PQ_KEMS.contains(pqcAlg)) {
+                LOG.warn("PQC KEM algorithm {} is not part of NIST FIPS 203. Consider using "
+                         + "ML-KEM (FIPS 203) for production hybrid deployments.",
+                        pqcAlg);
+            }
+        }
+    }
+
+    private void logNistRecommendations(PQCConfiguration config) {
+        String kemAlg = config.getKeyEncapsulationAlgorithm();
+        if (PQCKeyEncapsulationAlgorithms.MLKEM.name().equals(kemAlg)) {
+            LOG.info("Using ML-KEM (NIST FIPS 203). Available parameter sets: "
+                     + "ML-KEM-512 (Level 1), ML-KEM-768 (Level 3, recommended), ML-KEM-1024 (Level 5)");
+        }
+
+        String sigAlg = config.getSignatureAlgorithm();
+        if (PQCSignatureAlgorithms.MLDSA.name().equals(sigAlg)) {
+            LOG.info("Using ML-DSA (NIST FIPS 204). Available parameter sets: "
+                     + "ML-DSA-44 (Level 2), ML-DSA-65 (Level 3, recommended), ML-DSA-87 (Level 5)");
+        } else if (PQCSignatureAlgorithms.SLHDSA.name().equals(sigAlg)) {
+            LOG.info("Using SLH-DSA (NIST FIPS 205). Stateless hash-based signature scheme suitable for "
+                     + "applications where stateful key management is not feasible");
+        }
+    }
+
+    private boolean isKEMOperation(PQCOperations op) {
+        switch (op) {
+            case generateSecretKeyEncapsulation:
+            case extractSecretKeyEncapsulation:
+            case extractSecretKeyFromEncapsulation:
+            case hybridGenerateSecretKeyEncapsulation:
+            case hybridExtractSecretKeyEncapsulation:
+            case hybridExtractSecretKeyFromEncapsulation:
+                return true;
+            default:
+                return false;
         }
     }
 
