@@ -150,7 +150,18 @@ public final class CatalogLoader {
                         "Cannot download " + springBootGroupId + ":camel-catalog-provider-springboot:" + version);
             }
 
-            Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(SPRING_BOOT_CATALOG_PROVIDER);
+            Class<RuntimeProvider> clazz;
+            try {
+                clazz = (Class<RuntimeProvider>) cl.loadClass(SPRING_BOOT_CATALOG_PROVIDER);
+            } catch (UnsupportedClassVersionError e) {
+                String sbVersion = PropertyResolver.fromSystemProperty(
+                        CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, () -> camelVersion);
+                throw new IOException(
+                        "Cannot load camel-catalog-provider-springboot:" + sbVersion
+                                      + " on Java " + Runtime.version()
+                                      + ". Spring Boot runtime requires JDK 21+ starting from camel-spring-boot 4.19.0."
+                                      + " Use --camel-spring-boot-version=4.18.x for JDK 17 compatibility, or run on JDK 21+.");
+            }
             if (clazz != null) {
                 Class<CamelCatalog> clazz2 = (Class<CamelCatalog>) cl.loadClass(DEFAULT_CAMEL_CATALOG);
                 if (clazz2 != null) {

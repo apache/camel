@@ -4466,6 +4466,10 @@
                                 </goals>
                                 <configuration>
                                     <propertyName>jacocoAgent</propertyName>
+                                    <!-- Workaround to multi-release jar https://github.com/jacoco/jacoco/issues/407 -->
+                                    <excludes>
+                                        <exclude>**/CamelThreadFactory*</exclude>
+                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>

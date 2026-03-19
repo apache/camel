@@ -77,7 +77,7 @@ public class RunCommandITCase extends JBangTestSupport {
         executeBackground(String.format(
                 "run %s/route-props.yaml --property=a=a --property=b=b --properties=%s/route-props.properties",
                 mountPoint(), mountPoint()));
-        checkLogContains("Hello Camel with properties a=a b=b my-key=my-val", 5);
+        checkLogContains("Hello Camel with properties a=a b=b my-key=my-val");
     }
 
     @Test
