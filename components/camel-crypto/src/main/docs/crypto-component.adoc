@@ -270,18 +270,25 @@ Raw keys::
 +
 [source,java]
 ----
+private KeyPair mlDsaKeyPair;
+
+private KeyPair getMlDsaKeyPair() throws Exception {
+    if (mlDsaKeyPair == null) {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
+        kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
+        mlDsaKeyPair = kpGen.generateKeyPair();
+    }
+    return mlDsaKeyPair;
+}
+
 @BindToRegistry("mlDsaPrivateKey")
 public PrivateKey mlDsaPrivateKey() throws Exception {
-    KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
-    kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
-    return kpGen.generateKeyPair().getPrivate();
+    return getMlDsaKeyPair().getPrivate();
 }
 
 @BindToRegistry("mlDsaPublicKey")
 public PublicKey mlDsaPublicKey() throws Exception {
-    KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
-    kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
-    return kpGen.generateKeyPair().getPublic();
+    return getMlDsaKeyPair().getPublic();
 }
 
 from("direct:sign")
@@ -376,18 +383,25 @@ SLH-DSA (Stateless Hash-Based Digital Signature Algorithm, formerly SPHINCS+) is
 
 [source,java]
 ----
+private KeyPair slhDsaKeyPair;
+
+private KeyPair getSlhDsaKeyPair() throws Exception {
+    if (slhDsaKeyPair == null) {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("SLH-DSA", "BC");
+        kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s);
+        slhDsaKeyPair = kpGen.generateKeyPair();
+    }
+    return slhDsaKeyPair;
+}
+
 @BindToRegistry("slhDsaPrivateKey")
 public PrivateKey slhDsaPrivateKey() throws Exception {
-    KeyPairGenerator kpGen = KeyPairGenerator.getInstance("SLH-DSA", "BC");
-    kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s);
-    return kpGen.generateKeyPair().getPrivate();
+    return getSlhDsaKeyPair().getPrivate();
 }
 
 @BindToRegistry("slhDsaPublicKey")
 public PublicKey slhDsaPublicKey() throws Exception {
-    KeyPairGenerator kpGen = KeyPairGenerator.getInstance("SLH-DSA", "BC");
-    kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s);
-    return kpGen.generateKeyPair().getPublic();
+    return getSlhDsaKeyPair().getPublic();
 }
 
 from("direct:sign")
