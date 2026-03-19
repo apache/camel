@@ -20,6 +20,7 @@ import io.restassured.RestAssured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -35,6 +36,8 @@ abstract class AbstractPlatformHttpTest {
             if (ctx == null) {
                 ctx = new DefaultCamelContext();
                 ctx.getRegistry().bind(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, new JettyCustomPlatformHttpEngine());
+
+                port = AvailablePortFinder.getNextAvailable();
                 server = new JettyEmbeddedServer(port);
 
                 ctx.getRegistry().bind(JettyEmbeddedServer.JETTY_SERVER_NAME, server);
