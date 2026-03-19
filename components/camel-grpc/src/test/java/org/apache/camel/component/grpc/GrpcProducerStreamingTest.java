@@ -32,6 +32,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,8 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerStreamingTest.class);
 
-    private static final int GRPC_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcTestPort = AvailablePortFinder.find();
 
     private static Server grpcServer;
     private static PingPongImpl pingPongServer;
@@ -52,8 +54,8 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     @BeforeEach
     public void startGrpcServer() throws Exception {
         pingPongServer = new PingPongImpl();
-        grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT).addService(pingPongServer).build().start();
-        LOG.info("gRPC server started on port {}", GRPC_TEST_PORT);
+        grpcServer = ServerBuilder.forPort(grpcTestPort.getPort()).addService(pingPongServer).build().start();
+        LOG.info("gRPC server started on port {}", grpcTestPort.getPort());
     }
 
     @AfterEach
@@ -123,7 +125,7 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:grpc-stream-async-async-route")
-                        .to("grpc://localhost:" + GRPC_TEST_PORT
+                        .to("grpc://localhost:" + grpcTestPort.getPort()
                             + "/org.apache.camel.component.grpc.PingPong?producerStrategy=STREAMING&streamRepliesTo=direct:grpc-replies&method=pingAsyncAsync");
 
                 from("direct:grpc-replies")

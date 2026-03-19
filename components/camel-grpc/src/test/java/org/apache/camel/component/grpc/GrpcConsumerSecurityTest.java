@@ -40,6 +40,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +52,12 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerSecurityTest.class);
 
-    private static final int GRPC_TLS_TEST_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int GRPC_JWT_CORRECT_TEST_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int GRPC_JWT_INCORRECT_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcTlsTestPort = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcJwtCorrectTestPort = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcJwtIncorrectTestPort = AvailablePortFinder.find();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final String GRPC_TEST_PING_VALUE = "PING";
     private static final String GRPC_TEST_PONG_VALUE = "PONG";
@@ -81,12 +85,14 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
         Assumptions.assumeTrue(sslContext instanceof OpenSslClientContext || sslContext instanceof JdkSslContext);
 
-        tlsChannel = NettyChannelBuilder.forAddress("localhost", GRPC_TLS_TEST_PORT)
+        tlsChannel = NettyChannelBuilder.forAddress("localhost", grpcTlsTestPort.getPort())
                 .sslContext(sslContext)
                 .build();
 
-        jwtCorrectChannel = NettyChannelBuilder.forAddress("localhost", GRPC_JWT_CORRECT_TEST_PORT).usePlaintext().build();
-        jwtIncorrectChannel = NettyChannelBuilder.forAddress("localhost", GRPC_JWT_INCORRECT_TEST_PORT).usePlaintext().build();
+        jwtCorrectChannel
+                = NettyChannelBuilder.forAddress("localhost", grpcJwtCorrectTestPort.getPort()).usePlaintext().build();
+        jwtIncorrectChannel
+                = NettyChannelBuilder.forAddress("localhost", grpcJwtIncorrectTestPort.getPort()).usePlaintext().build();
 
         tlsAsyncStub = PingPongGrpc.newStub(tlsChannel);
         jwtCorrectAsyncStub
@@ -187,20 +193,20 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("grpc://localhost:" + GRPC_TLS_TEST_PORT
+                from("grpc://localhost:" + grpcTlsTestPort.getPort()
                      + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
                      + "negotiationType=TLS&keyCertChainResource=file:src/test/resources/certs/server.pem&"
                      + "keyResource=file:src/test/resources/certs/server.key&trustCertCollectionResource=file:src/test/resources/certs/ca.pem")
                         .to("mock:tls-enable")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
-                from("grpc://localhost:" + GRPC_JWT_CORRECT_TEST_PORT
+                from("grpc://localhost:" + grpcJwtCorrectTestPort.getPort()
                      + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
                      + "authenticationType=JWT&jwtSecret=" + GRPC_JWT_CORRECT_SECRET)
                         .to("mock:jwt-correct-secret")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
-                from("grpc://localhost:" + GRPC_JWT_INCORRECT_TEST_PORT
+                from("grpc://localhost:" + grpcJwtIncorrectTestPort.getPort()
                      + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
                      + "authenticationType=JWT&jwtSecret=" + GRPC_JWT_CORRECT_SECRET)
                         .to("mock:jwt-incorrect-secret")

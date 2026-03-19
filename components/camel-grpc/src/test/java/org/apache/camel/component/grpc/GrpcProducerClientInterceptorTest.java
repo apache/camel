@@ -25,6 +25,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,8 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerClientInterceptorTest.class);
 
-    private static final int GRPC_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcTestPort = AvailablePortFinder.find();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final String GRPC_TEST_PING_VALUE = "PING";
     private static final String GRPC_TEST_PONG_VALUE = "PONG";
@@ -51,9 +53,10 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startGrpcServer() throws Exception {
-        grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT).addService(new GrpcProducerClientInterceptorTest.PingPongImpl())
-                .build().start();
-        LOG.info("gRPC server started on port {}", GRPC_TEST_PORT);
+        grpcServer
+                = ServerBuilder.forPort(grpcTestPort.getPort()).addService(new GrpcProducerClientInterceptorTest.PingPongImpl())
+                        .build().start();
+        LOG.info("gRPC server started on port {}", grpcTestPort.getPort());
     }
 
     @AfterAll
@@ -80,7 +83,7 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
     @Test
     public void testNoAutoDiscover() throws Exception {
         GrpcComponent component = context.getComponent("grpc", GrpcComponent.class);
-        GrpcEndpoint endpoint = (GrpcEndpoint) component.createEndpoint("grpc://localhost:" + GRPC_TEST_PORT
+        GrpcEndpoint endpoint = (GrpcEndpoint) component.createEndpoint("grpc://localhost:" + grpcTestPort.getPort()
                                                                         + "/org.apache.camel.component.grpc"
                                                                         + ".PingPong?method=pingSyncSync&autoDiscoverClientInterceptors=false");
 
@@ -98,7 +101,7 @@ public class GrpcProducerClientInterceptorTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:grpc-interceptor")
-                        .to("grpc://localhost:" + GRPC_TEST_PORT
+                        .to("grpc://localhost:" + grpcTestPort.getPort()
                             + "/org.apache.camel.component.grpc"
                             + ".PingPong?method=pingSyncSync");
             }
