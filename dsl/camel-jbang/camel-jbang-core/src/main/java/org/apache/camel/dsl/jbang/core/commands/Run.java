@@ -999,7 +999,11 @@ public class Run extends CamelCommand {
                     .collect(Collectors.toSet());
 
             for (PluginExporter exporter : exporters) {
-                addDependencies(exporter.getDependencies(runtime).toArray(String[]::new));
+                addDependencies(exporter.getDependencies(runtime)
+                        .stream()
+                        .filter(dependency -> !dependency.startsWith("mvn@test")) // filter test scoped dependencies
+                        .collect(Collectors.toSet())
+                        .toArray(String[]::new));
             }
         }
 
