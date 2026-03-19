@@ -31,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,8 +43,10 @@ public class AS2ServerBasicAuthHeaderTest extends AbstractAS2ITSupport {
 
     private static final String MDN_USER_NAME = "camel";
     private static final String MDN_PASSWORD = "rider";
-    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int JETTY_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port targetPort = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port jettyPort = AvailablePortFinder.find();
     private static final String EDI_MESSAGE = """
             UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'
             UNH+00000000000117+INVOIC:D:97B:UN'
@@ -76,7 +79,7 @@ public class AS2ServerBasicAuthHeaderTest extends AbstractAS2ITSupport {
     // verify that the jetty server receives a Basic Auth header
     @Test
     public void serverRouteWithBasicAuthConfig() throws Exception {
-        clientSend("/basic", "http://localhost:" + JETTY_PORT + "/receiptsWithBasicAuth");
+        clientSend("/basic", "http://localhost:" + jettyPort.getPort() + "/receiptsWithBasicAuth");
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvRcptMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -100,7 +103,7 @@ public class AS2ServerBasicAuthHeaderTest extends AbstractAS2ITSupport {
                         MDN_USER_NAME, MDN_PASSWORD))
                         .to("mock:as2RcvMsgs");
 
-                from("jetty:http://localhost:" + JETTY_PORT + "/receiptsWithBasicAuth")
+                from("jetty:http://localhost:" + jettyPort.getPort() + "/receiptsWithBasicAuth")
                         .process(basicHeaderProc)
                         .to("mock:as2RcvRcptMsgs");
             }
@@ -118,12 +121,12 @@ public class AS2ServerBasicAuthHeaderTest extends AbstractAS2ITSupport {
 
     private AS2ClientConnection getAs2ClientConnection() throws IOException {
         return new AS2ClientConnection(
-                "1.1", "Camel AS2 Endpoint", "example.org", "localhost", TARGET_PORT, Duration.ofSeconds(5),
+                "1.1", "Camel AS2 Endpoint", "example.org", "localhost", targetPort.getPort(), Duration.ofSeconds(5),
                 Duration.ofSeconds(5), 5, Duration.ofMinutes(15), null, null);
     }
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setServerPortNumber(TARGET_PORT);
+        configuration.setServerPortNumber(targetPort.getPort());
     }
 }

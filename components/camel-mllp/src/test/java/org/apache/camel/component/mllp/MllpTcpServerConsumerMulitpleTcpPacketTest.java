@@ -37,6 +37,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport {
     @RegisterExtension
+    AvailablePortFinder.Port mllpClientPort = AvailablePortFinder.find();
+
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock://result")
@@ -59,7 +62,7 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
         final boolean groupActiveOnly = false;
 
         mllpClient.setMllpHost("localhost");
-        mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
+        mllpClient.setMllpPort(mllpClientPort.getPort());
 
         return new RouteBuilder() {
             String routeId = "mllp-receiver";

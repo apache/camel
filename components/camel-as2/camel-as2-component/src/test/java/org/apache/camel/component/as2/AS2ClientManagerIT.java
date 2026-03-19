@@ -81,9 +81,8 @@ import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.http.protocol.HttpDateGenerator;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,15 +149,16 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     private static final String DISPOSITION_NOTIFICATION_OPTIONS
             = "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
-    private static final int PARTNER_TARGET_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int MDN_TARGET_PORT = AvailablePortFinder.getNextAvailable();
-    private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + MDN_TARGET_PORT + "/handle-receipts";
+    @RegisterExtension
+    AvailablePortFinder.Port partnerTargetPort = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port mdnTargetPort = AvailablePortFinder.find();
     private static final String REPORTING_UA = "Server Responding with MDN";
 
-    private static AS2ServerConnection serverConnection;
+    private AS2ServerConnection serverConnection;
     private static KeyPair serverKP;
     private static X509Certificate serverCert;
-    private static RequestHandler requestHandler;
+    private RequestHandler requestHandler;
 
     private static final HttpDateGenerator DATE_GENERATOR = HttpDateGenerator.INSTANCE;
 
@@ -167,7 +167,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setTargetPortNumber(PARTNER_TARGET_PORT);
+        configuration.setTargetPortNumber(partnerTargetPort.getPort());
     }
 
     @Test
@@ -891,18 +891,20 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         // Send MDN
         @SuppressWarnings("unused")
-        HttpCoreContext httpContext = mdnManager.send(mdn, mdn.getMainMessageContentType(), RECIPIENT_DELIVERY_ADDRESS);
+        HttpCoreContext httpContext
+                = mdnManager.send(mdn, mdn.getMainMessageContentType(),
+                        "http://localhost:" + mdnTargetPort.getPort() + "/handle-receipts");
     }
 
-    @BeforeAll
-    public static void setupTest() throws Exception {
+    @Override
+    public void doPostSetup() throws Exception {
         setupServerKeysAndCertificates();
         setupClientKeysAndCertificates();
         receiveTestMessages();
     }
 
-    @AfterAll
-    public static void teardownTest() throws Exception {
+    @Override
+    public void doPostTearDown() {
         if (serverConnection != null) {
             serverConnection.close();
         }
@@ -967,7 +969,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                                 AS2_NAME,
                                 AS2_NAME);
 
-                from("jetty:http://localhost:" + MDN_TARGET_PORT + "/handle-receipts").process(proc);
+                from("jetty:http://localhost:" + mdnTargetPort.getPort() + "/handle-receipts").process(proc);
 
             }
         };
@@ -994,10 +996,10 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         serverCert = Utils.makeCertificate(serverKP, signingDN, issueKP, issueDN);
     }
 
-    private static void receiveTestMessages() throws IOException {
+    private void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 AS2_VERSION, ORIGIN_SERVER_NAME,
-                SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
+                SERVER_FQDN, partnerTargetPort.getPort(), AS2SignatureAlgorithm.SHA256WITHRSA,
                 new Certificate[] { serverCert }, serverKP.getPrivate(), null,
                 MDN_MESSAGE_TEMPLATE, null, null, null, null, null);
         requestHandler = new RequestHandler();

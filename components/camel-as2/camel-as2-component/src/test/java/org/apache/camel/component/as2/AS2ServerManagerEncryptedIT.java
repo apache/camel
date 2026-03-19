@@ -60,7 +60,7 @@ public class AS2ServerManagerEncryptedIT extends AS2ServerManagerITBase {
     public void receiveEnvelopedMessageTest() throws Exception {
         AS2ClientConnection clientConnection
                 = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
+                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, targetPort.getPort(), HTTP_SOCKET_TIMEOUT,
                         HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, clientSslContext,
                         null);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
@@ -96,7 +96,7 @@ public class AS2ServerManagerEncryptedIT extends AS2ServerManagerITBase {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(TARGET_HOST + ":" + targetPort.getPort(), request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
         assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");
@@ -133,7 +133,7 @@ public class AS2ServerManagerEncryptedIT extends AS2ServerManagerITBase {
     public void receiveEnvelopedCompressedAndSignedMessageTest() throws Exception {
         AS2ClientConnection clientConnection
                 = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
+                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, targetPort.getPort(), HTTP_SOCKET_TIMEOUT,
                         HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, clientSslContext,
                         null);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);

@@ -28,24 +28,20 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyDataFormatTest extends CamelTestSupport {
 
-    private static int serverPort;
+    @RegisterExtension
+    AvailablePortFinder.Port serverPort = AvailablePortFinder.find();
     private final int messageCount = 1;
     private final String message
             = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
               + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
               + "         Conveyer1=OK, Conveyer2=OK # %%";
-
-    @BeforeAll
-    public static void initPort() {
-        serverPort = AvailablePortFinder.getNextAvailable();
-    }
 
     @Test
     public void testSendingRawUDP() throws IOException, InterruptedException {
@@ -63,7 +59,7 @@ public class NettyDataFormatTest extends CamelTestSupport {
 
                 byte[] data = message.getBytes();
 
-                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort);
+                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
                 Thread.sleep(100);
             }
@@ -83,7 +79,8 @@ public class NettyDataFormatTest extends CamelTestSupport {
         mock2.expectedMessageCount(1);
         mock2.expectedBodiesReceived(message);
 
-        template.sendBody("netty:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false&useByteBuf=true",
+        template.sendBody(
+                "netty:udp://127.0.0.1:" + serverPort.getPort() + "?sync=false&allowDefaultCodec=false&useByteBuf=true",
                 message);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -98,7 +95,8 @@ public class NettyDataFormatTest extends CamelTestSupport {
                 DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
-                from("netty:udp://127.0.0.1:" + serverPort + "?sync=false&allowDefaultCodec=false").unmarshal(syslogDataFormat)
+                from("netty:udp://127.0.0.1:" + serverPort.getPort() + "?sync=false&allowDefaultCodec=false")
+                        .unmarshal(syslogDataFormat)
                         .process(new Processor() {
                             public void process(Exchange ex) {
                                 assertTrue(ex.getIn().getBody() instanceof SyslogMessage);

@@ -56,9 +56,8 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -110,29 +109,33 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
             """;
 
     private static final String EDI_MESSAGE_CONTENT_TRANSFER_ENCODING = "7bit";
-    private static final int PARTNER_TARGET_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port partnerTargetPort = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port receiptServerPort = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port receiptServerPort2 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port receiptServerPort3 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port receiptServerPort4 = AvailablePortFinder.find();
 
-    private static final int RECEIPT_SERVER_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int RECEIPT_SERVER_PORT2 = AvailablePortFinder.getNextAvailable();
-    private static final int RECEIPT_SERVER_PORT3 = AvailablePortFinder.getNextAvailable();
-    private static final int RECEIPT_SERVER_PORT4 = AvailablePortFinder.getNextAvailable();
-
-    private static AS2ServerConnection serverConnection;
-    private static RequestHandler requestHandler;
+    private AS2ServerConnection serverConnection;
+    private RequestHandler requestHandler;
     private static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     private static KeyPair serverKP;
     private static X509Certificate serverCert;
     private static KeyPair clientKeyPair;
     private static X509Certificate clientCert;
 
-    @BeforeAll
-    public static void setupTest() throws Exception {
+    @Override
+    public void doPostSetup() throws Exception {
         setupKeysAndCertificates();
         receiveTestMessages();
     }
 
-    @AfterAll
-    public static void teardownTest() {
+    @Override
+    public void doPostTearDown() {
         if (serverConnection != null) {
             serverConnection.close();
         }
@@ -140,7 +143,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setTargetPortNumber(PARTNER_TARGET_PORT);
+        configuration.setTargetPortNumber(partnerTargetPort.getPort());
     }
 
     // Verify the MDN is receipt returned asynchronously from the server when the request headers includes the
@@ -148,7 +151,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     @Test
     public void deliveryHeaderMultipartReportTest() throws Exception {
         DispositionNotificationMultipartReportEntity reportEntity
-                = executeRequestWithAsyncResponseHeader("direct://SEND", RECEIPT_SERVER_PORT, "mock:as2RcvRcptMsgs");
+                = executeRequestWithAsyncResponseHeader("direct://SEND", receiptServerPort.getPort(), "mock:as2RcvRcptMsgs");
         verifyMultiPartReportParts(reportEntity);
         verifyMultiPartReportEntity(reportEntity);
     }
@@ -168,7 +171,8 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     @Test
     public void deliveryHeaderMultipartSignedEntityTest() throws Exception {
         MultipartSignedEntity responseSignedEntity
-                = executeRequestWithSignedAsyncResponseHeader("direct://SEND", RECEIPT_SERVER_PORT2, "mock:as2RcvRcptMsgs2");
+                = executeRequestWithSignedAsyncResponseHeader("direct://SEND", receiptServerPort2.getPort(),
+                        "mock:as2RcvRcptMsgs2");
 
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
         assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
@@ -390,27 +394,29 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
                 // with option for asynchronous receipt specified as path-param
                 from("direct://SEND3")
                         .toF("as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m"
-                             + "&receiptDeliveryOption=%s", "http://localhost:" + RECEIPT_SERVER_PORT3 + "/handle-receipts");
+                             + "&receiptDeliveryOption=%s",
+                                "http://localhost:" + receiptServerPort3.getPort() + "/handle-receipts");
 
                 from("direct://SEND4")
                         .toF("as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m"
-                             + "&receiptDeliveryOption=%s", "http://localhost:" + RECEIPT_SERVER_PORT4 + "/handle-receipts");
+                             + "&receiptDeliveryOption=%s",
+                                "http://localhost:" + receiptServerPort4.getPort() + "/handle-receipts");
 
                 // asynchronous AS2-MDN (receipt) server instance
                 fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT)
+                        receiptServerPort.getPort())
                         .to("mock:as2RcvRcptMsgs");
 
                 fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT2)
+                        receiptServerPort2.getPort())
                         .to("mock:as2RcvRcptMsgs2");
 
                 fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT3)
+                        receiptServerPort3.getPort())
                         .to("mock:as2RcvRcptMsgs3");
 
                 fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT4)
+                        receiptServerPort4.getPort())
                         .to("mock:as2RcvRcptMsgs4");
             }
         };
@@ -438,10 +444,10 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
         }
     }
 
-    private static void receiveTestMessages() throws IOException {
+    private void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 AS2_VERSION, ORIGIN_SERVER_NAME,
-                SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
+                SERVER_FQDN, partnerTargetPort.getPort(), AS2SignatureAlgorithm.SHA256WITHRSA,
                 new Certificate[] { serverCert }, serverKP.getPrivate(), null,
                 MDN_MESSAGE_TEMPLATE, new Certificate[] { clientCert }, null, null, null, null);
         requestHandler = new RequestHandler();

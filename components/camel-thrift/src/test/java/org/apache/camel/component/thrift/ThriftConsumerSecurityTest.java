@@ -35,6 +35,7 @@ import org.apache.thrift.transport.TTransportException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftConsumerSecurityTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerSecurityTest.class);
-    private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
     private static final String TRUST_STORE_RESOURCE = "file:src/test/resources/certs/truststore.jks";
@@ -52,7 +54,7 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
     private static final String SECURITY_STORE_PASSWORD = "camelinaction";
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
 
-    private static Calculator.Client thriftClient;
+    private Calculator.Client thriftClient;
 
     private TProtocol protocol;
     private TTransport transport;
@@ -60,12 +62,13 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
     @BeforeEach
     public void startThriftSecureClient() throws TTransportException {
         if (transport == null) {
-            LOG.info("Connecting to the secured Thrift server on port: {}", THRIFT_TEST_PORT);
+            LOG.info("Connecting to the secured Thrift server on port: {}", thriftTestPort.getPort());
 
             TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters();
 
             sslParams.setTrustStore(TRUST_STORE_RESOURCE, SECURITY_STORE_PASSWORD);
-            transport = TSSLTransportFactory.getClientSocket("localhost", THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT, sslParams);
+            transport = TSSLTransportFactory.getClientSocket("localhost", thriftTestPort.getPort(), THRIFT_CLIENT_TIMEOUT,
+                    sslParams);
 
             protocol = new TBinaryProtocol(transport);
             thriftClient = new Calculator.Client(protocol);
@@ -137,7 +140,7 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("thrift://localhost:" + THRIFT_TEST_PORT
+                from("thrift://localhost:" + thriftTestPort.getPort()
                      + "/org.apache.camel.component.thrift.generated.Calculator?negotiationType=SSL&sslParameters=#sslParams&synchronous=true")
                         .to("mock:thrift-secure-service").choice()
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))

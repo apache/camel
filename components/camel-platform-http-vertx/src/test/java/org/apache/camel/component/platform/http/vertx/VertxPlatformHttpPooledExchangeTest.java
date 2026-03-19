@@ -31,6 +31,7 @@ import org.apache.camel.spi.PooledObjectFactory;
 import org.apache.camel.test.AvailablePortFinder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.get;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +39,8 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxPlatformHttpPooledExchangeTest {
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     public void testEngineSetup() throws Exception {
@@ -93,16 +96,15 @@ public class VertxPlatformHttpPooledExchangeTest {
         }
     }
 
-    static CamelContext createCamelContext() throws Exception {
+    CamelContext createCamelContext() throws Exception {
         return createCamelContext(null);
     }
 
-    private static CamelContext createCamelContext(ServerConfigurationCustomizer customizer) throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+    private CamelContext createCamelContext(ServerConfigurationCustomizer customizer) throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(port);
+        conf.setBindPort(port.getPort());
 
-        RestAssured.port = port;
+        RestAssured.port = port.getPort();
 
         if (customizer != null) {
             customizer.customize(conf);

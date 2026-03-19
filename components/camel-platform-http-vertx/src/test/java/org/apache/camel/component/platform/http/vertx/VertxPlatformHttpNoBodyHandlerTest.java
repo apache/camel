@@ -24,6 +24,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -34,11 +35,14 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformHttpNoBodyHandlerTest {
-    private final int port = AvailablePortFinder.getNextAvailable();
-    private final WireMockServer wireMockServer = new WireMockServer(options().port(port));
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
+    private WireMockServer wireMockServer;
 
     @BeforeEach
     void before() {
+        wireMockServer = new WireMockServer(options().port(port.getPort()));
         wireMockServer.stubFor(post(urlPathEqualTo("/test"))
                 .withRequestBody(containing("Hello World"))
                 .willReturn(aResponse()

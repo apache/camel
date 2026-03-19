@@ -22,31 +22,31 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyValidatorStreamTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     void testValideRequestAsStream() {
         InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
         assertNotNull(inputStream, "The inputStream should not be null");
 
-        String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
+        String response = template.requestBody("http://localhost:" + port.getPort() + "/test", inputStream, String.class);
         assertEquals("<ok/>", response, "The response should be ok");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
-
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://localhost:" + port + "/test")
+                from("jetty:http://localhost:" + port.getPort() + "/test")
                         .to("validator:OptimizationRequest.xsd")
                         .transform(constant("<ok/>"));
             }

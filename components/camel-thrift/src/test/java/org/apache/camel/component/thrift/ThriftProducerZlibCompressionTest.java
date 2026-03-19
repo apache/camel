@@ -33,9 +33,10 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TZlibTransport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,23 +48,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerZlibCompressionTest.class);
 
-    private static TServerSocket serverTransport;
-    private static TServer server;
+    private TServerSocket serverTransport;
+    private TServer server;
     @SuppressWarnings({ "rawtypes" })
-    private static Calculator.Processor processor;
+    private Calculator.Processor processor;
 
-    private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
 
-    @BeforeAll
+    @BeforeEach
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void startThriftServer() throws Exception {
+    public void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
 
         serverTransport = new TServerSocket(
-                new InetSocketAddress(InetAddress.getByName("localhost"), THRIFT_TEST_PORT), THRIFT_CLIENT_TIMEOUT);
+                new InetSocketAddress(InetAddress.getByName("localhost"), thriftTestPort.getPort()), THRIFT_CLIENT_TIMEOUT);
         TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
         args.processor(processor);
         args.protocolFactory(new TBinaryProtocol.Factory());
@@ -72,15 +74,15 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
 
         Runnable simple = new Runnable() {
             public void run() {
-                LOG.info("Thrift server with zlib compression started on port: {}", THRIFT_TEST_PORT);
+                LOG.info("Thrift server with zlib compression started on port: {}", thriftTestPort.getPort());
                 server.serve();
             }
         };
         new Thread(simple).start();
     }
 
-    @AfterAll
-    public static void stopThriftServer() {
+    @AfterEach
+    public void stopThriftServer() {
         if (server != null) {
             server.stop();
             serverTransport.close();
@@ -120,10 +122,10 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:thrift-zlib-calculate")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=calculate&compressionType=ZLIB&synchronous=true");
                 from("direct:thrift-zlib-ping")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=ping&compressionType=ZLIB&synchronous=true");
             }
         };

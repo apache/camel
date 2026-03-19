@@ -68,6 +68,7 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -83,7 +84,8 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
     protected static final String METHOD = "POST";
     protected static final String TARGET_HOST = "localhost";
-    protected static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    protected AvailablePortFinder.Port targetPort = AvailablePortFinder.find();
     protected static final Duration HTTP_SOCKET_TIMEOUT = Duration.ofSeconds(5);
     protected static final Duration HTTP_CONNECTION_TIMEOUT = Duration.ofSeconds(5);
     protected static final Integer HTTP_CONNECTION_POOL_SIZE = 5;
@@ -142,7 +144,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setServerPortNumber(TARGET_PORT);
+        configuration.setServerPortNumber(targetPort.getPort());
     }
 
     @Override
@@ -289,7 +291,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(TARGET_HOST + ":" + targetPort.getPort(), request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
         assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");

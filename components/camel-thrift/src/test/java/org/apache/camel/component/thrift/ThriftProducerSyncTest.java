@@ -158,22 +158,22 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
             @Override
             public void configure() {
                 from("direct:thrift-calculate")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=calculate&synchronous=true");
                 from("direct:thrift-add")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=add&synchronous=true");
                 from("direct:thrift-ping")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=ping&synchronous=true");
                 from("direct:thrift-zip")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=zip&synchronous=true");
                 from("direct:thrift-alltypes")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=alltypes&synchronous=true");
                 from("direct:thrift-echo")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=echo&synchronous=true");
             }
         };

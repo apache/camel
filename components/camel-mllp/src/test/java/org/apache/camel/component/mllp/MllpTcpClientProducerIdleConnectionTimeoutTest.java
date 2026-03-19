@@ -50,7 +50,10 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
     Logger log = LoggerFactory.getLogger(MllpTcpClientProducerIdleConnectionTimeoutTest.class);
 
     @RegisterExtension
-    MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
+    AvailablePortFinder.Port mllpServerPort = AvailablePortFinder.find();
+
+    @RegisterExtension
+    MllpServerResource mllpServer = new MllpServerResource("localhost", mllpServerPort.getPort());
 
     @EndpointInject("direct://source")
     ProducerTemplate source;

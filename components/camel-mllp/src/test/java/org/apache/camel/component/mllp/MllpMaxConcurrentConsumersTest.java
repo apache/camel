@@ -39,6 +39,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
 
     @RegisterExtension
+    AvailablePortFinder.Port mllpClientPort1 = AvailablePortFinder.find();
+
+    @RegisterExtension
+    AvailablePortFinder.Port mllpClientPort2 = AvailablePortFinder.find();
+
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @RegisterExtension
@@ -55,10 +61,10 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         mllpClient.setMllpHost("localhost");
-        mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
+        mllpClient.setMllpPort(mllpClientPort1.getPort());
 
         mllpClient2.setMllpHost("localhost");
-        mllpClient2.setMllpPort(AvailablePortFinder.getNextAvailable());
+        mllpClient2.setMllpPort(mllpClientPort2.getPort());
     }
 
     @SuppressWarnings("deprecation")

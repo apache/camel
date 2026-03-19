@@ -27,9 +27,8 @@ import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.core5.http.HttpRequest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
 
-    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port targetPort = AvailablePortFinder.find();
     private static final String ACCESS_TOKEN = "MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3";
     private static final String EDI_MESSAGE = """
             UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'
@@ -70,16 +70,16 @@ public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
             UNZ+1+00000000000778'
             """;
 
-    private static AS2ServerConnection serverConnection;
-    private static AS2ClientManagerIT.RequestHandler requestHandler;
+    private AS2ServerConnection serverConnection;
+    private AS2ClientManagerIT.RequestHandler requestHandler;
 
-    @BeforeAll
-    public static void setupTest() throws Exception {
+    @Override
+    public void doPostSetup() throws Exception {
         receiveTestMessages();
     }
 
-    @AfterAll
-    public static void tearDownTest() {
+    @Override
+    public void doPostTearDown() {
         if (serverConnection != null) {
             serverConnection.close();
         }
@@ -139,13 +139,13 @@ public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setTargetPortNumber(TARGET_PORT);
+        configuration.setTargetPortNumber(targetPort.getPort());
     }
 
-    private static void receiveTestMessages() throws IOException {
+    private void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
+                "server.example.com", targetPort.getPort(), AS2SignatureAlgorithm.SHA256WITHRSA,
                 null, null, null,
                 "TBD", null, null, null, null, null);
         requestHandler = new AS2ClientManagerIT.RequestHandler();

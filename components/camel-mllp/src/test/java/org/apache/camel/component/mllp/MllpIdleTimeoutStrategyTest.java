@@ -50,7 +50,10 @@ public class MllpIdleTimeoutStrategyTest extends CamelTestSupport {
     static final int IDLE_TIMEOUT = 500;
 
     @RegisterExtension
-    public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
+    AvailablePortFinder.Port mllpServerPort = AvailablePortFinder.find();
+
+    @RegisterExtension
+    public MllpServerResource mllpServer = new MllpServerResource("localhost", mllpServerPort.getPort());
 
     @EndpointInject("direct://sourcedefault")
     ProducerTemplate defaultStrategySource;

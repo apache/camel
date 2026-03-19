@@ -27,17 +27,16 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyRfc5425Test extends CamelTestSupport {
 
-    private static String uri;
-    private static String uriClient;
-    private static int serverPort;
+    @RegisterExtension
+    AvailablePortFinder.Port serverPort = AvailablePortFinder.find();
     private final String rfc3164Message
             = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
               + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
@@ -52,13 +51,6 @@ public class NettyRfc5425Test extends CamelTestSupport {
     @BindToRegistry("encoder")
     private Rfc5425Encoder encoder = new Rfc5425Encoder();
 
-    @BeforeAll
-    public static void initPort() {
-        serverPort = AvailablePortFinder.getNextAvailable();
-        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoders=#encoder";
-        uriClient = uri + "&useByteBuf=true";
-    }
-
     @Test
     public void testSendingCamel() throws Exception {
 
@@ -68,6 +60,8 @@ public class NettyRfc5425Test extends CamelTestSupport {
         mock2.expectedMessageCount(2);
         mock2.expectedBodiesReceived(rfc3164Message, rfc5424Message);
 
+        String uriClient = "netty:tcp://localhost:" + serverPort.getPort()
+                           + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoders=#encoder&useByteBuf=true";
         template.sendBody(uriClient, rfc3164Message.getBytes("UTF8"));
         template.sendBody(uriClient, rfc5424Message.getBytes("UTF8"));
 
@@ -91,6 +85,8 @@ public class NettyRfc5425Test extends CamelTestSupport {
             public void configure() {
                 context.setTracing(true);
                 DataFormat syslogDataFormat = new SyslogDataFormat();
+                String uri = "netty:tcp://localhost:" + serverPort.getPort()
+                             + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoders=#encoder";
 
                 // we setup a Syslog listener on a random port.
                 from(uri).unmarshal(syslogDataFormat).process(new Processor() {

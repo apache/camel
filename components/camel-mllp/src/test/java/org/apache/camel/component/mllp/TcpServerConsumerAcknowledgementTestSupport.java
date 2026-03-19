@@ -42,6 +42,9 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
                                                    + "MSA|AA|" + '\r';
 
     @RegisterExtension
+    AvailablePortFinder.Port mllpClientPort = AvailablePortFinder.find();
+
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock://result")
@@ -82,7 +85,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
     @Override
     protected RouteBuilder createRouteBuilder() {
         mllpClient.setMllpHost("localhost");
-        mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
+        mllpClient.setMllpPort(mllpClientPort.getPort());
 
         return new RouteBuilder() {
             int connectTimeout = 500;

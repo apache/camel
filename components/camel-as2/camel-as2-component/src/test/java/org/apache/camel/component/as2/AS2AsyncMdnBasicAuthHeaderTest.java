@@ -35,9 +35,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.core5.http.ContentType;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -53,9 +52,12 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
     private static final String MDN_USER_NAME = "camel";
     private static final String MDN_PASSWORD = "rider";
     private static final String MDN_ACCESS_TOKEN = "MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3";
-    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int RECEIPT_SERVER_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int JETTY_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port targetPort = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port receiptServerPort = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port jettyPort = AvailablePortFinder.find();
     private static final String EDI_MESSAGE = """
             UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'
             UNH+00000000000117+INVOIC:D:97B:UN'
@@ -85,15 +87,15 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
             UNZ+1+00000000000778'
             """;
 
-    private static AS2ServerConnection serverConnection;
+    private AS2ServerConnection serverConnection;
 
-    @BeforeAll
-    public static void setupTest() throws Exception {
+    @Override
+    public void doPostSetup() throws Exception {
         receiveTestMessages();
     }
 
-    @AfterAll
-    public static void tearDownTest() {
+    @Override
+    public void doPostTearDown() {
         if (serverConnection != null) {
             serverConnection.close();
         }
@@ -102,7 +104,7 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
     @Test
     public void asyncMdnHasBasicAuthHeader() throws Exception {
         requestBodyAndHeaders("direct://SEND", EDI_MESSAGE,
-                getAS2Headers("http://localhost:" + JETTY_PORT + "/handle-receipts"));
+                getAS2Headers("http://localhost:" + jettyPort.getPort() + "/handle-receipts"));
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvRcptMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -114,7 +116,7 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
     @Test
     public void asyncMdnHasExpectedParts() throws Exception {
         requestBodyAndHeaders("direct://SEND", EDI_MESSAGE,
-                getAS2Headers("http://localhost:" + RECEIPT_SERVER_PORT + "/handle-receipts"));
+                getAS2Headers("http://localhost:" + receiptServerPort.getPort() + "/handle-receipts"));
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvRcptMsgs2");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -171,12 +173,12 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
                 from("direct://SEND")
                         .to("as2://client/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m");
 
-                from("jetty:http://localhost:" + JETTY_PORT + "/handle-receipts")
+                from("jetty:http://localhost:" + jettyPort.getPort() + "/handle-receipts")
                         .process(proc)
                         .to("mock:as2RcvRcptMsgs");
 
                 fromF("as2://receipt/receive?requestUriPattern=/handle-receipts&asyncMdnPortNumber=%s",
-                        RECEIPT_SERVER_PORT)
+                        receiptServerPort.getPort())
                         .to("mock:as2RcvRcptMsgs2");
             }
         };
@@ -184,14 +186,14 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setTargetPortNumber(TARGET_PORT);
+        configuration.setTargetPortNumber(targetPort.getPort());
     }
 
     // AS2 server adds Authorization header to MDN returned asynchronously
-    private static void receiveTestMessages() throws IOException {
+    private void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
+                "server.example.com", targetPort.getPort(), AS2SignatureAlgorithm.SHA256WITHRSA,
                 null, null, null,
                 "TBD", null, null,
                 // server authorization config

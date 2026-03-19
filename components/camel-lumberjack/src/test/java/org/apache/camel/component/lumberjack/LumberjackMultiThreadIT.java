@@ -33,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Isolated
 public class LumberjackMultiThreadIT extends CamelTestSupport {
 
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
     private static final int CONCURRENCY_LEVEL = Math.min(Runtime.getRuntime().availableProcessors(), 4);
     private CountDownLatch latch = new CountDownLatch(CONCURRENCY_LEVEL);
     private volatile boolean interrupted;
@@ -57,7 +59,7 @@ public class LumberjackMultiThreadIT extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // Lumberjack configured with a specific port
-                from("lumberjack:0.0.0.0:" + PORT).to("mock:output");
+                from("lumberjack:0.0.0.0:" + port.getPort()).to("mock:output");
             }
         };
     }
@@ -104,7 +106,7 @@ public class LumberjackMultiThreadIT extends CamelTestSupport {
         @Override
         public void run() {
             try {
-                this.responses = LumberjackUtil.sendMessages(PORT, null, Arrays.asList(15, 10));
+                this.responses = LumberjackUtil.sendMessages(port.getPort(), null, Arrays.asList(15, 10));
                 latch.countDown();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

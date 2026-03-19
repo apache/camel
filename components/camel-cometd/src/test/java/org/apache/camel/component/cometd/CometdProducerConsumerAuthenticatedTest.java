@@ -34,13 +34,15 @@ import org.cometd.client.http.jetty.JettyHttpClientTransport;
 import org.cometd.server.DefaultSecurityPolicy;
 import org.eclipse.jetty.client.HttpClient;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CometdProducerConsumerAuthenticatedTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
     private String uri;
 
     @Test
@@ -90,7 +92,7 @@ public class CometdProducerConsumerAuthenticatedTest extends CamelTestSupport {
     }
 
     private BayeuxClient createRemoteClient(HttpClient httpClient, String user, String credentials) {
-        String url = "http://127.0.0.1:" + port + "/cometd";
+        String url = "http://127.0.0.1:" + port.getPort() + "/cometd";
         BayeuxClient client = new BayeuxClient(url, new JettyHttpClientTransport(null, httpClient));
         client.addExtension(new ClientSession.Extension() {
             @Override
@@ -110,8 +112,7 @@ public class CometdProducerConsumerAuthenticatedTest extends CamelTestSupport {
 
     @Override
     public void setupResources() {
-        port = AvailablePortFinder.getNextAvailable();
-        uri = "cometd://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
+        uri = "cometd://127.0.0.1:" + port.getPort() + "/service/test?baseResource=file:./target/test-classes/webapp&"
               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
     }
 

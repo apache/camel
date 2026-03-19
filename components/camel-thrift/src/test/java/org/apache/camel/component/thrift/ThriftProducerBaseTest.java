@@ -24,39 +24,41 @@ import org.apache.thrift.server.THsHaServer;
 import org.apache.thrift.server.THsHaServer.Args;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ThriftProducerBaseTest extends CamelTestSupport {
-    protected static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
     protected static final int THRIFT_TEST_NUM1 = 12;
     protected static final int THRIFT_TEST_NUM2 = 13;
     @SuppressWarnings({ "rawtypes" })
     protected static Calculator.Processor processor;
 
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerBaseTest.class);
-    private static TNonblockingServerSocket serverTransport;
-    private static TServer server;
+    private TNonblockingServerSocket serverTransport;
+    private TServer server;
 
-    @BeforeAll
+    @BeforeEach
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void startThriftServer() throws Exception {
+    public void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
-        serverTransport = new TNonblockingServerSocket(THRIFT_TEST_PORT);
+        serverTransport = new TNonblockingServerSocket(thriftTestPort.getPort());
         server = new THsHaServer(new Args(serverTransport).processor(processor));
         Runnable simple = new Runnable() {
             public void run() {
-                LOG.info("Thrift server started on port: {}", THRIFT_TEST_PORT);
+                LOG.info("Thrift server started on port: {}", thriftTestPort.getPort());
                 server.serve();
             }
         };
         new Thread(simple).start();
     }
 
-    @AfterAll
-    public static void stopThriftServer() {
+    @AfterEach
+    public void stopThriftServer() {
         if (server != null) {
             server.stop();
             serverTransport.close();

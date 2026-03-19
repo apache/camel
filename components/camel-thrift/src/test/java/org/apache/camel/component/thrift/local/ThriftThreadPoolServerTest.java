@@ -34,6 +34,7 @@ import org.apache.thrift.transport.TTransport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ThriftThreadPoolServerTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerSecurityTest.class);
 
-    private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
 
@@ -54,12 +56,12 @@ public class ThriftThreadPoolServerTest extends CamelTestSupport {
     private static final String SECURITY_STORE_PASSWORD = "camelinaction";
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
 
-    private static TServerSocket serverTransport;
-    private static TTransport clientTransport;
-    private static TServer server;
-    private static TProtocol protocol;
+    private TServerSocket serverTransport;
+    private TTransport clientTransport;
+    private TServer server;
+    private TProtocol protocol;
     @SuppressWarnings({ "rawtypes" })
-    private static Calculator.Processor processor;
+    private Calculator.Processor processor;
 
     @BeforeEach
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -69,7 +71,7 @@ public class ThriftThreadPoolServerTest extends CamelTestSupport {
         TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters();
 
         sslParams.setKeyStore(KEY_STORE_PATH, SECURITY_STORE_PASSWORD);
-        serverTransport = TSSLTransportFactory.getServerSocket(THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT,
+        serverTransport = TSSLTransportFactory.getServerSocket(thriftTestPort.getPort(), THRIFT_CLIENT_TIMEOUT,
                 InetAddress.getByName("localhost"), sslParams);
         ThriftThreadPoolServer.Args args = new ThriftThreadPoolServer.Args(serverTransport);
 
@@ -80,7 +82,7 @@ public class ThriftThreadPoolServerTest extends CamelTestSupport {
 
         server = new ThriftThreadPoolServer(args);
         server.serve();
-        LOG.info("Thrift secured server started on port: {}", THRIFT_TEST_PORT);
+        LOG.info("Thrift secured server started on port: {}", thriftTestPort.getPort());
     }
 
     @AfterEach
@@ -96,7 +98,7 @@ public class ThriftThreadPoolServerTest extends CamelTestSupport {
     public void clientConnectionTest() throws TException {
         TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters();
         sslParams.setTrustStore(TRUST_STORE_PATH, SECURITY_STORE_PASSWORD);
-        clientTransport = TSSLTransportFactory.getClientSocket("localhost", THRIFT_TEST_PORT, 1000, sslParams);
+        clientTransport = TSSLTransportFactory.getClientSocket("localhost", thriftTestPort.getPort(), 1000, sslParams);
 
         protocol = new TBinaryProtocol(clientTransport);
         Calculator.Client client = new Calculator.Client(protocol);

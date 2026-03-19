@@ -33,6 +33,7 @@ import org.apache.thrift.transport.TZlibTransport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +43,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerZlibCompressionTest.class);
-    private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
 
-    private static Calculator.Client thriftClient;
+    private Calculator.Client thriftClient;
 
     private TProtocol protocol;
     private TTransport transport;
@@ -55,9 +57,9 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
     @BeforeEach
     public void startThriftZlibClient() throws TTransportException {
         if (transport == null) {
-            LOG.info("Connecting to the Thrift server with zlib compression on port: {}", THRIFT_TEST_PORT);
+            LOG.info("Connecting to the Thrift server with zlib compression on port: {}", thriftTestPort.getPort());
 
-            transport = new TSocket(new TConfiguration(), "localhost", THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT);
+            transport = new TSocket(new TConfiguration(), "localhost", thriftTestPort.getPort(), THRIFT_CLIENT_TIMEOUT);
             protocol = new TBinaryProtocol(new TZlibTransport(transport));
             thriftClient = new Calculator.Client(protocol);
             transport.open();
@@ -113,7 +115,7 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("thrift://localhost:" + THRIFT_TEST_PORT
+                from("thrift://localhost:" + thriftTestPort.getPort()
                      + "/org.apache.camel.component.thrift.generated.Calculator?compressionType=ZLIB&synchronous=true")
                         .to("mock:thrift-secure-service").choice()
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))

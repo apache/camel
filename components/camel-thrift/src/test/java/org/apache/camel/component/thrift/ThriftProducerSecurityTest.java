@@ -40,9 +40,10 @@ import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,12 +56,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ThriftProducerSecurityTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerSecurityTest.class);
 
-    private static TServerSocket serverTransport;
-    private static TServer server;
+    private TServerSocket serverTransport;
+    private TServer server;
     @SuppressWarnings({ "rawtypes" })
-    private static Calculator.Processor processor;
+    private Calculator.Processor processor;
 
-    private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
 
@@ -69,15 +71,15 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
     private static final String SECURITY_STORE_PASSWORD = "camelinaction";
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
 
-    @BeforeAll
+    @BeforeEach
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void startThriftServer() throws Exception {
+    public void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
 
         TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters();
 
         sslParams.setKeyStore(KEY_STORE_SOURCE, SECURITY_STORE_PASSWORD);
-        serverTransport = TSSLTransportFactory.getServerSocket(THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT,
+        serverTransport = TSSLTransportFactory.getServerSocket(thriftTestPort.getPort(), THRIFT_CLIENT_TIMEOUT,
                 InetAddress.getByName("localhost"), sslParams);
         TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
         args.processor(processor);
@@ -85,15 +87,15 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
 
         Runnable simple = new Runnable() {
             public void run() {
-                LOG.info("Thrift secured server started on port: {}", THRIFT_TEST_PORT);
+                LOG.info("Thrift secured server started on port: {}", thriftTestPort.getPort());
                 server.serve();
             }
         };
         new Thread(simple).start();
     }
 
-    @AfterAll
-    public static void stopThriftServer() {
+    @AfterEach
+    public void stopThriftServer() {
         if (server != null) {
             server.stop();
             serverTransport.close();
@@ -201,23 +203,23 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:thrift-secured-calculate")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?"
                             + "method=calculate&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
                 from("direct:thrift-secured-add")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?"
                             + "method=add&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
                 from("direct:thrift-secured-ping")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?"
                             + "method=ping&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
                 from("direct:thrift-secured-zip")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?"
                             + "method=zip&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
                 from("direct:thrift-secured-alltypes")
-                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                        .to("thrift://localhost:" + thriftTestPort.getPort()
                             + "/org.apache.camel.component.thrift.generated.Calculator?"
                             + "method=alltypes&negotiationType=SSL&sslParameters=#sslParams&synchronous=true");
             }
