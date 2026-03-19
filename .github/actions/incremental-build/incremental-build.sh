@@ -52,6 +52,7 @@ function main() {
   local prId=${3}
   local ret=0
   local repository=${4}
+  local testedDependents=""
 
   echo "Searching for affected projects"
   local projects
@@ -154,12 +155,14 @@ function main() {
       local totalTestableProjects
       if [[ ${testDependents} = "1" ]] ; then
         echo "The test-dependents label has been detected thus the projects that depend on affected projects will be tested"
+        testedDependents=true
         totalTestableProjects=0
       else
         totalTestableProjects=$(./mvnw -B -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
-        echo "There are too many projects to test so only the affected projects are tested:"
+        echo "There are too many projects to test (${totalTestableProjects} > ${maxNumberOfTestableProjects}) so only the affected projects are tested:"
+        testedDependents=false
         for w in $pl; do
           echo "$w"
         done
@@ -167,7 +170,8 @@ function main() {
         $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
         ret=$?
       else
-        echo "Testing the affected projects and the projects that depend on them:"
+        echo "Testing the affected projects and the projects that depend on them (${totalTestableProjects} modules):"
+        testedDependents=true
         for w in $pl; do
           echo "$w"
         done
@@ -191,6 +195,12 @@ function main() {
       echo "- \`$w\`" >> "$comment_file"
     done
     echo "" >> "$GITHUB_STEP_SUMMARY"
+    # Add note about dependent modules testing scope
+    if [[ ${mode} = "test" && "${testedDependents:-}" = "false" ]] ; then
+      echo "" >> "$comment_file"
+      echo "> :information_source: Dependent modules were not tested because the total number of affected modules exceeded the threshold (${maxNumberOfTestableProjects}). Use the \`test-dependents\` label to force testing all dependents." >> "$comment_file"
+      echo "" >> "$comment_file"
+    fi
     # Extract full reactor module list from the build log
     if [[ -f "$log" ]] ; then
       local reactor_modules
@@ -198,10 +208,16 @@ function main() {
       if [[ -n "$reactor_modules" ]] ; then
         local count
         count=$(echo "$reactor_modules" | wc -l | tr -d ' ')
-        echo "<details><summary><b>All tested modules ($count)</b></summary>" >> "$GITHUB_STEP_SUMMARY"
+        local reactor_label
+        if [[ ${mode} = "test" && "${testedDependents:-}" = "false" ]] ; then
+          reactor_label="Build reactor — dependencies compiled but only changed modules were tested"
+        else
+          reactor_label="All tested modules"
+        fi
+        echo "<details><summary><b>${reactor_label} ($count)</b></summary>" >> "$GITHUB_STEP_SUMMARY"
         echo "" >> "$GITHUB_STEP_SUMMARY"
         echo "" >> "$comment_file"
-        echo "<details><summary>Full reactor ($count modules)</summary>" >> "$comment_file"
+        echo "<details><summary>${reactor_label} ($count modules)</summary>" >> "$comment_file"
         echo "" >> "$comment_file"
         echo "$reactor_modules" | while read -r m; do
           echo "- $m" >> "$GITHUB_STEP_SUMMARY"
