@@ -67,10 +67,14 @@ class ExportTest {
     }
 
     private static Stream<Arguments> runtimeProvider() {
-        return Stream.of(
-                Arguments.of(RuntimeType.quarkus),
-                Arguments.of(RuntimeType.springBoot),
-                Arguments.of(RuntimeType.main));
+        Stream.Builder<Arguments> builder = Stream.builder();
+        builder.add(Arguments.of(RuntimeType.quarkus));
+        // camel-spring-boot 4.19+ requires JDK 21 (Spring Boot 4)
+        if (Runtime.version().feature() >= 21) {
+            builder.add(Arguments.of(RuntimeType.springBoot));
+        }
+        builder.add(Arguments.of(RuntimeType.main));
+        return builder.build();
     }
 
     @ParameterizedTest
