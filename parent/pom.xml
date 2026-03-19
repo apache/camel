@@ -86,14 +86,14 @@
         <box-java-sdk-version>4.16.3</box-java-sdk-version>
         <braintree-gateway-version>3.44.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.6.1</build-helper-maven-plugin-version>
-        <bytebuddy-version>1.17.6</bytebuddy-version>
+        <bytebuddy-version>1.17.8</bytebuddy-version>
         <c3p0-version>0.12.0</c3p0-version>
-        <caffeine-version>3.2.2</caffeine-version>
+        <caffeine-version>3.2.3</caffeine-version>
         <californium-version>3.14.0</californium-version>
         <californium-scandium-version>3.11.0</californium-scandium-version>
         <camel-lsp-version>1.34.0</camel-lsp-version>
         <camunda-version>7.23.0</camunda-version>
-        <cassandra-driver-version>4.19.0</cassandra-driver-version>
+        <cassandra-driver-version>4.19.2</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
         <chicory-version>1.5.1</chicory-version>
@@ -207,12 +207,12 @@
         <graphql-java-version>24.2</graphql-java-version>
         <greenmail-version>2.1.5</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
-        <groovy-version>4.0.29</groovy-version>
+        <groovy-version>4.0.30</groovy-version>
         <grpc-version>1.75.0</grpc-version>
         <grpc-google-auth-library-version>1.39.1</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.5.0</grpc-java-jwt-version>
         <grpc-netty-tcnative-boringssl-static-version>2.0.59.Final</grpc-netty-tcnative-boringssl-static-version>
-        <gson-version>2.13.1</gson-version>
+        <gson-version>2.13.2</gson-version>
         <guava-version>33.4.8-jre</guava-version>
         <guice3-version>3.0</guice3-version>
         <h2-version>2.3.232</h2-version>
@@ -221,14 +221,14 @@
         <hapi-version>2.6.0</hapi-version>
         <hapi-base-version>2.6.0</hapi-base-version>
         <hapi-fhir-version>8.2.1</hapi-fhir-version>
-        <hazelcast-version>5.4.0</hazelcast-version>
+        <hazelcast-version>5.5.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>9.0.1.Final</hibernate-validator-version>
         <hibernate-version>6.3.2.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.4</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
-        <httpcore-version>5.3.5</httpcore-version>
+        <httpcore-version>5.3.6</httpcore-version>
         <httpclient-version>5.4.4</httpclient-version>
         <httpcore4-version>4.4.16</httpcore4-version>
         <httpclient4-version>4.5.14</httpclient4-version>
@@ -240,8 +240,8 @@
         <icu4j-version>77.1</icu4j-version>
         <ignite-version>2.17.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
-        <infinispan-version>15.2.5.Final</infinispan-version>
-        <infinispan-protostream-version>15.0.13.Final</infinispan-protostream-version>
+        <infinispan-version>15.2.6.Final</infinispan-version>
+        <infinispan-protostream-version>5.0.13.Final</infinispan-protostream-version>
         <influx-java-driver-version>2.25</influx-java-driver-version>
         <influx-client-java-driver-version>7.3.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
@@ -286,7 +286,7 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>6.1.0</jedis-client-version>
-        <jetty-version>12.0.32</jetty-version>
+        <jetty-version>12.0.33</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -304,7 +304,7 @@
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
         <!-- jooq 3.20 is Java 21+ only so we need to be 3.19.x -->
-        <jooq-version>3.19.22</jooq-version>
+        <jooq-version>3.19.30</jooq-version>
         <joor-version>0.9.15</joor-version>
         <jose4j-version>0.9.3</jose4j-version>
         <johnzon-version>2.0.2</johnzon-version>
@@ -329,7 +329,7 @@
         <jxmpp-version>1.1.0</jxmpp-version>
         <jython-version>2.7.4</jython-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>3.9.1</kafka-version>
+        <kafka-version>3.9.2</kafka-version>
         <keycloak-client-version>26.0.6</keycloak-client-version>
         <kubernetes-client-version>7.3.1</kubernetes-client-version>
         <kudu-version>1.18.0</kudu-version>
@@ -345,7 +345,7 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.25.3</log4j2-version>
-        <logback-version>1.5.18</logback-version>
+        <logback-version>1.5.32</logback-version>
         <lucene-version>9.12.0</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.4.4</littleproxy-version>
@@ -377,8 +377,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.33</metrics-version>
-        <micrometer-version>1.15.7</micrometer-version>
-        <micrometer-tracing-version>1.5.3</micrometer-tracing-version>
+        <micrometer-version>1.15.10</micrometer-version>
+        <micrometer-tracing-version>1.5.10</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <milvus-client-version>2.6.2</milvus-client-version>
         <mina-version>2.2.4</mina-version>
@@ -388,7 +388,7 @@
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockito-version>5.18.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
-        <mongo-java-driver-version>5.5.1</mongo-java-driver-version>
+        <mongo-java-driver-version>5.5.2</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.22.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
@@ -396,7 +396,7 @@
         <mybatis-version>3.5.19</mybatis-version>
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <neo4j-version>5.28.9</neo4j-version>
+        <neo4j-version>5.28.10</neo4j-version>
         <netty-version>4.1.131.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.8</networknt-json-schema-validator-version>
@@ -431,7 +431,7 @@
         <plexus-container-default-version>2.1.1</plexus-container-default-version>
         <plexus-utils-version>4.0.2</plexus-utils-version>
         <plexus-xml-version>3.0.1</plexus-xml-version>
-        <pooled-jms-version>3.1.7</pooled-jms-version>
+        <pooled-jms-version>3.1.9</pooled-jms-version>
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>3.25.5</protobuf-version>
@@ -439,19 +439,19 @@
         <protonpack-version>1.8</protonpack-version>
         <prowide-version>SRU2024-10.2.7</prowide-version>
         <pubnub-version>10.5.8</pubnub-version>
-        <pulsar-version>4.0.7</pulsar-version>
+        <pulsar-version>4.0.9</pulsar-version>
         <qdrant-client-version>1.15.0</qdrant-client-version>
         <qpid-broker-version>9.2.1</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.7.0</qpid-jms-client-version>
-        <quartz-version>2.5.0</quartz-version>
+        <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>2.3.2</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.7.9</reactor-version>
         <reactor-netty-version>1.2.9</reactor-netty-version>
         <redisson-version>3.50.0</redisson-version>
         <resilience4j-version>2.3.0</resilience4j-version>
-        <rest-assured-version>5.5.5</rest-assured-version>
+        <rest-assured-version>5.5.7</rest-assured-version>
         <roaster-version>2.30.1.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>5.3.2</rocketmq-version>
@@ -479,14 +479,14 @@
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
-        <spring-batch-version>5.2.4</spring-batch-version>
+        <spring-batch-version>5.2.5</spring-batch-version>
         <spring-data-redis-version>3.5.5</spring-data-redis-version>
         <spring-ldap-version>3.3.6</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
-        <spring-version>6.2.16</spring-version>
+        <spring-version>6.2.17</spring-version>
         <spring-rabbitmq-version>3.2.6</spring-rabbitmq-version>
-        <spring-security-version>6.5.8</spring-security-version>
-        <spring-ws-version>4.1.2</spring-ws-version>
+        <spring-security-version>6.5.9</spring-security-version>
+        <spring-ws-version>4.1.3</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okhttp5-version>5.1.0</squareup-okhttp5-version>
