@@ -273,6 +273,83 @@ The camel-jackson3 component shares a unified DSL with the camel-jackson compone
 
 The same detection mechanism and combined interface extends to the other Jackson data formats (avroJackson, protobufJackson, and jacksonXml).
 
+=== camel-test-junit6, camel-test-main-junit6, camel-test-spring-junit6
+
+camel-test-junit6 was introduced in 4.17.0 - and in 4.19.0 all of the camel components have moved to using it for testing as part of the upgrade to Spring Boot 4.0.   Migration to JUnit 6 camel-test-* components is optional - the camel-test-junit5 is still available and is pinned to JUnit 5 use.   Migrating to camel-test-junit6 has the benefit of better alignment with Spring Boot 4.0 (using camel-spring-boot as a runtime).  If you are using camel-test-junit5 and would like to move to camel-test-junit6, you can change from:
+
+Before:
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-junit5</artifactId>
+    <version>${camel.version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+After:
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-junit6</artifactId>
+    <version>${camel.version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+You will also need to change any imports of classes in `org.apache.camel.test.junit5.*` to `import org.apache.camel.test.junit6.*`.
+
+Similarly, for camel-test-main-junit5 you would need to change any imports of classes in `org.apache.camel.test.main.junit5.*` to `org.apache.camel.test.main.junit6.*`, and the dependency in your pom.xml would change from:
+
+Before:
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-main-junit5</artifactId>
+    <version>${camel.version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+After:
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-main-junit6</artifactId>
+    <version>${camel.version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+Finally, for camel-test-spring-junit5 any imports would change from `org.apache.camel.test.spring.junit5.*` to `import org.apache.camel.test.spring.junit6.*` and the dependency change would be : 
+
+Before:
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-spring-junit5</artifactId>
+    <version>${camel.version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+After:
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-spring-junit6</artifactId>
+    <version>${camel.version}</version>
+    <scope>test</scope>
+</dependency>
+----
+
+
 === camel-jbang
 
 Support for exporting to use Gradle as build tool has been removed (it was deprecated and not working well)
