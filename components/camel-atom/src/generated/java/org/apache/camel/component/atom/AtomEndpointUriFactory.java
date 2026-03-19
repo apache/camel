@@ -23,7 +23,7 @@ public class AtomEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(24);
+        Set<String> props = new HashSet<>(26);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -34,6 +34,8 @@ public class AtomEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("feedHeader");
         props.add("feedUri");
         props.add("greedy");
+        props.add("idempotent");
+        props.add("idempotentStrategy");
         props.add("initialDelay");
         props.add("pollStrategy");
         props.add("repeatCount");

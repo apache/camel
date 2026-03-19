@@ -39,6 +39,9 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "feedheader":
         case "feedHeader": target.setFeedHeader(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "idempotent": target.setIdempotent(property(camelContext, boolean.class, value)); return true;
+        case "idempotentstrategy":
+        case "idempotentStrategy": target.setIdempotentStrategy(property(camelContext, org.apache.camel.component.atom.AtomIdempotentStrategy.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "pollstrategy":
@@ -89,6 +92,9 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "feedheader":
         case "feedHeader": return boolean.class;
         case "greedy": return boolean.class;
+        case "idempotent": return boolean.class;
+        case "idempotentstrategy":
+        case "idempotentStrategy": return org.apache.camel.component.atom.AtomIdempotentStrategy.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "pollstrategy":
@@ -140,6 +146,9 @@ public class AtomEndpointConfigurer extends PropertyConfigurerSupport implements
         case "feedheader":
         case "feedHeader": return target.isFeedHeader();
         case "greedy": return target.isGreedy();
+        case "idempotent": return target.isIdempotent();
+        case "idempotentstrategy":
+        case "idempotentStrategy": return target.getIdempotentStrategy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "pollstrategy":

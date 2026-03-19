@@ -18,7 +18,6 @@ package org.apache.camel.component.atom;
 
 import com.apptasticsoftware.rssreader.Item;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -27,13 +26,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
 /**
- * Example for wiki documentation
+ * Atom Good Blog custom idempotency test
  */
 @DisabledOnOs(OS.AIX)
-public class AtomGoodBlogsTest {
-
-    // START SNIPPET: e1
+public class AtomGoodBlogsCustomItempotencyTest {
 
     // This is the CamelContext that is the heart of Camel
     private CamelContext context;
@@ -42,7 +41,7 @@ public class AtomGoodBlogsTest {
 
         // First we register a blog service in our bean registry
         SimpleRegistry registry = new SimpleRegistry();
-        registry.bind("blogService", new BlogService());
+        registry.bind("myIdempotentStrategy", new CustomIdempotentStrategy());
 
         // Then we create the camel context with our bean registry
         context = new DefaultCamelContext(registry);
@@ -59,26 +58,23 @@ public class AtomGoodBlogsTest {
     protected RouteBuilder createMyRoutes() {
         return new RouteBuilder() {
             public void configure() {
-                // We pool the atom feeds from the source for further processing in the seda queue
-                // we set the delay to 1 second for each pool as this is a unit test also, and we can
-                // not wait the default poll interval of 60 seconds.
-                // Using splitEntries=true will during polling only fetch one Atom Entry at any given time.
-                // As the feed.atom file contains 7 entries, using this will require 7 polls to fetch the entire
-                // content. When Camel have reach the end of entries it will refresh the atom feed from URI source
-                // and restart - but as the Camel Atom component is idempotent by default, it will only deliver new
-                // blog entries to "seda:feeds". So only when James Straham updates his blog with a new entry
-                // Camel will create an exchange for the seda:feeds.
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&delay=1000").to("seda:feeds");
-
-                // From the feeds we filter each blot entry by using our blog service class
-                from("seda:feeds").filter().method("blogService", "isGoodBlog").to("seda:goodBlogs");
-
-                // And the good blogs is moved to a mock queue as this sample is also used for unit testing
-                // this is one of the strengths in Camel that you can also use the mock endpoint for your
-                // unit tests
-                from("seda:goodBlogs").to("mock:result");
+                // Combination of large delay and throttleEntries=false ensures that we only process the full feed once
+                from("atom:file:src/test/data/feed.atom?delay=10000&splitEntries=true&throttleEntries=false&idempotentStrategy=#myIdempotentStrategy")
+                        .to("mock:result");
             }
         };
+    }
+
+    /**
+     * This test verifies that the correct idempotent strategy is used
+     */
+    @Test
+    void testCustomIdempotentStrategy() throws Exception {
+        // create and start Camel
+        context = createCamelContext();
+        AtomEndpoint endpoint
+                = context.getEndpoint("atom:feed.atom?idempotentStrategy=#myIdempotentStrategy", AtomEndpoint.class);
+        assertInstanceOf(CustomIdempotentStrategy.class, endpoint.getIdempotentStrategy());
     }
 
     /**
@@ -94,7 +90,7 @@ public class AtomGoodBlogsTest {
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
 
         // There should be at least two good blog entries from the feed
-        mock.expectedMinimumMessageCount(2);
+        mock.expectedMessageCount(2);
 
         // Asserts that the above expectations is true, will throw assertions exception if it failed
         // Camel will default wait max 20 seconds for the assertions to be true, if the conditions
@@ -104,25 +100,13 @@ public class AtomGoodBlogsTest {
         // stop Camel after use
         context.stop();
     }
+}
 
-    /**
-     * Services for blogs
-     */
-    public static class BlogService {
+class CustomIdempotentStrategy implements AtomIdempotentStrategy {
 
-        /**
-         * Tests the blogs if its a good blog entry or not
-         */
-        public boolean isGoodBlog(Exchange exchange) {
-            Item entry = exchange.getIn().getBody(Item.class);
-            String title = entry.getTitle().get();
-
-            // We like blogs about Camel
-            return title.toLowerCase().contains("camel");
-        }
-
+    @Override
+    public boolean isValidItem(Item entry) {
+        String ONLY_INTERESTING_TOPIC = "ActiveMQ";
+        return entry.getTitle().orElse("").contains(ONLY_INTERESTING_TOPIC);
     }
-
-    // END SNIPPET: e1
-
 }

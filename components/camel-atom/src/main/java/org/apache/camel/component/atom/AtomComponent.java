@@ -31,11 +31,18 @@ import org.apache.camel.util.URISupport;
 @Component("atom")
 public class AtomComponent extends FeedComponent {
 
+    private static final String KEY_FORMAT_STRATEGY_PARAM = "idempotentStrategy";
+
     public AtomComponent() {
     }
 
     @Override
     protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        String idempotentStrategy = (String) parameters.get(KEY_FORMAT_STRATEGY_PARAM);
+        AtomIdempotentStrategy atomIdempotentStrategy = resolveEnumIdempotentStrategy(idempotentStrategy);
+        if (atomIdempotentStrategy != null) {
+            parameters.put(KEY_FORMAT_STRATEGY_PARAM, atomIdempotentStrategy);
+        }
         return new AtomEndpoint(uri, this, null);
     }
 
@@ -61,4 +68,23 @@ public class AtomComponent extends FeedComponent {
         atom.setFeedUri(feedUri);
     }
 
+    /**
+     * Resolves the standard supported {@link AtomIdempotentStrategy} by a name which can be:
+     * <ul>
+     * <li>default - to use the default date strategy</li>
+     * <li>repository - to use the Guid Repository strategy</li>
+     * </ul>
+     *
+     * @param  name the name
+     * @return      the strategy, or <tt>null</tt> if not a standard name.
+     */
+    private static AtomIdempotentStrategy resolveEnumIdempotentStrategy(String name) {
+        if ("default".equalsIgnoreCase(name)) {
+            return new ItemUpdatedIdempotentStrategy();
+        } else if ("repository".equalsIgnoreCase(name)) {
+            return new RepositoryGuidIdempotentStrategy();
+        } else {
+            return null;
+        }
+    }
 }
