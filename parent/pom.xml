@@ -34,6 +34,7 @@
 
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+        <argLine /><!-- Empty by default, allows Quarkus/JaCoCo extensions to inject via @{argLine} -->
         <camel.surefire.fork.additional-vmargs /><!-- Empty by default -->
         <camel.surefire.fork.vmargs>-XX:+EnableDynamicAgentLoading -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError ${camel.surefire.fork.additional-vmargs}</camel.surefire.fork.vmargs>
         <camel.surefire.forkCount>1</camel.surefire.forkCount>
