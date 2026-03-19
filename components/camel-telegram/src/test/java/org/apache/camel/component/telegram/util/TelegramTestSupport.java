@@ -36,7 +36,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class TelegramTestSupport extends CamelTestSupport {
 
     @RegisterExtension
-    static AvailablePortFinder.Port port = AvailablePortFinder.find();
+    protected static AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     protected String chatId;
     private TelegramMockRoutes mockRoutes;

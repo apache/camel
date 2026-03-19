@@ -150,7 +150,7 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
 
     @Override
     protected ClickUpMockRoutes createMockRoutes() {
-        ClickUpMockRoutes clickUpMockRoutes = new ClickUpMockRoutes(port);
+        ClickUpMockRoutes clickUpMockRoutes = new ClickUpMockRoutes(port.getPort());
 
         clickUpMockRoutes.addEndpoint(
                 "health",

@@ -40,9 +40,9 @@ public class MainVertxWebsocketSSLTest extends VertxWebSocketTestSupport {
 
             public void configure() {
                 from("direct:start")
-                        .toF("vertx-websocket:localhost:%d/echo?", port);
+                        .toF("vertx-websocket:localhost:%d/echo?", port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/echo?", port)
+                fromF("vertx-websocket:localhost:%d/echo?", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
             }

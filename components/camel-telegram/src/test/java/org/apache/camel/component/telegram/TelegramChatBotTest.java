@@ -101,7 +101,7 @@ public class TelegramChatBotTest extends TelegramTestSupport {
         request2.getUpdates().get(0).getMessage().setText("intercept");
         request2.getUpdates().get(0).getMessage().getChat().setId("my-chat-id");
 
-        return new TelegramMockRoutes(port)
+        return new TelegramMockRoutes(port.getPort())
                 .addEndpoint(
                         "getUpdates",
                         "GET",

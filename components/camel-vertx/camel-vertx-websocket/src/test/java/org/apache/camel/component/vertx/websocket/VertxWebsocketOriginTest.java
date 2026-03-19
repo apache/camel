@@ -88,7 +88,7 @@ public class VertxWebsocketOriginTest extends VertxWebSocketTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test?allowedOriginPattern=.*localhost.*", port)
+                fromF("vertx-websocket:localhost:%d/test?allowedOriginPattern=.*localhost.*", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
 

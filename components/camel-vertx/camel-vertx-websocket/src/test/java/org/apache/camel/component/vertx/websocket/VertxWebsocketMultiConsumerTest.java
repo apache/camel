@@ -52,19 +52,19 @@ public class VertxWebsocketMultiConsumerTest extends VertxWebSocketTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test/a", port)
+                fromF("vertx-websocket:localhost:%d/test/a", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
 
-                fromF("vertx-websocket:localhost:%d/test/b", port)
+                fromF("vertx-websocket:localhost:%d/test/b", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
 
-                fromF("vertx-websocket:localhost:%d/test/c", port)
+                fromF("vertx-websocket:localhost:%d/test/c", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
 
-                fromF("vertx-websocket:localhost:%d/test", port2)
+                fromF("vertx-websocket:localhost:%d/test", port2.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result2");
             }

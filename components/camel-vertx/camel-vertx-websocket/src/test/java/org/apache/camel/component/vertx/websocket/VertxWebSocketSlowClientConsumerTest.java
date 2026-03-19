@@ -56,10 +56,10 @@ public class VertxWebSocketSlowClientConsumerTest extends VertxWebSocketTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("vertx-websocket:localhost:%d/echo/slow", port)
-                        .toF("vertx-websocket:localhost:%d/echo/slow?sendToAll=true", port);
+                fromF("vertx-websocket:localhost:%d/echo/slow", port.getPort())
+                        .toF("vertx-websocket:localhost:%d/echo/slow?sendToAll=true", port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/echo/slow?consumeAsClient=true", port)
+                fromF("vertx-websocket:localhost:%d/echo/slow?consumeAsClient=true", port.getPort())
                         .delay(600).syncDelayed()
                         .to("mock:clientConsumerResult");
             }

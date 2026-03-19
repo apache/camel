@@ -46,7 +46,7 @@ public class VertxHttpMultiRouteTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().port(port);
+                restConfiguration().port(port.getPort());
 
                 rest()
                         .post("/greeting")

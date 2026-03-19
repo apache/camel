@@ -76,7 +76,7 @@ public class TelegramConsumerMediaDocumentTest extends TelegramTestSupport {
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
-        return new TelegramMockRoutes(port)
+        return new TelegramMockRoutes(port.getPort())
                 .addEndpoint(
                         "getUpdates",
                         "GET",

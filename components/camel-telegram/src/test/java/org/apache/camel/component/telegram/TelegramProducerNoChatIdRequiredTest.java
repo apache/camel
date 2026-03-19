@@ -88,7 +88,7 @@ public class TelegramProducerNoChatIdRequiredTest extends TelegramTestSupport {
     protected TelegramMockRoutes createMockRoutes() {
         // Response for both answerInlineQuery and answerCallbackQuery is just {"ok": true, "result": true}
         String successResponse = "{\"ok\": true, \"result\": true}";
-        return new TelegramMockRoutes(port)
+        return new TelegramMockRoutes(port.getPort())
                 .addEndpoint(
                         "answerInlineQuery",
                         "POST",

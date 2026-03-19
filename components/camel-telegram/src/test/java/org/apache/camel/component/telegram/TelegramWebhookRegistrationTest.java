@@ -132,7 +132,7 @@ public class TelegramWebhookRegistrationTest extends TelegramTestSupport {
         final WebhookResult result = new WebhookResult();
         result.setOk(true);
         result.setResult(true);
-        return new TelegramMockRoutes(port)
+        return new TelegramMockRoutes(port.getPort())
                 .addEndpoint(
                         "getTest",
                         "GET",

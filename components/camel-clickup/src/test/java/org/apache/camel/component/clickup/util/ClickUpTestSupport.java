@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class ClickUpTestSupport extends CamelTestSupport {
 
     @RegisterExtension
-    static AvailablePortFinder.Port port = AvailablePortFinder.find();
+    protected static AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     private ClickUpMockRoutes mockRoutes;
 

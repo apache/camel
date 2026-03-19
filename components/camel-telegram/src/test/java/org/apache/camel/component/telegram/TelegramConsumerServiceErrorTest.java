@@ -67,7 +67,7 @@ public class TelegramConsumerServiceErrorTest extends TelegramTestSupport {
 
         UpdateResult defaultRes = getJSONResource("messages/updates-empty.json", UpdateResult.class);
 
-        return new TelegramMockRoutes(port)
+        return new TelegramMockRoutes(port.getPort())
                 .addEndpoint(
                         "getUpdates",
                         "GET",
