@@ -57,7 +57,7 @@ public class VertxHttpMultiRouteTest extends VertxHttpTestSupport {
 
                 from("direct:greet")
                         .removeHeaders("CamelHttp*")
-                        .toF("vertx-http:http://localhost:%d/hello?httpMethod=POST", port)
+                        .toF("vertx-http:http://localhost:%d/hello?httpMethod=POST", port.getPort())
                         .to("mock:result");
 
                 from("direct:hello")
