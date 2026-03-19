@@ -55,7 +55,7 @@ public class ObjectSerializationTest extends BaseNettyTest {
     public void testObjectSerializationAllowedViaDecoder() {
         Date date = new Date();
         Date receivedDate = template
-                .requestBody("netty:tcp://localhost:{{port2.getPort()}}?sync=true&encoders=#encoder&decoders=#decoder", date,
+                .requestBody("netty:tcp://localhost:{{port2}}?sync=true&encoders=#encoder&decoders=#decoder", date,
                         Date.class);
         assertEquals(date, receivedDate);
     }
@@ -99,7 +99,7 @@ public class ObjectSerializationTest extends BaseNettyTest {
                             }
                         });
 
-                from("netty:tcp://localhost:{{port2.getPort()}}?sync=true&decoders=#decoder&encoders=#encoder")
+                from("netty:tcp://localhost:{{port2}}?sync=true&decoders=#decoder&encoders=#encoder")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 Object obj = exchange.getIn().getBody();

@@ -46,9 +46,9 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
-        System.setProperty("RecipientListCxfTest.port1.getPort()", Integer.toString(port1.getPort()));
-        System.setProperty("RecipientListCxfTest.port2.getPort()", Integer.toString(port2.getPort()));
-        System.setProperty("RecipientListCxfTest.port3.getPort()", Integer.toString(port3.getPort()));
+        System.setProperty("RecipientListCxfTest.port1", Integer.toString(port1.getPort()));
+        System.setProperty("RecipientListCxfTest.port2", Integer.toString(port2.getPort()));
+        System.setProperty("RecipientListCxfTest.port3", Integer.toString(port3.getPort()));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class JettyRecipientListCxfIssueTest extends CamelSpringTestSupport {
         assertNotNull(request);
 
         // send a message to jetty
-        Exchange out = template.request("http://0.0.0.0:{{RecipientListCxfTest.port3.getPort()}}/myapp", exchange -> {
+        Exchange out = template.request("http://0.0.0.0:{{RecipientListCxfTest.port3}}/myapp", exchange -> {
             exchange.getIn().setHeader("operationName", "greetMe");
             exchange.getIn().setBody(request);
         });

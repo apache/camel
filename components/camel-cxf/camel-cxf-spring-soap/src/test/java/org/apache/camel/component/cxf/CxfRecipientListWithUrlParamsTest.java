@@ -40,8 +40,8 @@ public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
-        System.setProperty("CxfRecipientListWithUrlParams.port1.getPort()", Integer.toString(port1.getPort()));
-        System.setProperty("CxfRecipientListWithUrlParams.port2.getPort()", Integer.toString(port2.getPort()));
+        System.setProperty("CxfRecipientListWithUrlParams.port1", Integer.toString(port1.getPort()));
+        System.setProperty("CxfRecipientListWithUrlParams.port2", Integer.toString(port2.getPort()));
     }
 
     @EndpointInject("mock:reply")
