@@ -3263,8 +3263,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Query Couchbase Views with a poll strategy and/or perform various
-     * operations against Couchbase databases.
+     * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
+     * with a poll strategy and/or perform various operations against Couchbase
+     * databases.
      * 
      * Category: database
      * Since: 2.19
@@ -3290,8 +3291,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Query Couchbase Views with a poll strategy and/or perform various
-     * operations against Couchbase databases.
+     * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
+     * with a poll strategy and/or perform various operations against Couchbase
+     * databases.
      * 
      * Category: database
      * Since: 2.19
