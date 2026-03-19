@@ -28,7 +28,6 @@ import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -56,8 +55,10 @@ public class OpenAIEmbeddingsIT extends CamelTestSupport {
         if (apiKey == null || apiKey.isEmpty()) {
             apiKey = "dummy";
         }
-        Assumptions.assumeTrue(ObjectHelper.isNotEmpty(embeddingModel),
-                "Embedding model not available. Set the ollama.embedding.model system property or use a container with embedding support.");
+        if (ObjectHelper.isEmpty(embeddingModel)) {
+            throw new IllegalStateException(
+                    "Embedding model not available. Set the ollama.embedding.model system property or use a container with embedding support.");
+        }
     }
 
     @Override
