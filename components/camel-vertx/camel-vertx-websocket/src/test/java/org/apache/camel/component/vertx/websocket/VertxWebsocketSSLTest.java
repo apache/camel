@@ -180,7 +180,7 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
                 fromF("vertx-websocket:localhost:%d/echo?sslContextParameters=#serverSSLParameters", port.getPort())
                         .log("Server consumer received message: ${body}")
                         .toF("vertx-websocket:localhost:%d/echo?sendToAll=true&sslContextParameters=#clientSSLParameters",
-                                port);
+                                port.getPort());
 
                 fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&sslContextParameters=#clientSSLParameters",
                         port.getPort())

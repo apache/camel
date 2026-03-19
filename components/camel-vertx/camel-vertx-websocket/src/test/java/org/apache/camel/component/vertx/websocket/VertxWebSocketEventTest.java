@@ -80,7 +80,7 @@ public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
                         .endChoice();
 
                 fromF("vertx-websocket:localhost:%d/test?fireWebSocketConnectionEvents=true&serverOptions=#serverOptions&bridgeErrorHandler=true",
-                        port)
+                        port.getPort())
                         .choice()
                         .when(simple("${header.CamelVertxWebsocket.event} == 'OPEN'"))
                         .process(exchange -> {

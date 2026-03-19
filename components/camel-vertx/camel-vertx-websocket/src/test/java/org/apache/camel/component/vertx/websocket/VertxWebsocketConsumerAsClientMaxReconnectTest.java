@@ -74,7 +74,7 @@ public class VertxWebsocketConsumerAsClientMaxReconnectTest extends VertxWebSock
                         .toF("vertx-websocket:localhost:%d/echo?sendToAll=true", port.getPort());
 
                 fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&reconnectInterval=10&maxReconnectAttempts=1",
-                        port)
+                        port.getPort())
                         .log("Client consumer 1: Received message: ${body}")
                         .to("mock:result");
             }
