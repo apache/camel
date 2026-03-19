@@ -123,10 +123,14 @@ public class AS2AsyncMDNServerConnection {
         public RequestListenerThread(int port, SSLContext sslContext) throws IOException {
             setName(REQUEST_LISTENER_THREAD_NAME_PREFIX + port);
             if (sslContext == null) {
-                serverSocket = new ServerSocket(port);
+                serverSocket = new ServerSocket();
+                serverSocket.setReuseAddress(true);
+                serverSocket.bind(new java.net.InetSocketAddress(port));
             } else {
                 SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
-                serverSocket = factory.createServerSocket(port);
+                serverSocket = factory.createServerSocket();
+                serverSocket.setReuseAddress(true);
+                serverSocket.bind(new java.net.InetSocketAddress(port));
             }
             HttpProcessor httpProcessor = HttpProcessorBuilder.create()
                     .add(new ResponseContent(true))

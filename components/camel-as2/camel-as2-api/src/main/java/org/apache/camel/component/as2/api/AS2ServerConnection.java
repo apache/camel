@@ -440,10 +440,14 @@ public class AS2ServerConnection {
             this.service = service;
 
             if (sslContext == null) {
-                serversocket = new ServerSocket(port);
+                serversocket = new ServerSocket();
+                serversocket.setReuseAddress(true);
+                serversocket.bind(new java.net.InetSocketAddress(port));
             } else {
                 SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
-                serversocket = factory.createServerSocket(port);
+                serversocket = factory.createServerSocket();
+                serversocket.setReuseAddress(true);
+                serversocket.bind(new java.net.InetSocketAddress(port));
             }
         }
 
