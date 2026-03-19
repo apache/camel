@@ -59,7 +59,7 @@ public class WebhookUriEncodingTest extends WebhookTestBase {
 
                 restConfiguration()
                         .host("0.0.0.0")
-                        .port(port);
+                        .port(port.getPort());
 
                 from("webhook:wb-delegate://xx?webhookBasePath=/base&webhookPath=/uri&foo=hello} world&bar=RAW(hello} world)")
                         .transform(body().prepend("msg: "));
