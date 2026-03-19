@@ -16,10 +16,8 @@
  */
 package org.apache.directory.server.core.integ5;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,22 +70,14 @@ public final class ServerAnnotationProcessor {
             }
         } else {
             // Create default LDAP and LDAPS transports
-            try {
-                int port = getFreePort();
-                Transport ldap = new TcpTransport(port);
-                ldapServer.addTransports(ldap);
-            } catch (IOException ioe) {
-                // Don't know what to do here...
-            }
+            int port = getFreePort();
+            Transport ldap = new TcpTransport(port);
+            ldapServer.addTransports(ldap);
 
-            try {
-                int port = getFreePort();
-                Transport ldaps = new TcpTransport(port);
-                ldaps.setEnableSSL(true);
-                ldapServer.addTransports(ldaps);
-            } catch (IOException ioe) {
-                // Don't know what to do here...
-            }
+            int sslPort = getFreePort();
+            Transport ldaps = new TcpTransport(sslPort);
+            ldaps.setEnableSSL(true);
+            ldapServer.addTransports(ldaps);
         }
     }
 
@@ -319,11 +309,7 @@ public final class ServerAnnotationProcessor {
         }
 
         if (port <= 0) {
-            try {
-                port = getFreePort();
-            } catch (IOException ioe) {
-                // Don't know what to do here...
-            }
+            port = getFreePort();
         }
 
         if (protocol.equalsIgnoreCase("TCP") || protocol.equalsIgnoreCase("LDAP")) {
@@ -349,12 +335,8 @@ public final class ServerAnnotationProcessor {
         throw new IllegalArgumentException(I18n.err(I18n.ERR_689, protocol));
     }
 
-    private static int getFreePort() throws IOException {
-        ServerSocket ss = new ServerSocket(0);
-        int port = ss.getLocalPort();
-        ss.close();
-
-        return port;
+    private static int getFreePort() {
+        return org.apache.camel.test.AvailablePort.probePort(null, 0);
     }
 
 }

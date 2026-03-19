@@ -17,7 +17,6 @@
 package org.apache.camel.component.salesforce;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.Base64;
 
 import com.google.protobuf.ByteString;
@@ -246,9 +245,7 @@ public class PubSubApiTest {
         }
     }
 
-    private int getPort() throws IOException {
-        try (ServerSocket serverSocket = new ServerSocket(0)) {
-            return serverSocket.getLocalPort();
-        }
+    private int getPort() {
+        return org.apache.camel.test.AvailablePort.probePort(null, 0);
     }
 }
