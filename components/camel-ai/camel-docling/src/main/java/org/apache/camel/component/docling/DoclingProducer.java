@@ -21,16 +21,22 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
@@ -136,6 +142,18 @@ public class DoclingProducer extends DefaultProducer {
      * controlled by the producer via endpoint configuration or the {@link DoclingHeaders#OUTPUT_FILE_PATH} header.
      */
     private static final Set<String> PRODUCER_MANAGED_FLAGS = Set.of("--output", "-o");
+
+    private static final boolean POSIX_SUPPORTED = FileSystems.getDefault().supportedFileAttributeViews().contains("posix");
+
+    // Owner-only permissions: rwx for directories, rw for files
+    private static final Set<PosixFilePermission> DIR_PERMISSIONS_700 = EnumSet.of(
+            PosixFilePermission.OWNER_READ,
+            PosixFilePermission.OWNER_WRITE,
+            PosixFilePermission.OWNER_EXECUTE);
+
+    private static final Set<PosixFilePermission> FILE_PERMISSIONS_600 = EnumSet.of(
+            PosixFilePermission.OWNER_READ,
+            PosixFilePermission.OWNER_WRITE);
 
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
@@ -1643,9 +1661,10 @@ public class DoclingProducer extends DefaultProducer {
                 return content;
             } else {
                 // Treat as content to be written to a temp file
-                Path tempFile = Files.createTempFile("docling-", ".tmp");
+                Path secureTempDir = createSecureTempDir();
+                Path tempFile = createSecureTempFile(secureTempDir);
                 Files.write(tempFile, content.getBytes());
-                registerTempFileCleanup(exchange, tempFile);
+                registerTempDirCleanup(exchange, secureTempDir);
                 validateFileSize(tempFile.toString());
                 return tempFile.toString();
             }
@@ -1653,9 +1672,10 @@ public class DoclingProducer extends DefaultProducer {
             if (content.length > configuration.getMaxFileSize()) {
                 throw new IllegalArgumentException("File size exceeds maximum allowed size: " + configuration.getMaxFileSize());
             }
-            Path tempFile = Files.createTempFile("docling-", ".tmp");
+            Path secureTempDir = createSecureTempDir();
+            Path tempFile = createSecureTempFile(secureTempDir);
             Files.write(tempFile, content);
-            registerTempFileCleanup(exchange, tempFile);
+            registerTempDirCleanup(exchange, secureTempDir);
             return tempFile.toString();
         } else if (body instanceof File file) {
             validateFileSize(file.getAbsolutePath());
@@ -1665,18 +1685,61 @@ public class DoclingProducer extends DefaultProducer {
         throw new InvalidPayloadException(exchange, String.class);
     }
 
-    private void registerTempFileCleanup(Exchange exchange, Path tempFile) {
+    /**
+     * Creates a secure per-exchange subdirectory under the system temp dir with a UUID for uniqueness and restrictive
+     * POSIX permissions (700) when the platform supports it.
+     */
+    private Path createSecureTempDir() throws IOException {
+        Path tempDir;
+        if (POSIX_SUPPORTED) {
+            FileAttribute<Set<PosixFilePermission>> dirAttr = PosixFilePermissions.asFileAttribute(DIR_PERMISSIONS_700);
+            tempDir = Files.createTempDirectory("docling-" + UUID.randomUUID() + "-", dirAttr);
+        } else {
+            tempDir = Files.createTempDirectory("docling-" + UUID.randomUUID() + "-");
+        }
+        LOG.debug("Created secure temp directory: {}", tempDir);
+        return tempDir;
+    }
+
+    /**
+     * Creates a temp file inside the given directory with restrictive POSIX permissions (600) when the platform
+     * supports it.
+     */
+    private Path createSecureTempFile(Path parentDir) throws IOException {
+        Path tempFile;
+        if (POSIX_SUPPORTED) {
+            FileAttribute<Set<PosixFilePermission>> fileAttr = PosixFilePermissions.asFileAttribute(FILE_PERMISSIONS_600);
+            tempFile = Files.createTempFile(parentDir, "docling-", ".tmp", fileAttr);
+        } else {
+            tempFile = Files.createTempFile(parentDir, "docling-", ".tmp");
+        }
+        return tempFile;
+    }
+
+    /**
+     * Registers cleanup of an entire temp directory (and its contents) when the exchange completes.
+     */
+    private void registerTempDirCleanup(Exchange exchange, Path tempDir) {
         exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                try {
-                    Files.deleteIfExists(tempFile);
-                    LOG.debug("Cleaned up temp file: {}", tempFile);
-                } catch (IOException e) {
-                    LOG.warn("Failed to clean up temp file: {}", tempFile, e);
-                }
+                deleteDirectoryRecursively(tempDir);
             }
         });
+    }
+
+    private static void deleteDirectoryRecursively(Path dir) {
+        try {
+            if (Files.isDirectory(dir)) {
+                try (Stream<Path> entries = Files.list(dir)) {
+                    entries.forEach(DoclingProducer::deleteDirectoryRecursively);
+                }
+            }
+            Files.deleteIfExists(dir);
+            LOG.debug("Cleaned up temp path: {}", dir);
+        } catch (IOException e) {
+            LOG.warn("Failed to clean up temp path: {}", dir, e);
+        }
     }
 
     private void validateFileSize(String filePath) throws IOException {
@@ -1692,8 +1755,8 @@ public class DoclingProducer extends DefaultProducer {
 
     private String executeDoclingCommand(String inputPath, String outputFormat, Exchange exchange) throws Exception {
         LOG.debug("DoclingProducer executing Docling command for input: {} with format: {}", inputPath, outputFormat);
-        // Create temporary output directory
-        Path tempOutputDir = Files.createTempDirectory("docling-output");
+        // Create secure temporary output directory with restrictive permissions
+        Path tempOutputDir = createSecureTempDir();
 
         try {
             List<String> command = buildDoclingCommand(inputPath, outputFormat, exchange, tempOutputDir.toString());
@@ -1763,11 +1826,11 @@ public class DoclingProducer extends DefaultProducer {
             return result;
 
         } finally {
-            // Clean up temporary directory only if contentInBody is true
-            // (the file has already been read and deleted)
-            if (configuration.isContentInBody()) {
-                deleteDirectory(tempOutputDir);
-            }
+            // Always clean up the temporary output directory. When contentInBody is true,
+            // the file content has been read into the exchange body. When contentInBody is false,
+            // the output file has been moved to its final location. In both cases (and on failure),
+            // the temp directory is no longer needed.
+            deleteDirectory(tempOutputDir);
         }
     }
 

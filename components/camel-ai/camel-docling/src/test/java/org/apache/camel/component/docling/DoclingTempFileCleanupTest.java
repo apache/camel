@@ -35,15 +35,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * processing completes.
  *
  * <p>
- * Before the fix, temp files created for String content and byte[] bodies accumulated on disk indefinitely. After the
- * fix, an {@code addOnCompletion} callback deletes them when the exchange finishes.
+ * Temp files are created inside per-exchange subdirectories under the system temp dir. The entire subdirectory is
+ * removed when the exchange finishes.
  */
 class DoclingTempFileCleanupTest extends CamelTestSupport {
 
     @Test
     void tempFileFromStringContentIsCleanedUp() throws Exception {
-        // Snapshot temp files before
-        List<Path> before = listDoclingTempFiles();
+        // Snapshot docling temp directories before
+        List<Path> before = listDoclingTempDirs();
 
         // Send string content (not a path, not a URL) — this triggers temp file creation.
         // The docling CLI will fail (not installed), but the temp file cleanup
@@ -54,18 +54,18 @@ class DoclingTempFileCleanupTest extends CamelTestSupport {
             // Expected — docling binary not available in test env
         }
 
-        // After exchange completes, temp files should have been cleaned up
-        List<Path> after = listDoclingTempFiles();
+        // After exchange completes, temp directories should have been cleaned up
+        List<Path> after = listDoclingTempDirs();
         List<Path> leaked = new ArrayList<>(after);
         leaked.removeAll(before);
 
         assertTrue(leaked.isEmpty(),
-                "Temp files leaked after exchange completion: " + leaked);
+                "Temp directories leaked after exchange completion: " + leaked);
     }
 
     @Test
     void tempFileFromByteArrayIsCleanedUp() throws Exception {
-        List<Path> before = listDoclingTempFiles();
+        List<Path> before = listDoclingTempDirs();
 
         try {
             template.requestBody("direct:convert", "Binary content for conversion".getBytes());
@@ -73,20 +73,25 @@ class DoclingTempFileCleanupTest extends CamelTestSupport {
             // Expected — docling binary not available in test env
         }
 
-        List<Path> after = listDoclingTempFiles();
+        List<Path> after = listDoclingTempDirs();
         List<Path> leaked = new ArrayList<>(after);
         leaked.removeAll(before);
 
         assertTrue(leaked.isEmpty(),
-                "Temp files leaked after exchange completion: " + leaked);
+                "Temp directories leaked after exchange completion: " + leaked);
     }
 
-    private List<Path> listDoclingTempFiles() throws IOException {
+    /**
+     * Lists docling temp directories (docling-UUID-*) in the system temp dir.
+     */
+    private List<Path> listDoclingTempDirs() throws IOException {
         List<Path> result = new ArrayList<>();
         Path tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(tmpDir, "docling-*.tmp")) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(tmpDir, "docling-*")) {
             for (Path entry : stream) {
-                result.add(entry);
+                if (Files.isDirectory(entry)) {
+                    result.add(entry);
+                }
             }
         }
         return result;
