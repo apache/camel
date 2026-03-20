@@ -25,14 +25,14 @@ import org.apache.camel.support.DefaultComponent;
  * The Event component allows subscribing to Camel internal events such as route events and exchange events.
  */
 @org.apache.camel.spi.annotations.Component("event")
-public class EventComponent extends DefaultComponent {
+public class CamelEventComponent extends DefaultComponent {
 
-    public EventComponent() {
+    public CamelEventComponent() {
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EventEndpoint endpoint = new EventEndpoint(uri, this, remaining);
+        CamelEventEndpoint endpoint = new CamelEventEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         return endpoint;
     }

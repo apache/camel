@@ -144,6 +144,26 @@ For example, to only receive events for routes `myRoute1` and `myRoute2`:
 event:RouteStarted,RouteStopped?filter=myRoute1,myRoute2
 ----
 
+=== Exclusion Filter
+
+The `filterExclude` option allows you to exclude events from specific routes.
+This can be used on its own or combined with the `filter` option.
+
+----
+event:ExchangeCompleted?filterExclude=internalRoute
+event:Route*?filter=myRoute1,myRoute2&filterExclude=myRoute2
+----
+
+=== Custom Event Class Filter
+
+The `customEventClass` option allows filtering by a specific custom event class.
+When subscribing to `Custom` events, this restricts delivery to only events
+that are instances of the specified class.
+
+----
+event:Custom?customEventClass=com.example.MyCustomEvent
+----
+
 == Message Headers
 
 The following headers are set on exchanges created by this component.
@@ -268,6 +288,22 @@ Monitor exchange latency using ExchangeSent events:
 ----
 from("event:ExchangeSent")
     .log("Exchange sent to ${header.CamelEventEndpointUri} took ${header.CamelEventDuration}ms");
+----
+
+Exclude internal routes from monitoring:
+
+[source,java]
+----
+from("event:ExchangeCompleted?filterExclude=internalRoute1,internalRoute2")
+    .log("Exchange completed on route ${header.CamelEventRouteId}");
+----
+
+Subscribe to specific custom events:
+
+[source,java]
+----
+from("event:Custom?customEventClass=com.example.MyCustomEvent")
+    .log("Custom event received: ${body}");
 ----
 
 == Distributed Events

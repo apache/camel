@@ -48,7 +48,7 @@ public class EventWildcardTest extends CamelTestSupport {
 
         // All events should be route-related
         mock.getExchanges().forEach(e -> {
-            String eventType = e.getIn().getHeader(EventConstants.HEADER_EVENT_TYPE, String.class);
+            String eventType = e.getIn().getHeader(CamelEventConstants.HEADER_EVENT_TYPE, String.class);
             assertTrue(eventType.startsWith("Route"), "Expected route event but got: " + eventType);
         });
     }
@@ -63,7 +63,7 @@ public class EventWildcardTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         mock.getExchanges().forEach(e -> {
-            String eventType = e.getIn().getHeader(EventConstants.HEADER_EVENT_TYPE, String.class);
+            String eventType = e.getIn().getHeader(CamelEventConstants.HEADER_EVENT_TYPE, String.class);
             assertTrue(eventType.startsWith("Exchange"), "Expected exchange event but got: " + eventType);
         });
     }
@@ -82,7 +82,7 @@ public class EventWildcardTest extends CamelTestSupport {
 
     @Test
     void testResolveWildcardRouteTypes() {
-        Set<CamelEvent.Type> types = EventEndpoint.resolveWildcard("Route*");
+        Set<CamelEvent.Type> types = CamelEventEndpoint.resolveWildcard("Route*");
         assertTrue(types.contains(CamelEvent.Type.RouteStarted));
         assertTrue(types.contains(CamelEvent.Type.RouteStopped));
         assertTrue(types.contains(CamelEvent.Type.RouteAdded));
@@ -97,7 +97,7 @@ public class EventWildcardTest extends CamelTestSupport {
 
     @Test
     void testResolveWildcardExchangeTypes() {
-        Set<CamelEvent.Type> types = EventEndpoint.resolveWildcard("Exchange*");
+        Set<CamelEvent.Type> types = CamelEventEndpoint.resolveWildcard("Exchange*");
         assertTrue(types.contains(CamelEvent.Type.ExchangeCreated));
         assertTrue(types.contains(CamelEvent.Type.ExchangeCompleted));
         assertTrue(types.contains(CamelEvent.Type.ExchangeFailed));
@@ -107,7 +107,7 @@ public class EventWildcardTest extends CamelTestSupport {
 
     @Test
     void testResolveWildcardCamelContextTypes() {
-        Set<CamelEvent.Type> types = EventEndpoint.resolveWildcard("CamelContext*");
+        Set<CamelEvent.Type> types = CamelEventEndpoint.resolveWildcard("CamelContext*");
         assertTrue(types.contains(CamelEvent.Type.CamelContextStarted));
         assertTrue(types.contains(CamelEvent.Type.CamelContextStopped));
         assertTrue(types.contains(CamelEvent.Type.CamelContextInitialized));
@@ -117,7 +117,7 @@ public class EventWildcardTest extends CamelTestSupport {
 
     @Test
     void testResolveWildcardStepTypes() {
-        Set<CamelEvent.Type> types = EventEndpoint.resolveWildcard("Step*");
+        Set<CamelEvent.Type> types = CamelEventEndpoint.resolveWildcard("Step*");
         assertEquals(3, types.size());
         assertTrue(types.contains(CamelEvent.Type.StepStarted));
         assertTrue(types.contains(CamelEvent.Type.StepCompleted));
@@ -126,7 +126,7 @@ public class EventWildcardTest extends CamelTestSupport {
 
     @Test
     void testResolveWildcardServiceTypes() {
-        Set<CamelEvent.Type> types = EventEndpoint.resolveWildcard("Service*");
+        Set<CamelEvent.Type> types = CamelEventEndpoint.resolveWildcard("Service*");
         assertEquals(2, types.size());
         assertTrue(types.contains(CamelEvent.Type.ServiceStartupFailure));
         assertTrue(types.contains(CamelEvent.Type.ServiceStopFailure));
@@ -134,13 +134,13 @@ public class EventWildcardTest extends CamelTestSupport {
 
     @Test
     void testResolveWildcardAll() {
-        Set<CamelEvent.Type> types = EventEndpoint.resolveWildcard("*");
+        Set<CamelEvent.Type> types = CamelEventEndpoint.resolveWildcard("*");
         assertEquals(CamelEvent.Type.values().length, types.size());
     }
 
     @Test
     void testInvalidWildcard() {
-        assertThrows(IllegalArgumentException.class, () -> EventEndpoint.resolveWildcard("Invalid*"));
+        assertThrows(IllegalArgumentException.class, () -> CamelEventEndpoint.resolveWildcard("Invalid*"));
     }
 
     @Override

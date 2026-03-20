@@ -21,7 +21,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Constants for the Camel Event component headers.
  */
-public final class EventConstants {
+public final class CamelEventConstants {
 
     @Metadata(label = "consumer", description = "The event type name (e.g., RouteStarted, ExchangeCompleted)",
               javaType = "String")
@@ -67,6 +67,6 @@ public final class EventConstants {
               javaType = "Integer")
     public static final String HEADER_EVENT_REDELIVERY_ATTEMPT = "CamelEventRedeliveryAttempt";
 
-    private EventConstants() {
+    private CamelEventConstants() {
     }
 }

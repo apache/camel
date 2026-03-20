@@ -17,19 +17,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @Generated("org.apache.camel.maven.packaging.EndpointSchemaGeneratorMojo")
 @SuppressWarnings("unchecked")
-public class EventEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
+public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
-        EventEndpoint target = (EventEndpoint) obj;
+        CamelEventEndpoint target = (CamelEventEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "customeventclass":
+        case "customEventClass": target.setCustomEventClass(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filter": target.setFilter(property(camelContext, java.lang.String.class, value)); return true;
+        case "filterexclude":
+        case "filterExclude": target.setFilterExclude(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -39,26 +43,34 @@ public class EventEndpointConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "customeventclass":
+        case "customEventClass": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filter": return java.lang.String.class;
+        case "filterexclude":
+        case "filterExclude": return java.lang.String.class;
         default: return null;
         }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
-        EventEndpoint target = (EventEndpoint) obj;
+        CamelEventEndpoint target = (CamelEventEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "customeventclass":
+        case "customEventClass": return target.getCustomEventClass();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "filter": return target.getFilter();
+        case "filterexclude":
+        case "filterExclude": return target.getFilterExclude();
         default: return null;
         }
     }
