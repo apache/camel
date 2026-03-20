@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -32,7 +33,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,20 +111,19 @@ public class BatchProducer extends DefaultProducer {
         String jobInstanceId = UUID.randomUUID().toString();
         long startTime = System.currentTimeMillis();
 
+        // Set watermark header early so it's available during processing
+        if (watermarkStore != null && watermarkExpr != null) {
+            String wmKey = endpoint.getEffectiveWatermarkKey();
+            String wmValue = watermarkStore.get(wmKey);
+            exchange.getIn().setHeader(BatchConstants.BATCH_WATERMARK_VALUE, wmValue);
+        }
+
         // Extract items from exchange body
         List<Object> items = extractItems(exchange);
 
-        // Watermark handling
-        if (watermarkStore != null) {
-            String wmKey = endpoint.getEffectiveWatermarkKey();
-            String wmValue = watermarkStore.get(wmKey);
-            if (watermarkExpr != null) {
-                // Value-based: set header so upstream/caller can see current watermark
-                exchange.getIn().setHeader(BatchConstants.BATCH_WATERMARK_VALUE, wmValue);
-            } else {
-                // Index-based: skip already processed items
-                items = applyWatermarkFilter(items);
-            }
+        // Index-based watermark: skip already processed items
+        if (watermarkStore != null && watermarkExpr == null) {
+            items = applyWatermarkFilter(items);
         }
 
         int totalItems = items.size();
@@ -212,7 +213,7 @@ public class BatchProducer extends DefaultProducer {
 
         setResultHeaders(exchange, result, jobInstanceId);
 
-        LOG.info("Batch job '{}' [{}] completed: {}", endpoint.getJobName(), jobInstanceId, result);
+        LOG.debug("Batch job '{}' [{}] completed: {}", endpoint.getJobName(), jobInstanceId, result);
 
         // On Complete fires before potential exception
         fireOnComplete(exchange, result);
@@ -301,7 +302,7 @@ public class BatchProducer extends DefaultProducer {
     }
 
     private Exchange createItemExchange(Exchange parent, Object item, int index, int totalSize) {
-        Exchange itemExchange = parent.copy();
+        Exchange itemExchange = ExchangeHelper.createCorrelatedCopy(parent, false);
         itemExchange.getIn().setBody(item);
         itemExchange.getIn().setHeader(BatchConstants.BATCH_JOB_NAME, endpoint.getJobName());
         itemExchange.getIn().setHeader(BatchConstants.BATCH_INDEX, index);
@@ -355,13 +356,11 @@ public class BatchProducer extends DefaultProducer {
             // Endpoint URI — send via shared ProducerTemplate
             return exchange -> producerTemplate.send(ref, exchange);
         }
-        String name = ref.startsWith("#") ? ref.substring(1) : ref;
-        Processor p = endpoint.getCamelContext().getRegistry().lookupByNameAndType(name, Processor.class);
-        ObjectHelper.notNull(p, "processor bean '" + name + "'");
-        return p;
+        return EndpointHelper.resolveReferenceParameter(
+                endpoint.getCamelContext(), ref, Processor.class);
     }
 
-    private List<Integer> getEligibleItems(int totalItems, java.util.Set<Integer> failedIndices, BatchAcceptPolicy policy) {
+    private List<Integer> getEligibleItems(int totalItems, Set<Integer> failedIndices, BatchAcceptPolicy policy) {
         List<Integer> eligible = new ArrayList<>();
         for (int i = 0; i < totalItems; i++) {
             boolean isFailed = failedIndices.contains(i);
@@ -378,8 +377,6 @@ public class BatchProducer extends DefaultProducer {
                     if (isFailed) {
                         eligible.add(i);
                     }
-                    break;
-                default:
                     break;
             }
         }

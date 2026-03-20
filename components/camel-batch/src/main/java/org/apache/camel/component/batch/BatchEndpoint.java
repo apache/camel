@@ -28,6 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.EndpointHelper;
 
 /**
  * Process collections of items in structured batches with chunking, error thresholds, and watermark tracking.
@@ -102,6 +103,16 @@ public class BatchEndpoint extends DefaultEndpoint {
         if (processorRef != null && steps != null) {
             throw new IllegalArgumentException("Only one of processorRef or steps can be configured, not both");
         }
+        if (chunkSize <= 0) {
+            throw new IllegalArgumentException("chunkSize must be greater than 0, was: " + chunkSize);
+        }
+        if (errorThreshold < 0.0 || errorThreshold > 1.0) {
+            throw new IllegalArgumentException("errorThreshold must be between 0.0 and 1.0, was: " + errorThreshold);
+        }
+        if (watermarkExpression != null && watermarkStore == null) {
+            throw new IllegalArgumentException(
+                    "watermarkExpression is set but watermarkStore is not configured — watermark tracking will not be active");
+        }
         return new BatchProducer(this);
     }
 
@@ -117,8 +128,8 @@ public class BatchEndpoint extends DefaultEndpoint {
         if (aggregationStrategy == null) {
             return null;
         }
-        String name = aggregationStrategy.startsWith("#") ? aggregationStrategy.substring(1) : aggregationStrategy;
-        return getCamelContext().getRegistry().lookupByNameAndType(name, AggregationStrategy.class);
+        return EndpointHelper.resolveReferenceParameter(
+                getCamelContext(), aggregationStrategy, AggregationStrategy.class, false);
     }
 
     /**
@@ -129,8 +140,8 @@ public class BatchEndpoint extends DefaultEndpoint {
         if (watermarkStore == null) {
             return null;
         }
-        String name = watermarkStore.startsWith("#") ? watermarkStore.substring(1) : watermarkStore;
-        return getCamelContext().getRegistry().lookupByNameAndType(name, Map.class);
+        return (Map<String, String>) EndpointHelper.resolveReferenceParameter(
+                getCamelContext(), watermarkStore, Map.class, false);
     }
 
     public String getEffectiveWatermarkKey() {
