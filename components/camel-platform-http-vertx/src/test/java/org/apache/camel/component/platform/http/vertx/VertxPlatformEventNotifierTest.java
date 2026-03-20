@@ -24,19 +24,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformEventNotifierTest {
 
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     private final List<String> events = new ArrayList<>();
 
     @Test
     void testEventNotifierOk() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         context.getManagementStrategy().addEventNotifier(new MyEventListener());
         events.clear();
 
@@ -68,7 +73,7 @@ public class VertxPlatformEventNotifierTest {
 
     @Test
     void testEventNotifierError() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         context.getManagementStrategy().addEventNotifier(new MyEventListener());
         events.clear();
 

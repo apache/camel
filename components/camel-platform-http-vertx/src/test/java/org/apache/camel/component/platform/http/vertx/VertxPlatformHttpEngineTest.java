@@ -1344,14 +1344,6 @@ public class VertxPlatformHttpEngineTest {
         }
     }
 
-    static CamelContext createCamelContext() throws Exception {
-        return createCamelContext(AvailablePortFinder.find().getPort(), null);
-    }
-
-    static CamelContext createCamelContext(ServerConfigurationCustomizer customizer) throws Exception {
-        return createCamelContext(AvailablePortFinder.find().getPort(), customizer);
-    }
-
     CamelContext createCamelContextForTest() throws Exception {
         return createCamelContext(port.getPort(), null);
     }

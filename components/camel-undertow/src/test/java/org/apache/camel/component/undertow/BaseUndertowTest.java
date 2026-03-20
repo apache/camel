@@ -17,7 +17,6 @@
 package org.apache.camel.component.undertow;
 
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -34,7 +33,6 @@ public abstract class BaseUndertowTest extends CamelTestSupport {
     AvailablePortFinder.Port port = AvailablePortFinder.find();
     @RegisterExtension
     AvailablePortFinder.Port port2 = AvailablePortFinder.find();
-    private final AtomicInteger counter = new AtomicInteger(1);
 
     protected int getPort() {
         return port.getPort();
@@ -60,15 +58,4 @@ public abstract class BaseUndertowTest extends CamelTestSupport {
         return prop;
     }
 
-    protected int getNextPort() {
-        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
-            return p.getPort();
-        }
-    }
-
-    protected int getNextPort(int startWithPort) {
-        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
-            return p.getPort();
-        }
-    }
 }

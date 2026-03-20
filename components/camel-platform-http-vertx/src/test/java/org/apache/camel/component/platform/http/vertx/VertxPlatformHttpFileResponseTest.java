@@ -20,16 +20,21 @@ import java.io.File;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformHttpFileResponseTest {
 
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @Test
     void testFileResponse() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         final File file = new File("src/test/resources/dummy.txt");
 
         try {
@@ -57,7 +62,7 @@ public class VertxPlatformHttpFileResponseTest {
 
     @Test
     void testFileEndpointResponse() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {

@@ -39,6 +39,8 @@ import static org.hamcrest.Matchers.containsString;
 public class VertxPlatformHttpProxyTest {
     @RegisterExtension
     AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port camelPort = AvailablePortFinder.find();
 
     private WireMockServer wireMockServer;
 
@@ -63,7 +65,7 @@ public class VertxPlatformHttpProxyTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     void testProxy(boolean useStreaming) throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(camelPort.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {

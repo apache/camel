@@ -19,7 +19,9 @@ package org.apache.camel.component.platform.http.vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -28,9 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlatformHttpRestOpenApiConsumerTest {
 
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @Test
     public void testRestOpenApi() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -65,7 +70,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
     @Test
     public void testRestOpenApiDevMode() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         // run in developer mode
         context.getCamelContextExtension().setProfile("dev");
 
@@ -96,7 +101,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
     @Test
     public void testRestOpenApiMock() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -133,7 +138,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
     @Test
     public void testRestOpenApiMissingOperation() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             assertThrows(Exception.class, () -> {
@@ -157,7 +162,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
     @Test
     public void testRestOpenApiNotFound() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -185,7 +190,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
     @Test
     public void testRestOpenApiNotAllowed() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -213,7 +218,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
     @Test
     public void testRestOpenApiValidate() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -242,7 +247,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
     @Test
     public void testRestOpenApiMockData() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {

@@ -26,9 +26,11 @@ import java.util.Random;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,9 +38,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @EnabledIfSystemProperty(named = "performance-tests", matches = ".*")
 public class VertxPlatformHttpLargeMessageStreamingTest {
 
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @Test
     void testStreamingWithLargeRequestAndResponseBody() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         context.getStreamCachingStrategy().setSpoolEnabled(true);
 
         Path input = createLargeFile();

@@ -37,6 +37,8 @@ import static org.hamcrest.Matchers.is;
 public class VertxPlatformHttpNoBodyHandlerTest {
     @RegisterExtension
     AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port camelPort = AvailablePortFinder.find();
 
     private WireMockServer wireMockServer;
 
@@ -60,7 +62,7 @@ public class VertxPlatformHttpNoBodyHandlerTest {
 
     @Test
     void testNoBodyHandler() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(camelPort.getPort());
         final var mockUrl = "http://localhost:" + wireMockServer.port();
 
         try {
