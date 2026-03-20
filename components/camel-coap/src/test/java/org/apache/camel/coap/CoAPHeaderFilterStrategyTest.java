@@ -76,7 +76,7 @@ public class CoAPHeaderFilterStrategyTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("coap://localhost:%d/test", PORT)
+                fromF("coap://localhost:%d/test", PORT.getPort())
                         .to("mock:result");
             }
         };
