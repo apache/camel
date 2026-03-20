@@ -29,12 +29,14 @@ import org.apache.hc.core5.http.impl.routing.RequestRouter;
 import org.apache.hc.core5.http.protocol.UriPatternType;
 import org.apache.hc.core5.net.URIAuthority;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest {
 
-    private int port2;
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
     private HttpServer localServer;
 
     @BindToRegistry("x509HostnameVerifier")
@@ -88,14 +90,12 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                port2 = AvailablePortFinder.getNextAvailable();
-
                 from("direct:foo")
                         .to("https-foo://localhost:" + localServer.getLocalPort()
                             + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters");
 
                 from("direct:bar")
-                        .to("https-bar://localhost:" + port2
+                        .to("https-bar://localhost:" + port2.getPort()
                             + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
             }
         });

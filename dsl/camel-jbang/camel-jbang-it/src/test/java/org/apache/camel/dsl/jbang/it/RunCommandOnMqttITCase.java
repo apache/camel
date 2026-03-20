@@ -26,17 +26,19 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.containers.GenericContainer;
 
 @Tag("container-only")
 public class RunCommandOnMqttITCase extends JBangTestSupport {
 
-    private static int mqttPort = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port mqttPort = AvailablePortFinder.find();
     private static MosquittoLocalContainerService service;
 
     @BeforeAll
     public static void init() {
-        service = new MosquittoLocalContainerService(mqttPort);
+        service = new MosquittoLocalContainerService(mqttPort.getPort());
         service.initialize();
     }
 

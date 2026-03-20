@@ -87,7 +87,7 @@ public class WebhookBasePathTest extends WebhookTestBase {
 
                 restConfiguration()
                         .host("0.0.0.0")
-                        .port(port);
+                        .port(port.getPort());
 
                 from("webhook:wb-delegate://xx?webhookPath=uri0")
                         .transform(body().prepend("msg: "));

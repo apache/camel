@@ -28,25 +28,23 @@ import org.apache.camel.support.jsse.SecureSocketProtocolsParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class BaseMinaTest extends CamelTestSupport {
 
     protected static final String KEY_STORE_PASSWORD = "changeit";
 
-    private static volatile int port;
-
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     protected int getNextPort() {
-        return AvailablePortFinder.getNextAvailable();
+        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+            return p.getPort();
+        }
     }
 
     protected int getPort() {
-        return port;
+        return port.getPort();
     }
 
     protected boolean isUseSslContext() {

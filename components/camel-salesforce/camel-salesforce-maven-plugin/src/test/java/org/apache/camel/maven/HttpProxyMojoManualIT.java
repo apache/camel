@@ -19,7 +19,6 @@ package org.apache.camel.maven;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.littleshoot.proxy.HttpProxyServer;
@@ -40,7 +39,6 @@ public class HttpProxyMojoManualIT extends CamelSalesforceMojoManualIT {
 
     @BeforeEach
     public void startProxy() {
-        httpProxyPort = AvailablePortFinder.getNextAvailable();
 
         proxy = DefaultHttpProxyServer.bootstrap().withPort(httpProxyPort).withProxyAuthenticator(new ProxyAuthenticator() {
             @Override

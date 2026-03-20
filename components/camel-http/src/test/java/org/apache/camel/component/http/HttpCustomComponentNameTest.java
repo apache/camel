@@ -22,11 +22,15 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpCustomComponentNameTest extends CamelTestSupport {
+
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -37,13 +41,11 @@ public class HttpCustomComponentNameTest extends CamelTestSupport {
     public void testCustomName() {
         context.start();
 
-        int port = AvailablePortFinder.getNextAvailable();
-
         Component custom = new HttpComponent();
         context.addComponent("http-foo", custom);
         ServiceHelper.startService(custom);
 
-        String uri = "http-foo://www.somewhere.com:" + port + "?q=Camel";
+        String uri = "http-foo://www.somewhere.com:" + port.getPort() + "?q=Camel";
         Endpoint endpoint = context.getEndpoint(uri);
         assertNotNull(endpoint);
         // the endpoint uri should use the custom component name as scheme

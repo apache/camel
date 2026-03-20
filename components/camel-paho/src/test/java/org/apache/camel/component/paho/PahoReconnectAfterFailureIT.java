@@ -58,7 +58,9 @@ public class PahoReconnectAfterFailureIT implements ConfigurableRoute, Configura
     ArtemisMQTTService broker;
 
     CountDownLatch routeStartedLatch = new CountDownLatch(1);
-    int port = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @EndpointInject("mock:test")
     MockEndpoint mock;
@@ -95,8 +97,8 @@ public class PahoReconnectAfterFailureIT implements ConfigurableRoute, Configura
             @Override
             public void configure() {
 
-                from("direct:test").to("paho:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + port);
-                from("paho:queue?brokerUrl=tcp://localhost:" + port)
+                from("direct:test").to("paho:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + port.getPort());
+                from("paho:queue?brokerUrl=tcp://localhost:" + port.getPort())
                         .id(TESTING_ROUTE_ID)
                         .routePolicy(new RoutePolicySupport() {
                             @Override
@@ -133,7 +135,7 @@ public class PahoReconnectAfterFailureIT implements ConfigurableRoute, Configura
 
         // When
         ProducerTemplate template = camelContextExtension.getProducerTemplate();
-        template.sendBody("paho:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + port, msg);
+        template.sendBody("paho:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + port.getPort(), msg);
 
         // Then
         mock.assertIsSatisfied();
@@ -161,7 +163,7 @@ public class PahoReconnectAfterFailureIT implements ConfigurableRoute, Configura
     }
 
     private void startBroker() {
-        broker = new ArtemisMQTTService(port);
+        broker = new ArtemisMQTTService(port.getPort());
         broker.initialize();
     }
 

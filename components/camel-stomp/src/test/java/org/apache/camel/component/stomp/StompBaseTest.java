@@ -35,8 +35,10 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public abstract class StompBaseTest extends CamelTestSupport {
 
     protected int numberOfMessages = 100;
-    static int sslServicePort = AvailablePortFinder.getNextAvailable();
-    static int servicePort = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port sslServicePort = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port servicePort = AvailablePortFinder.find();
 
     @RegisterExtension
     public static ArtemisService service = new ArtemisEmbeddedServiceBuilder()
@@ -50,11 +52,11 @@ public abstract class StompBaseTest extends CamelTestSupport {
                                           "keyStorePath=jsse/server-side-keystore.jks;" +
                                           "keyStorePassword=password;" +
                                           "protocols=STOMP",
-                                    sslServicePort));
+                                    sslServicePort.getPort()));
 
                     configuration.addAcceptorConfiguration("stomp-tcp-acceptor",
                             String.format("tcp://0.0.0.0:%s?protocols=STOMP",
-                                    servicePort));
+                                    servicePort.getPort()));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -84,10 +86,10 @@ public abstract class StompBaseTest extends CamelTestSupport {
         Stomp stomp;
 
         if (isUseSsl()) {
-            stomp = new Stomp("ssl://localhost:" + sslServicePort);
+            stomp = new Stomp("ssl://localhost:" + sslServicePort.getPort());
             stomp.setSslContext(getClientSSLContext());
         } else {
-            stomp = new Stomp("tcp://localhost:" + servicePort);
+            stomp = new Stomp("tcp://localhost:" + servicePort.getPort());
         }
 
         return stomp;

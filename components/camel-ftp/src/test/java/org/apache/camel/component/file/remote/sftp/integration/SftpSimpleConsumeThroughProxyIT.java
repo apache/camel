@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthenticator;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
@@ -35,12 +36,14 @@ import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class SftpSimpleConsumeThroughProxyIT extends SftpServerTestSupport {
     private static HttpProxyServer proxyServer;
-    private final int proxyPort = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+
+    AvailablePortFinder.Port proxyPort = AvailablePortFinder.find();
 
     @BeforeAll
     public void setupProxy() {
         proxyServer = DefaultHttpProxyServer.bootstrap()
-                .withPort(proxyPort)
+                .withPort(proxyPort.getPort())
                 .withProxyAuthenticator(new ProxyAuthenticator() {
                     @Override
                     public boolean authenticate(String userName, String password) {
@@ -92,7 +95,7 @@ public class SftpSimpleConsumeThroughProxyIT extends SftpServerTestSupport {
     @BindToRegistry("proxy")
     public ProxyHTTP createProxy() {
 
-        final ProxyHTTP proxyHTTP = new ProxyHTTP("localhost", proxyPort);
+        final ProxyHTTP proxyHTTP = new ProxyHTTP("localhost", proxyPort.getPort());
         proxyHTTP.setUserPasswd("user", "password");
         return proxyHTTP;
     }

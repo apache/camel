@@ -51,7 +51,9 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
     @Override
     public void setupResources() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
+        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+            port = p.getPort();
+        }
         DeploymentInfo servletBuilder = getDeploymentInfo();
         manager = Servlets.newContainer().addDeployment(servletBuilder);
         manager.deploy();

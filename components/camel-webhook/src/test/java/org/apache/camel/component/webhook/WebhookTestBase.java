@@ -18,15 +18,11 @@ package org.apache.camel.component.webhook;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class WebhookTestBase extends CamelTestSupport {
 
-    protected static int port;
-
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
+    @RegisterExtension
+    static AvailablePortFinder.Port port = AvailablePortFinder.find();
 
 }

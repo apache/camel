@@ -34,6 +34,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataDeltaFeed;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,8 @@ public class AbstractOlingo2AppAPITestSupport {
 
     protected static final String SERVICE_NAME = "MyFormula.svc";
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractOlingo2AppAPITestSupport.class);
-    protected static final int PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    protected static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
     protected static final long TIMEOUT = 100000;
     protected static final String MANUFACTURERS = "Manufacturers";
     protected static final String FQN_MANUFACTURERS = "DefaultContainer.Manufacturers";
@@ -65,7 +67,7 @@ public class AbstractOlingo2AppAPITestSupport {
     protected static final String TEST_MANUFACTURER_LINKS_CARS = "Manufacturers('1')/$links/Cars";
     protected static final String TEST_CAR_LINK_MANUFACTURER = "Cars('1')/$links/Manufacturer";
     protected static final String COUNT_OPTION = "/$count";
-    protected static final String TEST_SERVICE_URL = "http://localhost:" + PORT + "/" + SERVICE_NAME;
+    protected static final String TEST_SERVICE_URL = "http://localhost:" + PORT.getPort() + "/" + SERVICE_NAME;
     protected static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
     protected static final String TEST_FORMAT_STRING = TEST_FORMAT.toString();
     protected static final String ID_PROPERTY = "Id";
@@ -142,7 +144,7 @@ public class AbstractOlingo2AppAPITestSupport {
     }
 
     protected static JettyConfiguration createConfiguration() {
-        return createConfiguration(PORT);
+        return createConfiguration(PORT.getPort());
     }
 
     protected static JettyConfiguration createConfiguration(int port) {

@@ -53,6 +53,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -72,6 +73,8 @@ public class KnativeHttpTest {
 
     private CamelContext context;
     private ProducerTemplate template;
+    @RegisterExtension
+    AvailablePortFinder.Port platformHttpPortExt = AvailablePortFinder.find();
     private int platformHttpPort;
     private String platformHttpHost;
 
@@ -91,7 +94,7 @@ public class KnativeHttpTest {
         this.context = new DefaultCamelContext();
         this.template = this.context.createProducerTemplate();
         this.platformHttpHost = "localhost";
-        this.platformHttpPort = AvailablePortFinder.getNextAvailable();
+        this.platformHttpPort = platformHttpPortExt.getPort();
 
         configurePlatformHttpComponent(context, this.platformHttpPort);
 
@@ -1356,7 +1359,6 @@ public class KnativeHttpTest {
     @ParameterizedTest
     @EnumSource(CloudEvents.class)
     void testHeaders(CloudEvent ce) throws Exception {
-        final int port = AvailablePortFinder.getNextAvailable();
         final KnativeHttpServer server = new KnativeHttpServer(context);
 
         configureKnativeComponent(

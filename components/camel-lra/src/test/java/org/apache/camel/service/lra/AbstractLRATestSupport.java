@@ -107,7 +107,9 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
 
     protected int getServerPort() {
         if (serverPort == null) {
-            serverPort = AvailablePortFinder.getNextAvailable();
+            try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+                serverPort = p.getPort();
+            }
         }
         return serverPort;
     }

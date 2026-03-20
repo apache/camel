@@ -24,6 +24,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.net.ftp.FTPFile;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,10 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FromFtpClientSoTimeoutTest extends CamelTestSupport {
 
-    int port = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + port + "/timeout/?soTimeout=5000";
+        return "ftp://admin@localhost:" + port.getPort() + "/timeout/?soTimeout=5000";
     }
 
     @Test

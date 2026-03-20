@@ -27,7 +27,7 @@ import org.apache.camel.test.AvailablePortFinder;
 public class KnativeHttpsServer extends KnativeHttpServer {
 
     public KnativeHttpsServer(CamelContext context) {
-        super(context, "localhost", AvailablePortFinder.getNextAvailable(), "/", null);
+        super(context, "localhost", AvailablePortFinder.find().getPort(), "/", null);
     }
 
     public KnativeHttpsServer(CamelContext context, int port) {
@@ -39,7 +39,7 @@ public class KnativeHttpsServer extends KnativeHttpServer {
     }
 
     public KnativeHttpsServer(CamelContext context, Handler<RoutingContext> handler) {
-        super(context, "localhost", AvailablePortFinder.getNextAvailable(), "/", handler);
+        super(context, "localhost", AvailablePortFinder.find().getPort(), "/", handler);
     }
 
     public KnativeHttpsServer(CamelContext context, String host, int port, String path) {
@@ -47,11 +47,11 @@ public class KnativeHttpsServer extends KnativeHttpServer {
     }
 
     public KnativeHttpsServer(CamelContext context, String host, String path) {
-        super(context, host, AvailablePortFinder.getNextAvailable(), path, null);
+        super(context, host, AvailablePortFinder.find().getPort(), path, null);
     }
 
     public KnativeHttpsServer(CamelContext context, String host, String path, Handler<RoutingContext> handler) {
-        super(context, host, AvailablePortFinder.getNextAvailable(), path, handler);
+        super(context, host, AvailablePortFinder.find().getPort(), path, handler);
     }
 
     @Override

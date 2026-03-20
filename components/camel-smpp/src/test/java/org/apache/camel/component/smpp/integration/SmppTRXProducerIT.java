@@ -32,6 +32,7 @@ import org.jsmpp.examples.SMPPServerSimulator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,9 +41,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class SmppTRXProducerIT extends CamelTestSupport {
 
-    private static int PORT = 8200; // use private port to avoid reusing from previous tests
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
     private static final Thread SMPP_SERVER_SIMULATOR = new Thread(() -> {
-        System.setProperty("jsmpp.simulator.port", "" + PORT);
+        System.setProperty("jsmpp.simulator.port", "" + PORT.getPort());
         SMPPServerSimulator.main(null);
     });
 
@@ -60,7 +62,6 @@ class SmppTRXProducerIT extends CamelTestSupport {
 
     @BeforeAll
     public static void runSMPPServerSimulator() {
-        PORT = AvailablePortFinder.getNextAvailable(8200, 9999);
         SMPP_SERVER_SIMULATOR.start();
     }
 
@@ -100,7 +101,7 @@ class SmppTRXProducerIT extends CamelTestSupport {
                 @Override
                 public void configure() {
                     from("direct:start2")
-                            .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer" +
+                            .to("smpp://j@localhost:" + PORT.getPort() + "?password=jpwd&systemType=producer" +
                                 "&messageReceiverRouteId=TYPO_IN_MessageReceiverRouteId");
                 }
             });
@@ -122,7 +123,7 @@ class SmppTRXProducerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start2")
-                        .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer" +
+                        .to("smpp://j@localhost:" + PORT.getPort() + "?password=jpwd&systemType=producer" +
                             "&messageReceiverRouteId=testMessageReceiverRouteId2");
             }
         });
@@ -141,7 +142,7 @@ class SmppTRXProducerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer" +
+                        .to("smpp://j@localhost:" + PORT.getPort() + "?password=jpwd&systemType=producer" +
                             "&messageReceiverRouteId=testMessageReceiverRouteId");
 
                 from("direct:messageReceiver").id("testMessageReceiverRouteId")

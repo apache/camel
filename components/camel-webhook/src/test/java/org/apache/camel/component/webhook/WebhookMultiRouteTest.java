@@ -57,7 +57,7 @@ public class WebhookMultiRouteTest extends WebhookTestBase {
 
                 restConfiguration()
                         .host("0.0.0.0")
-                        .port(port);
+                        .port(port.getPort());
 
                 from("webhook:wb-delegate://yy")
                         .transform(body().prepend("uri: "));

@@ -26,9 +26,9 @@ public class RestDslTest extends BaseEndpointDslTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        AvailablePortFinder.Port port = AvailablePortFinder.find();
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(port);
+        conf.setBindPort(port.getPort());
 
         CamelContext context = super.createCamelContext();
         context.addService(new VertxPlatformHttpServer(conf));

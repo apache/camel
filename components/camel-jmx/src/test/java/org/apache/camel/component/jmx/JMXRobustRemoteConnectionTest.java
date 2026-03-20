@@ -26,7 +26,6 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +53,6 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
         url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + port + "/" + DOMAIN);
 
         initContext();
