@@ -31,9 +31,9 @@ public class GreeterServiceExtension implements BeforeAllCallback, AfterAllCallb
 
     private static final GreeterImpl GREETER;
     private static final String ADDRESS;
+    private static final AvailablePortFinder.Port PORT_HOLDER;
     private static final int PORT;
 
-    private static final AvailablePortFinder.Port PORT_HOLDER;
     static {
         PORT_HOLDER = AvailablePortFinder.find();
         PORT = PORT_HOLDER.getPort();
