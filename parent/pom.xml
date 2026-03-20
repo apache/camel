@@ -238,7 +238,8 @@
         <hapi-base-version>2.6.0</hapi-base-version>
         <hapi-fhir-version>8.6.5</hapi-fhir-version>
         <hawtio-version>4.6.2</hawtio-version>
-        <hazelcast-version>5.5.0</hazelcast-version>
+        <!-- hazelcast version should stay at 5.4.0 due to commercial changes in 5.5.0 -->
+        <hazelcast-version>5.4.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>9.1.0.Final</hibernate-validator-version>
         <hibernate-version>6.3.2.Final</hibernate-version>
