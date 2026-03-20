@@ -59,7 +59,7 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
 
     @Test
     public void add() throws InterruptedException {
-        when(queue.poll(10000, TimeUnit.MILLISECONDS)).thenReturn("foo");
+        when(queue.poll(10000, TimeUnit.MILLISECONDS)).thenReturn("foo").thenReturn(null);
 
         MockEndpoint out = getMockEndpoint("mock:result");
         out.expectedMessageCount(1);

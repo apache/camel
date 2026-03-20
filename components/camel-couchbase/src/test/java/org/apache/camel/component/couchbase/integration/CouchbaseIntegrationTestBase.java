@@ -23,6 +23,7 @@ import java.util.Collections;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.manager.bucket.BucketSettings;
 import com.couchbase.client.java.manager.bucket.BucketType;
+import com.couchbase.client.java.manager.bucket.StorageBackend;
 import com.couchbase.client.java.manager.view.DesignDocument;
 import com.couchbase.client.java.manager.view.View;
 import com.couchbase.client.java.view.DesignDocumentNamespace;
@@ -48,7 +49,8 @@ public class CouchbaseIntegrationTestBase extends CamelTestSupport {
         cluster = Cluster.connect(service.getConnectionString(), service.getUsername(), service.getPassword());
 
         cluster.buckets().createBucket(
-                BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE).flushEnabled(true));
+                BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE)
+                        .storageBackend(StorageBackend.COUCHSTORE).flushEnabled(true));
 
         cluster.bucket(bucketName);
         DesignDocument designDoc = new DesignDocument(
