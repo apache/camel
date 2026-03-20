@@ -18,20 +18,42 @@ package org.apache.camel.component.netty.http;
 
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.junit.jupiter.api.Disabled;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * This test ensures LogCaptureAppender is configured properly
+ * This test ensures LogCaptureAppender can capture log events programmatically.
  */
-@Disabled
+@Isolated
 public class LogCaptureTest {
+
+    private LogCaptureAppender appender;
+
+    @BeforeEach
+    void setUp() {
+        appender = new LogCaptureAppender("capture", null, null);
+        appender.start();
+        Logger logger = (Logger) LogManager.getLogger(ResourceLeakDetector.class);
+        logger.addAppender(appender);
+    }
+
+    @AfterEach
+    void tearDown() {
+        Logger logger = (Logger) LogManager.getLogger(ResourceLeakDetector.class);
+        logger.removeAppender(appender);
+        appender.stop();
+        LogCaptureAppender.reset();
+    }
+
     @Test
     public void testCapture() {
         InternalLoggerFactory.getInstance(ResourceLeakDetector.class).error("testError");
         assertFalse(LogCaptureAppender.getEvents().isEmpty());
-        LogCaptureAppender.reset();
     }
 }
