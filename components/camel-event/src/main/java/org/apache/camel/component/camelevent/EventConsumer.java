@@ -32,8 +32,6 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class EventConsumer extends DefaultConsumer {
 
-    private static final ThreadLocal<Boolean> PROCESSING = ThreadLocal.withInitial(() -> Boolean.FALSE);
-
     private final EventNotifierSupport eventNotifier;
 
     public EventConsumer(EventEndpoint endpoint, Processor processor) {
@@ -46,15 +44,9 @@ public class EventConsumer extends DefaultConsumer {
 
             @Override
             public boolean isEnabled(CamelEvent event) {
-                // Guard against recursive event notifications
-                if (PROCESSING.get()) {
-                    return false;
-                }
                 return isEventAccepted(event) || isImplicitlyNeeded(event);
             }
         };
-        // Configure the notifier to only receive events we care about
-        configureEventNotifier();
     }
 
     @Override
@@ -65,6 +57,9 @@ public class EventConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        // Configure the notifier here (not in constructor) because doInit() on the endpoint
+        // has now been called, so getEventTypes() returns the parsed types
+        configureEventNotifier();
         getEndpoint().getCamelContext().getManagementStrategy().addEventNotifier(eventNotifier);
     }
 
@@ -249,25 +244,32 @@ public class EventConsumer extends DefaultConsumer {
         if (!isEventAccepted(event)) {
             return;
         }
-        // Guard against recursive event notifications:
-        // processing this exchange will generate exchange events which would cause infinite recursion
-        if (PROCESSING.get()) {
-            return;
-        }
-        PROCESSING.set(Boolean.TRUE);
+
+        Exchange exchange = createExchange(true);
+        // Mark exchange as a notify event to prevent the framework from generating
+        // recursive events for this exchange (same pattern as PublishEventNotifier)
+        exchange.getExchangeExtension().setNotifyEvent(true);
         try {
-            Exchange exchange = createExchange(true);
             exchange.getIn().setBody(event);
-            exchange.getIn().setHeader("CamelEventType", event.getType().name());
+            exchange.getIn().setHeader(EventConstants.HEADER_EVENT_TYPE, event.getType().name());
             if (event.getTimestamp() > 0) {
-                exchange.getIn().setHeader("CamelEventTimestamp", event.getTimestamp());
+                exchange.getIn().setHeader(EventConstants.HEADER_EVENT_TIMESTAMP, event.getTimestamp());
+            }
+
+            // Add exception header for any failure event (uses FailureEvent.getCause() which is
+            // more reliable than checking exchange.getException())
+            if (event instanceof CamelEvent.FailureEvent failureEvent) {
+                Throwable cause = failureEvent.getCause();
+                if (cause != null) {
+                    exchange.getIn().setHeader(EventConstants.HEADER_EVENT_EXCEPTION, cause.getMessage());
+                }
             }
 
             // Add route-specific headers for route events
             if (event instanceof CamelEvent.RouteEvent routeEvent) {
                 Route route = routeEvent.getRoute();
                 if (route != null) {
-                    exchange.getIn().setHeader("CamelEventRouteId", route.getRouteId());
+                    exchange.getIn().setHeader(EventConstants.HEADER_EVENT_ROUTE_ID, route.getRouteId());
                 }
             }
 
@@ -275,24 +277,32 @@ public class EventConsumer extends DefaultConsumer {
             if (event instanceof CamelEvent.ExchangeEvent exchangeEvent) {
                 Exchange sourceExchange = exchangeEvent.getExchange();
                 if (sourceExchange != null) {
-                    exchange.getIn().setHeader("CamelEventExchangeId", sourceExchange.getExchangeId());
-                    exchange.getIn().setHeader("CamelEventRouteId", sourceExchange.getFromRouteId());
+                    exchange.getIn().setHeader(EventConstants.HEADER_EVENT_EXCHANGE_ID, sourceExchange.getExchangeId());
+                    exchange.getIn().setHeader(EventConstants.HEADER_EVENT_ROUTE_ID, sourceExchange.getFromRouteId());
                     Endpoint fromEndpoint = sourceExchange.getFromEndpoint();
                     if (fromEndpoint != null) {
-                        exchange.getIn().setHeader("CamelEventEndpointUri", fromEndpoint.getEndpointUri());
-                    }
-                    // Add exception message for failed exchange events
-                    if (sourceExchange.getException() != null) {
-                        exchange.getIn().setHeader("CamelEventException", sourceExchange.getException().getMessage());
+                        exchange.getIn().setHeader(EventConstants.HEADER_EVENT_ENDPOINT_URI,
+                                fromEndpoint.getEndpointUri());
                     }
                 }
+            }
+
+            // Add step ID for step events
+            if (event instanceof CamelEvent.StepEvent stepEvent) {
+                exchange.getIn().setHeader(EventConstants.HEADER_EVENT_STEP_ID, stepEvent.getStepId());
+            }
+
+            // Add redelivery attempt for redelivery events
+            if (event instanceof CamelEvent.ExchangeRedeliveryEvent redeliveryEvent) {
+                exchange.getIn().setHeader(EventConstants.HEADER_EVENT_REDELIVERY_ATTEMPT,
+                        redeliveryEvent.getAttempt());
             }
 
             // Add specific headers for ExchangeSendingEvent
             if (event instanceof CamelEvent.ExchangeSendingEvent sendingEvent) {
                 Endpoint ep = sendingEvent.getEndpoint();
                 if (ep != null) {
-                    exchange.getIn().setHeader("CamelEventEndpointUri", ep.getEndpointUri());
+                    exchange.getIn().setHeader(EventConstants.HEADER_EVENT_ENDPOINT_URI, ep.getEndpointUri());
                 }
             }
 
@@ -300,18 +310,15 @@ public class EventConsumer extends DefaultConsumer {
             if (event instanceof CamelEvent.ExchangeSentEvent sentEvent) {
                 Endpoint ep = sentEvent.getEndpoint();
                 if (ep != null) {
-                    exchange.getIn().setHeader("CamelEventEndpointUri", ep.getEndpointUri());
+                    exchange.getIn().setHeader(EventConstants.HEADER_EVENT_ENDPOINT_URI, ep.getEndpointUri());
                 }
-                exchange.getIn().setHeader("CamelEventDuration", sentEvent.getTimeTaken());
+                exchange.getIn().setHeader(EventConstants.HEADER_EVENT_DURATION, sentEvent.getTimeTaken());
             }
 
-            try {
-                getProcessor().process(exchange);
-            } finally {
-                releaseExchange(exchange, false);
-            }
+            getProcessor().process(exchange);
         } finally {
-            PROCESSING.set(Boolean.FALSE);
+            exchange.getExchangeExtension().setNotifyEvent(false);
+            releaseExchange(exchange, false);
         }
     }
 }

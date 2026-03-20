@@ -92,7 +92,7 @@ public class EventFilterTest extends CamelTestSupport {
 
         // All route events should be for filteredDynamic
         mock.getExchanges().forEach(e -> {
-            assertEquals("filteredDynamic", e.getIn().getHeader("CamelEventRouteId", String.class));
+            assertEquals("filteredDynamic", e.getIn().getHeader(EventConstants.HEADER_EVENT_ROUTE_ID, String.class));
         });
     }
 

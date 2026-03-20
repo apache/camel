@@ -48,7 +48,7 @@ public class EventWildcardTest extends CamelTestSupport {
 
         // All events should be route-related
         mock.getExchanges().forEach(e -> {
-            String eventType = e.getIn().getHeader("CamelEventType", String.class);
+            String eventType = e.getIn().getHeader(EventConstants.HEADER_EVENT_TYPE, String.class);
             assertTrue(eventType.startsWith("Route"), "Expected route event but got: " + eventType);
         });
     }
@@ -63,7 +63,7 @@ public class EventWildcardTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         mock.getExchanges().forEach(e -> {
-            String eventType = e.getIn().getHeader("CamelEventType", String.class);
+            String eventType = e.getIn().getHeader(EventConstants.HEADER_EVENT_TYPE, String.class);
             assertTrue(eventType.startsWith("Exchange"), "Expected exchange event but got: " + eventType);
         });
     }

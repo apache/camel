@@ -146,7 +146,8 @@ event:RouteStarted,RouteStopped?filter=myRoute1,myRoute2
 
 == Message Headers
 
-The following headers are set on exchanges created by this component:
+The following headers are set on exchanges created by this component.
+Header constants are defined in `org.apache.camel.component.camelevent.EventConstants`.
 
 === Common Headers
 
@@ -154,7 +155,7 @@ The following headers are set on exchanges created by this component:
 |===
 | Header | Type | Description
 | CamelEventType | String | The event type name (e.g., `RouteStarted`, `ExchangeCompleted`)
-| CamelEventTimestamp | Long | The event timestamp (if available)
+| CamelEventTimestamp | Long | The event timestamp in milliseconds since epoch (if available)
 |===
 
 === Route Event Headers
@@ -173,7 +174,16 @@ The following headers are set on exchanges created by this component:
 | CamelEventExchangeId | String | The exchange ID
 | CamelEventRouteId | String | The route ID of the exchange (from route)
 | CamelEventEndpointUri | String | The from endpoint URI of the exchange
-| CamelEventException | String | The exception message (for `ExchangeFailed` events, if available)
+|===
+
+=== Failure Event Headers
+
+Set on any failure event (`ExchangeFailed`, `RouteRestartingFailure`, `ServiceStartupFailure`, etc.):
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventException | String | The exception message from `FailureEvent.getCause()`
 |===
 
 === ExchangeSent Event Headers
@@ -183,7 +193,7 @@ In addition to the common exchange event headers, `ExchangeSent` events include:
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
 | Header | Type | Description
-| CamelEventEndpointUri | String | The endpoint URI the exchange was sent to
+| CamelEventEndpointUri | String | The endpoint URI the exchange was sent to (overrides the from endpoint URI)
 | CamelEventDuration | Long | The time taken in milliseconds
 |===
 
@@ -194,7 +204,23 @@ In addition to the common exchange event headers, `ExchangeSending` events inclu
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
 | Header | Type | Description
-| CamelEventEndpointUri | String | The endpoint URI the exchange is being sent to
+| CamelEventEndpointUri | String | The endpoint URI the exchange is being sent to (overrides the from endpoint URI)
+|===
+
+=== ExchangeRedelivery Event Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventRedeliveryAttempt | Integer | The redelivery attempt number
+|===
+
+=== Step Event Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventStepId | String | The step ID
 |===
 
 == Message Body
