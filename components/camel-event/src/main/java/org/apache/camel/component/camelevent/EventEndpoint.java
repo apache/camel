@@ -18,6 +18,7 @@ package org.apache.camel.component.camelevent;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,9 @@ import org.apache.camel.support.DefaultEndpoint;
  * The URI path specifies comma-separated event types to subscribe to. Event types correspond to
  * {@link org.apache.camel.spi.CamelEvent.Type} enum values (case-insensitive), for example:
  * {@code event:RouteStarted,RouteStopped} or {@code event:ExchangeCompleted?filter=myRouteId}.
+ *
+ * Wildcard patterns are supported using a {@code *} suffix, for example: {@code event:Route*} matches all route events,
+ * {@code event:Exchange*} matches all exchange events, and {@code event:*} matches all events.
  */
 @UriEndpoint(firstVersion = "4.19.0", scheme = "event", title = "Event", syntax = "event:events",
              consumerOnly = true, remote = false,
@@ -48,7 +52,10 @@ public class EventEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Comma-separated list of event types to subscribe to."
                            + " Event types correspond to CamelEvent.Type enum values (case-insensitive),"
-                           + " for example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed.")
+                           + " for example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed."
+                           + " Wildcard patterns are supported using a * suffix,"
+                           + " for example: Route* matches all route events, Exchange* matches all exchange events,"
+                           + " and * matches all events.")
     @Metadata(required = true)
     private String events;
 
@@ -88,13 +95,20 @@ public class EventEndpoint extends DefaultEndpoint {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        // Parse event types
+        // Parse event types (with wildcard support)
         if (events != null && !events.isEmpty()) {
-            eventTypes = Arrays.stream(events.split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .map(EventEndpoint::resolveEventType)
-                    .collect(Collectors.toSet());
+            Set<CamelEvent.Type> types = new LinkedHashSet<>();
+            for (String token : events.split(",")) {
+                String name = token.trim();
+                if (!name.isEmpty()) {
+                    if (name.contains("*")) {
+                        types.addAll(resolveWildcard(name));
+                    } else {
+                        types.add(resolveEventType(name));
+                    }
+                }
+            }
+            eventTypes = Collections.unmodifiableSet(types);
         } else {
             eventTypes = Collections.emptySet();
         }
@@ -123,13 +137,34 @@ public class EventEndpoint extends DefaultEndpoint {
                                            + Arrays.toString(CamelEvent.Type.values()));
     }
 
+    /**
+     * Resolves a wildcard pattern (e.g., "Route*", "Exchange*", "*") to the matching {@link CamelEvent.Type} values.
+     */
+    static Set<CamelEvent.Type> resolveWildcard(String pattern) {
+        String prefix = pattern.substring(0, pattern.indexOf('*')).toLowerCase();
+        Set<CamelEvent.Type> matched = new LinkedHashSet<>();
+        for (CamelEvent.Type type : CamelEvent.Type.values()) {
+            if (type.name().toLowerCase().startsWith(prefix)) {
+                matched.add(type);
+            }
+        }
+        if (matched.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "No event types match wildcard pattern: " + pattern + ". Known types: "
+                                               + Arrays.toString(CamelEvent.Type.values()));
+        }
+        return matched;
+    }
+
     public String getEvents() {
         return events;
     }
 
     /**
      * Comma-separated list of event types to subscribe to. Event types correspond to CamelEvent.Type enum values
-     * (case-insensitive), for example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed.
+     * (case-insensitive), for example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed. Wildcard patterns
+     * are supported using a * suffix, for example: Route* matches all route events, Exchange* matches all exchange
+     * events, and * matches all events.
      */
     public void setEvents(String events) {
         this.events = events;

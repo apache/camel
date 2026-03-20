@@ -28,11 +28,17 @@ event:eventTypes[?options]
 Where `eventTypes` is a comma-separated list of event types to subscribe to.
 Event types correspond to `CamelEvent.Type` enum values (case-insensitive).
 
-For example:
+Wildcard patterns are supported using a `*` suffix:
 
 ----
-event:RouteStarted,RouteStopped
-event:ExchangeCompleted,ExchangeFailed?filter=myRoute
+event:Route*                          <-- all route events
+event:Exchange*                       <-- all exchange events
+event:CamelContext*                   <-- all context events
+event:Step*                           <-- all step events
+event:Service*                        <-- all service events
+event:*                               <-- all events
+event:RouteStarted,RouteStopped       <-- specific events
+event:Route*,Exchange*                <-- combine wildcards
 ----
 
 // component-configure options: START
@@ -103,6 +109,30 @@ The following event types are available (corresponding to `org.apache.camel.spi.
 - `ServiceStartupFailure`
 - `ServiceStopFailure`
 
+== Wildcard Subscriptions
+
+Instead of listing each event type individually, you can use wildcard patterns with a `*` suffix
+to match all event types that start with a given prefix.
+
+[source,java]
+----
+// Subscribe to all route events (RouteStarted, RouteStopped, RouteAdded, etc.)
+from("event:Route*")
+    .log("Route event: ${header.CamelEventType}");
+
+// Subscribe to all exchange events
+from("event:Exchange*")
+    .log("Exchange event: ${header.CamelEventType}");
+
+// Subscribe to all events
+from("event:*")
+    .log("Event: ${header.CamelEventType}");
+
+// Mix wildcards with specific types
+from("event:Route*,ExchangeFailed")
+    .log("Event: ${header.CamelEventType}");
+----
+
 == Filtering
 
 You can filter events using the `filter` option. For route events, this filters by route ID.
@@ -118,12 +148,53 @@ event:RouteStarted,RouteStopped?filter=myRoute1,myRoute2
 
 The following headers are set on exchanges created by this component:
 
+=== Common Headers
+
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
 | Header | Type | Description
-| CamelEventType | String | The event type name (e.g., `RouteStarted`)
+| CamelEventType | String | The event type name (e.g., `RouteStarted`, `ExchangeCompleted`)
 | CamelEventTimestamp | Long | The event timestamp (if available)
-| CamelEventRouteId | String | The route ID (for route events only)
+|===
+
+=== Route Event Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventRouteId | String | The route ID
+|===
+
+=== Exchange Event Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventExchangeId | String | The exchange ID
+| CamelEventRouteId | String | The route ID of the exchange (from route)
+| CamelEventEndpointUri | String | The from endpoint URI of the exchange
+| CamelEventException | String | The exception message (for `ExchangeFailed` events, if available)
+|===
+
+=== ExchangeSent Event Headers
+
+In addition to the common exchange event headers, `ExchangeSent` events include:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventEndpointUri | String | The endpoint URI the exchange was sent to
+| CamelEventDuration | Long | The time taken in milliseconds
+|===
+
+=== ExchangeSending Event Headers
+
+In addition to the common exchange event headers, `ExchangeSending` events include:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventEndpointUri | String | The endpoint URI the exchange is being sent to
 |===
 
 == Message Body
@@ -141,12 +212,36 @@ from("event:RouteStarted,RouteStopped")
     .log("Route ${header.CamelEventRouteId} event: ${header.CamelEventType}");
 ----
 
+Subscribe to all route events using a wildcard:
+
+[source,java]
+----
+from("event:Route*")
+    .log("Route ${header.CamelEventRouteId} event: ${header.CamelEventType}");
+----
+
 Subscribe to exchange completed events for a specific route:
 
 [source,java]
 ----
 from("event:ExchangeCompleted?filter=myRoute")
     .log("Exchange completed on route myRoute");
+----
+
+Monitor exchange failures with error details:
+
+[source,java]
+----
+from("event:ExchangeFailed")
+    .log("Exchange ${header.CamelEventExchangeId} failed on route ${header.CamelEventRouteId}: ${header.CamelEventException}");
+----
+
+Monitor exchange latency using ExchangeSent events:
+
+[source,java]
+----
+from("event:ExchangeSent")
+    .log("Exchange sent to ${header.CamelEventEndpointUri} took ${header.CamelEventDuration}ms");
 ----
 
 == Distributed Events
