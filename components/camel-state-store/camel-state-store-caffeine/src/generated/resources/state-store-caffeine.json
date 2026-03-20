@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "state-store-caffeine",
+    "title": "State Store Caffeine",
+    "description": "Camel State Store backend using Caffeine cache",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-state-store-caffeine",
+    "version": "4.19.0-SNAPSHOT"
+  }
+}

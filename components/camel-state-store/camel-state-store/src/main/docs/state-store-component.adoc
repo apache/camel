@@ -1,0 +1,331 @@
+= State Store Component
+:doctitle: State Store
+:shortname: state-store
+:artifactid: camel-state-store
+:description: Perform key-value operations against a pluggable state store backend.
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The State Store component provides a simple, unified key-value store API with pluggable backends.
+It is useful for caching, session state, and scenarios where you need a simple object store
+(similar to MuleSoft's Object Store).
+
+By default, an in-memory backend is used (based on `ConcurrentHashMap`), but you can plug in
+any custom backend by implementing the `StateStoreBackend` interface or using one of the
+provided backend modules:
+
+== When to use State Store vs individual components
+
+Camel also provides dedicated components for xref:infinispan-component.adoc[Infinispan],
+xref:spring-redis-component.adoc[Redis], and xref:caffeine-cache-component.adoc[Caffeine].
+Use the dedicated component when you need the full feature set of a specific technology
+(e.g., Infinispan queries, Redis pub/sub, Caffeine statistics).
+
+Use State Store when:
+
+* You need a *simple key-value API* and want to switch backends without changing route logic.
+* You are *migrating from MuleSoft* and want an Object Store equivalent.
+* You want *backend portability* — develop with in-memory, deploy with Redis or Infinispan.
+* Your use case is limited to *put, get, delete, contains, keys* operations.
+
+[width="100%",cols="1,2,1",options="header"]
+|===
+| Backend | Module | Description
+| In-Memory | `camel-state-store` | Default. Uses `ConcurrentHashMap` with lazy TTL expiry. No external dependencies.
+| Caffeine | `camel-state-store-caffeine` | High-performance local cache with proper eviction and per-entry TTL.
+| Redis | `camel-state-store-redis` | Distributed store via Redisson. Supports per-entry TTL natively.
+| Infinispan | `camel-state-store-infinispan` | Distributed cache via Hot Rod client. Supports per-entry TTL via lifespan.
+|===
+
+== URI Format
+
+----
+state-store:storeName[?options]
+----
+
+Where `storeName` is a logical name for the store. Endpoints with the same `storeName`
+share the same backend instance within the same `CamelContext`.
+
+// component-configure options: START
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+== Operations
+
+The operation to perform is set via the URI option `operation` or the header `CamelStateStoreOperation`.
+
+[width="100%",cols="1,2,2,2",options="header"]
+|===
+| Operation | Description | Body (input) | Result (body output)
+| `put` | Store a value | The value to store | The previous value (or null)
+| `putIfAbsent` | Store only if key absent | The value to store | The existing value (or null if stored)
+| `get` | Retrieve a value | ignored | The stored value (or null)
+| `delete` | Remove a value | ignored | The removed value (or null)
+| `contains` | Check if key exists | ignored | Boolean
+| `keys` | List all keys | ignored | Set<String>
+| `size` | Count entries | ignored | Integer
+| `clear` | Remove all entries | ignored | null
+|===
+
+The key is specified via the header `CamelStateStoreKey` (required for `put`, `putIfAbsent`, `get`, `delete`, `contains`).
+
+== TTL (Time-to-Live)
+
+You can set a TTL (in milliseconds) for entries in two ways:
+
+* *Endpoint option*: applies to all `put`/`putIfAbsent` operations on that endpoint.
++
+----
+state-store:myStore?operation=put&ttl=60000
+----
+
+* *Per-message header*: the header `CamelStateStoreTtl` (Long) overrides the endpoint TTL for that message.
++
+[source,java]
+----
+from("direct:store")
+    .setHeader("CamelStateStoreKey", constant("myKey"))
+    .setHeader("CamelStateStoreTtl", constant(30000L))
+    .to("state-store:myStore?operation=put");
+----
+
+A TTL of `0` (default) means no expiry.
+
+== Examples
+
+=== Java DSL
+
+[tabs]
+====
+Put and Get::
++
+[source,java]
+----
+from("direct:store")
+    .setHeader("CamelStateStoreKey", constant("myKey"))
+    .to("state-store:myStore?operation=put");
+
+from("direct:retrieve")
+    .setHeader("CamelStateStoreKey", constant("myKey"))
+    .to("state-store:myStore?operation=get");
+----
+
+Dynamic operation via header::
++
+[source,java]
+----
+from("direct:dynamic")
+    .setHeader("CamelStateStoreOperation", constant("put"))
+    .setHeader("CamelStateStoreKey", constant("myKey"))
+    .to("state-store:myStore");
+----
+
+Put if absent::
++
+[source,java]
+----
+from("direct:init")
+    .setHeader("CamelStateStoreKey", constant("counter"))
+    .to("state-store:myStore?operation=putIfAbsent");
+----
+====
+
+=== YAML DSL
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:store
+    steps:
+      - setHeader:
+          name: CamelStateStoreKey
+          constant: myKey
+      - to:
+          uri: state-store:myStore?operation=put
+----
+
+== Backends
+
+=== In-Memory (default)
+
+The default backend stores entries in a `ConcurrentHashMap`. TTL expiry is lazy -- entries are
+checked and removed on access rather than by a background thread.
+
+No additional dependency is needed beyond `camel-state-store`.
+
+=== Caffeine
+
+Add the dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-state-store-caffeine</artifactId>
+</dependency>
+----
+
+Register the backend as a bean and reference it:
+
+[source,java]
+----
+@BindToRegistry("caffeineBackend")
+public CaffeineStateStoreBackend caffeine() {
+    CaffeineStateStoreBackend backend = new CaffeineStateStoreBackend();
+    backend.setMaximumSize(50_000); // default is 10,000
+    return backend;
+}
+----
+
+[source,java]
+----
+from("direct:store")
+    .to("state-store:myStore?operation=put&backend=#caffeineBackend");
+----
+
+Caffeine provides proper eviction policies and active TTL expiration using variable expiry.
+
+=== Redis
+
+Add the dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-state-store-redis</artifactId>
+</dependency>
+----
+
+Configure and register:
+
+[source,java]
+----
+@BindToRegistry("redisBackend")
+public RedisStateStoreBackend redis() {
+    RedisStateStoreBackend backend = new RedisStateStoreBackend();
+    backend.setRedisUrl("redis://myhost:6379");
+    backend.setMapName("my-app-state"); // Redis map name
+    return backend;
+}
+----
+
+You can also inject a pre-configured `RedissonClient`:
+
+[source,java]
+----
+backend.setRedisson(existingRedissonClient);
+----
+
+Redis provides native per-entry TTL via `RMapCache`. Data is distributed and persisted according
+to your Redis configuration.
+
+=== Infinispan
+
+Add the dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-state-store-infinispan</artifactId>
+</dependency>
+----
+
+Configure and register:
+
+[source,java]
+----
+@BindToRegistry("infinispanBackend")
+public InfinispanStateStoreBackend infinispan() {
+    InfinispanStateStoreBackend backend = new InfinispanStateStoreBackend();
+    backend.setHosts("myhost:11222");
+    backend.setCacheName("my-cache");
+    return backend;
+}
+----
+
+You can also inject a pre-configured `RemoteCacheManager`:
+
+[source,java]
+----
+backend.setCacheManager(existingCacheManager);
+----
+
+Infinispan provides native per-entry TTL via the lifespan parameter and supports distributed caching.
+
+== Custom Backend
+
+Implement the `StateStoreBackend` interface to create your own backend:
+
+[source,java]
+----
+public class MyCustomBackend implements StateStoreBackend {
+
+    @Override
+    public Object put(String key, Object value, long ttlMillis) {
+        // store the value, return previous
+    }
+
+    @Override
+    public Object get(String key) {
+        // retrieve the value
+    }
+
+    @Override
+    public Object delete(String key) {
+        // remove and return the value
+    }
+
+    @Override
+    public boolean contains(String key) {
+        // check existence
+    }
+
+    @Override
+    public Set<String> keys() {
+        // return all keys
+    }
+
+    @Override
+    public void clear() {
+        // remove all entries
+    }
+
+    @Override
+    public void start() {
+        // initialize connections
+    }
+
+    @Override
+    public void stop() {
+        // clean up resources
+    }
+}
+----
+
+The `putIfAbsent` and `size` methods have default implementations but can be overridden
+for better performance with backends that support these operations natively.
+
+Then reference it via bean:
+
+[source,java]
+----
+from("direct:store")
+    .to("state-store:myStore?operation=put&backend=#myCustomBackend");
+----

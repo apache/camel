@@ -362,6 +362,7 @@
 ** xref:sql-component.adoc[SQL]
 ** xref:sql-stored-component.adoc[SQL Stored Procedure]
 ** xref:ssh-component.adoc[SSH]
+** xref:state-store-component.adoc[State Store]
 ** xref:stax-component.adoc[StAX]
 ** xref:stitch-component.adoc[Stitch]
 ** xref:stream-component.adoc[Stream]

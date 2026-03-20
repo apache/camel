@@ -1,0 +1,42 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "state-store",
+    "title": "State Store",
+    "description": "Perform key-value operations against a pluggable state store backend.",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "label": "cache",
+    "javaType": "org.apache.camel.component.statestore.StateStoreComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-state-store",
+    "version": "4.19.0-SNAPSHOT",
+    "scheme": "state-store",
+    "extendsScheme": "",
+    "syntax": "state-store:storeName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": false
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "CamelStateStoreOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "org.apache.camel.component.statestore.StateStoreOperations", "enum": [ "put", "putIfAbsent", "get", "delete", "contains", "keys", "size", "clear" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform", "constantName": "org.apache.camel.component.statestore.StateStoreConstants#OPERATION" },
+    "CamelStateStoreKey": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The key to use for the operation", "constantName": "org.apache.camel.component.statestore.StateStoreConstants#KEY" },
+    "CamelStateStoreTtl": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Per-message TTL override in milliseconds. Takes precedence over the endpoint ttl option.", "constantName": "org.apache.camel.component.statestore.StateStoreConstants#TTL" }
+  },
+  "properties": {
+    "storeName": { "index": 0, "kind": "path", "displayName": "Store Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the state store" },
+    "operation": { "index": 1, "kind": "parameter", "displayName": "Operation", "group": "producer", "label": "", "required": false, "type": "enum", "javaType": "org.apache.camel.component.statestore.StateStoreOperations", "enum": [ "put", "putIfAbsent", "get", "delete", "contains", "keys", "size", "clear" ], "deprecated": false, "autowired": false, "secret": false, "description": "The default operation to perform" },
+    "ttl": { "index": 2, "kind": "parameter", "displayName": "Ttl", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 0, "description": "Time-to-live in milliseconds for entries. 0 means no expiry." },
+    "lazyStartProducer": { "index": 3, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "backend": { "index": 4, "kind": "parameter", "displayName": "Backend", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.component.statestore.StateStoreBackend", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "memory", "description": "The backend to use. Default is an in-memory store. Set to a bean reference (e.g. #myBackend) for custom backends." }
+  }
+}
