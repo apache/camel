@@ -167,7 +167,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     try {
                         PahoMqtt5Consumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
-                        LOG.warn("Failed to commit message with ID: {} due to {}", mqttMessage.getId(), e.getMessage(), e);
+                        throw new RuntimeException(e);
                     }
                 }
 
