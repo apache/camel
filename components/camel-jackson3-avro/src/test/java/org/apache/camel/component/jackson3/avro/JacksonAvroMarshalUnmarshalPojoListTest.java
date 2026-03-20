@@ -26,7 +26,7 @@ import org.apache.camel.component.jackson3.SchemaResolver;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import tools.jackson.dataformat.avro.AvroSchema;
 
