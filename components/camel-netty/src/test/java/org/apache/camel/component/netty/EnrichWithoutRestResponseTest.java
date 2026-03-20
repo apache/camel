@@ -40,7 +40,7 @@ class EnrichWithoutRestResponseTest extends BaseNettyTest {
                 // mock server - accepts connection and immediately disconnects without any response
                 from("netty:tcp://0.0.0.0:{{port}}?disconnect=true")
                         .log("Got request ${body}")
-                        .setBody(constant(null));
+                        .setBody(constant((Object) null));
 
                 // test routes
                 final String nettyClientUri
