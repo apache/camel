@@ -53,7 +53,8 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
     private void assertCoAPMethodRestrictResponse(String path, String methodRestrict, String expectedResponse) {
         for (String method : CoAPConstants.METHOD_RESTRICT_ALL.split(",")) {
-            String result = template.requestBodyAndHeader("coap://localhost:" + PORT + path, null, CoAPConstants.COAP_METHOD,
+            String result = template.requestBodyAndHeader("coap://localhost:" + PORT.getPort() + path, null,
+                    CoAPConstants.COAP_METHOD,
                     method, String.class);
             if (methodRestrict.contains(method)) {
                 assertEquals(expectedResponse, result);
@@ -68,16 +69,17 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("coap://localhost:%d/test", PORT).setBody(constant("GET: /test"));
+                fromF("coap://localhost:%d/test", PORT.getPort()).setBody(constant("GET: /test"));
 
-                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/a"));
+                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT.getPort()).setBody(constant("GET: /test/a"));
 
-                fromF("coap://localhost:%d/test/a/b?coapMethodRestrict=DELETE", PORT).setBody(constant("DELETE: /test/a/b"));
+                fromF("coap://localhost:%d/test/a/b?coapMethodRestrict=DELETE", PORT.getPort())
+                        .setBody(constant("DELETE: /test/a/b"));
 
-                fromF("coap://localhost:%d/test/a/b/c?coapMethodRestrict=DELETE,GET", PORT)
+                fromF("coap://localhost:%d/test/a/b/c?coapMethodRestrict=DELETE,GET", PORT.getPort())
                         .setBody(constant("DELETE & GET: /test/a/b/c"));
 
-                fromF("coap://localhost:%d/test/b?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/b"));
+                fromF("coap://localhost:%d/test/b?coapMethodRestrict=GET", PORT.getPort()).setBody(constant("GET: /test/b"));
             }
         };
     }

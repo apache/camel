@@ -74,12 +74,13 @@ public class CoAPComponentTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("coap://localhost:%d/TestResource", PORT).convertBodyTo(String.class).transform(body().prepend("Hello "));
+                fromF("coap://localhost:%d/TestResource", PORT.getPort()).convertBodyTo(String.class)
+                        .transform(body().prepend("Hello "));
 
                 fromF("coap+tcp://localhost:%d/TestResource", TCP_PORT.getPort()).convertBodyTo(String.class)
                         .transform(body().prepend("Hello "));
 
-                from("direct:start").toF("coap://localhost:%d/TestResource", PORT).to("mock:result");
+                from("direct:start").toF("coap://localhost:%d/TestResource", PORT.getPort()).to("mock:result");
 
                 from("direct:starttcp").toF("coap+tcp://localhost:%d/TestResource", TCP_PORT.getPort()).to("mock:result");
             }

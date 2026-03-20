@@ -92,16 +92,16 @@ public class CoAPObserveTest extends CoAPTestSupport {
             public void configure() {
                 AtomicInteger i = new AtomicInteger(0);
 
-                fromF("coap://localhost:%d/TestResource?observable=true", PORT)
+                fromF("coap://localhost:%d/TestResource?observable=true", PORT.getPort())
                         .log("Received1: ${body}")
                         .process(exchange -> exchange.getMessage().setBody("Hello " + i.get()));
 
                 from("direct:notify")
                         .process(exchange -> i.incrementAndGet())
                         .log("Sending ${body}")
-                        .toF("coap://localhost:%d/TestResource?notify=true", PORT);
+                        .toF("coap://localhost:%d/TestResource?notify=true", PORT.getPort());
 
-                fromF("coap://localhost:%d/TestResource?observe=true", PORT)
+                fromF("coap://localhost:%d/TestResource?observe=true", PORT.getPort())
                         .log("Received2: ${body}")
                         .to("mock:sourceResults");
             }
