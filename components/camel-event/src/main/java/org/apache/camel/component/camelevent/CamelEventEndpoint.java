@@ -78,6 +78,17 @@ public class CamelEventEndpoint extends DefaultEndpoint {
                             + " This is useful for subscribing to custom user-defined events.")
     private String customEventClass;
 
+    @UriParam(description = "Whether to process events asynchronously using a thread pool."
+                            + " When enabled, the event notifier thread is not blocked while the event exchange is processed."
+                            + " Use asyncPoolSize to control the maximum number of concurrent event processing threads.",
+              defaultValue = "false")
+    private boolean async;
+
+    @UriParam(description = "The maximum number of threads in the pool for async event processing."
+                            + " Only used when the async option is enabled.",
+              defaultValue = "10")
+    private int asyncPoolSize = 10;
+
     private Set<CamelEvent.Type> eventTypes;
     private Set<String> filterValues;
     private Set<String> filterExcludeValues;
@@ -235,6 +246,30 @@ public class CamelEventEndpoint extends DefaultEndpoint {
      */
     public void setCustomEventClass(String customEventClass) {
         this.customEventClass = customEventClass;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    /**
+     * Whether to process events asynchronously using a thread pool. When enabled, the event notifier thread is not
+     * blocked while the event exchange is processed. Use asyncPoolSize to control the maximum number of concurrent
+     * event processing threads.
+     */
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+
+    public int getAsyncPoolSize() {
+        return asyncPoolSize;
+    }
+
+    /**
+     * The maximum number of threads in the pool for async event processing. Only used when the async option is enabled.
+     */
+    public void setAsyncPoolSize(int asyncPoolSize) {
+        this.asyncPoolSize = asyncPoolSize;
     }
 
     public Set<CamelEvent.Type> getEventTypes() {

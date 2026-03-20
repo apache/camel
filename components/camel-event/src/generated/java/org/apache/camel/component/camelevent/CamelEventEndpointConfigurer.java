@@ -23,6 +23,9 @@ public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CamelEventEndpoint target = (CamelEventEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
+        case "asyncpoolsize":
+        case "asyncPoolSize": target.setAsyncPoolSize(property(camelContext, int.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "customeventclass":
@@ -41,6 +44,9 @@ public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": return boolean.class;
+        case "asyncpoolsize":
+        case "asyncPoolSize": return int.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "customeventclass":
@@ -60,6 +66,9 @@ public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CamelEventEndpoint target = (CamelEventEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": return target.isAsync();
+        case "asyncpoolsize":
+        case "asyncPoolSize": return target.getAsyncPoolSize();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "customeventclass":

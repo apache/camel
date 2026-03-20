@@ -17,6 +17,7 @@
 package org.apache.camel.component.camelevent;
 
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -33,6 +34,7 @@ import org.apache.camel.support.EventNotifierSupport;
 public class CamelEventConsumer extends DefaultConsumer {
 
     private final EventNotifierSupport eventNotifier;
+    private ExecutorService executorService;
 
     public CamelEventConsumer(CamelEventEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -60,12 +62,22 @@ public class CamelEventConsumer extends DefaultConsumer {
         // Configure the notifier here (not in constructor) because doInit() on the endpoint
         // has now been called, so getEventTypes() returns the parsed types
         configureEventNotifier();
+        // Create thread pool for async processing
+        if (getEndpoint().isAsync()) {
+            int poolSize = getEndpoint().getAsyncPoolSize();
+            executorService = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newFixedThreadPool(this, "CamelEventConsumer", poolSize);
+        }
         getEndpoint().getCamelContext().getManagementStrategy().addEventNotifier(eventNotifier);
     }
 
     @Override
     protected void doStop() throws Exception {
         getEndpoint().getCamelContext().getManagementStrategy().removeEventNotifier(eventNotifier);
+        if (executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+            executorService = null;
+        }
         super.doStop();
     }
 
@@ -265,6 +277,23 @@ public class CamelEventConsumer extends DefaultConsumer {
             return;
         }
 
+        if (executorService != null) {
+            executorService.submit(() -> {
+                try {
+                    processEvent(event);
+                } catch (Exception e) {
+                    getExceptionHandler().handleException("Error processing event: " + event.getType(), e);
+                }
+            });
+        } else {
+            processEvent(event);
+        }
+    }
+
+    /**
+     * Processes a Camel event by creating an exchange, setting headers, and dispatching to the processor.
+     */
+    private void processEvent(CamelEvent event) throws Exception {
         Exchange exchange = createExchange(true);
         // Mark exchange as a notify event to prevent the framework from generating
         // recursive events for this exchange (same pattern as PublishEventNotifier)

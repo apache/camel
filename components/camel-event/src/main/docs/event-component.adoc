@@ -306,6 +306,27 @@ from("event:Custom?customEventClass=com.example.MyCustomEvent")
     .log("Custom event received: ${body}");
 ----
 
+== Async Processing
+
+By default, events are processed synchronously on the event notifier thread.
+This means the event notifier is blocked until the route has finished processing the event.
+
+To process events asynchronously, set the `async` option to `true`.
+This dispatches event processing to a thread pool, freeing the event notifier thread immediately.
+
+Use the `asyncPoolSize` option to control the maximum number of concurrent event processing threads (default: 10).
+
+[source,java]
+----
+// Process events asynchronously with default pool size (10)
+from("event:ExchangeCompleted?async=true")
+    .log("Exchange completed: ${header.CamelEventExchangeId}");
+
+// Process events asynchronously with a custom pool size
+from("event:Exchange*?async=true&asyncPoolSize=5")
+    .log("Exchange event: ${header.CamelEventType}");
+----
+
 == Distributed Events
 
 The Event component captures events within a single CamelContext (JVM). To propagate events across
