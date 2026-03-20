@@ -47,7 +47,8 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "4.19.0", scheme = "event", title = "Event", syntax = "event:events",
              consumerOnly = true, remote = false,
-             category = { Category.CORE, Category.MONITORING })
+             category = { Category.CORE, Category.MONITORING },
+             headersClass = EventConstants.class)
 public class EventEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Comma-separated list of event types to subscribe to."
