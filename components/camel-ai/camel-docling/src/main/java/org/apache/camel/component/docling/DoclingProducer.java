@@ -70,6 +70,7 @@ import ai.docling.serve.api.convert.request.source.FileSource;
 import ai.docling.serve.api.convert.request.source.HttpSource;
 import ai.docling.serve.api.convert.response.ConvertDocumentResponse;
 import ai.docling.serve.api.convert.response.DocumentResponse;
+import ai.docling.serve.api.convert.response.InBodyConvertDocumentResponse;
 import ai.docling.serve.api.task.request.TaskStatusPollRequest;
 import ai.docling.serve.api.task.response.TaskStatus;
 import ai.docling.serve.api.task.response.TaskStatusPollResponse;
@@ -1124,15 +1125,19 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     private DoclingDocument extractDoclingDocument(ConvertDocumentResponse response) throws IOException {
-        DocumentResponse document = response.getDocument();
-        if (document == null) {
-            throw new IOException("No document in response");
+        if (response instanceof InBodyConvertDocumentResponse inBodyConvertDocumentResponse) {
+            DocumentResponse document = inBodyConvertDocumentResponse.getDocument();
+            if (document == null) {
+                throw new IOException("No document in response");
+            }
+            DoclingDocument result = document.getJsonContent();
+            if (result == null) {
+                throw new IOException("No JSON content in document response");
+            }
+            return result;
+        } else {
+            throw new IOException("Unsupported type of response. Cannot extract a DoclingDocument");
         }
-        DoclingDocument result = document.getJsonContent();
-        if (result == null) {
-            throw new IOException("No JSON content in document response");
-        }
-        return result;
     }
 
     private void processBatchStructuredData(Exchange exchange) throws Exception {
@@ -1555,40 +1560,45 @@ public class DoclingProducer extends DefaultProducer {
 
     private String extractConvertedContent(ConvertDocumentResponse response, String outputFormat) throws IOException {
         try {
-            DocumentResponse document = response.getDocument();
+            if (response instanceof InBodyConvertDocumentResponse inBodyConvertDocumentResponse) {
+                DocumentResponse document = inBodyConvertDocumentResponse.getDocument();
 
-            if (document == null) {
-                throw new IOException("No document in response");
-            }
+                if (document == null) {
+                    throw new IOException("No document in response");
+                }
 
-            String format = mapOutputFormat(outputFormat);
+                String format = mapOutputFormat(outputFormat);
 
-            switch (format) {
-                case "md":
-                    String markdown = document.getMarkdownContent();
-                    return markdown != null ? markdown : "";
-                case "html":
-                    String html = document.getHtmlContent();
-                    return html != null ? html : "";
-                case "text":
-                    String text = document.getTextContent();
-                    return text != null ? text : "";
-                case "json":
-                    // Return the document JSON content
-                    var jsonDoc = document.getJsonContent();
-                    if (jsonDoc != null) {
-                        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonDoc);
-                    }
-                    return "{}";
-                default:
-                    // Default to markdown
-                    String defaultMarkdown = document.getMarkdownContent();
-                    return defaultMarkdown != null ? defaultMarkdown : "";
+                switch (format) {
+                    case "md":
+                        String markdown = document.getMarkdownContent();
+                        return markdown != null ? markdown : "";
+                    case "html":
+                        String html = document.getHtmlContent();
+                        return html != null ? html : "";
+                    case "text":
+                        String text = document.getTextContent();
+                        return text != null ? text : "";
+                    case "json":
+                        // Return the document JSON content
+                        var jsonDoc = document.getJsonContent();
+                        if (jsonDoc != null) {
+                            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonDoc);
+                        }
+                        return "{}";
+                    default:
+                        // Default to markdown
+                        String defaultMarkdown = document.getMarkdownContent();
+                        return defaultMarkdown != null ? defaultMarkdown : "";
+                }
+            } else {
+                throw new IOException("Unsupported type of response. Cannot extract a DoclingDocument");
             }
         } catch (Exception e) {
             LOG.warn("Failed to extract content from response: {}", e.getMessage());
             throw new IOException("Failed to extract content from response", e);
         }
+
     }
 
     private OutputFormat mapToOutputFormat(String outputFormat) {
