@@ -142,6 +142,24 @@ public interface CoapTcpComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default CoapTcpComponentBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     class CoapTcpComponentBuilderImpl
@@ -161,6 +179,7 @@ public interface CoapTcpComponentBuilderFactory {
             case "bridgeErrorHandler": ((CoAPComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((CoAPComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((CoAPComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "headerFilterStrategy": ((CoAPComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             default: return false;
             }
         }
