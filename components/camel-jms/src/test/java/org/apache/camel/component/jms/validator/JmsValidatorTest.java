@@ -44,7 +44,7 @@ public class JmsValidatorTest extends AbstractJMSTest {
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
         String body = "<?xml version=\"1.0\"?>\n<p>Hello world!</p>";
-        template.sendBody("jms:queue:inbox", body);
+        template.sendBody("jms:queue:inbox.JmsValidatorTest", body);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -56,7 +56,7 @@ public class JmsValidatorTest extends AbstractJMSTest {
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
         String body = "<?xml version=\"1.0\"?>\n<foo>Kaboom</foo>";
-        template.sendBody("jms:queue:inbox", body);
+        template.sendBody("jms:queue:inbox.JmsValidatorTest", body);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -66,20 +66,20 @@ public class JmsValidatorTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jms:queue:inbox")
+                from("jms:queue:inbox.JmsValidatorTest")
                         .convertBodyTo(String.class)
                         .doTry()
                         .to("validator:file:src/test/resources/org/apache/camel/component/jms/validator/JmsValidatorTestSchema.xsd")
-                        .to("jms:queue:valid")
+                        .to("jms:queue:valid.JmsValidatorTest")
                         .doCatch(ValidationException.class)
-                        .to("jms:queue:invalid")
+                        .to("jms:queue:invalid.JmsValidatorTest")
                         .doFinally()
-                        .to("jms:queue:finally")
+                        .to("jms:queue:finally.JmsValidatorTest")
                         .end();
 
-                from("jms:queue:valid").to("mock:valid");
-                from("jms:queue:invalid").to("mock:invalid");
-                from("jms:queue:finally").to("mock:finally");
+                from("jms:queue:valid.JmsValidatorTest").to("mock:valid");
+                from("jms:queue:invalid.JmsValidatorTest").to("mock:invalid");
+                from("jms:queue:finally.JmsValidatorTest").to("mock:finally");
             }
         };
     }

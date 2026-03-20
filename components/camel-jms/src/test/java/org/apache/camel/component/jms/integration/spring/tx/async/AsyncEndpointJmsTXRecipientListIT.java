@@ -45,7 +45,7 @@ public class AsyncEndpointJmsTXRecipientListIT extends AbstractSpringJMSITSuppor
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
-        template.sendBody("activemq:queue:inbox", "Hello Camel");
+        template.sendBody("activemq:queue:inbox.AsyncEndpointJmsTXRecipientListIT", "Hello Camel");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -60,7 +60,7 @@ public class AsyncEndpointJmsTXRecipientListIT extends AbstractSpringJMSITSuppor
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("activemq:queue:inbox")
+                from("activemq:queue:inbox.AsyncEndpointJmsTXRecipientListIT")
                         .transacted()
                         .to("mock:before")
                         .to("log:before")

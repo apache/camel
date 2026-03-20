@@ -35,32 +35,32 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="jms:queue:inbox"/>
+            <from uri="jms:queue:inbox.JmsSpringValidatorIT"/>
             <!-- enforce the body as a String to let it be easier to work with -->
             <convertBodyTo type="String"/>
             <doTry>
                 <to uri="validator:file:src/test/resources/org/apache/camel/component/jms/validator/JmsValidatorTestSchema.xsd"/>
-                <to uri="jms:queue:valid"/>
+                <to uri="jms:queue:valid.JmsSpringValidatorIT"/>
                 <doCatch>
                     <exception>org.apache.camel.ValidationException</exception>
-                    <to uri="jms:queue:invalid"/>
+                    <to uri="jms:queue:invalid.JmsSpringValidatorIT"/>
                 </doCatch>
                 <doFinally>
-                    <to uri="jms:queue:finally"/>
+                    <to uri="jms:queue:finally.JmsSpringValidatorIT"/>
                 </doFinally>
             </doTry>
         </route>
 
       <route>
-        <from uri="jms:queue:valid"/>
+        <from uri="jms:queue:valid.JmsSpringValidatorIT"/>
         <to uri="mock:valid"/>
       </route>
       <route>
-        <from uri="jms:queue:invalid"/>
+        <from uri="jms:queue:invalid.JmsSpringValidatorIT"/>
         <to uri="mock:invalid"/>
       </route>
       <route>
-        <from uri="jms:queue:finally"/>
+        <from uri="jms:queue:finally.JmsSpringValidatorIT"/>
         <to uri="mock:finally"/>
       </route>
     </camelContext>

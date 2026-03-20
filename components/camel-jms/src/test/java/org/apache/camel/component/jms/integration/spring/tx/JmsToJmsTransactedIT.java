@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.integration.spring.tx;
 
 import org.apache.activemq.artemis.api.core.QueueConfiguration;
 import org.apache.activemq.artemis.api.core.RoutingType;
+import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
@@ -39,9 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Isolated("Uses a shared DLQ queue name and embedded VM broker")
+@Isolated("Uses an embedded VM broker")
 public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
 
+    private static final String DLQ_NAME = "DLQ." + JmsToJmsTransactedIT.class.getSimpleName();
     private static final int MAX_DELIVERY_ATTEMPTS = 3;
 
     @Order(0)
@@ -52,9 +54,12 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
         ArtemisVMService svc = new ArtemisVMService();
         svc.customConfiguration(cfg -> {
             cfg.getAddressSettings().values()
-                    .forEach(s -> s.setMaxDeliveryAttempts(MAX_DELIVERY_ATTEMPTS));
+                    .forEach(s -> {
+                        s.setMaxDeliveryAttempts(MAX_DELIVERY_ATTEMPTS);
+                        s.setDeadLetterAddress(SimpleString.of(DLQ_NAME));
+                    });
             cfg.addQueueConfiguration(
-                    QueueConfiguration.of("DLQ").setRoutingType(RoutingType.ANYCAST));
+                    QueueConfiguration.of(DLQ_NAME).setRoutingType(RoutingType.ANYCAST));
         });
         return svc;
     }
@@ -149,7 +154,7 @@ public final class JmsToJmsTransactedIT extends CamelSpringTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // it should be moved to DLQ in JMS broker
-        Object body = consumer.receiveBody("activemq:queue:DLQ", 10000);
+        Object body = consumer.receiveBody("activemq:queue:" + DLQ_NAME, 10000);
         assertEquals("Hello World", body);
     }
 }

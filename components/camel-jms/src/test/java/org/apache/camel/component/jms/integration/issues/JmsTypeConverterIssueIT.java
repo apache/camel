@@ -76,7 +76,7 @@ public class JmsTypeConverterIssueIT extends AbstractJMSTest {
         getMockEndpoint("mock:portalxml").expectedMessageCount(1);
         getMockEndpoint("mock:historyxml").expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:inbox", "<?xml version=\"1.0\"?><agent id=\"123\"></agent>");
+        template.sendBody("activemq:queue:inbox.JmsTypeConverterIssueIT", "<?xml version=\"1.0\"?><agent id=\"123\"></agent>");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -86,7 +86,7 @@ public class JmsTypeConverterIssueIT extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:inbox")
+                from("activemq:queue:inbox.JmsTypeConverterIssueIT")
                         .setProperty(Exchange.CHARSET_NAME, constant("UTF-8"))
                         .setHeader("agentId", xpath("/agent/@id"))
                         .process(new FixateHeaderValuesProcessor())
