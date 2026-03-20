@@ -24,7 +24,7 @@ import java.net.ServerSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AvailablePort {
+final class AvailablePort {
     private static final Logger LOG = LoggerFactory.getLogger(AvailablePort.class);
 
     /**

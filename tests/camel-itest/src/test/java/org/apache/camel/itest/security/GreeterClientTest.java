@@ -16,8 +16,6 @@
  */
 package org.apache.camel.itest.security;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +25,7 @@ import jakarta.xml.ws.soap.SOAPFaultException;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.AvailablePort;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -129,11 +127,10 @@ public class GreeterClientTest {
 
     public static boolean isPortAvailable() {
         try {
-            AvailablePort.probePort(InetAddress.getByName("localhost"), 9000);
-        } catch (IllegalStateException | UnknownHostException e) {
+            AvailablePortFinder.probePort(9000);
+            return true;
+        } catch (IllegalStateException e) {
             return false;
         }
-
-        return true;
     }
 }
