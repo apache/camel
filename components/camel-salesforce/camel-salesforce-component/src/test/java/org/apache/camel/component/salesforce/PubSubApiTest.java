@@ -246,6 +246,6 @@ public class PubSubApiTest {
     }
 
     private int getPort() {
-        return org.apache.camel.test.AvailablePort.probePort(null, 0);
+        return org.apache.camel.test.AvailablePortFinder.getNextAvailable();
     }
 }
