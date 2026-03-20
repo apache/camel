@@ -17,8 +17,10 @@
 package org.apache.camel.component.jmx;
 
 import java.io.File;
+import java.rmi.NoSuchObjectException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Collections;
 
 import javax.management.MBeanServerFactory;
@@ -26,9 +28,11 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,6 +49,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
 
+    @RegisterExtension
+    AvailablePortFinder.Port portHolder = AvailablePortFinder.find();
+
     JMXServiceURL url;
     JMXConnectorServer connector;
     Registry registry;
@@ -53,6 +60,7 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
+        port = portHolder.getPort();
         url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + port + "/" + DOMAIN);
 
         initContext();
@@ -63,7 +71,17 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        connector.stop();
+        if (connector != null) {
+            connector.stop();
+        }
+        if (registry != null) {
+            try {
+                UnicastRemoteObject.unexportObject(registry, true);
+            } catch (NoSuchObjectException e) {
+                // Already unexported, ignore
+            }
+            registry = null;
+        }
     }
 
     @Override
