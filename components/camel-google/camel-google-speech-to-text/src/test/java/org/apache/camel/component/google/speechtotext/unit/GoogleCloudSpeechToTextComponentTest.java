@@ -18,7 +18,7 @@ package org.apache.camel.component.google.speechtotext.unit;
 
 import org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextComponent;
 import org.apache.camel.component.google.speechtotext.GoogleCloudSpeechToTextEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
