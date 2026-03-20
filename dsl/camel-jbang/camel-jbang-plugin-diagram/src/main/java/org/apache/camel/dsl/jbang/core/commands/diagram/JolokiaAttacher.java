@@ -58,11 +58,18 @@ final class JolokiaAttacher {
     }
 
     int attach(long pid, int port) {
-        int effectivePort = port;
-        if (effectivePort <= 0) {
-            effectivePort = findAvailablePort(8778, 10000);
-        }
-        return loadAgent(pid, effectivePort, false);
+        return attachGetPort(pid, port) >= 0 ? 0 : 1;
+    }
+
+    /**
+     * Attaches Jolokia to the given PID and returns the port actually used, or -1 on failure. If the requested port is
+     * already in use (e.g. leftover Jolokia from a previous run), a free port is found automatically.
+     */
+    int attachGetPort(long pid, int requestedPort) {
+        int effectivePort = (requestedPort > 0 && isPortFree(requestedPort))
+                ? requestedPort
+                : findAvailablePort(8778, 10000);
+        return loadAgent(pid, effectivePort, false) == 0 ? effectivePort : -1;
     }
 
     int detach(long pid) {

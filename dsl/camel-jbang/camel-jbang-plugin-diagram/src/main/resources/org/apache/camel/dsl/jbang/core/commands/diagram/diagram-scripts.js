@@ -367,76 +367,7 @@
     };
   };
 
-  diagram.isStable = () => {
-    if (!nodes.length) {
-      return false;
-    }
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    nodes.forEach((node) => {
-      const rect = node.getBoundingClientRect();
-      minX = Math.min(minX, rect.left);
-      minY = Math.min(minY, rect.top);
-      maxX = Math.max(maxX, rect.right);
-      maxY = Math.max(maxY, rect.bottom);
-    });
-    const bounds = {
-      minX: Math.round(minX),
-      minY: Math.round(minY),
-      maxX: Math.round(maxX),
-      maxY: Math.round(maxY)
-    };
-    const viewport = document.querySelector('.react-flow__viewport');
-    const transform = viewport ? viewport.style.transform : '';
-    const now = Date.now();
-    const state =
-      window.__camelDiagramState ||
-      (window.__camelDiagramState = { count: nodes.length, transform, bounds, at: now });
-    const changed =
-      state.count !== nodes.length ||
-      state.transform !== transform ||
-      !state.bounds ||
-      state.bounds.minX !== bounds.minX ||
-      state.bounds.minY !== bounds.minY ||
-      state.bounds.maxX !== bounds.maxX ||
-      state.bounds.maxY !== bounds.maxY;
-    if (changed) {
-      state.count = nodes.length;
-      state.transform = transform;
-      state.bounds = bounds;
-      state.at = now;
-      return false;
-    }
-    return now - state.at > 250;
-  };
 
-  diagram.isRouteSelected = (routeId) => {
-    return Array.from(document.querySelectorAll('#camel-tree-view [aria-selected="true"]')).some(
-      (element) =>
-        Array.from(element.querySelectorAll('button.pf-v5-c-tree-view__node-text')).some(
-          (button) => button.textContent && button.textContent.trim() === routeId
-        )
-    );
-  };
-
-  // Reset stability tracking state so that a fresh stability measurement begins.
-  // Call this after changing the selected route to avoid stale state from the
-  // previous route's diagram triggering a premature "stable" signal.
-  diagram.resetState = () => {
-    window.__camelDiagramState = null;
-    document.documentElement.removeAttribute('data-camel-stable');
-  };
-
-  diagram.isRoutesFolderSelected = () => {
-    return Array.from(document.querySelectorAll('#camel-tree-view [aria-selected="true"]')).some(
-      (element) =>
-        Array.from(element.querySelectorAll('button.pf-v5-c-tree-view__node-text')).some((button) => {
-          return button.textContent && button.textContent.trim().toLowerCase() === 'routes';
-        })
-    );
-  };
 
   diagram.waitForAssets = async () => {
     if (document.fonts && document.fonts.ready) {
@@ -454,9 +385,29 @@
   (function startStateMonitor() {
     var html = document.documentElement;
     var prepared = false;
+    var stableState = null;
+
+    function isStable(nodes) {
+      if (!nodes.length) return false;
+      var viewport = document.querySelector('.react-flow__viewport');
+      var transform = viewport ? viewport.style.transform : '';
+      var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      nodes.forEach(function(node) {
+        var r = node.getBoundingClientRect();
+        minX = Math.min(minX, r.left); minY = Math.min(minY, r.top);
+        maxX = Math.max(maxX, r.right); maxY = Math.max(maxY, r.bottom);
+      });
+      var now = Date.now();
+      if (!stableState || stableState.count !== nodes.length || stableState.transform !== transform ||
+          Math.round(stableState.minX) !== Math.round(minX) || Math.round(stableState.minY) !== Math.round(minY) ||
+          Math.round(stableState.maxX) !== Math.round(maxX) || Math.round(stableState.maxY) !== Math.round(maxY)) {
+        stableState = { count: nodes.length, transform: transform, minX: minX, minY: minY, maxX: maxX, maxY: maxY, at: now };
+        return false;
+      }
+      return now - stableState.at > 250;
+    }
 
     function tick() {
-      // Track Jolokia connection (set once, never cleared)
       try {
         if (!html.hasAttribute('data-camel-connected') &&
             sessionStorage.getItem('connect.currentConnection') !== null) {
@@ -464,32 +415,16 @@
         }
       } catch (e) { /* ignore */ }
 
-      // Track diagram state
       try {
-        if (window.camelDiagram) {
-          var nodes = document.querySelectorAll('.react-flow__node');
-
-          // Auto-call prepare() once when diagram nodes first appear
-          if (!prepared && nodes.length > 0) {
-            try { window.camelDiagram.prepare(); } catch (e) { /* ignore */ }
-            prepared = true;
-          }
-
-          // Track stable state (set/clear on every tick)
-          if (window.camelDiagram.isStable()) {
-            html.setAttribute('data-camel-stable', 'true');
-          } else {
-            html.removeAttribute('data-camel-stable');
-          }
-
-          // Track routes-folder selected
-          try {
-            if (window.camelDiagram.isRoutesFolderSelected()) {
-              html.setAttribute('data-camel-routes-folder-selected', 'true');
-            } else {
-              html.removeAttribute('data-camel-routes-folder-selected');
-            }
-          } catch (e) { /* ignore */ }
+        var nodes = document.querySelectorAll('.react-flow__node');
+        if (!prepared && nodes.length > 0) {
+          try { window.camelDiagram.prepare(); } catch (e) { /* ignore */ }
+          prepared = true;
+        }
+        if (isStable(nodes)) {
+          html.setAttribute('data-camel-stable', 'true');
+        } else {
+          html.removeAttribute('data-camel-stable');
         }
       } catch (e) { /* ignore */ }
 

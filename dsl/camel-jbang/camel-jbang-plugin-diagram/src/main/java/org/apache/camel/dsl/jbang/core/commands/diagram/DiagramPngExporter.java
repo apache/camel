@@ -16,21 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.diagram;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -75,6 +71,7 @@ class DiagramPngExporter {
     private final CamelLaunch camelLaunch;
     private boolean jolokiaAttached;
     private long jolokiaPid;
+    private String jolokiaUrl;
 
     DiagramPngExporter(CamelJBangMain main, Printer printer, Path output, String browser,
                        String playwrightBrowserPath, String routeId, int jolokiaPort, int hawtioPort, boolean keepRunning,
@@ -108,10 +105,11 @@ class DiagramPngExporter {
         }
 
         String hawtioUrl = "http://localhost:" + hawtioPort + "/hawtio";
-        String jolokiaUrl = "http://127.0.0.1:" + jolokiaPort + "/jolokia";
+        // jolokiaUrl may be updated after attach if a different port was used
+        jolokiaUrl = "http://127.0.0.1:" + jolokiaPort + "/jolokia";
 
         // Start Hawtio in parallel while we wait for Camel to reach Running state.
-        HawtioProcess hawtioProcess = startHawtioProcess(hawtioPort);
+        Process hawtioProcess = startHawtioProcess(hawtioPort);
         try {
             // Wait for Camel to be Running (if we launched a new process).
             if (camelLaunch != null) {
@@ -121,7 +119,7 @@ class DiagramPngExporter {
                 target = Long.toString(camelLaunch.pid());
             }
 
-            int attachCode = attachJolokia(target, jolokiaUrl);
+            int attachCode = attachJolokia(target);
             if (attachCode != 0) {
                 return attachCode;
             }
@@ -132,7 +130,7 @@ class DiagramPngExporter {
 
             return exportDiagramPng(hawtioUrl, jolokiaUrl, outputPath, hawtioProcess);
         } finally {
-            stopProcess(hawtioProcess.process);
+            stopProcess(hawtioProcess);
             if (keepRunning && jolokiaAttached) {
                 detachJolokia();
             }
@@ -204,34 +202,33 @@ class DiagramPngExporter {
         return null;
     }
 
-    private int attachJolokia(String target, String jolokiaUrl) throws Exception {
+    private int attachJolokia(String target) throws Exception {
         if (target == null || target.isBlank()) {
             printer.printErr("Name or PID required to attach Jolokia for PNG export");
             return 1;
         }
         jolokiaAttached = false;
         jolokiaPid = 0;
-        if (isJolokiaAvailable(jolokiaUrl)) {
-            return 0;
-        }
         if (embeddedJolokia) {
             return waitForJolokia(jolokiaUrl);
         }
+        // Always resolve the target PID and attach/verify Jolokia for that specific process.
+        // Using isJolokiaAvailable() as a shortcut is unsafe — the endpoint may belong to a
+        // different process (e.g. a leftover from a previous run or a different integration).
         JolokiaAttacher attacher = new JolokiaAttacher(printer);
         long pid = attacher.resolvePid(target);
         if (pid <= 0) {
             return 1;
         }
-        int code = attacher.attach(pid, jolokiaPort);
-        if (code == 0) {
-            jolokiaAttached = true;
-            jolokiaPid = pid;
-            return 0;
+        int actualPort = attacher.attachGetPort(pid, jolokiaPort);
+        if (actualPort < 0) {
+            return 1;
         }
-        if (isJolokiaAvailable(jolokiaUrl)) {
-            return 0;
-        }
-        return code;
+        // Update jolokiaUrl in case a different port was used (e.g. requested port was busy)
+        jolokiaUrl = "http://127.0.0.1:" + actualPort + "/jolokia";
+        jolokiaAttached = true;
+        jolokiaPid = pid;
+        return 0;
     }
 
     private int waitForJolokia(String jolokiaUrl) throws InterruptedException {
@@ -253,9 +250,9 @@ class DiagramPngExporter {
      * Waits for the Hawtio HTTP server to be available. This is called in the parent process so that the Playwright
      * subprocess can connect immediately without waiting.
      */
-    private void waitForHawtio(String hawtioUrl, HawtioProcess hawtioProcess) throws InterruptedException {
+    private void waitForHawtio(String hawtioUrl, Process hawtioProcess) throws InterruptedException {
         for (int i = 0; i < 60; i++) {
-            if (!hawtioProcess.process.isAlive()) {
+            if (!hawtioProcess.isAlive()) {
                 return; // subprocess will detect Hawtio not running
             }
             HttpURLConnection conn = null;
@@ -317,7 +314,7 @@ class DiagramPngExporter {
         return checkJolokia(jolokiaUrl) == null;
     }
 
-    private HawtioProcess startHawtioProcess(int port) throws Exception {
+    private Process startHawtioProcess(int port) throws Exception {
         List<String> args = new ArrayList<>();
         args.add("hawtio");
         args.add("--port=" + port);
@@ -326,10 +323,8 @@ class DiagramPngExporter {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(args);
         pb.redirectErrorStream(true);
-        Process process = pb.start();
-        List<String> output = Collections.synchronizedList(new ArrayList<>());
-        startOutputPump(process.getInputStream(), output);
-        return new HawtioProcess(process, output);
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        return pb.start();
     }
 
     private void stopProcess(Process process) {
@@ -346,7 +341,7 @@ class DiagramPngExporter {
         }
     }
 
-    private int exportDiagramPng(String hawtioUrl, String jolokiaUrl, Path outputPath, HawtioProcess hawtioProcess)
+    private int exportDiagramPng(String hawtioUrl, String jolokiaUrl, Path outputPath, Process hawtioProcess)
             throws Exception {
         String execPath = resolveBrowserPath();
         if (execPath == null) {
@@ -379,9 +374,8 @@ class DiagramPngExporter {
         pb.inheritIO();
         Process process = pb.start();
         int exitCode = process.waitFor();
-        if (exitCode != 0 && hawtioProcess != null && !hawtioProcess.process.isAlive()) {
-            throw new IllegalStateException(
-                    "Hawtio terminated before startup." + formatHawtioOutput(hawtioProcess.output));
+        if (exitCode != 0 && hawtioProcess != null && !hawtioProcess.isAlive()) {
+            throw new IllegalStateException("Hawtio terminated before startup.");
         }
         if (exitCode != 0) {
             throw new IllegalStateException("PNG export failed (exit code " + exitCode + ").");
@@ -469,48 +463,5 @@ class DiagramPngExporter {
         }
         Map<String, String> env = System.getenv();
         return env.get("PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH");
-    }
-
-    private void startOutputPump(InputStream inputStream, List<String> output) {
-        Thread thread = new Thread(() -> {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    synchronized (output) {
-                        if (output.size() >= 200) {
-                            output.remove(0);
-                        }
-                        output.add(line);
-                    }
-                }
-            } catch (Exception e) {
-                // ignore
-            }
-        }, "camel-diagram-hawtio-output");
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    private String formatHawtioOutput(List<String> output) {
-        if (output == null || output.isEmpty()) {
-            return "";
-        }
-        synchronized (output) {
-            if (output.isEmpty()) {
-                return "";
-            }
-            return System.lineSeparator() + "Hawtio output:" + System.lineSeparator()
-                   + String.join(System.lineSeparator(), output);
-        }
-    }
-
-    private static final class HawtioProcess {
-        private final Process process;
-        private final List<String> output;
-
-        private HawtioProcess(Process process, List<String> output) {
-            this.process = process;
-            this.output = output;
-        }
     }
 }
