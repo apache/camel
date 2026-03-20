@@ -382,6 +382,30 @@ class DataWeaveConverterTest {
         assertTrue(result.contains("name: body.name"));
     }
 
+    // ── startsWith / endsWith ──
+
+    @Test
+    void testStartsWith() {
+        String result = converter.convertExpression("payload.name startsWith \"Dr\"");
+        assertEquals("c.startsWith(body.name, \"Dr\")", result);
+        assertTrue(converter.needsCamelLib());
+    }
+
+    @Test
+    void testEndsWith() {
+        String result = converter.convertExpression("payload.file endsWith \".csv\"");
+        assertEquals("c.endsWith(body.file, \".csv\")", result);
+        assertTrue(converter.needsCamelLib());
+    }
+
+    // ── Escape handling ──
+
+    @Test
+    void testStringEscapesPreserved() {
+        String result = converter.convertExpression("payload.text ++ \"\\n\"");
+        assertTrue(result.contains("\"\\n\""), "Newline escape should be preserved, got: " + result);
+    }
+
     // ── Helpers ──
 
     private String loadResource(String path) throws IOException {

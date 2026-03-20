@@ -216,10 +216,8 @@ public class DataWeaveConverter {
     }
 
     private String emitStringLit(StringLit s) {
-        // DataSonnet uses double quotes for strings, single quotes for identifiers
-        String escaped = s.value().replace("\\", "\\\\");
-        // If the string contains single quotes from DW, keep them
-        return "\"" + escaped.replace("\"", "\\\"") + "\"";
+        // The lexer preserves escape sequences as-is, so don't double-escape
+        return "\"" + s.value().replace("\"", "\\\"") + "\"";
     }
 
     private String emitIdentifier(Identifier id) {
@@ -389,17 +387,37 @@ public class DataWeaveConverter {
             case "typeOf" -> "cml.typeOf(" + argStr + ")";
             case "isEmpty" -> "cml.isEmpty(" + argStr + ")";
             case "isBlank" -> "cml.isEmpty(" + argStr + ")";
-            case "abs" -> "std.abs(" + argStr + ")";
+            case "abs" -> {
+                todoCount++;
+                yield "std.abs(" + argStr + ")"
+                      + (includeComments ? " // TODO: std.abs may not exist in DataSonnet — use manual impl" : "");
+            }
             case "ceil" -> "std.ceil(" + argStr + ")";
             case "floor" -> "std.floor(" + argStr + ")";
-            case "round" -> "std.round(" + argStr + ")";
-            case "sqrt" -> "std.sqrt(" + argStr + ")";
+            case "round" -> {
+                todoCount++;
+                yield "std.round(" + argStr + ")"
+                      + (includeComments
+                              ? " // TODO: std.round may not exist in DataSonnet — use std.floor(x + 0.5)"
+                              : "");
+            }
+            case "sqrt" -> {
+                todoCount++;
+                yield "std.sqrt(" + argStr + ")"
+                      + (includeComments ? " // TODO: std.sqrt does not exist in DataSonnet" : "");
+            }
             case "sum" -> {
                 needsCamelLib = true;
                 yield "c.sum(" + argStr + ")";
             }
-            case "min" -> "std.min(" + argStr + ")";
-            case "max" -> "std.max(" + argStr + ")";
+            case "min" -> {
+                needsCamelLib = true;
+                yield "c.min(" + argStr + ")";
+            }
+            case "max" -> {
+                needsCamelLib = true;
+                yield "c.max(" + argStr + ")";
+            }
             case "read" -> {
                 todoCount++;
                 yield "std.parseJson(" + argStr + ")"
@@ -415,11 +433,8 @@ public class DataWeaveConverter {
     }
 
     private String emitLambda(Lambda lam) {
-        List<String> paramNames = new ArrayList<>();
-        for (LambdaParam p : lam.params()) {
-            paramNames.add(p.name());
-        }
-        return "function(" + String.join(", ") + ") " + emitNode(lam.body());
+        List<String> paramNames = lambdaParamNames(lam);
+        return "function(" + String.join(", ", paramNames) + ") " + emitNode(lam.body());
     }
 
     private String emitLambdaShorthand(LambdaShorthand ls) {
@@ -516,15 +531,16 @@ public class DataWeaveConverter {
     }
 
     private String emitOrderBy(OrderByExpr obe) {
+        needsCamelLib = true;
         String collection = emitNode(obe.collection());
         if (obe.lambda() instanceof Lambda lam) {
             List<String> paramNames = lambdaParamNames(lam);
             String body = emitNode(lam.body());
-            return "std.sort(" + collection + ", function(" + paramNames.get(0) + ") " + body + ")";
+            return "c.sortBy(" + collection + ", function(" + paramNames.get(0) + ") " + body + ")";
         }
         todoCount++;
-        return "std.sort(" + collection + ")"
-               + (includeComments ? " // TODO: verify orderBy conversion" : "");
+        return "c.sortBy(" + collection + ")"
+               + (includeComments ? " // TODO: verify orderBy conversion — missing key function" : "");
     }
 
     private String emitContains(ContainsExpr ce) {
@@ -533,11 +549,13 @@ public class DataWeaveConverter {
     }
 
     private String emitStartsWith(StartsWithExpr swe) {
-        return "std.startsWith(" + emitNode(swe.string()) + ", " + emitNode(swe.prefix()) + ")";
+        needsCamelLib = true;
+        return "c.startsWith(" + emitNode(swe.string()) + ", " + emitNode(swe.prefix()) + ")";
     }
 
     private String emitEndsWith(EndsWithExpr ewe) {
-        return "std.endsWith(" + emitNode(ewe.string()) + ", " + emitNode(ewe.suffix()) + ")";
+        needsCamelLib = true;
+        return "c.endsWith(" + emitNode(ewe.string()) + ", " + emitNode(ewe.suffix()) + ")";
     }
 
     private String emitSplitBy(SplitByExpr sbe) {

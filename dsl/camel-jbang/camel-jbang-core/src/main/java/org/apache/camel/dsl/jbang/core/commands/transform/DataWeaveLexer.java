@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.transform;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Tokenizer for DataWeave 2.0 scripts.
@@ -74,16 +73,6 @@ public class DataWeaveLexer {
             return type + "(" + value + ")@" + line + ":" + col;
         }
     }
-
-    private static final Set<String> KEYWORDS = Set.of(
-            "map", "filter", "reduce", "flatMap", "distinctBy", "groupBy", "orderBy",
-            "if", "else", "and", "or", "not", "default", "as", "is",
-            "contains", "startsWith", "endsWith", "splitBy", "joinBy", "replace", "with",
-            "sizeOf", "upper", "lower", "trim", "capitalize", "now", "uuid", "p",
-            "payload", "vars", "attributes", "flowVars",
-            "var", "fun", "match", "do", "using",
-            "true", "false", "null",
-            "output", "input", "import");
 
     private final String input;
     private int pos;
