@@ -38,6 +38,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -76,7 +78,7 @@ import static org.eclipse.californium.scandium.config.DtlsConfig.DTLS_RECOMMENDE
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri",
              category = { Category.IOT }, headersClass = CoAPConstants.class)
-public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLocation, HeaderFilterStrategyAware {
     final static Logger LOGGER = LoggerFactory.getLogger(CoAPEndpoint.class);
     @UriPath
     private URI uri;
@@ -107,6 +109,9 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     private boolean observable;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean notify;
+    @UriParam(label = "advanced",
+              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
     private CoAPComponent component;
 
@@ -255,6 +260,22 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
      */
     public void setNotify(boolean notify) {
         this.notify = notify;
+    }
+
+    @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new CoAPHeaderFilterStrategy();
+        }
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
+     */
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     /**

@@ -32,6 +32,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -58,12 +60,15 @@ import org.slf4j.LoggerFactory;
  * Represents the component that manages {@link CoAPEndpoint}.
  */
 @Component("coap,coaps,coap+tcp,coaps+tcp")
-public class CoAPComponent extends DefaultComponent implements RestConsumerFactory {
+public class CoAPComponent extends DefaultComponent implements RestConsumerFactory, HeaderFilterStrategyAware {
     static final int DEFAULT_PORT = 5684;
     private static final Logger LOG = LoggerFactory.getLogger(CoAPComponent.class);
 
     @Metadata
     private String configurationFile;
+    @Metadata(label = "filter",
+              description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
     final Map<Integer, CoapServer> servers = new ConcurrentHashMap<>();
 
@@ -154,8 +159,24 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
     }
 
     @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom {@link org.apache.camel.spi.HeaderFilterStrategy} to filter header to and from Camel message.
+     */
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new CoAPEndpoint(uri, this);
+        CoAPEndpoint endpoint = new CoAPEndpoint(uri, this);
+        if (headerFilterStrategy != null) {
+            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        }
         setProperties(endpoint, parameters);
         return endpoint;
     }
