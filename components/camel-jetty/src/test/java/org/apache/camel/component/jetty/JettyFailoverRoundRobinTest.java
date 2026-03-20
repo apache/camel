@@ -22,23 +22,20 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyFailoverRoundRobinTest extends CamelTestSupport {
-    private static int port1 = AvailablePortFinder.getNextAvailable();
-    private static int port2 = AvailablePortFinder.getNextAvailable();
-    private static int port3 = AvailablePortFinder.getNextAvailable();
-    private static int port4 = AvailablePortFinder.getNextAvailable();
 
-    private String bad = "jetty:http://localhost:" + port1 + "/bad";
-    private String bad2 = "jetty:http://localhost:" + port2 + "/bad2";
-    private String good = "jetty:http://localhost:" + port3 + "/good";
-    private String good2 = "jetty:http://localhost:" + port4 + "/good2";
-    private String hbad = "http://localhost:" + port1 + "/bad";
-    private String hbad2 = "http://localhost:" + port2 + "/bad2";
-    private String hgood = "http://localhost:" + port3 + "/good";
-    private String hgood2 = "http://localhost:" + port4 + "/good2";
+    @RegisterExtension
+    AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     @Test
     void testJettyFailoverRoundRobin() throws Exception {
@@ -78,28 +75,31 @@ public class JettyFailoverRoundRobinTest extends CamelTestSupport {
                         // -1 is to indicate that failover LB should newer exhaust and keep trying
                         .loadBalance().failover(-1, false, true)
                         // this is the four endpoints we will load balance with failover
-                        .to(hbad, hbad2, hgood, hgood2);
+                        .to("http://localhost:" + port1.getPort() + "/bad",
+                                "http://localhost:" + port2.getPort() + "/bad2",
+                                "http://localhost:" + port3.getPort() + "/good",
+                                "http://localhost:" + port4.getPort() + "/good2");
                 // END SNIPPET: e1
 
-                from(bad)
+                from("jetty:http://localhost:" + port1.getPort() + "/bad")
                         .to("mock:bad")
                         .process(exchange -> {
                             exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
                             exchange.getIn().setBody("Something bad happened");
                         });
 
-                from(bad2)
+                from("jetty:http://localhost:" + port2.getPort() + "/bad2")
                         .to("mock:bad2")
                         .process(exchange -> {
                             exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                             exchange.getIn().setBody("Not found");
                         });
 
-                from(good)
+                from("jetty:http://localhost:" + port3.getPort() + "/good")
                         .to("mock:good")
                         .process(exchange -> exchange.getIn().setBody("Good"));
 
-                from(good2)
+                from("jetty:http://localhost:" + port4.getPort() + "/good2")
                         .to("mock:good2")
                         .process(exchange -> exchange.getIn().setBody("Also good"));
             }
