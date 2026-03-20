@@ -129,13 +129,13 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
     private static X509Certificate clientCert;
 
     @Override
-    public void doPostSetup() throws Exception {
+    public void setupResources() throws Exception {
         setupKeysAndCertificates();
         receiveTestMessages();
     }
 
     @Override
-    public void doPostTearDown() {
+    public void cleanupResources() {
         if (serverConnection != null) {
             serverConnection.close();
         }

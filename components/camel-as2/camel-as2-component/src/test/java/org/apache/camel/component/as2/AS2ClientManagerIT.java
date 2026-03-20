@@ -897,14 +897,14 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     }
 
     @Override
-    public void doPostSetup() throws Exception {
+    public void setupResources() throws Exception {
         setupServerKeysAndCertificates();
         setupClientKeysAndCertificates();
         receiveTestMessages();
     }
 
     @Override
-    public void doPostTearDown() {
+    public void cleanupResources() {
         if (serverConnection != null) {
             serverConnection.close();
         }

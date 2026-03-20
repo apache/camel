@@ -90,12 +90,12 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
     private AS2ServerConnection serverConnection;
 
     @Override
-    public void doPostSetup() throws Exception {
+    public void setupResources() throws Exception {
         receiveTestMessages();
     }
 
     @Override
-    public void doPostTearDown() {
+    public void cleanupResources() {
         if (serverConnection != null) {
             serverConnection.close();
         }

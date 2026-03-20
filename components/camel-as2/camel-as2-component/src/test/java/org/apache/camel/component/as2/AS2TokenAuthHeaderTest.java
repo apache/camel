@@ -74,12 +74,12 @@ public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
     private AS2ClientManagerIT.RequestHandler requestHandler;
 
     @Override
-    public void doPostSetup() throws Exception {
+    public void setupResources() throws Exception {
         receiveTestMessages();
     }
 
     @Override
-    public void doPostTearDown() {
+    public void cleanupResources() {
         if (serverConnection != null) {
             serverConnection.close();
         }
