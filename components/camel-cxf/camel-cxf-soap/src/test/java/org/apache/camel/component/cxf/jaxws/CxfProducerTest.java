@@ -72,11 +72,13 @@ public class CxfProducerTest {
         return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/test";
     }
 
+    // Keep port reference to prevent reuse — this address must have nothing listening on it
+    private AvailablePortFinder.Port wrongPort;
+
     protected String getWrongServerAddress() {
         // Avoiding the test error on camel-cxf module
-        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
-            return "http://localhost:" + p.getPort() + "/" + getClass().getSimpleName() + "/test";
-        }
+        wrongPort = AvailablePortFinder.find();
+        return "http://localhost:" + wrongPort.getPort() + "/" + getClass().getSimpleName() + "/test";
     }
 
     @BeforeEach
