@@ -51,7 +51,7 @@ public class RabbitMQInOutIT extends RabbitMQITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.setUseBreadcrumb(true);
+                getContext().setUseBreadcrumb(true);
 
                 from("direct:start")
                         .setVariable("global:mycrmb", header(Exchange.BREADCRUMB_ID))
