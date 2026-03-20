@@ -336,7 +336,7 @@ public final class ServerAnnotationProcessor {
     }
 
     private static int getFreePort() {
-        return org.apache.camel.test.AvailablePortFinder.getNextAvailable();
+        return org.apache.camel.test.AvailablePortFinder.find().getPort();
     }
 
 }
