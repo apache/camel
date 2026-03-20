@@ -33,6 +33,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -63,13 +64,10 @@ public class MllpTcpServerConsumerThreadPoolTest extends CamelTestSupport {
     // to fail quickly if messages are stuck in queue
     private static final int PRODUCER_TIMEOUT_MS = 5000;
 
-    String mllpHost = "localhost";
-    int mllpPort;
+    @RegisterExtension
+    AvailablePortFinder.Port mllpPortField = AvailablePortFinder.find();
 
-    @Override
-    protected void doPreSetup() throws Exception {
-        mllpPort = AvailablePortFinder.getNextAvailable();
-    }
+    String mllpHost = "localhost";
 
     @SuppressWarnings("deprecation")
     @Override
@@ -85,7 +83,7 @@ public class MllpTcpServerConsumerThreadPoolTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // Includes processing delay to simulate real work
-                fromF("mllp://%s:%d?validatePayload=true", mllpHost, mllpPort)
+                fromF("mllp://%s:%d?validatePayload=true", mllpHost, mllpPortField.getPort())
                         .routeId("mllp-consumer-route")
                         .delay(PROCESSING_DELAY_MS)
                         .convertBodyTo(String.class)
@@ -94,7 +92,7 @@ public class MllpTcpServerConsumerThreadPoolTest extends CamelTestSupport {
                 from("direct:sendMllp")
                         .routeId("mllp-producer-route")
                         .toF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d",
-                                mllpHost, mllpPort, PRODUCER_TIMEOUT_MS, PRODUCER_TIMEOUT_MS)
+                                mllpHost, mllpPortField.getPort(), PRODUCER_TIMEOUT_MS, PRODUCER_TIMEOUT_MS)
                         .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
             }
         };

@@ -33,6 +33,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class MllpGlobalAndExplicitSSLContextParametersTest extends CamelTestSupport {
 
     @RegisterExtension
+    AvailablePortFinder.Port mllpClientPort = AvailablePortFinder.find();
+
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock:result")
@@ -80,7 +83,7 @@ public class MllpGlobalAndExplicitSSLContextParametersTest extends CamelTestSupp
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
         mllpClient.setMllpHost("localhost");
-        mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
+        mllpClient.setMllpPort(mllpClientPort.getPort());
 
         // Set global SSLContextParameters
         SSLContextParameters globalSslContextParameters = createGlobalSslContextParameters();

@@ -41,6 +41,9 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
     static final int READ_TIMEOUT = 500;
 
     @RegisterExtension
+    AvailablePortFinder.Port mllpClientPort = AvailablePortFinder.find();
+
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock://result")
@@ -51,7 +54,7 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         mllpClient.setMllpHost("localhost");
-        mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
+        mllpClient.setMllpPort(mllpClientPort.getPort());
 
         portBlocker = new ServerSocket(mllpClient.getMllpPort());
 

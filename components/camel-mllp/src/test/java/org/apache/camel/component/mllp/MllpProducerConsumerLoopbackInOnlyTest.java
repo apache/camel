@@ -29,10 +29,14 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MllpProducerConsumerLoopbackInOnlyTest extends CamelTestSupport {
+
+    @RegisterExtension
+    AvailablePortFinder.Port mllpPortField = AvailablePortFinder.find();
 
     @EndpointInject("direct://source")
     ProducerTemplate source;
@@ -54,7 +58,7 @@ public class MllpProducerConsumerLoopbackInOnlyTest extends CamelTestSupport {
     @Override
     protected RouteBuilder[] createRouteBuilders() {
         String mllpHost = "localhost";
-        int mllpPort = AvailablePortFinder.getNextAvailable();
+        int mllpPort = mllpPortField.getPort();
 
         return new RouteBuilder[] {
                 new RouteBuilder() {
