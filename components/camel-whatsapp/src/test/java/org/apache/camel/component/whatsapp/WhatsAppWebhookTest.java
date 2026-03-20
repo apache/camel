@@ -87,10 +87,6 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
         Assertions.assertThat(mock.getExchanges().get(0).getIn().getBody(String.class)).contains("\"type\": \"text\"");
     }
 
-    @Override
-    protected void doPreSetup() {
-    }
-
     protected WhatsAppApiConfig getWhatsAppApiConfig() {
         return WhatsAppApiConfig.mock(port.getPort());
     }

@@ -40,20 +40,21 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
     public static final String CONTEXT = "/mycontext";
     protected String contextUrl;
+    @RegisterExtension
+    AvailablePortFinder.Port portHolder = AvailablePortFinder.find();
     protected int port;
     protected DeploymentManager manager;
     protected Undertow server;
 
     @Override
     public void setupResources() throws Exception {
-        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
-            port = p.getPort();
-        }
+        port = portHolder.getPort();
         DeploymentInfo servletBuilder = getDeploymentInfo();
         manager = Servlets.newContainer().addDeployment(servletBuilder);
         manager.deploy();
