@@ -238,7 +238,7 @@
         <hapi-base-version>2.6.0</hapi-base-version>
         <hapi-fhir-version>8.6.5</hapi-fhir-version>
         <hawtio-version>4.6.2</hawtio-version>
-        <hazelcast-version>5.4.0</hazelcast-version>
+        <hazelcast-version>5.5.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>9.1.0.Final</hibernate-validator-version>
         <hibernate-version>6.3.2.Final</hibernate-version>
@@ -325,7 +325,7 @@
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
         <!-- jooq 3.20 is Java 21+ only so we need to be 3.19.x -->
-        <jooq-version>3.19.22</jooq-version>
+        <jooq-version>3.19.30</jooq-version>
         <joor-version>0.9.15</joor-version>
         <jose4j-version>0.9.3</jose4j-version>
         <johnzon-version>2.0.2</johnzon-version>
@@ -351,7 +351,7 @@
         <jxmpp-version>1.1.0</jxmpp-version>
         <jython-version>2.7.4</jython-version>
         <jzlib-version>1.1.3</jzlib-version>
-        <kafka-version>3.9.1</kafka-version>
+        <kafka-version>3.9.2</kafka-version>
         <keycloak-client-version>26.0.8</keycloak-client-version>
         <kubernetes-client-version>7.5.2</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
@@ -366,7 +366,7 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.25.3</log4j2-version>
-        <logback-version>1.5.29</logback-version>
+        <logback-version>1.5.32</logback-version>
         <lucene-version>9.12.3</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.6.0</littleproxy-version>
@@ -398,8 +398,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.5.1</maven-war-plugin-version>
         <metrics-version>4.2.38</metrics-version>
-        <micrometer-version>1.15.6</micrometer-version>
-        <micrometer-tracing-version>1.5.5</micrometer-tracing-version>
+        <micrometer-version>1.15.10</micrometer-version>
+        <micrometer-tracing-version>1.5.10</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <milo-version>1.1.1</milo-version>
         <milvus-client-version>2.6.14</milvus-client-version>
@@ -477,7 +477,7 @@
         <reactor-netty-version>1.3.3</reactor-netty-version>
         <redisson-version>3.52.0</redisson-version>
         <resilience4j-version>2.3.0</resilience4j-version>
-        <rest-assured-version>5.5.6</rest-assured-version>
+        <rest-assured-version>5.5.7</rest-assured-version>
         <roaster-version>2.31.0.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>5.3.2</rocketmq-version>
@@ -506,15 +506,15 @@
         <spock-version>2.4-groovy-4.0</spock-version>
         <spring-ai-version>1.1.2</spring-ai-version>
         <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
-        <spring-batch-version>5.2.4</spring-batch-version>
-        <spring-boot-version>3.5.11</spring-boot-version>
+        <spring-batch-version>5.2.5</spring-batch-version>
+        <spring-boot-version>3.5.12</spring-boot-version>
         <spring-data-redis-version>3.5.5</spring-data-redis-version>
-        <spring-ldap-version>3.3.5</spring-ldap-version>
+        <spring-ldap-version>3.3.6</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
-        <spring-version>6.2.16</spring-version>
-        <spring-rabbitmq-version>3.2.8</spring-rabbitmq-version>
-        <spring-security-version>6.5.8</spring-security-version>
-        <spring-ws-version>4.1.2</spring-ws-version>
+        <spring-version>6.2.17</spring-version>
+        <spring-rabbitmq-version>3.2.9</spring-rabbitmq-version>
+        <spring-security-version>6.5.9</spring-security-version>
+        <spring-ws-version>4.1.3</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okhttp5-version>5.3.2</squareup-okhttp5-version>
