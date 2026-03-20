@@ -27,6 +27,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,10 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerServerInterceptorTest.class);
 
-    private static final int GRPC_REQUEST_INTERCEPT_TEST_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int GRPC_REQUEST_NO_INTERCEPT_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcRequestInterceptTestPort = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcRequestNoInterceptTestPort = AvailablePortFinder.find();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final String GRPC_TEST_PING_VALUE = "PING";
     private static final String GRPC_TEST_PONG_VALUE = "PONG";
@@ -60,9 +63,10 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
     @BeforeEach
     public void startGrpcChannels() {
         interceptRequestChannel
-                = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_INTERCEPT_TEST_PORT).usePlaintext().build();
+                = ManagedChannelBuilder.forAddress("localhost", grpcRequestInterceptTestPort.getPort()).usePlaintext().build();
         nointerceptRequestChannel
-                = ManagedChannelBuilder.forAddress("localhost", GRPC_REQUEST_NO_INTERCEPT_TEST_PORT).usePlaintext().build();
+                = ManagedChannelBuilder.forAddress("localhost", grpcRequestNoInterceptTestPort.getPort()).usePlaintext()
+                        .build();
         interceptBlockingStub = PingPongGrpc.newBlockingStub(interceptRequestChannel);
         nointerceptBlockingStub = PingPongGrpc.newBlockingStub(nointerceptRequestChannel);
     }
@@ -112,11 +116,11 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("grpc://localhost:" + GRPC_REQUEST_INTERCEPT_TEST_PORT
+                from("grpc://localhost:" + grpcRequestInterceptTestPort.getPort()
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
                         .bean(new GrpcMessageBuilder(), "buildPongResponse");
 
-                from("grpc://localhost:" + GRPC_REQUEST_NO_INTERCEPT_TEST_PORT
+                from("grpc://localhost:" + grpcRequestNoInterceptTestPort.getPort()
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION"
                      + "&autoDiscoverServerInterceptors=false")
                         .bean(new GrpcMessageBuilder(), "buildPongResponse");

@@ -28,6 +28,7 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,8 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerSyncTest.class);
 
-    private static final int GRPC_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcTestPort = AvailablePortFinder.find();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final int GRPC_TEST_PONG_ID01 = 1;
     private static final int GRPC_TEST_PONG_ID02 = 2;
@@ -51,8 +53,8 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
 
     @BeforeAll
     public static void startGrpcServer() throws Exception {
-        grpcServer = ServerBuilder.forPort(GRPC_TEST_PORT).addService(new PingPongImpl()).build().start();
-        LOG.info("gRPC server started on port {}", GRPC_TEST_PORT);
+        grpcServer = ServerBuilder.forPort(grpcTestPort.getPort()).addService(new PingPongImpl()).build().start();
+        LOG.info("gRPC server started on port {}", grpcTestPort.getPort());
     }
 
     @AfterAll
@@ -118,13 +120,13 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:grpc-sync-sync")
-                        .to("grpc://localhost:" + GRPC_TEST_PORT
+                        .to("grpc://localhost:" + grpcTestPort.getPort()
                             + "/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true");
                 from("direct:grpc-sync-proto-method-name")
-                        .to("grpc://localhost:" + GRPC_TEST_PORT
+                        .to("grpc://localhost:" + grpcTestPort.getPort()
                             + "/org.apache.camel.component.grpc.PingPong?method=PingSyncSync&synchronous=true");
                 from("direct:grpc-sync-async")
-                        .to("grpc://localhost:" + GRPC_TEST_PORT
+                        .to("grpc://localhost:" + grpcTestPort.getPort()
                             + "/org.apache.camel.component.grpc.PingPong?method=pingSyncAsync&synchronous=true");
             }
         };
