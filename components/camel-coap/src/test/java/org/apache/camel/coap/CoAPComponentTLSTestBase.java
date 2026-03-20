@@ -45,19 +45,28 @@ import org.eclipse.californium.scandium.dtls.x509.NewAdvancedCertificateVerifier
 import org.eclipse.californium.scandium.dtls.x509.StaticNewAdvancedCertificateVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
-    private static final int PORT2 = AvailablePortFinder.getNextAvailable();
-    private static final int PORT3 = AvailablePortFinder.getNextAvailable();
-    private static final int PORT4 = AvailablePortFinder.getNextAvailable();
-    private static final int PORT5 = AvailablePortFinder.getNextAvailable();
-    private static final int PORT6 = AvailablePortFinder.getNextAvailable();
-    private static final int PORT7 = AvailablePortFinder.getNextAvailable();
-    private static final int PORT8 = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT2 = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT3 = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT4 = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT5 = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT6 = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT7 = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT8 = AvailablePortFinder.find();
 
     @ParameterizedTest
     @ValueSource(strings = { "direct:start", "direct:selfsigned", /*"direct:clientauth",*/ "direct:ciphersuites" })
@@ -200,68 +209,74 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             @Override
             public void configure() {
 
-                fromF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters", PORT)
+                fromF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters",
+                        PORT.getPort())
                         .transform(body().prepend("Hello "));
 
                 fromF(getProtocol()
                       + "://localhost:%d/TestResource?alias=selfsigned&sslContextParameters=#selfSignedServiceSSLContextParameters",
-                        PORT2)
+                        PORT2.getPort())
                         .transform(body().prepend("Hello "));
 
                 fromF(getProtocol()
                       + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
-                        PORT4)
+                        PORT4.getPort())
                         .transform(body().prepend("Hello "));
 
                 from("direct:start")
                         .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters",
-                                PORT)
+                                PORT.getPort())
                         .to("mock:result");
 
-                from("direct:notruststore").toF(getProtocol() + "://localhost:%d/TestResource", PORT).to("mock:result");
+                from("direct:notruststore").toF(getProtocol() + "://localhost:%d/TestResource", PORT.getPort())
+                        .to("mock:result");
 
                 from("direct:failedtrust")
                         .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters2",
-                                PORT)
+                                PORT.getPort())
                         .to("mock:result");
 
                 from("direct:selfsigned")
                         .toF(getProtocol()
-                             + "://localhost:%d/TestResource?sslContextParameters=#selfSignedClientSSLContextParameters", PORT2)
+                             + "://localhost:%d/TestResource?sslContextParameters=#selfSignedClientSSLContextParameters",
+                                PORT2.getPort())
                         .to("mock:result");
 
                 from("direct:clientauth")
                         .toF(getProtocol()
-                             + "://localhost:%d/TestResource?sslContextParameters=#clientAuthClientSSLContextParameters", PORT3)
+                             + "://localhost:%d/TestResource?sslContextParameters=#clientAuthClientSSLContextParameters",
+                                PORT3.getPort())
                         .to("mock:result");
 
                 from("direct:failedclientauth")
                         .toF(getProtocol()
                              + "://localhost:%d/TestResource?sslContextParameters=#clientAuthClientSSLContextParameters2",
-                                PORT3)
+                                PORT3.getPort())
                         .to("mock:result");
 
                 from("direct:ciphersuites")
                         .toF(getProtocol()
                              + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
-                                PORT4)
+                                PORT4.getPort())
                         .to("mock:result");
 
                 if (isRPKSupported()) {
-                    fromF(getProtocol() + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey", PORT5)
+                    fromF(getProtocol() + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey",
+                            PORT5.getPort())
                             .transform(body().prepend("Hello "));
 
                     fromF(getProtocol()
                           + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=NEEDED&advancedCertificateVerifier=#advancedCertificateVerifier",
-                            PORT6).transform(body().prepend("Hello "));
+                            PORT6.getPort()).transform(body().prepend("Hello "));
 
                     from("direct:rpk")
                             .toF(getProtocol()
                                  + "://localhost:%d/TestResource?advancedCertificateVerifier=#advancedCertificateVerifier",
-                                    PORT5)
+                                    PORT5.getPort())
                             .to("mock:result");
 
-                    from("direct:rpknotruststore").toF(getProtocol() + "://localhost:%d/TestResource", PORT5).to("mock:result");
+                    from("direct:rpknotruststore").toF(getProtocol() + "://localhost:%d/TestResource", PORT5.getPort())
+                            .to("mock:result");
 
                     //                    from("direct:rpkfailedtrust")
                     //                            .toF(getProtocol()
@@ -272,33 +287,34 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                     from("direct:rpkclientauth")
                             .toF(getProtocol()
                                  + "://localhost:%d/TestResource?advancedCertificateVerifier=#advancedCertificateVerifier&privateKey=#privateKey&publicKey=#publicKey",
-                                    PORT6)
+                                    PORT6.getPort())
                             .to("mock:result");
                 }
 
                 if (isPSKSupported()) {
-                    fromF(getProtocol() + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore", PORT7)
+                    fromF(getProtocol() + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore", PORT7.getPort())
                             .transform(body().prepend("Hello "));
 
                     fromF(getProtocol()
                           + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&advancedPskStore=#advancedPskStore",
-                            PORT8)
+                            PORT8.getPort())
                             .transform(body().prepend("Hello "));
 
                     from("direct:psk")
-                            .toF(getProtocol() + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore", PORT7)
+                            .toF(getProtocol() + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore",
+                                    PORT7.getPort())
                             .to("mock:result");
 
                     from("direct:pskciphersuite")
                             .toF(getProtocol()
                                  + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256",
-                                    PORT7)
+                                    PORT7.getPort())
                             .to("mock:result");
 
                     from("direct:pskx509")
                             .toF(getProtocol()
                                  + "://localhost:%d/TestResource?advancedPskStore=#advancedPskStore&sslContextParameters=#clientSSLContextParameters",
-                                    PORT8)
+                                    PORT8.getPort())
                             .to("mock:result");
                 }
 

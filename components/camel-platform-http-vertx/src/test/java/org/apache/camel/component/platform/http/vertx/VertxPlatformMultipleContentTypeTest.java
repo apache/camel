@@ -30,10 +30,14 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformMultipleContentTypeTest {
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     public static SSLContextParameters serverSSLParameters;
     public static SSLContextParameters clientSSLParameters;
 
@@ -179,16 +183,15 @@ public class VertxPlatformMultipleContentTypeTest {
         }
     }
 
-    static CamelContext createCamelContext() throws Exception {
+    CamelContext createCamelContext() throws Exception {
         return createCamelContext(null);
     }
 
-    private static CamelContext createCamelContext(ServerConfigurationCustomizer customizer) throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+    private CamelContext createCamelContext(ServerConfigurationCustomizer customizer) throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(port);
+        conf.setBindPort(port.getPort());
 
-        RestAssured.port = port;
+        RestAssured.port = port.getPort();
 
         if (customizer != null) {
             customizer.customize(conf);

@@ -26,10 +26,14 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VertxPlatformHttpSharedVertxTest {
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     private static final Vertx vertx = Vertx.vertx();
 
     @AfterAll
@@ -43,7 +47,7 @@ class VertxPlatformHttpSharedVertxTest {
     void sharedVertxInstanceNotClosed() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
-            configuration.setBindPort(AvailablePortFinder.getNextAvailable());
+            configuration.setBindPort(port.getPort());
 
             context.getRegistry().bind("vertx", vertx);
             context.addService(new VertxPlatformHttpServer(configuration));

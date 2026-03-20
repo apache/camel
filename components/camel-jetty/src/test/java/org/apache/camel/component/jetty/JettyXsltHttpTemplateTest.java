@@ -23,20 +23,22 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyXsltHttpTemplateTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     void testXsltHttpTemplate() throws Exception {
         // give Jetty a bit of time to startup and be ready
         Awaitility.await().atMost(1, TimeUnit.SECONDS).until(() -> context.isStarted());
 
-        String xml = template.requestBody("xslt:http://0.0.0.0:" + port + "/myxslt",
+        String xml = template.requestBody("xslt:http://0.0.0.0:" + port.getPort() + "/myxslt",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>", String.class);
 
         assertNotNull(xml, "The transformed XML should not be null");
@@ -49,12 +51,10 @@ public class JettyXsltHttpTemplateTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
-
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jetty:http://0.0.0.0:" + port + "/myxslt")
+                from("jetty:http://0.0.0.0:" + port.getPort() + "/myxslt")
                         .pollEnrich(
                                 "file://src/test/resources/org/apache/camel/component/jetty/?fileName=transform.xsl&noop=true&readLock=none",
                                 2000)

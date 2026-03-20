@@ -20,6 +20,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,22 +28,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringFailoverRoundRobinTest extends CamelSpringTestSupport {
 
-    private static int port1 = AvailablePortFinder.getNextAvailable();
-    private static int port2 = AvailablePortFinder.getNextAvailable();
-    private static int port3 = AvailablePortFinder.getNextAvailable();
-    private static int port4 = AvailablePortFinder.getNextAvailable();
-
-    static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts
-        System.setProperty("JettySpringFailoverRoundRobinTest.port1", Integer.toString(port1));
-        System.setProperty("JettySpringFailoverRoundRobinTest.port2", Integer.toString(port2));
-        System.setProperty("JettySpringFailoverRoundRobinTest.port3", Integer.toString(port3));
-        System.setProperty("JettySpringFailoverRoundRobinTest.port4", Integer.toString(port4));
-    }
+    @RegisterExtension
+    AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port3 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port4 = AvailablePortFinder.find();
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts
+        System.setProperty("JettySpringFailoverRoundRobinTest.port1", Integer.toString(port1.getPort()));
+        System.setProperty("JettySpringFailoverRoundRobinTest.port2", Integer.toString(port2.getPort()));
+        System.setProperty("JettySpringFailoverRoundRobinTest.port3", Integer.toString(port3.getPort()));
+        System.setProperty("JettySpringFailoverRoundRobinTest.port4", Integer.toString(port4.getPort()));
         return new ClassPathXmlApplicationContext("/org/apache/camel/component/jetty/JettySpringFailoverRoundRobinTest.xml");
     }
 

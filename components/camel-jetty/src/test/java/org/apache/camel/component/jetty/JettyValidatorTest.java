@@ -23,20 +23,22 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyValidatorTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     void testValidRequest() {
         InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
         assertNotNull(inputStream, "The inputStream should not be null");
 
-        String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
+        String response = template.requestBody("http://localhost:" + port.getPort() + "/test", inputStream, String.class);
 
         assertEquals("<ok/>", response, "The response should be ok");
     }
@@ -46,17 +48,15 @@ public class JettyValidatorTest extends CamelTestSupport {
         InputStream inputStream = this.getClass().getResourceAsStream("InvalidRequest.xml");
         assertNotNull(inputStream, "The inputStream should not be null");
 
-        String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
+        String response = template.requestBody("http://localhost:" + port.getPort() + "/test", inputStream, String.class);
         assertEquals("<error/>", response, "The response should be error");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
-
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:" + port + "/test")
+                from("jetty:http://localhost:" + port.getPort() + "/test")
                         .convertBodyTo(String.class)
                         .to("log:in")
                         .doTry()

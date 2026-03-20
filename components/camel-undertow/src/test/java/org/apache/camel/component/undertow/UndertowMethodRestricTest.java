@@ -25,17 +25,17 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowMethodRestricTest extends BaseUndertowTest {
 
-    private static String url;
+    private String url;
 
-    @BeforeAll
-    public static void init() {
+    @BeforeEach
+    public void init() {
         url = "http://localhost:" + getPort() + "/methodRestrict";
     }
 
