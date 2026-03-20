@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class VertxWebsocketOriginTest extends VertxWebSocketTestSupport {
 
-    private static final int PORT2 = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT2 = AvailablePortFinder.find();
 
     @Test
     public void testValidOrigin() throws InterruptedException {
@@ -45,7 +47,7 @@ public class VertxWebsocketOriginTest extends VertxWebSocketTestSupport {
     @Test
     public void testInvalidOrigin() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
-            template.sendBody("vertx-websocket:localhost:" + PORT2 + "/test", "world");
+            template.sendBody("vertx-websocket:localhost:" + PORT2.getPort() + "/test", "world");
         });
 
         UpgradeRejectedException upgradeRejectedException = unwrapException(e);
@@ -55,10 +57,10 @@ public class VertxWebsocketOriginTest extends VertxWebSocketTestSupport {
 
     @Test
     public void testCustomOrigin() throws InterruptedException {
-        String originUrl = "http://foohost:" + PORT2;
+        String originUrl = "http://foohost:" + PORT2.getPort();
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedBodiesReceived("Hello world");
-        template.sendBody("vertx-websocket:localhost:" + PORT2 + "/test?originHeaderUrl=" + originUrl, "world");
+        template.sendBody("vertx-websocket:localhost:" + PORT2.getPort() + "/test?originHeaderUrl=" + originUrl, "world");
         mockEndpoint.assertIsSatisfied();
     }
 
@@ -66,7 +68,7 @@ public class VertxWebsocketOriginTest extends VertxWebSocketTestSupport {
     public void testOriginDisabled() throws InterruptedException {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedBodiesReceived("Hello world");
-        template.sendBody("vertx-websocket:localhost:" + PORT2 + "/test?allowOriginHeader=false", "world");
+        template.sendBody("vertx-websocket:localhost:" + PORT2.getPort() + "/test?allowOriginHeader=false", "world");
         mockEndpoint.assertIsSatisfied();
     }
 
@@ -86,11 +88,11 @@ public class VertxWebsocketOriginTest extends VertxWebSocketTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test?allowedOriginPattern=.*localhost.*", port)
+                fromF("vertx-websocket:localhost:%d/test?allowedOriginPattern=.*localhost.*", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
 
-                fromF("vertx-websocket:localhost:%d/test?allowedOriginPattern=.*foohost.*", PORT2)
+                fromF("vertx-websocket:localhost:%d/test?allowedOriginPattern=.*foohost.*", PORT2.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
             }

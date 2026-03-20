@@ -26,12 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 class VertxHttpBridgeEndpointTest extends VertxHttpTestSupport {
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
     @Test
     void bridgeEndpointWithQueryStringDoesNotDuplicateHeaders() throws Exception {
@@ -89,15 +91,15 @@ class VertxHttpBridgeEndpointTest extends VertxHttpTestSupport {
             @Override
             public void configure() throws Exception {
                 from(getTestServerUri() + "/upstream")
-                        .toF("vertx-http:http://localhost:%d/downstream?bridgeEndpoint=true", PORT);
+                        .toF("vertx-http:http://localhost:%d/downstream?bridgeEndpoint=true", PORT.getPort());
 
                 from(getTestServerUri() + "/upstream/prefix?matchOnUriPrefix=true")
-                        .toF("vertx-http:http://localhost:%d/downstream?bridgeEndpoint=true", PORT);
+                        .toF("vertx-http:http://localhost:%d/downstream?bridgeEndpoint=true", PORT.getPort());
 
-                fromF("undertow:http://localhost:%d/downstream", PORT)
+                fromF("undertow:http://localhost:%d/downstream", PORT.getPort())
                         .to("mock:result");
 
-                fromF("undertow:http://localhost:%d/downstream/test", PORT)
+                fromF("undertow:http://localhost:%d/downstream/test", PORT.getPort())
                         .to("mock:result");
             }
         };
