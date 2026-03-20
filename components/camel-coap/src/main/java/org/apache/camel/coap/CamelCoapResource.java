@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Message;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -99,13 +100,22 @@ final class CamelCoapResource extends CoapResource {
             camelExchange = consumer.createExchange(false);
             consumer.createUoW(camelExchange);
 
+            HeaderFilterStrategy strategy = consumer.getCoapEndpoint().getHeaderFilterStrategy();
             OptionSet options = exchange.getRequest().getOptions();
             for (String s : options.getUriQuery()) {
                 int i = s.indexOf('=');
+                String name;
+                String value;
                 if (i == -1) {
-                    camelExchange.getIn().setHeader(s, "");
+                    name = s;
+                    value = "";
                 } else {
-                    camelExchange.getIn().setHeader(s.substring(0, i), s.substring(i + 1));
+                    name = s.substring(0, i);
+                    value = s.substring(i + 1);
+                }
+                if (strategy == null
+                        || !strategy.applyFilterToExternalHeaders(name, value, camelExchange)) {
+                    camelExchange.getIn().setHeader(name, value);
                 }
             }
 
