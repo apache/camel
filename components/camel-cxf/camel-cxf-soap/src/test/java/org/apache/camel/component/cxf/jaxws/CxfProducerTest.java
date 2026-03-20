@@ -74,7 +74,9 @@ public class CxfProducerTest {
 
     protected String getWrongServerAddress() {
         // Avoiding the test error on camel-cxf module
-        return "http://localhost:" + AvailablePortFinder.getNextAvailable() + "/" + getClass().getSimpleName() + "/test";
+        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
+            return "http://localhost:" + p.getPort() + "/" + getClass().getSimpleName() + "/test";
+        }
     }
 
     @BeforeEach

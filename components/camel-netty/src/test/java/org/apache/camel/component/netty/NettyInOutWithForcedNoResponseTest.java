@@ -47,7 +47,7 @@ public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}")
                         .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
-                        .otherwise().transform(constant((Object) null));
+                        .otherwise().transform(constant(null));
             }
         };
     }

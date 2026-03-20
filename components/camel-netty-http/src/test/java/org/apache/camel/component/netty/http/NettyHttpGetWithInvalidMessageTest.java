@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,7 +41,8 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
             another: value
              Host: localhost
             """;
-    private int port1;
+    @RegisterExtension
+    AvailablePortFinder.Port port1 = AvailablePortFinder.find();
 
     @BindToRegistry("string-decoder")
     private final StringDecoder stringDecoder = new StringDecoder();
@@ -68,12 +70,12 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
 
     @Test
     public void testNettyHttpServer() {
-        invokeService(port1);
+        invokeService(port1.getPort());
     }
 
     //@Test
     public void testJettyHttpServer() {
-        invokeService(port1);
+        invokeService(port1.getPort());
     }
 
     private void invokeService(int port) {
@@ -97,10 +99,8 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                port1 = AvailablePortFinder.getNextAvailable();
-
                 // set up a netty http proxy
-                from("netty-http:http://localhost:" + port1 + "/test")
+                from("netty-http:http://localhost:" + port1.getPort() + "/test")
                         .transform().simple("Bye ${header.user}.");
 
             }

@@ -29,8 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.codec.ObjectDecoder;
 import org.apache.camel.component.netty.codec.ObjectEncoder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,12 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 public class ObjectSerializationTest extends BaseNettyTest {
 
-    private static volatile int port2;
-
-    @BeforeAll
-    public static void initPort2() {
-        port2 = AvailablePortFinder.getNextAvailable();
-    }
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
 
     @Test
     public void testObjectSerializationFailureByDefault() {
@@ -59,7 +55,8 @@ public class ObjectSerializationTest extends BaseNettyTest {
     public void testObjectSerializationAllowedViaDecoder() {
         Date date = new Date();
         Date receivedDate = template
-                .requestBody("netty:tcp://localhost:{{port2}}?sync=true&encoders=#encoder&decoders=#decoder", date, Date.class);
+                .requestBody("netty:tcp://localhost:{{port2}}?sync=true&encoders=#encoder&decoders=#decoder", date,
+                        Date.class);
         assertEquals(date, receivedDate);
     }
 
@@ -69,7 +66,7 @@ public class ObjectSerializationTest extends BaseNettyTest {
 
         Properties prop = new Properties();
         prop.setProperty("port", Integer.toString(getPort()));
-        prop.setProperty("port2", Integer.toString(port2));
+        prop.setProperty("port2", Integer.toString(port2.getPort()));
 
         return prop;
     }
