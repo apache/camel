@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.mina;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.support.jsse.ClientAuthentication;
@@ -36,11 +38,13 @@ public abstract class BaseMinaTest extends CamelTestSupport {
 
     @RegisterExtension
     AvailablePortFinder.Port port = AvailablePortFinder.find();
+    // Keep additional Port references alive to prevent port reuse (TOCTOU prevention)
+    private final List<AvailablePortFinder.Port> additionalPorts = new ArrayList<>();
 
     protected int getNextPort() {
-        try (AvailablePortFinder.Port p = AvailablePortFinder.find()) {
-            return p.getPort();
-        }
+        AvailablePortFinder.Port p = AvailablePortFinder.find();
+        additionalPorts.add(p);
+        return p.getPort();
     }
 
     protected int getPort() {

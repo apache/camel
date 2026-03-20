@@ -55,6 +55,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class ServerAnnotationProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ServerAnnotationProcessor.class);
+    // Keep Port references alive to prevent port reuse (TOCTOU prevention)
+    private static final List<org.apache.camel.test.AvailablePortFinder.Port> RESERVED_PORTS = new ArrayList<>();
 
     private ServerAnnotationProcessor() {
     }
@@ -336,7 +338,9 @@ public final class ServerAnnotationProcessor {
     }
 
     private static int getFreePort() {
-        return org.apache.camel.test.AvailablePortFinder.find().getPort();
+        org.apache.camel.test.AvailablePortFinder.Port port = org.apache.camel.test.AvailablePortFinder.find();
+        RESERVED_PORTS.add(port);
+        return port.getPort();
     }
 
 }

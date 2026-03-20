@@ -22,12 +22,11 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.AvailablePortFinder;
 
 public class KnativeHttpsServer extends KnativeHttpServer {
 
     public KnativeHttpsServer(CamelContext context) {
-        super(context, "localhost", AvailablePortFinder.find().getPort(), "/", null);
+        super(context);
     }
 
     public KnativeHttpsServer(CamelContext context, int port) {
@@ -39,7 +38,7 @@ public class KnativeHttpsServer extends KnativeHttpServer {
     }
 
     public KnativeHttpsServer(CamelContext context, Handler<RoutingContext> handler) {
-        super(context, "localhost", AvailablePortFinder.find().getPort(), "/", handler);
+        super(context, handler);
     }
 
     public KnativeHttpsServer(CamelContext context, String host, int port, String path) {
@@ -47,11 +46,11 @@ public class KnativeHttpsServer extends KnativeHttpServer {
     }
 
     public KnativeHttpsServer(CamelContext context, String host, String path) {
-        super(context, host, AvailablePortFinder.find().getPort(), path, null);
+        super(context, host, path);
     }
 
     public KnativeHttpsServer(CamelContext context, String host, String path, Handler<RoutingContext> handler) {
-        super(context, host, AvailablePortFinder.find().getPort(), path, handler);
+        super(context, host, path, handler);
     }
 
     @Override

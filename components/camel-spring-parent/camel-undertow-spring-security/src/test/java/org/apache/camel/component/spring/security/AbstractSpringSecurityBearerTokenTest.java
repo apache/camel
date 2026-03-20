@@ -34,7 +34,6 @@ import org.apache.camel.component.spring.security.keycloak.KeycloakUsernameSubCl
 import org.apache.camel.component.undertow.UndertowComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -47,10 +46,6 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
 
     public MockFilter getMockFilter() {
         return mockFilter;
-    }
-
-    @BeforeAll
-    public static void initPort() {
     }
 
     protected static int getPort() {
