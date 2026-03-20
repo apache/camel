@@ -26,6 +26,7 @@ import java.util.List;
 public class BatchResult {
 
     private final String jobName;
+    private final String jobInstanceId;
     private final int totalItems;
     private final int successCount;
     private final int failureCount;
@@ -33,9 +34,10 @@ public class BatchResult {
     private final boolean aborted;
     private final List<BatchFailure> failures;
 
-    public BatchResult(String jobName, int totalItems, int successCount, int failureCount,
+    public BatchResult(String jobName, String jobInstanceId, int totalItems, int successCount, int failureCount,
                        long duration, boolean aborted, List<BatchFailure> failures) {
         this.jobName = jobName;
+        this.jobInstanceId = jobInstanceId;
         this.totalItems = totalItems;
         this.successCount = successCount;
         this.failureCount = failureCount;
@@ -46,6 +48,10 @@ public class BatchResult {
 
     public String getJobName() {
         return jobName;
+    }
+
+    public String getJobInstanceId() {
+        return jobInstanceId;
     }
 
     public int getTotalItems() {
@@ -75,6 +81,7 @@ public class BatchResult {
     @Override
     public String toString() {
         return "BatchResult[job=" + jobName
+               + ", instanceId=" + jobInstanceId
                + ", total=" + totalItems
                + ", success=" + successCount
                + ", failed=" + failureCount
@@ -90,11 +97,13 @@ public class BatchResult {
         private final int index;
         private final Object item;
         private final Throwable cause;
+        private final int stepIndex;
 
-        public BatchFailure(int index, Object item, Throwable cause) {
+        public BatchFailure(int index, Object item, Throwable cause, int stepIndex) {
             this.index = index;
             this.item = item;
             this.cause = cause;
+            this.stepIndex = stepIndex;
         }
 
         public int getIndex() {
@@ -109,9 +118,13 @@ public class BatchResult {
             return cause;
         }
 
+        public int getStepIndex() {
+            return stepIndex;
+        }
+
         @Override
         public String toString() {
-            return "BatchFailure[index=" + index + ", cause=" + cause.getMessage() + "]";
+            return "BatchFailure[index=" + index + ", step=" + stepIndex + ", cause=" + cause.getMessage() + "]";
         }
     }
 }

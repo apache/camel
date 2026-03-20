@@ -14,8 +14,8 @@
 *{component-header}*
 
 The Batch component provides structured batch processing for collections of items.
-It handles chunking, error thresholds, watermark-based resume, and progress reporting,
-replacing the need for manual split + aggregate + error handling assembly.
+It handles chunking, error thresholds, multi-step pipelines, watermark-based resume,
+and progress reporting, replacing the need for manual split + aggregate + error handling assembly.
 
 This fills a gap similar to MuleSoft's `<batch:job>` which Camel users previously achieved by
 manually combining the Splitter EIP, Aggregator EIP, and custom error handling logic.
@@ -62,14 +62,82 @@ from("direct:processItem")
 ----
 ====
 
-=== Error Threshold
+== Multi-Step Pipelines
+
+The `steps` option enables multi-step batch processing where items flow through multiple
+processing steps sequentially. This is analogous to MuleSoft's `<batch:step>` elements.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("batch:etlJob?steps=direct:validate,direct:transform,direct:load&acceptPolicy=NO_FAILURES");
+
+from("direct:validate")
+    .process(exchange -> {
+        // Validate the item — throw exception to mark as failed
+    });
+
+from("direct:transform")
+    .process(exchange -> {
+        // Transform — only items that passed validation reach here (NO_FAILURES)
+    });
+
+from("direct:load")
+    .to("jpa:MyEntity");
+----
+====
+
+=== Accept Policy
+
+The `acceptPolicy` controls which items are eligible for processing in subsequent steps
+(after the first step):
+
+* `ALL` (default) — process all items regardless of prior step results
+* `NO_FAILURES` — skip items that failed in any prior step
+* `FAILURES_ONLY` — only process items that failed (useful for error recovery steps)
+
+==== Error Recovery Pattern
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("batch:importJob?steps=direct:primary,direct:recovery&acceptPolicy=FAILURES_ONLY");
+
+from("direct:primary")
+    .to("http:primary-api");
+
+from("direct:recovery")
+    .to("http:fallback-api");
+----
+====
+
+Items that fail in the primary step are retried via the recovery step.
+If recovery succeeds, the item is marked as successful.
+
+== Error Threshold
 
 The `errorThreshold` option controls when a batch job should be aborted based on the ratio of failures.
 The value is a fraction between 0.0 and 1.0:
 
-* `1.0` (default) -- never abort, process all items regardless of failures
-* `0.1` -- abort if more than 10% of items fail
-* `0.0` -- abort on the first failure
+* `1.0` (default) — never abort, process all items regardless of failures
+* `0.1` — abort if more than 10% of items fail
+* `0.0` — abort on the first failure
+
+The `maxFailedRecords` option provides an absolute count alternative:
+
+* `-1` (default) — disabled, use `errorThreshold` instead
+* `0` — abort on the first failure
+* `10` — abort after more than 10 failures
+
+Both options can be used together — the batch aborts when either threshold is exceeded.
 
 [tabs]
 ====
@@ -79,7 +147,7 @@ Java::
 ----
 from("direct:start")
     .doTry()
-        .to("batch:importJob?chunkSize=50&processorRef=direct:import&errorThreshold=0.1")
+        .to("batch:importJob?processorRef=direct:import&errorThreshold=0.1&maxFailedRecords=50")
     .doCatch(BatchException.class)
         .log("Batch aborted: ${exception.message}")
     .end();
@@ -89,7 +157,33 @@ from("direct:start")
 When the threshold is exceeded, a `BatchException` is thrown containing the `BatchResult` with
 full statistics about the batch execution.
 
-=== Watermark Tracking
+== On Complete Callback
+
+The `onCompleteRef` option specifies an endpoint called after every batch execution,
+regardless of success or failure. The callback receives the `BatchResult` as the exchange body.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("batch:importJob?processorRef=direct:import&onCompleteRef=direct:notify");
+
+from("direct:notify")
+    .choice()
+        .when(simple("${body.failureCount} > 0"))
+            .to("slack:#alerts")
+        .otherwise()
+            .log("Batch completed successfully: ${body}")
+    .end();
+----
+====
+
+== Watermark Tracking
+
+=== Index-Based Watermarks
 
 Watermark tracking enables resume-from-last-position for batch jobs. By providing a watermark store
 (any `Map<String, String>` bean), the component tracks how many items have been processed and
@@ -103,13 +197,40 @@ Java::
 ----
 from("timer:poll?period=60000")
     .bean("myDataSource", "fetchAllRecords")
-    .to("batch:syncJob?chunkSize=100&processorRef=direct:sync&watermarkStore=#myWatermarkStore");
+    .to("batch:syncJob?processorRef=direct:sync&watermarkStore=#myWatermarkStore");
 ----
 ====
 
-The watermark key defaults to the job name but can be customized with `watermarkKey`.
+=== Value-Based Watermarks
 
-=== Parallel Processing
+For datasets where items may change between runs, use `watermarkExpression` to track a
+value from each processed item (e.g., a timestamp or sequence number).
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:poll?period=60000")
+    .bean("myDataSource", "fetchRecordsSince(${header.CamelBatchWatermarkValue})")
+    .to("batch:syncJob?processorRef=direct:sync"
+        + "&watermarkStore=#myStore&watermarkExpression=${body.lastModified}");
+----
+====
+
+When `watermarkExpression` is set:
+
+* The current watermark value is set as a `CamelBatchWatermarkValue` header before processing
+* Index-based skipping is disabled — filtering should be done upstream
+* After processing, the expression is evaluated on the last successful item and stored
+
+== Batch Job Instance ID
+
+Each batch execution is assigned a unique UUID, available as the `CamelBatchJobInstanceId` header
+on both the result exchange and each item exchange. This enables tracking concurrent batch executions.
+
+== Parallel Processing
 
 Enable `parallelProcessing` to process items within each chunk concurrently:
 
@@ -120,13 +241,13 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .to("batch:fastJob?chunkSize=50&processorRef=direct:process&parallelProcessing=true");
+    .to("batch:fastJob?processorRef=direct:process&parallelProcessing=true");
 ----
 ====
 
-=== Aggregation Strategy
+== Aggregation Strategy
 
-An optional `AggregationStrategy` can be provided to collect results from processed items:
+An optional `AggregationStrategy` can collect results from successfully processed items:
 
 [tabs]
 ====
@@ -135,7 +256,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .to("batch:transformJob?chunkSize=100&processorRef=direct:transform&aggregationStrategy=#myStrategy");
+    .to("batch:transformJob?processorRef=direct:transform&aggregationStrategy=#myStrategy");
 ----
 ====
 
@@ -144,12 +265,14 @@ from("direct:start")
 After processing, the exchange body is set to a `BatchResult` object (unless an aggregation strategy
 is configured) containing:
 
-* `totalItems` -- total number of items processed
-* `successCount` -- number of successfully processed items
-* `failureCount` -- number of failed items
-* `duration` -- processing time in milliseconds
-* `aborted` -- whether the batch was aborted
-* `failures` -- list of `BatchFailure` objects with index, item, and cause
+* `jobName` — the batch job name
+* `jobInstanceId` — unique UUID for this execution
+* `totalItems` — total number of items processed
+* `successCount` — number of successfully processed items
+* `failureCount` — number of failed items
+* `duration` — processing time in milliseconds
+* `aborted` — whether the batch was aborted
+* `failures` — list of `BatchFailure` objects with index, item, cause, and stepIndex
 
 == Output Headers
 
@@ -157,11 +280,13 @@ is configured) containing:
 |===
 | Header | Type | Description
 | CamelBatchJobName | String | The batch job name
+| CamelBatchJobInstanceId | String | Unique identifier for this batch execution
 | CamelBatchTotal | int | Total items processed
 | CamelBatchSuccess | int | Successfully processed items
 | CamelBatchFailed | int | Failed items
 | CamelBatchDuration | long | Total processing time in milliseconds
 | CamelBatchAborted | boolean | Whether the batch was aborted due to error threshold
+| CamelBatchWatermarkValue | String | Current watermark value (when using value-based watermarks)
 |===
 
 == Item Exchange Headers
@@ -172,7 +297,9 @@ Each item exchange sent to the processor endpoint receives these headers:
 |===
 | Header | Type | Description
 | CamelBatchJobName | String | The batch job name
+| CamelBatchJobInstanceId | String | Unique identifier for this batch execution
 | CamelBatchIndex | int | Zero-based index of this item
 | CamelBatchSize | int | Total number of items in the batch
 | CamelBatchChunkIndex | int | Index of the current chunk
+| CamelBatchStepIndex | int | Index of the current step in a multi-step batch
 |===

@@ -25,6 +25,8 @@ public final class BatchConstants {
 
     @Metadata(description = "The batch job name", javaType = "String")
     public static final String BATCH_JOB_NAME = "CamelBatchJobName";
+    @Metadata(description = "Unique identifier for this batch job execution", javaType = "String")
+    public static final String BATCH_JOB_INSTANCE_ID = "CamelBatchJobInstanceId";
     @Metadata(description = "Total items processed", javaType = "int")
     public static final String BATCH_TOTAL = "CamelBatchTotal";
     @Metadata(description = "Successfully processed items", javaType = "int")
@@ -41,6 +43,10 @@ public final class BatchConstants {
     public static final String BATCH_SIZE = "CamelBatchSize";
     @Metadata(description = "Index of the current chunk", javaType = "int")
     public static final String BATCH_CHUNK_INDEX = "CamelBatchChunkIndex";
+    @Metadata(description = "Index of the current step in a multi-step batch", javaType = "int")
+    public static final String BATCH_STEP_INDEX = "CamelBatchStepIndex";
+    @Metadata(description = "The current watermark value from the watermark store", javaType = "String")
+    public static final String BATCH_WATERMARK_VALUE = "CamelBatchWatermarkValue";
 
     private BatchConstants() {
     }

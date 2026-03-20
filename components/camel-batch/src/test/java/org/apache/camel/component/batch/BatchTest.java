@@ -55,6 +55,7 @@ class BatchTest extends CamelTestSupport {
         assertEquals(250, batchResult.getSuccessCount());
         assertEquals(0, batchResult.getFailureCount());
         assertFalse(batchResult.isAborted());
+        assertNotNull(batchResult.getJobInstanceId());
 
         // Verify headers
         assertEquals("testJob", result.getIn().getHeader(BatchConstants.BATCH_JOB_NAME, String.class));
@@ -63,6 +64,7 @@ class BatchTest extends CamelTestSupport {
         assertEquals(0, result.getIn().getHeader(BatchConstants.BATCH_FAILED, Integer.class));
         assertFalse(result.getIn().getHeader(BatchConstants.BATCH_ABORTED, Boolean.class));
         assertNotNull(result.getIn().getHeader(BatchConstants.BATCH_DURATION, Long.class));
+        assertNotNull(result.getIn().getHeader(BatchConstants.BATCH_JOB_INSTANCE_ID, String.class));
     }
 
     @Test
@@ -82,6 +84,7 @@ class BatchTest extends CamelTestSupport {
             assertEquals(5, itemExchange.getIn().getHeader(BatchConstants.BATCH_SIZE));
             assertNotNull(itemExchange.getIn().getHeader(BatchConstants.BATCH_INDEX));
             assertNotNull(itemExchange.getIn().getHeader(BatchConstants.BATCH_CHUNK_INDEX));
+            assertNotNull(itemExchange.getIn().getHeader(BatchConstants.BATCH_JOB_INSTANCE_ID));
         }
     }
 

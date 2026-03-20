@@ -23,6 +23,8 @@ public class BatchEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BatchEndpoint target = (BatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acceptpolicy":
+        case "acceptPolicy": target.setAcceptPolicy(property(camelContext, org.apache.camel.component.batch.BatchAcceptPolicy.class, value)); return true;
         case "aggregationstrategy":
         case "aggregationStrategy": target.setAggregationStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "chunksize":
@@ -31,10 +33,17 @@ public class BatchEndpointConfigurer extends PropertyConfigurerSupport implement
         case "errorThreshold": target.setErrorThreshold(property(camelContext, double.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxfailedrecords":
+        case "maxFailedRecords": target.setMaxFailedRecords(property(camelContext, int.class, value)); return true;
+        case "oncompleteref":
+        case "onCompleteRef": target.setOnCompleteRef(property(camelContext, java.lang.String.class, value)); return true;
         case "parallelprocessing":
         case "parallelProcessing": target.setParallelProcessing(property(camelContext, boolean.class, value)); return true;
         case "processorref":
         case "processorRef": target.setProcessorRef(property(camelContext, java.lang.String.class, value)); return true;
+        case "steps": target.setSteps(property(camelContext, java.lang.String.class, value)); return true;
+        case "watermarkexpression":
+        case "watermarkExpression": target.setWatermarkExpression(property(camelContext, java.lang.String.class, value)); return true;
         case "watermarkkey":
         case "watermarkKey": target.setWatermarkKey(property(camelContext, java.lang.String.class, value)); return true;
         case "watermarkstore":
@@ -46,6 +55,8 @@ public class BatchEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acceptpolicy":
+        case "acceptPolicy": return org.apache.camel.component.batch.BatchAcceptPolicy.class;
         case "aggregationstrategy":
         case "aggregationStrategy": return java.lang.String.class;
         case "chunksize":
@@ -54,10 +65,17 @@ public class BatchEndpointConfigurer extends PropertyConfigurerSupport implement
         case "errorThreshold": return double.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxfailedrecords":
+        case "maxFailedRecords": return int.class;
+        case "oncompleteref":
+        case "onCompleteRef": return java.lang.String.class;
         case "parallelprocessing":
         case "parallelProcessing": return boolean.class;
         case "processorref":
         case "processorRef": return java.lang.String.class;
+        case "steps": return java.lang.String.class;
+        case "watermarkexpression":
+        case "watermarkExpression": return java.lang.String.class;
         case "watermarkkey":
         case "watermarkKey": return java.lang.String.class;
         case "watermarkstore":
@@ -70,6 +88,8 @@ public class BatchEndpointConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BatchEndpoint target = (BatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acceptpolicy":
+        case "acceptPolicy": return target.getAcceptPolicy();
         case "aggregationstrategy":
         case "aggregationStrategy": return target.getAggregationStrategy();
         case "chunksize":
@@ -78,10 +98,17 @@ public class BatchEndpointConfigurer extends PropertyConfigurerSupport implement
         case "errorThreshold": return target.getErrorThreshold();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxfailedrecords":
+        case "maxFailedRecords": return target.getMaxFailedRecords();
+        case "oncompleteref":
+        case "onCompleteRef": return target.getOnCompleteRef();
         case "parallelprocessing":
         case "parallelProcessing": return target.isParallelProcessing();
         case "processorref":
         case "processorRef": return target.getProcessorRef();
+        case "steps": return target.getSteps();
+        case "watermarkexpression":
+        case "watermarkExpression": return target.getWatermarkExpression();
         case "watermarkkey":
         case "watermarkKey": return target.getWatermarkKey();
         case "watermarkstore":

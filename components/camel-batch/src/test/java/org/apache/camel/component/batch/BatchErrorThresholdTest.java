@@ -25,7 +25,9 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BatchErrorThresholdTest extends CamelTestSupport {
@@ -44,7 +46,7 @@ class BatchErrorThresholdTest extends CamelTestSupport {
         // The batch should have been aborted due to exceeding the error threshold
         Exception exception = result.getException();
         assertNotNull(exception, "Expected BatchException to be thrown");
-        assertTrue(exception instanceof BatchException, "Expected BatchException but got: " + exception.getClass().getName());
+        assertInstanceOf(BatchException.class, exception);
 
         BatchException batchException = (BatchException) exception;
         BatchResult batchResult = batchException.getResult();
@@ -69,7 +71,7 @@ class BatchErrorThresholdTest extends CamelTestSupport {
 
         // With threshold=1.0, it should never abort
         assertNotNull(result);
-        assertEquals(null, result.getException());
+        assertNull(result.getException());
 
         BatchResult batchResult = result.getIn().getBody(BatchResult.class);
         assertNotNull(batchResult);
@@ -77,6 +79,27 @@ class BatchErrorThresholdTest extends CamelTestSupport {
         // 20 items fail (index % 5 == 0: indices 0, 5, 10, ..., 95 = 20 items)
         assertEquals(20, batchResult.getFailureCount());
         assertEquals(80, batchResult.getSuccessCount());
+    }
+
+    @Test
+    void testMaxFailedRecordsAbortsBatch() throws Exception {
+        List<Integer> items = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            items.add(i);
+        }
+
+        Exchange result = template.send("direct:maxfailed", exchange -> {
+            exchange.getIn().setBody(items);
+        });
+
+        Exception exception = result.getException();
+        assertNotNull(exception, "Expected BatchException to be thrown");
+        assertInstanceOf(BatchException.class, exception);
+
+        BatchResult batchResult = ((BatchException) exception).getResult();
+        assertTrue(batchResult.isAborted());
+        // maxFailedRecords=5, so we should have aborted after 6 failures
+        assertTrue(batchResult.getFailureCount() <= 10, "Should have aborted early, but had " + batchResult.getFailureCount());
     }
 
     @Override
@@ -98,6 +121,9 @@ class BatchErrorThresholdTest extends CamelTestSupport {
 
                 from("direct:lenient")
                         .to("batch:lenientJob?chunkSize=100&processorRef=direct:failsome&errorThreshold=1.0");
+
+                from("direct:maxfailed")
+                        .to("batch:maxFailedJob?chunkSize=100&processorRef=direct:failsome&maxFailedRecords=5");
             }
         };
     }

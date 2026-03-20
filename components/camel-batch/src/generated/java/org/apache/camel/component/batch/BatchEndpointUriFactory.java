@@ -23,14 +23,19 @@ public class BatchEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(14);
+        props.add("acceptPolicy");
         props.add("aggregationStrategy");
         props.add("chunkSize");
         props.add("errorThreshold");
         props.add("jobName");
         props.add("lazyStartProducer");
+        props.add("maxFailedRecords");
+        props.add("onCompleteRef");
         props.add("parallelProcessing");
         props.add("processorRef");
+        props.add("steps");
+        props.add("watermarkExpression");
         props.add("watermarkKey");
         props.add("watermarkStore");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

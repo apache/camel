@@ -17,33 +17,40 @@
 package org.apache.camel.component.batch;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Producer that processes collections of items in structured batches with chunking, error thresholds, and watermark
- * tracking.
+ * Producer that processes collections of items in structured batches with chunking, error thresholds, multi-step
+ * pipelines, and watermark tracking.
  */
 public class BatchProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(BatchProducer.class);
 
     private final BatchEndpoint endpoint;
-    private Processor itemProcessor;
+    private ProducerTemplate producerTemplate;
+    private List<Processor> stepProcessors;
     private AggregationStrategy aggregationStrategy;
+    private Processor onCompleteProcessor;
     private Map<String, String> watermarkStore;
+    private Expression watermarkExpr;
     private ExecutorService executorService;
 
     public BatchProducer(BatchEndpoint endpoint) {
@@ -55,11 +62,28 @@ public class BatchProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        itemProcessor = endpoint.resolveProcessor();
-        ObjectHelper.notNull(itemProcessor, "processorRef", endpoint);
+        producerTemplate = endpoint.getCamelContext().createProducerTemplate();
+
+        // Resolve step processors
+        stepProcessors = resolveStepProcessors();
+        if (stepProcessors.isEmpty()) {
+            throw new IllegalArgumentException("No step processors resolved for batch job '" + endpoint.getJobName() + "'");
+        }
 
         aggregationStrategy = endpoint.resolveAggregationStrategy();
         watermarkStore = endpoint.resolveWatermarkStore();
+
+        // Resolve watermark expression
+        if (endpoint.getWatermarkExpression() != null) {
+            watermarkExpr = endpoint.getCamelContext()
+                    .resolveLanguage("simple")
+                    .createExpression(endpoint.getWatermarkExpression());
+        }
+
+        // Resolve onComplete
+        if (endpoint.getOnCompleteRef() != null) {
+            onCompleteProcessor = resolveRef(endpoint.getOnCompleteRef());
+        }
 
         if (endpoint.isParallelProcessing()) {
             executorService = endpoint.getCamelContext().getExecutorServiceManager()
@@ -69,6 +93,10 @@ public class BatchProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
+        if (producerTemplate != null) {
+            producerTemplate.stop();
+            producerTemplate = null;
+        }
         if (executorService != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
@@ -78,113 +106,152 @@ public class BatchProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        String jobInstanceId = UUID.randomUUID().toString();
         long startTime = System.currentTimeMillis();
 
         // Extract items from exchange body
         List<Object> items = extractItems(exchange);
-        int totalItems = items.size();
 
-        // Apply watermark filtering
-        items = applyWatermarkFilter(items);
-
-        LOG.debug("Batch job '{}': processing {} items (after watermark filter) in chunks of {}",
-                endpoint.getJobName(), items.size(), endpoint.getChunkSize());
-
-        AtomicInteger successCount = new AtomicInteger();
-        AtomicInteger failureCount = new AtomicInteger();
-        List<BatchResult.BatchFailure> failures = new ArrayList<>();
-        boolean aborted = false;
-        int processedTotal = items.size();
-
-        // Split into chunks and process
-        List<List<Object>> chunks = splitIntoChunks(items, endpoint.getChunkSize());
-        Exchange aggregated = null;
-
-        for (int chunkIndex = 0; chunkIndex < chunks.size(); chunkIndex++) {
-            List<Object> chunk = chunks.get(chunkIndex);
-
-            if (endpoint.isParallelProcessing()) {
-                aborted = processChunkParallel(
-                        exchange, chunk, chunkIndex, items, successCount, failureCount, failures);
+        // Watermark handling
+        if (watermarkStore != null) {
+            String wmKey = endpoint.getEffectiveWatermarkKey();
+            String wmValue = watermarkStore.get(wmKey);
+            if (watermarkExpr != null) {
+                // Value-based: set header so upstream/caller can see current watermark
+                exchange.getIn().setHeader(BatchConstants.BATCH_WATERMARK_VALUE, wmValue);
             } else {
-                aborted = processChunkSequential(
-                        exchange, chunk, chunkIndex, items, successCount, failureCount, failures);
+                // Index-based: skip already processed items
+                items = applyWatermarkFilter(items);
+            }
+        }
+
+        int totalItems = items.size();
+        if (totalItems == 0) {
+            BatchResult result = new BatchResult(
+                    endpoint.getJobName(), jobInstanceId, 0, 0, 0, 0, false, Collections.emptyList());
+            exchange.getIn().setBody(result);
+            setResultHeaders(exchange, result, jobInstanceId);
+            fireOnComplete(exchange, result);
+            return;
+        }
+
+        LOG.debug("Batch job '{}' [{}]: processing {} items through {} step(s) in chunks of {}",
+                endpoint.getJobName(), jobInstanceId, totalItems,
+                stepProcessors.size(), endpoint.getChunkSize());
+
+        // Initialize per-item exchanges (persist across steps)
+        Exchange[] itemExchanges = new Exchange[totalItems];
+        for (int i = 0; i < totalItems; i++) {
+            itemExchanges[i] = createItemExchange(exchange, items.get(i), i, totalItems);
+            itemExchanges[i].getIn().setHeader(BatchConstants.BATCH_JOB_INSTANCE_ID, jobInstanceId);
+        }
+
+        // Track failures across steps
+        // Key: item index, Value: most recent failure for that item
+        Map<Integer, BatchResult.BatchFailure> failureMap = new ConcurrentHashMap<>();
+        boolean aborted = false;
+
+        // Process through steps
+        for (int stepIndex = 0; stepIndex < stepProcessors.size() && !aborted; stepIndex++) {
+            Processor stepProcessor = stepProcessors.get(stepIndex);
+
+            // First step always processes ALL; subsequent steps use acceptPolicy
+            BatchAcceptPolicy policy = stepIndex == 0 ? BatchAcceptPolicy.ALL : endpoint.getAcceptPolicy();
+            List<Integer> eligible = getEligibleItems(totalItems, failureMap.keySet(), policy);
+
+            if (eligible.isEmpty()) {
+                continue;
             }
 
-            // Apply aggregation strategy for the chunk
-            if (aggregationStrategy != null) {
-                for (Object item : chunk) {
-                    Exchange itemExchange = createItemExchange(exchange, item, 0, items.size(), chunkIndex);
-                    aggregated = aggregationStrategy.aggregate(aggregated, itemExchange);
+            // Split eligible indices into chunks
+            List<List<Integer>> chunks = splitIntoChunks(eligible, endpoint.getChunkSize());
+
+            for (int chunkIndex = 0; chunkIndex < chunks.size() && !aborted; chunkIndex++) {
+                List<Integer> chunk = chunks.get(chunkIndex);
+
+                if (endpoint.isParallelProcessing()) {
+                    processChunkParallel(
+                            items, itemExchanges, chunk, stepIndex, chunkIndex, stepProcessor, failureMap);
+                    aborted = isThresholdExceeded(failureMap.size(), totalItems);
+                } else {
+                    aborted = processChunkSequential(
+                            items, itemExchanges, chunk, stepIndex, chunkIndex, stepProcessor, failureMap, totalItems);
                 }
-            }
-
-            if (aborted) {
-                break;
             }
         }
 
         long duration = System.currentTimeMillis() - startTime;
+        int failureCount = failureMap.size();
+        int successCount = totalItems - failureCount;
 
         // Update watermark
-        updateWatermark(processedTotal);
+        updateWatermark(items, itemExchanges, failureMap, totalItems);
 
         // Build result
+        List<BatchResult.BatchFailure> finalFailures = new ArrayList<>(failureMap.values());
         BatchResult result = new BatchResult(
-                endpoint.getJobName(), processedTotal,
-                successCount.get(), failureCount.get(),
-                duration, aborted, failures);
+                endpoint.getJobName(), jobInstanceId, totalItems,
+                successCount, failureCount, duration, aborted, finalFailures);
 
         // Set result on exchange
-        if (aggregated != null && aggregationStrategy != null) {
-            exchange.getIn().setBody(aggregated.getIn().getBody());
+        if (aggregationStrategy != null) {
+            Exchange aggregated = null;
+            for (int i = 0; i < totalItems; i++) {
+                if (!failureMap.containsKey(i)) {
+                    aggregated = aggregationStrategy.aggregate(aggregated, itemExchanges[i]);
+                }
+            }
+            if (aggregated != null) {
+                exchange.getIn().setBody(aggregated.getIn().getBody());
+            } else {
+                exchange.getIn().setBody(result);
+            }
         } else {
             exchange.getIn().setBody(result);
         }
 
-        // Set headers
-        exchange.getIn().setHeader(BatchConstants.BATCH_JOB_NAME, endpoint.getJobName());
-        exchange.getIn().setHeader(BatchConstants.BATCH_TOTAL, processedTotal);
-        exchange.getIn().setHeader(BatchConstants.BATCH_SUCCESS, successCount.get());
-        exchange.getIn().setHeader(BatchConstants.BATCH_FAILED, failureCount.get());
-        exchange.getIn().setHeader(BatchConstants.BATCH_DURATION, duration);
-        exchange.getIn().setHeader(BatchConstants.BATCH_ABORTED, aborted);
+        setResultHeaders(exchange, result, jobInstanceId);
 
-        LOG.info("Batch job '{}' completed: {}", endpoint.getJobName(), result);
+        LOG.info("Batch job '{}' [{}] completed: {}", endpoint.getJobName(), jobInstanceId, result);
+
+        // On Complete fires before potential exception
+        fireOnComplete(exchange, result);
 
         if (aborted) {
             throw new BatchException(
-                    "Batch job '" + endpoint.getJobName() + "' aborted: error threshold "
-                                     + endpoint.getErrorThreshold() + " exceeded with "
-                                     + failureCount.get() + "/" + processedTotal + " failures",
+                    "Batch job '" + endpoint.getJobName() + "' aborted: "
+                                     + failureCount + "/" + totalItems + " failures exceeded threshold",
                     result);
         }
     }
 
     private boolean processChunkSequential(
-            Exchange exchange, List<Object> chunk, int chunkIndex,
-            List<Object> allItems, AtomicInteger successCount,
-            AtomicInteger failureCount, List<BatchResult.BatchFailure> failures) {
+            List<Object> items, Exchange[] itemExchanges, List<Integer> chunk,
+            int stepIndex, int chunkIndex, Processor stepProcessor,
+            Map<Integer, BatchResult.BatchFailure> failureMap, int totalItems) {
 
-        int baseIndex = chunkIndex * endpoint.getChunkSize();
-        for (int i = 0; i < chunk.size(); i++) {
-            int itemIndex = baseIndex + i;
-            Object item = chunk.get(i);
+        for (int idx : chunk) {
+            Exchange itemExchange = itemExchanges[idx];
+            itemExchange.getIn().setHeader(BatchConstants.BATCH_STEP_INDEX, stepIndex);
+            itemExchange.getIn().setHeader(BatchConstants.BATCH_CHUNK_INDEX, chunkIndex);
+
             try {
-                Exchange itemExchange = createItemExchange(exchange, item, itemIndex, allItems.size(), chunkIndex);
-                itemProcessor.process(itemExchange);
+                stepProcessor.process(itemExchange);
 
                 if (itemExchange.getException() != null) {
-                    throw itemExchange.getException();
+                    Exception ex = itemExchange.getException();
+                    itemExchange.setException(null); // clear for potential recovery steps
+                    throw ex;
                 }
 
-                successCount.incrementAndGet();
+                // Success — remove from failures if recovering from a prior step
+                failureMap.remove(idx);
             } catch (Exception e) {
-                failureCount.incrementAndGet();
-                failures.add(new BatchResult.BatchFailure(itemIndex, item, e));
-                LOG.debug("Batch job '{}': item {} failed: {}", endpoint.getJobName(), itemIndex, e.getMessage());
+                failureMap.put(idx, new BatchResult.BatchFailure(idx, items.get(idx), e, stepIndex));
+                LOG.debug("Batch job '{}': item {} failed at step {}: {}",
+                        endpoint.getJobName(), idx, stepIndex, e.getMessage());
 
-                if (isThresholdExceeded(failureCount.get(), successCount.get() + failureCount.get())) {
+                if (isThresholdExceeded(failureMap.size(), totalItems)) {
                     return true;
                 }
             }
@@ -192,38 +259,38 @@ public class BatchProducer extends DefaultProducer {
         return false;
     }
 
-    private boolean processChunkParallel(
-            Exchange exchange, List<Object> chunk, int chunkIndex,
-            List<Object> allItems, AtomicInteger successCount,
-            AtomicInteger failureCount, List<BatchResult.BatchFailure> failures) {
+    private void processChunkParallel(
+            List<Object> items, Exchange[] itemExchanges, List<Integer> chunk,
+            int stepIndex, int chunkIndex, Processor stepProcessor,
+            Map<Integer, BatchResult.BatchFailure> failureMap) {
 
-        int baseIndex = chunkIndex * endpoint.getChunkSize();
         List<Future<?>> futures = new ArrayList<>();
 
-        for (int i = 0; i < chunk.size(); i++) {
-            int itemIndex = baseIndex + i;
-            Object item = chunk.get(i);
+        for (int idx : chunk) {
+            final int itemIdx = idx;
             futures.add(executorService.submit(() -> {
+                Exchange itemExchange = itemExchanges[itemIdx];
+                itemExchange.getIn().setHeader(BatchConstants.BATCH_STEP_INDEX, stepIndex);
+                itemExchange.getIn().setHeader(BatchConstants.BATCH_CHUNK_INDEX, chunkIndex);
+
                 try {
-                    Exchange itemExchange = createItemExchange(exchange, item, itemIndex, allItems.size(), chunkIndex);
-                    itemProcessor.process(itemExchange);
+                    stepProcessor.process(itemExchange);
 
                     if (itemExchange.getException() != null) {
-                        throw itemExchange.getException();
+                        Exception ex = itemExchange.getException();
+                        itemExchange.setException(null);
+                        throw ex;
                     }
 
-                    successCount.incrementAndGet();
+                    failureMap.remove(itemIdx);
                 } catch (Exception e) {
-                    failureCount.incrementAndGet();
-                    synchronized (failures) {
-                        failures.add(new BatchResult.BatchFailure(itemIndex, item, e));
-                    }
-                    LOG.debug("Batch job '{}': item {} failed: {}", endpoint.getJobName(), itemIndex, e.getMessage());
+                    failureMap.put(itemIdx, new BatchResult.BatchFailure(itemIdx, items.get(itemIdx), e, stepIndex));
+                    LOG.debug("Batch job '{}': item {} failed at step {}: {}",
+                            endpoint.getJobName(), itemIdx, stepIndex, e.getMessage());
                 }
             }));
         }
 
-        // Wait for all futures
         for (Future<?> future : futures) {
             try {
                 future.get();
@@ -231,18 +298,92 @@ public class BatchProducer extends DefaultProducer {
                 // already handled inside the task
             }
         }
-
-        return isThresholdExceeded(failureCount.get(), successCount.get() + failureCount.get());
     }
 
-    private Exchange createItemExchange(Exchange parent, Object item, int index, int totalSize, int chunkIndex) {
+    private Exchange createItemExchange(Exchange parent, Object item, int index, int totalSize) {
         Exchange itemExchange = parent.copy();
         itemExchange.getIn().setBody(item);
         itemExchange.getIn().setHeader(BatchConstants.BATCH_JOB_NAME, endpoint.getJobName());
         itemExchange.getIn().setHeader(BatchConstants.BATCH_INDEX, index);
         itemExchange.getIn().setHeader(BatchConstants.BATCH_SIZE, totalSize);
-        itemExchange.getIn().setHeader(BatchConstants.BATCH_CHUNK_INDEX, chunkIndex);
         return itemExchange;
+    }
+
+    private void setResultHeaders(Exchange exchange, BatchResult result, String jobInstanceId) {
+        exchange.getIn().setHeader(BatchConstants.BATCH_JOB_NAME, endpoint.getJobName());
+        exchange.getIn().setHeader(BatchConstants.BATCH_JOB_INSTANCE_ID, jobInstanceId);
+        exchange.getIn().setHeader(BatchConstants.BATCH_TOTAL, result.getTotalItems());
+        exchange.getIn().setHeader(BatchConstants.BATCH_SUCCESS, result.getSuccessCount());
+        exchange.getIn().setHeader(BatchConstants.BATCH_FAILED, result.getFailureCount());
+        exchange.getIn().setHeader(BatchConstants.BATCH_DURATION, result.getDuration());
+        exchange.getIn().setHeader(BatchConstants.BATCH_ABORTED, result.isAborted());
+    }
+
+    private void fireOnComplete(Exchange exchange, BatchResult result) {
+        if (onCompleteProcessor == null) {
+            return;
+        }
+        try {
+            Exchange completeExchange = exchange.copy();
+            completeExchange.getIn().setBody(result);
+            onCompleteProcessor.process(completeExchange);
+        } catch (Exception e) {
+            LOG.warn("Batch job '{}': onComplete callback failed: {}", endpoint.getJobName(), e.getMessage(), e);
+        }
+    }
+
+    private List<Processor> resolveStepProcessors() {
+        List<Processor> processors = new ArrayList<>();
+
+        if (endpoint.getSteps() != null) {
+            String[] stepRefs = endpoint.getSteps().split(",");
+            for (String ref : stepRefs) {
+                String trimmed = ref.trim();
+                if (!trimmed.isEmpty()) {
+                    processors.add(resolveRef(trimmed));
+                }
+            }
+        } else if (endpoint.getProcessorRef() != null) {
+            processors.add(resolveRef(endpoint.getProcessorRef()));
+        }
+
+        return processors;
+    }
+
+    private Processor resolveRef(String ref) {
+        if (ref.contains(":")) {
+            // Endpoint URI — send via shared ProducerTemplate
+            return exchange -> producerTemplate.send(ref, exchange);
+        }
+        String name = ref.startsWith("#") ? ref.substring(1) : ref;
+        Processor p = endpoint.getCamelContext().getRegistry().lookupByNameAndType(name, Processor.class);
+        ObjectHelper.notNull(p, "processor bean '" + name + "'");
+        return p;
+    }
+
+    private List<Integer> getEligibleItems(int totalItems, java.util.Set<Integer> failedIndices, BatchAcceptPolicy policy) {
+        List<Integer> eligible = new ArrayList<>();
+        for (int i = 0; i < totalItems; i++) {
+            boolean isFailed = failedIndices.contains(i);
+            switch (policy) {
+                case ALL:
+                    eligible.add(i);
+                    break;
+                case NO_FAILURES:
+                    if (!isFailed) {
+                        eligible.add(i);
+                    }
+                    break;
+                case FAILURES_ONLY:
+                    if (isFailed) {
+                        eligible.add(i);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return eligible;
     }
 
     @SuppressWarnings("unchecked")
@@ -290,17 +431,43 @@ public class BatchProducer extends DefaultProducer {
         return new ArrayList<>(items.subList(lastProcessed, items.size()));
     }
 
-    private void updateWatermark(int processedCount) {
+    private void updateWatermark(
+            List<Object> items, Exchange[] itemExchanges,
+            Map<Integer, BatchResult.BatchFailure> failureMap, int totalItems) {
         if (watermarkStore == null) {
             return;
         }
-        String key = endpoint.getEffectiveWatermarkKey();
-        String existing = watermarkStore.get(key);
-        int previous = existing != null ? Integer.parseInt(existing) : 0;
-        watermarkStore.put(key, String.valueOf(previous + processedCount));
+
+        if (watermarkExpr != null) {
+            // Value-based: evaluate expression on the last successful item
+            String lastValue = null;
+            for (int i = totalItems - 1; i >= 0; i--) {
+                if (!failureMap.containsKey(i)) {
+                    lastValue = watermarkExpr.evaluate(itemExchanges[i], String.class);
+                    if (lastValue != null) {
+                        break;
+                    }
+                }
+            }
+            if (lastValue != null) {
+                watermarkStore.put(endpoint.getEffectiveWatermarkKey(), lastValue);
+            }
+        } else {
+            // Index-based: track total processed count
+            String key = endpoint.getEffectiveWatermarkKey();
+            String existing = watermarkStore.get(key);
+            int previous = existing != null ? Integer.parseInt(existing) : 0;
+            watermarkStore.put(key, String.valueOf(previous + totalItems));
+        }
     }
 
     private boolean isThresholdExceeded(int failures, int total) {
+        // Check absolute count
+        int maxFailed = endpoint.getMaxFailedRecords();
+        if (maxFailed >= 0 && failures > maxFailed) {
+            return true;
+        }
+        // Check percentage threshold
         if (total == 0 || endpoint.getErrorThreshold() >= 1.0) {
             return false;
         }
@@ -308,8 +475,8 @@ public class BatchProducer extends DefaultProducer {
         return ratio > endpoint.getErrorThreshold();
     }
 
-    private List<List<Object>> splitIntoChunks(List<Object> items, int chunkSize) {
-        List<List<Object>> chunks = new ArrayList<>();
+    private <T> List<List<T>> splitIntoChunks(List<T> items, int chunkSize) {
+        List<List<T>> chunks = new ArrayList<>();
         for (int i = 0; i < items.size(); i += chunkSize) {
             chunks.add(items.subList(i, Math.min(i + chunkSize, items.size())));
         }

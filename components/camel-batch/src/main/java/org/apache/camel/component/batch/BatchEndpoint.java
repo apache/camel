@@ -49,12 +49,31 @@ public class BatchEndpoint extends DefaultEndpoint {
                                                   + " 1.0 means never abort. 0.1 means abort after 10% failures.")
     private double errorThreshold = 1.0;
 
-    @UriParam(description = "Bean reference to a Processor or endpoint URI that processes each individual item")
-    @Metadata(required = true)
+    @UriParam(defaultValue = "-1", description = "Maximum number of failed records before aborting the batch."
+                                                 + " -1 means disabled (use errorThreshold instead). 0 means abort on first failure.")
+    private int maxFailedRecords = -1;
+
+    @UriParam(description = "Bean reference to a Processor or endpoint URI that processes each individual item."
+                            + " Mutually exclusive with the steps option.")
     private String processorRef;
+
+    @UriParam(description = "Comma-separated list of endpoint URIs or bean references for multi-step batch processing."
+                            + " Items flow through each step sequentially. Use with acceptPolicy to filter items between steps."
+                            + " Mutually exclusive with the processorRef option.")
+    private String steps;
+
+    @UriParam(defaultValue = "ALL", enums = "ALL,NO_FAILURES,FAILURES_ONLY",
+              description = "Determines which items are eligible for processing in subsequent steps (after the first step)."
+                            + " ALL processes all items, NO_FAILURES skips items that failed in a prior step,"
+                            + " FAILURES_ONLY only processes items that failed (useful for error recovery steps).")
+    private BatchAcceptPolicy acceptPolicy = BatchAcceptPolicy.ALL;
 
     @UriParam(description = "Optional bean reference to an AggregationStrategy for collecting results")
     private String aggregationStrategy;
+
+    @UriParam(description = "Optional endpoint URI or bean reference called after the batch completes,"
+                            + " regardless of success or failure. Receives the BatchResult as the exchange body.")
+    private String onCompleteRef;
 
     @UriParam(description = "Optional bean reference to a Map<String, String> for watermark tracking")
     private String watermarkStore;
@@ -62,7 +81,12 @@ public class BatchEndpoint extends DefaultEndpoint {
     @UriParam(description = "Key used in the watermark store. Defaults to the job name.")
     private String watermarkKey;
 
-    @UriParam(defaultValue = "false", description = "Process chunks in parallel")
+    @UriParam(description = "A Simple expression evaluated on each successfully processed item to extract a watermark value."
+                            + " The last non-null value is stored in the watermark store. When set, index-based watermark skipping is disabled"
+                            + " and the current watermark value is set as a CamelBatchWatermarkValue header instead.")
+    private String watermarkExpression;
+
+    @UriParam(defaultValue = "false", description = "Process items within each chunk in parallel")
     private boolean parallelProcessing;
 
     public BatchEndpoint(String uri, BatchComponent component, String jobName) {
@@ -72,27 +96,18 @@ public class BatchEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
+        if (processorRef == null && steps == null) {
+            throw new IllegalArgumentException("Either processorRef or steps must be configured");
+        }
+        if (processorRef != null && steps != null) {
+            throw new IllegalArgumentException("Only one of processorRef or steps can be configured, not both");
+        }
         return new BatchProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("The batch component does not support consumers");
-    }
-
-    /**
-     * Resolves the item processor. If processorRef starts with a component scheme (contains ':'), it is treated as an
-     * endpoint URI. Otherwise, it is looked up as a bean reference.
-     */
-    public Processor resolveProcessor() {
-        if (processorRef.contains(":")) {
-            // treat as endpoint URI — send each item to this endpoint
-            return exchange -> {
-                getCamelContext().createProducerTemplate().send(processorRef, exchange);
-            };
-        }
-        String name = processorRef.startsWith("#") ? processorRef.substring(1) : processorRef;
-        return getCamelContext().getRegistry().lookupByNameAndType(name, Processor.class);
     }
 
     /**
@@ -146,6 +161,14 @@ public class BatchEndpoint extends DefaultEndpoint {
         this.errorThreshold = errorThreshold;
     }
 
+    public int getMaxFailedRecords() {
+        return maxFailedRecords;
+    }
+
+    public void setMaxFailedRecords(int maxFailedRecords) {
+        this.maxFailedRecords = maxFailedRecords;
+    }
+
     public String getProcessorRef() {
         return processorRef;
     }
@@ -154,12 +177,36 @@ public class BatchEndpoint extends DefaultEndpoint {
         this.processorRef = processorRef;
     }
 
+    public String getSteps() {
+        return steps;
+    }
+
+    public void setSteps(String steps) {
+        this.steps = steps;
+    }
+
+    public BatchAcceptPolicy getAcceptPolicy() {
+        return acceptPolicy;
+    }
+
+    public void setAcceptPolicy(BatchAcceptPolicy acceptPolicy) {
+        this.acceptPolicy = acceptPolicy;
+    }
+
     public String getAggregationStrategy() {
         return aggregationStrategy;
     }
 
     public void setAggregationStrategy(String aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public String getOnCompleteRef() {
+        return onCompleteRef;
+    }
+
+    public void setOnCompleteRef(String onCompleteRef) {
+        this.onCompleteRef = onCompleteRef;
     }
 
     public String getWatermarkStore() {
@@ -176,6 +223,14 @@ public class BatchEndpoint extends DefaultEndpoint {
 
     public void setWatermarkKey(String watermarkKey) {
         this.watermarkKey = watermarkKey;
+    }
+
+    public String getWatermarkExpression() {
+        return watermarkExpression;
+    }
+
+    public void setWatermarkExpression(String watermarkExpression) {
+        this.watermarkExpression = watermarkExpression;
     }
 
     public boolean isParallelProcessing() {

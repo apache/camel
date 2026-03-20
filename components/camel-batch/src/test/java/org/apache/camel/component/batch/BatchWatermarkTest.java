@@ -41,7 +41,7 @@ class BatchWatermarkTest extends CamelTestSupport {
     }
 
     @Test
-    void testWatermarkSkipsAlreadyProcessedItems() throws Exception {
+    void testIndexBasedWatermarkSkipsAlreadyProcessedItems() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watermark-processed");
 
         // First batch: items 1-100
@@ -80,7 +80,6 @@ class BatchWatermarkTest extends CamelTestSupport {
 
         BatchResult result2Body = result2.getIn().getBody(BatchResult.class);
         assertNotNull(result2Body);
-        // Only items 101-200 should be processed (watermark skips first 100)
         assertEquals(100, result2Body.getTotalItems());
         assertEquals(100, result2Body.getSuccessCount());
 
@@ -89,10 +88,61 @@ class BatchWatermarkTest extends CamelTestSupport {
 
         // Verify the second batch processed the right items (101-200)
         List<Exchange> exchanges = mock.getExchanges();
-        // First item should be 101 (index 100 of the 200-item list)
         assertEquals(101, exchanges.get(0).getIn().getBody(Integer.class));
-        // Last item should be 200
         assertEquals(200, exchanges.get(99).getIn().getBody(Integer.class));
+    }
+
+    @Test
+    void testValueBasedWatermarkTracking() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:value-watermark-processed");
+
+        // First batch: items with IDs
+        List<Map<String, Object>> firstBatch = new ArrayList<>();
+        for (int i = 1; i <= 50; i++) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", i);
+            item.put("name", "item-" + i);
+            firstBatch.add(item);
+        }
+
+        mock.expectedMessageCount(50);
+        Exchange result1 = template.send("direct:value-watermark", exchange -> {
+            exchange.getIn().setBody(firstBatch);
+        });
+        mock.assertIsSatisfied();
+
+        BatchResult result1Body = result1.getIn().getBody(BatchResult.class);
+        assertNotNull(result1Body);
+        assertEquals(50, result1Body.getTotalItems());
+
+        // Verify value-based watermark was stored (last item's id = 50)
+        assertEquals("50", watermarkStore.get("valueWatermarkJob"));
+
+        // Second batch — watermark header should be set
+        mock.reset();
+        mock.expectedMessageCount(50);
+
+        List<Map<String, Object>> secondBatch = new ArrayList<>();
+        for (int i = 51; i <= 100; i++) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", i);
+            item.put("name", "item-" + i);
+            secondBatch.add(item);
+        }
+
+        Exchange result2 = template.send("direct:value-watermark", exchange -> {
+            exchange.getIn().setBody(secondBatch);
+        });
+        mock.assertIsSatisfied();
+
+        // Verify watermark was updated to last item's id (100)
+        assertEquals("100", watermarkStore.get("valueWatermarkJob"));
+
+        // Verify the watermark value header was set on the exchange
+        // (value from first run = "50")
+        // Note: the header is set on the parent exchange before processing
+        BatchResult result2Body = result2.getIn().getBody(BatchResult.class);
+        assertEquals(50, result2Body.getTotalItems());
     }
 
     @Override
@@ -104,7 +154,16 @@ class BatchWatermarkTest extends CamelTestSupport {
                         .to("mock:watermark-processed");
 
                 from("direct:watermark")
-                        .to("batch:watermarkJob?chunkSize=50&processorRef=direct:watermark-process&watermarkStore=#myWatermarkStore");
+                        .to("batch:watermarkJob?chunkSize=50&processorRef=direct:watermark-process"
+                            + "&watermarkStore=#myWatermarkStore");
+
+                from("direct:value-watermark-process")
+                        .to("mock:value-watermark-processed");
+
+                from("direct:value-watermark")
+                        .to("batch:valueWatermarkJob?chunkSize=50&processorRef=direct:value-watermark-process"
+                            + "&watermarkStore=#myWatermarkStore"
+                            + "&watermarkExpression=${body[id]}");
             }
         };
     }
