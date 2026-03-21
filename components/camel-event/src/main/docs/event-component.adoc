@@ -371,6 +371,45 @@ from("event:Exchange*?async=true&batchSize=100&batchTimeout=5000")
     .log("Batch of ${header.CamelEventBatchSize} exchange events");
 ----
 
+== JBang Quick Start
+
+You can quickly try the Event component using https://camel.apache.org/manual/camel-jbang.html[Camel JBang].
+
+Create a file called `event-monitor.yaml`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: "event:Route*"
+      steps:
+        - log: "Route event: ${header.CamelEventType} - route ${header.CamelEventRouteId}"
+
+- route:
+    from:
+      uri: "event:ExchangeCompleted,ExchangeFailed"
+      steps:
+        - log: "Exchange ${header.CamelEventExchangeId} on route ${header.CamelEventRouteId}: ${header.CamelEventType}"
+
+- route:
+    id: myRoute
+    from:
+      uri: "timer:tick"
+      parameters:
+        period: "5000"
+      steps:
+        - setBody:
+            constant: "Hello from myRoute!"
+        - log: "${body}"
+----
+
+Then run it:
+
+[source,bash]
+----
+camel run event-monitor.yaml
+----
+
 == Distributed Events
 
 The Event component captures events within a single CamelContext (JVM). To propagate events across
