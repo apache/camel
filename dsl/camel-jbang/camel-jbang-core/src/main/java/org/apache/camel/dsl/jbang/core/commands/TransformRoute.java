@@ -107,7 +107,7 @@ public class TransformRoute extends CamelCommand {
             }
         };
         run.files = files;
-        run.maxSeconds = 1;
+        run.executionLimitOptions.maxSeconds = 1;
         Integer exit = run.runTransform(ignoreLoadingError);
         if (exit != null && exit != 0) {
             return exit;

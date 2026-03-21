@@ -75,12 +75,12 @@ public class Script extends CamelCommand {
         }
 
         Run run = new Run(getMain());
-        run.logging = logging;
-        run.loggingLevel = loggingLevel;
-        run.loggingColor = false;
-        run.maxSeconds = maxSeconds;
-        run.maxMessages = maxMessages;
-        run.maxIdleSeconds = maxIdleSeconds;
+        run.loggingOptions.logging = logging;
+        run.loggingOptions.loggingLevel = loggingLevel;
+        run.loggingOptions.loggingColor = false;
+        run.executionLimitOptions.maxSeconds = maxSeconds;
+        run.executionLimitOptions.maxMessages = maxMessages;
+        run.executionLimitOptions.maxIdleSeconds = maxIdleSeconds;
         run.property = property;
         run.propertiesFiles = propertiesFiles;
         return run.runScript(file);
