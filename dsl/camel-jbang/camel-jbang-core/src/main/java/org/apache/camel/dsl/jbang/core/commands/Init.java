@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Stack;
 import java.util.StringJoiner;
 
@@ -49,10 +51,13 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrl
          sortOptions = false, showDefaultValues = true)
 public class Init extends CamelCommand {
 
-    @Parameters(description = "Name of integration file (or a github link)", arity = "1",
+    @Parameters(description = "Name of integration file (or a github link)", arity = "0..1",
                 paramLabel = "<file>", parameterConsumer = FileConsumer.class)
     private Path filePath; // Defined only for file path completion; the field never used
     private String file;
+
+    @Option(names = { "--list" }, description = "List available templates")
+    private boolean list;
 
     @Option(names = {
             "--dir",
@@ -86,6 +91,13 @@ public class Init extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (list) {
+            return listTemplates();
+        }
+        if (file == null) {
+            printer().printErr("Missing required parameter: <file>");
+            return 1;
+        }
         int code = execute();
         if (code == 0) {
             // In case of successful execution, we create the working directory if it does not exist to help the tooling
@@ -214,6 +226,49 @@ public class Init extends CamelCommand {
             }
         }
         return packageDeclaration;
+    }
+
+    private int listTemplates() {
+        // Templates grouped by category with descriptions
+        // Only include user-facing templates (not POM/Dockerfile/internal templates)
+        Map<String, Map<String, String>> categories = new LinkedHashMap<>();
+
+        Map<String, String> routes = new LinkedHashMap<>();
+        routes.put("java", "Java DSL route (MyRoute.java)");
+        routes.put("xml", "XML DSL route (my-route.xml)");
+        routes.put("yaml", "YAML DSL route (my-route.yaml)");
+        categories.put("Routes", routes);
+
+        Map<String, String> kamelets = new LinkedHashMap<>();
+        kamelets.put("kamelet-source.yaml", "Kamelet source connector (my-source.kamelet.yaml)");
+        kamelets.put("kamelet-sink.yaml", "Kamelet sink connector (my-sink.kamelet.yaml)");
+        kamelets.put("kamelet-action.yaml", "Kamelet action processor (my-action.kamelet.yaml)");
+        categories.put("Kamelets", kamelets);
+
+        Map<String, String> pipes = new LinkedHashMap<>();
+        pipes.put("init-pipe.yaml", "Pipe CR connecting source and sink (my-pipe.yaml --pipe)");
+        pipes.put("pipe.yaml", "Pipe resource (my-pipe.pipe.yaml)");
+        pipes.put("integration.yaml", "Integration CR (my-integration.integration.yaml)");
+        categories.put("Pipes and CRs", pipes);
+
+        Map<String, String> restDsl = new LinkedHashMap<>();
+        restDsl.put("rest-dsl.yaml", "REST DSL with OpenAPI (my-api.rest-dsl.yaml)");
+        categories.put("REST", restDsl);
+
+        printer().println("Available templates for 'camel init':");
+        printer().println();
+        for (Map.Entry<String, Map<String, String>> category : categories.entrySet()) {
+            printer().println(category.getKey() + ":");
+            for (Map.Entry<String, String> template : category.getValue().entrySet()) {
+                printer().printf("  %-25s %s%n", template.getKey(), template.getValue());
+            }
+            printer().println();
+        }
+        printer().println("Usage: camel init <filename>.<ext>");
+        printer().println("The template is selected based on the file extension.");
+        printer().println("Example: camel init MyRoute.java");
+
+        return 0;
     }
 
     private void createWorkingDirectoryIfAbsent() {
