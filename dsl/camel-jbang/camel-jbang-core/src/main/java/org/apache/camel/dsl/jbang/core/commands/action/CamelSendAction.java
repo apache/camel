@@ -143,7 +143,7 @@ public class CamelSendAction extends ActionBaseCommand {
         if (headers != null) {
             for (String h : headers) {
                 if (!h.contains("=")) {
-                    printer().println("Header must be in key=value format, was: " + h);
+                    printer().printErr("Header must be in key=value format, was: " + h);
                     return 1;
                 }
             }
@@ -423,7 +423,7 @@ public class CamelSendAction extends ActionBaseCommand {
         JsonObject connectionDetails = readConnectionDetails(jsonFile);
 
         if (connectionDetails == null) {
-            printer().println("Could not read connection details from: " + jsonFile);
+            printer().printErr("Could not read connection details from: " + jsonFile);
             return 1;
         }
 

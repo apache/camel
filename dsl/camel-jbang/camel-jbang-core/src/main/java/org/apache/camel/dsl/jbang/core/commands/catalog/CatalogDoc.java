@@ -194,9 +194,10 @@ public class CatalogDoc extends CamelCommand {
             }
             if (!suggestions.isEmpty()) {
                 String type = kamelet ? "kamelet" : "component";
-                printer().printf("Camel %s: %s not found. Did you mean? %s%n", type, name, String.join(", ", suggestions));
+                printer().printErr(
+                        "Camel %s: %s not found. Did you mean? %s".formatted(type, name, String.join(", ", suggestions)));
             } else {
-                printer().println("Camel resource: " + name + " not found");
+                printer().printErr("Camel resource: " + name + " not found");
             }
         } else {
             List<String> suggestions = switch (prefix) {
@@ -209,9 +210,10 @@ public class CatalogDoc extends CamelCommand {
                 default -> List.of();
             };
             if (!suggestions.isEmpty()) {
-                printer().printf("Camel %s: %s not found. Did you mean? %s%n", prefix, name, String.join(", ", suggestions));
+                printer().printErr(
+                        "Camel %s: %s not found. Did you mean? %s".formatted(prefix, name, String.join(", ", suggestions)));
             } else {
-                printer().printf("Camel %s: %s not found.%n", prefix, name);
+                printer().printErr("Camel %s: %s not found.".formatted(prefix, name));
             }
         }
         return 1;

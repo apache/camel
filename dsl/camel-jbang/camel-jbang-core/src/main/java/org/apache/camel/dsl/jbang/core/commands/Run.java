@@ -469,7 +469,7 @@ public class Run extends CamelCommand {
             try {
                 Files.createDirectories(work);
             } catch (IOException e) {
-                printer().println("WARN: Failed to create working directory: " + work.toAbsolutePath());
+                printer().printErr("Failed to create working directory: " + work.toAbsolutePath());
             }
         }
 
@@ -1056,7 +1056,7 @@ public class Run extends CamelCommand {
 
     protected int runQuarkus() throws Exception {
         if (background) {
-            printer().println("Run Camel Quarkus with --background is not supported");
+            printer().printErr("Run Camel Quarkus with --background is not supported");
             return 1;
         }
 
@@ -1162,7 +1162,7 @@ public class Run extends CamelCommand {
 
     protected int runSpringBoot() throws Exception {
         if (background) {
-            printer().println("Run Camel Spring Boot with --background is not supported");
+            printer().printErr("Run Camel Spring Boot with --background is not supported");
             return 1;
         }
 

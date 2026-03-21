@@ -380,10 +380,10 @@ public class CamelReceiveAction extends ActionBaseCommand {
                 String url = jo.getString("url");
                 List<String> stackTrace = jo.getCollection("stackTrace");
                 if (url != null) {
-                    printer().println("Error starting to receive messages from: " + url + " due to: " + error);
+                    printer().printErr("Error starting to receive messages from: " + url + " due to: " + error);
 
                 } else {
-                    printer().println("Error starting to receive messages due to: " + error);
+                    printer().printErr("Error starting to receive messages due to: " + error);
                 }
                 printer().println(StringHelper.fillChars('-', 120));
                 printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");

@@ -85,11 +85,11 @@ public class UpdateRun extends CamelCommand {
                     command = update.command();
                 }
             } catch (CamelUpdateException ex) {
-                printer().println(ex.getMessage());
+                printer().printErr(ex.getMessage());
 
                 return -1;
             } catch (DownloadException e) {
-                printer().println(String.format("Cannot find Camel Upgrade Recipes %s:%s:%s",
+                printer().printErr(String.format("Cannot find Camel Upgrade Recipes %s:%s:%s",
                         "org.apache.camel.upgrade", update.getArtifactCoordinates(), updateMixin.version));
 
                 return -1;
