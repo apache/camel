@@ -26,6 +26,14 @@ public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport impl
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
         case "asyncpoolsize":
         case "asyncPoolSize": target.setAsyncPoolSize(property(camelContext, int.class, value)); return true;
+        case "asyncqueuesize":
+        case "asyncQueueSize": target.setAsyncQueueSize(property(camelContext, int.class, value)); return true;
+        case "backpressurepolicy":
+        case "backpressurePolicy": target.setBackpressurePolicy(property(camelContext, org.apache.camel.component.camelevent.BackpressurePolicy.class, value)); return true;
+        case "batchsize":
+        case "batchSize": target.setBatchSize(property(camelContext, int.class, value)); return true;
+        case "batchtimeout":
+        case "batchTimeout": target.setBatchTimeout(property(camelContext, long.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "customeventclass":
@@ -47,6 +55,14 @@ public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport impl
         case "async": return boolean.class;
         case "asyncpoolsize":
         case "asyncPoolSize": return int.class;
+        case "asyncqueuesize":
+        case "asyncQueueSize": return int.class;
+        case "backpressurepolicy":
+        case "backpressurePolicy": return org.apache.camel.component.camelevent.BackpressurePolicy.class;
+        case "batchsize":
+        case "batchSize": return int.class;
+        case "batchtimeout":
+        case "batchTimeout": return long.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "customeventclass":
@@ -69,6 +85,14 @@ public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport impl
         case "async": return target.isAsync();
         case "asyncpoolsize":
         case "asyncPoolSize": return target.getAsyncPoolSize();
+        case "asyncqueuesize":
+        case "asyncQueueSize": return target.getAsyncQueueSize();
+        case "backpressurepolicy":
+        case "backpressurePolicy": return target.getBackpressurePolicy();
+        case "batchsize":
+        case "batchSize": return target.getBatchSize();
+        case "batchtimeout":
+        case "batchTimeout": return target.getBatchTimeout();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "customeventclass":

@@ -114,6 +114,150 @@ public interface CamelEventEndpointBuilderFactory {
             return this;
         }
         /**
+         * The capacity of the bounded event queue used when async is enabled.
+         * When the queue is full, the backpressure policy determines the
+         * behavior. Only used when the async option is enabled.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder asyncQueueSize(int asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+        /**
+         * The capacity of the bounded event queue used when async is enabled.
+         * When the queue is full, the backpressure policy determines the
+         * behavior. Only used when the async option is enabled.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param asyncQueueSize the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder asyncQueueSize(String asyncQueueSize) {
+            doSetProperty("asyncQueueSize", asyncQueueSize);
+            return this;
+        }
+        /**
+         * The backpressure policy when the async event queue is full. Supported
+         * values: Block (block the event notifier thread until space is
+         * available), Drop (silently discard the event), Fail (throw an
+         * exception).
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.camelevent.BackpressurePolicy</code>
+         * type.
+         * 
+         * Default: Block
+         * Group: consumer
+         * 
+         * @param backpressurePolicy the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder backpressurePolicy(org.apache.camel.component.camelevent.BackpressurePolicy backpressurePolicy) {
+            doSetProperty("backpressurePolicy", backpressurePolicy);
+            return this;
+        }
+        /**
+         * The backpressure policy when the async event queue is full. Supported
+         * values: Block (block the event notifier thread until space is
+         * available), Drop (silently discard the event), Fail (throw an
+         * exception).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.camelevent.BackpressurePolicy</code>
+         * type.
+         * 
+         * Default: Block
+         * Group: consumer
+         * 
+         * @param backpressurePolicy the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder backpressurePolicy(String backpressurePolicy) {
+            doSetProperty("backpressurePolicy", backpressurePolicy);
+            return this;
+        }
+        /**
+         * Enables event batching. When set to a value greater than 1, events
+         * are collected into a java.util.List and dispatched as a single
+         * exchange when the batch is full or the batchTimeout expires. The
+         * exchange body will be a List.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * Enables event batching. When set to a value greater than 1, events
+         * are collected into a java.util.List and dispatched as a single
+         * exchange when the batch is full or the batchTimeout expires. The
+         * exchange body will be a List.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder batchSize(String batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * The maximum time in milliseconds to wait for a batch to fill before
+         * dispatching a partial batch. Only used when batchSize is greater than
+         * 1.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder batchTimeout(long batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+        /**
+         * The maximum time in milliseconds to wait for a batch to fill before
+         * dispatching a partial batch. Only used when batchSize is greater than
+         * 1.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder batchTimeout(String batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+        /**
          * Fully qualified class name of a custom event class to filter on. When
          * set, only events that are instances of the specified class will be
          * accepted. This is useful for subscribing to custom user-defined
@@ -488,6 +632,19 @@ public interface CamelEventEndpointBuilderFactory {
          */
         public String eventRedeliveryAttempt() {
             return "CamelEventRedeliveryAttempt";
+        }
+        /**
+         * The number of events in a batch (only set when batchSize is
+         * configured).
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code EventBatchSize}.
+         */
+        public String eventBatchSize() {
+            return "CamelEventBatchSize";
         }
     }
     static CamelEventEndpointBuilder endpointBuilder(String componentName, String path) {

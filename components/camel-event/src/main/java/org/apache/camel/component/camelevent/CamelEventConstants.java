@@ -67,6 +67,11 @@ public final class CamelEventConstants {
               javaType = "Integer")
     public static final String HEADER_EVENT_REDELIVERY_ATTEMPT = "CamelEventRedeliveryAttempt";
 
+    @Metadata(label = "consumer",
+              description = "The number of events in a batch (only set when batchSize is configured)",
+              javaType = "Integer")
+    public static final String HEADER_EVENT_BATCH_SIZE = "CamelEventBatchSize";
+
     private CamelEventConstants() {
     }
 }

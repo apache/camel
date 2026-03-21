@@ -89,6 +89,29 @@ public class CamelEventEndpoint extends DefaultEndpoint {
               defaultValue = "10")
     private int asyncPoolSize = 10;
 
+    @UriParam(description = "The capacity of the bounded event queue used when async is enabled."
+                            + " When the queue is full, the backpressure policy determines the behavior."
+                            + " Only used when the async option is enabled.",
+              defaultValue = "1000")
+    private int asyncQueueSize = 1000;
+
+    @UriParam(description = "The backpressure policy when the async event queue is full."
+                            + " Supported values: Block (block the event notifier thread until space is available),"
+                            + " Drop (silently discard the event), Fail (throw an exception).",
+              defaultValue = "Block")
+    private BackpressurePolicy backpressurePolicy = BackpressurePolicy.Block;
+
+    @UriParam(description = "Enables event batching. When set to a value greater than 1, events are collected"
+                            + " into a java.util.List and dispatched as a single exchange when the batch is full"
+                            + " or the batchTimeout expires. The exchange body will be a List<CamelEvent>.",
+              defaultValue = "0")
+    private int batchSize;
+
+    @UriParam(description = "The maximum time in milliseconds to wait for a batch to fill before dispatching"
+                            + " a partial batch. Only used when batchSize is greater than 1.",
+              defaultValue = "1000")
+    private long batchTimeout = 1000;
+
     private Set<CamelEvent.Type> eventTypes;
     private Set<String> filterValues;
     private Set<String> filterExcludeValues;
@@ -270,6 +293,55 @@ public class CamelEventEndpoint extends DefaultEndpoint {
      */
     public void setAsyncPoolSize(int asyncPoolSize) {
         this.asyncPoolSize = asyncPoolSize;
+    }
+
+    public int getAsyncQueueSize() {
+        return asyncQueueSize;
+    }
+
+    /**
+     * The capacity of the bounded event queue used when async is enabled. When the queue is full, the backpressure
+     * policy determines the behavior. Only used when the async option is enabled.
+     */
+    public void setAsyncQueueSize(int asyncQueueSize) {
+        this.asyncQueueSize = asyncQueueSize;
+    }
+
+    public BackpressurePolicy getBackpressurePolicy() {
+        return backpressurePolicy;
+    }
+
+    /**
+     * The backpressure policy when the async event queue is full. Supported values: Block (block the event notifier
+     * thread until space is available), Drop (silently discard the event), Fail (throw an exception).
+     */
+    public void setBackpressurePolicy(BackpressurePolicy backpressurePolicy) {
+        this.backpressurePolicy = backpressurePolicy;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    /**
+     * Enables event batching. When set to a value greater than 1, events are collected into a java.util.List and
+     * dispatched as a single exchange when the batch is full or the batchTimeout expires. The exchange body will be a
+     * List&lt;CamelEvent&gt;.
+     */
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public long getBatchTimeout() {
+        return batchTimeout;
+    }
+
+    /**
+     * The maximum time in milliseconds to wait for a batch to fill before dispatching a partial batch. Only used when
+     * batchSize is greater than 1.
+     */
+    public void setBatchTimeout(long batchTimeout) {
+        this.batchTimeout = batchTimeout;
     }
 
     public Set<CamelEvent.Type> getEventTypes() {

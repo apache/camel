@@ -16,8 +16,14 @@
  */
 package org.apache.camel.component.camelevent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -26,6 +32,8 @@ import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EventNotifierSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumer that registers as an {@link org.apache.camel.spi.EventNotifier} to receive Camel internal events and
@@ -33,8 +41,13 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class CamelEventConsumer extends DefaultConsumer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CamelEventConsumer.class);
+
     private final EventNotifierSupport eventNotifier;
     private ExecutorService executorService;
+    private BlockingQueue<CamelEvent> eventQueue;
+    private ScheduledExecutorService batchScheduler;
+    private final List<CamelEvent> batchBuffer = new ArrayList<>();
 
     public CamelEventConsumer(CamelEventEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -65,8 +78,21 @@ public class CamelEventConsumer extends DefaultConsumer {
         // Create thread pool for async processing
         if (getEndpoint().isAsync()) {
             int poolSize = getEndpoint().getAsyncPoolSize();
+            int queueSize = getEndpoint().getAsyncQueueSize();
+            eventQueue = new ArrayBlockingQueue<>(queueSize);
             executorService = getEndpoint().getCamelContext().getExecutorServiceManager()
                     .newFixedThreadPool(this, "CamelEventConsumer", poolSize);
+            // Start consumer threads that drain the queue
+            for (int i = 0; i < poolSize; i++) {
+                executorService.submit(this::drainQueue);
+            }
+        }
+        // Set up batch scheduler if batching is enabled
+        if (getEndpoint().getBatchSize() > 1) {
+            batchScheduler = getEndpoint().getCamelContext().getExecutorServiceManager()
+                    .newScheduledThreadPool(this, "CamelEventBatch", 1);
+            long timeout = getEndpoint().getBatchTimeout();
+            batchScheduler.scheduleAtFixedRate(this::flushBatch, timeout, timeout, TimeUnit.MILLISECONDS);
         }
         getEndpoint().getCamelContext().getManagementStrategy().addEventNotifier(eventNotifier);
     }
@@ -74,11 +100,101 @@ public class CamelEventConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         getEndpoint().getCamelContext().getManagementStrategy().removeEventNotifier(eventNotifier);
+        if (batchScheduler != null) {
+            // Flush remaining events before stopping
+            flushBatch();
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(batchScheduler);
+            batchScheduler = null;
+        }
+        if (eventQueue != null) {
+            eventQueue.clear();
+        }
         if (executorService != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
         }
+        eventQueue = null;
         super.doStop();
+    }
+
+    /**
+     * Consumer thread loop that drains events from the queue and processes them.
+     */
+    private void drainQueue() {
+        while (isRunAllowed()) {
+            try {
+                CamelEvent event = eventQueue.poll(1, TimeUnit.SECONDS);
+                if (event != null) {
+                    if (getEndpoint().getBatchSize() > 1) {
+                        addToBatch(event);
+                    } else {
+                        processEvent(event);
+                    }
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            } catch (Exception e) {
+                getExceptionHandler().handleException("Error processing event", e);
+            }
+        }
+    }
+
+    /**
+     * Adds an event to the batch buffer and flushes when the batch is full.
+     */
+    private void addToBatch(CamelEvent event) {
+        List<CamelEvent> toFlush = null;
+        synchronized (batchBuffer) {
+            batchBuffer.add(event);
+            if (batchBuffer.size() >= getEndpoint().getBatchSize()) {
+                toFlush = new ArrayList<>(batchBuffer);
+                batchBuffer.clear();
+            }
+        }
+        if (toFlush != null) {
+            processBatch(toFlush);
+        }
+    }
+
+    /**
+     * Flushes any accumulated events in the batch buffer (called by the scheduled timer).
+     */
+    private void flushBatch() {
+        List<CamelEvent> toFlush = null;
+        synchronized (batchBuffer) {
+            if (!batchBuffer.isEmpty()) {
+                toFlush = new ArrayList<>(batchBuffer);
+                batchBuffer.clear();
+            }
+        }
+        if (toFlush != null) {
+            processBatch(toFlush);
+        }
+    }
+
+    /**
+     * Processes a batch of events by creating a single exchange with a List body.
+     */
+    private void processBatch(List<CamelEvent> events) {
+        try {
+            Exchange exchange = createExchange(true);
+            exchange.getExchangeExtension().setNotifyEvent(true);
+            try {
+                exchange.getIn().setBody(events);
+                exchange.getIn().setHeader(CamelEventConstants.HEADER_EVENT_BATCH_SIZE, events.size());
+                // Use the first event's type for the header
+                if (!events.isEmpty()) {
+                    exchange.getIn().setHeader(CamelEventConstants.HEADER_EVENT_TYPE, events.get(0).getType().name());
+                }
+                getProcessor().process(exchange);
+            } finally {
+                exchange.getExchangeExtension().setNotifyEvent(false);
+                releaseExchange(exchange, false);
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error processing event batch", e);
+        }
     }
 
     /**
@@ -277,16 +393,43 @@ public class CamelEventConsumer extends DefaultConsumer {
             return;
         }
 
-        if (executorService != null) {
-            executorService.submit(() -> {
-                try {
-                    processEvent(event);
-                } catch (Exception e) {
-                    getExceptionHandler().handleException("Error processing event: " + event.getType(), e);
-                }
-            });
+        if (eventQueue != null) {
+            // Async mode: enqueue with backpressure policy
+            enqueueEvent(event);
+        } else if (getEndpoint().getBatchSize() > 1) {
+            // Synchronous batching (no async)
+            addToBatch(event);
         } else {
             processEvent(event);
+        }
+    }
+
+    /**
+     * Enqueues an event into the async queue, applying the configured backpressure policy when the queue is full.
+     */
+    private void enqueueEvent(CamelEvent event) throws Exception {
+        BackpressurePolicy policy = getEndpoint().getBackpressurePolicy();
+        switch (policy) {
+            case Block:
+                try {
+                    eventQueue.put(event);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw e;
+                }
+                break;
+            case Drop:
+                if (!eventQueue.offer(event)) {
+                    LOG.debug("Event queue full, dropping event: {}", event.getType());
+                }
+                break;
+            case Fail:
+                if (!eventQueue.offer(event)) {
+                    throw new IllegalStateException(
+                            "Event queue full (capacity: " + getEndpoint().getAsyncQueueSize()
+                                                    + "), cannot enqueue event: " + event.getType());
+                }
+                break;
         }
     }
 

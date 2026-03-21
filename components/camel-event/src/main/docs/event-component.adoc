@@ -327,6 +327,50 @@ from("event:Exchange*?async=true&asyncPoolSize=5")
     .log("Exchange event: ${header.CamelEventType}");
 ----
 
+=== Backpressure
+
+When async processing is enabled, events are placed into a bounded blocking queue
+(default capacity: 1000, configurable via `asyncQueueSize`). When the queue is full,
+the `backpressurePolicy` option controls the behavior:
+
+* `Block` (default) — blocks the event notifier thread until space is available.
+* `Drop` — silently discards the event.
+* `Fail` — throws an exception.
+
+[source,java]
+----
+// Async with a small queue and Drop policy (discard events when overloaded)
+from("event:ExchangeCompleted?async=true&asyncQueueSize=100&backpressurePolicy=Drop")
+    .log("Exchange completed: ${header.CamelEventExchangeId}");
+
+// Async with Fail policy (fail fast if queue is full)
+from("event:Exchange*?async=true&asyncQueueSize=500&backpressurePolicy=Fail")
+    .log("Exchange event: ${header.CamelEventType}");
+----
+
+== Event Batching
+
+For high-throughput scenarios, events can be collected into batches and dispatched as a single
+exchange containing a `java.util.List<CamelEvent>` body. This reduces the overhead of creating
+individual exchanges for each event.
+
+Set `batchSize` to the number of events per batch. The `batchTimeout` option (default: 1000ms)
+controls the maximum time to wait for a full batch before flushing a partial batch.
+
+When batching is enabled, the `CamelEventBatchSize` header is set with the number of events
+in the batch.
+
+[source,java]
+----
+// Collect events in batches of 50, flush every 2 seconds
+from("event:ExchangeCompleted?batchSize=50&batchTimeout=2000")
+    .log("Received batch of ${header.CamelEventBatchSize} events");
+
+// Combine async processing with batching
+from("event:Exchange*?async=true&batchSize=100&batchTimeout=5000")
+    .log("Batch of ${header.CamelEventBatchSize} exchange events");
+----
+
 == Distributed Events
 
 The Event component captures events within a single CamelContext (JVM). To propagate events across
