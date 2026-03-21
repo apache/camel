@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -31,6 +32,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -203,26 +205,46 @@ public class ListMetric extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
-                    new Column().header("METRIC").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.metricName),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.metricId),
-                    new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> getNumber(r.count)),
-                    new Column().header("MEAN").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> getNumber(r.mean)),
-                    new Column().header("MAX").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> getNumber(r.max)),
-                    new Column().header("TOTAL").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(r -> getNumber(r.total)),
-                    new Column().header("TAGS").visible(tags).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(60, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.tags))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("type", r.type);
+                    jo.put("metric", r.metricName);
+                    jo.put("id", r.metricId);
+                    jo.put("value", r.count);
+                    jo.put("mean", r.mean);
+                    jo.put("max", r.max);
+                    jo.put("total", r.total);
+                    jo.put("tags", r.tags);
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
+                        new Column().header("METRIC").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.metricName),
+                        new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.metricId),
+                        new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                                .with(r -> getNumber(r.count)),
+                        new Column().header("MEAN").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                                .with(r -> getNumber(r.mean)),
+                        new Column().header("MAX").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                                .with(r -> getNumber(r.max)),
+                        new Column().header("TOTAL").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                                .with(r -> getNumber(r.total)),
+                        new Column().header("TAGS").visible(tags).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(60, OverflowBehaviour.NEWLINE)
+                                .with(r -> r.tags))));
+            }
         }
 
         return 0;

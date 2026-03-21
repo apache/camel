@@ -34,6 +34,10 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
                         description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format")
+    boolean jsonOutput;
+
     private CommandHelper.ReadConsoleTask waitUserTask;
 
     public ProcessWatchCommand(CamelJBangMain main) {

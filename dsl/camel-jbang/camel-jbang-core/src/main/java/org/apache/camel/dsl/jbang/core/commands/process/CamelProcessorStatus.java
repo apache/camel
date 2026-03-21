@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -302,6 +303,29 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
     }
 
     protected void printTable(List<Row> rows) {
+        if (jsonOutput) {
+            printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", r.pid);
+                jo.put("name", getName(r));
+                jo.put("routeId", r.routeId);
+                jo.put("group", r.group);
+                jo.put("id", getId(r));
+                jo.put("processor", r.processor);
+                jo.put("status", getStatus(r));
+                jo.put("total", r.total);
+                jo.put("failed", r.failed);
+                jo.put("inflight", r.inflight);
+                jo.put("mean", r.mean);
+                jo.put("min", r.min);
+                jo.put("max", r.max);
+                jo.put("last", r.last);
+                jo.put("delta", getDelta(r));
+                jo.put("sinceLast", getSinceLast(r));
+                return jo;
+            }).collect(Collectors.toList())));
+            return;
+        }
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(this::getPid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)

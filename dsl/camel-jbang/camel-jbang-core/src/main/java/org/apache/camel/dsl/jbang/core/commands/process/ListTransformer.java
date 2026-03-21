@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -30,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -55,6 +57,10 @@ public class ListTransformer extends ProcessBaseCommand {
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeTotalCompletionCandidates.class,
                         description = "Sort by pid, name, age or total", defaultValue = "pid")
     String sort;
+
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format")
+    boolean jsonOutput;
 
     public ListTransformer(CamelJBangMain main) {
         super(main);
@@ -104,6 +110,19 @@ public class ListTransformer extends ProcessBaseCommand {
     }
 
     protected void printTable(List<Row> rows) {
+        if (jsonOutput) {
+            printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", r.pid);
+                jo.put("name", r.name);
+                jo.put("age", r.age);
+                jo.put("dataType", r.dataTypeName);
+                jo.put("from", r.dataTypeFrom);
+                jo.put("to", r.dataTypeTo);
+                return jo;
+            }).collect(Collectors.toList())));
+            return;
+        }
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)

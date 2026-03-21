@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -30,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -132,22 +134,41 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(r -> r.routeId),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.id),
-                    new Column().header("STATE").dataAlign(HorizontalAlign.LEFT).with(r -> r.state),
-                    new Column().header("PENDING").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getPending),
-                    new Column().header("SUCCESS").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getSuccess),
-                    new Column().header("FAIL").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getFailure),
-                    new Column().header("REJECT").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getReject))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("component", r.component);
+                    jo.put("route", r.routeId);
+                    jo.put("id", r.id);
+                    jo.put("state", r.state);
+                    jo.put("bufferedCalls", r.bufferedCalls);
+                    jo.put("successfulCalls", r.successfulCalls);
+                    jo.put("failedCalls", r.failedCalls);
+                    jo.put("notPermittedCalls", r.notPermittedCalls);
+                    jo.put("failureRate", r.failureRate);
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
+                        new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(r -> r.routeId),
+                        new Column().header("ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.id),
+                        new Column().header("STATE").dataAlign(HorizontalAlign.LEFT).with(r -> r.state),
+                        new Column().header("PENDING").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                                .with(this::getPending),
+                        new Column().header("SUCCESS").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                                .with(this::getSuccess),
+                        new Column().header("FAIL").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT)
+                                .with(this::getFailure),
+                        new Column().header("REJECT").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                                .with(this::getReject))));
+            }
         }
 
         return 0;

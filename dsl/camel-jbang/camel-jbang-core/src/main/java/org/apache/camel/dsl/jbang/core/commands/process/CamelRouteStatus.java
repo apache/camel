@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -35,6 +36,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -257,6 +259,32 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     }
 
     protected void printTable(List<Row> rows, boolean remoteVisible) {
+        if (jsonOutput) {
+            printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", r.pid);
+                jo.put("name", r.name);
+                jo.put("routeId", r.routeId);
+                jo.put("group", r.group);
+                jo.put("from", r.from);
+                jo.put("remote", r.remote);
+                jo.put("status", getStatus(r));
+                jo.put("age", r.age);
+                jo.put("coverage", r.coverage);
+                jo.put("throughput", getThroughput(r));
+                jo.put("total", r.total);
+                jo.put("failed", r.failed);
+                jo.put("inflight", r.inflight);
+                jo.put("mean", r.mean);
+                jo.put("min", r.min);
+                jo.put("max", r.max);
+                jo.put("last", r.last);
+                jo.put("delta", getDelta(r));
+                jo.put("sinceLast", getSinceLast(r));
+                return jo;
+            }).collect(Collectors.toList())));
+            return;
+        }
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)

@@ -53,10 +53,6 @@ public class ListProcess extends ProcessWatchCommand {
                         description = "List only pid in the output")
     boolean pid;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
-    boolean jsonOutput;
-
     public ListProcess(CamelJBangMain main) {
         super(main);
     }

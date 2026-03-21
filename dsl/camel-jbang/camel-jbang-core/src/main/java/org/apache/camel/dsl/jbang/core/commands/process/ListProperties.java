@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -31,6 +32,7 @@ import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -133,22 +135,40 @@ public class ListProperties extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("LOCATION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.loc),
-                    new Column().header("KEY").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.key),
-                    new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> "" + r.value),
-                    new Column().header("FUNCTION").visible(verbose).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getFunction),
-                    new Column().header("ORIGINAL VALUE").visible(verbose).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> "" + r.originalValue))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("location", r.loc);
+                    jo.put("key", r.key);
+                    jo.put("value", "" + r.value);
+                    jo.put("function", getFunction(r));
+                    jo.put("originalValue", "" + r.originalValue);
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("LOCATION").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                .with(r -> r.loc),
+                        new Column().header("KEY").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.key),
+                        new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                .with(r -> "" + r.value),
+                        new Column().header("FUNCTION").visible(verbose).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(this::getFunction),
+                        new Column().header("ORIGINAL VALUE").visible(verbose).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                .with(r -> "" + r.originalValue))));
+            }
         }
 
         return 0;
