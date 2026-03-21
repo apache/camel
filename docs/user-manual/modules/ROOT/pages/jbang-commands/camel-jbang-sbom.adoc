@@ -34,7 +34,7 @@ camel sbom [options]
 | `--hawtio` | Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus) | false | boolean
 | `--hawtio-version` | Version of the Hawtio web console | HawtioVersion.HAWTIO_VERSION | String
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
-| `--java-version` | Java version | 21 | String
+| `--java-version` | Java version (21, 25) | 21 | String
 | `--kamelets-version` | Apache Camel Kamelets version | RuntimeType.KAMELETS_VERSION | String
 | `--lazy-bean` | Whether to use lazy bean initialization (can help with complex classloading issues | true | boolean
 | `--local-kamelet-dir` | Local directory for loading Kamelets (takes precedence) |  | String
@@ -55,14 +55,14 @@ camel sbom [options]
 | `--package-name` | For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. Use false to turn off and not include package name in the Java source files. |  | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
 | `--port` | Embeds a local HTTP server on this port |  | int
-| `--profile` | Profile to export. |  | String
+| `--profile` | Profile to export (dev, test, or prod). |  | String
 | `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String
 | `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
 | `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
 | `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
 | `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
-| `--runtime` | Runtime |  | RuntimeType
+| `--runtime` | Runtime () |  | RuntimeType
 | `--sbom-format` | The SBOM format, possible values are cyclonedx or spdx | CYCLONEDX_FORMAT | String
 | `--sbom-output-format` | The SBOM output format, possible values are json or xml | SBOM_JSON_FORMAT | String
 | `--skip-plugins` | Skip plugins during export | false | boolean

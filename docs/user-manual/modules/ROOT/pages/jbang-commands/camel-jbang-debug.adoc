@@ -48,7 +48,7 @@ camel debug [options]
 | `--logging-color` | Use colored logging | true | boolean
 | `--logging-config-path` | Path to file with custom logging configuration |  | String
 | `--logging-json` | Use JSON logging (ECS Layout) | false | boolean
-| `--logging-level` | Logging level | info | String
+| `--logging-level` | Logging level () | info | String
 | `--management-port` | To use a dedicated port for HTTP management (use 0 to dynamic assign a free random port number) |  | int
 | `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys |  | boolean
 | `--maven-apache-snapshot-enabled` | Whether downloading JARs from ASF Maven Snapshot repository is enabled | true | boolean
@@ -67,7 +67,7 @@ camel debug [options]
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
 | `--port` | Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number) |  | int
 | `--pretty` | Pretty print message body when using JSon or XML format |  | boolean
-| `--profile` | Profile to run. | dev | String
+| `--profile` | Profile to run (dev, test, or prod). | dev | String
 | `--prompt` | Allow user to type in required parameters in prompt if not present in application | false | boolean
 | `--prop,--property` | Additional properties (override existing) |  | String
 | `--properties` | comma separated list of properties file (ex. /path/to/file.properties,/path/to/other.properties |  | String
@@ -77,13 +77,13 @@ camel debug [options]
 | `--reload,--dev` | Enables dev mode (live reload when source files are updated and saved) |  | boolean
 | `--remote-attach` | Attaches debugger remotely to an existing running Camel integration. (Add camel-cli-debug JAR to the existing Camel application and run before attaching this debugger) |  | boolean
 | `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
-| `--runtime` | Runtime | camel-main | RuntimeType
+| `--runtime` | Runtime () | camel-main | RuntimeType
 | `--show-body` | Show message body in debug messages | true | boolean
 | `--show-exception` | Show exception and stacktrace for failed messages | true | boolean
 | `--show-exchange-properties` | Show exchange properties in debug messages | false | boolean
 | `--show-exchange-variables` | Show exchange variables in debug messages | true | boolean
 | `--show-headers` | Show message headers in debug messages | true | boolean
-| `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
+| `--skip-plugins` | Skip plugins during export | false | boolean
 | `--source` | Prefer to display source filename/code instead of IDs |  | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
 | `--spring-boot-version` | Spring Boot version | RuntimeType.SPRING_BOOT_VERSION | String
