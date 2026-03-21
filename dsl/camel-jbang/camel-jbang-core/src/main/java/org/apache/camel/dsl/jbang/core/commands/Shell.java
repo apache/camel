@@ -20,6 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.camel.util.HomeHelper;
+import org.jline.builtins.InteractiveCommandGroup;
+import org.jline.builtins.PosixCommandGroup;
 import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.LineReader;
 import picocli.CommandLine;
@@ -41,10 +43,12 @@ public class Shell extends CamelCommand {
 
         try (org.jline.shell.Shell shell = org.jline.shell.Shell.builder()
                 .prompt("camel> ")
-                .groups(registry)
+                .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
                 .historyFile(history)
                 .historyCommands(true)
                 .helpCommands(true)
+                .scriptCommands(true)
+                .variableCommands(true)
                 .commandHighlighter(true)
                 .variable(LineReader.LIST_MAX, 50)
                 .option(LineReader.Option.GROUP_PERSIST, true)
