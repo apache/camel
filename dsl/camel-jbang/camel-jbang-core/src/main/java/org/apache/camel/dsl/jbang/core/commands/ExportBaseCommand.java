@@ -27,6 +27,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -259,6 +260,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Verbose output of startup activity (dependency resolution and downloading")
     protected boolean verbose;
 
+    @CommandLine.Option(names = { "--dry-run" }, defaultValue = "false",
+                        description = "Preview export without writing files")
+    protected boolean dryRun;
+
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
@@ -304,8 +309,75 @@ public abstract class ExportBaseCommand extends CamelCommand {
         if (!quiet) {
             printConfigurationValues("Exporting integration with the following configuration:");
         }
+
+        if (dryRun) {
+            return doDryRunExport();
+        }
+
         // export
         return export();
+    }
+
+    /**
+     * Performs a dry-run export: runs the export to a temporary directory, lists the files that would be generated, and
+     * cleans up.
+     */
+    private Integer doDryRunExport() throws Exception {
+        // Save original export directory
+        String originalExportDir = this.exportDir;
+        Path tempDir = Files.createTempDirectory("camel-export-dry-run-");
+        try {
+            // Redirect export to temp directory
+            this.exportDir = tempDir.toString();
+            this.cleanExportDir = false;
+            this.dryRun = false; // avoid recursion in subclasses
+            this.quiet = true; // suppress normal output
+
+            Integer result = export();
+
+            printer().println("Dry-run export preview:");
+            printer().println();
+            printer().println("Target directory: " + (originalExportDir != null ? originalExportDir : "."));
+            printer().println();
+            printer().println("Files that would be created:");
+            try (Stream<Path> walk = Files.walk(tempDir)) {
+                walk.filter(Files::isRegularFile)
+                        .sorted()
+                        .forEach(p -> {
+                            Path rel = tempDir.relativize(p);
+                            try {
+                                long size = Files.size(p);
+                                printer().printf("  %s (%s)%n", rel, humanReadableSize(size));
+                            } catch (IOException e) {
+                                printer().printf("  %s%n", rel);
+                            }
+                        });
+            }
+
+            return result;
+        } finally {
+            // Clean up temp directory
+            try (Stream<Path> walk = Files.walk(tempDir)) {
+                walk.sorted(Comparator.reverseOrder())
+                        .forEach(p -> {
+                            try {
+                                Files.deleteIfExists(p);
+                            } catch (IOException e) {
+                                // ignore
+                            }
+                        });
+            }
+        }
+    }
+
+    private static String humanReadableSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " bytes";
+        } else if (bytes < 1024 * 1024) {
+            return String.format("%.1f KB", bytes / 1024.0);
+        } else {
+            return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
+        }
     }
 
     protected static String mavenRepositoriesAsPomXml(String repos) {

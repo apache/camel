@@ -256,6 +256,7 @@ public class Export extends ExportBaseCommand {
         cmd.groovyPrecompiled = this.groovyPrecompiled;
         cmd.hawtio = this.hawtio;
         cmd.hawtioVersion = this.hawtioVersion;
+        cmd.dryRun = this.dryRun;
         // run export
         return cmd.export();
     }
