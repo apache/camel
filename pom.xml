@@ -267,6 +267,7 @@
                                     <exclude>**/*.chtml</exclude>
                                     <exclude>**/*.crt</exclude>
                                     <exclude>**/*.csv</exclude>
+                                    <exclude>**/*.dwl</exclude>
                                     <exclude>**/*.event</exclude>
                                     <exclude>**/*.gif</exclude>
                                     <exclude>**/*.gpg</exclude>
