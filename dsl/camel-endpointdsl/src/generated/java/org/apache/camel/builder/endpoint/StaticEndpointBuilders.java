@@ -4880,36 +4880,42 @@ public class StaticEndpointBuilders {
      * Comma-separated list of event types to subscribe to. Event types
      * correspond to CamelEvent.Type enum values (case-insensitive), for
      * example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed.
-     * 
+     * Wildcard patterns are supported using a suffix, for example: Route
+     * matches all route events, Exchange matches all exchange events, and
+     * matches all events.
+     *
      * @param path events
      * @return the dsl builder
      */
-    public static EventEndpointBuilderFactory.EventEndpointBuilder event(String path) {
+    public static CamelEventEndpointBuilderFactory.CamelEventEndpointBuilder event(String path) {
         return event("event", path);
     }
     /**
      * Event (camel-event)
      * Subscribe to Camel internal events such as route started/stopped and
      * exchange completed/failed.
-     * 
+     *
      * Category: core,monitoring
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-event
-     * 
+     *
      * Syntax: <code>event:events</code>
-     * 
+     *
      * Path parameter: events (required)
      * Comma-separated list of event types to subscribe to. Event types
      * correspond to CamelEvent.Type enum values (case-insensitive), for
      * example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed.
-     * 
+     * Wildcard patterns are supported using a suffix, for example: Route
+     * matches all route events, Exchange matches all exchange events, and
+     * matches all events.
+     *
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path events
      * @return the dsl builder
      */
-    public static EventEndpointBuilderFactory.EventEndpointBuilder event(String componentName, String path) {
-        return EventEndpointBuilderFactory.endpointBuilder(componentName, path);
+    public static CamelEventEndpointBuilderFactory.CamelEventEndpointBuilder event(String componentName, String path) {
+        return CamelEventEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Exec (camel-exec)

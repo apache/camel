@@ -46,6 +46,74 @@ public interface CamelEventEndpointBuilderFactory {
         }
 
         /**
+         * Whether to process events asynchronously using a thread pool. When
+         * enabled, the event notifier thread is not blocked while the event
+         * exchange is processed. Use asyncPoolSize to control the maximum
+         * number of concurrent event processing threads.
+         *
+         * The option is a: <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: consumer
+         *
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder async(boolean async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * Whether to process events asynchronously using a thread pool. When
+         * enabled, the event notifier thread is not blocked while the event
+         * exchange is processed. Use asyncPoolSize to control the maximum
+         * number of concurrent event processing threads.
+         *
+         * The option will be converted to a <code>boolean</code> type.
+         *
+         * Default: false
+         * Group: consumer
+         *
+         * @param async the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder async(String async) {
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * The maximum number of threads in the pool for async event processing.
+         * Only used when the async option is enabled.
+         *
+         * The option is a: <code>int</code> type.
+         *
+         * Default: 10
+         * Group: consumer
+         *
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder asyncPoolSize(int asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+        /**
+         * The maximum number of threads in the pool for async event processing.
+         * Only used when the async option is enabled.
+         *
+         * The option will be converted to a <code>int</code> type.
+         *
+         * Default: 10
+         * Group: consumer
+         *
+         * @param asyncPoolSize the value to set
+         * @return the dsl builder
+         */
+        default CamelEventEndpointBuilder asyncPoolSize(String asyncPoolSize) {
+            doSetProperty("asyncPoolSize", asyncPoolSize);
+            return this;
+        }
+        /**
          * Fully qualified class name of a custom event class to filter on. When
          * set, only events that are instances of the specified class will be
          * accepted. This is useful for subscribing to custom user-defined
