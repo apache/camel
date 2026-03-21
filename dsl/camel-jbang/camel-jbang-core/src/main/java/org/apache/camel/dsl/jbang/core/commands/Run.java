@@ -236,6 +236,18 @@ public class Run extends CamelCommand {
                         description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
     boolean packageScanJars;
 
+    @CommandLine.ArgGroup(validate = false, heading = "%nLogging Options:%n")
+    LoggingOptions loggingOptions = new LoggingOptions();
+
+    @CommandLine.ArgGroup(validate = false, heading = "%nDebug Options:%n")
+    DebugOptions debugOptions = new DebugOptions();
+
+    @CommandLine.ArgGroup(validate = false, heading = "%nExecution Limit Options:%n")
+    ExecutionLimitOptions executionLimitOptions = new ExecutionLimitOptions();
+
+    @CommandLine.ArgGroup(validate = false, heading = "%nServer Options:%n")
+    ServerOptions serverOptions = new ServerOptions();
+
     @Option(names = { "--jvm-debug" }, parameterConsumer = DebugConsumer.class, paramLabel = "<true|false|port>",
             description = "To enable JVM remote debugging on port 4004 by default. The supported values are true to " +
                           "enable the remote debugging, false to disable the remote debugging or a number to use a custom port")
@@ -247,46 +259,13 @@ public class Run extends CamelCommand {
     @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
-    @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
-    boolean logging = true;
-
-    @Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
-            defaultValue = "info", description = "Logging level (${COMPLETION-CANDIDATES})")
-    String loggingLevel;
-
-    @Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
-    boolean loggingColor = true;
-
-    @Option(names = { "--logging-json" }, defaultValue = "false", description = "Use JSON logging (ECS Layout)")
-    boolean loggingJson;
-
-    @Option(names = { "--logging-config-path" }, description = "Path to file with custom logging configuration")
-    String loggingConfigPath;
-
-    @Option(names = { "--logging-category" }, description = "Used for individual logging levels (ex: org.apache.kafka=DEBUG)")
-    List<String> loggingCategory = new ArrayList<>();
-
-    @Option(names = { "--max-messages" }, defaultValue = "0", description = "Max number of messages to process before stopping")
-    int maxMessages;
-
-    @Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
-    int maxSeconds;
-
-    @Option(names = { "--max-idle-seconds" }, defaultValue = "0",
-            description = "For how long time in seconds Camel can be idle before stopping")
-    int maxIdleSeconds;
+    // Logging, execution limit, debug, and server options are defined in their respective @ArgGroup inner classes below
 
     @Option(names = { "--reload", "--dev" },
             description = "Enables dev mode (live reload when source files are updated and saved)")
     boolean dev;
 
-    @Option(names = { "--trace" }, defaultValue = "false",
-            description = "Enables trace logging of the routed messages")
-    boolean trace;
-
-    @Option(names = { "--backlog-trace" }, defaultValue = "false",
-            description = "Enables backlog tracing of the routed messages")
-    boolean backlogTrace;
+    // trace and backlogTrace options are in DebugOptions @ArgGroup
 
     @Option(names = { "--properties" },
             description = "comma separated list of properties file" +
@@ -300,43 +279,13 @@ public class Run extends CamelCommand {
                                                 + " Multiple names can be separated by comma. (all = stub all endpoints).")
     String stub;
 
-    @Option(names = { "--jfr" }, defaultValue = "false",
-            description = "Enables Java Flight Recorder saving recording to disk on exit")
-    boolean jfr;
-
-    @Option(names = { "--jfr-profile" },
-            description = "Java Flight Recorder profile to use (such as default or profile)")
-    String jfrProfile;
+    // jfr and jfrProfile options are in DebugOptions @ArgGroup
 
     @Option(names = { "--local-kamelet-dir" },
             description = "Local directory (or github link) for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma.")
     String localKameletDir;
 
-    @Option(names = { "--port" },
-            description = "Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number)")
-    int port = -1;
-
-    @Option(names = { "--management-port" },
-            description = "To use a dedicated port for HTTP management (use 0 to dynamic assign a free random port number)")
-    int managementPort = -1;
-
-    @Option(names = { "--console" }, defaultValue = "false",
-            description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
-    boolean console;
-
-    @Deprecated
-    @Option(names = { "--health" }, defaultValue = "false",
-            description = "Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default)")
-    boolean health;
-
-    @Deprecated
-    @Option(names = { "--metrics" }, defaultValue = "false",
-            description = "Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
-    boolean metrics;
-
-    @Option(names = { "--observe" }, defaultValue = "false",
-            description = "Enable observability services")
-    boolean observe;
+    // port, managementPort, console, health, metrics, observe options are in ServerOptions @ArgGroup
 
     @Option(names = { "--modeline" }, defaultValue = "true",
             description = "Whether to support JBang style //DEPS to specify additional dependencies")
@@ -640,10 +589,10 @@ public class Run extends CamelCommand {
         if (sourceDir != null) {
             writeSetting(main, profileProperties, SOURCE_DIR, sourceDir);
         }
-        if (trace) {
+        if (debugOptions.trace) {
             writeSetting(main, profileProperties, "camel.main.tracing", "true");
         }
-        if (backlogTrace) {
+        if (debugOptions.backlogTrace) {
             writeSetting(main, profileProperties, "camel.trace.enabled", "true");
         }
         if (modeline) {
@@ -670,9 +619,9 @@ public class Run extends CamelCommand {
         if (repositories != null) {
             writeSetting(main, profileProperties, REPOS, repositories);
         }
-        writeSetting(main, profileProperties, HEALTH, health ? "true" : "false");
-        writeSetting(main, profileProperties, METRICS, metrics ? "true" : "false");
-        writeSetting(main, profileProperties, CONSOLE, console ? "true" : "false");
+        writeSetting(main, profileProperties, HEALTH, serverOptions.health ? "true" : "false");
+        writeSetting(main, profileProperties, METRICS, serverOptions.metrics ? "true" : "false");
+        writeSetting(main, profileProperties, CONSOLE, serverOptions.console ? "true" : "false");
         writeSetting(main, profileProperties, VERBOSE, verbose ? "true" : "false");
         // the runtime version of Camel is what is loaded via the catalog
         writeSetting(main, profileProperties, CAMEL_VERSION, new DefaultCamelCatalog().getCatalogVersion());
@@ -723,23 +672,28 @@ public class Run extends CamelCommand {
         doAddInitialProperty(main);
 
         writeSetting(main, profileProperties, "camel.main.durationMaxMessages",
-                () -> maxMessages > 0 ? String.valueOf(maxMessages) : null);
+                () -> executionLimitOptions.maxMessages > 0
+                        ? String.valueOf(executionLimitOptions.maxMessages) : null);
         writeSetting(main, profileProperties, "camel.main.durationMaxSeconds",
-                () -> maxSeconds > 0 ? String.valueOf(maxSeconds) : null);
+                () -> executionLimitOptions.maxSeconds > 0
+                        ? String.valueOf(executionLimitOptions.maxSeconds) : null);
         writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
-                () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
-        if (port != -1 && port != 8080) {
-            writeSetting(main, profileProperties, "camel.server.port", () -> String.valueOf(port));
+                () -> executionLimitOptions.maxIdleSeconds > 0
+                        ? String.valueOf(executionLimitOptions.maxIdleSeconds) : null);
+        if (serverOptions.port != -1 && serverOptions.port != 8080) {
+            writeSetting(main, profileProperties, "camel.server.port", () -> String.valueOf(serverOptions.port));
         }
-        if (port == 0 && managementPort == -1) {
+        if (serverOptions.port == 0 && serverOptions.managementPort == -1) {
             // use same port for management
-            managementPort = 0;
+            serverOptions.managementPort = 0;
         }
-        if (managementPort != -1 && managementPort != 8080) {
-            writeSetting(main, profileProperties, "camel.management.port", () -> String.valueOf(managementPort));
+        if (serverOptions.managementPort != -1 && serverOptions.managementPort != 8080) {
+            writeSetting(main, profileProperties, "camel.management.port",
+                    () -> String.valueOf(serverOptions.managementPort));
         }
-        writeSetting(main, profileProperties, JFR, jfr || jfrProfile != null ? "jfr" : null);
-        writeSetting(main, profileProperties, JFR_PROFILE, jfrProfile != null ? jfrProfile : null);
+        writeSetting(main, profileProperties, JFR, debugOptions.jfr || debugOptions.jfrProfile != null ? "jfr" : null);
+        writeSetting(main, profileProperties, JFR_PROFILE,
+                debugOptions.jfrProfile != null ? debugOptions.jfrProfile : null);
 
         writeSetting(main, profileProperties, KAMELETS_VERSION, kameletsVersion);
 
@@ -1007,7 +961,7 @@ public class Run extends CamelCommand {
             }
         }
 
-        if (observe) {
+        if (serverOptions.observe) {
             dependencies.add("camel:observability-services");
         }
         if (!dependencies.isEmpty()) {
@@ -1155,8 +1109,8 @@ public class Run extends CamelCommand {
         eq.files = this.files;
         eq.name = this.name;
         eq.verbose = this.verbose;
-        eq.port = this.port;
-        eq.managementPort = this.managementPort;
+        eq.port = this.serverOptions.port;
+        eq.managementPort = this.serverOptions.managementPort;
         eq.gav = this.gav;
         eq.runtime = this.runtime;
         if (eq.gav == null) {
@@ -1262,8 +1216,8 @@ public class Run extends CamelCommand {
         eq.files = this.files;
         eq.name = this.name;
         eq.verbose = this.verbose;
-        eq.port = this.port;
-        eq.managementPort = this.managementPort;
+        eq.port = this.serverOptions.port;
+        eq.managementPort = this.serverOptions.managementPort;
         eq.gav = this.gav;
         eq.repositories = this.repositories;
         eq.runtime = this.runtime;
@@ -1411,11 +1365,13 @@ public class Run extends CamelCommand {
         if (Files.exists(profilePropertiesPath)) {
             answer = loadProfilePropertiesFile(profilePropertiesPath);
             // logging level/color may be configured in the properties file
-            loggingLevel = answer.getProperty("loggingLevel", loggingLevel);
-            loggingColor
-                    = "true".equals(answer.getProperty("loggingColor", loggingColor ? "true" : "false"));
-            loggingJson
-                    = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
+            loggingOptions.loggingLevel = answer.getProperty("loggingLevel", loggingOptions.loggingLevel);
+            loggingOptions.loggingColor
+                    = "true"
+                            .equals(answer.getProperty("loggingColor", loggingOptions.loggingColor ? "true" : "false"));
+            loggingOptions.loggingJson
+                    = "true"
+                            .equals(answer.getProperty("loggingJson", loggingOptions.loggingJson ? "true" : "false"));
             repositories = answer.getProperty(REPOS, repositories);
             mavenSettings = answer.getProperty(MAVEN_SETTINGS, mavenSettings);
             mavenSettingsSecurity = answer.getProperty(MAVEN_SETTINGS_SECURITY, mavenSettingsSecurity);
@@ -1876,7 +1832,7 @@ public class Run extends CamelCommand {
     }
 
     private void configureLogging(Path baseDir) throws Exception {
-        if (logging) {
+        if (loggingOptions.logging) {
             // allow to configure individual logging levels in application.properties
             Properties prop = loadProfileProperties(baseDir);
             if (prop != null) {
@@ -1896,16 +1852,18 @@ public class Run extends CamelCommand {
                     key = StringHelper.removeLeadingAndEndingQuotes(key);
                     String line = key + "=" + value;
                     String line2 = key + " = " + value;
-                    if (!loggingCategory.contains(line) && !loggingCategory.contains(line2)) {
-                        loggingCategory.add(line);
+                    if (!loggingOptions.loggingCategory.contains(line)
+                            && !loggingOptions.loggingCategory.contains(line2)) {
+                        loggingOptions.loggingCategory.add(line);
                     }
                 }
             }
-            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, scriptRun, false, loggingConfigPath,
-                    loggingCategory);
-            writeSettings("loggingLevel", loggingLevel);
-            writeSettings("loggingColor", loggingColor ? "true" : "false");
-            writeSettings("loggingJson", loggingJson ? "true" : "false");
+            RuntimeUtil.configureLog(loggingOptions.loggingLevel, loggingOptions.loggingColor,
+                    loggingOptions.loggingJson, scriptRun, false, loggingOptions.loggingConfigPath,
+                    loggingOptions.loggingCategory);
+            writeSettings("loggingLevel", loggingOptions.loggingLevel);
+            writeSettings("loggingColor", loggingOptions.loggingColor ? "true" : "false");
+            writeSettings("loggingJson", loggingOptions.loggingJson ? "true" : "false");
             if (!scriptRun) {
                 // remember log file
                 String name = RuntimeUtil.getPid() + ".log";
@@ -1922,8 +1880,8 @@ public class Run extends CamelCommand {
             }
         } else {
             if (exportRun) {
-                RuntimeUtil.configureLog(loggingLevel, false, false, false, true, null, null);
-                writeSettings("loggingLevel", loggingLevel);
+                RuntimeUtil.configureLog(loggingOptions.loggingLevel, false, false, false, true, null, null);
+                writeSettings("loggingLevel", loggingOptions.loggingLevel);
             } else {
                 RuntimeUtil.configureLog("off", false, false, false, false, null, null);
                 writeSettings("loggingLevel", "off");
@@ -2193,6 +2151,87 @@ public class Run extends CamelCommand {
         }
     }
 
+    static class LoggingOptions {
+        @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
+        boolean logging = true;
+
+        @Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
+                defaultValue = "info", description = "Logging level (${COMPLETION-CANDIDATES})")
+        String loggingLevel;
+
+        @Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+        boolean loggingColor = true;
+
+        @Option(names = { "--logging-json" }, defaultValue = "false", description = "Use JSON logging (ECS Layout)")
+        boolean loggingJson;
+
+        @Option(names = { "--logging-config-path" }, description = "Path to file with custom logging configuration")
+        String loggingConfigPath;
+
+        @Option(names = { "--logging-category" },
+                description = "Used for individual logging levels (ex: org.apache.kafka=DEBUG)")
+        List<String> loggingCategory = new ArrayList<>();
+    }
+
+    static class DebugOptions {
+        @Option(names = { "--jfr" }, defaultValue = "false",
+                description = "Enables Java Flight Recorder saving recording to disk on exit")
+        boolean jfr;
+
+        @Option(names = { "--jfr-profile" },
+                description = "Java Flight Recorder profile to use (such as default or profile)")
+        String jfrProfile;
+
+        @Option(names = { "--trace" }, defaultValue = "false",
+                description = "Enables trace logging of the routed messages")
+        boolean trace;
+
+        @Option(names = { "--backlog-trace" }, defaultValue = "false",
+                description = "Enables backlog tracing of the routed messages")
+        boolean backlogTrace;
+    }
+
+    static class ExecutionLimitOptions {
+        @Option(names = { "--max-messages" }, defaultValue = "0",
+                description = "Max number of messages to process before stopping")
+        int maxMessages;
+
+        @Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
+        int maxSeconds;
+
+        @Option(names = { "--max-idle-seconds" }, defaultValue = "0",
+                description = "For how long time in seconds Camel can be idle before stopping")
+        int maxIdleSeconds;
+    }
+
+    static class ServerOptions {
+        @Option(names = { "--port" },
+                description = "Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number)")
+        int port = -1;
+
+        @Option(names = { "--management-port" },
+                description = "To use a dedicated port for HTTP management (use 0 to dynamic assign a free random port number)")
+        int managementPort = -1;
+
+        @Option(names = { "--console" }, defaultValue = "false",
+                description = "Developer console at /q/dev on local HTTP server (port 8080 by default)")
+        boolean console;
+
+        @Deprecated
+        @Option(names = { "--health" }, defaultValue = "false",
+                description = "Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default)")
+        boolean health;
+
+        @Deprecated
+        @Option(names = { "--metrics" }, defaultValue = "false",
+                description = "Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
+        boolean metrics;
+
+        @Option(names = { "--observe" }, defaultValue = "false",
+                description = "Enable observability services")
+        boolean observe;
+    }
+
     static class FilesConsumer extends ParameterConsumer<Run> {
         @Override
         protected void doConsumeParameters(Stack<String> args, Run cmd) {
@@ -2240,7 +2279,7 @@ public class Run extends CamelCommand {
 
     @Override
     protected Printer printer() {
-        if (exportRun && (!logging && !verbose)) {
+        if (exportRun && (!loggingOptions.logging && !verbose)) {
             // Export run should be silent unless in logging or verbose mode
             if (quietPrinter == null) {
                 quietPrinter = new Printer.QuietPrinter(super.printer());

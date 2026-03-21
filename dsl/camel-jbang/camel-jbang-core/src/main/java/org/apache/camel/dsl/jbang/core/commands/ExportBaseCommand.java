@@ -359,11 +359,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.dependencies = dependencies;
         run.files = files;
         run.name = name;
-        run.port = port;
-        run.managementPort = managementPort;
+        run.serverOptions.port = port;
+        run.serverOptions.managementPort = managementPort;
         run.excludes = excludes;
         run.openapi = openapi;
-        run.observe = observe;
+        run.serverOptions.observe = observe;
         run.download = download;
         run.packageScanJars = packageScanJars;
         run.runtime = runtime;
@@ -379,7 +379,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.property = applicationProperties;
         run.repositories = repositories;
         run.verbose = verbose;
-        run.logging = logging;
+        run.loggingOptions.logging = logging;
         return run.runExport(ignoreLoadingError);
     }
 
