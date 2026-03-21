@@ -144,7 +144,7 @@ public class CamelSendAction extends ActionBaseCommand {
             for (String h : headers) {
                 if (!h.contains("=")) {
                     printer().println("Header must be in key=value format, was: " + h);
-                    return 0;
+                    return 1;
                 }
             }
         }
@@ -211,7 +211,7 @@ public class CamelSendAction extends ActionBaseCommand {
         if (pids.size() != 1) {
             printer().println("Name or pid " + name + " matches " + pids.size()
                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 0;
+            return 1;
         }
 
         this.pid = pids.get(0);

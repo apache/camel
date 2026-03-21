@@ -148,7 +148,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
             if (it) {
                 if (pids.size() > 1) {
                     printer().println("Interactive mode only operate on a single Camel application");
-                    return 0;
+                    return 1;
                 }
                 return doInteractiveCall(pids.get(0));
             }
