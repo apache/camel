@@ -1533,8 +1533,8 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
-    static CamelEventComponentBuilderFactory.CamelEventComponentBuilder event() {
-        return CamelEventComponentBuilderFactory.event();
+    static EventComponentBuilderFactory.EventComponentBuilder event() {
+        return EventComponentBuilderFactory.event();
     }
     /**
      * Exec (camel-exec)

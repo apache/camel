@@ -4883,7 +4883,7 @@ public class StaticEndpointBuilders {
      * Wildcard patterns are supported using a suffix, for example: Route
      * matches all route events, Exchange matches all exchange events, and
      * matches all events.
-     *
+     * 
      * @param path events
      * @return the dsl builder
      */
@@ -4894,13 +4894,13 @@ public class StaticEndpointBuilders {
      * Event (camel-event)
      * Subscribe to Camel internal events such as route started/stopped and
      * exchange completed/failed.
-     *
+     * 
      * Category: core,monitoring
      * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-event
-     *
+     * 
      * Syntax: <code>event:events</code>
-     *
+     * 
      * Path parameter: events (required)
      * Comma-separated list of event types to subscribe to. Event types
      * correspond to CamelEvent.Type enum values (case-insensitive), for
@@ -4908,7 +4908,7 @@ public class StaticEndpointBuilders {
      * Wildcard patterns are supported using a suffix, for example: Route
      * matches all route events, Exchange matches all exchange events, and
      * matches all events.
-     *
+     * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path events
