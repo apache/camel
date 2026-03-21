@@ -20,18 +20,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.HomeHelper;
 import org.jline.builtins.InteractiveCommandGroup;
 import org.jline.builtins.PosixCommandGroup;
 import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.LineReader;
 import org.jline.shell.impl.DefaultAliasManager;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
+import org.jline.widget.AutosuggestionWidgets;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "shell",
                      description = "Interactive Camel JBang shell.",
                      footer = "Press Ctrl-C to exit.")
 public class Shell extends CamelCommand {
+
+    // Camel orange color (packed RGB)
+    private static final int CAMEL_ORANGE = 0xF69123;
 
     public Shell(CamelJBangMain main) {
         super(main);
@@ -51,8 +58,12 @@ public class Shell extends CamelCommand {
         // Init script: if ~/.camel-jbang-init exists, it will be executed on shell startup
         Path initScript = Paths.get(homeDir, ".camel-jbang-init");
 
+        String camelVersion = VersionHelper.extractCamelVersion();
+        boolean colorEnabled = isColorEnabled();
+
         org.jline.shell.ShellBuilder builder = org.jline.shell.Shell.builder()
-                .prompt("camel> ")
+                .prompt(() -> buildPrompt(camelVersion, colorEnabled))
+                .rightPrompt(() -> buildRightPrompt(colorEnabled))
                 .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
                 .historyFile(history)
                 .historyCommands(true)
@@ -60,6 +71,10 @@ public class Shell extends CamelCommand {
                 .variableCommands(true)
                 .commandHighlighter(true)
                 .aliasManager(aliasManager)
+                .onReaderReady(reader -> {
+                    // Enable fish-style auto-suggestions from history
+                    new AutosuggestionWidgets(reader).enable();
+                })
                 // scriptCommands(true) requires a scriptRunner to be set;
                 // omitting for now until a DefaultScriptRunner is available
                 .variable(LineReader.LIST_MAX, 50)
@@ -70,8 +85,76 @@ public class Shell extends CamelCommand {
         }
 
         try (org.jline.shell.Shell shell = builder.build()) {
+            printBanner(shell, camelVersion, colorEnabled);
             shell.run();
         }
         return 0;
+    }
+
+    private static String buildPrompt(String camelVersion, boolean colorEnabled) {
+        if (!colorEnabled) {
+            return camelVersion != null ? "camel " + camelVersion + "> " : "camel> ";
+        }
+        AttributedStringBuilder sb = new AttributedStringBuilder();
+        sb.append("camel", AttributedStyle.DEFAULT.bold().foregroundRgb(CAMEL_ORANGE));
+        if (camelVersion != null) {
+            sb.append(" ");
+            sb.append(camelVersion, AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
+        }
+        sb.append("> ", AttributedStyle.DEFAULT);
+        return sb.toAnsi();
+    }
+
+    private static String buildRightPrompt(boolean colorEnabled) {
+        String cwd = System.getProperty("user.dir");
+        String home = System.getProperty("user.home");
+        if (cwd != null && home != null && cwd.startsWith(home)) {
+            cwd = "~" + cwd.substring(home.length());
+        }
+        if (cwd == null) {
+            return null;
+        }
+        if (!colorEnabled) {
+            return cwd;
+        }
+        return new AttributedStringBuilder()
+                .append(cwd, AttributedStyle.DEFAULT.faint())
+                .toAnsi();
+    }
+
+    private static void printBanner(org.jline.shell.Shell shell, String camelVersion, boolean colorEnabled) {
+        var writer = shell.terminal().writer();
+        if (colorEnabled) {
+            AttributedStringBuilder sb = new AttributedStringBuilder();
+            sb.append("Apache Camel", AttributedStyle.DEFAULT.bold().foregroundRgb(CAMEL_ORANGE));
+            sb.append(" JBang Shell", AttributedStyle.DEFAULT.bold());
+            if (camelVersion != null) {
+                sb.append(" v" + camelVersion, AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
+            }
+            writer.println(sb.toAnsi(shell.terminal()));
+        } else {
+            String banner = "Apache Camel JBang Shell";
+            if (camelVersion != null) {
+                banner += " v" + camelVersion;
+            }
+            writer.println(banner);
+        }
+        writer.println("Type 'help' for available commands, 'exit' to quit.");
+        writer.println();
+        writer.flush();
+    }
+
+    private static boolean isColorEnabled() {
+        // Respect NO_COLOR (https://no-color.org/)
+        String noColor = System.getenv("NO_COLOR");
+        if (noColor != null) {
+            return false;
+        }
+        // Respect FORCE_COLOR
+        String forceColor = System.getenv("FORCE_COLOR");
+        if (forceColor != null) {
+            return true;
+        }
+        return System.console() != null;
     }
 }
