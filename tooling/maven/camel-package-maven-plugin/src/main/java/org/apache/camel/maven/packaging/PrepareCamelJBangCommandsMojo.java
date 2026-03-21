@@ -523,9 +523,9 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         if (description == null) {
             return null;
         }
-        // Remove ${COMPLETION-CANDIDATES} placeholder
-        description = description.replace("${COMPLETION-CANDIDATES}", "");
+        // Remove ${COMPLETION-CANDIDATES} placeholder (check with parentheses first to avoid leaving empty parens)
         description = description.replace("(${COMPLETION-CANDIDATES})", "");
+        description = description.replace("${COMPLETION-CANDIDATES}", "");
         // Remove ${camel-version} and similar version placeholders
         description = description.replaceAll("\\$\\{[^}]+\\}", "");
         // Remove Java string concatenation artifacts (+ at end of line from multi-line strings)
