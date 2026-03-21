@@ -225,6 +225,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)")
     protected boolean cleanExportDir;
 
+    @CommandLine.Option(names = { "--yes", "-y" }, defaultValue = "false",
+                        description = "Automatically answer yes to confirmation prompts (e.g. when using --clean-dir)")
+    protected boolean yes;
+
     @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info",
                         completionCandidates = LoggingLevelCompletionCandidates.class,
                         description = "Logging level (${COMPLETION-CANDIDATES})")
