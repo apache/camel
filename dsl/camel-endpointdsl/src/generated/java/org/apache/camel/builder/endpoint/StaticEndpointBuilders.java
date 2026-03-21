@@ -2385,6 +2385,48 @@ public class StaticEndpointBuilders {
         return QueueEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Batch (camel-batch)
+     * Process collections of items in structured batches with chunking, error
+     * thresholds, and watermark tracking.
+     * 
+     * Category: core,scheduling
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-batch
+     * 
+     * Syntax: <code>batch:jobName</code>
+     * 
+     * Path parameter: jobName (required)
+     * The batch job name
+     * 
+     * @param path jobName
+     * @return the dsl builder
+     */
+    public static BatchEndpointBuilderFactory.BatchEndpointBuilder batch(String path) {
+        return batch("batch", path);
+    }
+    /**
+     * Batch (camel-batch)
+     * Process collections of items in structured batches with chunking, error
+     * thresholds, and watermark tracking.
+     * 
+     * Category: core,scheduling
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-batch
+     * 
+     * Syntax: <code>batch:jobName</code>
+     * 
+     * Path parameter: jobName (required)
+     * The batch job name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path jobName
+     * @return the dsl builder
+     */
+    public static BatchEndpointBuilderFactory.BatchEndpointBuilder batch(String componentName, String path) {
+        return BatchEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Bean (camel-bean)
      * Invoke methods of Java beans stored in Camel registry.
      * 

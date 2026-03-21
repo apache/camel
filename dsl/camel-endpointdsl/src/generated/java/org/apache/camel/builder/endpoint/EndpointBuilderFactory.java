@@ -42,6 +42,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketBuilders,
             org.apache.camel.builder.endpoint.dsl.AtomEndpointBuilderFactory.AtomBuilders,
             org.apache.camel.builder.endpoint.dsl.AvroEndpointBuilderFactory.AvroBuilders,
+            org.apache.camel.builder.endpoint.dsl.BatchEndpointBuilderFactory.BatchBuilders,
             org.apache.camel.builder.endpoint.dsl.BeanEndpointBuilderFactory.BeanBuilders,
             org.apache.camel.builder.endpoint.dsl.BeanValidatorEndpointBuilderFactory.BeanValidatorBuilders,
             org.apache.camel.builder.endpoint.dsl.BedrockAgentEndpointBuilderFactory.BedrockAgentBuilders,
