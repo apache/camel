@@ -167,7 +167,7 @@ event:Custom?customEventClass=com.example.MyCustomEvent
 == Message Headers
 
 The following headers are set on exchanges created by this component.
-Header constants are defined in `org.apache.camel.component.camelevent.EventConstants`.
+Header constants are defined in `org.apache.camel.component.camelevent.CamelEventConstants`.
 
 === Common Headers
 
