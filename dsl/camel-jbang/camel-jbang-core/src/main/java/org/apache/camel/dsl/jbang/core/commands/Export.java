@@ -226,6 +226,7 @@ public class Export extends ExportBaseCommand {
         cmd.mavenApacheSnapshotEnabled = this.mavenApacheSnapshotEnabled;
         cmd.exportDir = this.exportDir;
         cmd.cleanExportDir = this.cleanExportDir;
+        cmd.yes = this.yes;
         cmd.fresh = this.fresh;
         cmd.download = this.download;
         cmd.skipPlugins = this.skipPlugins;

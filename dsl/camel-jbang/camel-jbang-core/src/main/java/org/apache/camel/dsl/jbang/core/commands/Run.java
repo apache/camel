@@ -43,6 +43,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
@@ -2161,8 +2162,9 @@ public class Run extends CamelCommand {
                 defaultValue = "info", description = "Logging level (${COMPLETION-CANDIDATES})")
         String loggingLevel;
 
-        @Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
-        boolean loggingColor = true;
+        @Option(names = { "--logging-color" },
+                description = "Use colored logging. Default is auto-detected based on NO_COLOR, CI, FORCE_COLOR environment variables and terminal capabilities")
+        boolean loggingColor = EnvironmentHelper.isColorEnabled();
 
         @Option(names = { "--logging-json" }, defaultValue = "false", description = "Use JSON logging (ECS Layout)")
         boolean loggingJson;

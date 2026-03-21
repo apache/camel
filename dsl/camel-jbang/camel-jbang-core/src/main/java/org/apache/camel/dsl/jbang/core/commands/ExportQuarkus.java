@@ -143,6 +143,12 @@ class ExportQuarkus extends Export {
         if (cleanExportDir || !exportDir.equals(".")) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
             // otherwise always clean export-dir to avoid stale data
+            if (cleanExportDir) {
+                String absPath = Path.of(exportDir).toAbsolutePath().toString();
+                if (!CommandHelper.confirmOperation("Are you sure you want to delete " + absPath + "?", yes)) {
+                    return 1;
+                }
+            }
             CommandHelper.cleanExportDir(exportDir);
         }
         // copy to export dir and remove work dir
