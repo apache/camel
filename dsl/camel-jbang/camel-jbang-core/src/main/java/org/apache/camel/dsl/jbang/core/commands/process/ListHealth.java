@@ -37,6 +37,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -189,28 +190,44 @@ public class ListHealth extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getId),
-                    new Column().header("RL").minWidth(4).maxWidth(4).with(this::getLR),
-                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .dataAlign(HorizontalAlign.CENTER)
-                            .with(r -> r.state),
-                    new Column().header("RATE").headerAlign(HorizontalAlign.CENTER)
-                            .dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getRate),
-                    new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
-                            .dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getSince),
-                    new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.message))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("age", r.ago);
+                    jo.put("id", getId(r));
+                    jo.put("rl", getLR(r));
+                    jo.put("status", r.state);
+                    jo.put("rate", getRate(r));
+                    jo.put("since", getSince(r));
+                    jo.put("message", r.message);
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                        new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(this::getId),
+                        new Column().header("RL").minWidth(4).maxWidth(4).with(this::getLR),
+                        new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                                .dataAlign(HorizontalAlign.CENTER)
+                                .with(r -> r.state),
+                        new Column().header("RATE").headerAlign(HorizontalAlign.CENTER)
+                                .dataAlign(HorizontalAlign.RIGHT)
+                                .with(this::getRate),
+                        new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
+                                .dataAlign(HorizontalAlign.RIGHT)
+                                .with(this::getSince),
+                        new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                .with(r -> r.message))));
+            }
         }
         if (trace) {
             var traces

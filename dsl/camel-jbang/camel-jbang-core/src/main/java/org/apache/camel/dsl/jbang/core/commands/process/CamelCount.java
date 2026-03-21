@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -30,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -93,14 +95,26 @@ public class CamelCount extends ProcessWatchCommand {
 
         if (!total && !fail) {
             if (!rows.isEmpty()) {
-                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                                .with(r -> r.name),
-                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                        new Column().header("TOTAL").with(r -> r.total),
-                        new Column().header("FAIL").with(r -> r.failed))));
+                if (jsonOutput) {
+                    printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                        JsonObject jo = new JsonObject();
+                        jo.put("pid", r.pid);
+                        jo.put("name", r.name);
+                        jo.put("age", r.age);
+                        jo.put("total", r.total);
+                        jo.put("failed", r.failed);
+                        return jo;
+                    }).collect(Collectors.toList())));
+                } else {
+                    printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                            new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                            new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                    .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                    .with(r -> r.name),
+                            new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
+                            new Column().header("TOTAL").with(r -> r.total),
+                            new Column().header("FAIL").with(r -> r.failed))));
+                }
             }
         } else {
             StringBuilder builder = new StringBuilder();

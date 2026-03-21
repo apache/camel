@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -179,27 +180,48 @@ public class ListKafka extends ProcessWatchCommand {
         }
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(this::getRouteId),
-                    new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).with(this::getState),
-                    new Column().header("GROUP-ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.groupId),
-                    new Column().header("TOPIC").dataAlign(HorizontalAlign.RIGHT).with(r -> r.lastTopic),
-                    new Column().header("PARTITION").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastPartition),
-                    new Column().header("OFFSET").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastOffset),
-                    new Column().header("COMMITTED").visible(committed).dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getCommitted),
-                    new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(60, OverflowBehaviour.NEWLINE)
-                            .with(this::getLastError),
-                    new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getUri),
-                    new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(140, OverflowBehaviour.NEWLINE)
-                            .with(this::getUri))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("route", getRouteId(r));
+                    jo.put("status", getState(r));
+                    jo.put("groupId", r.groupId);
+                    jo.put("topic", r.lastTopic);
+                    jo.put("partition", r.lastPartition);
+                    jo.put("offset", r.lastOffset);
+                    if (committed) {
+                        jo.put("committed", getCommitted(r));
+                    }
+                    jo.put("error", getLastError(r));
+                    jo.put("endpoint", getUri(r));
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(this::getRouteId),
+                        new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).with(this::getState),
+                        new Column().header("GROUP-ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.groupId),
+                        new Column().header("TOPIC").dataAlign(HorizontalAlign.RIGHT).with(r -> r.lastTopic),
+                        new Column().header("PARTITION").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastPartition),
+                        new Column().header("OFFSET").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.lastOffset),
+                        new Column().header("COMMITTED").visible(committed).dataAlign(HorizontalAlign.RIGHT)
+                                .with(this::getCommitted),
+                        new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(60, OverflowBehaviour.NEWLINE)
+                                .with(this::getLastError),
+                        new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(this::getUri),
+                        new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                .with(this::getUri))));
+            }
         }
 
         return 0;

@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -30,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -97,21 +99,40 @@ public class ListInternalTask extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("TASK").dataAlign(HorizontalAlign.LEFT).with(r -> r.task),
-                    new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).with(r -> r.status),
-                    new Column().header("ATTEMPT").dataAlign(HorizontalAlign.LEFT).with(r -> "" + r.attempts),
-                    new Column().header("DELAY").dataAlign(HorizontalAlign.LEFT).with(r -> "" + r.delay),
-                    new Column().header("ELAPSED").dataAlign(HorizontalAlign.LEFT).with(this::getElapsed),
-                    new Column().header("FIRST").dataAlign(HorizontalAlign.LEFT).with(this::getFirst),
-                    new Column().header("LAST").dataAlign(HorizontalAlign.LEFT).with(this::getLast),
-                    new Column().header("NEXT").dataAlign(HorizontalAlign.LEFT).with(this::getNext),
-                    new Column().header("FAILURE").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(140, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.error))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("task", r.task);
+                    jo.put("status", r.status);
+                    jo.put("attempts", r.attempts);
+                    jo.put("delay", r.delay);
+                    jo.put("elapsed", getElapsed(r));
+                    jo.put("first", getFirst(r));
+                    jo.put("last", getLast(r));
+                    jo.put("next", getNext(r));
+                    jo.put("failure", r.error);
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("TASK").dataAlign(HorizontalAlign.LEFT).with(r -> r.task),
+                        new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).with(r -> r.status),
+                        new Column().header("ATTEMPT").dataAlign(HorizontalAlign.LEFT).with(r -> "" + r.attempts),
+                        new Column().header("DELAY").dataAlign(HorizontalAlign.LEFT).with(r -> "" + r.delay),
+                        new Column().header("ELAPSED").dataAlign(HorizontalAlign.LEFT).with(this::getElapsed),
+                        new Column().header("FIRST").dataAlign(HorizontalAlign.LEFT).with(this::getFirst),
+                        new Column().header("LAST").dataAlign(HorizontalAlign.LEFT).with(this::getLast),
+                        new Column().header("NEXT").dataAlign(HorizontalAlign.LEFT).with(this::getNext),
+                        new Column().header("FAILURE").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                .with(r -> r.error))));
+            }
         }
 
         return 0;

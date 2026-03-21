@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -29,6 +30,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -104,17 +106,32 @@ public class ListVariable extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("REPO").headerAlign(HorizontalAlign.CENTER).with(r -> r.id),
-                    new Column().header("TYPE").headerAlign(HorizontalAlign.CENTER)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(r -> r.type),
-                    new Column().header("KEY").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.key),
-                    new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(this::getValue))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("repo", r.id);
+                    jo.put("type", r.type);
+                    jo.put("key", r.key);
+                    jo.put("value", getValue(r));
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("REPO").headerAlign(HorizontalAlign.CENTER).with(r -> r.id),
+                        new Column().header("TYPE").headerAlign(HorizontalAlign.CENTER)
+                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(r -> r.type),
+                        new Column().header("KEY").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.key),
+                        new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                                .with(this::getValue))));
+            }
         }
 
         return 0;

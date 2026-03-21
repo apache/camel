@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -29,6 +30,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -94,16 +96,33 @@ public class ListGroovy extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("PRELOAD").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.preloaddCounter),
-                    new Column().header("COMPILE").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.compiledCounter),
-                    new Column().header("TIME").headerAlign(HorizontalAlign.CENTER).with(this::getTime),
-                    new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).with(this::getLast),
-                    new Column().header("CLASSES").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(60, OverflowBehaviour.ELLIPSIS_LEFT).with(this::getClasses))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("preload", r.preloaddCounter);
+                    jo.put("compile", r.compiledCounter);
+                    jo.put("time", getTime(r));
+                    jo.put("since", getLast(r));
+                    jo.put("classes", getClasses(r));
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("PRELOAD").headerAlign(HorizontalAlign.CENTER)
+                                .with(r -> "" + r.preloaddCounter),
+                        new Column().header("COMPILE").headerAlign(HorizontalAlign.CENTER)
+                                .with(r -> "" + r.compiledCounter),
+                        new Column().header("TIME").headerAlign(HorizontalAlign.CENTER).with(this::getTime),
+                        new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).with(this::getLast),
+                        new Column().header("CLASSES").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(60, OverflowBehaviour.ELLIPSIS_LEFT).with(this::getClasses))));
+            }
         }
 
         return 0;

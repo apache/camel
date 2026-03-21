@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -31,6 +32,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -104,19 +106,37 @@ public class ListInflight extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("EXCHANGE-ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.exchangeId),
-                    new Column().header("REMOTE").visible(remoteVisible.get()).dataAlign(HorizontalAlign.CENTER)
-                            .with(this::getRemote),
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.atRouteId),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.nodeId),
-                    new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT).with(this::getElapsed),
-                    new Column().header("DURATION").dataAlign(HorizontalAlign.RIGHT).with(this::getDuration))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("exchangeId", r.exchangeId);
+                    jo.put("remote", r.fromRemoteEndpoint);
+                    jo.put("route", r.atRouteId);
+                    jo.put("id", r.nodeId);
+                    jo.put("elapsed", getElapsed(r));
+                    jo.put("duration", getDuration(r));
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("EXCHANGE-ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.exchangeId),
+                        new Column().header("REMOTE").visible(remoteVisible.get()).dataAlign(HorizontalAlign.CENTER)
+                                .with(this::getRemote),
+                        new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.atRouteId),
+                        new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.nodeId),
+                        new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT).with(this::getElapsed),
+                        new Column().header("DURATION").dataAlign(HorizontalAlign.RIGHT).with(this::getDuration))));
+            }
         }
 
         return 0;

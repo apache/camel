@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -32,6 +33,7 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -167,29 +169,53 @@ public class CamelContextStatus extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("CAMEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.camelVersion),
-                    new Column().header("PLATFORM").dataAlign(HorizontalAlign.LEFT).with(this::getPlatform),
-                    new Column().header("PROFILE").dataAlign(HorizontalAlign.LEFT).with(this::getProfile),
-                    new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
-                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .with(this::getStatus),
-                    new Column().header("RELOAD").with(this::getReloaded),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
-                    new Column().header("ROUTE").with(this::getRoutes),
-                    new Column().header("MSG/S").with(this::getThroughput),
-                    new Column().header("TOTAL").with(this::getTotal),
-                    new Column().header("FAIL").with(this::getFailed),
-                    new Column().header("INFLIGHT").with(this::getInflight),
-                    new Column().header("LAST").with(r -> r.last),
-                    new Column().header("SINCE-LAST").with(this::getSinceLast),
-                    new Column().header("") // empty header as we only show info when there is an error
-                            .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(70, OverflowBehaviour.NEWLINE)
-                            .with(this::getDescription))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("camelVersion", r.camelVersion);
+                    jo.put("platform", getPlatform(r));
+                    jo.put("profile", getProfile(r));
+                    jo.put("ready", r.ready);
+                    jo.put("status", getStatus(r));
+                    jo.put("reload", getReloaded(r));
+                    jo.put("age", r.age);
+                    jo.put("route", getRoutes(r));
+                    jo.put("throughput", getThroughput(r));
+                    jo.put("total", r.total);
+                    jo.put("failed", r.failed);
+                    jo.put("inflight", r.inflight);
+                    jo.put("last", r.last);
+                    jo.put("sinceLast", getSinceLast(r));
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("CAMEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.camelVersion),
+                        new Column().header("PLATFORM").dataAlign(HorizontalAlign.LEFT).with(this::getPlatform),
+                        new Column().header("PROFILE").dataAlign(HorizontalAlign.LEFT).with(this::getProfile),
+                        new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
+                        new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                                .with(this::getStatus),
+                        new Column().header("RELOAD").with(this::getReloaded),
+                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.age),
+                        new Column().header("ROUTE").with(this::getRoutes),
+                        new Column().header("MSG/S").with(this::getThroughput),
+                        new Column().header("TOTAL").with(this::getTotal),
+                        new Column().header("FAIL").with(this::getFailed),
+                        new Column().header("INFLIGHT").with(this::getInflight),
+                        new Column().header("LAST").with(r -> r.last),
+                        new Column().header("SINCE-LAST").with(this::getSinceLast),
+                        new Column().header("") // empty header as we only show info when there is an error
+                                .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(70, OverflowBehaviour.NEWLINE)
+                                .with(this::getDescription))));
+            }
         }
 
         return 0;
