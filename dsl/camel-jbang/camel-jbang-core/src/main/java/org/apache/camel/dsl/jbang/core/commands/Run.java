@@ -49,6 +49,7 @@ import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -194,7 +195,8 @@ public class Run extends CamelCommand {
     String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
-            description = "Profile to run (dev, test, or prod).")
+            completionCandidates = ProfileCompletionCandidates.class,
+            description = "Profile to run (${COMPLETION-CANDIDATES}).")
     String profile = "dev";
 
     @Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",

@@ -51,10 +51,13 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
+import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -160,7 +163,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "CamelApplication")
     protected String mainClassname = "CamelApplication";
 
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version (21, 25)", defaultValue = "21")
+    @CommandLine.Option(names = { "--java-version" }, completionCandidates = JavaVersionCompletionCandidates.class,
+                        description = "Java version (${COMPLETION-CANDIDATES})", defaultValue = "21")
     protected String javaVersion = "21";
 
     @CommandLine.Option(names = { "--camel-version" },
@@ -173,7 +177,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String kameletsVersion = RuntimeType.KAMELETS_VERSION;
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
-                        description = "Profile to export (dev, test, or prod).")
+                        completionCandidates = ProfileCompletionCandidates.class,
+                        description = "Profile to export (${COMPLETION-CANDIDATES}).")
     protected String profile;
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
@@ -219,7 +224,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)")
     protected boolean cleanExportDir;
 
-    @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
+    @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info",
+                        completionCandidates = LoggingLevelCompletionCandidates.class,
+                        description = "Logging level (${COMPLETION-CANDIDATES})")
     protected String loggingLevel = "info";
 
     @CommandLine.Option(names = { "--package-name" },
