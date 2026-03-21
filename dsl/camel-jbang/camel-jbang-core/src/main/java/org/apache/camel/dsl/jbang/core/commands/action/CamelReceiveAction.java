@@ -94,6 +94,17 @@ public class CamelReceiveAction extends ActionBaseCommand {
         }
     }
 
+    public static class OutputFormatCompletionCandidates implements Iterable<String> {
+
+        public OutputFormatCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("text", "json").iterator();
+        }
+    }
+
     @CommandLine.Parameters(description = "To use an existing running Camel integration for receiving the message (name or pid)",
                             arity = "0..1")
     String name;
@@ -194,7 +205,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--output" }, description = "Output format (text or json)")
+    @CommandLine.Option(names = { "--output" }, completionCandidates = OutputFormatCompletionCandidates.class,
+                        description = "Output format (${COMPLETION-CANDIDATES})")
     private String output;
 
     private volatile long pid;

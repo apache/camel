@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,6 +54,17 @@ import picocli.CommandLine.Parameters;
          description = "Explain what a Camel route does using AI/LLM",
          sortOptions = false, showDefaultValues = true)
 public class Explain extends CamelCommand {
+
+    public static class FormatCompletionCandidates implements Iterable<String> {
+
+        public FormatCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("text", "markdown").iterator();
+        }
+    }
 
     private static final String DEFAULT_OLLAMA_URL = "http://localhost:11434";
     private static final String DEFAULT_MODEL = "llama3.2";
@@ -123,7 +135,8 @@ public class Explain extends CamelCommand {
     boolean verbose;
 
     @Option(names = { "--format" },
-            description = "Output format: text, markdown",
+            completionCandidates = FormatCompletionCandidates.class,
+            description = "Output format (${COMPLETION-CANDIDATES})",
             defaultValue = "text")
     String format = "text";
 

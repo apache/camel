@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -50,7 +51,19 @@ public class DependencyList extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
 
-    @CommandLine.Option(names = { "--output" }, description = "Output format (gav, maven, jbang)", defaultValue = "gav")
+    public static class OutputFormatCompletionCandidates implements Iterable<String> {
+
+        public OutputFormatCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("gav", "maven", "jbang").iterator();
+        }
+    }
+
+    @CommandLine.Option(names = { "--output" }, completionCandidates = OutputFormatCompletionCandidates.class,
+                        description = "Output format (${COMPLETION-CANDIDATES})", defaultValue = "gav")
     protected String output;
 
     public DependencyList(CamelJBangMain main) {
