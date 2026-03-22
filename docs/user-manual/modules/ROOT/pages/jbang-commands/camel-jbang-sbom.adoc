@@ -34,12 +34,12 @@ camel sbom [options]
 | `--hawtio` | Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus) | false | boolean
 | `--hawtio-version` | Version of the Hawtio web console | HawtioVersion.HAWTIO_VERSION | String
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
-| `--java-version` | Java version (21, 25) | 21 | String
+| `--java-version` | Java version () | 21 | String
 | `--kamelets-version` | Apache Camel Kamelets version | RuntimeType.KAMELETS_VERSION | String
 | `--lazy-bean` | Whether to use lazy bean initialization (can help with complex classloading issues | true | boolean
 | `--local-kamelet-dir` | Local directory for loading Kamelets (takes precedence) |  | String
 | `--logging` | Can be used to turn on logging to console (logs by default to file in <user home>/.camel directory) | false | boolean
-| `--logging-level` | Logging level | info | String
+| `--logging-level` | Logging level () | info | String
 | `--main-classname` | The class name of the Camel Main application class | CamelApplication | String
 | `--management-port` | To use a dedicated port for HTTP management |  | int
 | `--maven-apache-snapshot-enabled` | Whether downloading JARs from ASF Maven Snapshot repository is enabled | true | boolean
@@ -55,7 +55,7 @@ camel sbom [options]
 | `--package-name` | For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. Use false to turn off and not include package name in the Java source files. |  | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
 | `--port` | Embeds a local HTTP server on this port |  | int
-| `--profile` | Profile to export (dev, test, or prod). |  | String
+| `--profile` | Profile to export (). |  | String
 | `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String
 | `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
 | `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String

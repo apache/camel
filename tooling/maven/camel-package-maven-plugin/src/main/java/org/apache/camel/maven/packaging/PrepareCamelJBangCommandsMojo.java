@@ -368,6 +368,19 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 options.add(option);
             }
         }
+
+        // Also parse options from @ArgGroup inner classes
+        for (org.jboss.forge.roaster.model.source.JavaSource<?> nested : clazz.getNestedTypes()) {
+            if (nested instanceof JavaClassSource nestedClass) {
+                for (FieldSource<JavaClassSource> field : nestedClass.getFields()) {
+                    OptionInfo option = parseOption(field);
+                    if (option != null) {
+                        options.removeIf(o -> o.names.equals(option.names));
+                        options.add(option);
+                    }
+                }
+            }
+        }
     }
 
     private File findClassFile(File dir, String className) {

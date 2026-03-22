@@ -143,7 +143,7 @@ public class CamelSendAction extends ActionBaseCommand {
         if (headers != null) {
             for (String h : headers) {
                 if (!h.contains("=")) {
-printer().printErr("Header must be in key=value format, was: " + h);
+                    printer().printErr("Header must be in key=value format, was: " + h);
                     return 1;
                 }
             }

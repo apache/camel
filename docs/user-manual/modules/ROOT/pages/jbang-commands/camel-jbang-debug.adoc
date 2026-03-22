@@ -67,7 +67,7 @@ camel debug [options]
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
 | `--port` | Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number) |  | int
 | `--pretty` | Pretty print message body when using JSon or XML format |  | boolean
-| `--profile` | Profile to run (dev, test, or prod). | dev | String
+| `--profile` | Profile to run (). | dev | String
 | `--prompt` | Allow user to type in required parameters in prompt if not present in application | false | boolean
 | `--prop,--property` | Additional properties (override existing) |  | String
 | `--properties` | comma separated list of properties file (ex. /path/to/file.properties,/path/to/other.properties |  | String
@@ -83,7 +83,7 @@ camel debug [options]
 | `--show-exchange-properties` | Show exchange properties in debug messages | false | boolean
 | `--show-exchange-variables` | Show exchange variables in debug messages | true | boolean
 | `--show-headers` | Show message headers in debug messages | true | boolean
-| `--skip-plugins` | Skip plugins during export | false | boolean
+| `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
 | `--source` | Prefer to display source filename/code instead of IDs |  | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
 | `--spring-boot-version` | Spring Boot version | RuntimeType.SPRING_BOOT_VERSION | String
