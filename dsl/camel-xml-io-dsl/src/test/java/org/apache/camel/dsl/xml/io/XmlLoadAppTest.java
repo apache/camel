@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlLoadAppTest {
@@ -439,6 +440,28 @@ public class XmlLoadAppTest {
             assertNotNull(sslParams.getTrustManagers().getKeyStore(), "Trust store should be configured");
             assertEquals("truststore.p12", sslParams.getTrustManagers().getKeyStore().getResource());
             assertEquals("changeit", sslParams.getTrustManagers().getKeyStore().getPassword());
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithSSLTrustAllCertificates() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app-ssl-trust-all.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            // verify SSL context parameters with trustAllCertificates
+            SSLContextParameters sslParams
+                    = context.getRegistry().lookupByNameAndType("myTrustAllSSL", SSLContextParameters.class);
+            assertNotNull(sslParams, "SSL context parameters should be registered");
+            assertNotNull(sslParams.getTrustManagers(), "Trust managers should be configured for trust-all");
+            // key managers should be null since no keyStore was provided
+            assertNull(sslParams.getKeyManagers());
         }
     }
 

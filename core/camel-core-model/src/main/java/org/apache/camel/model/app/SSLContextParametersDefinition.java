@@ -34,6 +34,8 @@ import org.apache.camel.support.jsse.SecureRandomParameters;
 import org.apache.camel.support.jsse.SignatureSchemesParameters;
 import org.apache.camel.support.jsse.TrustAllTrustManager;
 import org.apache.camel.support.jsse.TrustManagersParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SSL/TLS context parameters configuration.
@@ -66,6 +68,8 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 @XmlRootElement(name = "sslContextParameters")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SSLContextParametersDefinition {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SSLContextParametersDefinition.class);
 
     @XmlAttribute
     @Metadata(description = "The id of this SSL configuration.")
@@ -453,25 +457,40 @@ public class SSLContextParametersDefinition {
      * @return              the SSL context parameters
      */
     public SSLContextParameters createSSLContextParameters(CamelContext camelContext) {
-        KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setCamelContext(camelContext);
-        ksp.setResource(keyStore);
-        ksp.setType(keyStoreType);
-        ksp.setPassword(keystorePassword);
-        ksp.setProvider(keyStoreProvider);
+        KeyManagersParameters kmp = null;
+        if (keyStore != null) {
+            KeyStoreParameters ksp = new KeyStoreParameters();
+            ksp.setCamelContext(camelContext);
+            ksp.setResource(keyStore);
+            ksp.setType(keyStoreType);
+            ksp.setPassword(keystorePassword);
+            ksp.setProvider(keyStoreProvider);
 
-        KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setCamelContext(camelContext);
-        kmp.setKeyPassword(keystorePassword);
-        kmp.setKeyStore(ksp);
-        kmp.setAlgorithm(keyManagerAlgorithm);
-        kmp.setProvider(keyManagerProvider);
+            kmp = new KeyManagersParameters();
+            kmp.setCamelContext(camelContext);
+            kmp.setKeyPassword(keystorePassword);
+            kmp.setKeyStore(ksp);
+            kmp.setAlgorithm(keyManagerAlgorithm);
+            kmp.setProvider(keyManagerProvider);
+        }
+
+        // resolve property placeholder for trustAllCertificates since we check it before the JSSE layer
+        String resolvedTrustAll = trustAllCertificates;
+        if (resolvedTrustAll != null) {
+            try {
+                resolvedTrustAll = camelContext.resolvePropertyPlaceholders(resolvedTrustAll);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
 
         TrustManagersParameters tmp = null;
-        if ("true".equalsIgnoreCase(trustAllCertificates)) {
+        if ("true".equalsIgnoreCase(resolvedTrustAll)) {
             tmp = new TrustManagersParameters();
             tmp.setCamelContext(camelContext);
             tmp.setTrustManager(TrustAllTrustManager.INSTANCE);
+            LOG.warn(
+                    "Trust all certificates enabled. Using this in production can expose the application to man-in-the-middle attacks");
         } else if (trustStore != null) {
             KeyStoreParameters tsp = new KeyStoreParameters();
             tsp.setCamelContext(camelContext);

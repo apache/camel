@@ -79,4 +79,42 @@ class SSLContextParametersTest extends YamlTestSupport {
             sslParams.serverParameters != null
             sslParams.serverParameters.clientAuthentication == 'WANT'
     }
+
+    def "load ssl context parameters with trust all certificates"() {
+        when:
+            loadRoutesNoValidate """
+                - sslContextParameters:
+                    id: myTrustAllSSL
+                    trustAllCertificates: "true"
+                - from:
+                    uri: "direct:ssl"
+                    steps:
+                      - to: "mock:ssl"
+            """
+        then:
+            def sslParams = context.registry.lookupByNameAndType('myTrustAllSSL', SSLContextParameters)
+            sslParams != null
+            // trust managers should be configured with trust-all
+            sslParams.trustManagers != null
+            // key managers should be null since no keyStore was provided
+            sslParams.keyManagers == null
+    }
+
+    def "load ssl context parameters without id sets global default"() {
+        when:
+            loadRoutesNoValidate """
+                - sslContextParameters:
+                    keyStore: server.p12
+                    keystorePassword: changeit
+                - from:
+                    uri: "direct:ssl"
+                    steps:
+                      - to: "mock:ssl"
+            """
+        then:
+            // verify global default is set even without id
+            context.getSSLContextParameters() != null
+            context.getSSLContextParameters().keyManagers != null
+            context.getSSLContextParameters().keyManagers.keyStore.resource == 'server.p12'
+    }
 }
