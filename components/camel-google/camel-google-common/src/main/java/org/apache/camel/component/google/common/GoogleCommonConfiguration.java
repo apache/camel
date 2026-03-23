@@ -83,6 +83,37 @@ public interface GoogleCommonConfiguration {
         return null;
     }
 
+    // ==================== Workload Identity Federation ====================
+
+    /**
+     * Whether to use Workload Identity Federation (WIF) for authentication. When enabled, the component can
+     * authenticate using external identity providers (e.g., AWS, Azure, OIDC) without service account keys.
+     */
+    default boolean isUseWorkloadIdentityFederation() {
+        return false;
+    }
+
+    /**
+     * Path to a Workload Identity Federation JSON configuration file. This file contains the external credential source
+     * configuration for authenticating with GCP via OIDC token exchange. Can be loaded from classpath, file system, or
+     * http(s) URL using prefixes: classpath:, file:, http:, https:
+     * <p>
+     * If not set and useWorkloadIdentityFederation is true, Application Default Credentials will be used, which
+     * automatically works on GKE with Workload Identity.
+     */
+    default String getWorkloadIdentityConfig() {
+        return null;
+    }
+
+    /**
+     * Target service account email for service account impersonation via Workload Identity Federation. When set, the
+     * external credentials obtained via WIF will be used to impersonate this service account, which grants the
+     * permissions of that service account to the workload.
+     */
+    default String getImpersonatedServiceAccount() {
+        return null;
+    }
+
     // ==================== Authentication Toggle ====================
 
     /**

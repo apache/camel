@@ -154,6 +154,39 @@ By default, this component acquires credentials using `GoogleCredentials.getAppl
 This behavior can be disabled by setting _authenticate_ option to `false`, in which case requests to Google API will be made without authentication details. This is only desirable when developing against an emulator.
 This behavior can be altered by supplying a path to a service account key file.
 
+==== Workload Identity Federation (WIF)
+
+All Google components support https://cloud.google.com/iam/docs/workload-identity-federation[Workload Identity Federation], which enables workloads running outside of Google Cloud (e.g., on AWS, Azure, GitHub Actions) or on GKE to authenticate without service account key files.
+
+**On GKE with Workload Identity:** No configuration is needed. Application Default Credentials (ADC) automatically detects the GKE environment and uses the Kubernetes service account's associated GCP identity.
+
+**With an explicit WIF configuration file:** Set `useWorkloadIdentityFederation=true` and provide the path to the WIF JSON config file via `workloadIdentityConfig`. This is the typical setup for GitHub Actions, AWS, and Azure workloads.
+
+[source,java]
+----
+// GKE with Workload Identity - ADC handles it automatically
+from("google-pubsub:my-project:my-subscription")
+    .to("direct:process");
+
+// GitHub Actions / AWS / Azure with WIF config file
+GooglePubsubEndpoint endpoint = context.getEndpoint("google-pubsub:my-project:my-subscription", GooglePubsubEndpoint.class);
+endpoint.setUseWorkloadIdentityFederation(true);
+endpoint.setWorkloadIdentityConfig("/path/to/wif-config.json");
+----
+
+**With Service Account Impersonation:** Set `impersonatedServiceAccount` to a target service account email. The external credentials obtained via WIF will impersonate that service account, inheriting its permissions.
+
+[source,java]
+----
+// WIF with service account impersonation
+GooglePubsubEndpoint endpoint = context.getEndpoint("google-pubsub:my-project:my-subscription", GooglePubsubEndpoint.class);
+endpoint.setUseWorkloadIdentityFederation(true);
+endpoint.setWorkloadIdentityConfig("/path/to/wif-config.json");
+endpoint.setImpersonatedServiceAccount("my-sa@my-project.iam.gserviceaccount.com");
+----
+
+NOTE: Workload Identity Federation support is available in all Google components (PubSub, Storage, BigQuery, Firestore, Sheets, Calendar, Drive, Mail, Functions, Secret Manager, Vision, Vertex AI, Speech-to-Text, Text-to-Speech) through the common `GoogleCommonConfiguration` interface.
+
 include::spring-boot:partial$starter.adoc[]
 
 === Manual Acknowledgement
