@@ -132,8 +132,8 @@ public class CamelMonitor extends CamelCommand {
 
     // Log state
     private final List<String> logLines = new ArrayList<>();
-    private final List<String> filteredLogLines = new ArrayList<>();
-    private int logScroll;
+    private final List<LogEntry> filteredLogEntries = new ArrayList<>();
+    private final TableState logTableState = new TableState();
     private boolean logFollowMode = true;
     private boolean showLogTrace = true;
     private boolean showLogDebug = true;
@@ -241,13 +241,17 @@ public class CamelMonitor extends CamelCommand {
             if (ke.isKey(KeyCode.PAGE_UP)) {
                 if (tab == TAB_LOG) {
                     logFollowMode = false;
-                    logScroll = Math.max(0, logScroll - 20);
+                    for (int i = 0; i < 20; i++) {
+                        logTableState.selectPrevious();
+                    }
                 }
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_DOWN)) {
                 if (tab == TAB_LOG) {
-                    logScroll += 20;
+                    for (int i = 0; i < 20; i++) {
+                        logTableState.selectNext(filteredLogEntries.size());
+                    }
                 }
                 return true;
             }
@@ -307,7 +311,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 if (ke.isChar('g')) {
                     logFollowMode = false;
-                    logScroll = 0;
+                    logTableState.select(0);
                     return true;
                 }
                 if (ke.isChar('G')) {
@@ -379,7 +383,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_ENDPOINTS -> endpointTableState.selectPrevious();
             case TAB_LOG -> {
                 logFollowMode = false;
-                logScroll = Math.max(0, logScroll - 1);
+                logTableState.selectPrevious();
             }
             case TAB_TRACE -> {
                 traceFollowMode = false;
@@ -404,7 +408,7 @@ public class CamelMonitor extends CamelCommand {
                 IntegrationInfo info = findSelectedIntegration();
                 endpointTableState.selectNext(info != null ? info.endpoints.size() : 0);
             }
-            case TAB_LOG -> logScroll++;
+            case TAB_LOG -> logTableState.selectNext(filteredLogEntries.size());
             case TAB_TRACE -> {
                 List<TraceEntry> current = traces.get();
                 traceTableState.selectNext(current.size());
@@ -472,8 +476,6 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderContent(Frame frame, Rect area) {
-        // Clear the content area to prevent artifacts when switching tabs
-        frame.buffer().clear(area);
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> renderOverview(frame, area);
             case TAB_ROUTES -> renderRoutes(frame, area);
@@ -511,7 +513,7 @@ public class CamelMonitor extends CamelCommand {
 
                 rows.add(Row.from(
                         Cell.from(Span.styled(info.pid, dimStyle)),
-                        Cell.from(Span.styled(truncate(info.name, 25), dimStyle)),
+                        Cell.from(Span.styled(info.name != null ? info.name : "", dimStyle)),
                         Cell.from(Span.styled(info.platform != null ? info.platform : "", dimStyle)),
                         Cell.from(Span.styled("\u2716 Stopped", Style.create().fg(Color.RED).dim())),
                         Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
@@ -527,7 +529,7 @@ public class CamelMonitor extends CamelCommand {
 
                 rows.add(Row.from(
                         Cell.from(info.pid),
-                        Cell.from(Span.styled(truncate(info.name, 25), Style.create().fg(Color.CYAN))),
+                        Cell.from(Span.styled(info.name != null ? info.name : "", Style.create().fg(Color.CYAN))),
                         Cell.from(info.platform != null ? info.platform : ""),
                         Cell.from(Span.styled(extractState(info.state), statusStyle)),
                         Cell.from(info.ago != null ? info.ago : ""),
@@ -560,6 +562,7 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(15),
                         Constraint.length(12))
                 .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
                 .build();
 
@@ -632,8 +635,8 @@ public class CamelMonitor extends CamelCommand {
                     : Style.create();
 
             routeRows.add(Row.from(
-                    Cell.from(Span.styled(truncate(route.routeId, 12), Style.create().fg(Color.CYAN))),
-                    Cell.from(truncate(route.from, 30)),
+                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(route.from != null ? route.from : ""),
                     Cell.from(Span.styled(route.state, stateStyle)),
                     Cell.from(route.uptime != null ? route.uptime : ""),
                     Cell.from(route.throughput != null ? route.throughput : ""),
@@ -663,6 +666,7 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(8),
                         Constraint.length(12))
                 .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Routes [" + info.name + "] sort:" + routeSort + " ").build())
                 .build();
@@ -794,11 +798,11 @@ public class CamelMonitor extends CamelCommand {
             }
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(truncate(hc.group != null ? hc.group : "", 12), Style.create().dim())),
-                    Cell.from(Span.styled(truncate(hc.name, 25), Style.create().fg(Color.CYAN))),
+                    Cell.from(Span.styled(hc.group != null ? hc.group : "", Style.create().dim())),
+                    Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.create().fg(Color.CYAN))),
                     Cell.from(Span.styled(icon + hc.state, stateStyle)),
                     Cell.from(rate),
-                    Cell.from(hc.message != null ? truncate(hc.message, 50) : "")));
+                    Cell.from(hc.message != null ? hc.message : "")));
         }
 
         if (rows.isEmpty()) {
@@ -830,6 +834,7 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(6),
                         Constraint.fill())
                 .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
                 .build();
 
@@ -884,7 +889,7 @@ public class CamelMonitor extends CamelCommand {
             rows.add(Row.from(
                     Cell.from(Span.styled(ep.component, Style.create().fg(Color.CYAN))),
                     Cell.from(Span.styled(arrow + ep.direction, dirStyle)),
-                    Cell.from(truncate(ep.uri, 60)),
+                    Cell.from(ep.uri != null ? ep.uri : ""),
                     Cell.from(ep.routeId != null ? ep.routeId : "")));
         }
 
@@ -907,8 +912,9 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(15),
                         Constraint.length(8),
                         Constraint.fill(),
-                        Constraint.length(12))
+                        Constraint.length(20))
                 .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Endpoints [" + info.name + "] ").build())
                 .build();
@@ -929,40 +935,90 @@ public class CamelMonitor extends CamelCommand {
         readLogFile(info.pid);
         applyLogFilters();
 
+        // Auto-follow: select last entry
+        if (logFollowMode && !filteredLogEntries.isEmpty()) {
+            logTableState.select(filteredLogEntries.size() - 1);
+        }
+
+        // Split: log table (60%) + detail (40%)
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.percentage(60), Constraint.fill())
+                .split(area);
+
+        // Log table
+        List<Row> rows = new ArrayList<>();
+        for (LogEntry entry : filteredLogEntries) {
+            Style levelStyle = switch (entry.level) {
+                case "ERROR", "FATAL" -> Style.create().fg(Color.RED);
+                case "WARN" -> Style.create().fg(Color.YELLOW);
+                case "DEBUG", "TRACE" -> Style.create().dim();
+                default -> Style.create();
+            };
+
+            rows.add(Row.from(
+                    Cell.from(Span.styled(entry.time, Style.create().dim())),
+                    Cell.from(Span.styled(entry.level, levelStyle)),
+                    Cell.from(Span.styled(entry.logger != null ? entry.logger : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(Span.styled(entry.message, levelStyle))));
+        }
+
         String levelTitle = buildLevelFilterTitle();
-        Block logBlock = Block.builder().borderType(BorderType.ROUNDED)
-                .title(" Log [" + info.name + "] " + levelTitle)
+        Table logTable = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled("TIME", Style.create().bold())),
+                        Cell.from(Span.styled("LEVEL", Style.create().bold())),
+                        Cell.from(Span.styled("LOGGER", Style.create().bold())),
+                        Cell.from(Span.styled("MESSAGE", Style.create().bold()))))
+                .widths(
+                        Constraint.length(12),
+                        Constraint.length(6),
+                        Constraint.length(20),
+                        Constraint.fill())
+                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(" Log [" + info.name + "] " + levelTitle).build())
                 .build();
 
-        int innerHeight = Math.max(1, area.height() - 2); // account for border
-        int totalLines = filteredLogLines.size();
+        frame.renderStatefulWidget(logTable, chunks.get(0), logTableState);
 
-        int startLine;
-        if (logFollowMode) {
-            startLine = Math.max(0, totalLines - innerHeight);
-            logScroll = startLine;
-        } else {
-            logScroll = Math.max(0, Math.min(logScroll, Math.max(0, totalLines - innerHeight)));
-            startLine = logScroll;
+        // Detail panel for selected log entry
+        renderLogDetail(frame, chunks.get(1));
+    }
+
+    private void renderLogDetail(Frame frame, Rect area) {
+        Integer sel = logTableState.selected();
+        if (sel == null || sel < 0 || sel >= filteredLogEntries.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled(" Select a log entry", Style.create().dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
         }
 
-        List<Line> visibleLines = new ArrayList<>();
-        for (int i = startLine; i < Math.min(startLine + innerHeight, totalLines); i++) {
-            visibleLines.add(colorizeLogLine(filteredLogLines.get(i)));
-        }
+        LogEntry entry = filteredLogEntries.get(sel);
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(Line.from(Span.styled(entry.raw, colorStyleForLevel(entry.level)))))
+                        .overflow(Overflow.WRAP_WORD)
+                        .block(Block.builder().borderType(BorderType.ROUNDED)
+                                .title(" " + entry.time + " " + entry.level + " ").build())
+                        .build(),
+                area);
+    }
 
-        // Fill remaining space
-        while (visibleLines.size() < innerHeight) {
-            visibleLines.add(Line.from(Span.raw("")));
-        }
-
-        Paragraph logParagraph = Paragraph.builder()
-                .text(Text.from(visibleLines))
-                .overflow(Overflow.CLIP)
-                .block(logBlock)
-                .build();
-
-        frame.renderWidget(logParagraph, area);
+    private Style colorStyleForLevel(String level) {
+        return switch (level) {
+            case "ERROR", "FATAL" -> Style.create().fg(Color.RED);
+            case "WARN" -> Style.create().fg(Color.YELLOW);
+            case "DEBUG", "TRACE" -> Style.create().dim();
+            default -> Style.create();
+        };
     }
 
     private String buildLevelFilterTitle() {
@@ -976,17 +1032,6 @@ public class CamelMonitor extends CamelCommand {
             sb.append("[FOLLOW]");
         }
         return sb.toString();
-    }
-
-    private Line colorizeLogLine(String line) {
-        if (line.contains(" ERROR ") || line.contains(" FATAL ")) {
-            return Line.from(Span.styled(line, Style.create().fg(Color.RED)));
-        } else if (line.contains(" WARN ")) {
-            return Line.from(Span.styled(line, Style.create().fg(Color.YELLOW)));
-        } else if (line.contains(" DEBUG ") || line.contains(" TRACE ")) {
-            return Line.from(Span.styled(line, Style.create().dim()));
-        }
-        return Line.from(Span.raw(line));
     }
 
     private void readLogFile(String pid) {
@@ -1021,27 +1066,78 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void applyLogFilters() {
-        filteredLogLines.clear();
+        filteredLogEntries.clear();
         for (String line : logLines) {
-            if (!matchesLogLevelFilter(line)) {
+            LogEntry entry = parseLogLine(line);
+            if (!matchesLogLevelFilter(entry.level)) {
                 continue;
             }
-            filteredLogLines.add(line);
+            filteredLogEntries.add(entry);
         }
     }
 
-    private boolean matchesLogLevelFilter(String line) {
-        if (line.contains(" ERROR ") || line.contains(" FATAL ")) {
-            return showLogError;
-        } else if (line.contains(" WARN ")) {
-            return showLogWarn;
-        } else if (line.contains(" DEBUG ")) {
-            return showLogDebug;
-        } else if (line.contains(" TRACE ")) {
-            return showLogTrace;
+    private static LogEntry parseLogLine(String line) {
+        LogEntry entry = new LogEntry();
+        entry.raw = line;
+        // Typical format: "2026-03-22 22:45:47.768  INFO 92447 --- [thread] logger : message"
+        // Try to parse structured fields
+        try {
+            // Extract time (first 12 chars of timestamp, skip date)
+            if (line.length() > 24 && line.charAt(10) == ' ') {
+                entry.time = line.substring(11, 23); // HH:mm:ss.SSS
+                String rest = line.substring(23).trim();
+                // Extract level
+                int spaceIdx = rest.indexOf(' ');
+                if (spaceIdx > 0) {
+                    entry.level = rest.substring(0, spaceIdx).trim();
+                    rest = rest.substring(spaceIdx).trim();
+                }
+                // Skip PID and "---"
+                int dashIdx = rest.indexOf("---");
+                if (dashIdx >= 0) {
+                    rest = rest.substring(dashIdx + 3).trim();
+                }
+                // Extract thread [...]
+                if (rest.startsWith("[")) {
+                    int closeBracket = rest.indexOf(']');
+                    if (closeBracket > 0) {
+                        rest = rest.substring(closeBracket + 1).trim();
+                    }
+                }
+                // Extract logger and message (logger : message)
+                int colonIdx = rest.indexOf(" : ");
+                if (colonIdx > 0) {
+                    entry.logger = rest.substring(0, colonIdx).trim();
+                    // Shorten logger to simple name
+                    int lastDot = entry.logger.lastIndexOf('.');
+                    if (lastDot > 0) {
+                        entry.logger = entry.logger.substring(lastDot + 1);
+                    }
+                    entry.message = rest.substring(colonIdx + 3).trim();
+                } else {
+                    entry.message = rest;
+                }
+            } else {
+                entry.time = "";
+                entry.level = "INFO";
+                entry.message = line;
+            }
+        } catch (Exception e) {
+            entry.time = "";
+            entry.level = "INFO";
+            entry.message = line;
         }
-        // Lines without a recognized level are treated as INFO
-        return showLogInfo;
+        return entry;
+    }
+
+    private boolean matchesLogLevelFilter(String level) {
+        return switch (level) {
+            case "ERROR", "FATAL" -> showLogError;
+            case "WARN" -> showLogWarn;
+            case "DEBUG" -> showLogDebug;
+            case "TRACE" -> showLogTrace;
+            default -> showLogInfo;
+        };
     }
 
     // ---- Tab 6: Trace ----
@@ -1114,6 +1210,7 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(10),
                         Constraint.fill())
                 .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(traceTitle).build())
                 .build();
 
@@ -1828,6 +1925,14 @@ public class CamelMonitor extends CamelCommand {
         Map<String, Object> headers;
         Map<String, Object> exchangeProperties;
         Map<String, Object> exchangeVariables;
+    }
+
+    static class LogEntry {
+        String raw;
+        String time = "";
+        String level = "INFO";
+        String logger;
+        String message = "";
     }
 
     record VanishingInfo(IntegrationInfo info, long startTime) {
