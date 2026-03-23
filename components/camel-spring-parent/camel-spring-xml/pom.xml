@@ -410,6 +410,8 @@
                                         <include name="org/apache/camel/model/**/*.java" />
                                         <include name="org/apache/camel/package-info.java" />
                                         <exclude name="org/apache/camel/model/cloud/**" />
+                                        <!-- Exclude SSLContextParametersDefinition to avoid conflict with Spring's SSLContextParametersFactoryBean -->
+                                        <exclude name="org/apache/camel/model/app/SSLContextParametersDefinition.java" />
                                     </fileset>
                                     <fileset dir="${project.build.directory}/sources/camel-util">
                                         <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />

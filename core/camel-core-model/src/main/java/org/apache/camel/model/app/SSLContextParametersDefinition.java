@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * </pre>
  */
 @Metadata(label = "configuration,security")
-@XmlType(name = "sslContextParametersDefinition")
+@XmlType(name = "")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SSLContextParametersDefinition {
 
