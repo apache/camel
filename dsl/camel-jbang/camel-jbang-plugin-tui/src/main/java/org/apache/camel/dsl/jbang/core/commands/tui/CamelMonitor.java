@@ -144,7 +144,7 @@ public class CamelMonitor extends CamelCommand {
     // Trace state
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
     private final TableState traceTableState = new TableState();
-    private final Map<String, Long> traceFilePositions = new LinkedHashMap<>();
+    private final Map<String, Long> traceFilePositions = new ConcurrentHashMap<>();
     private boolean showTraceHeaders = true;
     private boolean showTraceBody = true;
     private boolean traceFollowMode = true;
@@ -637,7 +637,7 @@ public class CamelMonitor extends CamelCommand {
             routeRows.add(Row.from(
                     Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.create().fg(Color.CYAN))),
                     Cell.from(route.from != null ? route.from : ""),
-                    Cell.from(Span.styled(route.state, stateStyle)),
+                    Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                     Cell.from(route.uptime != null ? route.uptime : ""),
                     Cell.from(route.throughput != null ? route.throughput : ""),
                     Cell.from(String.valueOf(route.total)),
@@ -722,8 +722,8 @@ public class CamelMonitor extends CamelCommand {
             Style nameStyle = proc.failed > 0 ? Style.create().fg(Color.RED) : Style.create().fg(Color.CYAN);
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(indent + proc.id, nameStyle)),
-                    Cell.from(proc.processor),
+                    Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
+                    Cell.from(proc.processor != null ? proc.processor : ""),
                     Cell.from(String.valueOf(proc.total)),
                     Cell.from(proc.failed > 0
                             ? Span.styled(String.valueOf(proc.failed), Style.create().fg(Color.RED))
@@ -875,20 +875,21 @@ public class CamelMonitor extends CamelCommand {
 
         List<Row> rows = new ArrayList<>();
         for (EndpointInfo ep : info.endpoints) {
-            Style dirStyle = switch (ep.direction) {
+            String dir = ep.direction != null ? ep.direction : "";
+            Style dirStyle = switch (dir) {
                 case "in" -> Style.create().fg(Color.GREEN);
                 case "out" -> Style.create().fg(Color.BLUE);
                 default -> Style.create().fg(Color.YELLOW);
             };
-            String arrow = switch (ep.direction) {
+            String arrow = switch (dir) {
                 case "in" -> "\u2192 ";
                 case "out" -> "\u2190 ";
                 default -> "\u2194 ";
             };
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(ep.component, Style.create().fg(Color.CYAN))),
-                    Cell.from(Span.styled(arrow + ep.direction, dirStyle)),
+                    Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(Span.styled(arrow + dir, dirStyle)),
                     Cell.from(ep.uri != null ? ep.uri : ""),
                     Cell.from(ep.routeId != null ? ep.routeId : "")));
         }
@@ -931,9 +932,7 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Read and filter log lines
-        readLogFile(info.pid);
-        applyLogFilters();
+        // Log data is refreshed in refreshData() tick handler
 
         // Auto-follow: select last entry
         if (logFollowMode && !filteredLogEntries.isEmpty()) {
@@ -1152,10 +1151,11 @@ public class CamelMonitor extends CamelCommand {
         // Trace list
         List<Row> rows = new ArrayList<>();
         for (TraceEntry entry : current) {
-            Style statusStyle = switch (entry.status) {
-                case "Created" -> Style.create().fg(Color.CYAN);
-                case "Routing", "Processing" -> Style.create().fg(Color.YELLOW);
-                case "Sent" -> Style.create().fg(Color.GREEN);
+            String status = entry.status != null ? entry.status : "";
+            Style statusStyle = switch (status) {
+                case "Done" -> Style.create().fg(Color.GREEN);
+                case "Failed" -> Style.create().fg(Color.RED);
+                case "Processing" -> Style.create().fg(Color.YELLOW);
                 default -> Style.create().fg(Color.WHITE);
             };
 
@@ -1168,7 +1168,7 @@ public class CamelMonitor extends CamelCommand {
                             entry.routeId != null ? truncate(entry.routeId, 15) : "",
                             Style.create().fg(Color.CYAN))),
                     Cell.from(entry.nodeId != null ? truncate(entry.nodeId, 15) : ""),
-                    Cell.from(Span.styled(entry.status != null ? entry.status : "", statusStyle)),
+                    Cell.from(Span.styled(status, statusStyle)),
                     Cell.from(entry.elapsed + "ms"),
                     Cell.from(bodyPreview)));
         }
@@ -1241,7 +1241,8 @@ public class CamelMonitor extends CamelCommand {
                 Span.styled(" Route:    ", Style.create().fg(Color.YELLOW).bold()),
                 Span.raw(entry.routeId != null ? entry.routeId : ""),
                 Span.raw("  Node: "),
-                Span.raw(entry.nodeId != null ? entry.nodeId : "")));
+                Span.raw(entry.nodeId != null ? entry.nodeId : ""),
+                Span.raw(entry.nodeLabel != null ? " (" + entry.nodeLabel + ")" : "")));
         lines.add(Line.from(
                 Span.styled(" Status:   ", Style.create().fg(Color.YELLOW).bold()),
                 Span.raw(entry.status != null ? entry.status : ""),
@@ -1450,6 +1451,13 @@ public class CamelMonitor extends CamelCommand {
 
             data.set(infos);
 
+            // Refresh log data for the selected integration
+            IntegrationInfo selected = findSelectedIntegration();
+            if (selected != null) {
+                readLogFile(selected.pid);
+                applyLogFilters();
+            }
+
             // Refresh trace data
             refreshTraceData(pids);
         } catch (Exception e) {
@@ -1552,7 +1560,7 @@ public class CamelMonitor extends CamelCommand {
 
             traceFilePositions.put(pid, length);
 
-            // Each line is a separate JSON object
+            // Each line is a JSON object: {"enabled":true,"traces":[...]}
             String[] lines = content.split("\n");
             for (String line : lines) {
                 line = line.trim();
@@ -1561,9 +1569,22 @@ public class CamelMonitor extends CamelCommand {
                 }
                 try {
                     JsonObject json = (JsonObject) Jsoner.deserialize(line);
-                    TraceEntry entry = parseTraceEntry(json, pid);
-                    if (entry != null) {
-                        allTraces.add(entry);
+                    Object tracesArray = json.get("traces");
+                    if (tracesArray instanceof List<?> traceList) {
+                        for (Object traceObj : traceList) {
+                            if (traceObj instanceof JsonObject traceJson) {
+                                TraceEntry entry = parseTraceEntry(traceJson, pid);
+                                if (entry != null) {
+                                    allTraces.add(entry);
+                                }
+                            }
+                        }
+                    } else {
+                        // Fallback: try parsing the line itself as a trace entry
+                        TraceEntry entry = parseTraceEntry(json, pid);
+                        if (entry != null) {
+                            allTraces.add(entry);
+                        }
                     }
                 } catch (Exception e) {
                     // skip malformed lines
@@ -1578,13 +1599,38 @@ public class CamelMonitor extends CamelCommand {
     private TraceEntry parseTraceEntry(JsonObject json, String pid) {
         TraceEntry entry = new TraceEntry();
         entry.pid = pid;
-        entry.uid = json.getString("uid");
+        entry.uid = stringValue(json.get("uid"));
         entry.exchangeId = json.getString("exchangeId");
-        entry.timestamp = json.getString("timestamp");
         entry.routeId = json.getString("routeId");
         entry.nodeId = json.getString("nodeId");
         entry.location = json.getString("location");
-        entry.status = json.getString("status");
+        entry.nodeLabel = json.getString("nodeLabel");
+
+        // timestamp is epoch millis (number)
+        Object tsObj = json.get("timestamp");
+        if (tsObj instanceof Number n) {
+            long epochMs = n.longValue();
+            entry.timestamp = java.time.Instant.ofEpochMilli(epochMs)
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalTime().toString();
+            // Truncate to HH:mm:ss.SSS
+            if (entry.timestamp.length() > 12) {
+                entry.timestamp = entry.timestamp.substring(0, 12);
+            }
+        } else if (tsObj != null) {
+            entry.timestamp = tsObj.toString();
+        }
+
+        // Derive status from done/failed booleans
+        Boolean done = (Boolean) json.get("done");
+        Boolean failed = (Boolean) json.get("failed");
+        if (Boolean.TRUE.equals(failed)) {
+            entry.status = "Failed";
+        } else if (Boolean.TRUE.equals(done)) {
+            entry.status = "Done";
+        } else {
+            entry.status = "Processing";
+        }
 
         Object elapsedObj = json.get("elapsed");
         if (elapsedObj instanceof Number n) {
@@ -1598,37 +1644,71 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Parse message object
-        JsonObject message = (JsonObject) json.get("message");
-        if (message != null) {
-            // Headers
+        Object msgObj = json.get("message");
+        if (msgObj instanceof JsonObject message) {
+            // Headers: can be a list of {key, type, value} or a map
             Object headersObj = message.get("headers");
-            if (headersObj instanceof Map) {
+            if (headersObj instanceof List<?> headerList) {
+                entry.headers = new LinkedHashMap<>();
+                for (Object h : headerList) {
+                    if (h instanceof JsonObject hObj) {
+                        entry.headers.put(
+                                String.valueOf(hObj.get("key")),
+                                hObj.get("value"));
+                    }
+                }
+            } else if (headersObj instanceof Map) {
                 entry.headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
             }
 
-            // Body
+            // Body: can be {type, value} or a plain string
             Object bodyObj = message.get("body");
-            if (bodyObj != null) {
+            if (bodyObj instanceof JsonObject bodyJson) {
+                Object val = bodyJson.get("value");
+                entry.body = val != null ? val.toString() : bodyJson.toString();
+            } else if (bodyObj != null) {
                 entry.body = bodyObj.toString();
-                // Create a preview (first line, truncated)
-                String preview = entry.body.replace("\n", " ").replace("\r", "");
-                entry.bodyPreview = preview;
+            }
+            if (entry.body != null) {
+                entry.bodyPreview = entry.body.replace("\n", " ").replace("\r", "");
             }
 
-            // Exchange properties
+            // Exchange properties: can be a list of {key, type, value} or a map
             Object propsObj = message.get("exchangeProperties");
-            if (propsObj instanceof Map) {
+            if (propsObj instanceof List<?> propList) {
+                entry.exchangeProperties = new LinkedHashMap<>();
+                for (Object p : propList) {
+                    if (p instanceof JsonObject pObj) {
+                        entry.exchangeProperties.put(
+                                String.valueOf(pObj.get("key")),
+                                pObj.get("value"));
+                    }
+                }
+            } else if (propsObj instanceof Map) {
                 entry.exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
             }
 
-            // Exchange variables
+            // Exchange variables: can be a list of {key, type, value} or a map
             Object varsObj = message.get("exchangeVariables");
-            if (varsObj instanceof Map) {
+            if (varsObj instanceof List<?> varList) {
+                entry.exchangeVariables = new LinkedHashMap<>();
+                for (Object v : varList) {
+                    if (v instanceof JsonObject vObj) {
+                        entry.exchangeVariables.put(
+                                String.valueOf(vObj.get("key")),
+                                vObj.get("value"));
+                    }
+                }
+            } else if (varsObj instanceof Map) {
                 entry.exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
             }
         }
 
         return entry;
+    }
+
+    private static String stringValue(Object obj) {
+        return obj != null ? obj.toString() : null;
     }
 
     // ---- Integration Parsing ----
@@ -1648,7 +1728,7 @@ public class CamelMonitor extends CamelCommand {
         info.pid = Long.toString(ph.pid());
         info.uptime = extractSince(ph);
         info.ago = TimeUtils.printSince(info.uptime);
-        info.state = context.getInteger("phase");
+        info.state = context.getIntegerOrDefault("phase", 0);
 
         JsonObject runtime = (JsonObject) root.get("runtime");
         info.platform = runtime != null ? runtime.getString("platform") : null;
@@ -1664,14 +1744,14 @@ public class CamelMonitor extends CamelCommand {
 
         JsonObject mem = (JsonObject) root.get("memory");
         if (mem != null) {
-            info.heapMemUsed = mem.getLong("heapMemoryUsed");
-            info.heapMemMax = mem.getLong("heapMemoryMax");
+            info.heapMemUsed = mem.getLongOrDefault("heapMemoryUsed", 0L);
+            info.heapMemMax = mem.getLongOrDefault("heapMemoryMax", 0L);
         }
 
         JsonObject threads = (JsonObject) root.get("threads");
         if (threads != null) {
-            info.threadCount = threads.getInteger("threadCount");
-            info.peakThreadCount = threads.getInteger("peakThreadCount");
+            info.threadCount = threads.getIntegerOrDefault("threadCount", 0);
+            info.peakThreadCount = threads.getIntegerOrDefault("peakThreadCount", 0);
         }
 
         // Parse routes
@@ -1905,6 +1985,7 @@ public class CamelMonitor extends CamelCommand {
         String timestamp;
         String routeId;
         String nodeId;
+        String nodeLabel;
         String location;
         String status;
         long elapsed;

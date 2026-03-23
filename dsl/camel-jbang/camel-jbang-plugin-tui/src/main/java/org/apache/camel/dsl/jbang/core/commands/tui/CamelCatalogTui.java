@@ -729,10 +729,6 @@ public class CamelCatalogTui extends CamelCommand {
         }
     }
 
-    private static String truncate(String s, int max) {
-        return TuiHelper.truncate(s, max);
-    }
-
     // ---- Data Classes ----
 
     static class ComponentInfo {

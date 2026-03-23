@@ -119,18 +119,18 @@ public final class PluginHelper {
 
         // Fall back to JSON configuration for additional or missing plugins
         Map<String, Plugin> plugins = getActivePlugins(main, repos);
-        for (Map.Entry<String, Plugin> entry : plugins.entrySet()) {
+        for (Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
             // only load the plugin if the command-line is calling this plugin
-            if (target != null && !"shell".equals(target) && !target.equals(entry.getKey())) {
+            if (target != null && !"shell".equals(target) && !target.equals(plugin.getKey())) {
                 continue;
             }
 
             // Skip if this plugin was already loaded from embedded plugins
-            if (foundEmbeddedPlugins && commandLine.getSubcommands().containsKey(entry.getKey())) {
+            if (foundEmbeddedPlugins && commandLine.getSubcommands().containsKey(plugin.getKey())) {
                 continue;
             }
 
-            entry.getValue().customize(commandLine, main);
+            plugin.getValue().customize(commandLine, main);
         }
     }
 
@@ -428,12 +428,12 @@ public final class PluginHelper {
                 String command = extractCommandFromPlugin(pluginClass, pluginName);
 
                 // Only load the plugin if the command-line is calling this plugin or if target is null (shell mode)
-                CamelJBangPlugin annotation = pluginClass.getAnnotation(CamelJBangPlugin.class);
                 if (target != null && !"shell".equals(target) && !target.equals(command)) {
                     return false;
                 }
 
                 // Check version compatibility if needed
+                CamelJBangPlugin annotation = pluginClass.getAnnotation(CamelJBangPlugin.class);
                 if (annotation != null) {
                     CamelCatalog catalog = new DefaultCamelCatalog();
                     String version = catalog.getCatalogVersion();
