@@ -436,7 +436,11 @@ The component-specific `CredentialType` enums in all Azure components have been 
 `org.apache.camel.component.azure.common.CredentialType` enum in the new `camel-azure-common` module. This shared enum
 contains the union of all credential types across all Azure components.
 
-If you reference `CredentialType` in Java code, update your imports:
+URI-based configuration (e.g., `credentialType=AZURE_IDENTITY`) requires no changes, as the enum value names are identical.
+
+The component configuration classes still use the component-specific enum types for now.
+A future release will migrate the configuration to use the shared enum, at which point
+Java API users should update their imports:
 
 Before:
 [source,java]
@@ -449,8 +453,6 @@ After:
 ----
 import org.apache.camel.component.azure.common.CredentialType;
 ----
-
-URI-based configuration (e.g., `credentialType=AZURE_IDENTITY`) requires no changes, as the enum value names are identical.
 
 The deprecated component-specific enums will be removed in a future release. The new `camel-azure-common` module is
 automatically included as a transitive dependency of all Azure components.
