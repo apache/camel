@@ -41,8 +41,9 @@ public @interface CamelJBangPlugin {
     String firstVersion();
 
     /**
-     * Names of existing commands that this plugin extends by adding subcommands. When any of these commands is invoked,
-     * the plugin will be loaded so it can inject its subcommands into the existing command tree.
+     * Additional command names that should trigger loading this plugin. This includes names of existing commands that
+     * this plugin extends by adding subcommands, as well as any top-level commands the plugin adds. When any of these
+     * commands is invoked, the plugin will be loaded.
      */
-    String[] parentCommands() default {};
+    String[] commands() default {};
 }

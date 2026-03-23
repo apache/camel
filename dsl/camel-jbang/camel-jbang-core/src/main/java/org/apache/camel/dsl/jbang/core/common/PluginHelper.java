@@ -125,7 +125,7 @@ public final class PluginHelper {
             PluginEntry pe = entry.getValue();
             // only load the plugin if the command-line is calling this plugin or one of its parent commands
             if (target != null && !"shell".equals(target) && !target.equals(entry.getKey())
-                    && !pe.parentCommands().contains(target)) {
+                    && !pe.commands().contains(target)) {
                 continue;
             }
 
@@ -180,7 +180,7 @@ public final class PluginHelper {
         return activePlugins;
     }
 
-    record PluginEntry(Plugin plugin, List<String> parentCommands) {
+    record PluginEntry(Plugin plugin, List<String> commands) {
     }
 
     @SuppressWarnings("unchecked")
@@ -200,13 +200,13 @@ public final class PluginHelper {
                 final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
                 final String gav = properties.getOrDefault("dependency", "").toString();
 
-                // Parse parentCommands from JSON config
-                List<String> parentCommands = List.of();
-                Object pc = properties.get("parentCommands");
+                // Parse additional commands from JSON config
+                List<String> commands = List.of();
+                Object pc = properties.get("commands");
                 if (pc instanceof List<?> pcList) {
-                    parentCommands = pcList.stream().map(Object::toString).toList();
+                    commands = pcList.stream().map(Object::toString).toList();
                 } else if (pc instanceof String pcs && !pcs.isEmpty()) {
-                    parentCommands = Arrays.asList(pcs.split(","));
+                    commands = Arrays.asList(pcs.split(","));
                 }
 
                 // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
@@ -216,7 +216,7 @@ public final class PluginHelper {
 
                 Optional<Plugin> plugin = getPlugin(command, version, gav, repos, main.getOut());
                 if (plugin.isPresent()) {
-                    activePlugins.put(command, new PluginEntry(plugin.get(), parentCommands));
+                    activePlugins.put(command, new PluginEntry(plugin.get(), commands));
                 } else {
                     main.getOut().println("camel-jbang-plugin-" + command + " not found. Exit");
                     main.quit(1);
@@ -481,7 +481,7 @@ public final class PluginHelper {
                 // Only load the plugin if the command-line is calling this plugin or if target is null (shell mode)
                 CamelJBangPlugin annotation = pluginClass.getAnnotation(CamelJBangPlugin.class);
                 if (target != null && !"shell".equals(target) && !target.equals(command)
-                        && !matchesParentCommand(annotation, target)) {
+                        && !matchesCommand(annotation, target)) {
                     return false;
                 }
 
@@ -521,12 +521,12 @@ public final class PluginHelper {
     }
 
     /**
-     * Checks whether the target command matches one of the plugin's declared parent commands.
+     * Checks whether the target command matches one of the plugin's declared additional commands.
      */
-    private static boolean matchesParentCommand(CamelJBangPlugin annotation, String target) {
+    private static boolean matchesCommand(CamelJBangPlugin annotation, String target) {
         if (annotation != null) {
-            for (String pc : annotation.parentCommands()) {
-                if (pc.equals(target)) {
+            for (String cmd : annotation.commands()) {
+                if (cmd.equals(target)) {
                     return true;
                 }
             }

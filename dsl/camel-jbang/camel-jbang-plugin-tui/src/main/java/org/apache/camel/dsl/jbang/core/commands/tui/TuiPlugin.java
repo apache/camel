@@ -22,7 +22,7 @@ import org.apache.camel.dsl.jbang.core.common.Plugin;
 import picocli.CommandLine;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-tui", firstVersion = "4.19.0",
-                  parentCommands = { "top", "trace", "log", "catalog" })
+                  commands = { "health", "monitor", "top", "trace", "log", "catalog" })
 public class TuiPlugin implements Plugin {
 
     @Override
