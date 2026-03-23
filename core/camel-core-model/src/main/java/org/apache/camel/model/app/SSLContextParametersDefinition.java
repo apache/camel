@@ -19,7 +19,7 @@ package org.apache.camel.model.app;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * </pre>
  */
 @Metadata(label = "configuration,security")
-@XmlRootElement(name = "sslContextParameters")
+@XmlType(name = "sslContextParametersDefinition")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SSLContextParametersDefinition {
 

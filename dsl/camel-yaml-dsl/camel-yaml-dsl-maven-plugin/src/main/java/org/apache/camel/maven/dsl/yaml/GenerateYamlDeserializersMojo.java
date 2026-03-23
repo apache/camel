@@ -455,6 +455,14 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                     modelName.set(value);
                     TypeSpecHolder.put(attributes, "node", value);
                 });
+        // SSLContextParametersDefinition uses @XmlType instead of @XmlRootElement
+        // to avoid conflicting with Spring's sslContextParameters element
+        if (modelName.get() == null
+                && info.name().toString().equals("org.apache.camel.model.app.SSLContextParametersDefinition")) {
+            yamlTypeAnnotation.addMember("nodes", "$S", "sslContextParameters");
+            modelName.set("sslContextParameters");
+            TypeSpecHolder.put(attributes, "node", "sslContextParameters");
+        }
 
         //
         // Constructors

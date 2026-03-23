@@ -377,9 +377,6 @@ public class ModelWriter extends BaseWriter {
     public void writeBeansDefinition(BeansDefinition def) throws IOException {
         doWriteBeansDefinition("beans", def);
     }
-    public void writeSSLContextParametersDefinition(SSLContextParametersDefinition def) throws IOException {
-        doWriteSSLContextParametersDefinition("sslContextParameters", def);
-    }
     public void writeBatchResequencerConfig(BatchResequencerConfig def) throws IOException {
         doWriteBatchResequencerConfig("batchConfig", def);
     }
