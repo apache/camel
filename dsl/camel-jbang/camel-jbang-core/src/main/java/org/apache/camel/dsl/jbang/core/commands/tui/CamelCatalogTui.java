@@ -80,6 +80,8 @@ public class CamelCatalogTui extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // Eagerly load classes used by the input reader thread and picocli
+        // post-processing to avoid ClassNotFoundException during shutdown
         try {
             Class.forName("dev.tamboui.tui.event.KeyModifiers");
             Class.forName("dev.tamboui.tui.event.KeyEvent");
