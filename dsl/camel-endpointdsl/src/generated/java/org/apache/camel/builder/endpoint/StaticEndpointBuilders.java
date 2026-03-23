@@ -13918,7 +13918,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * To call REST services using OpenAPI specification as contract.
+     * To call and expose REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
@@ -13955,7 +13955,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * To call REST services using OpenAPI specification as contract.
+     * To call and expose REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
