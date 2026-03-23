@@ -102,6 +102,21 @@ public class Export extends ExportBaseCommand {
             }
         }
 
+        // auto-detect application.properties and include it
+        {
+            String name = baseDir.resolve("application.properties").toString();
+            if (Files.exists(Paths.get(name)) && !files.contains(name)) {
+                files.add(name);
+            }
+        }
+        if (profile != null) {
+            // need to include profile application properties if exists
+            String name = baseDir.resolve("application-" + profile + ".properties").toString();
+            if (Files.exists(Paths.get(name)) && !files.contains(name)) {
+                files.add(name);
+            }
+        }
+
         // application.properties
         doLoadAndInitProfileProperties(baseDir.resolve("application.properties"));
         if (profile != null) {
