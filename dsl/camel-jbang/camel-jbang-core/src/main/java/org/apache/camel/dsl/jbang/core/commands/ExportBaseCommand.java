@@ -330,8 +330,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
      * cleans up.
      */
     private Integer doDryRunExport() throws Exception {
-        // Save original export directory
+        // Save original state
         String originalExportDir = this.exportDir;
+        boolean originalCleanExportDir = this.cleanExportDir;
+        boolean originalQuiet = this.quiet;
         Path tempDir = Files.createTempDirectory("camel-export-dry-run-");
         try {
             // Redirect export to temp directory
@@ -341,6 +343,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
             this.quiet = true; // suppress normal output
 
             Integer result = export();
+
+            // Restore quiet so output works correctly
+            this.quiet = originalQuiet;
 
             printer().println("Dry-run export preview:");
             printer().println();
@@ -363,6 +368,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
             return result;
         } finally {
+            // Restore original state
+            this.exportDir = originalExportDir;
+            this.cleanExportDir = originalCleanExportDir;
+            this.quiet = originalQuiet;
+            this.dryRun = true;
             // Clean up temp directory
             try (Stream<Path> walk = Files.walk(tempDir)) {
                 walk.sorted(Comparator.reverseOrder())
