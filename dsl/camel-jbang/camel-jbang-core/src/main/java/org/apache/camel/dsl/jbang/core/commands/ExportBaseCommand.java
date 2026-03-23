@@ -408,46 +408,144 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
     }
 
-    protected static String mavenRepositoriesAsPomXml(String repos) {
-        StringBuilder sb = new StringBuilder();
-        int i = 1;
-        sb.append("    <repositories>\n");
-        if (!repos.isEmpty()) {
+    /**
+     * Builds a list of repository data maps from a comma-separated repos string, for use with FreeMarker templates.
+     */
+    protected static List<Map<String, Object>> buildRepositoryList(String repos) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (repos != null && !repos.isEmpty()) {
+            int i = 1;
             for (String repo : repos.split(",")) {
-                sb.append("        <repository>\n");
-                sb.append("            <id>custom").append(i++).append("</id>\n");
-                sb.append("            <url>").append(repo).append("</url>\n");
-                if (repo.contains("snapshots")) {
-                    sb.append("            <releases>\n");
-                    sb.append("                <enabled>false</enabled>\n");
-                    sb.append("            </releases>\n");
-                    sb.append("            <snapshots>\n");
-                    sb.append("                <enabled>true</enabled>\n");
-                    sb.append("            </snapshots>\n");
-                }
-                sb.append("        </repository>\n");
+                Map<String, Object> r = new HashMap<>();
+                r.put("id", "custom" + i++);
+                r.put("url", repo);
+                r.put("isSnapshot", repo.contains("snapshots"));
+                result.add(r);
             }
         }
-        sb.append("    </repositories>\n");
-        sb.append("    <pluginRepositories>\n");
-        if (!repos.isEmpty()) {
-            for (String repo : repos.split(",")) {
-                sb.append("        <pluginRepository>\n");
-                sb.append("            <id>custom").append(i++).append("</id>\n");
-                sb.append("            <url>").append(repo).append("</url>\n");
-                if (repo.contains("snapshots")) {
-                    sb.append("            <releases>\n");
-                    sb.append("                <enabled>false</enabled>\n");
-                    sb.append("            </releases>\n");
-                    sb.append("            <snapshots>\n");
-                    sb.append("                <enabled>true</enabled>\n");
-                    sb.append("            </snapshots>\n");
+        return result;
+    }
+
+    /**
+     * Builds a list of dependency data maps from the deps set, for use with FreeMarker templates.
+     */
+    protected List<Map<String, Object>> buildDependencyList(Set<String> deps) {
+        List<MavenGav> gavs = new ArrayList<>();
+        for (String dep : deps) {
+            MavenGav gav = parseMavenGav(dep);
+            String gid = gav.getGroupId();
+            if ("org.apache.camel".equals(gid)) {
+                // uses BOM so version should not be included
+                gav.setVersion(null);
+            }
+            gavs.add(gav);
+        }
+
+        // sort artifacts
+        gavs.sort(mavenGavComparator());
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (MavenGav gav : gavs) {
+            Map<String, Object> dep = new HashMap<>();
+            dep.put("groupId", gav.getGroupId());
+            dep.put("artifactId", gav.getArtifactId());
+            dep.put("version", gav.getVersion());
+            dep.put("scope", gav.getScope());
+            dep.put("isLib", "lib".equals(gav.getPackaging()));
+            dep.put("isKameletsUtils", "camel-kamelets-utils".equals(gav.getArtifactId()));
+            result.add(dep);
+        }
+        return result;
+    }
+
+    public Comparator<MavenGav> mavenGavComparator() {
+        return new Comparator<MavenGav>() {
+            @Override
+            public int compare(MavenGav o1, MavenGav o2) {
+                int r1 = rankGroupId(o1);
+                int r2 = rankGroupId(o2);
+
+                if (r1 > r2) {
+                    return -1;
+                } else if (r2 > r1) {
+                    return 1;
+                } else {
+                    return o1.toString().compareTo(o2.toString());
                 }
-                sb.append("        </pluginRepository>\n");
+            }
+
+            int rankGroupId(MavenGav o1) {
+                String g1 = o1.getGroupId();
+                if (g1 == null) {
+                    return 0;
+                }
+
+                switch (g1) {
+                    case "org.springframework.boot" -> {
+                        return 30;
+                    }
+                    case "io.quarkus" -> {
+                        return 30;
+                    }
+                    case "org.apache.camel.quarkus" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-quarkus-core".equals(a1)) {
+                            return 21;
+                        }
+                        return 20;
+                    }
+                    case "org.apache.camel.springboot" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-spring-boot-starter".equals(a1)) {
+                            return 21;
+                        } else if ("camel-spring-boot-engine-starter".equals(a1)) {
+                            return 22;
+                        }
+                        return 20;
+                    }
+                    case "org.apache.camel" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-main".equals(a1)) {
+                            return 11;
+                        }
+                        return 10;
+                    }
+                    case "org.apache.camel.kamelets" -> {
+                        return 5;
+                    }
+                    default -> {
+                        return 0;
+                    }
+                }
+            }
+        };
+    }
+
+    /**
+     * Formats build properties as XML property lines for inclusion in POM templates.
+     */
+    protected String formatBuildProperties() {
+        Properties properties = mapBuildProperties();
+
+        if (!skipPlugins) {
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
+                    .stream()
+                    .map(Plugin::getExporter)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+
+            for (PluginExporter exporter : exporters) {
+                exporter.getBuildProperties().forEach(properties::putIfAbsent);
             }
         }
-        sb.append("    </pluginRepositories>\n");
-        return sb.toString();
+
+        return properties.entrySet().stream()
+                .map(item -> String.format("        <%s>%s</%s>", item.getKey(), item.getValue(), item.getKey()))
+                .collect(Collectors.joining(System.lineSeparator()));
     }
 
     protected abstract Integer export() throws Exception;
@@ -489,30 +587,15 @@ public abstract class ExportBaseCommand extends CamelCommand {
         dependencies.addAll(Arrays.asList(depsArray));
     }
 
+    /**
+     * @deprecated Use {@link #formatBuildProperties()} instead for FreeMarker templates.
+     */
+    @Deprecated
     protected String replaceBuildProperties(String context) {
-        Properties properties = mapBuildProperties();
-
-        if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
-                    .stream()
-                    .map(Plugin::getExporter)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toSet());
-
-            for (PluginExporter exporter : exporters) {
-                exporter.getBuildProperties().forEach(properties::putIfAbsent);
-            }
-        }
-
-        String mavenProperties = properties.entrySet().stream()
-                .map(item -> {
-                    return String.format("        <%s>%s</%s>", item.getKey(), item.getValue(), item.getKey());
-                })
-                .collect(Collectors.joining(System.lineSeparator()));
-
+        String mavenProperties = formatBuildProperties();
         if (!mavenProperties.isEmpty()) {
-            context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), Matcher.quoteReplacement(mavenProperties));
+            context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"),
+                    Matcher.quoteReplacement(mavenProperties));
         } else {
             context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), "");
         }

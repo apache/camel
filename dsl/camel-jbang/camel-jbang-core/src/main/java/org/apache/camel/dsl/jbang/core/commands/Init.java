@@ -154,6 +154,10 @@ public class Init extends CamelCommand {
         }
 
         if (is == null) {
+            is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".ftl");
+        }
+        if (is == null) {
+            // fallback to old .tmpl format
             is = Init.class.getClassLoader().getResourceAsStream("templates/" + ext + ".tmpl");
         }
         if (is == null) {
@@ -166,6 +170,8 @@ public class Init extends CamelCommand {
         }
         String content = IOHelper.loadText(is);
         IOHelper.close(is);
+        // Strip FreeMarker license header comment (appears as literal text in .ftl files)
+        content = content.replaceFirst("(?s)\\A<#--.*?-->\\s*", "");
 
         if (!directory.equals(".")) {
             if (cleanDirectory) {
@@ -179,7 +185,8 @@ public class Init extends CamelCommand {
         if (!targetPath.isAbsolute()) {
             targetPath = Paths.get(directory, file);
         }
-        content = content.replaceFirst("\\{\\{ \\.Name }}", name);
+        content = content.replace("{{ .Name }}", name);
+        content = content.replace("[=Name]", name);
         if (fromKamelet != null) {
             content = content.replaceFirst("\\s\\sname:\\s" + fromKamelet, "  name: " + name);
             content = content.replaceFirst("camel.apache.org/provider: \"Apache Software Foundation\"",
@@ -201,7 +208,8 @@ public class Init extends CamelCommand {
         }
         if ("java".equals(ext)) {
             String packageDeclaration = computeJavaPackageDeclaration(targetPath);
-            content = content.replaceFirst("\\{\\{ \\.PackageDeclaration }}", packageDeclaration);
+            content = content.replace("{{ .PackageDeclaration }}", packageDeclaration);
+            content = content.replace("[=PackageDeclaration]", packageDeclaration);
         }
         // in case of using relative paths in the file name
         Path parentPath = targetPath.getParent();

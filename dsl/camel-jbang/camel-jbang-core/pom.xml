@@ -152,6 +152,13 @@
             <artifactId>plexus-xml</artifactId>
         </dependency>
 
+        <!-- template engine for code generation -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker-version}</version>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>

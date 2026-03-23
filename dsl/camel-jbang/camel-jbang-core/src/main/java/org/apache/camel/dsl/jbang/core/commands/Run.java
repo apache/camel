@@ -60,6 +60,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
@@ -1642,16 +1643,9 @@ public class Run extends CamelCommand {
     }
 
     protected int runCustomCamelVersion(KameletMain main) throws Exception {
-        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/run-custom-camel-version.tmpl");
-        String content = IOHelper.loadText(is);
-        IOHelper.close(is);
-
-        content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "21");
-        if (repositories != null) {
-            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repositories);
-        } else {
-            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
-        }
+        Map<String, Object> model = new HashMap<>();
+        model.put("JavaVersion", "21");
+        model.put("MavenRepositories", repositories != null ? "//REPOS " + repositories : "");
 
         // use custom distribution of camel
         StringBuilder sb = new StringBuilder();
@@ -1665,18 +1659,20 @@ public class Run extends CamelCommand {
         if (VersionHelper.isGE(camelVersion, "3.19.0")) {
             sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s%n", camelVersion));
         }
-        content = content.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
+        model.put("CamelDependencies", sb.toString());
 
         // use apache distribution of camel-jbang/github-resolver
         String v = camelVersion.substring(0, camelVersion.lastIndexOf('.'));
         sb = new StringBuilder();
         sb.append(String.format("//DEPS org.apache.camel:camel-jbang-core:%s%n", v));
         sb.append(String.format("//DEPS org.apache.camel:camel-resourceresolver-github:%s%n", v));
-        content = content.replaceFirst("\\{\\{ \\.CamelJBangDependencies }}", sb.toString());
+        model.put("CamelJBangDependencies", sb.toString());
 
         sb = new StringBuilder();
         sb.append(String.format("//DEPS org.apache.camel.kamelets:camel-kamelets:%s%n", kameletsVersion));
-        content = content.replaceFirst("\\{\\{ \\.CamelKameletsDependencies }}", sb.toString());
+        model.put("CamelKameletsDependencies", sb.toString());
+
+        String content = TemplateHelper.processTemplate("run-custom-camel-version.ftl", model);
 
         String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java";
         Files.writeString(Paths.get(fn), content);
@@ -1743,9 +1739,6 @@ public class Run extends CamelCommand {
 
     private String loadFromCode(String code, String name, boolean file) throws IOException {
         String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/" + name + ".java";
-        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/code-java.tmpl");
-        String content = IOHelper.loadText(is);
-        IOHelper.close(is);
         if (!file) {
             // need to replace single quote as double quotes (from input string)
             code = code.replace("'", "\"");
@@ -1755,8 +1748,10 @@ public class Run extends CamelCommand {
         if (!code.endsWith(";")) {
             code = code + ";";
         }
-        content = StringHelper.replaceFirst(content, "{{ .Name }}", name);
-        content = StringHelper.replaceFirst(content, "{{ .Code }}", code);
+        Map<String, Object> model = new HashMap<>();
+        model.put("Name", name);
+        model.put("Code", code);
+        String content = TemplateHelper.processTemplate("code-java.ftl", model);
         Files.writeString(Paths.get(fn), content);
         return "file:" + fn;
     }
@@ -1938,11 +1933,10 @@ public class Run extends CamelCommand {
             throw new FileNotFoundException("Cannot find file: " + filePath);
         }
 
-        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/rest-dsl.yaml.tmpl")) {
-            String content = IOHelper.loadText(is);
-            String onlyName = filePath.toString();
-            content = content.replaceFirst("\\{\\{ \\.Spec }}", onlyName);
-
+        {
+            Map<String, Object> model = new HashMap<>();
+            model.put("Spec", filePath.toString());
+            String content = TemplateHelper.processTemplate("rest-dsl.yaml.ftl", model);
             Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
 
             // we need to include the spec on the classpath
