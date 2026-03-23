@@ -275,38 +275,38 @@ public interface CamelEventEndpointBuilderFactory {
             return this;
         }
         /**
-         * Comma-separated list of filters to narrow down events. For route
-         * events, this filters by route ID. For exchange events, this filters
-         * by the route ID of the exchange. Only events matching one of the
-         * specified route IDs will be accepted.
+         * Comma-separated list of route IDs to exclude. For route events, this
+         * excludes by route ID. For exchange events, this excludes by the route
+         * ID of the exchange. Events matching any of the specified route IDs
+         * will be rejected. This option can be used together with the include
+         * option.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
-         * @param filter the value to set
+         * @param exclude the value to set
          * @return the dsl builder
          */
-        default CamelEventEndpointBuilder filter(String filter) {
-            doSetProperty("filter", filter);
+        default CamelEventEndpointBuilder exclude(String exclude) {
+            doSetProperty("exclude", exclude);
             return this;
         }
         /**
-         * Comma-separated list of route IDs to exclude from events. For route
-         * events, this excludes by route ID. For exchange events, this excludes
-         * by the route ID of the exchange. Events matching any of the specified
-         * route IDs will be rejected. This option can be used together with the
-         * filter option.
+         * Comma-separated list of route IDs to include. For route events, this
+         * matches the route ID. For exchange events, this matches the route ID
+         * of the exchange. Only events matching one of the specified route IDs
+         * will be accepted.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          * 
-         * @param filterExclude the value to set
+         * @param include the value to set
          * @return the dsl builder
          */
-        default CamelEventEndpointBuilder filterExclude(String filterExclude) {
-            doSetProperty("filterExclude", filterExclude);
+        default CamelEventEndpointBuilder include(String include) {
+            doSetProperty("include", include);
             return this;
         }
     }

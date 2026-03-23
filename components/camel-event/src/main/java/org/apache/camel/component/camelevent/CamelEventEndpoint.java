@@ -40,7 +40,7 @@ import org.apache.camel.support.DefaultEndpoint;
  *
  * The URI path specifies comma-separated event types to subscribe to. Event types correspond to
  * {@link org.apache.camel.spi.CamelEvent.Type} enum values (case-insensitive), for example:
- * {@code event:RouteStarted,RouteStopped} or {@code event:ExchangeCompleted?filter=myRouteId}.
+ * {@code event:RouteStarted,RouteStopped} or {@code event:ExchangeCompleted?include=myRouteId}.
  *
  * Wildcard patterns are supported using a {@code *} suffix, for example: {@code event:Route*} matches all route events,
  * {@code event:Exchange*} matches all exchange events, and {@code event:*} matches all events.
@@ -60,18 +60,18 @@ public class CamelEventEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private String events;
 
-    @UriParam(description = "Comma-separated list of filters to narrow down events."
-                            + " For route events, this filters by route ID."
-                            + " For exchange events, this filters by the route ID of the exchange."
+    @UriParam(description = "Comma-separated list of route IDs to include."
+                            + " For route events, this matches the route ID."
+                            + " For exchange events, this matches the route ID of the exchange."
                             + " Only events matching one of the specified route IDs will be accepted.")
-    private String filter;
+    private String include;
 
-    @UriParam(description = "Comma-separated list of route IDs to exclude from events."
+    @UriParam(description = "Comma-separated list of route IDs to exclude."
                             + " For route events, this excludes by route ID."
                             + " For exchange events, this excludes by the route ID of the exchange."
                             + " Events matching any of the specified route IDs will be rejected."
-                            + " This option can be used together with the filter option.")
-    private String filterExclude;
+                            + " This option can be used together with the include option.")
+    private String exclude;
 
     @UriParam(description = "Fully qualified class name of a custom event class to filter on."
                             + " When set, only events that are instances of the specified class will be accepted."
@@ -113,8 +113,8 @@ public class CamelEventEndpoint extends DefaultEndpoint {
     private long batchTimeout = 1000;
 
     private Set<CamelEvent.Type> eventTypes;
-    private Set<String> filterValues;
-    private Set<String> filterExcludeValues;
+    private Set<String> includeValues;
+    private Set<String> excludeValues;
     private Class<?> customEventClazz;
 
     public CamelEventEndpoint() {
@@ -162,23 +162,23 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         } else {
             eventTypes = Collections.emptySet();
         }
-        // Parse filter values
-        if (filter != null && !filter.isEmpty()) {
-            filterValues = Arrays.stream(filter.split(","))
+        // Parse include values
+        if (include != null && !include.isEmpty()) {
+            includeValues = Arrays.stream(include.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .collect(Collectors.toSet());
         } else {
-            filterValues = Collections.emptySet();
+            includeValues = Collections.emptySet();
         }
-        // Parse filter exclude values
-        if (filterExclude != null && !filterExclude.isEmpty()) {
-            filterExcludeValues = Arrays.stream(filterExclude.split(","))
+        // Parse exclude values
+        if (exclude != null && !exclude.isEmpty()) {
+            excludeValues = Arrays.stream(exclude.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .collect(Collectors.toSet());
         } else {
-            filterExcludeValues = Collections.emptySet();
+            excludeValues = Collections.emptySet();
         }
         // Resolve custom event class
         if (customEventClass != null && !customEventClass.isEmpty()) {
@@ -233,30 +233,29 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         this.events = events;
     }
 
-    public String getFilter() {
-        return filter;
+    public String getInclude() {
+        return include;
     }
 
     /**
-     * Comma-separated list of filters to narrow down events. For route events, this filters by route ID. For exchange
-     * events, this filters by the route ID of the exchange. Only events matching one of the specified route IDs will be
-     * accepted.
+     * Comma-separated list of route IDs to include. For route events, this matches the route ID. For exchange events,
+     * this matches the route ID of the exchange. Only events matching one of the specified route IDs will be accepted.
      */
-    public void setFilter(String filter) {
-        this.filter = filter;
+    public void setInclude(String include) {
+        this.include = include;
     }
 
-    public String getFilterExclude() {
-        return filterExclude;
+    public String getExclude() {
+        return exclude;
     }
 
     /**
-     * Comma-separated list of route IDs to exclude from events. For route events, this excludes by route ID. For
-     * exchange events, this excludes by the route ID of the exchange. Events matching any of the specified route IDs
-     * will be rejected. This option can be used together with the filter option.
+     * Comma-separated list of route IDs to exclude. For route events, this excludes by route ID. For exchange events,
+     * this excludes by the route ID of the exchange. Events matching any of the specified route IDs will be rejected.
+     * This option can be used together with the include option.
      */
-    public void setFilterExclude(String filterExclude) {
-        this.filterExclude = filterExclude;
+    public void setExclude(String exclude) {
+        this.exclude = exclude;
     }
 
     public String getCustomEventClass() {
@@ -348,12 +347,12 @@ public class CamelEventEndpoint extends DefaultEndpoint {
         return eventTypes;
     }
 
-    public Set<String> getFilterValues() {
-        return filterValues;
+    public Set<String> getIncludeValues() {
+        return includeValues;
     }
 
-    public Set<String> getFilterExcludeValues() {
-        return filterExcludeValues;
+    public Set<String> getExcludeValues() {
+        return excludeValues;
     }
 
     public Class<?> getCustomEventClazz() {

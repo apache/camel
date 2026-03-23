@@ -82,15 +82,15 @@ public class EventBackpressureTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("event:ExchangeCompleted?async=true&backpressurePolicy=Block&asyncQueueSize=100&filter=blockSourceRoute")
+                from("event:ExchangeCompleted?async=true&backpressurePolicy=Block&asyncQueueSize=100&include=blockSourceRoute")
                         .routeId("blockConsumer")
                         .to("mock:blockResult");
 
-                from("event:ExchangeCompleted?async=true&backpressurePolicy=Drop&asyncQueueSize=5&filter=dropSourceRoute")
+                from("event:ExchangeCompleted?async=true&backpressurePolicy=Drop&asyncQueueSize=5&include=dropSourceRoute")
                         .routeId("dropConsumer")
                         .to("mock:dropResult");
 
-                from("event:ExchangeCompleted?async=true&asyncQueueSize=50&filter=queueSizeSourceRoute")
+                from("event:ExchangeCompleted?async=true&asyncQueueSize=50&include=queueSizeSourceRoute")
                         .routeId("queueSizeConsumer")
                         .to("mock:queueSizeResult");
 

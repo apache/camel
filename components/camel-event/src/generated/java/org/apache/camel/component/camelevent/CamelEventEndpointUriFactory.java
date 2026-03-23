@@ -35,8 +35,8 @@ public class CamelEventEndpointUriFactory extends org.apache.camel.support.compo
         props.add("events");
         props.add("exceptionHandler");
         props.add("exchangePattern");
-        props.add("filter");
-        props.add("filterExclude");
+        props.add("exclude");
+        props.add("include");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();

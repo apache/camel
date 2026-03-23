@@ -155,7 +155,7 @@ public class EventComponentTest extends CamelTestSupport {
                         .to("mock:exchangeEvents");
 
                 // Route with filter
-                from("event:ExchangeCompleted?filter=filteredRoute")
+                from("event:ExchangeCompleted?include=filteredRoute")
                         .routeId("filteredEventConsumer")
                         .to("mock:filteredEvents");
 

@@ -102,15 +102,15 @@ public class EventFilterExcludeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("event:ExchangeCompleted?filterExclude=excludedRoute")
+                from("event:ExchangeCompleted?exclude=excludedRoute")
                         .routeId("excludeConsumer")
                         .to("mock:excludeResult");
 
-                from("event:ExchangeCompleted?filter=includeRouteA,includeRouteB&filterExclude=includeRouteB")
+                from("event:ExchangeCompleted?include=includeRouteA,includeRouteB&exclude=includeRouteB")
                         .routeId("combinedFilterConsumer")
                         .to("mock:combinedFilterResult");
 
-                from("event:RouteStarted,RouteStopped?filterExclude=dropDynamic")
+                from("event:RouteStarted,RouteStopped?exclude=dropDynamic")
                         .routeId("routeExcludeConsumer")
                         .to("mock:routeExclude");
 

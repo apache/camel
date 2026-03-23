@@ -42,9 +42,8 @@ public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "filter": target.setFilter(property(camelContext, java.lang.String.class, value)); return true;
-        case "filterexclude":
-        case "filterExclude": target.setFilterExclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "exclude": target.setExclude(property(camelContext, java.lang.String.class, value)); return true;
+        case "include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -71,9 +70,8 @@ public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
-        case "filter": return java.lang.String.class;
-        case "filterexclude":
-        case "filterExclude": return java.lang.String.class;
+        case "exclude": return java.lang.String.class;
+        case "include": return java.lang.String.class;
         default: return null;
         }
     }
@@ -101,9 +99,8 @@ public class CamelEventEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
-        case "filter": return target.getFilter();
-        case "filterexclude":
-        case "filterExclude": return target.getFilterExclude();
+        case "exclude": return target.getExclude();
+        case "include": return target.getInclude();
         default: return null;
         }
     }

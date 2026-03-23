@@ -101,15 +101,15 @@ public class EventFilterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("event:ExchangeCompleted?filter=filterRouteA,filterRouteB")
+                from("event:ExchangeCompleted?include=filterRouteA,filterRouteB")
                         .routeId("multiFilterConsumer")
                         .to("mock:multiFilter");
 
-                from("event:ExchangeCompleted?filter=filterRouteA")
+                from("event:ExchangeCompleted?include=filterRouteA")
                         .routeId("singleFilterConsumer")
                         .to("mock:singleFilter");
 
-                from("event:RouteStarted,RouteStopped?filter=filteredDynamic")
+                from("event:RouteStarted,RouteStopped?include=filteredDynamic")
                         .routeId("routeFilterConsumer")
                         .to("mock:routeFilter");
 

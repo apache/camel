@@ -103,17 +103,17 @@ public class EventBatchTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // Synchronous batching with batchSize=3
-                from("event:ExchangeCompleted?batchSize=3&batchTimeout=5000&filter=batchSourceRoute")
+                from("event:ExchangeCompleted?batchSize=3&batchTimeout=5000&include=batchSourceRoute")
                         .routeId("batchConsumer")
                         .to("mock:batchResult");
 
                 // Batch with short timeout to test partial flush
-                from("event:ExchangeCompleted?batchSize=10&batchTimeout=500&filter=timeoutBatchSourceRoute")
+                from("event:ExchangeCompleted?batchSize=10&batchTimeout=500&include=timeoutBatchSourceRoute")
                         .routeId("timeoutBatchConsumer")
                         .to("mock:timeoutBatchResult");
 
                 // Async + batching combined
-                from("event:ExchangeCompleted?async=true&batchSize=2&batchTimeout=1000&filter=asyncBatchSourceRoute")
+                from("event:ExchangeCompleted?async=true&batchSize=2&batchTimeout=1000&include=asyncBatchSourceRoute")
                         .routeId("asyncBatchConsumer")
                         .to("mock:asyncBatchResult");
 

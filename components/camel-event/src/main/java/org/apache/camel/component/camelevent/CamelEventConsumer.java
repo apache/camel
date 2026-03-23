@@ -347,17 +347,17 @@ public class CamelEventConsumer extends DefaultConsumer {
         // Apply route ID filters
         String routeId = extractRouteId(event);
 
-        // Apply inclusion filter if configured
-        Set<String> filters = getEndpoint().getFilterValues();
-        if (filters != null && !filters.isEmpty()) {
-            if (routeId != null && !filters.contains(routeId)) {
+        // Apply include filter if configured
+        Set<String> includes = getEndpoint().getIncludeValues();
+        if (includes != null && !includes.isEmpty()) {
+            if (routeId != null && !includes.contains(routeId)) {
                 return false;
             }
             // If we can't extract a route ID, don't filter (allow the event through)
         }
 
-        // Apply exclusion filter if configured
-        Set<String> excludes = getEndpoint().getFilterExcludeValues();
+        // Apply exclude filter if configured
+        Set<String> excludes = getEndpoint().getExcludeValues();
         if (excludes != null && !excludes.isEmpty()) {
             if (routeId != null && excludes.contains(routeId)) {
                 return false;

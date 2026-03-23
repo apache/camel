@@ -88,11 +88,11 @@ public class EventAsyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("event:ExchangeCompleted?async=true&filter=asyncSourceRoute")
+                from("event:ExchangeCompleted?async=true&include=asyncSourceRoute")
                         .routeId("asyncConsumer")
                         .to("mock:asyncResult");
 
-                from("event:ExchangeCompleted?async=true&asyncPoolSize=2&filter=asyncPoolSourceRoute")
+                from("event:ExchangeCompleted?async=true&asyncPoolSize=2&include=asyncPoolSourceRoute")
                         .routeId("asyncPoolConsumer")
                         .to("mock:asyncPoolResult");
 

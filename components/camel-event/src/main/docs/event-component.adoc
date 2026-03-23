@@ -135,23 +135,23 @@ from("event:Route*,ExchangeFailed")
 
 == Filtering
 
-You can filter events using the `filter` option. For route events, this filters by route ID.
-For exchange events, this filters by the route ID of the exchange (from route).
+You can filter events using the `include` option. For route events, this matches the route ID.
+For exchange events, this matches the route ID of the exchange (from route).
 
 For example, to only receive events for routes `myRoute1` and `myRoute2`:
 
 ----
-event:RouteStarted,RouteStopped?filter=myRoute1,myRoute2
+event:RouteStarted,RouteStopped?include=myRoute1,myRoute2
 ----
 
 === Exclusion Filter
 
-The `filterExclude` option allows you to exclude events from specific routes.
-This can be used on its own or combined with the `filter` option.
+The `exclude` option allows you to exclude events from specific routes.
+This can be used on its own or combined with the `include` option.
 
 ----
-event:ExchangeCompleted?filterExclude=internalRoute
-event:Route*?filter=myRoute1,myRoute2&filterExclude=myRoute2
+event:ExchangeCompleted?exclude=internalRoute
+event:Route*?include=myRoute1,myRoute2&exclude=myRoute2
 ----
 
 === Custom Event Class Filter
@@ -270,7 +270,7 @@ Subscribe to exchange completed events for a specific route:
 
 [source,java]
 ----
-from("event:ExchangeCompleted?filter=myRoute")
+from("event:ExchangeCompleted?include=myRoute")
     .log("Exchange completed on route myRoute");
 ----
 
@@ -294,7 +294,7 @@ Exclude internal routes from monitoring:
 
 [source,java]
 ----
-from("event:ExchangeCompleted?filterExclude=internalRoute1,internalRoute2")
+from("event:ExchangeCompleted?exclude=internalRoute1,internalRoute2")
     .log("Exchange completed on route ${header.CamelEventRouteId}");
 ----
 
