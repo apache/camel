@@ -53,9 +53,6 @@ import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
@@ -96,16 +93,7 @@ public class CamelTraceTui extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        // Eagerly load classes used by the input reader thread and picocli
-        // post-processing to avoid ClassNotFoundException during shutdown
-        try {
-            Class.forName("dev.tamboui.tui.event.KeyModifiers");
-            Class.forName("dev.tamboui.tui.event.KeyEvent");
-            Class.forName("dev.tamboui.tui.event.KeyCode");
-            Class.forName("picocli.CommandLine$IExitCodeGenerator");
-        } catch (ClassNotFoundException e) {
-            // ignore
-        }
+        TuiHelper.preloadClasses();
 
         // Initial data load
         refreshData();
@@ -561,57 +549,15 @@ public class CamelTraceTui extends CamelCommand {
     // ---- Helpers ----
 
     private List<Long> findPids(String name) {
-        List<Long> pids = new ArrayList<>();
-        final long cur = ProcessHandle.current().pid();
-        String pattern = name;
-        if (!pattern.matches("\\d+") && !pattern.endsWith("*")) {
-            pattern = pattern + "*";
-        }
-        final String pat = pattern;
-        ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        String pName = ProcessHelper.extractName(root, ph);
-                        pName = FileUtil.onlyName(pName);
-                        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                            pids.add(ph.pid());
-                        } else {
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                                    pids.add(ph.pid());
-                                }
-                            }
-                        }
-                    }
-                });
-        return pids;
+        return TuiHelper.findPids(name, this::getStatusFile);
     }
 
     private JsonObject loadStatus(long pid) {
-        try {
-            Path f = getStatusFile(Long.toString(pid));
-            if (f != null && Files.exists(f)) {
-                String text = Files.readString(f);
-                return (JsonObject) Jsoner.deserialize(text);
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        return null;
+        return TuiHelper.loadStatus(pid, this::getStatusFile);
     }
 
     private static String truncate(String s, int max) {
-        if (s == null) {
-            return "";
-        }
-        return s.length() > max ? s.substring(0, max - 1) + "\u2026" : s;
+        return TuiHelper.truncate(s, max);
     }
 
     // ---- Data Classes ----

@@ -65,12 +65,9 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -132,17 +129,7 @@ public class CamelMonitor extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        // Eagerly load classes used by the input reader thread and picocli
-        // post-processing to avoid ClassNotFoundException during shutdown
-        // when the Spring Boot LaunchedClassLoader may already be closing
-        try {
-            Class.forName("dev.tamboui.tui.event.KeyModifiers");
-            Class.forName("dev.tamboui.tui.event.KeyEvent");
-            Class.forName("dev.tamboui.tui.event.KeyCode");
-            Class.forName("picocli.CommandLine$IExitCodeGenerator");
-        } catch (ClassNotFoundException e) {
-            // ignore
-        }
+        TuiHelper.preloadClasses();
 
         // Initial data load
         refreshData();
@@ -1133,50 +1120,11 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private List<Long> findPids(String name) {
-        List<Long> pids = new ArrayList<>();
-        final long cur = ProcessHandle.current().pid();
-        String pattern = name;
-        if (!pattern.matches("\\d+") && !pattern.endsWith("*")) {
-            pattern = pattern + "*";
-        }
-        final String pat = pattern;
-        ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        String pName = ProcessHelper.extractName(root, ph);
-                        pName = FileUtil.onlyName(pName);
-                        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                            pids.add(ph.pid());
-                        } else {
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pat)) {
-                                    pids.add(ph.pid());
-                                }
-                            }
-                        }
-                    }
-                });
-        return pids;
+        return TuiHelper.findPids(name, this::getStatusFile);
     }
 
     private JsonObject loadStatus(long pid) {
-        try {
-            Path f = getStatusFile(Long.toString(pid));
-            if (f != null && Files.exists(f)) {
-                String text = Files.readString(f);
-                return (JsonObject) Jsoner.deserialize(text);
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        return null;
+        return TuiHelper.loadStatus(pid, this::getStatusFile);
     }
 
     private static long extractSince(ProcessHandle ph) {
@@ -1184,10 +1132,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private static String truncate(String s, int max) {
-        if (s == null) {
-            return "";
-        }
-        return s.length() > max ? s.substring(0, max - 1) + "\u2026" : s;
+        return TuiHelper.truncate(s, max);
     }
 
     private static String formatMemory(long used, long max) {
@@ -1223,17 +1168,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private static long objToLong(Object o) {
-        if (o instanceof Number n) {
-            return n.longValue();
-        }
-        if (o != null) {
-            try {
-                return Long.parseLong(o.toString());
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-        }
-        return 0;
+        return TuiHelper.objToLong(o);
     }
 
     // ---- Data Classes ----

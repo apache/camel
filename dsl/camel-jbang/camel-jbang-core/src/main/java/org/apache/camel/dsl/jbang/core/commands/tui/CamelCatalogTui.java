@@ -80,16 +80,7 @@ public class CamelCatalogTui extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        // Eagerly load classes used by the input reader thread and picocli
-        // post-processing to avoid ClassNotFoundException during shutdown
-        try {
-            Class.forName("dev.tamboui.tui.event.KeyModifiers");
-            Class.forName("dev.tamboui.tui.event.KeyEvent");
-            Class.forName("dev.tamboui.tui.event.KeyCode");
-            Class.forName("picocli.CommandLine$IExitCodeGenerator");
-        } catch (ClassNotFoundException e) {
-            // ignore
-        }
+        TuiHelper.preloadClasses();
 
         loadCatalog();
 
@@ -655,10 +646,7 @@ public class CamelCatalogTui extends CamelCommand {
     // ---- Helpers ----
 
     private static String truncate(String s, int max) {
-        if (s == null) {
-            return "";
-        }
-        return s.length() > max ? s.substring(0, max - 1) + "\u2026" : s;
+        return TuiHelper.truncate(s, max);
     }
 
     // ---- Data Classes ----
