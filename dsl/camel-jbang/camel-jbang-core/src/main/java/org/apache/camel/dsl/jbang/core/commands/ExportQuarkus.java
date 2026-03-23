@@ -348,11 +348,6 @@ class ExportQuarkus extends Export {
             camelVersion = catalog.getCatalogVersion();
         }
 
-        String mp = prop.getProperty("quarkus.management.port");
-        if (mp == null) {
-            mp = "9876";
-        }
-
         // Build template data model
         List<Map<String, Object>> depList = buildQuarkusDependencyList(deps, catalog);
 
@@ -364,9 +359,7 @@ class ExportQuarkus extends Export {
         model.put("QuarkusArtifactId", quarkusArtifactId);
         model.put("QuarkusVersion", quarkusVersion);
         model.put("QuarkusPackageType", quarkusPackageType);
-        model.put("QuarkusManagementPort", mp);
         model.put("JavaVersion", javaVersion);
-        model.put("CamelVersion", camelVersion);
         model.put("ProjectBuildOutputTimestamp", this.getBuildMavenProjectDate());
         model.put("BuildProperties", formatBuildProperties());
         model.put("Repositories", buildRepositoryList(repos));

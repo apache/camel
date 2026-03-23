@@ -193,7 +193,11 @@ class ExportSpringBoot extends Export {
         }
 
         // Check if catalog provides a custom template (backward compatibility)
+        // Also check old .tmpl name for catalogs that haven't been updated
         InputStream catalogTemplate = catalog.loadResource("camel-jbang", pomTemplateName);
+        if (catalogTemplate == null) {
+            catalogTemplate = catalog.loadResource("camel-jbang", pomTemplateName.replace(".ftl", ".tmpl"));
+        }
         if (catalogTemplate != null) {
             // Catalog provides a custom template - use legacy regex-based processing
             String context = IOHelper.loadText(catalogTemplate);
@@ -212,7 +216,6 @@ class ExportSpringBoot extends Export {
         model.put("Version", ids[2]);
         model.put("SpringBootVersion", springBootVersion);
         model.put("JavaVersion", javaVersion);
-        model.put("CamelVersion", camelVersion);
         model.put("CamelSpringBootVersion",
                 Objects.requireNonNullElseGet(camelSpringBootVersion, () -> camelVersion));
         model.put("ProjectBuildOutputTimestamp", this.getBuildMavenProjectDate());
