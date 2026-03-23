@@ -22,8 +22,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -118,19 +120,21 @@ public final class PluginHelper {
         }
 
         // Fall back to JSON configuration for additional or missing plugins
-        Map<String, Plugin> plugins = getActivePlugins(main, repos);
-        for (Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
-            // only load the plugin if the command-line is calling this plugin
-            if (target != null && !"shell".equals(target) && !target.equals(plugin.getKey())) {
+        Map<String, PluginEntry> plugins = getActivePluginEntries(main, repos);
+        for (Map.Entry<String, PluginEntry> entry : plugins.entrySet()) {
+            PluginEntry pe = entry.getValue();
+            // only load the plugin if the command-line is calling this plugin or one of its parent commands
+            if (target != null && !"shell".equals(target) && !target.equals(entry.getKey())
+                    && !pe.parentCommands().contains(target)) {
                 continue;
             }
 
             // Skip if this plugin was already loaded from embedded plugins
-            if (foundEmbeddedPlugins && commandLine.getSubcommands().containsKey(plugin.getKey())) {
+            if (foundEmbeddedPlugins && commandLine.getSubcommands().containsKey(entry.getKey())) {
                 continue;
             }
 
-            plugin.getValue().customize(commandLine, main);
+            pe.plugin().customize(commandLine, main);
         }
     }
 
@@ -166,6 +170,53 @@ public final class PluginHelper {
                 Optional<Plugin> plugin = getPlugin(command, version, gav, repos, main.getOut());
                 if (plugin.isPresent()) {
                     activePlugins.put(command, plugin.get());
+                } else {
+                    main.getOut().println("camel-jbang-plugin-" + command + " not found. Exit");
+                    main.quit(1);
+                }
+            }
+        }
+
+        return activePlugins;
+    }
+
+    record PluginEntry(Plugin plugin, List<String> parentCommands) {
+    }
+
+    @SuppressWarnings("unchecked")
+    static Map<String, PluginEntry> getActivePluginEntries(CamelJBangMain main, String repos) {
+        Map<String, PluginEntry> activePlugins = new HashMap<>();
+        JsonObject config = getPluginConfig();
+        if (config != null) {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            String version = catalog.getCatalogVersion();
+            JsonObject plugins = config.getMap("plugins");
+
+            for (String pluginKey : plugins.keySet()) {
+                JsonObject properties = plugins.getMap(pluginKey);
+
+                final String name = properties.getOrDefault("name", pluginKey).toString();
+                final String command = properties.getOrDefault("command", name).toString();
+                final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
+                final String gav = properties.getOrDefault("dependency", "").toString();
+
+                // Parse parentCommands from JSON config
+                List<String> parentCommands = List.of();
+                Object pc = properties.get("parentCommands");
+                if (pc instanceof List<?> pcList) {
+                    parentCommands = pcList.stream().map(Object::toString).toList();
+                } else if (pc instanceof String pcs && !pcs.isEmpty()) {
+                    parentCommands = Arrays.asList(pcs.split(","));
+                }
+
+                // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
+                if (!version.isBlank() && !firstVersion.isBlank()) {
+                    versionCheck(main, version, firstVersion, command);
+                }
+
+                Optional<Plugin> plugin = getPlugin(command, version, gav, repos, main.getOut());
+                if (plugin.isPresent()) {
+                    activePlugins.put(command, new PluginEntry(plugin.get(), parentCommands));
                 } else {
                     main.getOut().println("camel-jbang-plugin-" + command + " not found. Exit");
                     main.quit(1);
@@ -428,12 +479,13 @@ public final class PluginHelper {
                 String command = extractCommandFromPlugin(pluginClass, pluginName);
 
                 // Only load the plugin if the command-line is calling this plugin or if target is null (shell mode)
-                if (target != null && !"shell".equals(target) && !target.equals(command)) {
+                CamelJBangPlugin annotation = pluginClass.getAnnotation(CamelJBangPlugin.class);
+                if (target != null && !"shell".equals(target) && !target.equals(command)
+                        && !matchesParentCommand(annotation, target)) {
                     return false;
                 }
 
                 // Check version compatibility if needed
-                CamelJBangPlugin annotation = pluginClass.getAnnotation(CamelJBangPlugin.class);
                 if (annotation != null) {
                     CamelCatalog catalog = new DefaultCamelCatalog();
                     String version = catalog.getCatalogVersion();
@@ -466,6 +518,20 @@ public final class PluginHelper {
         }
 
         return pluginName;
+    }
+
+    /**
+     * Checks whether the target command matches one of the plugin's declared parent commands.
+     */
+    private static boolean matchesParentCommand(CamelJBangPlugin annotation, String target) {
+        if (annotation != null) {
+            for (String pc : annotation.parentCommands()) {
+                if (pc.equals(target)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
