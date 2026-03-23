@@ -1,0 +1,94 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.aws2.ddb.localstack;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws2.ddb.Ddb2Constants;
+import org.apache.camel.component.aws2.ddb.Ddb2Operations;
+import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.Get;
+import software.amazon.awssdk.services.dynamodb.model.ItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.TransactGetItem;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class AWS2TransactGetItemsRuleIT extends Aws2DDBBase {
+
+    @EndpointInject("direct:start")
+    private ProducerTemplate template;
+
+    private final String attributeName = "clave";
+    private final String tableName = "TestTableTransactGet";
+
+    @Test
+    public void transactGetItems() {
+        // First put an item
+        final Map<String, AttributeValue> attributeMap = new HashMap<>();
+        attributeMap.put(attributeName, AttributeValue.builder().s("txGetKey1").build());
+        attributeMap.put("data", AttributeValue.builder().s("txGetVal1").build());
+
+        template.send("direct:start", new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.PutItem);
+                exchange.getIn().setHeader(Ddb2Constants.ITEM, attributeMap);
+            }
+        });
+
+        // Now transactionally get it
+        Map<String, AttributeValue> key = new HashMap<>();
+        key.put(attributeName, AttributeValue.builder().s("txGetKey1").build());
+
+        Exchange result = template.send("direct:start", new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.TransactGetItems);
+                exchange.getIn().setHeader(Ddb2Constants.TRANSACT_GET_ITEMS, Arrays.asList(
+                        TransactGetItem.builder()
+                                .get(Get.builder().tableName(tableName).key(key).build())
+                                .build()));
+            }
+        });
+
+        @SuppressWarnings("unchecked")
+        List<ItemResponse> responses = result.getIn().getHeader(Ddb2Constants.TRANSACT_GET_RESPONSE, List.class);
+        assertNotNull(responses);
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").to(
+                        "aws2-ddb://" + tableName + "?keyAttributeName=" + attributeName + "&keyAttributeType=" + KeyType.HASH
+                                        + "&keyScalarType=" + ScalarAttributeType.S
+                                        + "&readCapacity=1&writeCapacity=1");
+            }
+        };
+    }
+}
