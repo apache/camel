@@ -17,6 +17,7 @@
 package org.apache.camel.main;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -26,9 +27,8 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * Generates a self-signed certificate for development use. This allows enabling HTTPS with minimal configuration when
@@ -42,18 +42,20 @@ final class SelfSignedCertificateGenerator {
     }
 
     /**
-     * Generates a PKCS12 KeyStore containing a self-signed certificate.
+     * Generates a PKCS12 KeyStore containing a self-signed certificate with Subject Alternative Names for localhost and
+     * 127.0.0.1.
      *
      * @param  password  the password for the keystore and key entry
      * @return           a KeyStore containing the self-signed certificate
      * @throws Exception if certificate generation fails
      */
     static KeyStore generateKeyStore(String password) throws Exception {
+        SecureRandom random = new SecureRandom();
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(2048, new SecureRandom());
+        keyGen.initialize(2048, random);
         KeyPair keyPair = keyGen.generateKeyPair();
 
-        X509Certificate cert = generateCertificate(keyPair);
+        X509Certificate cert = generateCertificate(keyPair, random);
 
         KeyStore ks = KeyStore.getInstance("PKCS12");
         ks.load(null, password.toCharArray());
@@ -63,17 +65,15 @@ final class SelfSignedCertificateGenerator {
         return ks;
     }
 
-    @SuppressWarnings("restriction")
-    private static X509Certificate generateCertificate(KeyPair keyPair) throws Exception {
+    private static X509Certificate generateCertificate(KeyPair keyPair, SecureRandom random) throws Exception {
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
 
-        Instant now = Instant.now();
-        Date notBefore = Date.from(now);
-        Date notAfter = Date.from(now.plus(365, ChronoUnit.DAYS));
+        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime expiry = now.plusDays(365);
 
         // Build self-signed X.509 certificate using DER encoding
-        byte[] encoded = buildSelfSignedCertificateDer(publicKey, privateKey, notBefore, notAfter);
+        byte[] encoded = buildSelfSignedCertificateDer(publicKey, privateKey, now, expiry, random);
 
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         return (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(encoded));
@@ -81,14 +81,15 @@ final class SelfSignedCertificateGenerator {
 
     private static byte[] buildSelfSignedCertificateDer(
             PublicKey publicKey, PrivateKey privateKey,
-            Date notBefore, Date notAfter)
+            ZonedDateTime notBefore, ZonedDateTime notAfter,
+            SecureRandom random)
             throws Exception {
 
         // DN: CN=localhost, O=Apache Camel (self-signed)
         byte[] issuerDn = buildDn();
 
         // TBS Certificate
-        byte[] tbsCertificate = buildTbsCertificate(publicKey, issuerDn, notBefore, notAfter);
+        byte[] tbsCertificate = buildTbsCertificate(publicKey, issuerDn, notBefore, notAfter, random);
 
         // Sign the TBS certificate
         Signature sig = Signature.getInstance("SHA256withRSA");
@@ -105,34 +106,32 @@ final class SelfSignedCertificateGenerator {
 
     private static byte[] buildTbsCertificate(
             PublicKey publicKey, byte[] dn,
-            Date notBefore, Date notAfter)
-            throws Exception {
+            ZonedDateTime notBefore, ZonedDateTime notAfter,
+            SecureRandom random) {
 
         // Version: v3 (2)
         byte[] version = wrapExplicitTag(0, wrapInteger(new byte[] { 2 }));
 
         // Serial number
         byte[] serialBytes = new byte[16];
-        new SecureRandom().nextBytes(serialBytes);
+        random.nextBytes(serialBytes);
         serialBytes[0] &= 0x7F; // ensure positive
         byte[] serial = wrapInteger(serialBytes);
 
         // Signature algorithm
         byte[] signatureAlgorithm = sha256WithRsaAlgorithmIdentifier();
 
-        // Issuer DN
-        byte[] issuer = dn;
-
         // Validity
         byte[] validity = wrapSequence(concat(encodeUtcTime(notBefore), encodeUtcTime(notAfter)));
-
-        // Subject DN (same as issuer for self-signed)
-        byte[] subject = dn;
 
         // Subject Public Key Info (from the encoded public key)
         byte[] subjectPublicKeyInfo = publicKey.getEncoded();
 
-        return wrapSequence(concat(version, serial, signatureAlgorithm, issuer, validity, subject, subjectPublicKeyInfo));
+        // Extensions: Subject Alternative Name (localhost, 127.0.0.1)
+        byte[] extensions = wrapExplicitTag(3, wrapSequence(buildSanExtension()));
+
+        return wrapSequence(
+                concat(version, serial, signatureAlgorithm, dn, validity, dn, subjectPublicKeyInfo, extensions));
     }
 
     // Builds DN: CN=localhost, O=Apache Camel (self-signed)
@@ -143,18 +142,25 @@ final class SelfSignedCertificateGenerator {
     }
 
     private static byte[] buildRdn(byte[] oidBytes, String value) {
-        byte[] oid = new byte[2 + oidBytes.length];
-        oid[0] = 0x06; // OID tag
-        oid[1] = (byte) oidBytes.length;
-        System.arraycopy(oidBytes, 0, oid, 2, oidBytes.length);
-
-        byte[] valueBytes = value.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-        byte[] utf8String = new byte[2 + valueBytes.length];
-        utf8String[0] = 0x0C; // UTF8String tag
-        utf8String[1] = (byte) valueBytes.length;
-        System.arraycopy(valueBytes, 0, utf8String, 2, valueBytes.length);
-
+        byte[] oid = wrapTag(0x06, oidBytes);
+        byte[] utf8String = wrapTag(0x0C, value.getBytes(StandardCharsets.UTF_8));
         return wrapSequence(concat(oid, utf8String));
+    }
+
+    // Builds SAN extension with DNS:localhost and IP:127.0.0.1
+    private static byte[] buildSanExtension() {
+        // OID 2.5.29.17 (subjectAltName)
+        byte[] sanOid = wrapTag(0x06, new byte[] { 0x55, 0x1D, 0x11 });
+
+        // SAN value: SEQUENCE { [2] "localhost", [7] 127.0.0.1 }
+        byte[] dnsName = wrapTag(0x82, "localhost".getBytes(StandardCharsets.US_ASCII)); // context [2] = dNSName
+        byte[] ipAddress = wrapTag(0x87, new byte[] { 127, 0, 0, 1 }); // context [7] = iPAddress
+        byte[] sanSequence = wrapSequence(concat(dnsName, ipAddress));
+
+        // Wrap the SAN value as an OCTET STRING (extension value must be wrapped)
+        byte[] sanOctetString = wrapTag(0x04, sanSequence);
+
+        return wrapSequence(concat(sanOid, sanOctetString));
     }
 
     private static byte[] sha256WithRsaAlgorithmIdentifier() {
@@ -165,18 +171,13 @@ final class SelfSignedCertificateGenerator {
         return wrapSequence(concat(oid, nullParam));
     }
 
-    @SuppressWarnings("deprecation")
-    private static byte[] encodeUtcTime(Date date) {
+    private static byte[] encodeUtcTime(ZonedDateTime dateTime) {
         // UTCTime format: YYMMDDHHmmSSZ
         String utc = String.format("%02d%02d%02d%02d%02d%02dZ",
-                date.getYear() % 100, date.getMonth() + 1, date.getDate(),
-                date.getHours(), date.getMinutes(), date.getSeconds());
-        byte[] timeBytes = utc.getBytes(java.nio.charset.StandardCharsets.US_ASCII);
-        byte[] result = new byte[2 + timeBytes.length];
-        result[0] = 0x17; // UTCTime tag
-        result[1] = (byte) timeBytes.length;
-        System.arraycopy(timeBytes, 0, result, 2, timeBytes.length);
-        return result;
+                dateTime.getYear() % 100, dateTime.getMonthValue(), dateTime.getDayOfMonth(),
+                dateTime.getHour(), dateTime.getMinute(), dateTime.getSecond());
+        byte[] timeBytes = utc.getBytes(StandardCharsets.US_ASCII);
+        return wrapTag(0x17, timeBytes);
     }
 
     private static byte[] wrapSequence(byte[] content) {

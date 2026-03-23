@@ -2026,7 +2026,9 @@ public abstract class BaseMainSupport extends BaseService {
 
         // when global SSL is enabled, automatically use it for the HTTP server
         // (unless the user has explicitly configured useGlobalSslContextParameters)
-        if (!server.isUseGlobalSslContextParameters() && camelContext.getSSLContextParameters() != null) {
+        if (!server.isUseGlobalSslContextParameters()
+                && camelContext.getSSLContextParameters() != null
+                && !properties.containsKey("useGlobalSslContextParameters")) {
             server.setUseGlobalSslContextParameters(true);
         }
 
@@ -2055,7 +2057,10 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         // when global SSL is enabled, automatically use it for the HTTP management server
-        if (!server.isUseGlobalSslContextParameters() && camelContext.getSSLContextParameters() != null) {
+        // (unless the user has explicitly configured useGlobalSslContextParameters)
+        if (!server.isUseGlobalSslContextParameters()
+                && camelContext.getSSLContextParameters() != null
+                && !properties.containsKey("useGlobalSslContextParameters")) {
             server.setUseGlobalSslContextParameters(true);
         }
 

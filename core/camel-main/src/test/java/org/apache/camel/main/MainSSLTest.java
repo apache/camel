@@ -450,7 +450,16 @@ public class MainSSLTest {
         assertNotNull(ks);
         Assertions.assertTrue(ks.containsAlias("camel-self-signed"));
         assertNotNull(ks.getKey("camel-self-signed", "test-password".toCharArray()));
-        assertNotNull(ks.getCertificate("camel-self-signed"));
+
+        java.security.cert.X509Certificate cert
+                = (java.security.cert.X509Certificate) ks.getCertificate("camel-self-signed");
+        assertNotNull(cert);
+
+        // verify the certificate has a SAN extension with localhost
+        java.util.Collection<java.util.List<?>> sans = cert.getSubjectAlternativeNames();
+        assertNotNull(sans);
+        // should have DNS:localhost and IP:127.0.0.1
+        Assertions.assertTrue(sans.size() >= 2);
     }
 
     @Test
