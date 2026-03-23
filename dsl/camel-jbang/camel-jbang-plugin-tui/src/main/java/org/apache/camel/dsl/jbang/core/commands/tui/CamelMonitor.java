@@ -1055,7 +1055,7 @@ public class CamelMonitor extends CamelCommand {
             String[] lines = content.split("\n", -1);
             int start = Math.max(0, lines.length - MAX_LOG_LINES);
             for (int i = start; i < lines.length; i++) {
-                String line = lines[i];
+                String line = lines[i].replaceAll("\u001B\\[[;\\d]*m", "");
                 if (!line.isEmpty()) {
                     logLines.add(line);
                 }
@@ -1076,47 +1076,35 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    // Regex for Spring Boot / Camel log format:
+    // "2026-03-23T21:24:11.705+01:00  WARN 11283 --- [thread] logger : message"
+    // "2026-03-23 21:24:11.705  WARN 11283 --- [thread] logger : message"
+    private static final java.util.regex.Pattern LOG_PATTERN = java.util.regex.Pattern.compile(
+            "^(\\d{4}-\\d{2}-\\d{2})[T ](\\d{2}:\\d{2}:\\d{2}\\.\\d+)\\S*\\s+"
+                                                                                               + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
+                                                                                               + "\\d+\\s+---\\s+"
+                                                                                               + "\\[([^]]*)]\\s+"
+                                                                                               + "(\\S+)\\s*:\\s*(.*)$");
+
     private static LogEntry parseLogLine(String line) {
         LogEntry entry = new LogEntry();
         entry.raw = line;
-        // Typical format: "2026-03-22 22:45:47.768  INFO 92447 --- [thread] logger : message"
-        // Try to parse structured fields
         try {
-            // Extract time (first 12 chars of timestamp, skip date)
-            if (line.length() > 24 && line.charAt(10) == ' ') {
-                entry.time = line.substring(11, 23); // HH:mm:ss.SSS
-                String rest = line.substring(23).trim();
-                // Extract level
-                int spaceIdx = rest.indexOf(' ');
-                if (spaceIdx > 0) {
-                    entry.level = rest.substring(0, spaceIdx).trim();
-                    rest = rest.substring(spaceIdx).trim();
+            java.util.regex.Matcher m = LOG_PATTERN.matcher(line);
+            if (m.matches()) {
+                entry.time = m.group(2); // HH:mm:ss.SSS...
+                // Truncate time to 12 chars (HH:mm:ss.SSS)
+                if (entry.time.length() > 12) {
+                    entry.time = entry.time.substring(0, 12);
                 }
-                // Skip PID and "---"
-                int dashIdx = rest.indexOf("---");
-                if (dashIdx >= 0) {
-                    rest = rest.substring(dashIdx + 3).trim();
+                entry.level = m.group(3);
+                entry.logger = m.group(5);
+                // Shorten logger to simple name
+                int lastDot = entry.logger.lastIndexOf('.');
+                if (lastDot > 0) {
+                    entry.logger = entry.logger.substring(lastDot + 1);
                 }
-                // Extract thread [...]
-                if (rest.startsWith("[")) {
-                    int closeBracket = rest.indexOf(']');
-                    if (closeBracket > 0) {
-                        rest = rest.substring(closeBracket + 1).trim();
-                    }
-                }
-                // Extract logger and message (logger : message)
-                int colonIdx = rest.indexOf(" : ");
-                if (colonIdx > 0) {
-                    entry.logger = rest.substring(0, colonIdx).trim();
-                    // Shorten logger to simple name
-                    int lastDot = entry.logger.lastIndexOf('.');
-                    if (lastDot > 0) {
-                        entry.logger = entry.logger.substring(lastDot + 1);
-                    }
-                    entry.message = rest.substring(colonIdx + 3).trim();
-                } else {
-                    entry.message = rest;
-                }
+                entry.message = m.group(6);
             } else {
                 entry.time = "";
                 entry.level = "INFO";
