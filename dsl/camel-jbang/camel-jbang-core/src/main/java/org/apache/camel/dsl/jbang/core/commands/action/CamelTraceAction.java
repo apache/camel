@@ -63,8 +63,8 @@ import picocli.CommandLine;
                      showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd trace hello",
-                             "  camel cmd trace *" })
+                             "  camel trace hello",
+                             "  camel trace *" })
 public class CamelTraceAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;

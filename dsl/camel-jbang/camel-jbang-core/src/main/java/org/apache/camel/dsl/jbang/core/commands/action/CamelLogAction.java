@@ -53,9 +53,9 @@ import picocli.CommandLine;
                      description = "Tail logs from running Camel integrations", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd log hello",
-                             "  camel cmd log *",
-                             "  camel cmd log hello --tail=50" })
+                             "  camel log hello",
+                             "  camel log *",
+                             "  camel log hello --tail=50" })
 public class CamelLogAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;

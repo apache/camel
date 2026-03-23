@@ -24,7 +24,7 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "complete", description = "Generate completion script for bash/zsh",
                      footer = {
                              "%nExamples:",
-                             "  source <(camel complete)" })
+                             "  source <(camel completion)" })
 public class Complete extends CamelCommand {
 
     public Complete(CamelJBangMain main) {
