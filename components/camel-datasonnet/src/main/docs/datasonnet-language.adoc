@@ -352,7 +352,7 @@ XML::
 
 == Migrating from DataWeave
 
-If you are migrating from MuleSoft and have existing DataWeave (`.dwl`) scripts, Camel provides a transpiler to convert them to DataSonnet format via the Camel JBang CLI.
+If you have existing DataWeave (`.dwl`) scripts, Camel provides a transpiler to convert them to DataSonnet format via the Camel JBang CLI.
 
 === Converting an inline expression
 
