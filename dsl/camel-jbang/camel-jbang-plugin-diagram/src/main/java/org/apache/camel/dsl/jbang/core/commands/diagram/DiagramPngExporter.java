@@ -262,6 +262,10 @@ class DiagramPngExporter {
                 conn.setReadTimeout(500);
                 conn.setRequestMethod("GET");
                 int code = conn.getResponseCode();
+                // Accept 2xx/3xx/4xx (except 404) as "server is up": Hawtio may respond
+                // with 401 (auth), 403 (CSRF), or 405 (method) before its routes are fully
+                // initialised — all mean the HTTP listener is already accepting connections.
+                // 404 is excluded because it means the endpoint itself is not yet available.
                 if (code >= 200 && code < 500 && code != 404) {
                     return;
                 }
@@ -297,6 +301,10 @@ class DiagramPngExporter {
             conn.setReadTimeout(1000);
             conn.setRequestMethod("GET");
             int code = conn.getResponseCode();
+            // Accept 2xx/3xx/4xx (except 404) as "server is up": Jolokia may respond
+            // with 401 (auth), 403 (CSRF), or 405 (method) before fully initialised —
+            // all mean the HTTP listener is already accepting connections.
+            // 404 is excluded because it means the endpoint itself is not yet available.
             if (code >= 200 && code < 500 && code != 404) {
                 return null;
             }
