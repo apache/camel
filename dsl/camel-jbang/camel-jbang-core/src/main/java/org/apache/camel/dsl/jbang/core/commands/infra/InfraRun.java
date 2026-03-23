@@ -102,8 +102,9 @@ public class InfraRun extends InfraBaseCommand {
             if (testServiceImplementation != null) {
                 printer().printErr("service " + testService + " with implementation " + testServiceImplementation + " not found"
                                    + message);
+            } else {
+                printer().printErr("service " + testService + " not found" + message);
             }
-            printer().printErr("service " + testService + " not found" + message);
             return 1;
         }
 

@@ -469,7 +469,7 @@ public class Run extends CamelCommand {
             try {
                 Files.createDirectories(work);
             } catch (IOException e) {
-                printer().printErr("Failed to create working directory: " + work.toAbsolutePath());
+                printer().println("WARN: Failed to create working directory: " + work.toAbsolutePath());
             }
         }
 
@@ -1575,7 +1575,7 @@ public class Run extends CamelCommand {
             if (!p.isAlive()) {
                 ec = p.exitValue();
                 if (ec != 0) {
-                    printer().println(kind + ": " + name + " startup failure");
+                    printer().printErr(kind + ": " + name + " startup failure");
                     printer().println("");
                     String text = Files.readString(logPath);
                     printer().print(text);
