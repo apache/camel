@@ -23,7 +23,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
@@ -32,11 +31,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.hazelcast.services.HazelcastService;
 import org.apache.camel.test.infra.hazelcast.services.HazelcastServiceFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for {@link HazelcastRoutePolicy} that verifies leader election and route management using Hazelcast
@@ -49,7 +49,7 @@ public class HazelcastRoutePolicyIT {
     @RegisterExtension
     public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
 
-    private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
+    private static final List<String> CLIENTS = List.of("0", "1", "2");
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
     private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
@@ -63,8 +63,7 @@ public class HazelcastRoutePolicyIT {
         LATCH.await(1, TimeUnit.MINUTES);
         SCHEDULER.shutdownNow();
 
-        Assertions.assertEquals(CLIENTS.size(), RESULTS.size());
-        Assertions.assertTrue(RESULTS.containsAll(CLIENTS));
+        assertThat(RESULTS).containsExactlyInAnyOrderElementsOf(CLIENTS);
     }
 
     private static void run(String id) {
