@@ -49,6 +49,7 @@ import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginDelete;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginGet;
 import org.apache.camel.dsl.jbang.core.commands.process.*;
+import org.apache.camel.dsl.jbang.core.commands.tui.*;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateCommand;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateList;
 import org.apache.camel.dsl.jbang.core.commands.update.UpdateRun;
@@ -96,7 +97,8 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(this)))
                         .addSubcommand("transformer", new CommandLine(new CatalogTransformer(this)))
                         .addSubcommand("language", new CommandLine(new CatalogLanguage(this)))
-                        .addSubcommand("other", new CommandLine(new CatalogOther(this))))
+                        .addSubcommand("other", new CommandLine(new CatalogOther(this)))
+                        .addSubcommand("tui", new CommandLine(new CamelCatalogTui(this))))
                 .addSubcommand("cmd", new CommandLine(new CamelAction(this))
                         .addSubcommand("browse", new CommandLine(new CamelBrowseAction(this)))
                         .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(this)))
@@ -177,7 +179,9 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("stop", new CommandLine(new InfraStop(this))))
                 .addSubcommand("init", new CommandLine(new Init(this)))
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(this)))
-                .addSubcommand("log", new CommandLine(new CamelLogAction(this)))
+                .addSubcommand("health", new CommandLine(new CamelHealthTui(this)))
+                .addSubcommand("log", new CommandLine(new CamelLogAction(this))
+                        .addSubcommand("tui", new CommandLine(new CamelLogTui(this))))
                 .addSubcommand("nano", new CommandLine(new Nano(this)))
                 .addSubcommand("plugin", new CommandLine(new PluginCommand(this))
                         .addSubcommand("add", new CommandLine(new PluginAdd(this)))
@@ -187,6 +191,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("run", new CommandLine(new Run(this)))
                 .addSubcommand("sbom", new CommandLine(new SBOMGenerator(this)))
                 .addSubcommand("script", new CommandLine(new Script(this)))
+                .addSubcommand("monitor", new CommandLine(new CamelMonitor(this)))
                 .addSubcommand("shell", new CommandLine(new Shell(this)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(this)))
                 .addSubcommand("top", new CommandLine(new CamelTop(this))
@@ -194,8 +199,10 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("group", new CommandLine(new CamelRouteGroupTop(this)))
                         .addSubcommand("processor", new CommandLine(new CamelProcessorTop(this)))
                         .addSubcommand("route", new CommandLine(new CamelRouteTop(this)))
-                        .addSubcommand("source", new CommandLine(new CamelSourceTop(this))))
-                .addSubcommand("trace", new CommandLine(new CamelTraceAction(this)))
+                        .addSubcommand("source", new CommandLine(new CamelSourceTop(this)))
+                        .addSubcommand("tui", new CommandLine(new CamelTopTui(this))))
+                .addSubcommand("trace", new CommandLine(new CamelTraceAction(this))
+                        .addSubcommand("tui", new CommandLine(new CamelTraceTui(this))))
                 .addSubcommand("transform", new CommandLine(new TransformCommand(this))
                         .addSubcommand("dataweave", new CommandLine(new TransformDataWeave(this)))
                         .addSubcommand("message", new CommandLine(new TransformMessageAction(this)))
