@@ -20,12 +20,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.HomeHelper;
 import org.jline.builtins.InteractiveCommandGroup;
 import org.jline.builtins.PosixCommandGroup;
 import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.LineReader;
+import org.jline.shell.ShellBuilder;
 import org.jline.shell.impl.DefaultAliasManager;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
@@ -39,6 +41,9 @@ public class Shell extends CamelCommand {
 
     // Camel orange color (packed RGB)
     private static final int CAMEL_ORANGE = 0xF69123;
+
+    // Help colors: title=bold blue, command=38, args=italic, options=yellow, description=dark gray
+    private static final String HELP_COLORS = "ti=1;34:co=38:ar=3:op=33:de=90";
 
     public Shell(CamelJBangMain main) {
         super(main);
@@ -59,9 +64,10 @@ public class Shell extends CamelCommand {
         Path initScript = Paths.get(homeDir, ".camel-jbang-init");
 
         String camelVersion = VersionHelper.extractCamelVersion();
-        boolean colorEnabled = isColorEnabled();
+        boolean colorEnabled = EnvironmentHelper.isColorEnabled();
 
-        org.jline.shell.ShellBuilder builder = org.jline.shell.Shell.builder()
+        // org.jline.shell.Shell is used via FQCN to avoid clash with this class name
+        ShellBuilder builder = org.jline.shell.Shell.builder()
                 .prompt(() -> buildPrompt(camelVersion, colorEnabled))
                 .rightPrompt(() -> buildRightPrompt(colorEnabled))
                 .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
@@ -74,10 +80,15 @@ public class Shell extends CamelCommand {
                 .onReaderReady(reader -> {
                     // Enable fish-style auto-suggestions from history
                     new AutosuggestionWidgets(reader).enable();
+                    // TODO: Replace AutosuggestionWidgets with CommandTailTipWidgets once
+                    // ShellBuilder exposes the CommandDispatcher in the onReaderReady callback.
+                    // CommandTailTipWidgets provides both autosuggestion AND command description
+                    // tooltips in a unified way, but requires a CommandDispatcher reference.
                 })
-                // scriptCommands(true) requires a scriptRunner to be set;
-                // omitting for now until a DefaultScriptRunner is available
                 .variable(LineReader.LIST_MAX, 50)
+                .variable(LineReader.OTHERS_GROUP_NAME, "Others")
+                .variable(LineReader.COMPLETION_STYLE_GROUP, "fg:blue,bold")
+                .variable("HELP_COLORS", HELP_COLORS)
                 .option(LineReader.Option.GROUP_PERSIST, true);
 
         if (Files.exists(initScript)) {
@@ -142,19 +153,5 @@ public class Shell extends CamelCommand {
         writer.println("Type 'help' for available commands, 'exit' to quit.");
         writer.println();
         writer.flush();
-    }
-
-    private static boolean isColorEnabled() {
-        // Respect NO_COLOR (https://no-color.org/)
-        String noColor = System.getenv("NO_COLOR");
-        if (noColor != null) {
-            return false;
-        }
-        // Respect FORCE_COLOR
-        String forceColor = System.getenv("FORCE_COLOR");
-        if (forceColor != null) {
-            return true;
-        }
-        return System.console() != null;
     }
 }
