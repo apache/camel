@@ -350,6 +350,35 @@ XML::
 
 
 
+== Migrating from DataWeave
+
+If you are migrating from MuleSoft and have existing DataWeave (`.dwl`) scripts, Camel provides a transpiler to convert them to DataSonnet format via the Camel JBang CLI.
+
+=== Converting an inline expression
+
+[source,bash]
+----
+camel transform dataweave -e "payload.name ++ ' ' ++ payload.surname"
+----
+
+=== Converting a file or directory
+
+[source,bash]
+----
+camel transform dataweave --input my-transform.dwl --output my-transform.ds
+camel transform dataweave --input src/main/resources/dwl/ --output src/main/resources/ds/
+----
+
+The transpiler automatically maps DataWeave constructs to their DataSonnet equivalents, including:
+
+- `payload` to `body`, `vars` to `cml.variable()`, `attributes.headers` to `cml.header()`
+- Operators: `++` to `+`, `default` to `cml.defaultVal()`, `as Number/String/Boolean` to `cml.toInteger()/std.toString()/cml.toBoolean()`
+- Collection operations: `map`, `filter`, `reduce`, `flatMap`, `groupBy`, `orderBy`, `distinctBy`
+- String operations: `contains`, `startsWith`, `endsWith`, `splitBy`, `joinBy`, `replace`
+- Functions: `sizeOf`, `upper`, `lower`, `trim`, `now`, `uuid`, `abs`, `round`, `sqrt`
+
+Constructs that cannot be automatically converted (such as `match` expressions) are marked with `TODO` comments in the output for manual review.
+
 == Dependencies
 
 To use scripting languages in your camel routes, you need to add a
