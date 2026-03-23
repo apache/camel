@@ -16,7 +16,10 @@
  */
 package org.apache.camel.main;
 
+import java.security.KeyStore;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.jsse.ClientAuthentication;
@@ -385,6 +388,69 @@ public class MainSSLTest {
         Assertions.assertEquals("ed448", excludes.get(0));
 
         main.stop();
+    }
+
+    @Test
+    public void testMainSSLSelfSigned() {
+        Main main = new Main();
+
+        // just enabling SSL without a keystore should generate a self-signed certificate
+        main.addInitialProperty("camel.ssl.enabled", "true");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+
+        // should have key managers with a self-signed certificate
+        KeyManagersParameters kmp = sslParams.getKeyManagers();
+        assertNotNull(kmp);
+
+        KeyStoreParameters ksp = kmp.getKeyStore();
+        assertNotNull(ksp);
+        // the keystore should be set directly (not via resource)
+        assertNull(ksp.getResource());
+
+        // verify that an SSLContext can be created from the parameters
+        try {
+            SSLContext sslContext = sslParams.createSSLContext(context);
+            assertNotNull(sslContext);
+        } catch (Exception e) {
+            Assertions.fail("Should be able to create SSLContext from self-signed certificate: " + e.getMessage());
+        }
+
+        main.stop();
+    }
+
+    @Test
+    public void testMainSSLSelfSignedFluent() {
+        Main main = new Main();
+
+        main.configure().sslConfig()
+                .withEnabled(true);
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        SSLContextParameters sslParams = context.getSSLContextParameters();
+        assertNotNull(sslParams);
+        assertNotNull(sslParams.getKeyManagers());
+
+        main.stop();
+    }
+
+    @Test
+    public void testSelfSignedCertificateGenerator() throws Exception {
+        KeyStore ks = SelfSignedCertificateGenerator.generateKeyStore("test-password");
+        assertNotNull(ks);
+        Assertions.assertTrue(ks.containsAlias("camel-self-signed"));
+        assertNotNull(ks.getKey("camel-self-signed", "test-password".toCharArray()));
+        assertNotNull(ks.getCertificate("camel-self-signed"));
     }
 
     @Test
