@@ -1399,6 +1399,7 @@ public class ModelParser extends BaseParser {
                 case "routeConfiguration": doAdd(doParseRouteConfigurationDefinition(), def.getRouteConfigurations(), def::setRouteConfigurations); break;
                 case "routeTemplate": doAdd(doParseRouteTemplateDefinition(), def.getRouteTemplates(), def::setRouteTemplates); break;
                 case "route": doAdd(doParseRouteDefinition(), def.getRoutes(), def::setRoutes); break;
+                case "sslContextParameters": doAdd(doParseSSLContextParametersDefinition(), def.getSslContextParameters(), def::setSslContextParameters); break;
                 case "templatedRoute": doAdd(doParseTemplatedRouteDefinition(), def.getTemplatedRoutes(), def::setTemplatedRoutes); break;
                 default:
                     DataFormatDefinition v = doParseDataFormatDefinitionRef(key);
@@ -1424,6 +1425,37 @@ public class ModelParser extends BaseParser {
     protected ComponentScanDefinition doParseComponentScanDefinition() throws IOException, XmlPullParserException {
         return doParse(new ComponentScanDefinition(), (def, key, val) -> switch (key) {
                 case "base-package": def.setBasePackage(val); yield true;
+                default: yield false;
+            }, noElementHandler(), noValueHandler());
+    }
+    protected SSLContextParametersDefinition doParseSSLContextParametersDefinition() throws IOException, XmlPullParserException {
+        return doParse(new SSLContextParametersDefinition(), (def, key, val) -> switch (key) {
+                case "certAlias": def.setCertAlias(val); yield true;
+                case "cipherSuites": def.setCipherSuites(val); yield true;
+                case "cipherSuitesExclude": def.setCipherSuitesExclude(val); yield true;
+                case "cipherSuitesInclude": def.setCipherSuitesInclude(val); yield true;
+                case "clientAuthentication": def.setClientAuthentication(val); yield true;
+                case "id": def.setId(val); yield true;
+                case "keyManagerAlgorithm": def.setKeyManagerAlgorithm(val); yield true;
+                case "keyManagerProvider": def.setKeyManagerProvider(val); yield true;
+                case "keyStore": def.setKeyStore(val); yield true;
+                case "keyStoreProvider": def.setKeyStoreProvider(val); yield true;
+                case "keyStoreType": def.setKeyStoreType(val); yield true;
+                case "keystorePassword": def.setKeystorePassword(val); yield true;
+                case "namedGroups": def.setNamedGroups(val); yield true;
+                case "namedGroupsExclude": def.setNamedGroupsExclude(val); yield true;
+                case "namedGroupsInclude": def.setNamedGroupsInclude(val); yield true;
+                case "provider": def.setProvider(val); yield true;
+                case "secureRandomAlgorithm": def.setSecureRandomAlgorithm(val); yield true;
+                case "secureRandomProvider": def.setSecureRandomProvider(val); yield true;
+                case "secureSocketProtocol": def.setSecureSocketProtocol(val); yield true;
+                case "sessionTimeout": def.setSessionTimeout(val); yield true;
+                case "signatureSchemes": def.setSignatureSchemes(val); yield true;
+                case "signatureSchemesExclude": def.setSignatureSchemesExclude(val); yield true;
+                case "signatureSchemesInclude": def.setSignatureSchemesInclude(val); yield true;
+                case "trustAllCertificates": def.setTrustAllCertificates(val); yield true;
+                case "trustStore": def.setTrustStore(val); yield true;
+                case "trustStorePassword": def.setTrustStorePassword(val); yield true;
                 default: yield false;
             }, noElementHandler(), noValueHandler());
     }

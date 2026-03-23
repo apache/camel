@@ -46,6 +46,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.app.BeansDefinition;
+import org.apache.camel.model.app.SSLContextParametersDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -55,6 +56,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.CachedResource;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.scan.PackageScanHelper;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
 import org.apache.camel.xml.io.util.XmlStreamInfo;
@@ -206,6 +208,19 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
                 // in preParseRoute() and possibly registered in
                 // org.apache.camel.main.BaseMainSupport.postProcessCamelRegistry() (if given Main implementation
                 // decides to do so)
+
+                if (!app.getSslContextParameters().isEmpty()) {
+                    for (SSLContextParametersDefinition def : app.getSslContextParameters()) {
+                        SSLContextParameters scp = def.createSSLContextParameters(getCamelContext());
+                        if (def.getId() != null) {
+                            getCamelContext().getRegistry().bind(def.getId(), scp);
+                        }
+                        // set the first one as the global default
+                        if (getCamelContext().getSSLContextParameters() == null) {
+                            getCamelContext().setSSLContextParameters(scp);
+                        }
+                    }
+                }
 
                 if (app.getRestConfigurations().size() > 1) {
                     throw new RuntimeException("There should only be one <restConfiguration>");
