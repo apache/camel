@@ -18,7 +18,10 @@ package org.apache.camel.component.azure.functions;
 
 /**
  * Determines the credential strategy to use for Azure Functions operations.
+ *
+ * @deprecated Use {@link org.apache.camel.component.azure.common.CredentialType} instead.
  */
+@Deprecated(since = "4.19.0")
 public enum CredentialType {
     /**
      * Uses DefaultAzureCredential for automatic credential chain. Supports environment variables, managed identity,
