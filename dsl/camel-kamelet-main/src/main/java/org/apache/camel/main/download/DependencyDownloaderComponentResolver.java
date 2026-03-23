@@ -108,6 +108,12 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
                 downloadLoader(quartz.getGroupId(), quartz.getArtifactId(), quartz.getVersion());
             }
         }
+        if ("jpa".equals(name)) {
+            // include hibernate as JPA provider
+            if (!downloader.alreadyOnClasspath("org.hibernate.orm", "hibernate-core", null)) {
+                downloader.downloadDependency("org.hibernate.orm", "hibernate-core", "${hibernate-version}");
+            }
+        }
         if ("activemq".equals(name) || "activemq6".equals(name)) {
             // need to include JMS connection-pool (trigger class loader to download correct JAR)
             try {

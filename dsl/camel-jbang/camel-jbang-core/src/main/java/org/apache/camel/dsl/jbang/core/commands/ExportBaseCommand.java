@@ -705,6 +705,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
+        // automatic add hibernate as JPA provider when using camel-jpa
+        if (answer.stream().anyMatch(s -> s.contains("camel-jpa") || s.equals("camel:jpa"))) {
+            answer.add("mvn:org.hibernate.orm:hibernate-core");
+        }
+
         // remove duplicate versions (keep first)
         Map<String, String> versions = new HashMap<>();
         Set<String> toBeRemoved = new HashSet<>();
