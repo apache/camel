@@ -15456,6 +15456,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
     }
 
+    @YamlIn
     @YamlType(
             nodes = "sslContextParameters",
             types = org.apache.camel.model.app.SSLContextParametersDefinition.class,

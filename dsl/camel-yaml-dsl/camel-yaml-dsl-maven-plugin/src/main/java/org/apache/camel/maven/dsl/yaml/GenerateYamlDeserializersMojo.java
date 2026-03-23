@@ -442,6 +442,9 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         if (info.name().toString().equals("org.apache.camel.model.validator.ValidatorsDefinition")) {
             builder.addAnnotation(CN_YAML_IN);
         }
+        if (info.name().toString().equals("org.apache.camel.model.app.SSLContextParametersDefinition")) {
+            builder.addAnnotation(CN_YAML_IN);
+        }
 
         final AtomicReference<String> modelName = new AtomicReference<>();
         annotationValue(info, XML_ROOT_ELEMENT_ANNOTATION_CLASS, "name")

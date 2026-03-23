@@ -17188,6 +17188,9 @@
       "templatedRoute" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
       },
+      "sslContextParameters" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.app.SSLContextParametersDefinition"
+      },
       "restConfiguration" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestConfigurationDefinition"
       },
