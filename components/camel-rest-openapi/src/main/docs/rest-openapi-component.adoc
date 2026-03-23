@@ -2,7 +2,7 @@
 :doctitle: REST OpenApi
 :shortname: rest-openapi
 :artifactid: camel-rest-openapi
-:description: To call REST services using OpenAPI specification as contract.
+:description: To call and expose REST services using OpenAPI specification as contract.
 :since: 3.1
 :supportlevel: Stable
 :tabs-sync-option:
