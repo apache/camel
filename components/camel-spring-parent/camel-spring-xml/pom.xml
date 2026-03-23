@@ -544,6 +544,8 @@
                             <deleteFilesAfterRun>
                                 ${project.build.directory}/schema/schema1.xsd,${project.build.directory}/schema/schema2.xsd
                             </deleteFilesAfterRun>
+                            <!-- Exclude sslContextParameters to avoid overwriting Spring's existing element documentation -->
+                            <excludeModels>sslContextParameters</excludeModels>
                         </configuration>
                     </execution>
                 </executions>
