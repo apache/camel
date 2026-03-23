@@ -63,7 +63,7 @@ public class AWS2BatchWriteItemRuleIT extends Aws2DDBBase {
 
         Exchange result = template.send("direct:start", new Processor() {
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchWriteItem);
+                exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchWriteItems);
                 exchange.getIn().setHeader(Ddb2Constants.BATCH_WRITE_ITEMS, requestItems);
             }
         });

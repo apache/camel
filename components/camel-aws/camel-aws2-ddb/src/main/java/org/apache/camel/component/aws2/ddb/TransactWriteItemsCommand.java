@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.aws2.ddb;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.TransactWriteItem;
 import software.amazon.awssdk.services.dynamodb.model.TransactWriteItemsRequest;
+import software.amazon.awssdk.services.dynamodb.model.TransactWriteItemsResponse;
 
 public class TransactWriteItemsCommand extends AbstractDdbCommand {
 
@@ -40,7 +43,16 @@ public class TransactWriteItemsCommand extends AbstractDdbCommand {
             builder.clientRequestToken(clientRequestToken);
         }
 
-        ddbClient.transactWriteItems(builder.build());
+        TransactWriteItemsResponse result = ddbClient.transactWriteItems(builder.build());
+
+        Map<Object, Object> tmp = new HashMap<>();
+        if (result.consumedCapacity() != null) {
+            tmp.put(Ddb2Constants.TRANSACT_WRITE_CONSUMED_CAPACITY, result.consumedCapacity());
+        }
+        if (result.itemCollectionMetrics() != null) {
+            tmp.put(Ddb2Constants.TRANSACT_WRITE_ITEM_COLLECTION_METRICS, result.itemCollectionMetrics());
+        }
+        addToResults(tmp);
     }
 
     @SuppressWarnings("unchecked")

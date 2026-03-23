@@ -68,7 +68,7 @@ public class ExecuteStatementCommandTest {
         assertEquals(1, items.size());
         assertEquals(AttributeValue.builder().s("attrValue").build(), items.get(0).get("attrName"));
 
-        assertEquals("nextToken123", exchange.getIn().getHeader(Ddb2Constants.EXECUTE_STATEMENT_NEXT_TOKEN, String.class));
+        assertEquals("nextToken123", exchange.getIn().getHeader(Ddb2Constants.NEXT_TOKEN, String.class));
     }
 
     @Test

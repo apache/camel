@@ -104,7 +104,7 @@ Registry.
 === Supported producer operations
 
 - BatchGetItems
-- BatchWriteItem
+- BatchWriteItems
 - BatchExecuteStatement
 - DeleteItem
 - DeleteTable
@@ -281,7 +281,7 @@ from("direct:transactGet")
   .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
 --------------------------------------------------------------------------------
 
-- BatchWriteItem: this operation puts or deletes multiple items in one or more tables in a single batch
+- BatchWriteItems: this operation puts or deletes multiple items in one or more tables in a single batch
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -297,7 +297,7 @@ requestItems.put("MyTable", List.of(
 
 from("direct:batchWrite")
   .process(exchange -> {
-      exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchWriteItem);
+      exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchWriteItems);
       exchange.getIn().setHeader(Ddb2Constants.BATCH_WRITE_ITEMS, requestItems);
   })
   .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);

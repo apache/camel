@@ -1148,7 +1148,7 @@ public interface Ddb2EndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: ExecuteStatement BatchExecuteStatement
+         * Group: ExecuteStatement
          * 
          * @return the name of the header {@code AwsDdbStatement}.
          */
@@ -1161,7 +1161,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The option is a: {@code
          * java.util.List<software.amazon.awssdk.services.dynamodb.model.AttributeValue>} type.
          * 
-         * Group: ExecuteStatement BatchExecuteStatement
+         * Group: ExecuteStatement
          * 
          * @return the name of the header {@code AwsDdbStatementParameters}.
          */
@@ -1194,19 +1194,6 @@ public interface Ddb2EndpointBuilderFactory {
          */
         public String awsDdbExecuteStatementItems() {
             return "CamelAwsDdbExecuteStatementItems";
-        }
-        /**
-         * The next token from an ExecuteStatement operation for pagination.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: ExecuteStatement
-         * 
-         * @return the name of the header {@code
-         * AwsDdbExecuteStatementNextToken}.
-         */
-        public String awsDdbExecuteStatementNextToken() {
-            return "CamelAwsDdbExecuteStatementNextToken";
         }
         /**
          * The response to each PartiQL statement in the batch.
@@ -1249,6 +1236,34 @@ public interface Ddb2EndpointBuilderFactory {
             return "CamelAwsDdbTransactClientRequestToken";
         }
         /**
+         * The consumed capacity from a TransactWriteItems operation.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity>} type.
+         * 
+         * Group: TransactWriteItems
+         * 
+         * @return the name of the header {@code
+         * AwsDdbTransactWriteConsumedCapacity}.
+         */
+        public String awsDdbTransactWriteConsumedCapacity() {
+            return "CamelAwsDdbTransactWriteConsumedCapacity";
+        }
+        /**
+         * The item collection metrics from a TransactWriteItems operation.
+         * 
+         * The option is a: {@code java.util.Map<String,
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.ItemCollectionMetrics>>} type.
+         * 
+         * Group: TransactWriteItems
+         * 
+         * @return the name of the header {@code
+         * AwsDdbTransactWriteItemCollectionMetrics}.
+         */
+        public String awsDdbTransactWriteItemCollectionMetrics() {
+            return "CamelAwsDdbTransactWriteItemCollectionMetrics";
+        }
+        /**
          * The list of TransactGetItem objects for a transactional read.
          * 
          * The option is a: {@code
@@ -1281,7 +1296,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The option is a: {@code java.util.Map<String,
          * java.util.List<software.amazon.awssdk.services.dynamodb.model.WriteRequest>>} type.
          * 
-         * Group: BatchWriteItem
+         * Group: BatchWriteItems
          * 
          * @return the name of the header {@code AwsDdbBatchWriteItems}.
          */
@@ -1290,12 +1305,12 @@ public interface Ddb2EndpointBuilderFactory {
         }
         /**
          * A map of tables and their respective unprocessed items after a
-         * BatchWriteItem operation.
+         * BatchWriteItems operation.
          * 
          * The option is a: {@code java.util.Map<String,
          * java.util.List<software.amazon.awssdk.services.dynamodb.model.WriteRequest>>} type.
          * 
-         * Group: BatchWriteItem
+         * Group: BatchWriteItems
          * 
          * @return the name of the header {@code
          * AwsDdbBatchWriteUnprocessedItems}.

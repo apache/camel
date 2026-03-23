@@ -45,7 +45,7 @@ public class Ddb2Producer extends DefaultProducer {
             case BatchGetItems:
                 new BatchGetItemsCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
                 break;
-            case BatchWriteItem:
+            case BatchWriteItems:
                 new BatchWriteItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
                 break;
             case BatchExecuteStatement:

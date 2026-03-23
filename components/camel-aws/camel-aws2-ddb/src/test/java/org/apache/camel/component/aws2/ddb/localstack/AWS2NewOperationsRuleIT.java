@@ -111,7 +111,7 @@ public class AWS2NewOperationsRuleIT extends Aws2DDBBase {
                 WriteRequest.builder().putRequest(PutRequest.builder().item(item2).build()).build()));
 
         Exchange batchWriteResult = template.send("direct:start", e -> {
-            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchWriteItem);
+            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchWriteItems);
             e.getIn().setHeader(Ddb2Constants.BATCH_WRITE_ITEMS, requestItems);
         });
 
@@ -274,7 +274,7 @@ public class AWS2NewOperationsRuleIT extends Aws2DDBBase {
         requestItems.put(TABLE_NAME, writes);
 
         template.send("direct:start", e -> {
-            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchWriteItem);
+            e.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchWriteItems);
             e.getIn().setHeader(Ddb2Constants.BATCH_WRITE_ITEMS, requestItems);
         });
 

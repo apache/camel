@@ -144,11 +144,11 @@ public interface Ddb2Constants {
     @Metadata(label = "UpdateTable DescribeTable", description = "WriteCapacityUnits property of this table.",
               javaType = "Long")
     String WRITE_CAPACITY = "CamelAwsDdbWriteCapacity";
-    @Metadata(label = "ExecuteStatement BatchExecuteStatement",
+    @Metadata(label = "ExecuteStatement",
               description = "A PartiQL statement that uses parameters.",
               javaType = "String")
     String STATEMENT = "CamelAwsDdbStatement";
-    @Metadata(label = "ExecuteStatement BatchExecuteStatement",
+    @Metadata(label = "ExecuteStatement",
               description = "The parameters for the PartiQL statement, if any.",
               javaType = "java.util.List<software.amazon.awssdk.services.dynamodb.model.AttributeValue>")
     String STATEMENT_PARAMETERS = "CamelAwsDdbStatementParameters";
@@ -160,10 +160,6 @@ public interface Ddb2Constants {
               description = "The response items from an ExecuteStatement operation.",
               javaType = "java.util.List<java.util.Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>>")
     String EXECUTE_STATEMENT_ITEMS = "CamelAwsDdbExecuteStatementItems";
-    @Metadata(label = "ExecuteStatement",
-              description = "The next token from an ExecuteStatement operation for pagination.",
-              javaType = "String")
-    String EXECUTE_STATEMENT_NEXT_TOKEN = "CamelAwsDdbExecuteStatementNextToken";
     @Metadata(label = "BatchExecuteStatement",
               description = "The response to each PartiQL statement in the batch.",
               javaType = "java.util.List<software.amazon.awssdk.services.dynamodb.model.BatchStatementResponse>")
@@ -176,6 +172,14 @@ public interface Ddb2Constants {
               description = "A unique client request token for idempotent TransactWriteItems calls.",
               javaType = "String")
     String TRANSACT_CLIENT_REQUEST_TOKEN = "CamelAwsDdbTransactClientRequestToken";
+    @Metadata(label = "TransactWriteItems",
+              description = "The consumed capacity from a TransactWriteItems operation.",
+              javaType = "java.util.List<software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity>")
+    String TRANSACT_WRITE_CONSUMED_CAPACITY = "CamelAwsDdbTransactWriteConsumedCapacity";
+    @Metadata(label = "TransactWriteItems",
+              description = "The item collection metrics from a TransactWriteItems operation.",
+              javaType = "java.util.Map<String, java.util.List<software.amazon.awssdk.services.dynamodb.model.ItemCollectionMetrics>>")
+    String TRANSACT_WRITE_ITEM_COLLECTION_METRICS = "CamelAwsDdbTransactWriteItemCollectionMetrics";
     @Metadata(label = "TransactGetItems",
               description = "The list of TransactGetItem objects for a transactional read.",
               javaType = "java.util.List<software.amazon.awssdk.services.dynamodb.model.TransactGetItem>")
@@ -184,12 +188,12 @@ public interface Ddb2Constants {
               description = "The response from a TransactGetItems operation.",
               javaType = "java.util.List<software.amazon.awssdk.services.dynamodb.model.ItemResponse>")
     String TRANSACT_GET_RESPONSE = "CamelAwsDdbTransactGetResponse";
-    @Metadata(label = "BatchWriteItem",
+    @Metadata(label = "BatchWriteItems",
               description = "A map of table names to lists of WriteRequest objects for batch writes.",
               javaType = "java.util.Map<String, java.util.List<software.amazon.awssdk.services.dynamodb.model.WriteRequest>>")
     String BATCH_WRITE_ITEMS = "CamelAwsDdbBatchWriteItems";
-    @Metadata(label = "BatchWriteItem",
-              description = "A map of tables and their respective unprocessed items after a BatchWriteItem operation.",
+    @Metadata(label = "BatchWriteItems",
+              description = "A map of tables and their respective unprocessed items after a BatchWriteItems operation.",
               javaType = "java.util.Map<String, java.util.List<software.amazon.awssdk.services.dynamodb.model.WriteRequest>>")
     String BATCH_WRITE_UNPROCESSED_ITEMS = "CamelAwsDdbBatchWriteUnprocessedItems";
     @Metadata(label = "Query Scan", description = "The Filter Expression.",

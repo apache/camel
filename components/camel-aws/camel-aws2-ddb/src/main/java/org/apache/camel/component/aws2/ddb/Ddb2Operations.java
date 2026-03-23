@@ -18,7 +18,7 @@ package org.apache.camel.component.aws2.ddb;
 
 public enum Ddb2Operations {
     BatchGetItems,
-    BatchWriteItem,
+    BatchWriteItems,
     BatchExecuteStatement,
     DeleteItem,
     DeleteTable,

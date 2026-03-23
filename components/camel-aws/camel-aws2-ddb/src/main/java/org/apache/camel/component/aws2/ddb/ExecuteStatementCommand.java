@@ -53,7 +53,7 @@ public class ExecuteStatementCommand extends AbstractDdbCommand {
 
         Map<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.EXECUTE_STATEMENT_ITEMS, result.items());
-        tmp.put(Ddb2Constants.EXECUTE_STATEMENT_NEXT_TOKEN, result.nextToken());
+        tmp.put(Ddb2Constants.NEXT_TOKEN, result.nextToken());
         addToResults(tmp);
     }
 
