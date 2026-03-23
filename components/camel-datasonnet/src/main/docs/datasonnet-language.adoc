@@ -154,6 +154,15 @@ xref:ROOT:properties-component.adoc[Properties] component (property placeholders
 |cml.parseDate(value, format) |`cml.parseDate('20/03/2026', 'dd/MM/yyyy')` |Parses a date string into epoch milliseconds. Returns null for null input.
 |===
 
+=== Math Functions
+
+[width="100%",cols="20%,30%,50%",options="header",]
+|===
+|Function |Example |Description
+
+|cml.sqrt(value) |`cml.sqrt(body.x)` |Computes the square root of a number. Returns null for null input.
+|===
+
 === Utility Functions
 
 [width="100%",cols="20%,30%,50%",options="header",]
@@ -213,6 +222,16 @@ local c = import 'camel.libsonnet';
 |`c.min(arr)` / `c.max(arr)` |Minimum/maximum element.
 |`c.take(arr, n)` / `c.drop(arr, n)` |First/last n elements.
 |`c.zip(a, b)` |Zips two arrays into pairs.
+|===
+
+==== Math Helpers
+
+[width="100%",cols="30%,70%",options="header",]
+|===
+|Function |Description
+
+|`c.abs(x)` |Absolute value.
+|`c.round(x)` |Rounds to nearest integer.
 |===
 
 ==== Object Helpers

@@ -57,6 +57,10 @@
   take(arr, n):: arr[:n],
   drop(arr, n):: arr[n:],
 
+  // Math helpers
+  abs(x):: if x < 0 then -x else x,
+  round(x):: std.floor(x + 0.5),
+
   // Object helpers
   pick(obj, keys):: { [k]: obj[k] for k in keys if std.objectHas(obj, k) },
   omit(obj, keys):: { [k]: obj[k] for k in std.objectFields(obj) if !std.member(keys, k) },

@@ -116,6 +116,11 @@ public final class CML extends Library {
                 Arrays.asList("value", "format"),
                 params -> parseDate(params.get(0), params.get(1))));
 
+        // Math functions
+        answer.put("sqrt", makeSimpleFunc(
+                Collections.singletonList("value"),
+                params -> sqrt(params.get(0))));
+
         // Utility functions
         answer.put("uuid", makeSimpleFunc(
                 Collections.emptyList(),
@@ -287,6 +292,18 @@ public final class CML extends Library {
             instant = date.atStartOfDay(ZoneId.of("UTC")).toInstant();
         }
         return new Val.Num(instant.toEpochMilli());
+    }
+
+    // ---- Math functions ----
+
+    private Val sqrt(Val value) {
+        if (isNull(value)) {
+            return Val.Null$.MODULE$;
+        }
+        if (value instanceof Val.Num num) {
+            return new Val.Num(Math.sqrt(num.value()));
+        }
+        throw new IllegalArgumentException("Cannot compute sqrt of " + value.prettyName());
     }
 
     // ---- Utility functions ----

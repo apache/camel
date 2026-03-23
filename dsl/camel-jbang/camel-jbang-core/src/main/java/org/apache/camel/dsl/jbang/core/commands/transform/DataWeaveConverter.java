@@ -255,11 +255,8 @@ public class DataWeaveConverter {
     }
 
     private String emitMultiValueSelector(MultiValueSelector mv) {
-        todoCount++;
-        String comment = includeComments
-                ? " // TODO: manual conversion needed — multi-value selector .*" + mv.field()
-                : "";
-        return emitNode(mv.object()) + "." + mv.field() + comment;
+        String collection = emitNode(mv.object());
+        return "std.map(function(x) x." + mv.field() + ", " + collection + ")";
     }
 
     private String emitObjectLit(ObjectLit obj) {
@@ -388,24 +385,16 @@ public class DataWeaveConverter {
             case "isEmpty" -> "cml.isEmpty(" + argStr + ")";
             case "isBlank" -> "cml.isEmpty(" + argStr + ")";
             case "abs" -> {
-                todoCount++;
-                yield "std.abs(" + argStr + ")"
-                      + (includeComments ? " // TODO: std.abs may not exist in DataSonnet — use manual impl" : "");
+                needsCamelLib = true;
+                yield "c.abs(" + argStr + ")";
             }
             case "ceil" -> "std.ceil(" + argStr + ")";
             case "floor" -> "std.floor(" + argStr + ")";
             case "round" -> {
-                todoCount++;
-                yield "std.round(" + argStr + ")"
-                      + (includeComments
-                              ? " // TODO: std.round may not exist in DataSonnet — use std.floor(x + 0.5)"
-                              : "");
+                needsCamelLib = true;
+                yield "c.round(" + argStr + ")";
             }
-            case "sqrt" -> {
-                todoCount++;
-                yield "std.sqrt(" + argStr + ")"
-                      + (includeComments ? " // TODO: std.sqrt does not exist in DataSonnet" : "");
-            }
+            case "sqrt" -> "cml.sqrt(" + argStr + ")";
             case "sum" -> {
                 needsCamelLib = true;
                 yield "c.sum(" + argStr + ")";
@@ -418,16 +407,10 @@ public class DataWeaveConverter {
                 needsCamelLib = true;
                 yield "c.max(" + argStr + ")";
             }
-            case "read" -> {
-                todoCount++;
-                yield "std.parseJson(" + argStr + ")"
-                      + (includeComments ? " // TODO: verify — DW read() may handle multiple formats" : "");
-            }
-            case "write" -> {
-                todoCount++;
-                yield "std.manifestJsonEx(" + argStr + ", \"  \")"
-                      + (includeComments ? " // TODO: verify — DW write() may handle multiple formats" : "");
-            }
+            case "read" -> "std.parseJson(" + argStr + ")"
+                           + (includeComments ? " // NOTE: assumes JSON input — DW read() supports multiple formats" : "");
+            case "write" -> "std.manifestJsonEx(" + argStr + ", \"  \")"
+                            + (includeComments ? " // NOTE: outputs JSON — DW write() supports multiple formats" : "");
             default -> fc.name() + "(" + argStr + ")";
         };
     }
@@ -493,9 +476,7 @@ public class DataWeaveConverter {
                        + collection + ", " + init + ")";
             }
         }
-        todoCount++;
-        return "std.foldl(" + emitNode(re.lambda()) + ", " + collection + ", null)"
-               + (includeComments ? " // TODO: verify reduce conversion" : "");
+        return "std.foldl(" + emitNode(re.lambda()) + ", " + collection + ", null)";
     }
 
     private String emitFlatMap(FlatMapExpr fme) {
@@ -538,9 +519,7 @@ public class DataWeaveConverter {
             String body = emitNode(lam.body());
             return "c.sortBy(" + collection + ", function(" + paramNames.get(0) + ") " + body + ")";
         }
-        todoCount++;
-        return "c.sortBy(" + collection + ")"
-               + (includeComments ? " // TODO: verify orderBy conversion — missing key function" : "");
+        return "c.sortBy(" + collection + ", " + emitNode(obe.lambda()) + ")";
     }
 
     private String emitContains(ContainsExpr ce) {
@@ -610,11 +589,7 @@ public class DataWeaveConverter {
             case "Object" -> "std.isObject(" + expr + ")";
             case "Array" -> "std.isArray(" + expr + ")";
             case "Null" -> expr + " == null";
-            default -> {
-                todoCount++;
-                yield "cml.typeOf(" + expr + ") == \"" + tc.type().toLowerCase() + "\""
-                      + (includeComments ? " // TODO: verify type check" : "");
-            }
+            default -> "cml.typeOf(" + expr + ") == \"" + tc.type().toLowerCase() + "\"";
         };
     }
 

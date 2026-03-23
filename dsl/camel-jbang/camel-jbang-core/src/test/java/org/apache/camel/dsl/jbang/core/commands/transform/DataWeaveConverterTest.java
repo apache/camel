@@ -398,6 +398,37 @@ class DataWeaveConverterTest {
         assertTrue(converter.needsCamelLib());
     }
 
+    // ── Math functions ──
+
+    @Test
+    void testAbs() {
+        String result = converter.convertExpression("abs(payload.value)");
+        assertEquals("c.abs(body.value)", result);
+        assertTrue(converter.needsCamelLib());
+    }
+
+    @Test
+    void testRound() {
+        String result = converter.convertExpression("round(payload.value)");
+        assertEquals("c.round(body.value)", result);
+        assertTrue(converter.needsCamelLib());
+    }
+
+    @Test
+    void testSqrt() {
+        String result = converter.convertExpression("sqrt(payload.value)");
+        assertEquals("cml.sqrt(body.value)", result);
+    }
+
+    // ── Multi-value selector ──
+
+    @Test
+    void testMultiValueSelector() {
+        String result = converter.convertExpression("payload.items.*name");
+        assertEquals("std.map(function(x) x.name, body.items)", result);
+        assertEquals(0, converter.getTodoCount());
+    }
+
     // ── Escape handling ──
 
     @Test
