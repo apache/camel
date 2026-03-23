@@ -41,7 +41,12 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route", description = "Get status of Camel routes",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get route",
+                 "  camel get route hello",
+                 "  camel get route --watch" })
 public class CamelRouteStatus extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")

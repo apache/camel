@@ -59,7 +59,14 @@ import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.SPRING_
 
 @Command(name = "export",
          description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel export hello.java",
+                 "  camel export --runtime=spring-boot hello.java",
+                 "  camel export --runtime=quarkus *",
+                 "  camel export --gav=com.example:myapp:1.0 hello.java",
+                 "  camel export --dry-run hello.java" })
 public class Export extends ExportBaseCommand {
 
     public Export(CamelJBangMain main) {

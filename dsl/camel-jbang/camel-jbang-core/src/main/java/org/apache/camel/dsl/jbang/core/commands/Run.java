@@ -88,7 +88,15 @@ import static org.apache.camel.dsl.jbang.core.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
-@Command(name = "run", description = "Run as local Camel integration", sortOptions = false, showDefaultValues = true)
+@Command(name = "run", description = "Run as local Camel integration", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel run hello.java",
+                 "  camel run hello.yaml",
+                 "  camel run *",
+                 "  camel run hello.java --dev",
+                 "  camel run hello.java --port=8080",
+                 "  camel run https://gist.github.com/user/123456" })
 public class Run extends CamelCommand {
 
     // special template for running camel-jbang in docker containers

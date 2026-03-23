@@ -31,7 +31,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "wrapper", description = "Install Camel wrapper scripts for version pinning", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel wrapper",
+                 "  camel wrapper --camel-version=4.10.0" })
 public class WrapperCommand extends CamelCommand {
 
     private static final String DEFAULT_REPO_URL = "https://repo1.maven.org/maven2";
