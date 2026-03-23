@@ -21,32 +21,12 @@ import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import picocli.CommandLine;
 
-@CamelJBangPlugin(name = "camel-jbang-plugin-tui", firstVersion = "4.19.0",
-                  commands = { "health", "monitor", "top", "trace", "log", "catalog" })
+@CamelJBangPlugin(name = "camel-jbang-plugin-tui", firstVersion = "4.19.0")
 public class TuiPlugin implements Plugin {
 
     @Override
     public void customize(CommandLine commandLine, CamelJBangMain main) {
-        // Top-level TUI commands
-        commandLine.addSubcommand("health", new CommandLine(new CamelHealthTui(main)));
         commandLine.addSubcommand("monitor", new CommandLine(new CamelMonitor(main)));
-
-        // Subcommands of existing commands
-        CommandLine topCmd = commandLine.getSubcommands().get("top");
-        if (topCmd != null) {
-            topCmd.addSubcommand("tui", new CommandLine(new CamelTopTui(main)));
-        }
-        CommandLine traceCmd = commandLine.getSubcommands().get("trace");
-        if (traceCmd != null) {
-            traceCmd.addSubcommand("tui", new CommandLine(new CamelTraceTui(main)));
-        }
-        CommandLine logCmd = commandLine.getSubcommands().get("log");
-        if (logCmd != null) {
-            logCmd.addSubcommand("tui", new CommandLine(new CamelLogTui(main)));
-        }
-        CommandLine catalogCmd = commandLine.getSubcommands().get("catalog");
-        if (catalogCmd != null) {
-            catalogCmd.addSubcommand("tui", new CommandLine(new CamelCatalogTui(main)));
-        }
+        commandLine.addSubcommand("catalog-tui", new CommandLine(new CamelCatalogTui(main)));
     }
 }

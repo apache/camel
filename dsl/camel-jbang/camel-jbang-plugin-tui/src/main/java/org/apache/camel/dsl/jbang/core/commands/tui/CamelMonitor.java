@@ -18,12 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +70,7 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -82,6 +85,8 @@ public class CamelMonitor extends CamelCommand {
     private static final long DEFAULT_REFRESH_MS = 100;
     private static final int MAX_SPARKLINE_POINTS = 60;
     private static final int MAX_LOG_LINES = 200;
+    private static final int MAX_TRACES = 200;
+    private static final int NUM_TABS = 6;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
@@ -89,6 +94,10 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_HEALTH = 2;
     private static final int TAB_ENDPOINTS = 3;
     private static final int TAB_LOG = 4;
+    private static final int TAB_TRACE = 5;
+
+    // Route sort columns
+    private static final String[] ROUTE_SORT_COLUMNS = { "mean", "max", "total", "failed", "name" };
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -114,9 +123,31 @@ public class CamelMonitor extends CamelCommand {
     // Track last time a sparkline point was recorded
     private final Map<String, Long> previousExchangesTime = new ConcurrentHashMap<>();
 
+    // Route sort state
+    private String routeSort = "mean";
+    private int routeSortIndex;
+
+    // Health filter state
+    private boolean showOnlyDown;
+
     // Log state
     private final List<String> logLines = new ArrayList<>();
+    private final List<String> filteredLogLines = new ArrayList<>();
     private int logScroll;
+    private boolean logFollowMode = true;
+    private boolean showLogTrace = true;
+    private boolean showLogDebug = true;
+    private boolean showLogInfo = true;
+    private boolean showLogWarn = true;
+    private boolean showLogError = true;
+
+    // Trace state
+    private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
+    private final TableState traceTableState = new TableState();
+    private final Map<String, Long> traceFilePositions = new LinkedHashMap<>();
+    private boolean showTraceHeaders = true;
+    private boolean showTraceBody = true;
+    private boolean traceFollowMode = true;
 
     // Selected integration for detail views
     private String selectedPid;
@@ -167,46 +198,38 @@ public class CamelMonitor extends CamelCommand {
 
             // Tab switching with number keys
             if (ke.isChar('1')) {
-                tabsState.select(TAB_OVERVIEW);
-                selectedPid = null;
-                return true;
+                return handleTabKey(TAB_OVERVIEW);
             }
             if (ke.isChar('2')) {
-                selectCurrentIntegration();
-                tabsState.select(TAB_ROUTES);
-                return true;
+                return handleTabKey(TAB_ROUTES);
             }
             if (ke.isChar('3')) {
-                selectCurrentIntegration();
-                tabsState.select(TAB_HEALTH);
-                return true;
+                return handleTabKey(TAB_HEALTH);
             }
             if (ke.isChar('4')) {
-                selectCurrentIntegration();
-                tabsState.select(TAB_ENDPOINTS);
-                return true;
+                return handleTabKey(TAB_ENDPOINTS);
             }
             if (ke.isChar('5')) {
-                selectCurrentIntegration();
-                tabsState.select(TAB_LOG);
-                logScroll = 0;
-                return true;
+                return handleTabKey(TAB_LOG);
+            }
+            if (ke.isChar('6')) {
+                return handleTabKey(TAB_TRACE);
             }
 
             // Tab cycling
             if (ke.isKey(KeyCode.TAB)) {
-                int next = (tabsState.selected() + 1) % 5;
+                int next = (tabsState.selected() + 1) % NUM_TABS;
                 if (next != TAB_OVERVIEW) {
                     selectCurrentIntegration();
                 }
                 tabsState.select(next);
-                if (next == TAB_LOG) {
-                    logScroll = 0;
-                }
                 return true;
             }
 
-            // Navigation
+            // Tab-specific keys
+            int tab = tabsState.selected();
+
+            // Navigation (all tabs)
             if (ke.isUp()) {
                 navigateUp();
                 return true;
@@ -216,25 +239,103 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_UP)) {
-                if (tabsState.selected() == TAB_LOG) {
+                if (tab == TAB_LOG) {
+                    logFollowMode = false;
                     logScroll = Math.max(0, logScroll - 20);
                 }
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (tabsState.selected() == TAB_LOG) {
+                if (tab == TAB_LOG) {
                     logScroll += 20;
                 }
                 return true;
             }
 
             // Enter to drill into selected integration
-            if (ke.isKey(KeyCode.ENTER) && tabsState.selected() == TAB_OVERVIEW) {
+            if (ke.isKey(KeyCode.ENTER) && tab == TAB_OVERVIEW) {
                 selectCurrentIntegration();
                 if (selectedPid != null) {
                     tabsState.select(TAB_ROUTES);
                 }
                 return true;
+            }
+
+            // Routes tab: sort
+            if (tab == TAB_ROUTES && ke.isCharIgnoreCase('s')) {
+                routeSortIndex = (routeSortIndex + 1) % ROUTE_SORT_COLUMNS.length;
+                routeSort = ROUTE_SORT_COLUMNS[routeSortIndex];
+                return true;
+            }
+
+            // Health tab: DOWN filter
+            if (tab == TAB_HEALTH && ke.isCharIgnoreCase('d')) {
+                showOnlyDown = !showOnlyDown;
+                return true;
+            }
+
+            // Log tab: level filters and follow mode
+            if (tab == TAB_LOG) {
+                if (ke.isCharIgnoreCase('t')) {
+                    showLogTrace = !showLogTrace;
+                    applyLogFilters();
+                    return true;
+                }
+                if (ke.isCharIgnoreCase('d')) {
+                    showLogDebug = !showLogDebug;
+                    applyLogFilters();
+                    return true;
+                }
+                if (ke.isCharIgnoreCase('i')) {
+                    showLogInfo = !showLogInfo;
+                    applyLogFilters();
+                    return true;
+                }
+                if (ke.isCharIgnoreCase('w')) {
+                    showLogWarn = !showLogWarn;
+                    applyLogFilters();
+                    return true;
+                }
+                if (ke.isCharIgnoreCase('e')) {
+                    showLogError = !showLogError;
+                    applyLogFilters();
+                    return true;
+                }
+                if (ke.isCharIgnoreCase('f')) {
+                    logFollowMode = !logFollowMode;
+                    return true;
+                }
+                if (ke.isChar('g')) {
+                    logFollowMode = false;
+                    logScroll = 0;
+                    return true;
+                }
+                if (ke.isChar('G')) {
+                    logFollowMode = true;
+                    return true;
+                }
+            }
+
+            // Trace tab: headers/body toggle and follow mode
+            if (tab == TAB_TRACE) {
+                if (ke.isCharIgnoreCase('h')) {
+                    showTraceHeaders = !showTraceHeaders;
+                    return true;
+                }
+                if (ke.isCharIgnoreCase('b')) {
+                    showTraceBody = !showTraceBody;
+                    return true;
+                }
+                if (ke.isCharIgnoreCase('f')) {
+                    traceFollowMode = !traceFollowMode;
+                    if (traceFollowMode) {
+                        List<TraceEntry> current = traces.get();
+                        if (!current.isEmpty()) {
+                            traceTableState.select(current.size() - 1);
+                        }
+                    }
+                    return true;
+                }
             }
         }
         if (event instanceof TickEvent) {
@@ -245,6 +346,16 @@ public class CamelMonitor extends CamelCommand {
             return true;
         }
         return false;
+    }
+
+    private boolean handleTabKey(int tab) {
+        if (tab != TAB_OVERVIEW) {
+            selectCurrentIntegration();
+        } else {
+            selectedPid = null;
+        }
+        tabsState.select(tab);
+        return true;
     }
 
     private void selectCurrentIntegration() {
@@ -266,7 +377,14 @@ public class CamelMonitor extends CamelCommand {
             case TAB_ROUTES -> routeTableState.selectPrevious();
             case TAB_HEALTH -> healthTableState.selectPrevious();
             case TAB_ENDPOINTS -> endpointTableState.selectPrevious();
-            case TAB_LOG -> logScroll = Math.max(0, logScroll - 1);
+            case TAB_LOG -> {
+                logFollowMode = false;
+                logScroll = Math.max(0, logScroll - 1);
+            }
+            case TAB_TRACE -> {
+                traceFollowMode = false;
+                traceTableState.selectPrevious();
+            }
         }
     }
 
@@ -280,13 +398,17 @@ public class CamelMonitor extends CamelCommand {
             }
             case TAB_HEALTH -> {
                 IntegrationInfo info = findSelectedIntegration();
-                healthTableState.selectNext(info != null ? info.healthChecks.size() : 0);
+                healthTableState.selectNext(info != null ? getFilteredHealthChecks(info).size() : 0);
             }
             case TAB_ENDPOINTS -> {
                 IntegrationInfo info = findSelectedIntegration();
                 endpointTableState.selectNext(info != null ? info.endpoints.size() : 0);
             }
             case TAB_LOG -> logScroll++;
+            case TAB_TRACE -> {
+                List<TraceEntry> current = traces.get();
+                traceTableState.selectNext(current.size());
+            }
         }
     }
 
@@ -340,7 +462,8 @@ public class CamelMonitor extends CamelCommand {
                         " 2 Routes" + sel + " ",
                         " 3 Health" + sel + " ",
                         " 4 Endpoints" + sel + " ",
-                        " 5 Log" + sel + " ")
+                        " 5 Log" + sel + " ",
+                        " 6 Trace" + sel + " ")
                 .highlightStyle(Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
                 .divider(Span.styled(" | ", Style.create().dim()))
                 .build();
@@ -357,6 +480,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_HEALTH -> renderHealth(frame, area);
             case TAB_ENDPOINTS -> renderEndpoints(frame, area);
             case TAB_LOG -> renderLog(frame, area);
+            case TAB_TRACE -> renderTrace(frame, area);
         }
     }
 
@@ -487,6 +611,10 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
+        // Sort routes
+        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
+        sortedRoutes.sort(this::sortRoute);
+
         // Split: routes table (top half) + processors table (bottom half)
         List<Rect> chunks = Layout.vertical()
                 .constraints(Constraint.percentage(45), Constraint.percentage(55))
@@ -494,10 +622,14 @@ public class CamelMonitor extends CamelCommand {
 
         // Routes table
         List<Row> routeRows = new ArrayList<>();
-        for (RouteInfo route : info.routes) {
+        for (RouteInfo route : sortedRoutes) {
             Style stateStyle = "Started".equals(route.state)
                     ? Style.create().fg(Color.GREEN)
                     : Style.create().fg(Color.RED);
+
+            Style failStyle = route.failed > 0
+                    ? Style.create().fg(Color.RED).bold()
+                    : Style.create();
 
             routeRows.add(Row.from(
                     Cell.from(Span.styled(truncate(route.routeId, 12), Style.create().fg(Color.CYAN))),
@@ -506,9 +638,7 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(route.uptime != null ? route.uptime : ""),
                     Cell.from(route.throughput != null ? route.throughput : ""),
                     Cell.from(String.valueOf(route.total)),
-                    Cell.from(route.failed > 0
-                            ? Span.styled(String.valueOf(route.failed), Style.create().fg(Color.RED))
-                            : Span.raw("0")),
+                    Cell.from(Span.styled(String.valueOf(route.failed), failStyle)),
                     Cell.from(route.meanTime + "/" + route.maxTime)));
         }
 
@@ -520,9 +650,9 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled("STATE", Style.create().bold())),
                         Cell.from(Span.styled("UPTIME", Style.create().bold())),
                         Cell.from(Span.styled("THRUPUT", Style.create().bold())),
-                        Cell.from(Span.styled("TOTAL", Style.create().bold())),
-                        Cell.from(Span.styled("FAILED", Style.create().bold())),
-                        Cell.from(Span.styled("MEAN/MAX", Style.create().bold()))))
+                        Cell.from(Span.styled(routeSortLabel("TOTAL", "total"), routeSortStyle("total"))),
+                        Cell.from(Span.styled(routeSortLabel("FAILED", "failed"), routeSortStyle("failed"))),
+                        Cell.from(Span.styled(routeSortLabel("MEAN/MAX", "mean"), routeSortStyle("mean")))))
                 .widths(
                         Constraint.length(12),
                         Constraint.fill(),
@@ -534,18 +664,18 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(12))
                 .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
                 .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Routes [" + info.name + "] ").build())
+                        .title(" Routes [" + info.name + "] sort:" + routeSort + " ").build())
                 .build();
 
         frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
 
         // Processors for selected route
         Integer selectedRoute = routeTableState.selected();
-        if (selectedRoute != null && selectedRoute >= 0 && selectedRoute < info.routes.size()) {
-            RouteInfo route = info.routes.get(selectedRoute);
+        if (selectedRoute != null && selectedRoute >= 0 && selectedRoute < sortedRoutes.size()) {
+            RouteInfo route = sortedRoutes.get(selectedRoute);
             renderProcessors(frame, chunks.get(1), route);
-        } else if (!info.routes.isEmpty()) {
-            renderProcessors(frame, chunks.get(1), info.routes.get(0));
+        } else if (!sortedRoutes.isEmpty()) {
+            renderProcessors(frame, chunks.get(1), sortedRoutes.get(0));
         } else {
             frame.renderWidget(
                     Paragraph.builder()
@@ -554,6 +684,31 @@ public class CamelMonitor extends CamelCommand {
                             .build(),
                     chunks.get(1));
         }
+    }
+
+    private int sortRoute(RouteInfo a, RouteInfo b) {
+        return switch (routeSort) {
+            case "mean" -> Long.compare(b.meanTime, a.meanTime);
+            case "max" -> Long.compare(b.maxTime, a.maxTime);
+            case "total" -> Long.compare(b.total, a.total);
+            case "failed" -> Long.compare(b.failed, a.failed);
+            case "name" -> {
+                String ra = a.routeId != null ? a.routeId : "";
+                String rb = b.routeId != null ? b.routeId : "";
+                yield ra.compareToIgnoreCase(rb);
+            }
+            default -> 0;
+        };
+    }
+
+    private String routeSortLabel(String label, String column) {
+        return routeSort.equals(column) ? label + "\u25BC" : label;
+    }
+
+    private Style routeSortStyle(String column) {
+        return routeSort.equals(column)
+                ? Style.create().fg(Color.YELLOW).bold()
+                : Style.create().bold();
     }
 
     private void renderProcessors(Frame frame, Rect area, RouteInfo route) {
@@ -613,8 +768,10 @@ public class CamelMonitor extends CamelCommand {
                 .constraints(Constraint.fill(), Constraint.length(3))
                 .split(area);
 
+        List<HealthCheckInfo> healthChecks = getFilteredHealthChecks(info);
+
         List<Row> rows = new ArrayList<>();
-        for (HealthCheckInfo hc : info.healthChecks) {
+        for (HealthCheckInfo hc : healthChecks) {
             Style stateStyle;
             String icon;
             if ("UP".equals(hc.state)) {
@@ -628,20 +785,35 @@ public class CamelMonitor extends CamelCommand {
                 icon = "\u26A0 ";
             }
 
+            String rate = "";
+            if (hc.readiness) {
+                rate += "R";
+            }
+            if (hc.liveness) {
+                rate += rate.isEmpty() ? "L" : "/L";
+            }
+
             rows.add(Row.from(
                     Cell.from(Span.styled(truncate(hc.group != null ? hc.group : "", 12), Style.create().dim())),
-                    Cell.from(Span.styled(truncate(hc.name, 30), Style.create().fg(Color.CYAN))),
+                    Cell.from(Span.styled(truncate(hc.name, 25), Style.create().fg(Color.CYAN))),
                     Cell.from(Span.styled(icon + hc.state, stateStyle)),
+                    Cell.from(rate),
                     Cell.from(hc.message != null ? truncate(hc.message, 50) : "")));
         }
 
         if (rows.isEmpty()) {
             rows.add(Row.from(
                     Cell.from(""),
-                    Cell.from(Span.styled("No health checks registered", Style.create().dim())),
+                    Cell.from(Span.styled(showOnlyDown ? "No DOWN checks" : "No health checks registered",
+                            Style.create().dim())),
+                    Cell.from(""),
                     Cell.from(""),
                     Cell.from("")));
         }
+
+        String title = showOnlyDown
+                ? " Health [" + info.name + "] [DOWN only] "
+                : " Health [" + info.name + "] ";
 
         Table table = Table.builder()
                 .rows(rows)
@@ -649,15 +821,16 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled("GROUP", Style.create().bold())),
                         Cell.from(Span.styled("NAME", Style.create().bold())),
                         Cell.from(Span.styled("STATUS", Style.create().bold())),
+                        Cell.from(Span.styled("RATE", Style.create().bold())),
                         Cell.from(Span.styled("MESSAGE", Style.create().bold()))))
                 .widths(
                         Constraint.length(12),
-                        Constraint.length(30),
+                        Constraint.length(25),
                         Constraint.length(12),
+                        Constraint.length(6),
                         Constraint.fill())
                 .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Health [" + info.name + "] ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
                 .build();
 
         frame.renderStatefulWidget(table, chunks.get(0), healthTableState);
@@ -677,6 +850,13 @@ public class CamelMonitor extends CamelCommand {
 
             frame.renderWidget(gauge, chunks.get(1));
         }
+    }
+
+    private List<HealthCheckInfo> getFilteredHealthChecks(IntegrationInfo info) {
+        if (showOnlyDown) {
+            return info.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).toList();
+        }
+        return info.healthChecks;
     }
 
     // ---- Tab 4: Endpoints ----
@@ -745,27 +925,30 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Read log lines
+        // Read and filter log lines
         readLogFile(info.pid);
+        applyLogFilters();
 
+        String levelTitle = buildLevelFilterTitle();
         Block logBlock = Block.builder().borderType(BorderType.ROUNDED)
-                .title(" Log [" + info.name + "] ")
+                .title(" Log [" + info.name + "] " + levelTitle)
                 .build();
 
         int innerHeight = Math.max(1, area.height() - 2); // account for border
-        int totalLines = logLines.size();
+        int totalLines = filteredLogLines.size();
 
-        // Auto-scroll to bottom if logScroll is 0 (default)
         int startLine;
-        if (logScroll == 0) {
+        if (logFollowMode) {
             startLine = Math.max(0, totalLines - innerHeight);
+            logScroll = startLine;
         } else {
-            startLine = Math.max(0, Math.min(logScroll, totalLines - innerHeight));
+            logScroll = Math.max(0, Math.min(logScroll, Math.max(0, totalLines - innerHeight)));
+            startLine = logScroll;
         }
 
         List<Line> visibleLines = new ArrayList<>();
         for (int i = startLine; i < Math.min(startLine + innerHeight, totalLines); i++) {
-            visibleLines.add(colorizeLogLine(logLines.get(i)));
+            visibleLines.add(colorizeLogLine(filteredLogLines.get(i)));
         }
 
         // Fill remaining space
@@ -780,6 +963,19 @@ public class CamelMonitor extends CamelCommand {
                 .build();
 
         frame.renderWidget(logParagraph, area);
+    }
+
+    private String buildLevelFilterTitle() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(showLogTrace ? "[T] " : "[t] ");
+        sb.append(showLogDebug ? "[D] " : "[d] ");
+        sb.append(showLogInfo ? "[I] " : "[i] ");
+        sb.append(showLogWarn ? "[W] " : "[w] ");
+        sb.append(showLogError ? "[E] " : "[e] ");
+        if (logFollowMode) {
+            sb.append("[FOLLOW]");
+        }
+        return sb.toString();
     }
 
     private Line colorizeLogLine(String line) {
@@ -810,7 +1006,7 @@ public class CamelMonitor extends CamelCommand {
             // Read remaining bytes and split into lines using proper encoding
             byte[] remaining = new byte[(int) (length - raf.getFilePointer())];
             raf.readFully(remaining);
-            String content = new String(remaining, java.nio.charset.StandardCharsets.UTF_8);
+            String content = new String(remaining, StandardCharsets.UTF_8);
             String[] lines = content.split("\n", -1);
             int start = Math.max(0, lines.length - MAX_LOG_LINES);
             for (int i = start; i < lines.length; i++) {
@@ -822,6 +1018,206 @@ public class CamelMonitor extends CamelCommand {
         } catch (IOException e) {
             // ignore
         }
+    }
+
+    private void applyLogFilters() {
+        filteredLogLines.clear();
+        for (String line : logLines) {
+            if (!matchesLogLevelFilter(line)) {
+                continue;
+            }
+            filteredLogLines.add(line);
+        }
+    }
+
+    private boolean matchesLogLevelFilter(String line) {
+        if (line.contains(" ERROR ") || line.contains(" FATAL ")) {
+            return showLogError;
+        } else if (line.contains(" WARN ")) {
+            return showLogWarn;
+        } else if (line.contains(" DEBUG ")) {
+            return showLogDebug;
+        } else if (line.contains(" TRACE ")) {
+            return showLogTrace;
+        }
+        // Lines without a recognized level are treated as INFO
+        return showLogInfo;
+    }
+
+    // ---- Tab 6: Trace ----
+
+    private void renderTrace(Frame frame, Rect area) {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null) {
+            renderNoSelection(frame, area);
+            return;
+        }
+
+        List<TraceEntry> current = traces.get();
+
+        // Layout: trace list (50%) + detail panel (50%)
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.percentage(50), Constraint.fill())
+                .split(area);
+
+        // Auto-follow: select last entry
+        if (traceFollowMode && !current.isEmpty()) {
+            traceTableState.select(current.size() - 1);
+        }
+
+        // Trace list
+        List<Row> rows = new ArrayList<>();
+        for (TraceEntry entry : current) {
+            Style statusStyle = switch (entry.status) {
+                case "Created" -> Style.create().fg(Color.CYAN);
+                case "Routing", "Processing" -> Style.create().fg(Color.YELLOW);
+                case "Sent" -> Style.create().fg(Color.GREEN);
+                default -> Style.create().fg(Color.WHITE);
+            };
+
+            String bodyPreview = entry.bodyPreview != null ? truncate(entry.bodyPreview, 40) : "";
+
+            rows.add(Row.from(
+                    Cell.from(entry.timestamp != null ? truncate(entry.timestamp, 12) : ""),
+                    Cell.from(entry.pid != null ? entry.pid : ""),
+                    Cell.from(Span.styled(
+                            entry.routeId != null ? truncate(entry.routeId, 15) : "",
+                            Style.create().fg(Color.CYAN))),
+                    Cell.from(entry.nodeId != null ? truncate(entry.nodeId, 15) : ""),
+                    Cell.from(Span.styled(entry.status != null ? entry.status : "", statusStyle)),
+                    Cell.from(entry.elapsed + "ms"),
+                    Cell.from(bodyPreview)));
+        }
+
+        Row header = Row.from(
+                Cell.from(Span.styled("TIME", Style.create().bold())),
+                Cell.from(Span.styled("PID", Style.create().bold())),
+                Cell.from(Span.styled("ROUTE", Style.create().bold())),
+                Cell.from(Span.styled("NODE", Style.create().bold())),
+                Cell.from(Span.styled("STATUS", Style.create().bold())),
+                Cell.from(Span.styled("ELAPSED", Style.create().bold())),
+                Cell.from(Span.styled("BODY", Style.create().bold())));
+
+        String traceTitle = String.format(" Traces [%d] %s ",
+                current.size(),
+                traceFollowMode ? "[FOLLOW]" : "[SCROLL]");
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(header)
+                .widths(
+                        Constraint.length(12),
+                        Constraint.length(8),
+                        Constraint.length(15),
+                        Constraint.length(15),
+                        Constraint.length(12),
+                        Constraint.length(10),
+                        Constraint.fill())
+                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(traceTitle).build())
+                .build();
+
+        frame.renderStatefulWidget(table, chunks.get(0), traceTableState);
+
+        // Detail panel
+        renderTraceDetail(frame, chunks.get(1), current);
+    }
+
+    private void renderTraceDetail(Frame frame, Rect area, List<TraceEntry> current) {
+        Integer sel = traceTableState.selected();
+
+        if (sel == null || sel < 0 || sel >= current.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled(" Select a trace entry to view details",
+                                            Style.create().dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        TraceEntry entry = current.get(sel);
+        List<Line> lines = new ArrayList<>();
+
+        // Exchange info
+        lines.add(Line.from(
+                Span.styled(" Exchange: ", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(entry.exchangeId != null ? entry.exchangeId : "")));
+        lines.add(Line.from(
+                Span.styled(" UID:      ", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(entry.uid != null ? entry.uid : "")));
+        lines.add(Line.from(
+                Span.styled(" Location: ", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(entry.location != null ? entry.location : "")));
+        lines.add(Line.from(
+                Span.styled(" Route:    ", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(entry.routeId != null ? entry.routeId : ""),
+                Span.raw("  Node: "),
+                Span.raw(entry.nodeId != null ? entry.nodeId : "")));
+        lines.add(Line.from(
+                Span.styled(" Status:   ", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(entry.status != null ? entry.status : ""),
+                Span.raw("  Elapsed: "),
+                Span.raw(entry.elapsed + "ms")));
+        lines.add(Line.from(Span.raw("")));
+
+        // Headers
+        if (showTraceHeaders && entry.headers != null && !entry.headers.isEmpty()) {
+            lines.add(Line.from(Span.styled(" Headers:", Style.create().fg(Color.GREEN).bold())));
+            for (Map.Entry<String, Object> h : entry.headers.entrySet()) {
+                lines.add(Line.from(
+                        Span.styled("   " + h.getKey(), Style.create().fg(Color.CYAN)),
+                        Span.raw(" = "),
+                        Span.raw(h.getValue() != null ? h.getValue().toString() : "null")));
+            }
+            lines.add(Line.from(Span.raw("")));
+        }
+
+        // Body
+        if (showTraceBody && entry.body != null) {
+            lines.add(Line.from(Span.styled(" Body:", Style.create().fg(Color.GREEN).bold())));
+            String[] bodyLines = entry.body.split("\n");
+            for (String bl : bodyLines) {
+                lines.add(Line.from(Span.raw("   " + bl)));
+            }
+            lines.add(Line.from(Span.raw("")));
+        }
+
+        // Exchange properties
+        if (entry.exchangeProperties != null && !entry.exchangeProperties.isEmpty()) {
+            lines.add(Line.from(Span.styled(" Exchange Properties:", Style.create().fg(Color.GREEN).bold())));
+            for (Map.Entry<String, Object> p : entry.exchangeProperties.entrySet()) {
+                lines.add(Line.from(
+                        Span.styled("   " + p.getKey(), Style.create().fg(Color.CYAN)),
+                        Span.raw(" = "),
+                        Span.raw(p.getValue() != null ? p.getValue().toString() : "null")));
+            }
+            lines.add(Line.from(Span.raw("")));
+        }
+
+        // Exchange variables
+        if (entry.exchangeVariables != null && !entry.exchangeVariables.isEmpty()) {
+            lines.add(Line.from(Span.styled(" Exchange Variables:", Style.create().fg(Color.GREEN).bold())));
+            for (Map.Entry<String, Object> v : entry.exchangeVariables.entrySet()) {
+                lines.add(Line.from(
+                        Span.styled("   " + v.getKey(), Style.create().fg(Color.CYAN)),
+                        Span.raw(" = "),
+                        Span.raw(v.getValue() != null ? v.getValue().toString() : "null")));
+            }
+        }
+
+        String title = String.format(" Detail [%s] ", entry.exchangeId != null ? truncate(entry.exchangeId, 30) : "");
+
+        Paragraph detail = Paragraph.builder()
+                .text(Text.from(lines))
+                .overflow(Overflow.CLIP)
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
+                .build();
+
+        frame.renderWidget(detail, area);
     }
 
     // ---- Shared rendering ----
@@ -843,7 +1239,8 @@ public class CamelMonitor extends CamelCommand {
                 ? (refreshInterval / 1000) + "s"
                 : refreshInterval + "ms";
         Line footer;
-        if (tabsState.selected() == TAB_OVERVIEW) {
+        int tab = tabsState.selected();
+        if (tab == TAB_OVERVIEW) {
             footer = Line.from(
                     Span.styled(" q", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" quit  "),
@@ -853,10 +1250,32 @@ public class CamelMonitor extends CamelCommand {
                     Span.raw(" navigate  "),
                     Span.styled("Enter", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" details  "),
-                    Span.styled("1-5", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" tabs  "),
                     Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
-        } else if (tabsState.selected() == TAB_LOG) {
+        } else if (tab == TAB_ROUTES) {
+            footer = Line.from(
+                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" back  "),
+                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" navigate  "),
+                    Span.styled("s", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" sort  "),
+                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" tabs  "),
+                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+        } else if (tab == TAB_HEALTH) {
+            footer = Line.from(
+                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" back  "),
+                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" navigate  "),
+                    Span.styled("d", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" toggle DOWN  "),
+                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" tabs  "),
+                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+        } else if (tab == TAB_LOG) {
             footer = Line.from(
                     Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" back  "),
@@ -864,16 +1283,31 @@ public class CamelMonitor extends CamelCommand {
                     Span.raw(" scroll  "),
                     Span.styled("PgUp/PgDn", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" page  "),
-                    Span.styled("1-5", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+                    Span.styled("t/d/i/w/e", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" levels  "),
+                    Span.styled("f", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" follow  "),
+                    Span.styled("g/G", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" top/end"));
+        } else if (tab == TAB_TRACE) {
+            footer = Line.from(
+                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" back  "),
+                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" navigate  "),
+                    Span.styled("h", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" headers" + (showTraceHeaders ? " [on]" : " [off]") + "  "),
+                    Span.styled("b", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" body" + (showTraceBody ? " [on]" : " [off]") + "  "),
+                    Span.styled("f", Style.create().fg(Color.YELLOW).bold()),
+                    Span.raw(" follow" + (traceFollowMode ? " [on]" : " [off]")));
         } else {
             footer = Line.from(
                     Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" back  "),
                     Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" navigate  "),
-                    Span.styled("1-5", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" tabs  "),
                     Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
         }
@@ -930,6 +1364,9 @@ public class CamelMonitor extends CamelCommand {
             }
 
             data.set(infos);
+
+            // Refresh trace data
+            refreshTraceData(pids);
         } catch (Exception e) {
             // ignore refresh errors
         }
@@ -969,6 +1406,147 @@ public class CamelMonitor extends CamelCommand {
             }
         }
     }
+
+    // ---- Trace Data Loading ----
+
+    private void refreshTraceData(List<Long> pids) {
+        List<TraceEntry> allTraces = new ArrayList<>(traces.get());
+
+        for (Long pid : pids) {
+            readTraceFile(Long.toString(pid), allTraces);
+        }
+
+        // Sort by timestamp
+        allTraces.sort((a, b) -> {
+            if (a.timestamp == null && b.timestamp == null) {
+                return 0;
+            }
+            if (a.timestamp == null) {
+                return -1;
+            }
+            if (b.timestamp == null) {
+                return 1;
+            }
+            return a.timestamp.compareTo(b.timestamp);
+        });
+
+        // Keep only last MAX_TRACES
+        if (allTraces.size() > MAX_TRACES) {
+            allTraces = new ArrayList<>(allTraces.subList(allTraces.size() - MAX_TRACES, allTraces.size()));
+        }
+
+        traces.set(allTraces);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void readTraceFile(String pid, List<TraceEntry> allTraces) {
+        Path traceFile = CommandLineHelper.getCamelDir().resolve(pid + "-trace.json");
+        if (!Files.exists(traceFile)) {
+            return;
+        }
+
+        long lastPos = traceFilePositions.getOrDefault(pid, 0L);
+
+        try (RandomAccessFile raf = new RandomAccessFile(traceFile.toFile(), "r")) {
+            long length = raf.length();
+            if (length <= lastPos) {
+                return; // no new data
+            }
+
+            raf.seek(lastPos);
+            // If we're resuming mid-file, skip any partial line
+            if (lastPos > 0) {
+                raf.readLine();
+            }
+
+            // Read remaining bytes
+            long startPos = raf.getFilePointer();
+            byte[] remaining = new byte[(int) (length - startPos)];
+            raf.readFully(remaining);
+            String content = new String(remaining, StandardCharsets.UTF_8);
+
+            traceFilePositions.put(pid, length);
+
+            // Each line is a separate JSON object
+            String[] lines = content.split("\n");
+            for (String line : lines) {
+                line = line.trim();
+                if (line.isEmpty()) {
+                    continue;
+                }
+                try {
+                    JsonObject json = (JsonObject) Jsoner.deserialize(line);
+                    TraceEntry entry = parseTraceEntry(json, pid);
+                    if (entry != null) {
+                        allTraces.add(entry);
+                    }
+                } catch (Exception e) {
+                    // skip malformed lines
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private TraceEntry parseTraceEntry(JsonObject json, String pid) {
+        TraceEntry entry = new TraceEntry();
+        entry.pid = pid;
+        entry.uid = json.getString("uid");
+        entry.exchangeId = json.getString("exchangeId");
+        entry.timestamp = json.getString("timestamp");
+        entry.routeId = json.getString("routeId");
+        entry.nodeId = json.getString("nodeId");
+        entry.location = json.getString("location");
+        entry.status = json.getString("status");
+
+        Object elapsedObj = json.get("elapsed");
+        if (elapsedObj instanceof Number n) {
+            entry.elapsed = n.longValue();
+        } else if (elapsedObj != null) {
+            try {
+                entry.elapsed = Long.parseLong(elapsedObj.toString());
+            } catch (NumberFormatException e) {
+                // ignore
+            }
+        }
+
+        // Parse message object
+        JsonObject message = (JsonObject) json.get("message");
+        if (message != null) {
+            // Headers
+            Object headersObj = message.get("headers");
+            if (headersObj instanceof Map) {
+                entry.headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
+            }
+
+            // Body
+            Object bodyObj = message.get("body");
+            if (bodyObj != null) {
+                entry.body = bodyObj.toString();
+                // Create a preview (first line, truncated)
+                String preview = entry.body.replace("\n", " ").replace("\r", "");
+                entry.bodyPreview = preview;
+            }
+
+            // Exchange properties
+            Object propsObj = message.get("exchangeProperties");
+            if (propsObj instanceof Map) {
+                entry.exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
+            }
+
+            // Exchange variables
+            Object varsObj = message.get("exchangeVariables");
+            if (varsObj instanceof Map) {
+                entry.exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
+            }
+        }
+
+        return entry;
+    }
+
+    // ---- Integration Parsing ----
 
     @SuppressWarnings("unchecked")
     private IntegrationInfo parseIntegration(ProcessHandle ph, JsonObject root) {
@@ -1069,6 +1647,8 @@ public class CamelMonitor extends CamelCommand {
                     hc.group = cj.getString("group");
                     hc.name = cj.getString("id");
                     hc.state = cj.getString("state");
+                    hc.readiness = cj.getBooleanOrDefault("readiness", false);
+                    hc.liveness = cj.getBooleanOrDefault("liveness", false);
                     // Extract message from details if available
                     JsonObject details = (JsonObject) cj.get("details");
                     if (details != null && details.containsKey("failure.error.message")) {
@@ -1221,6 +1801,8 @@ public class CamelMonitor extends CamelCommand {
         String group;
         String name;
         String state;
+        boolean readiness;
+        boolean liveness;
         String message;
     }
 
@@ -1229,6 +1811,23 @@ public class CamelMonitor extends CamelCommand {
         String component;
         String direction;
         String routeId;
+    }
+
+    static class TraceEntry {
+        String pid;
+        String uid;
+        String exchangeId;
+        String timestamp;
+        String routeId;
+        String nodeId;
+        String location;
+        String status;
+        long elapsed;
+        String body;
+        String bodyPreview;
+        Map<String, Object> headers;
+        Map<String, Object> exchangeProperties;
+        Map<String, Object> exchangeVariables;
     }
 
     record VanishingInfo(IntegrationInfo info, long startTime) {

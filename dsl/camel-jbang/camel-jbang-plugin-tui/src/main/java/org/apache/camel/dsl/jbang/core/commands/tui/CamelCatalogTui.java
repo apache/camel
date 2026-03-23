@@ -57,7 +57,7 @@ import picocli.CommandLine.Command;
 public class CamelCatalogTui extends CamelCommand {
 
     private static final int FOCUS_LIST = 0;
-    private static final int FOCUS_DETAILS = 1;
+    private static final int FOCUS_OPTIONS = 1;
 
     // Catalog data
     private List<ComponentInfo> allComponents = Collections.emptyList();
@@ -67,12 +67,16 @@ public class CamelCatalogTui extends CamelCommand {
     private final TableState listTableState = new TableState();
     private final TableState optionsTableState = new TableState();
     private int focus = FOCUS_LIST;
-    private boolean searching;
-    private final StringBuilder searchText = new StringBuilder();
-    private int detailScroll;
+    private final StringBuilder componentFilter = new StringBuilder();
+    private final StringBuilder optionFilter = new StringBuilder();
+    private boolean componentFullText;
+    private boolean optionFullText;
+    private int descriptionScroll;
 
-    // Selected component details
-    private ComponentDetail selectedDetail;
+    // All options for selected component (unfiltered)
+    private List<OptionInfo> allOptionsUnfiltered = Collections.emptyList();
+    // Filtered options displayed in table
+    private List<OptionInfo> filteredOptions = Collections.emptyList();
 
     public CamelCatalogTui(CamelJBangMain main) {
         super(main);
@@ -96,7 +100,7 @@ public class CamelCatalogTui extends CamelCommand {
     @SuppressWarnings("unchecked")
     private void loadCatalog() {
         CamelCatalog catalog = new DefaultCamelCatalog();
-        List<String> names = catalog.findComponentNames();
+        List<String> names = new ArrayList<>(catalog.findComponentNames());
         Collections.sort(names);
 
         allComponents = new ArrayList<>();
@@ -124,24 +128,8 @@ public class CamelCatalogTui extends CamelCommand {
                 info.syntax = component.getStringOrDefault("syntax", "");
                 info.deprecated = component.getBooleanOrDefault("deprecated", false);
 
-                // Parse component properties
+                // Parse properties — separate by kind
                 JsonObject properties = (JsonObject) root.get("properties");
-                if (properties != null) {
-                    for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                        JsonObject prop = (JsonObject) entry.getValue();
-                        OptionInfo opt = parseOption(entry.getKey(), prop);
-                        opt.kind = "property";
-                        info.componentOptions.add(opt);
-                    }
-                }
-
-                // Parse endpoint properties (headers in newer catalogs, but "properties" is the standard)
-                // The endpoint options are typically under "properties" for the endpoint
-                // In the catalog JSON, component-level options have "kind":"property"
-                // and endpoint options have "kind":"path" or "kind":"parameter"
-                // So we re-scan and separate them
-                info.componentOptions.clear();
-                info.endpointOptions.clear();
                 if (properties != null) {
                     for (Map.Entry<String, Object> entry : properties.entrySet()) {
                         JsonObject prop = (JsonObject) entry.getValue();
@@ -162,10 +150,10 @@ public class CamelCatalogTui extends CamelCommand {
             }
         }
 
-        applyFilter();
+        applyComponentFilter();
         if (!filteredComponents.isEmpty()) {
             listTableState.select(0);
-            updateSelectedDetail();
+            updateSelectedComponent();
         }
     }
 
@@ -189,136 +177,202 @@ public class CamelCatalogTui extends CamelCommand {
         return opt;
     }
 
-    private void applyFilter() {
-        String filter = searchText.toString().toLowerCase();
+    private void applyComponentFilter() {
+        String filter = componentFilter.toString().toLowerCase();
         if (filter.isEmpty()) {
             filteredComponents = new ArrayList<>(allComponents);
         } else {
             filteredComponents = new ArrayList<>();
             for (ComponentInfo c : allComponents) {
-                if (c.name.toLowerCase().contains(filter)
-                        || c.title.toLowerCase().contains(filter)
-                        || c.description.toLowerCase().contains(filter)
-                        || c.label.toLowerCase().contains(filter)) {
-                    filteredComponents.add(c);
+                if (componentFullText) {
+                    if (c.name.toLowerCase().contains(filter)
+                            || c.title.toLowerCase().contains(filter)
+                            || c.description.toLowerCase().contains(filter)
+                            || c.label.toLowerCase().contains(filter)) {
+                        filteredComponents.add(c);
+                    }
+                } else {
+                    if (c.name.toLowerCase().contains(filter)) {
+                        filteredComponents.add(c);
+                    }
                 }
             }
         }
-        // Reset selection
         if (!filteredComponents.isEmpty()) {
             listTableState.select(0);
         } else {
             listTableState.clearSelection();
         }
-        updateSelectedDetail();
+        updateSelectedComponent();
     }
 
-    private void updateSelectedDetail() {
+    private void applyOptionFilter() {
+        String filter = optionFilter.toString().toLowerCase();
+        if (filter.isEmpty()) {
+            filteredOptions = new ArrayList<>(allOptionsUnfiltered);
+        } else {
+            filteredOptions = new ArrayList<>();
+            for (OptionInfo o : allOptionsUnfiltered) {
+                if (optionFullText) {
+                    if (o.name.toLowerCase().contains(filter)
+                            || o.description.toLowerCase().contains(filter)
+                            || o.group.toLowerCase().contains(filter)) {
+                        filteredOptions.add(o);
+                    }
+                } else {
+                    if (o.name.toLowerCase().contains(filter)) {
+                        filteredOptions.add(o);
+                    }
+                }
+            }
+        }
+        if (!filteredOptions.isEmpty()) {
+            optionsTableState.select(0);
+        } else {
+            optionsTableState.clearSelection();
+        }
+        descriptionScroll = 0;
+    }
+
+    private void updateSelectedComponent() {
         Integer sel = listTableState.selected();
         if (sel != null && sel >= 0 && sel < filteredComponents.size()) {
             ComponentInfo info = filteredComponents.get(sel);
-            selectedDetail = new ComponentDetail(info);
-            detailScroll = 0;
+            allOptionsUnfiltered = new ArrayList<>();
+            allOptionsUnfiltered.addAll(info.endpointOptions);
+            allOptionsUnfiltered.addAll(info.componentOptions);
         } else {
-            selectedDetail = null;
+            allOptionsUnfiltered = Collections.emptyList();
         }
+        optionFilter.setLength(0);
+        optionFullText = false;
+        applyOptionFilter();
+        descriptionScroll = 0;
     }
 
     // ---- Event Handling ----
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
-            // Search mode handling
-            if (searching) {
-                if (ke.isKey(KeyCode.ESCAPE)) {
-                    if (searchText.isEmpty()) {
-                        searching = false;
-                    } else {
-                        searchText.setLength(0);
-                        applyFilter();
-                    }
-                    return true;
-                }
-                if (ke.isKey(KeyCode.ENTER)) {
-                    searching = false;
-                    return true;
-                }
-                if (ke.isKey(KeyCode.BACKSPACE)) {
-                    if (!searchText.isEmpty()) {
-                        searchText.deleteCharAt(searchText.length() - 1);
-                        applyFilter();
-                    }
-                    return true;
-                }
-                if (ke.isUp()) {
-                    listTableState.selectPrevious();
-                    updateSelectedDetail();
-                    return true;
-                }
-                if (ke.isDown()) {
-                    listTableState.selectNext(filteredComponents.size());
-                    updateSelectedDetail();
-                    return true;
-                }
-                // Typed character
-                if (ke.code() == KeyCode.CHAR) {
-                    searchText.append(ke.character());
-                    applyFilter();
-                    return true;
-                }
-                return true;
-            }
-
-            // Normal mode
-            if (ke.isQuit() || ke.isCharIgnoreCase('q') || ke.isKey(KeyCode.ESCAPE)) {
+            // Quit
+            if (ke.isQuit()) {
                 runner.quit();
                 return true;
             }
 
-            if (ke.isChar('/')) {
-                searching = true;
+            // Escape: clear filter first, then go back, then quit
+            if (ke.isKey(KeyCode.ESCAPE)) {
+                if (focus == FOCUS_OPTIONS && (!optionFilter.isEmpty() || optionFullText)) {
+                    optionFilter.setLength(0);
+                    optionFullText = false;
+                    applyOptionFilter();
+                    return true;
+                }
+                if (focus == FOCUS_OPTIONS) {
+                    focus = FOCUS_LIST;
+                    descriptionScroll = 0;
+                    return true;
+                }
+                if (!componentFilter.isEmpty() || componentFullText) {
+                    componentFilter.setLength(0);
+                    componentFullText = false;
+                    applyComponentFilter();
+                    return true;
+                }
+                runner.quit();
                 return true;
             }
 
+            // Backspace: delete from active filter
+            if (ke.isKey(KeyCode.BACKSPACE)) {
+                if (focus == FOCUS_LIST && !componentFilter.isEmpty()) {
+                    componentFilter.deleteCharAt(componentFilter.length() - 1);
+                    applyComponentFilter();
+                } else if (focus == FOCUS_OPTIONS && !optionFilter.isEmpty()) {
+                    optionFilter.deleteCharAt(optionFilter.length() - 1);
+                    applyOptionFilter();
+                }
+                return true;
+            }
+
+            // Panel switching — only when no active filter on current panel
             if (ke.isKey(KeyCode.TAB)) {
-                focus = (focus == FOCUS_LIST) ? FOCUS_DETAILS : FOCUS_LIST;
+                if (focus == FOCUS_LIST) {
+                    focus = FOCUS_OPTIONS;
+                } else {
+                    focus = FOCUS_LIST;
+                }
+                descriptionScroll = 0;
+                return true;
+            }
+            if (ke.isKey(KeyCode.RIGHT) && focus == FOCUS_LIST) {
+                focus = FOCUS_OPTIONS;
+                descriptionScroll = 0;
+                return true;
+            }
+            if (ke.isKey(KeyCode.LEFT) && focus == FOCUS_OPTIONS) {
+                focus = FOCUS_LIST;
+                descriptionScroll = 0;
                 return true;
             }
 
+            // Enter drills into options
+            if (ke.isKey(KeyCode.ENTER) && focus == FOCUS_LIST) {
+                focus = FOCUS_OPTIONS;
+                descriptionScroll = 0;
+                return true;
+            }
+
+            // Navigation
             if (ke.isUp()) {
                 if (focus == FOCUS_LIST) {
                     listTableState.selectPrevious();
-                    updateSelectedDetail();
+                    updateSelectedComponent();
                 } else {
-                    detailScroll = Math.max(0, detailScroll - 1);
+                    optionsTableState.selectPrevious();
+                    descriptionScroll = 0;
                 }
                 return true;
             }
             if (ke.isDown()) {
                 if (focus == FOCUS_LIST) {
                     listTableState.selectNext(filteredComponents.size());
-                    updateSelectedDetail();
+                    updateSelectedComponent();
                 } else {
-                    detailScroll++;
+                    optionsTableState.selectNext(filteredOptions.size());
+                    descriptionScroll = 0;
                 }
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_UP)) {
-                if (focus == FOCUS_DETAILS) {
-                    detailScroll = Math.max(0, detailScroll - 20);
-                }
+                descriptionScroll = Math.max(0, descriptionScroll - 5);
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (focus == FOCUS_DETAILS) {
-                    detailScroll += 20;
+                descriptionScroll += 5;
+                return true;
+            }
+
+            // '/' toggles full-text search mode
+            if (ke.isChar('/')) {
+                if (focus == FOCUS_LIST) {
+                    componentFullText = !componentFullText;
+                    applyComponentFilter();
+                } else {
+                    optionFullText = !optionFullText;
+                    applyOptionFilter();
                 }
                 return true;
             }
-            if (ke.isKey(KeyCode.ENTER)) {
+
+            // Typing filters the active panel
+            if (ke.code() == KeyCode.CHAR) {
                 if (focus == FOCUS_LIST) {
-                    updateSelectedDetail();
-                    focus = FOCUS_DETAILS;
+                    componentFilter.append(ke.character());
+                    applyComponentFilter();
+                } else {
+                    optionFilter.append(ke.character());
+                    applyOptionFilter();
                 }
                 return true;
             }
@@ -331,35 +385,29 @@ public class CamelCatalogTui extends CamelCommand {
     private void render(Frame frame) {
         Rect area = frame.area();
 
-        // Layout: header (3 rows) + content (fill) + footer (1 row)
+        // Layout: header (3) + top panels (fill) + separator (1) + description (40%) + footer (1)
         List<Rect> mainChunks = Layout.vertical()
                 .constraints(
                         Constraint.length(3),
+                        Constraint.percentage(50),
+                        Constraint.length(1),
                         Constraint.fill(),
                         Constraint.length(1))
                 .split(area);
 
         renderHeader(frame, mainChunks.get(0));
-        renderContent(frame, mainChunks.get(1));
-        renderFooter(frame, mainChunks.get(2));
+        renderTopPanels(frame, mainChunks.get(1));
+        renderSeparator(frame, mainChunks.get(2));
+        renderDescription(frame, mainChunks.get(3));
+        renderFooter(frame, mainChunks.get(4));
     }
 
     private void renderHeader(Frame frame, Rect area) {
-        String searchStatus;
-        if (searching) {
-            searchStatus = "  Search: " + searchText + "_";
-        } else if (!searchText.isEmpty()) {
-            searchStatus = "  Filter: \"" + searchText + "\"";
-        } else {
-            searchStatus = "";
-        }
-
         Line titleLine = Line.from(
                 Span.styled(" Camel Catalog", Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)).bold()),
                 Span.raw("  "),
                 Span.styled(filteredComponents.size() + "/" + allComponents.size() + " components",
-                        Style.create().fg(Color.CYAN)),
-                Span.styled(searchStatus, Style.create().fg(Color.YELLOW)));
+                        Style.create().fg(Color.CYAN)));
 
         Block headerBlock = Block.builder()
                 .borderType(BorderType.ROUNDED)
@@ -371,16 +419,14 @@ public class CamelCatalogTui extends CamelCommand {
                 area);
     }
 
-    private void renderContent(Frame frame, Rect area) {
-        // Split horizontally: left panel (30%) + right panel (70%)
+    private void renderTopPanels(Frame frame, Rect area) {
+        // Split horizontally: component list (30%) + options table (70%)
         List<Rect> chunks = Layout.horizontal()
-                .constraints(
-                        Constraint.percentage(30),
-                        Constraint.percentage(70))
+                .constraints(Constraint.percentage(30), Constraint.percentage(70))
                 .split(area);
 
         renderComponentList(frame, chunks.get(0));
-        renderComponentDetails(frame, chunks.get(1));
+        renderOptionsTable(frame, chunks.get(1));
     }
 
     private void renderComponentList(Frame frame, Rect area) {
@@ -404,6 +450,11 @@ public class CamelCatalogTui extends CamelCommand {
                 ? Style.create().fg(Color.rgb(0xF6, 0x91, 0x23))
                 : Style.create();
 
+        String modePrefix = componentFullText ? "/" : "";
+        String listTitle = componentFilter.isEmpty() && !componentFullText
+                ? " Components "
+                : " Components [" + modePrefix + componentFilter + "] ";
+
         Table table = Table.builder()
                 .rows(rows)
                 .widths(Constraint.fill())
@@ -411,154 +462,42 @@ public class CamelCatalogTui extends CamelCommand {
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .borderStyle(borderStyle)
-                        .title(" Components ")
+                        .title(listTitle)
                         .build())
                 .build();
 
         frame.renderStatefulWidget(table, area, listTableState);
     }
 
-    private void renderComponentDetails(Frame frame, Rect area) {
-        Style borderStyle = focus == FOCUS_DETAILS
+    private void renderOptionsTable(Frame frame, Rect area) {
+        Style borderStyle = focus == FOCUS_OPTIONS
                 ? Style.create().fg(Color.rgb(0xF6, 0x91, 0x23))
                 : Style.create();
 
-        if (selectedDetail == null) {
+        String optModePrefix = optionFullText ? "/" : "";
+        String optTitle = optionFilter.isEmpty() && !optionFullText
+                ? " Options "
+                : " Options [" + optModePrefix + optionFilter + "] ";
+
+        if (filteredOptions.isEmpty()) {
+            String emptyMsg = allOptionsUnfiltered.isEmpty() ? " Select a component" : " No matching options";
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
-                                    Span.styled(" Select a component from the list",
-                                            Style.create().dim()))))
+                                    Span.styled(emptyMsg, Style.create().dim()))))
                             .block(Block.builder()
                                     .borderType(BorderType.ROUNDED)
                                     .borderStyle(borderStyle)
-                                    .title(" Details ")
+                                    .title(optTitle)
                                     .build())
                             .build(),
                     area);
             return;
         }
 
-        ComponentInfo comp = selectedDetail.info;
-
-        // Split: info area (top) + options table (bottom)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(
-                        Constraint.length(9),
-                        Constraint.fill())
-                .split(area);
-
-        // Component info panel
-        List<Line> infoLines = new ArrayList<>();
-        infoLines.add(Line.from(
-                Span.styled(" Title: ", Style.create().bold()),
-                Span.styled(comp.title, Style.create().fg(Color.CYAN))));
-        infoLines.add(Line.from(
-                Span.styled(" Scheme: ", Style.create().bold()),
-                Span.raw(comp.scheme)));
-        infoLines.add(Line.from(
-                Span.styled(" Syntax: ", Style.create().bold()),
-                Span.raw(comp.syntax)));
-        infoLines.add(Line.from(
-                Span.styled(" Label: ", Style.create().bold()),
-                Span.styled(comp.label, Style.create().fg(Color.GREEN))));
-        infoLines.add(Line.from(
-                Span.styled(" Maven: ", Style.create().bold()),
-                Span.raw(comp.groupId + ":" + comp.artifactId + ":" + comp.version)));
-        if (comp.deprecated) {
-            infoLines.add(Line.from(
-                    Span.styled(" Status: ", Style.create().bold()),
-                    Span.styled("DEPRECATED", Style.create().fg(Color.RED).bold())));
-        }
-        infoLines.add(Line.from(Span.raw("")));
-        // Word-wrap description into the available width
-        int descWidth = Math.max(10, chunks.get(0).width() - 4);
-        String desc = comp.description;
-        if (desc.length() > descWidth) {
-            infoLines.add(Line.from(
-                    Span.styled(" " + desc.substring(0, descWidth), Style.create().dim())));
-            if (desc.length() > descWidth * 2) {
-                infoLines.add(Line.from(
-                        Span.styled(" " + desc.substring(descWidth, descWidth * 2) + "...", Style.create().dim())));
-            } else {
-                infoLines.add(Line.from(
-                        Span.styled(" " + desc.substring(descWidth), Style.create().dim())));
-            }
-        } else {
-            infoLines.add(Line.from(Span.styled(" " + desc, Style.create().dim())));
-        }
-
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(infoLines))
-                        .overflow(Overflow.CLIP)
-                        .block(Block.builder()
-                                .borderType(BorderType.ROUNDED)
-                                .borderStyle(borderStyle)
-                                .title(" " + comp.title + " ")
-                                .build())
-                        .build(),
-                chunks.get(0));
-
-        // Options table
-        renderOptionsTable(frame, chunks.get(1), borderStyle);
-    }
-
-    private void renderOptionsTable(Frame frame, Rect area, Style borderStyle) {
-        if (selectedDetail == null) {
-            return;
-        }
-
-        ComponentInfo comp = selectedDetail.info;
-
-        // Combine all options with section headers
         List<Row> rows = new ArrayList<>();
-
-        if (!comp.endpointOptions.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("--- Endpoint Options ---", Style.create().fg(Color.YELLOW).bold())),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from("")));
-            for (OptionInfo opt : comp.endpointOptions) {
-                rows.add(optionToRow(opt));
-            }
-        }
-
-        if (!comp.componentOptions.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("--- Component Options ---", Style.create().fg(Color.YELLOW).bold())),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from("")));
-            for (OptionInfo opt : comp.componentOptions) {
-                rows.add(optionToRow(opt));
-            }
-        }
-
-        if (rows.isEmpty()) {
-            rows.add(Row.from(
-                    Cell.from(Span.styled("No options", Style.create().dim())),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from(""),
-                    Cell.from("")));
-        }
-
-        // Apply scrolling
-        int innerHeight = Math.max(1, area.height() - 3); // border + header
-        int maxScroll = Math.max(0, rows.size() - innerHeight);
-        if (detailScroll > maxScroll) {
-            detailScroll = maxScroll;
-        }
-        List<Row> visibleRows;
-        if (detailScroll > 0 && detailScroll < rows.size()) {
-            int end = Math.min(detailScroll + innerHeight, rows.size());
-            visibleRows = rows.subList(detailScroll, end);
-        } else {
-            visibleRows = rows;
+        for (OptionInfo opt : filteredOptions) {
+            rows.add(optionToRow(opt));
         }
 
         Row header = Row.from(
@@ -566,15 +505,10 @@ public class CamelCatalogTui extends CamelCommand {
                 Cell.from(Span.styled("TYPE", Style.create().bold())),
                 Cell.from(Span.styled("REQ", Style.create().bold())),
                 Cell.from(Span.styled("DEFAULT", Style.create().bold())),
-                Cell.from(Span.styled("DESCRIPTION", Style.create().bold())));
-
-        String scrollInfo = rows.size() > innerHeight
-                ? " [" + (detailScroll + 1) + "-" + Math.min(detailScroll + innerHeight, rows.size())
-                  + "/" + rows.size() + "] "
-                : " ";
+                Cell.from(Span.styled("KIND", Style.create().bold())));
 
         Table table = Table.builder()
-                .rows(visibleRows)
+                .rows(rows)
                 .header(header)
                 .widths(
                         Constraint.length(25),
@@ -582,25 +516,118 @@ public class CamelCatalogTui extends CamelCommand {
                         Constraint.length(4),
                         Constraint.length(12),
                         Constraint.fill())
+                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .borderStyle(borderStyle)
-                        .title(" Options" + scrollInfo)
+                        .title(optTitle)
                         .build())
                 .build();
 
         frame.renderStatefulWidget(table, area, optionsTableState);
     }
 
+    private void renderSeparator(Frame frame, Rect area) {
+        String line = "\u2500".repeat(Math.max(0, area.width()));
+        frame.renderWidget(
+                Paragraph.from(Line.from(Span.styled(line, Style.create().fg(Color.DARK_GRAY)))),
+                area);
+    }
+
+    private void renderDescription(Frame frame, Rect area) {
+        List<Line> lines = new ArrayList<>();
+        String title;
+        int wrapWidth = Math.max(20, area.width() - 4);
+
+        if (focus == FOCUS_OPTIONS) {
+            // Show selected option detail
+            Integer sel = optionsTableState.selected();
+            if (sel != null && sel >= 0 && sel < filteredOptions.size()) {
+                OptionInfo opt = filteredOptions.get(sel);
+                title = " " + opt.name + " ";
+
+                List<String[]> fields = new ArrayList<>();
+                fields.add(new String[] { "Name", opt.name });
+                if (opt.kind != null && !opt.kind.isEmpty()) {
+                    fields.add(new String[] { "Kind", opt.kind });
+                }
+                fields.add(new String[] { "Type", opt.type });
+                fields.add(new String[] { "Required", opt.required ? "Yes" : "No" });
+                if (!opt.defaultValue.isEmpty()) {
+                    fields.add(new String[] { "Default", opt.defaultValue });
+                }
+                if (opt.group != null && !opt.group.isEmpty()) {
+                    fields.add(new String[] { "Group", opt.group });
+                }
+                if (opt.enumValues != null && !opt.enumValues.isEmpty()) {
+                    fields.add(new String[] { "Values", opt.enumValues });
+                }
+                flowFields(lines, fields, wrapWidth, opt);
+
+                lines.add(Line.from(Span.raw("")));
+                wrapText(lines, opt.description, wrapWidth, Style.create());
+            } else {
+                title = " Description ";
+            }
+        } else {
+            // Show selected component detail
+            Integer sel = listTableState.selected();
+            if (sel != null && sel >= 0 && sel < filteredComponents.size()) {
+                ComponentInfo comp = filteredComponents.get(sel);
+                title = " " + comp.title + " ";
+
+                List<String[]> fields = new ArrayList<>();
+                fields.add(new String[] { "Scheme", comp.scheme });
+                fields.add(new String[] { "Syntax", comp.syntax });
+                fields.add(new String[] { "Label", comp.label });
+                fields.add(new String[] { "Maven", comp.groupId + ":" + comp.artifactId + ":" + comp.version });
+                fields.add(new String[] {
+                        "Options",
+                        comp.endpointOptions.size() + " endpoint, " + comp.componentOptions.size() + " component" });
+                if (comp.deprecated) {
+                    fields.add(new String[] { "Status", "DEPRECATED" });
+                }
+                flowFields(lines, fields, wrapWidth, null);
+
+                lines.add(Line.from(Span.raw("")));
+                wrapText(lines, comp.description, wrapWidth, Style.create());
+            } else {
+                title = " Description ";
+            }
+        }
+
+        // Apply scroll
+        int innerHeight = Math.max(1, area.height() - 2);
+        int maxScroll = Math.max(0, lines.size() - innerHeight);
+        if (descriptionScroll > maxScroll) {
+            descriptionScroll = maxScroll;
+        }
+        List<Line> visible;
+        if (descriptionScroll > 0) {
+            int end = Math.min(descriptionScroll + innerHeight, lines.size());
+            visible = lines.subList(descriptionScroll, end);
+        } else if (lines.size() > innerHeight) {
+            visible = lines.subList(0, innerHeight);
+        } else {
+            visible = lines;
+        }
+
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(visible))
+                        .overflow(Overflow.CLIP)
+                        .block(Block.builder()
+                                .borderType(BorderType.ROUNDED)
+                                .title(title)
+                                .build())
+                        .build(),
+                area);
+    }
+
     private Row optionToRow(OptionInfo opt) {
         Style nameStyle = opt.required
                 ? Style.create().fg(Color.CYAN).bold()
                 : Style.create().fg(Color.CYAN);
-
-        String desc = opt.description;
-        if (!opt.enumValues.isEmpty()) {
-            desc = desc + " [" + opt.enumValues + "]";
-        }
 
         return Row.from(
                 Cell.from(Span.styled(opt.name, nameStyle)),
@@ -609,41 +636,96 @@ public class CamelCatalogTui extends CamelCommand {
                         ? Span.styled("*", Style.create().fg(Color.RED).bold())
                         : Span.raw("")),
                 Cell.from(Span.styled(opt.defaultValue, Style.create().dim())),
-                Cell.from(truncate(desc, 80)));
+                Cell.from(Span.styled(opt.kind != null ? opt.kind : "", Style.create().dim())));
     }
 
     private void renderFooter(Frame frame, Rect area) {
-        Line footer;
-        if (searching) {
-            footer = Line.from(
-                    Span.styled(" Type", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" to filter  "),
-                    Span.styled("Enter", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" confirm  "),
-                    Span.styled("Esc", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" clear/cancel  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate"));
-        } else {
-            footer = Line.from(
-                    Span.styled(" q", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" quit  "),
-                    Span.styled("/", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" search  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("Tab", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" switch panel  "),
-                    Span.styled("Enter", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" select  "),
-                    Span.styled("PgUp/PgDn", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" scroll details"));
-        }
+        Line footer = Line.from(
+                Span.styled(" Type", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(" name filter  "),
+                Span.styled("/", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(" full-text  "),
+                Span.styled("Esc", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(" clear/back/quit  "),
+                Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(" navigate  "),
+                Span.styled("\u2190\u2192", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw("/"),
+                Span.styled("Tab", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(" panels  "),
+                Span.styled("PgUp/Dn", Style.create().fg(Color.YELLOW).bold()),
+                Span.raw(" scroll"));
 
         frame.renderWidget(Paragraph.from(footer), area);
     }
 
     // ---- Helpers ----
+
+    private static void flowFields(List<Line> lines, List<String[]> fields, int maxWidth, OptionInfo opt) {
+        List<Span> currentSpans = new ArrayList<>();
+        int currentLen = 1; // leading space
+        String gap = "    ";
+
+        for (String[] field : fields) {
+            String label = field[0] + ": ";
+            String value = field[1];
+            int fieldLen = label.length() + value.length();
+
+            // If adding this field would exceed width, flush current line
+            if (!currentSpans.isEmpty() && currentLen + gap.length() + fieldLen > maxWidth) {
+                lines.add(Line.from(currentSpans));
+                currentSpans = new ArrayList<>();
+                currentLen = 1;
+            }
+
+            if (!currentSpans.isEmpty()) {
+                currentSpans.add(Span.raw(gap));
+                currentLen += gap.length();
+            } else {
+                currentSpans.add(Span.raw(" "));
+            }
+
+            currentSpans.add(Span.styled(label, Style.create().fg(Color.YELLOW).bold()));
+
+            // Apply special styling for certain values
+            Style valueStyle;
+            if ("DEPRECATED".equals(value)) {
+                valueStyle = Style.create().fg(Color.RED).bold();
+            } else if (opt != null && "Required".equals(field[0]) && opt.required) {
+                valueStyle = Style.create().fg(Color.RED).bold();
+            } else if (opt != null && "Name".equals(field[0])) {
+                valueStyle = Style.create().fg(Color.CYAN).bold();
+            } else if ("Label".equals(field[0]) || "Values".equals(field[0])) {
+                valueStyle = Style.create().fg(Color.CYAN);
+            } else {
+                valueStyle = Style.create();
+            }
+            currentSpans.add(Span.styled(value, valueStyle));
+            currentLen += fieldLen;
+        }
+
+        if (!currentSpans.isEmpty()) {
+            lines.add(Line.from(currentSpans));
+        }
+    }
+
+    private static void wrapText(List<Line> lines, String text, int width, Style style) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        int pos = 0;
+        while (pos < text.length()) {
+            int end = Math.min(pos + width, text.length());
+            if (end < text.length() && end > pos) {
+                int lastSpace = text.lastIndexOf(' ', end);
+                if (lastSpace > pos) {
+                    end = lastSpace + 1;
+                }
+            }
+            lines.add(Line.from(Span.styled(" " + text.substring(pos, end).trim(), style)));
+            pos = end;
+        }
+    }
 
     private static String truncate(String s, int max) {
         return TuiHelper.truncate(s, max);
@@ -675,13 +757,5 @@ public class CamelCatalogTui extends CamelCommand {
         String description;
         String group;
         String enumValues;
-    }
-
-    static class ComponentDetail {
-        final ComponentInfo info;
-
-        ComponentDetail(ComponentInfo info) {
-            this.info = info;
-        }
     }
 }
