@@ -78,7 +78,7 @@ public class TransformDataWeave extends CamelCommand {
 
         printer().println(result);
         printSummary(converter, 1);
-        return converter.getTodoCount() > 0 ? 1 : 0;
+        return 0;
     }
 
     private int convertFiles() throws IOException {
@@ -130,7 +130,7 @@ public class TransformDataWeave extends CamelCommand {
         }
 
         printSummary(totalConverted, totalTodos, dwlFiles.size());
-        return totalTodos > 0 ? 1 : 0;
+        return 0;
     }
 
     private Path resolveOutputPath(Path dwlFile, Path outputPath) {

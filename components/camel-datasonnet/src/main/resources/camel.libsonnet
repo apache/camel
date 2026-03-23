@@ -32,6 +32,7 @@
   // Collection helpers
   sum(arr):: std.foldl(function(acc, x) acc + x, arr, 0),
   sumBy(arr, f):: std.foldl(function(acc, x) acc + f(x), arr, 0),
+  avg(arr):: if std.length(arr) == 0 then null else std.foldl(function(acc, x) acc + x, arr, 0) / std.length(arr),
   first(arr):: if std.length(arr) > 0 then arr[0] else null,
   last(arr):: if std.length(arr) > 0 then arr[std.length(arr) - 1] else null,
   count(arr):: std.length(arr),
@@ -39,6 +40,13 @@
     function(acc, x) if std.member(acc, x) then acc else acc + [x],
     arr, []
   ),
+  distinctBy(arr, f):: std.foldl(
+    function(acc, x)
+      local k = f(x);
+      if std.member(acc.keys, k) then acc
+      else { keys: acc.keys + [k], items: acc.items + [x] },
+    arr, { keys: [], items: [] }
+  ).items,
   flatMap(arr, f):: std.flatMap(f, arr),
   sortBy(arr, f):: std.sort(arr, keyF=f),
   groupBy(arr, f):: std.foldl(

@@ -122,7 +122,7 @@ class DataWeaveConverterTest {
     @Test
     void testAsNumber() {
         String result = converter.convertExpression("payload.count as Number");
-        assertEquals("cml.toInteger(body.count)", result);
+        assertEquals("cml.toDecimal(body.count)", result);
     }
 
     @Test
@@ -312,7 +312,7 @@ class DataWeaveConverterTest {
 
         assertTrue(result.contains("std.map(function(item)"));
         assertTrue(result.contains("item.product_sku"));
-        assertTrue(result.contains("cml.toInteger(item.qty)"));
+        assertTrue(result.contains("cml.toDecimal(item.qty)"));
         assertTrue(result.contains("std.foldl(function(acc, item)"));
     }
 
@@ -333,8 +333,8 @@ class DataWeaveConverterTest {
         String dw = loadResource("dataweave/type-coercion.dwl");
         String result = converter.convert(dw);
 
-        assertTrue(result.contains("cml.toInteger(body.count)"));
-        assertTrue(result.contains("cml.toInteger(body.total)"));
+        assertTrue(result.contains("cml.toDecimal(body.count)"));
+        assertTrue(result.contains("cml.toDecimal(body.total)"));
         assertTrue(result.contains("cml.toBoolean(body.active)"));
         assertTrue(result.contains("std.toString(body.id)"));
         assertTrue(result.contains("cml.formatDate(body.timestamp, \"yyyy-MM-dd\")"));
@@ -418,6 +418,52 @@ class DataWeaveConverterTest {
     void testSqrt() {
         String result = converter.convertExpression("sqrt(payload.value)");
         assertEquals("cml.sqrt(body.value)", result);
+    }
+
+    @Test
+    void testAvg() {
+        String result = converter.convertExpression("avg(payload.scores)");
+        assertEquals("c.avg(body.scores)", result);
+        assertTrue(converter.needsCamelLib());
+    }
+
+    // ── mapWithIndex parameter order ──
+
+    @Test
+    void testMapWithIndex() {
+        String result = converter.convertExpression(
+                "payload.items map ((item, idx) -> { index: idx, name: item.name })");
+        // DataSonnet std.mapWithIndex uses function(index, item), so params must be swapped
+        assertTrue(result.contains("std.mapWithIndex(function(idx, item)"));
+    }
+
+    // ── distinctBy ──
+
+    @Test
+    void testDistinctBy() {
+        String result = converter.convertExpression(
+                "payload.items distinctBy ((item) -> item.id)");
+        assertTrue(result.contains("c.distinctBy("));
+        assertTrue(result.contains("function(item) item.id"));
+        assertTrue(converter.needsCamelLib());
+    }
+
+    // ── Lambda shorthand ──
+
+    @Test
+    void testLambdaShorthand() {
+        String result = converter.convertExpression("payload.items map $.name");
+        assertTrue(result.contains("function(x) x.name"));
+    }
+
+    // ── match expression ──
+
+    @Test
+    void testMatchExpressionUnsupported() {
+        String result = converter.convertExpression(
+                "payload.status match { case \"active\" -> true, case \"inactive\" -> false }");
+        assertTrue(result.contains("TODO"));
+        assertTrue(converter.getTodoCount() > 0);
     }
 
     // ── Multi-value selector ──

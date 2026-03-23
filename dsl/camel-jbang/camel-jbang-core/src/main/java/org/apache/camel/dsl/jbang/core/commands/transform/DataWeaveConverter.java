@@ -201,8 +201,6 @@ public class DataWeaveConverter {
             return emitVarDecl(vd);
         } else if (node instanceof FunDecl fd) {
             return emitFunDecl(fd);
-        } else if (node instanceof MatchExpr me) {
-            return emitMatch(me);
         } else if (node instanceof TypeCheck tc) {
             return emitTypeCheck(tc);
         } else if (node instanceof Unsupported u) {
@@ -349,7 +347,7 @@ public class DataWeaveConverter {
         }
         String expr = emitNode(tc.expr());
         return switch (tc.type()) {
-            case "Number" -> "cml.toInteger(" + expr + ")";
+            case "Number" -> "cml.toDecimal(" + expr + ")";
             case "String" -> "std.toString(" + expr + ")";
             case "Boolean" -> "cml.toBoolean(" + expr + ")";
             default -> {
@@ -395,6 +393,10 @@ public class DataWeaveConverter {
                 yield "c.round(" + argStr + ")";
             }
             case "sqrt" -> "cml.sqrt(" + argStr + ")";
+            case "avg" -> {
+                needsCamelLib = true;
+                yield "c.avg(" + argStr + ")";
+            }
             case "sum" -> {
                 needsCamelLib = true;
                 yield "c.sum(" + argStr + ")";
@@ -421,11 +423,11 @@ public class DataWeaveConverter {
     }
 
     private String emitLambdaShorthand(LambdaShorthand ls) {
-        StringBuilder sb = new StringBuilder("$");
-        for (String field : ls.fields()) {
-            sb.append(".").append(field);
+        if (ls.fields().isEmpty()) {
+            return "function(x) x";
         }
-        return sb.toString();
+        String path = String.join(".", ls.fields());
+        return "function(x) x." + path;
     }
 
     private String emitMap(MapExpr me) {
@@ -434,8 +436,9 @@ public class DataWeaveConverter {
             List<String> paramNames = lambdaParamNames(lam);
             String body = emitNode(lam.body());
             if (paramNames.size() == 2) {
-                // map with index: std.mapWithIndex(function(item, idx) body, collection)
-                return "std.mapWithIndex(function(" + paramNames.get(0) + ", " + paramNames.get(1)
+                // DW: map ((item, index) -> body) — DS: std.mapWithIndex(function(index, item) body, collection)
+                // Parameter order is swapped: DW is (item, index), DS is (index, item)
+                return "std.mapWithIndex(function(" + paramNames.get(1) + ", " + paramNames.get(0)
                        + ") " + body + ", " + collection + ")";
             }
             return "std.map(function(" + paramNames.get(0) + ") " + body + ", " + collection + ")";
@@ -495,7 +498,8 @@ public class DataWeaveConverter {
         if (dbe.lambda() instanceof Lambda lam) {
             List<String> paramNames = lambdaParamNames(lam);
             String body = emitNode(lam.body());
-            return "c.distinct(std.map(function(" + paramNames.get(0) + ") " + body + ", " + collection + "))";
+            // distinctBy keeps first occurrence per key — use distinctBy helper
+            return "c.distinctBy(" + collection + ", function(" + paramNames.get(0) + ") " + body + ")";
         }
         return "c.distinct(" + collection + ")";
     }
@@ -570,14 +574,6 @@ public class DataWeaveConverter {
         }
         sb.append(emitNode(block.expr()));
         return sb.toString();
-    }
-
-    private String emitMatch(MatchExpr me) {
-        todoCount++;
-        return (includeComments
-                ? "// TODO: manual conversion needed — match expression\n// " + me.originalText() + "\n"
-                : "")
-               + "null";
     }
 
     private String emitTypeCheck(TypeCheck tc) {

@@ -38,6 +38,7 @@ public class DataWeaveLexer {
         STAR,
         SLASH,
         PLUSPLUS,
+        ASSIGN,
         EQ,
         NEQ,
         GT,
@@ -269,7 +270,7 @@ public class DataWeaveLexer {
                     advance();
                     yield new Token(TokenType.EQ, "==", startLine, startCol);
                 }
-                yield new Token(TokenType.EQ, "=", startLine, startCol);
+                yield new Token(TokenType.ASSIGN, "=", startLine, startCol);
             }
             case '!' -> {
                 if (pos < input.length() && input.charAt(pos) == '=') {

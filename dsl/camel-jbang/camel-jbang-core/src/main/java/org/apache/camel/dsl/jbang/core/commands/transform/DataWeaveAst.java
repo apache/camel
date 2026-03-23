@@ -142,10 +142,6 @@ public sealed interface DataWeaveAst {
     record FunDecl(String name, List<String> params, DataWeaveAst funBody, DataWeaveAst next) implements DataWeaveAst {
     }
 
-    // Match expression
-    record MatchExpr(DataWeaveAst expr, String originalText) implements DataWeaveAst {
-    }
-
     // Type check
     record TypeCheck(DataWeaveAst expr, String type) implements DataWeaveAst {
     }

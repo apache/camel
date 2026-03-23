@@ -141,7 +141,7 @@ public class DataWeaveParser {
         advance(); // var
         String name = current().value();
         advance(); // name
-        expect(TokenType.EQ); // =
+        expect(TokenType.ASSIGN); // =
         DataWeaveAst value = parseExpression();
         // The body follows after the var declaration (next expression in sequence)
         DataWeaveAst body = null;
@@ -166,7 +166,7 @@ public class DataWeaveParser {
             }
         }
         expect(TokenType.RPAREN);
-        expect(TokenType.EQ); // =
+        expect(TokenType.ASSIGN); // =
         DataWeaveAst funBody = parseExpression();
         DataWeaveAst next = null;
         if (!check(TokenType.EOF) && !check(TokenType.RPAREN) && !check(TokenType.RBRACE)) {
@@ -184,7 +184,7 @@ public class DataWeaveParser {
                 advance(); // var
                 String name = current().value();
                 advance();
-                expect(TokenType.EQ);
+                expect(TokenType.ASSIGN);
                 DataWeaveAst value = parseExpression();
                 declarations.add(new DataWeaveAst.VarDecl(name, value, null));
             } else {
@@ -207,7 +207,7 @@ public class DataWeaveParser {
         while (!check(TokenType.RPAREN) && !check(TokenType.EOF)) {
             String name = current().value();
             advance();
-            expect(TokenType.EQ);
+            expect(TokenType.ASSIGN);
             DataWeaveAst value = parseOr();
             declarations.add(new DataWeaveAst.VarDecl(name, value, null));
             if (check(TokenType.COMMA)) {
@@ -440,6 +440,28 @@ public class DataWeaveParser {
                 }
                 DataWeaveAst replacement = parsePrimary();
                 expr = new DataWeaveAst.ReplaceExpr(expr, target, replacement);
+            } else if (checkIdentifier("match")) {
+                advance(); // match
+                // Capture the match block as unsupported — skip braces
+                StringBuilder matchText = new StringBuilder("match ");
+                if (check(TokenType.LBRACE)) {
+                    int depth = 1;
+                    matchText.append("{");
+                    advance();
+                    while (depth > 0 && !check(TokenType.EOF)) {
+                        if (check(TokenType.LBRACE)) {
+                            depth++;
+                        } else if (check(TokenType.RBRACE)) {
+                            depth--;
+                        }
+                        matchText.append(current().value());
+                        if (depth > 0) {
+                            matchText.append(" ");
+                        }
+                        advance();
+                    }
+                }
+                expr = new DataWeaveAst.Unsupported(matchText.toString().trim(), "match expression");
             } else {
                 break;
             }
@@ -484,7 +506,7 @@ public class DataWeaveParser {
             String paramName = current().value();
             advance();
             DataWeaveAst defaultValue = null;
-            if (check(TokenType.EQ)) {
+            if (check(TokenType.ASSIGN)) {
                 advance();
                 defaultValue = parseOr();
             }

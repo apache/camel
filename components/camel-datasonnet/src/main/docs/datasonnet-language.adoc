@@ -215,7 +215,9 @@ local c = import 'camel.libsonnet';
 |`c.sumBy(arr, f)` |Sums by applying function `f` to each element.
 |`c.first(arr)` / `c.last(arr)` |First/last element, or null if empty.
 |`c.count(arr)` |Array length.
+|`c.avg(arr)` |Average of all elements, or null if empty.
 |`c.distinct(arr)` |Removes duplicates.
+|`c.distinctBy(arr, f)` |Removes duplicates by key function (keeps first occurrence).
 |`c.flatMap(arr, f)` |Maps and flattens.
 |`c.sortBy(arr, f)` |Sorts by key function.
 |`c.groupBy(arr, f)` |Groups into object by key function.
