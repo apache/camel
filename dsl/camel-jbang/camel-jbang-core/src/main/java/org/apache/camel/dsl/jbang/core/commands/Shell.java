@@ -29,9 +29,9 @@ import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.LineReader;
 import org.jline.shell.ShellBuilder;
 import org.jline.shell.impl.DefaultAliasManager;
+import org.jline.shell.widget.CommandTailTipWidgets;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
-import org.jline.widget.AutosuggestionWidgets;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "shell",
@@ -77,13 +77,10 @@ public class Shell extends CamelCommand {
                 .variableCommands(true)
                 .commandHighlighter(true)
                 .aliasManager(aliasManager)
-                .onReaderReady(reader -> {
-                    // Enable fish-style auto-suggestions from history
-                    new AutosuggestionWidgets(reader).enable();
-                    // TODO: Replace AutosuggestionWidgets with CommandTailTipWidgets once
-                    // ShellBuilder exposes the CommandDispatcher in the onReaderReady callback.
-                    // CommandTailTipWidgets provides both autosuggestion AND command description
-                    // tooltips in a unified way, but requires a CommandDispatcher reference.
+                .onReaderReady((reader, dispatcher) -> {
+                    // CommandTailTipWidgets provides both fish-style autosuggestion
+                    // and command description tooltips below the cursor line
+                    new CommandTailTipWidgets(reader, dispatcher, 5).enable();
                 })
                 .variable(LineReader.LIST_MAX, 50)
                 .variable(LineReader.OTHERS_GROUP_NAME, "Others")
