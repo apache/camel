@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.hazelcast.policy;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration test for {@link HazelcastRoutePolicy} that verifies leader election and route management using Hazelcast
@@ -45,34 +46,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HazelcastRoutePolicyIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastRoutePolicyIT.class);
+    private static final List<String> CLIENTS = List.of("0", "1", "2");
 
     @RegisterExtension
     public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
 
-    private static final List<String> CLIENTS = List.of("0", "1", "2");
-    private static final List<String> RESULTS = new ArrayList<>();
-    private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
-    private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
-
     @Test
     public void test() throws Exception {
+        List<String> results = new CopyOnWriteArrayList<>();
+        CountDownLatch latch = new CountDownLatch(CLIENTS.size());
+        ExecutorService executor = Executors.newFixedThreadPool(CLIENTS.size());
+
         for (String id : CLIENTS) {
-            SCHEDULER.submit(() -> run(id));
+            executor.submit(() -> run(id, results, latch));
         }
 
-        LATCH.await(1, TimeUnit.MINUTES);
-        SCHEDULER.shutdownNow();
+        assertTrue(latch.await(1, TimeUnit.MINUTES), "All nodes should complete within timeout");
+        executor.shutdown();
+        assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS), "Executor should terminate cleanly");
 
-        assertThat(RESULTS).containsExactlyInAnyOrderElementsOf(CLIENTS);
+        assertThat(results).containsExactlyInAnyOrderElementsOf(CLIENTS);
     }
 
-    private static void run(String id) {
+    private static void run(String id, List<String> results, CountDownLatch latch) {
+        DefaultCamelContext context = null;
+        HazelcastInstance instance = null;
         try {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
             CountDownLatch contextLatch = new CountDownLatch(events);
 
             Config config = hazelcastService.createConfiguration(null, 0, "node-" + id, "set");
-            HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
+            instance = Hazelcast.newHazelcastInstance(config);
 
             HazelcastRoutePolicy policy = new HazelcastRoutePolicy(instance);
             policy.setLockMapName("camel-route-policy");
@@ -80,7 +84,7 @@ public class HazelcastRoutePolicyIT {
             policy.setLockValue("node-" + id);
             policy.setTryLockTimeout(5, TimeUnit.SECONDS);
 
-            DefaultCamelContext context = new DefaultCamelContext();
+            context = new DefaultCamelContext();
             context.disableJMX();
             context.getCamelContextExtension().setName("context-" + id);
             context.addRoutes(new RouteBuilder() {
@@ -104,12 +108,17 @@ public class HazelcastRoutePolicyIT {
             contextLatch.await(30, TimeUnit.SECONDS);
 
             LOGGER.info("Shutting down node {}", id);
-            RESULTS.add(id);
-            context.stop();
-            instance.shutdown();
-            LATCH.countDown();
+            results.add(id);
         } catch (Exception e) {
-            LOGGER.warn("{}", e.getMessage(), e);
+            LOGGER.warn("Node {} failed: {}", id, e.getMessage(), e);
+        } finally {
+            if (context != null) {
+                context.stop();
+            }
+            if (instance != null) {
+                instance.shutdown();
+            }
+            latch.countDown();
         }
     }
 }
