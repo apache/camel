@@ -79,7 +79,7 @@ import static org.apache.camel.util.IOHelper.buffered;
                  "%nExamples:",
                  "  camel debug hello.java",
                  "  camel debug hello.yaml --breakpoint=myBreakpoint",
-                 "  camel debug hello.java --suspend" })
+                 "  camel debug hello.java --stop-on-exit=false" })
 public class Debug extends Run {
 
     @CommandLine.Option(names = { "--remote-attach" },

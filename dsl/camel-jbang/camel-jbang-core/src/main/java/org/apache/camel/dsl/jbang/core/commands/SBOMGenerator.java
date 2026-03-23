@@ -39,7 +39,7 @@ import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
                              "%nExamples:",
                              "  camel sbom hello.java",
                              "  camel sbom hello.java --sbom-format=spdx",
-                             "  camel sbom hello.java --output-format=xml" })
+                             "  camel sbom hello.java --sbom-output-format=xml" })
 public class SBOMGenerator extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
