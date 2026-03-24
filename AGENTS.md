@@ -10,6 +10,49 @@ Apache Camel is an integration framework supporting routing rules in Java, XML a
 - Java: 21+
 - Build: Maven 3.9.12+
 
+## AI Agent Rules of Engagement
+
+These rules apply to ALL AI agents working on this codebase.
+
+### Attribution
+
+- All AI-generated content (GitHub PR descriptions, review comments, JIRA comments) MUST clearly
+  identify itself as AI-generated and mention the human operator.
+  Example: "_Claude Code on behalf of [Human Name]_"
+
+### PR Volume
+
+- An agent MUST NOT open more than 10 PRs per day per operator to ensure human reviewers can keep up.
+- Prioritize quality over quantity — fewer well-tested PRs are better than many shallow ones.
+
+### Branch Ownership
+
+- An agent MUST NEVER push commits to a branch it did not create.
+- If a contributor's PR needs changes, the agent may suggest changes via review comments,
+  but must not push to their branch without explicit permission.
+
+### JIRA Ticket Ownership
+
+- An agent MUST ONLY pick up **Unassigned** JIRA tickets.
+- If a ticket is already assigned to a human, the agent must not reassign it or work on it.
+- Before starting work, the agent must assign the ticket to its operator and transition it to "In Progress".
+- Before closing a ticket, always set the correct `fixVersions` field.
+  Note: `fixVersions` cannot be set on an already-closed issue — set it before closing,
+  or reopen/set/close if needed.
+
+### Merge Requirements
+
+- An agent MUST NOT merge a PR if there are any **unresolved review conversations**.
+- An agent MUST NOT merge a PR without at least **one human approval**.
+- An agent MUST NOT approve its own PRs — human review is always required.
+
+### Code Quality
+
+- Every PR must include tests for new functionality or bug fixes.
+- Every PR must include documentation updates where applicable.
+- All code must pass formatting checks (`mvn formatter:format impsort:sort`) before pushing.
+- All generated files must be regenerated and committed (CI checks for uncommitted changes).
+
 ## Structure
 
 ```
