@@ -328,7 +328,8 @@ main() {
   fi
 
   echo "Running targeted tests for affected modules..."
-  $mavenBinary -l $log $MVND_OPTS test -pl "${filtered_ids},${exclusionList}" -amd
+  # Use install instead of test, otherwise test-infra modules fail due to jandex maven plugin
+  $mavenBinary -l $log $MVND_OPTS install -pl "${filtered_ids},${exclusionList}" -amd
   local ret=$?
 
   if [ ${ret} -eq 0 ]; then
