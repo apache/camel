@@ -247,6 +247,7 @@ public class Export extends ExportBaseCommand {
         cmd.quarkusGroupId = this.quarkusGroupId;
         cmd.quarkusArtifactId = this.quarkusArtifactId;
         cmd.quarkusVersion = this.quarkusVersion;
+        cmd.quarkusPackageType = this.quarkusPackageType;
         cmd.springBootVersion = this.springBootVersion;
         cmd.mavenWrapper = this.mavenWrapper;
         cmd.gradleWrapper = this.gradleWrapper;

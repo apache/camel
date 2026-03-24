@@ -16,34 +16,36 @@
 #
 
 ####
-# This Dockerfile is used in order to build a container that runs the Quarkus application in Native mode.
+# This Dockerfile is used in order to build a container that runs the Quarkus application in JVM mode
+# using the fast-jar packaging.
 #
 # Before building the container image run:
 #
-# ./mvnw package -Dnative
+# ./mvnw clean package
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native -t quarkus/code-with-quarkus .
+# docker build -f src/main/docker/Dockerfile -t quarkus/camel-app .
 #
 # Then run the container using:
 #
-# docker run -i quarkus/code-with-quarkus
+# docker run -i --rm -p 8080:8080 quarkus/camel-app
 #
-# The ` registry.access.redhat.com/ubi9/ubi-minimal:9.7` base image is based on UBI 9.
-# To use UBI 8, switch to `quay.io/ubi8/ubi-minimal:8.10`.
 ###
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7
-WORKDIR /work/
-RUN chown 1001 /work \
-    && chmod "g+rwX" /work \
-    && chown 1001:root /work
-COPY --chown=1001:root --chmod=0755 target/*-runner /work/application
+FROM registry.access.redhat.com/ubi9/openjdk-21:1.23
+
+ENV LANGUAGE='en_US:en'
+
+# We make four distinct layers so if there are application changes the library layers can be re-used
+COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
+COPY --chown=185 target/quarkus-app/*.jar /deployments/
+COPY --chown=185 target/quarkus-app/app/ /deployments/app/
+COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
 
 # Uncomment to expose any given port
 # EXPOSE 8080
-USER 1001
+USER 185
+ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
-# Use this if you're exposing some port
-# ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]
-ENTRYPOINT ["./application"]
+ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
