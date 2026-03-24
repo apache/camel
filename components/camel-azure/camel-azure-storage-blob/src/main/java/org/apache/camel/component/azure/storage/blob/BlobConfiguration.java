@@ -26,6 +26,7 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlockListType;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

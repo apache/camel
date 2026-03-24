@@ -48,7 +48,7 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "consumergroupname":
         case "consumerGroupName": target.getConfiguration().setConsumerGroupName(property(camelContext, java.lang.String.class, value)); return true;
         case "credentialtype":
-        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.eventhubs.CredentialType.class, value)); return true;
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "eventposition":
         case "eventPosition": target.getConfiguration().setEventPosition(property(camelContext, java.util.Map.class, value)); return true;
         case "exceptionhandler":
@@ -108,7 +108,7 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "consumergroupname":
         case "consumerGroupName": return java.lang.String.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.azure.eventhubs.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "eventposition":
         case "eventPosition": return java.util.Map.class;
         case "exceptionhandler":

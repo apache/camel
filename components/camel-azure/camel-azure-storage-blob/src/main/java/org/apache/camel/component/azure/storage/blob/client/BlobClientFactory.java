@@ -29,7 +29,7 @@ import static java.lang.String.format;
 import static java.util.Locale.ROOT;
 import static java.util.Optional.ofNullable;
 import static java.util.Set.of;
-import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
+import static org.apache.camel.component.azure.common.CredentialType.*;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 public final class BlobClientFactory {

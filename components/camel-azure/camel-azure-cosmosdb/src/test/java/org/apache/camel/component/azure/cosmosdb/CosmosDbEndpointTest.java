@@ -22,6 +22,7 @@ import java.util.Map;
 import com.azure.cosmos.models.IndexingMode;
 import com.azure.cosmos.models.IndexingPolicy;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 

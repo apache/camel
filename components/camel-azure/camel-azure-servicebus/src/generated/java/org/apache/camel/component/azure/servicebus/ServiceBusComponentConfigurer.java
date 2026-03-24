@@ -45,7 +45,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "connectionstring":
         case "connectionString": getOrCreateConfiguration(target).setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
         case "credentialtype":
-        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.servicebus.CredentialType.class, value)); return true;
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "enabledeadlettering":
         case "enableDeadLettering": getOrCreateConfiguration(target).setEnableDeadLettering(property(camelContext, boolean.class, value)); return true;
         case "fullyqualifiednamespace":
@@ -113,7 +113,7 @@ public class ServiceBusComponentConfigurer extends PropertyConfigurerSupport imp
         case "connectionstring":
         case "connectionString": return java.lang.String.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.azure.servicebus.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "enabledeadlettering":
         case "enableDeadLettering": return boolean.class;
         case "fullyqualifiednamespace":

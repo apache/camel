@@ -47,7 +47,7 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -55,7 +55,7 @@ public interface QueueEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default QueueEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+        default QueueEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -63,7 +63,7 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -1016,7 +1016,7 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -1024,7 +1024,7 @@ public interface QueueEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default QueueEndpointProducerBuilder credentialType(org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+        default QueueEndpointProducerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1032,7 +1032,7 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -1451,7 +1451,7 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common
@@ -1459,7 +1459,7 @@ public interface QueueEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default QueueEndpointBuilder credentialType(org.apache.camel.component.azure.storage.queue.CredentialType credentialType) {
+        default QueueEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1467,7 +1467,7 @@ public interface QueueEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.queue.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: SHARED_ACCOUNT_KEY
          * Group: common

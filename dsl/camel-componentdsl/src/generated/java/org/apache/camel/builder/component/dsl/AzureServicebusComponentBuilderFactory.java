@@ -533,7 +533,7 @@ public interface AzureServicebusComponentBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.servicebus.CredentialType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.azure.common.CredentialType&lt;/code&gt; type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -541,7 +541,7 @@ public interface AzureServicebusComponentBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default AzureServicebusComponentBuilder credentialType(org.apache.camel.component.azure.servicebus.CredentialType credentialType) {
+        default AzureServicebusComponentBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -624,7 +624,7 @@ public interface AzureServicebusComponentBuilderFactory {
             case "sessionId": getOrCreateConfiguration((ServiceBusComponent) component).setSessionId((java.lang.String) value); return true;
             case "autowiredEnabled": ((ServiceBusComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionString": getOrCreateConfiguration((ServiceBusComponent) component).setConnectionString((java.lang.String) value); return true;
-            case "credentialType": getOrCreateConfiguration((ServiceBusComponent) component).setCredentialType((org.apache.camel.component.azure.servicebus.CredentialType) value); return true;
+            case "credentialType": getOrCreateConfiguration((ServiceBusComponent) component).setCredentialType((org.apache.camel.component.azure.common.CredentialType) value); return true;
             case "fullyQualifiedNamespace": getOrCreateConfiguration((ServiceBusComponent) component).setFullyQualifiedNamespace((java.lang.String) value); return true;
             case "tokenCredential": getOrCreateConfiguration((ServiceBusComponent) component).setTokenCredential((com.azure.core.credential.TokenCredential) value); return true;
             default: return false;

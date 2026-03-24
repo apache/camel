@@ -18,12 +18,13 @@ package org.apache.camel.component.azure.key.vault;
 
 import com.azure.security.keyvault.secrets.SecretClient;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.azure.key.vault.CredentialType.CLIENT_SECRET;
+import static org.apache.camel.component.azure.common.CredentialType.CLIENT_SECRET;
 
 @UriParams
 public class KeyVaultConfiguration implements Cloneable {

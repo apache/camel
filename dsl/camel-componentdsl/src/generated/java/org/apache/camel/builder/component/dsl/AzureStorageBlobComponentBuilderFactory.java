@@ -156,7 +156,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.CredentialType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.azure.common.CredentialType&lt;/code&gt; type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -164,7 +164,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default AzureStorageBlobComponentBuilder credentialType(org.apache.camel.component.azure.storage.blob.CredentialType credentialType) {
+        default AzureStorageBlobComponentBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -964,7 +964,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "closeStreamAfterRead": getOrCreateConfiguration((BlobComponent) component).setCloseStreamAfterRead((boolean) value); return true;
             case "configuration": ((BlobComponent) component).setConfiguration((org.apache.camel.component.azure.storage.blob.BlobConfiguration) value); return true;
             case "credentials": getOrCreateConfiguration((BlobComponent) component).setCredentials((com.azure.storage.common.StorageSharedKeyCredential) value); return true;
-            case "credentialType": getOrCreateConfiguration((BlobComponent) component).setCredentialType((org.apache.camel.component.azure.storage.blob.CredentialType) value); return true;
+            case "credentialType": getOrCreateConfiguration((BlobComponent) component).setCredentialType((org.apache.camel.component.azure.common.CredentialType) value); return true;
             case "dataCount": getOrCreateConfiguration((BlobComponent) component).setDataCount((java.lang.Long) value); return true;
             case "fileDir": getOrCreateConfiguration((BlobComponent) component).setFileDir((java.lang.String) value); return true;
             case "leaseBlob": getOrCreateConfiguration((BlobComponent) component).setLeaseBlob((boolean) value); return true;

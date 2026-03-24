@@ -48,7 +48,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.key.vault.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -56,7 +56,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default KeyVaultEndpointBuilder credentialType(org.apache.camel.component.azure.key.vault.CredentialType credentialType) {
+        default KeyVaultEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -64,7 +64,7 @@ public interface KeyVaultEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.key.vault.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: CLIENT_SECRET
          * Group: common

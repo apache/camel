@@ -31,7 +31,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.azure.storage.blob.CredentialType.SHARED_KEY_CREDENTIAL;
+import static org.apache.camel.component.azure.common.CredentialType.SHARED_KEY_CREDENTIAL;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Base extends CamelTestSupport {

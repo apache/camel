@@ -454,7 +454,8 @@ After:
 import org.apache.camel.component.azure.common.CredentialType;
 ----
 
-The deprecated component-specific enums will be removed in a future release. The new `camel-azure-common` module is
+The deprecated component-specific enums have been removed. All internal usages now reference
+`org.apache.camel.component.azure.common.CredentialType` directly. The `camel-azure-common` module is
 automatically included as a transitive dependency of all Azure components.
 
 === camel-quickfix

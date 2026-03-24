@@ -18,13 +18,14 @@ package org.apache.camel.component.file.azure;
 
 import java.net.URI;
 
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.file.azure.CredentialType.SHARED_ACCOUNT_KEY;
+import static org.apache.camel.component.azure.common.CredentialType.SHARED_ACCOUNT_KEY;
 
 @UriParams
 public class FilesConfiguration extends RemoteFileConfiguration {

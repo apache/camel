@@ -411,7 +411,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -419,7 +419,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default EventHubsEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.eventhubs.CredentialType credentialType) {
+        default EventHubsEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -427,7 +427,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -815,7 +815,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -823,7 +823,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default EventHubsEndpointProducerBuilder credentialType(org.apache.camel.component.azure.eventhubs.CredentialType credentialType) {
+        default EventHubsEndpointProducerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -831,7 +831,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1061,7 +1061,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security
@@ -1069,7 +1069,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default EventHubsEndpointBuilder credentialType(org.apache.camel.component.azure.eventhubs.CredentialType credentialType) {
+        default EventHubsEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1077,7 +1077,7 @@ public interface EventHubsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.eventhubs.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: CONNECTION_STRING
          * Group: security

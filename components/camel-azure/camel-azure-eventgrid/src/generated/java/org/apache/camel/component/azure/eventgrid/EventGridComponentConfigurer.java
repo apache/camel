@@ -38,7 +38,7 @@ public class EventGridComponentConfigurer extends PropertyConfigurerSupport impl
         case "azureKeyCredential": getOrCreateConfiguration(target).setAzureKeyCredential(property(camelContext, com.azure.core.credential.AzureKeyCredential.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.eventgrid.EventGridConfiguration.class, value)); return true;
         case "credentialtype":
-        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.eventgrid.CredentialType.class, value)); return true;
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "publisherclient":
@@ -65,7 +65,7 @@ public class EventGridComponentConfigurer extends PropertyConfigurerSupport impl
         case "azureKeyCredential": return com.azure.core.credential.AzureKeyCredential.class;
         case "configuration": return org.apache.camel.component.azure.eventgrid.EventGridConfiguration.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.azure.eventgrid.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "publisherclient":

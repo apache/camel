@@ -239,7 +239,7 @@ public interface FunctionsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.functions.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: AZURE_IDENTITY
          * Group: security
@@ -247,7 +247,7 @@ public interface FunctionsEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default FunctionsEndpointBuilder credentialType(org.apache.camel.component.azure.functions.CredentialType credentialType) {
+        default FunctionsEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -255,7 +255,7 @@ public interface FunctionsEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.functions.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
          * 
          * Default: AZURE_IDENTITY
          * Group: security

@@ -651,7 +651,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -660,7 +660,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+        default CosmosDbEndpointConsumerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -668,7 +668,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -1420,7 +1420,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -1429,7 +1429,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointProducerBuilder credentialType(org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+        default CosmosDbEndpointProducerBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -1437,7 +1437,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -2003,7 +2003,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY
@@ -2012,7 +2012,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default CosmosDbEndpointBuilder credentialType(org.apache.camel.component.azure.cosmosdb.CredentialType credentialType) {
+        default CosmosDbEndpointBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -2020,7 +2020,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.cosmosdb.CredentialType</code>
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
          * type.
          * 
          * Default: SHARED_ACCOUNT_KEY

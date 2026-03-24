@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 
-import static org.apache.camel.component.azure.storage.blob.CredentialType.*;
+import static org.apache.camel.component.azure.common.CredentialType.*;
 
 /**
  * Azure Blob Storage component using azure java sdk v12.x
@@ -91,7 +91,7 @@ public class BlobComponent extends HealthCheckComponent {
                     configuration.setCredentialType(AZURE_IDENTITY);
                 }
             } else {
-                configuration.setCredentialType(CredentialType.SHARED_KEY_CREDENTIAL);
+                configuration.setCredentialType(SHARED_KEY_CREDENTIAL);
             }
         }
     }

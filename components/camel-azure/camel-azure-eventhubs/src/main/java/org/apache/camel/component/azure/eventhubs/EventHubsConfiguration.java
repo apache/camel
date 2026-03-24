@@ -29,6 +29,7 @@ import com.azure.messaging.eventhubs.EventProcessorClient;
 import com.azure.messaging.eventhubs.models.EventPosition;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

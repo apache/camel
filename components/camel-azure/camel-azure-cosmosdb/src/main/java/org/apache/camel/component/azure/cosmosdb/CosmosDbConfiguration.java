@@ -23,12 +23,13 @@ import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import static org.apache.camel.component.azure.cosmosdb.CredentialType.SHARED_ACCOUNT_KEY;
+import static org.apache.camel.component.azure.common.CredentialType.SHARED_ACCOUNT_KEY;
 
 @UriParams
 public class CosmosDbConfiguration implements Cloneable {

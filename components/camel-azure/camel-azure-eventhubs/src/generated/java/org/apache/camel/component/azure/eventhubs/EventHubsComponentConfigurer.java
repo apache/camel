@@ -58,7 +58,7 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "consumergroupname":
         case "consumerGroupName": getOrCreateConfiguration(target).setConsumerGroupName(property(camelContext, java.lang.String.class, value)); return true;
         case "credentialtype":
-        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.eventhubs.CredentialType.class, value)); return true;
+        case "credentialType": getOrCreateConfiguration(target).setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "eventposition":
         case "eventPosition": getOrCreateConfiguration(target).setEventPosition(property(camelContext, java.util.Map.class, value)); return true;
         case "lazystartproducer":
@@ -117,7 +117,7 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "consumergroupname":
         case "consumerGroupName": return java.lang.String.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.azure.eventhubs.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "eventposition":
         case "eventPosition": return java.util.Map.class;
         case "lazystartproducer":

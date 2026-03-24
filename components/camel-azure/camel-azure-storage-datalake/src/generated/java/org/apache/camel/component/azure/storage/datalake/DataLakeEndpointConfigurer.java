@@ -43,7 +43,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "closestreamafterread":
         case "closeStreamAfterRead": target.getConfiguration().setCloseStreamAfterRead(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "credentialtype":
-        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.storage.datalake.CredentialType.class, value)); return true;
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "datacount":
         case "dataCount": target.getConfiguration().setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "datalakeserviceclient":
@@ -148,7 +148,7 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "closestreamafterread":
         case "closeStreamAfterRead": return java.lang.Boolean.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.azure.storage.datalake.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "datacount":
         case "dataCount": return java.lang.Long.class;
         case "datalakeserviceclient":

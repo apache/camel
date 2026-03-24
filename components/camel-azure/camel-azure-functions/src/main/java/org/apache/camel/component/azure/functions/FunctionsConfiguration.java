@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.functions;
 import com.azure.core.credential.TokenCredential;
 import com.azure.resourcemanager.appservice.AppServiceManager;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

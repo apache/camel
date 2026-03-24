@@ -22,7 +22,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.queue.QueueServiceClient;
 import com.azure.storage.queue.QueueServiceClientBuilder;
-import org.apache.camel.component.azure.storage.queue.CredentialType;
+import org.apache.camel.component.azure.common.CredentialType;
 import org.apache.camel.component.azure.storage.queue.QueueConfiguration;
 import org.apache.camel.util.ObjectHelper;
 

@@ -293,7 +293,7 @@ public interface AzureFunctionsComponentBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.functions.CredentialType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.azure.common.CredentialType&lt;/code&gt; type.
          * 
          * Default: AZURE_IDENTITY
          * Group: security
@@ -301,7 +301,7 @@ public interface AzureFunctionsComponentBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default AzureFunctionsComponentBuilder credentialType(org.apache.camel.component.azure.functions.CredentialType credentialType) {
+        default AzureFunctionsComponentBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -434,7 +434,7 @@ public interface AzureFunctionsComponentBuilderFactory {
             case "autowiredEnabled": ((FunctionsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientId": getOrCreateConfiguration((FunctionsComponent) component).setClientId((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((FunctionsComponent) component).setClientSecret((java.lang.String) value); return true;
-            case "credentialType": getOrCreateConfiguration((FunctionsComponent) component).setCredentialType((org.apache.camel.component.azure.functions.CredentialType) value); return true;
+            case "credentialType": getOrCreateConfiguration((FunctionsComponent) component).setCredentialType((org.apache.camel.component.azure.common.CredentialType) value); return true;
             case "functionKey": getOrCreateConfiguration((FunctionsComponent) component).setFunctionKey((java.lang.String) value); return true;
             case "hostKey": getOrCreateConfiguration((FunctionsComponent) component).setHostKey((java.lang.String) value); return true;
             case "resourceGroup": getOrCreateConfiguration((FunctionsComponent) component).setResourceGroup((java.lang.String) value); return true;

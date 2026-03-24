@@ -121,7 +121,7 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.azure.storage.datalake.CredentialType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.azure.common.CredentialType&lt;/code&gt; type.
          * 
          * Default: CLIENT_SECRET
          * Group: common
@@ -129,7 +129,7 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
          * @param credentialType the value to set
          * @return the dsl builder
          */
-        default AzureStorageDatalakeComponentBuilder credentialType(org.apache.camel.component.azure.storage.datalake.CredentialType credentialType) {
+        default AzureStorageDatalakeComponentBuilder credentialType(org.apache.camel.component.azure.common.CredentialType credentialType) {
             doSetProperty("credentialType", credentialType);
             return this;
         }
@@ -709,7 +709,7 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             case "close": getOrCreateConfiguration((DataLakeComponent) component).setClose((java.lang.Boolean) value); return true;
             case "closeStreamAfterRead": getOrCreateConfiguration((DataLakeComponent) component).setCloseStreamAfterRead((java.lang.Boolean) value); return true;
             case "configuration": ((DataLakeComponent) component).setConfiguration((org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration) value); return true;
-            case "credentialType": getOrCreateConfiguration((DataLakeComponent) component).setCredentialType((org.apache.camel.component.azure.storage.datalake.CredentialType) value); return true;
+            case "credentialType": getOrCreateConfiguration((DataLakeComponent) component).setCredentialType((org.apache.camel.component.azure.common.CredentialType) value); return true;
             case "dataCount": getOrCreateConfiguration((DataLakeComponent) component).setDataCount((java.lang.Long) value); return true;
             case "directoryName": getOrCreateConfiguration((DataLakeComponent) component).setDirectoryName((java.lang.String) value); return true;
             case "downloadLinkExpiration": getOrCreateConfiguration((DataLakeComponent) component).setDownloadLinkExpiration((java.lang.Long) value); return true;

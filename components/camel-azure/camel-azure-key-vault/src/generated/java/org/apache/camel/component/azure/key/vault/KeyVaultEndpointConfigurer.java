@@ -28,7 +28,7 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
         case "clientsecret":
         case "clientSecret": target.getConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "credentialtype":
-        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.key.vault.CredentialType.class, value)); return true;
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.key.vault.KeyVaultOperation.class, value)); return true;
@@ -53,7 +53,7 @@ public class KeyVaultEndpointConfigurer extends PropertyConfigurerSupport implem
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.azure.key.vault.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.azure.key.vault.KeyVaultOperation.class;

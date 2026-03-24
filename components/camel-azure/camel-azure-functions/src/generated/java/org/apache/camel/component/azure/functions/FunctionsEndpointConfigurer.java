@@ -32,7 +32,7 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "credentialtype":
-        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.functions.CredentialType.class, value)); return true;
+        case "credentialType": target.getConfiguration().setCredentialType(property(camelContext, org.apache.camel.component.azure.common.CredentialType.class, value)); return true;
         case "functionkey":
         case "functionKey": target.getConfiguration().setFunctionKey(property(camelContext, java.lang.String.class, value)); return true;
         case "hostkey":
@@ -79,7 +79,7 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectiontimeout":
         case "connectionTimeout": return int.class;
         case "credentialtype":
-        case "credentialType": return org.apache.camel.component.azure.functions.CredentialType.class;
+        case "credentialType": return org.apache.camel.component.azure.common.CredentialType.class;
         case "functionkey":
         case "functionKey": return java.lang.String.class;
         case "hostkey":
