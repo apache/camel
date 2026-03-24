@@ -514,4 +514,14 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
     public ResizeExecCmd.Exec createResizeExecCmdExec() {
         return null;
     }
+
+    @Override
+    public com.github.dockerjava.api.command.ImageHistoryCmd.Exec createImageHistoryCmdExec() {
+        return null;
+    }
+
+    @Override
+    public com.github.dockerjava.api.command.ExportContainerCmd.Exec createExportContainerCmdExec() {
+        return null;
+    }
 }
