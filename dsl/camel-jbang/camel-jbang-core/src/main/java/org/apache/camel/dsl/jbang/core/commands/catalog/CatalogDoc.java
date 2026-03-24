@@ -56,7 +56,7 @@ import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseComman
                              "%nExamples:",
                              "  camel doc kafka",
                              "  camel doc timer",
-                             "  camel doc beer-source",
+                             "  camel doc aws-s3-source",
                              "  camel doc jsonpath" })
 public class CatalogDoc extends CamelCommand {
 
