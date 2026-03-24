@@ -148,7 +148,6 @@ public class GoogleVertexAIProducer extends DefaultProducer {
 
         Client client = endpoint.getClient();
         String modelId = endpoint.getConfiguration().getModelId();
-        String streamOutputMode = endpoint.getConfiguration().getStreamOutputMode();
 
         LOG.debug("Generating streaming content with model: {} and prompt: {}", modelId, prompt);
 
@@ -169,15 +168,7 @@ public class GoogleVertexAIProducer extends DefaultProducer {
             }
 
             Message message = getMessageForResponse(exchange);
-
-            if ("chunks".equals(streamOutputMode)) {
-                // In chunks mode, return the full accumulated text but include chunk count
-                message.setBody(fullText.toString());
-            } else {
-                // In complete mode (default), return the full accumulated text
-                message.setBody(fullText.toString());
-            }
-
+            message.setBody(fullText.toString());
             message.setHeader(GoogleVertexAIConstants.CHUNK_COUNT, chunkCount);
 
             if (lastResponse != null) {
@@ -216,7 +207,6 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         message.setHeader(GoogleVertexAIConstants.MODEL_ID, modelId);
     }
 
-    @SuppressWarnings("unchecked")
     private void generateEmbeddings(Exchange exchange) throws Exception {
         Client client = endpoint.getClient();
         String modelId = endpoint.getConfiguration().getModelId();
@@ -240,9 +230,16 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         Object body = exchange.getIn().getBody();
         EmbedContentResponse response;
 
-        if (body instanceof List) {
-            // Batch embeddings
-            List<String> texts = (List<String>) body;
+        if (body instanceof List<?> list) {
+            // Batch embeddings — convert all elements to String
+            List<String> texts = new ArrayList<>(list.size());
+            for (Object item : list) {
+                if (item instanceof String s) {
+                    texts.add(s);
+                } else {
+                    texts.add(String.valueOf(item));
+                }
+            }
             response = client.models.embedContent(modelId, texts, embedConfig);
         } else {
             // Single text embedding
@@ -287,22 +284,22 @@ public class GoogleVertexAIProducer extends DefaultProducer {
             parts.add(Part.fromText(prompt));
         }
 
-        // Add inline media data if provided
+        // Add inline media data from header if provided
         byte[] mediaData = exchange.getIn().getHeader(GoogleVertexAIConstants.MEDIA_DATA, byte[].class);
         String mediaMimeType = exchange.getIn().getHeader(GoogleVertexAIConstants.MEDIA_MIME_TYPE, String.class);
         if (mediaData != null && mediaMimeType != null) {
             parts.add(Part.fromBytes(mediaData, mediaMimeType));
         }
 
-        // Add GCS URI media if provided
+        // Add GCS URI media from header if provided
         String gcsUri = exchange.getIn().getHeader(GoogleVertexAIConstants.MEDIA_GCS_URI, String.class);
         if (gcsUri != null) {
             String mimeType = mediaMimeType != null ? mediaMimeType : "application/octet-stream";
             parts.add(Part.fromUri(gcsUri, mimeType));
         }
 
-        // If body is byte[] and no media header was set, treat body as media
-        if (parts.isEmpty() || (prompt != null && mediaData == null && gcsUri == null)) {
+        // Fall back to body content when no media headers are set
+        if (mediaData == null && gcsUri == null) {
             Object body = exchange.getIn().getBody();
             if (body instanceof byte[] bodyBytes && mediaMimeType != null) {
                 parts.add(Part.fromBytes(bodyBytes, mediaMimeType));
@@ -346,10 +343,12 @@ public class GoogleVertexAIProducer extends DefaultProducer {
             throw new IllegalArgumentException("Publisher must be specified for rawPredict operation");
         }
 
-        // Resolve location - "global" is mapped to a regional endpoint for gRPC
+        // "global" is not supported by the gRPC-based Prediction Service; partner models
+        // (Anthropic, Meta, Mistral) are available in specific regions only, with us-east5
+        // being the most commonly supported across all partners.
         String location = config.getLocation();
         if ("global".equalsIgnoreCase(location)) {
-            location = "us-east5"; // Default regional endpoint for partner models
+            location = "us-east5";
         }
 
         String endpointName = PredictionServiceClientFactory.buildPublisherModelEndpoint(
@@ -403,6 +402,9 @@ public class GoogleVertexAIProducer extends DefaultProducer {
             throw new IllegalArgumentException("Publisher must be specified for streamRawPredict operation");
         }
 
+        // "global" is not supported by the gRPC-based Prediction Service; partner models
+        // (Anthropic, Meta, Mistral) are available in specific regions only, with us-east5
+        // being the most commonly supported across all partners.
         String location = config.getLocation();
         if ("global".equalsIgnoreCase(location)) {
             location = "us-east5";
@@ -442,10 +444,14 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         StringBuilder fullResponse = new StringBuilder();
         int chunkCount = 0;
 
-        for (HttpBody responseChunk : stream) {
-            chunkCount++;
-            String chunkData = responseChunk.getData().toString(StandardCharsets.UTF_8);
-            fullResponse.append(chunkData);
+        try {
+            for (HttpBody responseChunk : stream) {
+                chunkCount++;
+                String chunkData = responseChunk.getData().toString(StandardCharsets.UTF_8);
+                fullResponse.append(chunkData);
+            }
+        } finally {
+            stream.cancel();
         }
 
         Message message = getMessageForResponse(exchange);
@@ -606,7 +612,7 @@ public class GoogleVertexAIProducer extends DefaultProducer {
                         }
                     }
                 } catch (Exception e) {
-                    // Skip non-JSON or unparseable lines
+                    LOG.trace("Skipping unparseable SSE line: {}", jsonStr, e);
                 }
             }
         }

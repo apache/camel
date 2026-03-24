@@ -775,7 +775,7 @@ public interface GoogleVertexAIEndpointBuilderFactory {
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer generateChatStreaming
+         * Group: producer generateChatStreaming streamRawPredict
          * 
          * @return the name of the header {@code GoogleVertexAIChunkCount}.
          */
@@ -815,7 +815,7 @@ public interface GoogleVertexAIEndpointBuilderFactory {
          * The option is a: {@code java.util.List<com.google.genai.types.Image>}
          * type.
          * 
-         * Group: generateImage
+         * Group: producer generateImage
          * 
          * @return the name of the header {@code GoogleVertexAIGeneratedImages}.
          */

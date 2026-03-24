@@ -87,12 +87,9 @@ public final class GoogleVertexAIConstants {
     @Metadata(description = "Whether the content was blocked by safety filters", javaType = "Boolean")
     public static final String CONTENT_BLOCKED = "CamelGoogleVertexAIContentBlocked";
 
-    @Metadata(description = "The number of chunks received in streaming response", javaType = "Integer")
-    public static final String STREAMING_CHUNK_COUNT = "CamelGoogleVertexAIChunkCount";
-
     // ==================== Streaming Operation Constants ====================
 
-    @Metadata(label = "producer generateChatStreaming",
+    @Metadata(label = "producer generateChatStreaming streamRawPredict",
               description = "The number of streaming chunks received", javaType = "Integer")
     public static final String CHUNK_COUNT = "CamelGoogleVertexAIChunkCount";
 
@@ -106,7 +103,7 @@ public final class GoogleVertexAIConstants {
               description = "The aspect ratio for generated images (e.g., 1:1, 16:9, 9:16, 3:4, 4:3)", javaType = "String")
     public static final String IMAGE_ASPECT_RATIO = "CamelGoogleVertexAIImageAspectRatio";
 
-    @Metadata(label = "generateImage",
+    @Metadata(label = "producer generateImage",
               description = "The generated images from an image generation operation",
               javaType = "java.util.List<com.google.genai.types.Image>")
     public static final String GENERATED_IMAGES = "CamelGoogleVertexAIGeneratedImages";
