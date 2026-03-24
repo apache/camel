@@ -147,5 +147,6 @@ jobs:
         uses: ./.github/actions/detect-dependencies
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          base-ref: ${{ github.base_ref || 'main' }}
+          pr-id: ${{ github.event.number || inputs.pr_number }}
+          github-repo: ${{ github.repository }}
           skip-mvnd-install: 'true'
