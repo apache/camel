@@ -83,7 +83,7 @@ camel debug [options]
 | `--show-exchange-properties` | Show exchange properties in debug messages | false | boolean
 | `--show-exchange-variables` | Show exchange variables in debug messages | true | boolean
 | `--show-headers` | Show message headers in debug messages | true | boolean
-| `--skip-plugins` | Skip plugins during export | false | boolean
+| `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
 | `--source` | Prefer to display source filename/code instead of IDs |  | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
 | `--spring-boot-version` | Spring Boot version | RuntimeType.SPRING_BOOT_VERSION | String

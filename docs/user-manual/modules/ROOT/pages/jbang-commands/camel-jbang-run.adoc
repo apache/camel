@@ -71,7 +71,7 @@ camel run [options]
 | `--reload,--dev` | Enables dev mode (live reload when source files are updated and saved) |  | boolean
 | `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime () | camel-main | RuntimeType
-| `--skip-plugins` | Skip plugins during export | false | boolean
+| `--skip-plugins` | Skip resolving plugin dependencies | false | boolean
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
 | `--spring-boot-version` | Spring Boot version | RuntimeType.SPRING_BOOT_VERSION | String
 | `--stub` | Stubs all the matching endpoint uri with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints). |  | String
