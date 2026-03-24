@@ -28,6 +28,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -175,23 +176,41 @@ public class CamelBeanDump extends ActionBaseCommand {
     }
 
     protected void singleTable(List<Row> rows) {
+        int tw = terminalWidth();
+        int borderOverhead = TerminalWidthHelper.noBorderOverhead(2);
+        int nameWidth = TerminalWidthHelper.flexWidth(tw, 100, borderOverhead, 20, 60);
+        int typeWidth = TerminalWidthHelper.flexWidth(tw, nameWidth, borderOverhead, 20, 100);
+
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(nameWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(100, OverflowBehaviour.CLIP_LEFT)
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(typeWidth, OverflowBehaviour.CLIP_LEFT)
                         .with(r -> r.type))));
     }
 
     protected void propertiesTable(List<PropertyRow> rows) {
+        int tw = terminalWidth();
+        int colCount = dsl ? 4 : 3;
+        int borderOverhead = TerminalWidthHelper.noBorderOverhead(colCount);
+        int propWidth = TerminalWidthHelper.flexWidth(tw, 40 + 80 + (dsl ? 80 : 0), borderOverhead, 15, 40);
+        int propTypeWidth = TerminalWidthHelper.flexWidth(tw, propWidth + 80 + (dsl ? 80 : 0), borderOverhead, 15, 40);
+        int valueWidth = TerminalWidthHelper.flexWidth(tw, propWidth + propTypeWidth + (dsl ? 80 : 0), borderOverhead, 20, 80);
+        int configWidth = dsl
+                ? TerminalWidthHelper.flexWidth(tw, propWidth + propTypeWidth + valueWidth, borderOverhead, 20, 80)
+                : 80;
+
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("PROPERTY").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("PROPERTY").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(propWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
-                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(propTypeWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.type),
                 new Column().header("CONFIGURATION").visible(dsl).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .maxWidth(configWidth, OverflowBehaviour.NEWLINE)
                         .with(r -> r.configValue),
-                new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT).maxWidth(valueWidth, OverflowBehaviour.NEWLINE)
                         .with(this::getValue))));
     }
 

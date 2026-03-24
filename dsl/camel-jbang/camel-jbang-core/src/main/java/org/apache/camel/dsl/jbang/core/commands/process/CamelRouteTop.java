@@ -24,6 +24,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import picocli.CommandLine.Command;
 
 @Command(name = "route", description = "Top performing routes",
@@ -36,6 +37,10 @@ public class CamelRouteTop extends CamelRouteStatus {
 
     @Override
     protected void printTable(List<Row> rows, boolean remoteVisible) {
+        // Flexible column: FROM (40)
+        // Fixed columns: PID(8)+NAME(30)+GROUP(20)+ID(25)+REMOTE(6)+STATUS(8)+AGE(8)+LOAD(12)+TOTAL(5)+FAIL(4)+INFLIGHT(8)+MEAN(4)+MIN(3)+MAX(3)+SINCE-LAST(10) ~= 154
+        int tw = terminalWidth();
+        int fromW = TerminalWidthHelper.flexWidth(tw, 154, TerminalWidthHelper.noBorderOverhead(16), 20, 40);
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -45,7 +50,7 @@ public class CamelRouteTop extends CamelRouteStatus {
                         .with(this::getGroup),
                 new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
-                new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(fromW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
                 new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER)

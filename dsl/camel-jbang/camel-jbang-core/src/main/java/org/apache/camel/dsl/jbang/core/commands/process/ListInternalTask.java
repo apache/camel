@@ -28,6 +28,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -116,6 +117,10 @@ public class ListInternalTask extends ProcessWatchCommand {
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
+                // Flexible column: FAILURE (140)
+                // Fixed columns: PID(8)+NAME(30)+TASK(10)+STATUS(8)+ATTEMPT(7)+DELAY(5)+ELAPSED(7)+FIRST(8)+LAST(8)+NEXT(8) ~= 99
+                int tw = terminalWidth();
+                int failW = TerminalWidthHelper.flexWidth(tw, 99, TerminalWidthHelper.noBorderOverhead(11), 20, 140);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
@@ -130,7 +135,7 @@ public class ListInternalTask extends ProcessWatchCommand {
                         new Column().header("LAST").dataAlign(HorizontalAlign.LEFT).with(this::getLast),
                         new Column().header("NEXT").dataAlign(HorizontalAlign.LEFT).with(this::getNext),
                         new Column().header("FAILURE").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                .maxWidth(failW, OverflowBehaviour.NEWLINE)
                                 .with(r -> r.error))));
             }
         }

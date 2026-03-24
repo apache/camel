@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -191,6 +192,10 @@ public class CamelContextStatus extends ProcessWatchCommand {
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
+                // Flexible column: error description (70)
+                // Fixed columns: PID(8)+NAME(30)+CAMEL(8)+PLATFORM(12)+PROFILE(8)+READY(5)+STATUS(8)+RELOAD(6)+AGE(8)+ROUTE(5)+MSG/S(5)+TOTAL(5)+FAIL(4)+INFLIGHT(8)+LAST(4)+SINCE-LAST(10) ~= 134
+                int tw = terminalWidth();
+                int errW = TerminalWidthHelper.flexWidth(tw, 134, TerminalWidthHelper.noBorderOverhead(17), 15, 70);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
@@ -213,7 +218,7 @@ public class CamelContextStatus extends ProcessWatchCommand {
                         new Column().header("SINCE-LAST").with(this::getSinceLast),
                         new Column().header("") // empty header as we only show info when there is an error
                                 .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(70, OverflowBehaviour.NEWLINE)
+                                .maxWidth(errW, OverflowBehaviour.NEWLINE)
                                 .with(this::getDescription))));
             }
         }

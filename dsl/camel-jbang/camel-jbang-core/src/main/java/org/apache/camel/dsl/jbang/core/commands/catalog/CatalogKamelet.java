@@ -30,6 +30,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -109,11 +110,18 @@ public class CatalogKamelet extends CamelCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
+            int tw = terminalWidth();
+            // Fixed columns: NAME (~30), TYPE (10), LEVEL (12)
+            int fixedWidth = 30 + 10 + 12;
+            int descWidth = TerminalWidthHelper.flexWidth(
+                    tw, fixedWidth, TerminalWidthHelper.noBorderOverhead(4),
+                    20, 80);
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> r.name),
                     new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).minWidth(10).with(r -> r.type),
                     new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).minWidth(12).with(r -> r.supportLevel),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::getDescription))));
+                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(descWidth)
+                            .with(this::getDescription))));
         }
 
         return 0;

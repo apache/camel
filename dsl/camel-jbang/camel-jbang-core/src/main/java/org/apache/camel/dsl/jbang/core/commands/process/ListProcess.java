@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.model.ListProcessDTO;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -140,10 +141,14 @@ public class ListProcess extends ProcessWatchCommand {
                                             .map(ListProcessDTO::toMap)
                                             .collect(Collectors.toList())));
                 } else {
+                    // Fixed columns: PID(~8) + NAME(up to nameW) + READY(5) + STATUS(8) + AGE(8) + TOTAL(6) + FAIL(5) + INFLIGHT(10)
+                    int tw = terminalWidth();
+                    int nameW = TerminalWidthHelper.flexWidth(tw, 56, TerminalWidthHelper.noBorderOverhead(9), 15, 40);
+                    int errW = TerminalWidthHelper.flexWidth(tw, nameW + 56, TerminalWidthHelper.noBorderOverhead(9), 10, 70);
                     printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                             new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                             new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                                    .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                    .maxWidth(nameW, OverflowBehaviour.ELLIPSIS_RIGHT)
                                     .with(r -> r.name),
                             new Column().header("READY").dataAlign(HorizontalAlign.CENTER).with(r -> r.ready),
                             new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
@@ -154,7 +159,7 @@ public class ListProcess extends ProcessWatchCommand {
                             new Column().header("INFLIGHT").with(this::getInflight),
                             new Column().header("") // empty header as we only show info when there is an error
                                     .headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                                    .maxWidth(70, OverflowBehaviour.NEWLINE)
+                                    .maxWidth(errW, OverflowBehaviour.NEWLINE)
                                     .with(this::getDescription))));
                 }
             }

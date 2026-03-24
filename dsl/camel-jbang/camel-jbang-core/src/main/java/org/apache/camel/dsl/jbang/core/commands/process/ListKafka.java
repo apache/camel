@@ -32,6 +32,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -199,6 +200,12 @@ public class ListKafka extends ProcessWatchCommand {
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
+                // Flexible columns: ERROR (60), ENDPOINT (90/140)
+                // Fixed columns: PID(8)+NAME(30)+ROUTE(8)+STATUS(8)+GROUP-ID(10)+TOPIC(10)+PARTITION(9)+OFFSET(6)+COMMITTED(10) ~= 99
+                int tw = terminalWidth();
+                int errW = TerminalWidthHelper.flexWidth(tw, 99 + 90, TerminalWidthHelper.noBorderOverhead(12), 15, 60);
+                int epW = TerminalWidthHelper.flexWidth(tw, 99 + 60, TerminalWidthHelper.noBorderOverhead(12), 20, 90);
+                int epWideW = TerminalWidthHelper.flexWidth(tw, 99 + 60, TerminalWidthHelper.noBorderOverhead(12), 20, 140);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
@@ -213,13 +220,13 @@ public class ListKafka extends ProcessWatchCommand {
                         new Column().header("COMMITTED").visible(committed).dataAlign(HorizontalAlign.RIGHT)
                                 .with(this::getCommitted),
                         new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(60, OverflowBehaviour.NEWLINE)
+                                .maxWidth(errW, OverflowBehaviour.NEWLINE)
                                 .with(this::getLastError),
                         new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .maxWidth(epW, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(this::getUri),
                         new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                .maxWidth(epWideW, OverflowBehaviour.NEWLINE)
                                 .with(this::getUri))));
             }
         }

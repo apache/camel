@@ -29,6 +29,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -104,6 +105,21 @@ public class MessageTableHelper {
             String exchangeId, String exchangePattern,
             JsonObject aggregate, JsonObject endpoint, JsonObject endpointService,
             JsonObject root, JsonObject cause) {
+
+        int tw = TerminalWidthHelper.getTerminalWidth();
+        int kindWidth = showExchangeProperties || showExchangeVariables ? 12 : 10;
+        // Compute flexible widths for the 4-column tables (kind + type + key + value)
+        int fixed4 = kindWidth + 25 + 25; // kind + type(min) + key(min)
+        int border4 = TerminalWidthHelper.noBorderOverhead(4);
+        int valueWidth = TerminalWidthHelper.flexWidth(tw, fixed4, border4, 20, 80);
+        int typeWidth = TerminalWidthHelper.flexWidth(tw, kindWidth + 25 + valueWidth, border4, 20, 50);
+        int keyWidth = TerminalWidthHelper.flexWidth(tw, kindWidth + typeWidth + valueWidth, border4, 15, 40);
+        // Body/stacktrace spans full width (single column table)
+        int bodyWidth = TerminalWidthHelper.flexWidth(tw, 0, TerminalWidthHelper.noBorderOverhead(1), 40, 160);
+        // Exception table: kind + type + value (3 columns)
+        int border3 = TerminalWidthHelper.noBorderOverhead(3);
+        int excValueWidth = TerminalWidthHelper.flexWidth(tw, kindWidth + 40, border3, 20, 80);
+        int excTypeWidth = TerminalWidthHelper.flexWidth(tw, kindWidth + excValueWidth, border3, 15, 40);
 
         List<TableRow> rows = new ArrayList<>();
         TableRow eRow;
@@ -205,14 +221,14 @@ public class MessageTableHelper {
             if (!rows.isEmpty()) {
                 tab2 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                                .minWidth(kindWidth)
                                 .with(TableRow::kindAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
+                                .minWidth(25).maxWidth(typeWidth, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                         new Column().dataAlign(HorizontalAlign.RIGHT)
-                                .minWidth(25).maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
+                                .minWidth(25).maxWidth(keyWidth, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
+                                .maxWidth(valueWidth, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
             }
             rows.clear();
 
@@ -255,14 +271,14 @@ public class MessageTableHelper {
                 // headers
                 tab4 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                                .minWidth(kindWidth)
                                 .with(TableRow::kindAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
+                                .minWidth(25).maxWidth(typeWidth, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                         new Column().dataAlign(HorizontalAlign.RIGHT)
-                                .minWidth(25).maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
+                                .minWidth(25).maxWidth(keyWidth, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
+                                .maxWidth(valueWidth, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
             }
             rows.clear();
 
@@ -279,7 +295,7 @@ public class MessageTableHelper {
                 // body value only (span)
                 if (bodyRow.value != null) {
                     tab6 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Collections.singletonList(
-                            new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
+                            new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(bodyWidth, OverflowBehaviour.NEWLINE)
                                     .with(b -> pretty ? bodyRow.valueAsStringPretty() : bodyRow.valueAsString())));
                 }
             }
@@ -290,12 +306,12 @@ public class MessageTableHelper {
             eRow = new TableRow("Exception", cause.getString("type"), null, cause.get("message"));
             tab7 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10)
+                            .minWidth(kindWidth)
                             .with(TableRow::kindAsStringRed),
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
+                            .maxWidth(excTypeWidth, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsStringRed)));
+                            .maxWidth(excValueWidth, OverflowBehaviour.NEWLINE).with(TableRow::valueAsStringRed)));
         }
         // stacktrace only (span)
         String tab8 = null;
@@ -305,7 +321,7 @@ public class MessageTableHelper {
                 value = Jsoner.unescape(value);
                 eRow = new TableRow("Stacktrace", null, null, value);
                 tab8 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Collections.singletonList(
-                        new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
+                        new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(bodyWidth, OverflowBehaviour.NEWLINE)
                                 .with(TableRow::valueAsStringRed)));
             }
         }
