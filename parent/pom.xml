@@ -440,7 +440,7 @@
         <ognl-version>3.4.10</ognl-version>
         <mcp-java-sdk-version>1.1.0</mcp-java-sdk-version>
         <openai-java-version>4.29.0</openai-java-version>
-        <openapi-generator-version>7.20.0</openapi-generator-version>
+        <openapi-generator-version>7.21.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.5.0</opensearch-rest-client-version>
         <opensearch-java-client-version>3.7.0</opensearch-java-client-version>
