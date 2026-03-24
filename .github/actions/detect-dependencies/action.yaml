@@ -56,7 +56,7 @@ runs:
           const body = fs.readFileSync(commentFile, 'utf8').trim();
           if (!body) return;
 
-          const prNumber = context.issue.number;
+          const prNumber = ${{ inputs.pr-id || 0 }};
           if (!prNumber) {
             core.warning('Could not determine PR number, skipping dependency comment');
             return;
