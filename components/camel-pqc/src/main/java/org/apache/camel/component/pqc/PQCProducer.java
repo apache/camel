@@ -36,6 +36,9 @@ import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
 import org.apache.camel.component.pqc.stateful.StatefulKeyState;
+import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
@@ -107,6 +110,10 @@ public class PQCProducer extends DefaultProducer {
     private Signature classicalSigner;
     private KeyAgreement classicalKeyAgreement;
     private KeyPair classicalKeyPair;
+
+    // Health check fields
+    private HealthCheck producerHealthCheck;
+    private WritableHealthCheckRepository healthCheckRepository;
 
     public PQCProducer(Endpoint endpoint) {
         super(endpoint);
@@ -381,10 +388,34 @@ public class PQCProducer extends DefaultProducer {
             // Initialize classical key pair
             classicalKeyPair = getConfiguration().getClassicalKeyPair();
         }
+
+        // Register health check for stateful key monitoring
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(),
+                "producers",
+                WritableHealthCheckRepository.class);
+
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
+            String id = getEndpoint().getId();
+            producerHealthCheck = new PQCStatefulKeyHealthCheck(getEndpoint(), id);
+            producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
+            healthCheckRepository.removeHealthCheck(producerHealthCheck);
+            producerHealthCheck = null;
+        }
+        super.doStop();
     }
 
     private void signature(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException {
+            throws Exception {
+        checkStatefulKeyBeforeSign();
+
         String payload = exchange.getMessage().getMandatoryBody(String.class);
 
         signer.initSign(keyPair.getPrivate());
@@ -392,6 +423,8 @@ public class PQCProducer extends DefaultProducer {
 
         byte[] signature = signer.sign();
         exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
+
+        persistStatefulKeyStateAfterSign(exchange);
     }
 
     private void verification(Exchange exchange)
@@ -810,6 +843,112 @@ public class PQCProducer extends DefaultProducer {
         if (klm != null) {
             klm.deleteKey(keyId);
         }
+    }
+
+    /**
+     * Checks whether the current key is a stateful signature key (XMSS, XMSSMT, LMS/HSS) and if so, validates that it
+     * has remaining signatures available. Logs a warning when remaining signatures fall below the configured threshold.
+     *
+     * @throws IllegalStateException if the key has zero remaining signatures
+     */
+    private void checkStatefulKeyBeforeSign() {
+        if (keyPair == null || keyPair.getPrivate() == null) {
+            return;
+        }
+
+        PrivateKey privateKey = keyPair.getPrivate();
+        long remaining = getStatefulKeyRemaining(privateKey);
+        if (remaining < 0) {
+            // Not a stateful key
+            return;
+        }
+
+        if (remaining <= 0) {
+            throw new IllegalStateException(
+                    "Stateful key (" + privateKey.getAlgorithm() + ") is exhausted with 0 remaining signatures. "
+                                            + "The key must not be reused — generate a new key pair.");
+        }
+
+        double threshold = getConfiguration().getStatefulKeyWarningThreshold();
+        if (threshold > 0) {
+            long totalCapacity = getStatefulKeyIndex(privateKey) + remaining;
+            if (totalCapacity > 0) {
+                double fractionRemaining = (double) remaining / totalCapacity;
+                if (fractionRemaining <= threshold) {
+                    LOG.warn(
+                            "Stateful key ({}) is approaching exhaustion: {} signatures remaining out of {} total ({} remaining). "
+                             + "Consider generating a new key pair.",
+                            privateKey.getAlgorithm(), remaining, totalCapacity,
+                            String.format("%.1f%%", fractionRemaining * 100));
+                }
+            }
+        }
+    }
+
+    /**
+     * Persists stateful key state after a signing operation through the KeyLifecycleManager, if configured. This
+     * ensures the key index is tracked across restarts.
+     */
+    private void persistStatefulKeyStateAfterSign(Exchange exchange) throws Exception {
+        if (keyPair == null || keyPair.getPrivate() == null) {
+            return;
+        }
+
+        PrivateKey privateKey = keyPair.getPrivate();
+        long remaining = getStatefulKeyRemaining(privateKey);
+        if (remaining < 0) {
+            // Not a stateful key
+            return;
+        }
+
+        KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
+        if (klm == null) {
+            return;
+        }
+
+        String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
+        if (ObjectHelper.isEmpty(keyId)) {
+            return;
+        }
+
+        // Update metadata with current usage
+        KeyMetadata metadata = klm.getKeyMetadata(keyId);
+        if (metadata != null) {
+            metadata.updateLastUsed();
+            klm.updateKeyMetadata(keyId, metadata);
+        }
+
+        // Persist the updated key (with new index) so state survives restarts
+        klm.storeKey(keyId, keyPair, metadata);
+    }
+
+    /**
+     * Returns the remaining signatures for a stateful private key, or -1 if the key is not stateful.
+     */
+    private long getStatefulKeyRemaining(PrivateKey privateKey) {
+        if (privateKey instanceof XMSSPrivateKey) {
+            return ((XMSSPrivateKey) privateKey).getUsagesRemaining();
+        } else if (privateKey instanceof XMSSMTPrivateKey) {
+            return ((XMSSMTPrivateKey) privateKey).getUsagesRemaining();
+        } else if (privateKey instanceof LMSPrivateKey) {
+            return ((LMSPrivateKey) privateKey).getUsagesRemaining();
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the current index (number of signatures already produced) for a stateful private key, or 0 if the key is
+     * not stateful.
+     */
+    private long getStatefulKeyIndex(PrivateKey privateKey) {
+        if (privateKey instanceof XMSSPrivateKey) {
+            return ((XMSSPrivateKey) privateKey).getIndex();
+        } else if (privateKey instanceof XMSSMTPrivateKey) {
+            return ((XMSSMTPrivateKey) privateKey).getIndex();
+        } else if (privateKey instanceof LMSPrivateKey) {
+            return ((LMSPrivateKey) privateKey).getIndex();
+        }
+        return 0;
     }
 
     // ========== Configuration Validation ==========
