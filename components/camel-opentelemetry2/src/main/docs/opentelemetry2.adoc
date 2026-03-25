@@ -11,7 +11,7 @@
 
 *Since Camel {since}*
 
-This module is an implementation of the common `camel-telemetry` interface based on link:++https://opentelemetry.io/[OpenTelemetry]++[OpenTelemetry] technology.
+This module is an implementation of the common `camel-telemetry` interface based on link:https://opentelemetry.io/[OpenTelemetry] technology.
 
 It is named `camel-opentelemetry2` to differentiate it from the existing `camel-opentelemetry` component, which is based on an older Camel tracing specification. We recommend using this new component for future projects and migrating existing applications from `camel-opentelemetry`, as this component will likely become the default in a future version of Camel.
 
