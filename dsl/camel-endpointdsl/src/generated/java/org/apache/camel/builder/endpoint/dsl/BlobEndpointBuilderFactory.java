@@ -240,7 +240,8 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -256,7 +257,8 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -1673,7 +1675,8 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -1689,7 +1692,8 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -2835,7 +2839,8 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
@@ -2851,7 +2856,8 @@ public interface BlobEndpointBuilderFactory {
          * Determines the credential strategy to adopt.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.common.CredentialType</code> type.
+         * <code>org.apache.camel.component.azure.common.CredentialType</code>
+         * type.
          * 
          * Default: AZURE_IDENTITY
          * Group: common
