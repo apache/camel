@@ -40,6 +40,19 @@ These rules apply to ALL AI agents working on this codebase.
   Note: `fixVersions` cannot be set on an already-closed issue — set it before closing,
   or reopen/set/close if needed.
 
+### PR Reviewers
+
+When creating a PR, **always identify and request reviews** from the most relevant committers:
+
+- Run `git log --format='%an' --since='1 year' -- <affected-files> | sort | uniq -c | sort -rn | head -10`
+  to find who has been most active on the affected files.
+- Use `git blame` on key modified files to identify who wrote the code being changed.
+- Cross-reference with the [committer list](https://camel.apache.org/community/team/#committers)
+  to ensure you request reviews from active committers (not just contributors).
+- For component-specific changes, prefer reviewers who have recently worked on that component.
+- For cross-cutting changes (core, API), include committers with broader project knowledge.
+- Request review from **at least 2 relevant committers** using `gh pr edit --add-reviewer`.
+
 ### Merge Requirements
 
 - An agent MUST NOT merge a PR if there are any **unresolved review conversations**.
