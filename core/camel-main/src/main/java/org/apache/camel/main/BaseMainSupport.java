@@ -2150,9 +2150,9 @@ public abstract class BaseMainSupport extends BaseService {
             kmp.setKeyStore(ksp);
             kmp.setAlgorithm(sslConfig.getKeyManagerAlgorithm());
             kmp.setProvider(sslConfig.getKeyManagerProvider());
-        } else {
-            // no keystore configured, generate a self-signed certificate for development use
-            LOG.info("No SSL keystore configured - generating self-signed certificate for development use."
+        } else if (sslConfig.isSelfSigned()) {
+            // generate a self-signed certificate for development use
+            LOG.warn("Generating self-signed SSL certificate for development use."
                      + " Do NOT use this in production.");
             String password = "camel-self-signed";
             KeyStore ks = SelfSignedCertificateGenerator.generateKeyStore(password);
@@ -2167,6 +2167,10 @@ public abstract class BaseMainSupport extends BaseService {
             kmp.setCamelContext(camelContext);
             kmp.setKeyPassword(password);
             kmp.setKeyStore(ksp);
+        } else {
+            LOG.warn("SSL is enabled but no keystore is configured."
+                     + " Set camel.ssl.keyStore or camel.ssl.selfSigned=true for development.");
+            return;
         }
 
         final SSLContextParameters sslContextParameters = createSSLContextParameters(camelContext, sslConfig, kmp);

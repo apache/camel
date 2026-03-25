@@ -136,6 +136,7 @@ public class MainSSLTest {
         Main main = new Main();
 
         main.addInitialProperty("camel.ssl.enabled", "true");
+        main.addInitialProperty("camel.ssl.selfSigned", "true");
         main.addInitialProperty("camel.ssl.trustAllCertificates", "true");
 
         main.start();
@@ -154,6 +155,7 @@ public class MainSSLTest {
 
         main.configure().sslConfig()
                 .withEnabled(true)
+                .withSelfSigned(true)
                 .withTrustAllCertificates(true);
 
         main.start();
@@ -394,8 +396,9 @@ public class MainSSLTest {
     public void testMainSSLSelfSigned() {
         Main main = new Main();
 
-        // just enabling SSL without a keystore should generate a self-signed certificate
+        // enabling SSL with selfSigned should generate a self-signed certificate
         main.addInitialProperty("camel.ssl.enabled", "true");
+        main.addInitialProperty("camel.ssl.selfSigned", "true");
 
         main.start();
 
@@ -430,7 +433,8 @@ public class MainSSLTest {
         Main main = new Main();
 
         main.configure().sslConfig()
-                .withEnabled(true);
+                .withEnabled(true)
+                .withSelfSigned(true);
 
         main.start();
 
