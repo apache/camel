@@ -471,7 +471,7 @@
         <properties-maven-plugin-version>1.3.0</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>4.33.2</protobuf-version>
-        <protobuf-maven-plugin-version>4.1.3</protobuf-maven-plugin-version>
+        <protobuf-maven-plugin-version>5.1.0</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <prowide-version>SRU2025-10.3.5</prowide-version>
         <pubnub-version>13.1.1</pubnub-version>
