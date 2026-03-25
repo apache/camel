@@ -18,7 +18,6 @@ package org.apache.camel.opentelemetry2;
 
 import java.util.Map;
 
-import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
@@ -29,18 +28,12 @@ import org.apache.camel.telemetry.TagConstants;
 public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span {
 
     private static final String DEFAULT_EVENT_NAME = "log";
-    static final String BAGGAGE_CAMEL_FLAG = "camelScope";
 
     private final Span otelSpan;
-    private final Baggage baggage;
     private Scope scope;
-    private Scope baggageScope;
 
-    protected OpenTelemetrySpanAdapter(Span otelSpan, Baggage baggage) {
+    protected OpenTelemetrySpanAdapter(Span otelSpan) {
         this.otelSpan = otelSpan;
-        // We store an important flag in the baggage in order to verify if the
-        // root span was generated internally or from a third party dependency.
-        this.baggage = baggage.toBuilder().put(BAGGAGE_CAMEL_FLAG, "true").build();
     }
 
     protected Span getSpan() {
@@ -49,7 +42,6 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
 
     protected void makeCurrent() {
         this.scope = this.otelSpan.makeCurrent();
-        this.baggageScope = this.baggage.makeCurrent();
     }
 
     protected void end() {
@@ -57,16 +49,9 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     }
 
     protected void close() {
-        if (baggageScope != null) {
-            this.baggageScope.close();
-        }
         if (scope != null) {
             this.scope.close();
         }
-    }
-
-    protected Baggage getBaggage() {
-        return this.baggage;
     }
 
     @Override
@@ -126,7 +111,7 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
 
     @Override
     public String toString() {
-        return "OpenTelemetrySpanAdapter [span=" + otelSpan + ", baggage=" + baggage + "]";
+        return "OpenTelemetrySpanAdapter [span=" + otelSpan + "]";
     }
 
 }
