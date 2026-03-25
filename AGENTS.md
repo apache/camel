@@ -40,6 +40,12 @@ These rules apply to ALL AI agents working on this codebase.
   Note: `fixVersions` cannot be set on an already-closed issue — set it before closing,
   or reopen/set/close if needed.
 
+### PR Description Maintenance
+
+When pushing new commits to a PR, **always update the PR description** (and title if needed) to
+reflect the current state of the changeset. PRs evolve across commits — the description must stay
+accurate and complete. Use `gh pr edit --title "..." --body "..."` after each push.
+
 ### PR Reviewers
 
 When creating a PR, **always identify and request reviews** from the most relevant committers:
