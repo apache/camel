@@ -63,6 +63,84 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Data Type Transformer: update-message-labels
+
+The `google-mail:update-message-labels` data type transformer builds a `ModifyMessageRequest` from exchange variables, resolving label names to Gmail label IDs automatically.
+
+This is useful for modifying Gmail message labels (categorizing, archiving, starring, moving, etc.) without manually calling the labels/list API.
+
+=== Exchange Variables
+
+[cols="1,1,3"]
+|===
+| Variable | Type | Description
+
+| `addLabels`
+| `String` (comma-separated) or `List<String>`
+| Label names to add to the message.
+
+| `removeLabels`
+| `String` (comma-separated) or `List<String>`
+| Label names to remove from the message.
+|===
+
+At least one of the two variables must be set.
+
+Both system labels (INBOX, UNREAD, STARRED, SPAM, TRASH, IMPORTANT, etc.) and custom user-defined labels are resolved via the Gmail labels/list API.
+
+=== Examples
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("google-mail-stream:0")
+    .setVariable("addLabels", constant("Work"))
+    .setVariable("removeLabels", constant("INBOX,UNREAD"))
+    .transformDataType(new DataType("google-mail:update-message-labels"))
+    .to("google-mail:messages/modify");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "google-mail-stream:0"
+    steps:
+      - setVariable:
+          name: addLabels
+          constant: "Work"
+      - setVariable:
+          name: removeLabels
+          constant: "INBOX,UNREAD"
+      - transformDataType:
+            toType: "google-mail:update-message-labels"
+      - to:
+          uri: "google-mail:messages/modify"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="google-mail-stream:0"/>
+    <setVariable name="addLabels">
+        <constant>Work</constant>
+    </setVariable>
+    <setVariable name="removeLabels">
+        <constant>INBOX,UNREAD</constant>
+    </setVariable>
+    <transformDataType toType="google-mail:update-message-labels"/>
+    <to uri="google-mail:messages/modify"/>
+</route>
+----
+====
+
 == More Information
 
 For more information on the endpoints and options see API documentation
