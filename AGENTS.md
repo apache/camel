@@ -99,6 +99,20 @@ jump straight to implementation after reading the issue description and the curr
 **Present your findings** to the operator before implementing. Flag any risks, ambiguities, or cases
 where the issue may be invalid or the proposed approach may conflict with prior decisions.
 
+### Knowledge Cutoff Awareness
+
+AI agents have a training data cutoff and may not know about recent releases, API changes, or
+deprecations in external projects. **Never make authoritative claims about external project state
+based solely on training knowledge.**
+
+- When a JIRA issue, PR, or code references a specific version of an external dependency (e.g.,
+  Spring Boot 4.0, JUnit 6, Jakarta EE 11), **verify it exists** by checking official sources
+  (web search, Maven Central, release notes) before questioning or relying on it.
+- When implementing or reviewing changes that depend on external project behavior, verify the
+  current state rather than assuming training data is up to date.
+- If uncertain about whether something exists or has changed, say so and verify — do not
+  confidently assert something is wrong based on potentially stale knowledge.
+
 ### Git History Review (When Reviewing PRs)
 
 When reviewing PRs, apply the same investigative rigor:
