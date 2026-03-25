@@ -25,11 +25,14 @@ These rules apply to ALL AI agents working on this codebase.
 - An agent MUST NOT open more than 10 PRs per day per operator to ensure human reviewers can keep up.
 - Prioritize quality over quantity — fewer well-tested PRs are better than many shallow ones.
 
-### Branch Ownership
+### Git branch
 
 - An agent MUST NEVER push commits to a branch it did not create.
 - If a contributor's PR needs changes, the agent may suggest changes via review comments,
   but must not push to their branch without explicit permission.
+- An agent should prefer to use his own fork to push branches instead of the main apache/camel repository. It avoids to fill the main repository with a long list of uncleaned branches.
+- An agent must provide a useful name for the git branch. It should contain the global topic and issue number if possible.
+- After a Pull Request is merged or rejected, the branch should be deleted.
 
 ### JIRA Ticket Ownership
 
