@@ -2427,6 +2427,20 @@ public interface ComponentsBuilderFactory {
         return IbmWatsonxAiComponentBuilderFactory.ibmWatsonxAi();
     }
     /**
+     * IBM watsonx.data (camel-ibm-watsonx-data)
+     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
+     * engine management.
+     * 
+     * Category: cloud,database
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-data
+     * 
+     * @return the dsl builder
+     */
+    static IbmWatsonxDataComponentBuilderFactory.IbmWatsonxDataComponentBuilder ibmWatsonxData() {
+        return IbmWatsonxDataComponentBuilderFactory.ibmWatsonxData();
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.

@@ -7859,6 +7859,48 @@ public class StaticEndpointBuilders {
         return WatsonxAiEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM watsonx.data (camel-ibm-watsonx-data)
+     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
+     * engine management.
+     * 
+     * Category: cloud,database
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-data
+     * 
+     * Syntax: <code>ibm-watsonx-data:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxDataEndpointBuilderFactory.WatsonxDataEndpointBuilder ibmWatsonxData(String path) {
+        return ibmWatsonxData("ibm-watsonx-data", path);
+    }
+    /**
+     * IBM watsonx.data (camel-ibm-watsonx-data)
+     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
+     * engine management.
+     * 
+     * Category: cloud,database
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-data
+     * 
+     * Syntax: <code>ibm-watsonx-data:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxDataEndpointBuilderFactory.WatsonxDataEndpointBuilder ibmWatsonxData(String componentName, String path) {
+        return WatsonxDataEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
