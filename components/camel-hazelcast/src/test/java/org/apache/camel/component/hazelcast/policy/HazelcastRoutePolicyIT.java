@@ -32,6 +32,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.hazelcast.services.HazelcastService;
 import org.apache.camel.test.infra.hazelcast.services.HazelcastServiceFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,8 @@ public class HazelcastRoutePolicyIT {
     public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
 
     @Test
-    public void test() throws Exception {
+    @Timeout(value = 2, unit = TimeUnit.MINUTES)
+    public void testLeaderElectionWithMultipleNodes() throws Exception {
         List<String> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(CLIENTS.size());
         ExecutorService executor = Executors.newFixedThreadPool(CLIENTS.size());
@@ -105,10 +107,12 @@ public class HazelcastRoutePolicyIT {
             context.start();
             LOGGER.info("Started CamelContext on node: {}", id);
 
-            contextLatch.await(30, TimeUnit.SECONDS);
-
-            LOGGER.info("Shutting down node {}", id);
-            results.add(id);
+            if (contextLatch.await(30, TimeUnit.SECONDS)) {
+                LOGGER.info("Node {} completed successfully", id);
+                results.add(id);
+            } else {
+                LOGGER.warn("Node {} timed out waiting for route events", id);
+            }
         } catch (Exception e) {
             LOGGER.warn("Node {} failed: {}", id, e.getMessage(), e);
         } finally {
