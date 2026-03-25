@@ -53,6 +53,58 @@ These rules apply to ALL AI agents working on this codebase.
 - All code must pass formatting checks (`mvn formatter:format impsort:sort`) before pushing.
 - All generated files must be regenerated and committed (CI checks for uncommitted changes).
 
+### Issue Investigation (Before Implementation)
+
+Before implementing a fix for a JIRA issue, **thoroughly investigate** the issue's validity and context.
+Camel is a large, long-lived project — code often looks "wrong" but exists for good reasons. Do NOT
+jump straight to implementation after reading the issue description and the current code.
+
+**Required investigation steps:**
+
+1. **Validate the issue**: Confirm the reported problem is real and reproducible. Question assumptions
+   in the issue description — they may be incomplete or based on misunderstanding.
+2. **Check git history**: Run `git log --oneline <file>` and `git blame <file>` on the affected code.
+   Read the commit messages and linked JIRA tickets for prior changes to understand *why* the code
+   is written the way it is.
+3. **Search for related issues**: Search JIRA for related tickets (same component, similar keywords)
+   to find prior discussions, rejected approaches, or intentional design decisions.
+4. **Look for design documents**: Check the `proposals/` directory for design docs (`.adoc` files)
+   that may explain architectural decisions in the affected area.
+5. **Understand the broader context**: If the issue involves a module that replaced or deprecated
+   another (e.g., `camel-opentelemetry2` replacing `camel-opentelemetry`), understand *why* the
+   replacement was made and what was intentionally changed vs. accidentally omitted.
+6. **Check if the "fix" reverts prior work**: If your proposed change effectively reverts a prior
+   intentional commit, stop and reconsider. If the revert is still justified, explicitly acknowledge
+   it in the PR description and explain why despite the original rationale.
+
+**Present your findings** to the operator before implementing. Flag any risks, ambiguities, or cases
+where the issue may be invalid or the proposed approach may conflict with prior decisions.
+
+### Git History Review (When Reviewing PRs)
+
+When reviewing PRs, apply the same investigative rigor:
+
+- Check `git log` and `git blame` on modified files to see if the change conflicts with prior
+  intentional decisions.
+- Verify that "fixes" don't revert deliberate behavior without justification.
+- Check for design proposals (`proposals/*.adoc`) related to the affected area.
+- Search for related JIRA tickets that provide context on why the code was written that way.
+
+### Documentation Conventions
+
+When writing or modifying `.adoc` documentation:
+
+- **Use `xref:` for internal links**, never external `https://camel.apache.org/...` URLs.
+  Example: `xref:manual::camel-jbang.adoc[Camel JBang]` instead of
+  `https://camel.apache.org/manual/camel-jbang.html[Camel JBang]`.
+- **Cross-version xref fragments**: When linking to a section anchor (e.g., `#_my_section`) using
+  the `components::` prefix, verify that the target section exists in the **current released version**,
+  not just on `main`. The `components::` prefix resolves to the latest released version, so anchors
+  that only exist on `main` will produce broken links. Either omit the fragment or use a
+  version-aware reference.
+- **When reviewing doc PRs**, check that all `xref:` links and anchors resolve correctly, especially
+  cross-component references that may span versions.
+
 ## Structure
 
 ```
