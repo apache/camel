@@ -119,6 +119,10 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
                 .host(service.host())
                 .port(service.port());
 
+        clientBuilder
+                .socketTimeout(15000)
+                .connectionTimeout(15000);
+
         // add security info
         clientBuilder
                 .security()
