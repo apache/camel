@@ -35,11 +35,14 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class VertxWebSocketTestSupport extends CamelTestSupport {
 
-    protected final int port = AvailablePortFinder.getNextAvailable();
-    protected final int port2 = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
 
     /**
      * Returns the randomized port used for the Vert.x server if no port was provided to the consumer.
@@ -49,8 +52,8 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
         Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = component.getVertxHostRegistry();
         return registry.values()
                 .stream()
-                .filter(wsHost -> wsHost.getPort() != port)
-                .filter(wsHost -> wsHost.getPort() != port2)
+                .filter(wsHost -> wsHost.getPort() != port.getPort())
+                .filter(wsHost -> wsHost.getPort() != port2.getPort())
                 .findFirst()
                 .get()
                 .getPort();

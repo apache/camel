@@ -42,6 +42,9 @@ public class LogPhiTest extends CamelTestSupport {
     static final int SERVER_ACKNOWLEDGEMENT_DELAY = 10000;
 
     @RegisterExtension
+    AvailablePortFinder.Port mllpServerPort = AvailablePortFinder.find();
+
+    @RegisterExtension
     public MllpServerResource mllpServer = new MllpServerResource();
 
     @EndpointInject("direct:startNoLogPhi")
@@ -56,7 +59,7 @@ public class LogPhiTest extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         mllpServer.setListenHost("localhost");
-        mllpServer.setListenPort(AvailablePortFinder.getNextAvailable());
+        mllpServer.setListenPort(mllpServerPort.getPort());
         mllpServer.setDelayDuringAcknowledgement(SERVER_ACKNOWLEDGEMENT_DELAY);
         mllpServer.startup();
         assertTrue(mllpServer.isActive());

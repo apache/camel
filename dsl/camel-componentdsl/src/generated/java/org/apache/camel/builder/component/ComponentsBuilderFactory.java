@@ -1051,8 +1051,9 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Query Couchbase Views with a poll strategy and/or perform various
-     * operations against Couchbase databases.
+     * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
+     * with a poll strategy and/or perform various operations against Couchbase
+     * databases.
      * 
      * Category: database
      * Since: 2.19
@@ -4182,7 +4183,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * To call REST services using OpenAPI specification as contract.
+     * To call and expose REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1

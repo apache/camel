@@ -22,6 +22,7 @@ import java.util.HashMap;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthenticator;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
@@ -34,25 +35,26 @@ public class HttpProxyMojoManualIT extends CamelSalesforceMojoManualIT {
 
     private static final String HTTP_PROXY_USER_NAME = "camel-user";
 
-    private int httpProxyPort;
+    @RegisterExtension
+    AvailablePortFinder.Port httpProxyPortHolder = AvailablePortFinder.find();
 
     private HttpProxyServer proxy;
 
     @BeforeEach
     public void startProxy() {
-        httpProxyPort = AvailablePortFinder.getNextAvailable();
 
-        proxy = DefaultHttpProxyServer.bootstrap().withPort(httpProxyPort).withProxyAuthenticator(new ProxyAuthenticator() {
-            @Override
-            public String getRealm() {
-                return HTTP_PROXY_REALM;
-            }
+        proxy = DefaultHttpProxyServer.bootstrap().withPort(httpProxyPortHolder.getPort())
+                .withProxyAuthenticator(new ProxyAuthenticator() {
+                    @Override
+                    public String getRealm() {
+                        return HTTP_PROXY_REALM;
+                    }
 
-            @Override
-            public boolean authenticate(String userName, String password) {
-                return HTTP_PROXY_USER_NAME.equals(userName) && HTTP_PROXY_PASSWORD.equals(password);
-            }
-        }).start();
+                    @Override
+                    public boolean authenticate(String userName, String password) {
+                        return HTTP_PROXY_USER_NAME.equals(userName) && HTTP_PROXY_PASSWORD.equals(password);
+                    }
+                }).start();
     }
 
     @AfterEach
@@ -66,12 +68,12 @@ public class HttpProxyMojoManualIT extends CamelSalesforceMojoManualIT {
 
         // HTTP proxy properties
         mojo.httpProxyHost = "localhost";
-        mojo.httpProxyPort = httpProxyPort;
+        mojo.httpProxyPort = httpProxyPortHolder.getPort();
         mojo.httpProxyUsername = HTTP_PROXY_USER_NAME;
         mojo.httpProxyPassword = HTTP_PROXY_PASSWORD;
         mojo.httpProxyRealm = HTTP_PROXY_REALM;
         mojo.isHttpProxySecure = false;
-        mojo.httpProxyAuthUri = String.format("http://localhost:%s", httpProxyPort);
+        mojo.httpProxyAuthUri = String.format("http://localhost:%s", httpProxyPortHolder.getPort());
 
         // HTTP client properties
         mojo.httpClientProperties = new HashMap<>();

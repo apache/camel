@@ -28,18 +28,19 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AS2AsyncMDNServerConnectionTest {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
     private AS2AsyncMDNServerConnection connection;
 
     @BeforeEach
     void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
-        connection = new AS2AsyncMDNServerConnection(port, null);
+        connection = new AS2AsyncMDNServerConnection(port.getPort(), null);
     }
 
     @AfterEach
@@ -67,7 +68,8 @@ class AS2AsyncMDNServerConnectionTest {
 
         // Send a request with a Host header that doesn't match the server's hostname
         // This previously caused HTTP 421 due to RequestValidateHost
-        HttpURLConnection conn = (HttpURLConnection) new URL("http://localhost:" + port + "/test-mdn").openConnection();
+        HttpURLConnection conn
+                = (HttpURLConnection) new URL("http://localhost:" + port.getPort() + "/test-mdn").openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Host", "different-host.example.com");
         conn.setDoOutput(true);

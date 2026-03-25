@@ -45,7 +45,7 @@ public class AsyncEndpointJmsTXWireTapIT extends AbstractSpringJMSITSupport {
         getMockEndpoint("mock:tap").expectedBodiesReceived("Hi Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
-        template.sendBody("activemq:queue:inbox", "Hello Camel");
+        template.sendBody("activemq:queue:inbox.AsyncEndpointJmsTXWireTapIT", "Hello Camel");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -60,7 +60,7 @@ public class AsyncEndpointJmsTXWireTapIT extends AbstractSpringJMSITSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("activemq:queue:inbox")
+                from("activemq:queue:inbox.AsyncEndpointJmsTXWireTapIT")
                         .transacted()
                         .process(exchange -> assertTrue(exchange.isTransacted(), "Exchange should be transacted"))
                         .to("async:bye:camel")

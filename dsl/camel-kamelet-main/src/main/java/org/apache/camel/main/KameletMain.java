@@ -167,10 +167,9 @@ public class KameletMain extends MainCommandLineSupport {
     public static void main(String... args) throws Exception {
         KameletMain main = new KameletMain();
         int code = main.run(args);
-        if (code != 0) {
-            System.exit(code);
-        }
-        // normal exit
+        // force exit to ensure the JVM terminates even if
+        // components have non-daemon threads still running (e.g. RabbitMQ)
+        System.exit(code);
     }
 
     @Override

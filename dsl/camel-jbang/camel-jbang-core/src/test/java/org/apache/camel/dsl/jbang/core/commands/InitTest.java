@@ -23,12 +23,14 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InitTest {
@@ -121,5 +123,37 @@ class InitTest {
         List<String> lines = Files.readAllLines(f);
         assertEquals("import org.apache.camel.builder.RouteBuilder;", lines.get(0));
         Files.delete(f);
+    }
+
+    @Test
+    void initListTemplates() throws Exception {
+        StringPrinter printer = new StringPrinter();
+        Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(initCommand, "--list");
+
+        int exit = initCommand.doCall();
+
+        assertEquals(0, exit);
+        String output = printer.getOutput();
+        assertTrue(output.contains("Available templates"), "Should contain header");
+        assertTrue(output.contains("Routes:"), "Should contain Routes category");
+        assertTrue(output.contains("Kamelets:"), "Should contain Kamelets category");
+        assertTrue(output.contains("java"), "Should list java template");
+        assertTrue(output.contains("yaml"), "Should list yaml template");
+        assertTrue(output.contains("xml"), "Should list xml template");
+        // Should not list internal templates
+        assertFalse(output.contains("Dockerfile"), "Should not list Dockerfile templates");
+        assertFalse(output.contains("pom"), "Should not list POM templates");
+    }
+
+    @Test
+    void initWithoutFileAndWithoutList() throws Exception {
+        StringPrinter printer = new StringPrinter();
+        Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(initCommand);
+
+        int exit = initCommand.doCall();
+
+        assertEquals(1, exit);
     }
 }

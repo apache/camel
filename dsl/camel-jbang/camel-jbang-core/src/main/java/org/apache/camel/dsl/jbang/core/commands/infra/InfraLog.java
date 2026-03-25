@@ -93,7 +93,7 @@ public class InfraLog extends InfraBaseCommand {
             }
 
             if (logFile == null) {
-                printer().println("Log not found for service " + alias);
+                printer().printErr("Log not found for service " + alias);
                 return -1;
             }
 

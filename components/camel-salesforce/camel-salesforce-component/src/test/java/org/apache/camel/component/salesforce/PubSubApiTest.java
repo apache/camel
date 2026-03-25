@@ -17,8 +17,9 @@
 package org.apache.camel.component.salesforce;
 
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import com.google.protobuf.ByteString;
 import com.salesforce.eventbus.protobuf.ReplayPreset;
@@ -30,6 +31,7 @@ import org.apache.camel.component.salesforce.internal.pubsub.AuthErrorPubSubServ
 import org.apache.camel.component.salesforce.internal.pubsub.SendInvalidReplayIdErrorPubSubServer;
 import org.apache.camel.component.salesforce.internal.pubsub.SendOneMessagePubSubServer;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -48,6 +50,8 @@ import static org.mockito.Mockito.when;
 public class PubSubApiTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(PubSubApiTest.class);
+    // Keep Port references alive to prevent port reuse (TOCTOU prevention)
+    private final List<AvailablePortFinder.Port> reservedPorts = new ArrayList<>();
 
     @Test
     public void testReconnectOnErrorAfterReplayIdNonNull() throws Exception {
@@ -246,9 +250,9 @@ public class PubSubApiTest {
         }
     }
 
-    private int getPort() throws IOException {
-        try (ServerSocket serverSocket = new ServerSocket(0)) {
-            return serverSocket.getLocalPort();
-        }
+    private int getPort() {
+        AvailablePortFinder.Port port = AvailablePortFinder.find();
+        reservedPorts.add(port);
+        return port.getPort();
     }
 }

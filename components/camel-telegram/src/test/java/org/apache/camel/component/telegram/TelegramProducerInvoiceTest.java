@@ -225,7 +225,7 @@ public class TelegramProducerInvoiceTest extends TelegramTestSupport {
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
-        return new TelegramMockRoutes(port)
+        return new TelegramMockRoutes(port.getPort())
                 .addEndpoint(
                         "sendInvoice",
                         "POST",

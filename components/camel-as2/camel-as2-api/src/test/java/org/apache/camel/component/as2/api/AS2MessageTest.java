@@ -85,7 +85,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
         setupKeysAndCertificates();
 
         testServer = new AS2ServerConnection(
-                AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
+                AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT.getPort(), AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), decryptingKP.getPrivate(), MDN_MESSAGE_TEMPLATE,
                 VALIDATE_SIGNING_CERTIFICATE_CHAIN, null, null, null, null);
         testServer.listen("*", new HttpRequestHandler() {

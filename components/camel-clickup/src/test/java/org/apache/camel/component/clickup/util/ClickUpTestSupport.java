@@ -24,21 +24,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.clickup.ClickUpComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * A support test class for ClickUp tests.
  */
 public class ClickUpTestSupport extends CamelTestSupport {
 
-    protected static volatile int port;
+    @RegisterExtension
+    protected static AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     private ClickUpMockRoutes mockRoutes;
-
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
 
     /**
      * Retrieves a response from a JSON file on classpath.

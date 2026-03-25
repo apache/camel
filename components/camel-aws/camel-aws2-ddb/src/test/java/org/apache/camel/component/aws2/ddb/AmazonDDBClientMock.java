@@ -27,8 +27,13 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbServiceClientConfiguration;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.BatchExecuteStatementRequest;
+import software.amazon.awssdk.services.dynamodb.model.BatchExecuteStatementResponse;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.BatchStatementResponse;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableResponse;
@@ -38,8 +43,11 @@ import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
+import software.amazon.awssdk.services.dynamodb.model.ExecuteStatementRequest;
+import software.amazon.awssdk.services.dynamodb.model.ExecuteStatementResponse;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.ItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputDescription;
@@ -51,10 +59,15 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
+import software.amazon.awssdk.services.dynamodb.model.TransactGetItemsRequest;
+import software.amazon.awssdk.services.dynamodb.model.TransactGetItemsResponse;
+import software.amazon.awssdk.services.dynamodb.model.TransactWriteItemsRequest;
+import software.amazon.awssdk.services.dynamodb.model.TransactWriteItemsResponse;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTableResponse;
+import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
 public class AmazonDDBClientMock implements DynamoDbClient {
     public static final long NOW = 1327709390233L;
@@ -67,8 +80,13 @@ public class AmazonDDBClientMock implements DynamoDbClient {
     DeleteItemRequest deleteItemRequest;
     GetItemRequest getItemRequest;
     BatchGetItemRequest batchGetItemRequest;
+    BatchWriteItemRequest batchWriteItemRequest;
     ScanRequest scanRequest;
     QueryRequest queryRequest;
+    ExecuteStatementRequest executeStatementRequest;
+    BatchExecuteStatementRequest batchExecuteStatementRequest;
+    TransactWriteItemsRequest transactWriteItemsRequest;
+    TransactGetItemsRequest transactGetItemsRequest;
 
     public AmazonDDBClientMock() {
     }
@@ -201,6 +219,44 @@ public class AmazonDDBClientMock implements DynamoDbClient {
         lastEvaluatedKey.put("1", AttributeValue.builder().s("LAST_KEY").build());
         return QueryResponse.builder().consumedCapacity(consumed.build()).count(1).items(getAttributes())
                 .lastEvaluatedKey(lastEvaluatedKey).build();
+    }
+
+    @Override
+    public ExecuteStatementResponse executeStatement(ExecuteStatementRequest executeStatementRequest) {
+        this.executeStatementRequest = executeStatementRequest;
+        List<Map<String, AttributeValue>> items = new ArrayList<>();
+        items.add(getAttributes());
+        return ExecuteStatementResponse.builder().items(items).nextToken("nextToken123").build();
+    }
+
+    @Override
+    public BatchExecuteStatementResponse batchExecuteStatement(
+            BatchExecuteStatementRequest batchExecuteStatementRequest) {
+        this.batchExecuteStatementRequest = batchExecuteStatementRequest;
+        List<BatchStatementResponse> responses = new ArrayList<>();
+        responses.add(BatchStatementResponse.builder().item(getAttributes()).build());
+        return BatchExecuteStatementResponse.builder().responses(responses).build();
+    }
+
+    @Override
+    public TransactWriteItemsResponse transactWriteItems(TransactWriteItemsRequest transactWriteItemsRequest) {
+        this.transactWriteItemsRequest = transactWriteItemsRequest;
+        return TransactWriteItemsResponse.builder().build();
+    }
+
+    @Override
+    public TransactGetItemsResponse transactGetItems(TransactGetItemsRequest transactGetItemsRequest) {
+        this.transactGetItemsRequest = transactGetItemsRequest;
+        List<ItemResponse> responses = new ArrayList<>();
+        responses.add(ItemResponse.builder().item(getAttributes()).build());
+        return TransactGetItemsResponse.builder().responses(responses).build();
+    }
+
+    @Override
+    public BatchWriteItemResponse batchWriteItem(BatchWriteItemRequest batchWriteItemRequest) {
+        this.batchWriteItemRequest = batchWriteItemRequest;
+        Map<String, List<WriteRequest>> unprocessedItems = new HashMap<>();
+        return BatchWriteItemResponse.builder().unprocessedItems(unprocessedItems).build();
     }
 
     @Override

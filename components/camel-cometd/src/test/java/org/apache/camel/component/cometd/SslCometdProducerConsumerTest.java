@@ -25,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class SslCometdProducerConsumerTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
     private String uri;
     private String pwd = "changeit";
 
@@ -52,8 +54,7 @@ public class SslCometdProducerConsumerTest extends CamelTestSupport {
 
     @Override
     public void doPreSetup() {
-        port = AvailablePortFinder.getNextAvailable();
-        uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
+        uri = "cometds://127.0.0.1:" + port.getPort() + "/service/test?baseResource=file:./target/test-classes/webapp&"
               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
     }
 

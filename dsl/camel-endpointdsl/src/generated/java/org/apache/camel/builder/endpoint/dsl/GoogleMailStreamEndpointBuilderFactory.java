@@ -1079,6 +1079,42 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         public String googleMailId() {
             return "CamelGoogleMailId";
         }
+        /**
+         * The thread ID of the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleMailStreamThreadId}.
+         */
+        public String googleMailStreamThreadId() {
+            return "CamelGoogleMailStreamThreadId";
+        }
+        /**
+         * The Message-ID of the message.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleMailStreamMessageId}.
+         */
+        public String googleMailStreamMessageId() {
+            return "CamelGoogleMailStreamMessageId";
+        }
+        /**
+         * The label IDs of the message.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GoogleMailStreamLabelIds}.
+         */
+        public String googleMailStreamLabelIds() {
+            return "CamelGoogleMailStreamLabelIds";
+        }
     }
     static GoogleMailStreamEndpointBuilder endpointBuilder(String componentName, String path) {
         class GoogleMailStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailStreamEndpointBuilder, AdvancedGoogleMailStreamEndpointBuilder {

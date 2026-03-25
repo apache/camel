@@ -54,6 +54,7 @@ import org.apache.camel.spi.annotations.ExternalSchemaElement;
         "componentScanning",
         "beans",
         "springOrBlueprintBeans",
+        "sslContextParameters",
         "dataFormats",
         "restConfigurations",
         "rests",
@@ -92,6 +93,9 @@ public class BeansDefinition {
 
     // initially we'll be supporting only these elements which are parsed by
     // org.apache.camel.dsl.xml.io.XmlRoutesBuilderLoader in camel-xml-io-dsl
+
+    @XmlElement(name = "sslContextParameters")
+    private List<SSLContextParametersDefinition> sslContextParameters = new ArrayList<>();
 
     @XmlElementWrapper(name = "dataFormats")
     @XmlElement(name = "dataFormat")
@@ -143,6 +147,17 @@ public class BeansDefinition {
      */
     public void setSpringOrBlueprintBeans(List<Element> springOrBlueprintBeans) {
         this.springOrBlueprintBeans = springOrBlueprintBeans;
+    }
+
+    public List<SSLContextParametersDefinition> getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * SSL/TLS context parameters configuration
+     */
+    public void setSslContextParameters(List<SSLContextParametersDefinition> sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public List<RestConfigurationDefinition> getRestConfigurations() {

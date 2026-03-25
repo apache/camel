@@ -104,13 +104,18 @@ Registry.
 === Supported producer operations
 
 - BatchGetItems
+- BatchWriteItems
+- BatchExecuteStatement
 - DeleteItem
 - DeleteTable
 - DescribeTable
+- ExecuteStatement
 - GetItem
 - PutItem
 - Query
 - Scan
+- TransactGetItems
+- TransactWriteItems
 - UpdateItem
 - UpdateTable
 
@@ -202,6 +207,100 @@ from("direct:delete")
       exchange.getIn().setHeader(Ddb2Constants.KEY, keyMap);
   })
   .toF("aws2-ddb://%s?amazonDDBClient=#client&consistentRead=true", tableName);
+--------------------------------------------------------------------------------
+
+
+- ExecuteStatement (PartiQL): this operation runs a PartiQL statement against DynamoDB
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:partiql")
+  .process(exchange -> {
+      exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.ExecuteStatement);
+      exchange.getIn().setHeader(Ddb2Constants.STATEMENT,
+          "SELECT * FROM \"MyTable\" WHERE \"key\" = ?");
+      exchange.getIn().setHeader(Ddb2Constants.STATEMENT_PARAMETERS,
+          List.of(AttributeValue.builder().s("myKeyValue").build()));
+      exchange.getIn().setHeader(Ddb2Constants.CONSISTENT_READ, true);
+  })
+  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
+--------------------------------------------------------------------------------
+
+- BatchExecuteStatement (PartiQL batch): this operation runs multiple PartiQL statements in a batch
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:batchPartiql")
+  .process(exchange -> {
+      exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchExecuteStatement);
+      exchange.getIn().setHeader(Ddb2Constants.BATCH_STATEMENTS, List.of(
+          BatchStatementRequest.builder()
+              .statement("INSERT INTO \"MyTable\" VALUE {'key': 'k1', 'data': 'v1'}")
+              .build(),
+          BatchStatementRequest.builder()
+              .statement("INSERT INTO \"MyTable\" VALUE {'key': 'k2', 'data': 'v2'}")
+              .build()));
+  })
+  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
+--------------------------------------------------------------------------------
+
+- TransactWriteItems: this operation performs a transactional write across one or more tables
+
+[source,java]
+--------------------------------------------------------------------------------
+Map<String, AttributeValue> item = new HashMap<>();
+item.put("key", AttributeValue.builder().s("txKey").build());
+item.put("data", AttributeValue.builder().s("txValue").build());
+
+from("direct:transactWrite")
+  .process(exchange -> {
+      exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.TransactWriteItems);
+      exchange.getIn().setHeader(Ddb2Constants.TRANSACT_WRITE_ITEMS, List.of(
+          TransactWriteItem.builder()
+              .put(Put.builder().tableName("MyTable").item(item).build())
+              .build()));
+  })
+  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
+--------------------------------------------------------------------------------
+
+- TransactGetItems: this operation performs a transactional read across one or more tables
+
+[source,java]
+--------------------------------------------------------------------------------
+Map<String, AttributeValue> key = new HashMap<>();
+key.put("key", AttributeValue.builder().s("txKey").build());
+
+from("direct:transactGet")
+  .process(exchange -> {
+      exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.TransactGetItems);
+      exchange.getIn().setHeader(Ddb2Constants.TRANSACT_GET_ITEMS, List.of(
+          TransactGetItem.builder()
+              .get(Get.builder().tableName("MyTable").key(key).build())
+              .build()));
+  })
+  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
+--------------------------------------------------------------------------------
+
+- BatchWriteItems: this operation puts or deletes multiple items in one or more tables in a single batch
+
+[source,java]
+--------------------------------------------------------------------------------
+Map<String, AttributeValue> item1 = new HashMap<>();
+item1.put("key", AttributeValue.builder().s("bk1").build());
+item1.put("data", AttributeValue.builder().s("bv1").build());
+
+Map<String, List<WriteRequest>> requestItems = new HashMap<>();
+requestItems.put("MyTable", List.of(
+    WriteRequest.builder()
+        .putRequest(PutRequest.builder().item(item1).build())
+        .build()));
+
+from("direct:batchWrite")
+  .process(exchange -> {
+      exchange.getIn().setHeader(Ddb2Constants.OPERATION, Ddb2Operations.BatchWriteItems);
+      exchange.getIn().setHeader(Ddb2Constants.BATCH_WRITE_ITEMS, requestItems);
+  })
+  .toF("aws2-ddb://%s?amazonDDBClient=#client", tableName);
 --------------------------------------------------------------------------------
 
 

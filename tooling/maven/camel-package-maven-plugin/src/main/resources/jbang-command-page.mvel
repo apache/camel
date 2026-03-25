@@ -20,7 +20,7 @@
 @if{command.description != null}@{command.description}@end{}
 @if{command.deprecated}
 
-CAUTION: This command is deprecated.@if{command.deprecationNote} @{command.deprecationNote}@end{}
+CAUTION: This command is deprecated.@if{command.deprecationNote != null} @{command.deprecationNote}@end{}
 @end{}
 
 == Usage

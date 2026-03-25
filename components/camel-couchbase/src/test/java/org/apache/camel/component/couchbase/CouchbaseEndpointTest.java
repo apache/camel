@@ -173,6 +173,82 @@ public class CouchbaseEndpointTest {
         endpoint.setDescending(false);
     }
 
+    @Test
+    public void testBuildSqlQuerySimple() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setBucket("myBucket");
+        String query = endpoint.buildSqlQuery();
+        assertEquals("SELECT META().id AS __id, * FROM `myBucket`", query);
+    }
+
+    @Test
+    public void testBuildSqlQueryWithCollection() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setBucket("myBucket");
+        endpoint.setCollection("myCollection");
+        String query = endpoint.buildSqlQuery();
+        assertEquals("SELECT META().id AS __id, * FROM `myCollection`", query);
+    }
+
+    @Test
+    public void testBuildSqlQueryWithLimitAndSkip() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setBucket("myBucket");
+        endpoint.setLimit(10);
+        endpoint.setSkip(5);
+        String query = endpoint.buildSqlQuery();
+        assertEquals("SELECT META().id AS __id, * FROM `myBucket` LIMIT 10 OFFSET 5", query);
+    }
+
+    @Test
+    public void testBuildSqlQueryWithDescending() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setBucket("myBucket");
+        endpoint.setDescending(true);
+        endpoint.setLimit(10);
+        String query = endpoint.buildSqlQuery();
+        assertEquals("SELECT META().id AS __id, * FROM `myBucket` ORDER BY META().id DESC LIMIT 10", query);
+    }
+
+    @Test
+    public void testBuildSqlQueryWithRangeKeys() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setBucket("myBucket");
+        endpoint.setRangeStartKey("docA");
+        endpoint.setRangeEndKey("docZ");
+        String query = endpoint.buildSqlQuery();
+        assertEquals(
+                "SELECT META().id AS __id, * FROM `myBucket` WHERE META().id >= 'docA' AND META().id <= 'docZ'",
+                query);
+    }
+
+    @Test
+    public void testBuildSqlQueryWithStartKeyOnly() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setBucket("myBucket");
+        endpoint.setRangeStartKey("docA");
+        String query = endpoint.buildSqlQuery();
+        assertEquals("SELECT META().id AS __id, * FROM `myBucket` WHERE META().id >= 'docA'", query);
+    }
+
+    @Test
+    public void testBuildSqlQueryFullOptions() {
+        CouchbaseEndpoint endpoint = new CouchbaseEndpoint();
+        endpoint.setBucket("myBucket");
+        endpoint.setCollection("orders");
+        endpoint.setRangeStartKey("order_001");
+        endpoint.setRangeEndKey("order_999");
+        endpoint.setDescending(true);
+        endpoint.setLimit(50);
+        endpoint.setSkip(10);
+        String query = endpoint.buildSqlQuery();
+        assertEquals(
+                "SELECT META().id AS __id, * FROM `orders`"
+                     + " WHERE META().id >= 'order_001' AND META().id <= 'order_999'"
+                     + " ORDER BY META().id DESC LIMIT 50 OFFSET 10",
+                query);
+    }
+
     /**
      * Verifies that the ClusterEnvironment is configured with DefaultJsonSerializer to prevent the Couchbase SDK from
      * auto-detecting non-shaded Jackson on the classpath (CAMEL-22090). When non-shaded Jackson is present (e.g., via

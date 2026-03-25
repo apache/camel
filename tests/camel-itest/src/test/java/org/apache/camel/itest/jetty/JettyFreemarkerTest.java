@@ -28,6 +28,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,7 +36,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class JettyFreemarkerTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    static AvailablePortFinder.Port portFinder = AvailablePortFinder.find();
+    private int port = portFinder.getPort();
 
     @Test
     void testClasspath() {
@@ -77,7 +80,6 @@ public class JettyFreemarkerTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             public void configure() {

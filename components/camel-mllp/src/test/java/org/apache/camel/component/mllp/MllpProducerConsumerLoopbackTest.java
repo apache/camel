@@ -32,6 +32,7 @@ import org.apache.camel.test.mllp.PassthroughProcessor;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
     Logger log = LoggerFactory.getLogger(MllpProducerConsumerLoopbackTest.class);
-    int mllpPort = AvailablePortFinder.getNextAvailable();
+
+    @RegisterExtension
+    AvailablePortFinder.Port mllpPortField = AvailablePortFinder.find();
+
     String mllpHost = "localhost";
 
     @EndpointInject("direct://source")
@@ -75,7 +79,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
             String routeId = "mllp-receiver";
 
             public void configure() {
-                fromF("mllp://%s:%d?autoAck=true&readTimeout=5000", mllpHost, mllpPort).id(routeId)
+                fromF("mllp://%s:%d?autoAck=true&readTimeout=5000", mllpHost, mllpPortField.getPort()).id(routeId)
                         .convertBodyTo(String.class)
                         .to(acknowledged)
                         .process(new PassthroughProcessor("after send to result"))
@@ -89,7 +93,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
             public void configure() {
                 from(source.getDefaultEndpoint()).routeId(routeId)
                         .log(LoggingLevel.DEBUG, routeId, "Sending: ${body}")
-                        .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPort)
+                        .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPortField.getPort())
                         .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
             }
         };

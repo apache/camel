@@ -49,6 +49,7 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -58,7 +59,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
 
     protected static final String TARGET_HOST = "localhost";
-    protected static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    protected AvailablePortFinder.Port targetPort = AvailablePortFinder.find();
     protected static final Duration HTTP_SOCKET_TIMEOUT = Duration.ofSeconds(5);
     protected static final Duration HTTP_CONNECTION_TIMEOUT = Duration.ofSeconds(5);
     protected static final Integer HTTP_CONNECTION_POOL_SIZE = 5;
@@ -112,7 +114,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setServerPortNumber(TARGET_PORT);
+        configuration.setServerPortNumber(targetPort.getPort());
     }
 
     @Override
@@ -231,7 +233,7 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
     protected AS2ClientManager clientConnection() throws IOException {
         AS2ClientConnection clientConnection
                 = new AS2ClientConnection(
-                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
+                        AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, targetPort.getPort(), HTTP_SOCKET_TIMEOUT,
                         HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL, null,
                         null);
         return new AS2ClientManager(clientConnection);

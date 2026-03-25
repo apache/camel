@@ -43,7 +43,7 @@ class ConfigGetTest extends BaseConfigTestSupport {
         command.key = "foo";
         command.doCall();
 
-        Assertions.assertEquals("foo key not found", printer.getOutput());
+        Assertions.assertEquals("ERROR: foo key not found", printer.getOutput());
     }
 
     @Test

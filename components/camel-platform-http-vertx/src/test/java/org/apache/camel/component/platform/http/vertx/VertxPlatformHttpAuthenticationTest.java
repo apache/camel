@@ -32,11 +32,14 @@ import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig.
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class VertxPlatformHttpAuthenticationTest {
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     public void testAuthenticationDisabled() throws Exception {
@@ -287,9 +290,8 @@ public class VertxPlatformHttpAuthenticationTest {
 
     private CamelContext createCamelContext(AuthenticationConfigCustomizer customizer)
             throws Exception {
-        int bindPort = AvailablePortFinder.getNextAvailable();
-        RestAssured.port = bindPort;
-        return createCamelContext(bindPort, customizer);
+        RestAssured.port = port.getPort();
+        return createCamelContext(port.getPort(), customizer);
     }
 
     private CamelContext createCamelContext(int bindPort, AuthenticationConfigCustomizer customizer)

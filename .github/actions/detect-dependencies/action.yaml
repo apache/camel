@@ -21,10 +21,13 @@ inputs:
   github-token:
     description: 'The github token to access to the API'
     required: false
-  base-ref:
-    description: 'The base branch to compare against (defaults to github.base_ref)'
+  pr-id:
+    description: 'Id of the pull request'
+    required: true
+  github-repo:
+    description: 'The GitHub repository name (example, apache/camel)'
     required: false
-    default: ''
+    default: 'apache/camel'
   skip-mvnd-install:
     description: 'Skip mvnd installation (use if already installed)'
     required: false
@@ -40,7 +43,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: bash
-      run: ${{ github.action_path }}/detect-test.sh ${{ inputs.base-ref || github.base_ref }} ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd
+      run: ${{ github.action_path }}/detect-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd ${{ inputs.pr-id }} ${{ inputs.github-repo }}
     - name: Post dependency change comment
       if: always()
       uses: actions/github-script@v8
@@ -53,7 +56,7 @@ runs:
           const body = fs.readFileSync(commentFile, 'utf8').trim();
           if (!body) return;
 
-          const prNumber = context.issue.number;
+          const prNumber = ${{ inputs.pr-id || 0 }};
           if (!prNumber) {
             core.warning('Could not determine PR number, skipping dependency comment');
             return;

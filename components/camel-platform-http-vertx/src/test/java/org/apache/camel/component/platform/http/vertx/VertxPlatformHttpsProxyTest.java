@@ -31,6 +31,7 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -40,17 +41,21 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 
 public class VertxPlatformHttpsProxyTest {
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port camelPort = AvailablePortFinder.find();
 
-    private final int port = AvailablePortFinder.getNextAvailable();
-    private final WireMockServer wireMockServer = new WireMockServer(
-            options().httpsPort(port)
-                    .httpDisabled(true)
-                    .keystorePath("proxy/keystore.p12")
-                    .keystorePassword("changeit")
-                    .keyManagerPassword("changeit"));
+    private WireMockServer wireMockServer;
 
     @BeforeEach
     void before() {
+        wireMockServer = new WireMockServer(
+                options().httpsPort(port.getPort())
+                        .httpDisabled(true)
+                        .keystorePath("proxy/keystore.p12")
+                        .keystorePassword("changeit")
+                        .keyManagerPassword("changeit"));
         wireMockServer.stubFor(get(urlPathEqualTo("/"))
                 .willReturn(aResponse()
                         .withBody(
@@ -68,7 +73,7 @@ public class VertxPlatformHttpsProxyTest {
 
     @Test
     void testProxy() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(camelPort.getPort());
 
         try {
 
@@ -91,7 +96,7 @@ public class VertxPlatformHttpsProxyTest {
 
             // In order to make sure that RestAssured don't perform a CONNECT instead of a GET, we do trick with http
             // if we want to do test manually from a terminal we use the real HTTPS address
-            final var originURI = "http://localhost:" + port;
+            final var originURI = "http://localhost:" + port.getPort();
 
             given()
                     .proxy(proxyURI)

@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast;
 
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.collection.IQueue;
@@ -30,6 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,16 +43,29 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
     @Mock
     private IQueue<String> queue;
 
+    // Thread-safe backing queue: the mock's poll() delegates here,
+    // so stubbing is set up before the consumer starts polling.
+    private final LinkedBlockingQueue<String> mockItems = new LinkedBlockingQueue<>();
+
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.<String> getQueue("foo")).thenReturn(queue);
+        try {
+            when(queue.poll(anyLong(), any(TimeUnit.class))).thenAnswer(invocation -> {
+                long timeout = invocation.getArgument(0);
+                TimeUnit unit = invocation.getArgument(1);
+                return mockItems.poll(timeout, unit);
+            });
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
         verify(hazelcastInstance).getQueue("foo");
         try {
-            verify(queue, atLeast(1)).poll(10000, TimeUnit.MILLISECONDS);
+            verify(queue, atLeast(1)).poll(anyLong(), any(TimeUnit.class));
         } catch (InterruptedException e) {
             LOG.debug("Interrupted during test execution", e);
         }
@@ -57,21 +73,21 @@ public class HazelcastQueueConsumerPollTest extends HazelcastCamelTestSupport {
 
     @Test
     public void add() throws InterruptedException {
-        when(queue.poll(10000, TimeUnit.MILLISECONDS)).thenReturn("foo").thenReturn(null);
+        mockItems.add("foo");
 
         MockEndpoint out = getMockEndpoint("mock:result");
         out.expectedMessageCount(1);
 
-        MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);
+        MockEndpoint.assertIsSatisfied(context, 5000, TimeUnit.MILLISECONDS);
 
         this.checkHeadersAbsence(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.ADDED);
     }
 
     @Test
     public void pollTimeout() throws InterruptedException {
-        // if nothing to poll after timeout the queue.poll returns NULL, the consumer shouldn't send this NULL message
-        when(queue.poll(10000, TimeUnit.MILLISECONDS)).thenReturn(null);
-
+        // Don't add anything — the backing queue is empty so poll() will
+        // block for the configured timeout and return null.
+        // The consumer should NOT send a null message.
         MockEndpoint out = getMockEndpoint("mock:result");
         out.expectedMessageCount(0);
 

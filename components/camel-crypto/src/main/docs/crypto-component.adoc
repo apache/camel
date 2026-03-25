@@ -223,6 +223,322 @@ signed.getIn().setHeader(DigitalSignatureConstants.KEYSTORE_ALIAS, "bob");
 template.send("direct:alias-verify", signed);
 -------------------------------------------------------------------------------------------------
 
+== Using Post-Quantum Cryptography (PQC) Algorithms
 
+The Digital Signature EIP supports Post-Quantum Cryptography algorithms through the standard JCE provider mechanism.
+Since the `algorithm` and `provider` options accept any value supported by the underlying JCE implementation, you can use PQC signature algorithms such as ML-DSA (NIST FIPS 204) by registering a Bouncy Castle provider and supplying the corresponding keys.
+
+This approach is useful when you want to apply PQC signatures directly using the `crypto:sign` / `crypto:verify` pair without the full `camel-pqc` component.
+For hybrid signatures (combining classical + PQC) or key lifecycle management, use the xref:components::pqc-component.adoc[PQC component] instead.
+
+=== Prerequisites
+
+Add the Bouncy Castle provider dependencies to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcprov-jdk18on</artifactId>
+    <version>${bouncycastle.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcpkix-jdk18on</artifactId>
+    <version>${bouncycastle.version}</version>
+</dependency>
+----
+
+Register the Bouncy Castle provider at application startup:
+
+[source,java]
+----
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+Security.addProvider(new BouncyCastleProvider());
+----
+
+=== ML-DSA (NIST FIPS 204)
+
+ML-DSA (Module-Lattice Digital Signature Algorithm, formerly Dilithium) is the primary NIST-standardized post-quantum signature algorithm.
+
+==== Java DSL
+
+[tabs]
+====
+Raw keys::
++
+[source,java]
+----
+private KeyPair mlDsaKeyPair;
+
+private KeyPair getMlDsaKeyPair() throws Exception {
+    if (mlDsaKeyPair == null) {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
+        kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
+        mlDsaKeyPair = kpGen.generateKeyPair();
+    }
+    return mlDsaKeyPair;
+}
+
+@BindToRegistry("mlDsaPrivateKey")
+public PrivateKey mlDsaPrivateKey() throws Exception {
+    return getMlDsaKeyPair().getPrivate();
+}
+
+@BindToRegistry("mlDsaPublicKey")
+public PublicKey mlDsaPublicKey() throws Exception {
+    return getMlDsaKeyPair().getPublic();
+}
+
+from("direct:sign")
+    .to("crypto:sign:pqc?algorithm=ML-DSA&provider=BC&privateKeyName=#mlDsaPrivateKey")
+    .to("direct:verify");
+
+from("direct:verify")
+    .to("crypto:verify:pqc?algorithm=ML-DSA&provider=BC&publicKeyName=#mlDsaPublicKey")
+    .to("mock:result");
+----
+
+Dynamic keys via headers::
++
+[source,java]
+----
+KeyPairGenerator kpGen = KeyPairGenerator.getInstance("ML-DSA", "BC");
+kpGen.initialize(MLDSAParameterSpec.ml_dsa_65);
+KeyPair kp = kpGen.generateKeyPair();
+
+from("direct:sign")
+    .setHeader(DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY, constant(kp.getPrivate()))
+    .to("crypto:sign:pqc?algorithm=ML-DSA&provider=BC")
+    .to("direct:verify");
+
+from("direct:verify")
+    .setHeader(DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT, constant(kp.getPublic()))
+    .to("crypto:verify:pqc?algorithm=ML-DSA&provider=BC")
+    .to("mock:result");
+----
+====
+
+==== YAML DSL
+
+[source,yaml]
+----
+- route:
+    id: sign-route
+    from:
+      uri: direct:sign
+    steps:
+      - to:
+          uri: crypto:sign:pqc
+          parameters:
+            algorithm: ML-DSA
+            provider: BC
+            privateKeyName: "#mlDsaPrivateKey"
+      - to:
+          uri: direct:verify
+
+- route:
+    id: verify-route
+    from:
+      uri: direct:verify
+    steps:
+      - to:
+          uri: crypto:verify:pqc
+          parameters:
+            algorithm: ML-DSA
+            provider: BC
+            publicKeyName: "#mlDsaPublicKey"
+      - to:
+          uri: mock:result
+----
+
+==== ML-DSA parameter sets
+
+The following ML-DSA parameter sets are available:
+
+[cols="1,1,1,1"]
+|===
+| Parameter Set | Security Level | Signature Size | Use Case
+
+| `ml_dsa_44`
+| NIST Level 2
+| ~2,420 bytes
+| General-purpose signing
+
+| `ml_dsa_65`
+| NIST Level 3
+| ~3,309 bytes
+| Recommended default
+
+| `ml_dsa_87`
+| NIST Level 5
+| ~4,627 bytes
+| Highest security
+|===
+
+=== SLH-DSA (NIST FIPS 205)
+
+SLH-DSA (Stateless Hash-Based Digital Signature Algorithm, formerly SPHINCS+) is the secondary NIST-standardized PQC signature algorithm, based on hash functions.
+
+[source,java]
+----
+private KeyPair slhDsaKeyPair;
+
+private KeyPair getSlhDsaKeyPair() throws Exception {
+    if (slhDsaKeyPair == null) {
+        KeyPairGenerator kpGen = KeyPairGenerator.getInstance("SLH-DSA", "BC");
+        kpGen.initialize(SLHDSAParameterSpec.slh_dsa_sha2_128s);
+        slhDsaKeyPair = kpGen.generateKeyPair();
+    }
+    return slhDsaKeyPair;
+}
+
+@BindToRegistry("slhDsaPrivateKey")
+public PrivateKey slhDsaPrivateKey() throws Exception {
+    return getSlhDsaKeyPair().getPrivate();
+}
+
+@BindToRegistry("slhDsaPublicKey")
+public PublicKey slhDsaPublicKey() throws Exception {
+    return getSlhDsaKeyPair().getPublic();
+}
+
+from("direct:sign")
+    .to("crypto:sign:pqc?algorithm=SLH-DSA&provider=BC&privateKeyName=#slhDsaPrivateKey")
+    .to("direct:verify");
+
+from("direct:verify")
+    .to("crypto:verify:pqc?algorithm=SLH-DSA&provider=BC&publicKeyName=#slhDsaPublicKey")
+    .to("mock:result");
+----
+
+=== Hybrid Signatures (Classical + PQC)
+
+For hybrid signatures that combine a classical algorithm (e.g., ECDSA) with a PQC algorithm (e.g., ML-DSA) in a single route, the recommended approach is to use the xref:components::pqc-component.adoc[PQC component] which provides built-in hybrid operations.
+
+==== Using the PQC component (recommended)
+
+The `camel-pqc` component has dedicated `hybridSign` and `hybridVerify` operations that produce a single combined signature:
+
+[tabs]
+====
+Java DSL::
++
+[source,java]
+----
+from("direct:sign")
+    .to("pqc:hybrid?operation=hybridSign"
+        + "&signatureAlgorithm=MLDSA"
+        + "&classicalSignatureAlgorithm=ECDSA_P256")
+    .to("direct:verify");
+
+from("direct:verify")
+    .to("pqc:hybrid?operation=hybridVerify"
+        + "&signatureAlgorithm=MLDSA"
+        + "&classicalSignatureAlgorithm=ECDSA_P256")
+    .to("mock:result");
+----
+
+YAML DSL::
++
+[source,yaml]
+----
+- route:
+    id: hybrid-sign-route
+    from:
+      uri: direct:sign
+    steps:
+      - to:
+          uri: pqc:hybrid
+          parameters:
+            operation: hybridSign
+            signatureAlgorithm: MLDSA
+            classicalSignatureAlgorithm: ECDSA_P256
+      - to:
+          uri: direct:verify
+
+- route:
+    id: hybrid-verify-route
+    from:
+      uri: direct:verify
+    steps:
+      - to:
+          uri: pqc:hybrid
+          parameters:
+            operation: hybridVerify
+            signatureAlgorithm: MLDSA
+            classicalSignatureAlgorithm: ECDSA_P256
+      - to:
+          uri: mock:result
+----
+====
+
+Other hybrid combinations include:
+
+* `ED25519` + `MLDSA` — Edwards curve + ML-DSA
+* `RSA_3072` + `MLDSA` — RSA 3072-bit + ML-DSA
+* `ECDSA_P384` + `SLHDSA` — ECDSA P-384 + SLH-DSA
+
+See the xref:components::pqc-component.adoc[PQC component] for the full list of supported classical algorithms and details on the hybrid wire format.
+
+==== Chaining crypto: endpoints (manual approach)
+
+Alternatively, you can chain two `crypto:sign` / `crypto:verify` endpoints to produce both a classical and a PQC signature, storing each in a separate header:
+
+[source,java]
+----
+from("direct:sign")
+    // Classical ECDSA signature
+    .to("crypto:sign:classical?algorithm=SHA256withECDSA&privateKeyName=#ecPrivateKey"
+        + "&signatureHeaderName=ClassicalSignature")
+    // PQC ML-DSA signature
+    .to("crypto:sign:pqc?algorithm=ML-DSA&provider=BC&privateKeyName=#mlDsaPrivateKey"
+        + "&signatureHeaderName=PQCSignature")
+    .to("direct:verify");
+
+from("direct:verify")
+    // Verify classical signature
+    .to("crypto:verify:classical?algorithm=SHA256withECDSA&publicKeyName=#ecPublicKey"
+        + "&signatureHeaderName=ClassicalSignature")
+    // Verify PQC signature
+    .to("crypto:verify:pqc?algorithm=ML-DSA&provider=BC&publicKeyName=#mlDsaPublicKey"
+        + "&signatureHeaderName=PQCSignature")
+    .to("mock:result");
+----
+
+NOTE: The chaining approach stores two independent signatures in separate headers, while the PQC component's hybrid operations produce a single combined signature.
+For new implementations, the PQC component's hybrid operations are recommended as they handle the wire format, key management, and verification logic in a single step.
+
+=== Choosing Between camel-crypto and camel-pqc
+
+[cols="1,1,1"]
+|===
+| Feature | `camel-crypto` (Digital Signature EIP) | `camel-pqc` component
+
+| PQC-only signatures
+| Supported (set `algorithm` and `provider`)
+| Supported (built-in algorithm support)
+
+| Hybrid signatures
+| Manual chaining of two endpoints
+| Built-in `hybridSign` / `hybridVerify`
+
+| Key lifecycle management
+| Not included
+| Generate, rotate, expire, revoke keys
+
+| Key encapsulation (KEM)
+| Not supported
+| Built-in support
+
+| Additional dependencies
+| Only Bouncy Castle
+| Only Bouncy Castle
+
+| Best for
+| Adding PQC to existing crypto: routes
+| New PQC-focused implementations
+|===
 
 include::spring-boot:partial$starter.adoc[]

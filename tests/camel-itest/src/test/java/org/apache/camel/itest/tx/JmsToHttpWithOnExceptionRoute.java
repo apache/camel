@@ -33,6 +33,7 @@ import static org.apache.camel.itest.TransactionSupport.transactionErrorHandler;
  */
 public class JmsToHttpWithOnExceptionRoute extends RouteBuilder {
     protected static int counter;
+    protected AvailablePortFinder.Port portHolder;
     protected int port;
 
     @Resource(name = "PROPAGATION_REQUIRED")
@@ -45,7 +46,8 @@ public class JmsToHttpWithOnExceptionRoute extends RouteBuilder {
 
     @Override
     public void configure() {
-        port = AvailablePortFinder.getNextAvailable();
+        portHolder = AvailablePortFinder.find();
+        port = portHolder.getPort();
 
         // configure a global transacted error handler
         errorHandler(transactionErrorHandler(required));

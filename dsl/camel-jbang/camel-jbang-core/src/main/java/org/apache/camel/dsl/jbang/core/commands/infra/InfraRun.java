@@ -100,10 +100,11 @@ public class InfraRun extends InfraBaseCommand {
         if (testInfraService == null) {
             String message = ", use the list command for the available services";
             if (testServiceImplementation != null) {
-                printer().println("service " + testService + " with implementation " + testServiceImplementation + " not found"
-                                  + message);
+                printer().printErr("service " + testService + " with implementation " + testServiceImplementation + " not found"
+                                   + message);
+            } else {
+                printer().printErr("service " + testService + " not found" + message);
             }
-            printer().println("service " + testService + " not found" + message);
             return 1;
         }
 

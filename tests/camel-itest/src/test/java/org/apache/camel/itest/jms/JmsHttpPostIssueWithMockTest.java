@@ -41,7 +41,9 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
-    private int port;
+    @RegisterExtension
+    static AvailablePortFinder.Port portFinder = AvailablePortFinder.find();
+    private int port = portFinder.getPort();
 
     @Test
     void testJmsInOnlyHttpPostIssue() throws Exception {
@@ -64,7 +66,6 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             public void configure() {

@@ -20,16 +20,21 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.vertx.model.Pet;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
 
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @Test
     public void testRestOpenApiOutType() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -67,7 +72,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslBindingTest {
 
     @Test
     public void testRestOpenApiInType() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {

@@ -28,8 +28,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.emptyOrNullString;
@@ -38,9 +40,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxPlatformHttpStreamingTest {
 
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @Test
     void testStreamingWithStringRequestAndResponseBody() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {
@@ -67,7 +72,7 @@ public class VertxPlatformHttpStreamingTest {
 
     @Test
     void testStreamingWithFileRequestAndResponseBody() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         String content = "Hello World";
         Path testFile = Files.createTempFile("platform-http-testing", "txt");
         Files.writeString(testFile, content);
@@ -97,7 +102,7 @@ public class VertxPlatformHttpStreamingTest {
 
     @Test
     void testPopulateOnlyHeadersWithFormUrlEncodedBody() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -124,7 +129,7 @@ public class VertxPlatformHttpStreamingTest {
 
     @Test
     void testStreamingWithFormUrlEncodedBody() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -154,7 +159,7 @@ public class VertxPlatformHttpStreamingTest {
         Path testFile = Files.createTempFile("platform-http-testing", "txt");
         Files.writeString(testFile, content);
 
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(configuration -> {
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort(), configuration -> {
             VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler
                     = new VertxPlatformHttpServerConfiguration.BodyHandler();
             // turn on file uploads
@@ -187,7 +192,7 @@ public class VertxPlatformHttpStreamingTest {
 
     @Test
     void testStreamingWithSpecificEncoding() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         Path input = Files.createTempFile("platform-http-input", "dat");
         Path output = Files.createTempFile("platform-http-output", "dat");
 
@@ -226,7 +231,7 @@ public class VertxPlatformHttpStreamingTest {
 
     @Test
     void testStreamingWithClosedInputStreamResponse() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -260,7 +265,7 @@ public class VertxPlatformHttpStreamingTest {
 
     @Test
     void testStreamingWithUnconvertableResponseType() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
         try {
             context.addRoutes(new RouteBuilder() {
                 @Override

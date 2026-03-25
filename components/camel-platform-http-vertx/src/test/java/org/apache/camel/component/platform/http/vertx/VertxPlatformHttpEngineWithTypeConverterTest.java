@@ -28,16 +28,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class VertxPlatformHttpEngineWithTypeConverterTest {
 
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @Test
     public void testByteBufferConversion() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         TypeConverter tc = mockByteBufferTypeConverter();
         context.getTypeConverterRegistry().addTypeConverter(ByteBuffer.class, Map.class, tc);
@@ -67,7 +72,7 @@ public class VertxPlatformHttpEngineWithTypeConverterTest {
 
     @Test
     public void testInputStreamConversion() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
 
         TypeConverter tc = mockInputStreamTypeConverter();
         context.getTypeConverterRegistry().addTypeConverter(InputStream.class, Map.class, tc);

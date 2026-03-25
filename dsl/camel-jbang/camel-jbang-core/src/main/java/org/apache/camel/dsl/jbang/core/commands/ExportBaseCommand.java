@@ -27,6 +27,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -51,10 +52,13 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
+import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -160,7 +164,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "CamelApplication")
     protected String mainClassname = "CamelApplication";
 
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version (21, 25)", defaultValue = "21")
+    @CommandLine.Option(names = { "--java-version" }, completionCandidates = JavaVersionCompletionCandidates.class,
+                        description = "Java version (${COMPLETION-CANDIDATES})", defaultValue = "21")
     protected String javaVersion = "21";
 
     @CommandLine.Option(names = { "--camel-version" },
@@ -173,7 +178,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String kameletsVersion = RuntimeType.KAMELETS_VERSION;
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
-                        description = "Profile to export (dev, test, or prod).")
+                        completionCandidates = ProfileCompletionCandidates.class,
+                        description = "Profile to export (${COMPLETION-CANDIDATES}).")
     protected String profile;
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
@@ -199,6 +205,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = RuntimeType.QUARKUS_VERSION)
     protected String quarkusVersion = RuntimeType.QUARKUS_VERSION;
 
+    @CommandLine.Option(names = { "--quarkus-package-type" },
+                        description = "Quarkus package type (uber-jar or fast-jar)",
+                        defaultValue = "uber-jar")
+    protected String quarkusPackageType = "uber-jar";
+
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")
     protected boolean mavenWrapper = true;
@@ -219,7 +230,13 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)")
     protected boolean cleanExportDir;
 
-    @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
+    @CommandLine.Option(names = { "--yes", "-y" }, defaultValue = "false",
+                        description = "Automatically answer yes to confirmation prompts (e.g. when using --clean-dir)")
+    protected boolean yes;
+
+    @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info",
+                        completionCandidates = LoggingLevelCompletionCandidates.class,
+                        description = "Logging level (${COMPLETION-CANDIDATES})")
     protected String loggingLevel = "info";
 
     @CommandLine.Option(names = { "--package-name" },
@@ -258,6 +275,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--verbose" }, defaultValue = "false",
                         description = "Verbose output of startup activity (dependency resolution and downloading")
     protected boolean verbose;
+
+    @CommandLine.Option(names = { "--dry-run" }, defaultValue = "false",
+                        description = "Preview export without writing files")
+    protected boolean dryRun;
 
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
@@ -304,8 +325,85 @@ public abstract class ExportBaseCommand extends CamelCommand {
         if (!quiet) {
             printConfigurationValues("Exporting integration with the following configuration:");
         }
+
+        if (dryRun) {
+            return doDryRunExport();
+        }
+
         // export
         return export();
+    }
+
+    /**
+     * Performs a dry-run export: runs the export to a temporary directory, lists the files that would be generated, and
+     * cleans up.
+     */
+    private Integer doDryRunExport() throws Exception {
+        // Save original state
+        String originalExportDir = this.exportDir;
+        boolean originalCleanExportDir = this.cleanExportDir;
+        boolean originalQuiet = this.quiet;
+        Path tempDir = Files.createTempDirectory("camel-export-dry-run-");
+        try {
+            // Redirect export to temp directory
+            this.exportDir = tempDir.toString();
+            this.cleanExportDir = false;
+            this.dryRun = false; // avoid recursion in subclasses
+            this.quiet = true; // suppress normal output
+
+            Integer result = export();
+
+            // Restore quiet so output works correctly
+            this.quiet = originalQuiet;
+
+            printer().println("Dry-run export preview:");
+            printer().println();
+            printer().println("Target directory: " + (originalExportDir != null ? originalExportDir : "."));
+            printer().println();
+            printer().println("Files that would be created:");
+            try (Stream<Path> walk = Files.walk(tempDir)) {
+                walk.filter(Files::isRegularFile)
+                        .sorted()
+                        .forEach(p -> {
+                            Path rel = tempDir.relativize(p);
+                            try {
+                                long size = Files.size(p);
+                                printer().printf("  %s (%s)%n", rel, humanReadableSize(size));
+                            } catch (IOException e) {
+                                printer().printf("  %s%n", rel);
+                            }
+                        });
+            }
+
+            return result;
+        } finally {
+            // Restore original state
+            this.exportDir = originalExportDir;
+            this.cleanExportDir = originalCleanExportDir;
+            this.quiet = originalQuiet;
+            this.dryRun = true;
+            // Clean up temp directory
+            try (Stream<Path> walk = Files.walk(tempDir)) {
+                walk.sorted(Comparator.reverseOrder())
+                        .forEach(p -> {
+                            try {
+                                Files.deleteIfExists(p);
+                            } catch (IOException e) {
+                                // ignore
+                            }
+                        });
+            }
+        }
+    }
+
+    private static String humanReadableSize(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " bytes";
+        } else if (bytes < 1024 * 1024) {
+            return String.format("%.1f KB", bytes / 1024.0);
+        } else {
+            return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
+        }
     }
 
     protected static String mavenRepositoriesAsPomXml(String repos) {
@@ -359,11 +457,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.dependencies = dependencies;
         run.files = files;
         run.name = name;
-        run.port = port;
-        run.managementPort = managementPort;
+        run.serverOptions.port = port;
+        run.serverOptions.managementPort = managementPort;
         run.excludes = excludes;
         run.openapi = openapi;
-        run.observe = observe;
+        run.serverOptions.observe = observe;
         run.download = download;
         run.packageScanJars = packageScanJars;
         run.runtime = runtime;
@@ -373,13 +471,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
         run.quarkusGroupId = quarkusGroupId;
         run.springBootVersion = springBootVersion;
         run.kameletsVersion = kameletsVersion;
+        run.javaVersion = javaVersion;
         run.localKameletDir = localKameletDir;
         run.ignoreLoadingError = ignoreLoadingError;
         run.lazyBean = lazyBean;
         run.property = applicationProperties;
         run.repositories = repositories;
         run.verbose = verbose;
-        run.logging = logging;
+        run.loggingOptions.logging = logging;
         return run.runExport(ignoreLoadingError);
     }
 

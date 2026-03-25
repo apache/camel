@@ -95,7 +95,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < 2; i++) {
-            openWebSocketConnection("localhost", port, "/test", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test", message -> {
                 synchronized (latch) {
                     results.add(message);
                     latch.countDown();
@@ -125,7 +125,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < 2; i++) {
-            openWebSocketConnection("localhost", port, "/test/paramA/other/paramB", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/paramA/other/paramB", message -> {
                 synchronized (latch) {
                     results.add(message);
                     latch.countDown();
@@ -157,7 +157,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < 2; i++) {
-            openWebSocketConnection("localhost", port, "/test/paramA/other/paramB", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/paramA/other/paramB", message -> {
                 synchronized (latch) {
                     results.add(message);
                     latch.countDown();
@@ -189,7 +189,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < 2; i++) {
-            openWebSocketConnection("localhost", port, "/test/wildcarded/path", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/wildcarded/path", message -> {
                 synchronized (latch) {
                     results.add(message);
                     latch.countDown();
@@ -197,7 +197,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
-        openWebSocketConnection("localhost", port, "/test/wildcarded/otherpath", message -> {
+        openWebSocketConnection("localhost", port.getPort(), "/test/wildcarded/otherpath", message -> {
             synchronized (latch) {
                 results.add(message);
                 latch.countDown();
@@ -227,7 +227,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < 2; i++) {
-            openWebSocketConnection("localhost", port, "/test/wildcarded/path", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/wildcarded/path", message -> {
                 synchronized (latch) {
                     results.add(message);
                     latch.countDown();
@@ -235,7 +235,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
-        openWebSocketConnection("localhost", port, "/test/wildcarded/otherpath", message -> {
+        openWebSocketConnection("localhost", port.getPort(), "/test/wildcarded/otherpath", message -> {
             synchronized (latch) {
                 results.add(message);
                 latch.countDown();
@@ -277,7 +277,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
-            openWebSocketConnection("localhost", port, "/test", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test", message -> {
                 synchronized (latch) {
                     results.add(message);
                     latch.countDown();
@@ -314,7 +314,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < expectedResultCount; i++) {
-            openWebSocketConnection("localhost", port, "/test", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
@@ -324,13 +324,13 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
 
         // Open a connection on path /test on another port to ensure the 'send to all' operation
         // only targeted peers connected on path /test
-        openWebSocketConnection("localhost", port2, "/test", message -> {
+        openWebSocketConnection("localhost", port2.getPort(), "/test", message -> {
             results.add("/test on port " + port2 + " should not have been called");
         });
 
         // Open a connection on path /test-other to ensure the 'send to all' operation
         // only targeted peers connected on path /test
-        openWebSocketConnection("localhost", port, "/test-other", message -> {
+        openWebSocketConnection("localhost", port.getPort(), "/test-other", message -> {
             results.add("/test-other should not have been called");
         });
 
@@ -356,7 +356,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < expectedResultCount; i++) {
-            openWebSocketConnection("localhost", port, "/test", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
@@ -366,13 +366,13 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
 
         // Open a connection on path /test on another port to ensure the 'send to all' operation
         // only targeted peers connected on path /test
-        openWebSocketConnection("localhost", port2, "/test", message -> {
+        openWebSocketConnection("localhost", port2.getPort(), "/test", message -> {
             results.add("/test on port " + port2 + " should not have been called");
         });
 
         // Open a connection on path /test-other to ensure the 'send to all' operation
         // only targeted peers connected on path /test
-        openWebSocketConnection("localhost", port, "/test-other", message -> {
+        openWebSocketConnection("localhost", port.getPort(), "/test-other", message -> {
             results.add("/test-other should not have been called");
         });
 
@@ -396,7 +396,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < expectedResultCount; i++) {
-            openWebSocketConnection("localhost", port, "/test/firstParam/other/secondParam", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/firstParam/other/secondParam", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
@@ -404,7 +404,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
 
             // Below we produce to an explicit path so this peer should be ignored
-            openWebSocketConnection("localhost", port, "/test/otherFirstParam/other/otherSecondParam", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/otherFirstParam/other/otherSecondParam", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
@@ -430,14 +430,14 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
-            openWebSocketConnection("localhost", port, "/test/firstParam/other/secondParam", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/firstParam/other/secondParam", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
                 }
             });
 
-            openWebSocketConnection("localhost", port, "/test/otherFirstParam/other/otherSecondParam", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/otherFirstParam/other/otherSecondParam", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
@@ -462,7 +462,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < expectedResultCount; i++) {
-            openWebSocketConnection("localhost", port, "/test/wildcarded/path", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/wildcarded/path", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
@@ -470,7 +470,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
 
             // Below we produce to an explicit path so this peer should be ignored
-            openWebSocketConnection("localhost", port, "/test/wildcarded/other", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/wildcarded/other", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
@@ -495,14 +495,14 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         List<String> results = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
-            openWebSocketConnection("localhost", port, "/test/wildcarded/path", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/wildcarded/path", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
                 }
             });
 
-            openWebSocketConnection("localhost", port, "/test/wildcarded/other", message -> {
+            openWebSocketConnection("localhost", port.getPort(), "/test/wildcarded/other", message -> {
                 synchronized (latch) {
                     results.add(message + " " + latch.getCount());
                     latch.countDown();
@@ -545,7 +545,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         CountDownLatch latch = new CountDownLatch(1);
         List<String> results = new ArrayList<>();
 
-        WebSocket webSocket = openWebSocketConnection("localhost", port, "/testA/echo/testB", message -> {
+        WebSocket webSocket = openWebSocketConnection("localhost", port.getPort(), "/testA/echo/testB", message -> {
             synchronized (latch) {
                 results.add(message);
                 latch.countDown();
@@ -563,7 +563,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         CountDownLatch latch = new CountDownLatch(1);
         List<String> results = new ArrayList<>();
 
-        WebSocket webSocket = openWebSocketConnection("localhost", port, "/wildcard/echo/foo/bar", message -> {
+        WebSocket webSocket = openWebSocketConnection("localhost", port.getPort(), "/wildcard/echo/foo/bar", message -> {
             synchronized (latch) {
                 results.add(message);
                 latch.countDown();
@@ -671,32 +671,32 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toF("vertx-websocket:localhost:%d/test", port);
+                        .toF("vertx-websocket:localhost:%d/test", port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/test", port)
+                fromF("vertx-websocket:localhost:%d/test", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
 
-                fromF("vertx-websocket:localhost:%d/test", port2)
+                fromF("vertx-websocket:localhost:%d/test", port2.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
 
-                fromF("vertx-websocket:localhost:%d/test-other", port)
+                fromF("vertx-websocket:localhost:%d/test-other", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
 
-                fromF("vertx-websocket:localhost:%d/path/params/{firstParam}/{secondParam}", port)
+                fromF("vertx-websocket:localhost:%d/path/params/{firstParam}/{secondParam}", port.getPort())
                         .setBody(simple("${header.firstParam} ${header.secondParam}"))
                         .to("mock:pathParamResult");
 
-                fromF("vertx-websocket:localhost:%d/{firstParam}/echo/{secondParam}", port)
+                fromF("vertx-websocket:localhost:%d/{firstParam}/echo/{secondParam}", port.getPort())
                         .setBody(simple("${body} ${header.firstParam} ${header.secondParam}"))
-                        .toF("vertx-websocket:localhost:%d/testA/echo/testB", port);
+                        .toF("vertx-websocket:localhost:%d/testA/echo/testB", port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/test/{paramA}/other/{paramB}", port)
+                fromF("vertx-websocket:localhost:%d/test/{paramA}/other/{paramB}", port.getPort())
                         .setBody(simple("${header.firstParam} ${header.secondParam}"));
 
-                fromF("vertx-websocket:localhost:%d/query/params", port)
+                fromF("vertx-websocket:localhost:%d/query/params", port.getPort())
                         .setBody(simple("${header.firstParam} ${header.secondParam}"))
                         .to("mock:queryParamResult");
 
@@ -711,19 +711,19 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                         })
                         .toD("vertx-websocket:localhost:${header.port}/greeting");
 
-                fromF("vertx-websocket:localhost:%d", port)
+                fromF("vertx-websocket:localhost:%d", port.getPort())
                         .setBody().simple("Hello ${body} from the default path")
                         .to("mock:defaultPath");
 
-                fromF("vertx-websocket:localhost:%d/wild/card*", port)
+                fromF("vertx-websocket:localhost:%d/wild/card*", port.getPort())
                         .setBody().simple("Hello ${body} from the wildcard path")
                         .to("mock:wildcardPath");
 
-                fromF("vertx-websocket:localhost:%d/wildcard/echo*", port)
+                fromF("vertx-websocket:localhost:%d/wildcard/echo*", port.getPort())
                         .setBody().simple("${body} World")
-                        .toF("vertx-websocket:localhost:%d/wildcard/echo/foo/bar", port);
+                        .toF("vertx-websocket:localhost:%d/wildcard/echo/foo/bar", port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/test/wildcarded*", port)
+                fromF("vertx-websocket:localhost:%d/test/wildcarded*", port.getPort())
                         .setBody().simple("Hello ${body} from the wildcard path");
             }
         };

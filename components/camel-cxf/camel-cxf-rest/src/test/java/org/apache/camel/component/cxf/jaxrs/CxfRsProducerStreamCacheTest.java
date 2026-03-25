@@ -37,12 +37,14 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
     private Server rsServer;
 
     @Override
@@ -54,7 +56,6 @@ public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
     @Override
     @Deprecated
     protected void doPreSetup() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
         startRsEchoServer();
     }
 
@@ -68,7 +69,7 @@ public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
 
     private void startRsEchoServer() {
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
-        sf.setAddress("http://localhost:" + port + "/rs");
+        sf.setAddress("http://localhost:" + port.getPort() + "/rs");
         sf.setServiceBeans(Collections.singletonList(new EchoResource()));
         rsServer = sf.create();
         rsServer.start();
@@ -87,7 +88,7 @@ public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final String cxfrsUri = "cxfrs://http://localhost:" + port + "/rs"
+        final String cxfrsUri = "cxfrs://http://localhost:" + port.getPort() + "/rs"
                                 + "?httpClientAPI=true"
                                 + "&throwExceptionOnFailure=false";
 

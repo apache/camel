@@ -25,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,13 +33,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
 
-    private static int port1 = AvailablePortFinder.getNextAvailable();
-    private static int port2 = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port port2 = AvailablePortFinder.find();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
-        System.setProperty("CxfRecipientListWithUrlParams.port1", Integer.toString(port1));
-        System.setProperty("CxfRecipientListWithUrlParams.port2", Integer.toString(port2));
+        System.setProperty("CxfRecipientListWithUrlParams.port1", Integer.toString(port1.getPort()));
+        System.setProperty("CxfRecipientListWithUrlParams.port2", Integer.toString(port2.getPort()));
     }
 
     @EndpointInject("mock:reply")
@@ -63,14 +66,14 @@ public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(CxfConstants.OPERATION_NAME, "greetMe");
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port1.getPort() + "/SoapContext/SoapPort");
 
         // returns the last message from the recipient list
         Object out = template.requestBodyAndHeaders("direct:start", "Willem", headers, String.class);
         assertEquals("Hello Willem", out);
 
         // change foo headers
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port2.getPort() + "/SoapContext/SoapPort");
 
         // call again to ensure that works also
         // returns the last message from the recipient list
@@ -78,8 +81,8 @@ public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
         assertEquals("Bye Claus", out2);
 
         // change foo headers again
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort"
-                           + ",cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port1.getPort() + "/SoapContext/SoapPort"
+                           + ",cxf:bean:clientEndpoint?address=http://localhost:" + port2.getPort() + "/SoapContext/SoapPort");
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list
@@ -87,8 +90,8 @@ public class CxfRecipientListWithUrlParamsTest extends CamelSpringTestSupport {
         assertEquals("Bye Jonathan", out3);
 
         // change foo headers again
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort"
-                           + ",cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port2.getPort() + "/SoapContext/SoapPort"
+                           + ",cxf:bean:clientEndpoint?address=http://localhost:" + port1.getPort() + "/SoapContext/SoapPort");
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list

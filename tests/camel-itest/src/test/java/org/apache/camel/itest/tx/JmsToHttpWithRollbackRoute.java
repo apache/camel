@@ -33,6 +33,7 @@ import static org.apache.camel.itest.TransactionSupport.transactionErrorHandler;
  */
 public class JmsToHttpWithRollbackRoute extends RouteBuilder {
     protected static int counter;
+    protected AvailablePortFinder.Port portHolder;
     protected int port;
 
     @Resource(name = "PROPAGATION_REQUIRED")
@@ -46,7 +47,8 @@ public class JmsToHttpWithRollbackRoute extends RouteBuilder {
 
     @Override
     public void configure() {
-        port = AvailablePortFinder.getNextAvailable();
+        portHolder = AvailablePortFinder.find();
+        port = portHolder.getPort();
 
         // configure a global transacted error handler
         errorHandler(transactionErrorHandler(required));

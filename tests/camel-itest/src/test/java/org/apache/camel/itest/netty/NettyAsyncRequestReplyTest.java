@@ -49,9 +49,12 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
+    @RegisterExtension
+    static AvailablePortFinder.Port portFinder = AvailablePortFinder.find();
+
     private static final Logger LOG = LoggerFactory.getLogger(NettyAsyncRequestReplyTest.class);
 
-    private int port;
+    private int port = portFinder.getPort();
 
     @Test
     void testNetty() {
@@ -101,7 +104,6 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                port = AvailablePortFinder.getNextAvailable();
 
                 from("netty:tcp://localhost:" + port + "?textline=true&sync=true&reuseAddress=true&synchronous=false")
                         .to("activemq:queue:NettyAsyncRequestReplyTest")

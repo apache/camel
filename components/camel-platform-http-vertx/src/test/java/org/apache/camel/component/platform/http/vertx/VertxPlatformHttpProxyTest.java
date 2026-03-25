@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -36,11 +37,16 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 
 public class VertxPlatformHttpProxyTest {
-    private final int port = AvailablePortFinder.getNextAvailable();
-    private final WireMockServer wireMockServer = new WireMockServer(options().port(port));
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port camelPort = AvailablePortFinder.find();
+
+    private WireMockServer wireMockServer;
 
     @BeforeEach
     void before() {
+        wireMockServer = new WireMockServer(options().port(port.getPort()));
         wireMockServer.stubFor(get(urlPathEqualTo("/"))
                 .willReturn(aResponse()
                         .withBody(
@@ -59,7 +65,7 @@ public class VertxPlatformHttpProxyTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     void testProxy(boolean useStreaming) throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(camelPort.getPort());
 
         try {
             context.addRoutes(new RouteBuilder() {

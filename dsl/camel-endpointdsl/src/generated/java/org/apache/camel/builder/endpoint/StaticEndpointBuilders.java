@@ -3263,8 +3263,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Query Couchbase Views with a poll strategy and/or perform various
-     * operations against Couchbase databases.
+     * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
+     * with a poll strategy and/or perform various operations against Couchbase
+     * databases.
      * 
      * Category: database
      * Since: 2.19
@@ -3290,8 +3291,9 @@ public class StaticEndpointBuilders {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Query Couchbase Views with a poll strategy and/or perform various
-     * operations against Couchbase databases.
+     * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
+     * with a poll strategy and/or perform various operations against Couchbase
+     * databases.
      * 
      * Category: database
      * Since: 2.19
@@ -4878,11 +4880,14 @@ public class StaticEndpointBuilders {
      * Comma-separated list of event types to subscribe to. Event types
      * correspond to CamelEvent.Type enum values (case-insensitive), for
      * example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed.
+     * Wildcard patterns are supported using a suffix, for example: Route
+     * matches all route events, Exchange matches all exchange events, and
+     * matches all events.
      * 
      * @param path events
      * @return the dsl builder
      */
-    public static EventEndpointBuilderFactory.EventEndpointBuilder event(String path) {
+    public static CamelEventEndpointBuilderFactory.CamelEventEndpointBuilder event(String path) {
         return event("event", path);
     }
     /**
@@ -4900,14 +4905,17 @@ public class StaticEndpointBuilders {
      * Comma-separated list of event types to subscribe to. Event types
      * correspond to CamelEvent.Type enum values (case-insensitive), for
      * example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed.
+     * Wildcard patterns are supported using a suffix, for example: Route
+     * matches all route events, Exchange matches all exchange events, and
+     * matches all events.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
      * @param path events
      * @return the dsl builder
      */
-    public static EventEndpointBuilderFactory.EventEndpointBuilder event(String componentName, String path) {
-        return EventEndpointBuilderFactory.endpointBuilder(componentName, path);
+    public static CamelEventEndpointBuilderFactory.CamelEventEndpointBuilder event(String componentName, String path) {
+        return CamelEventEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Exec (camel-exec)
@@ -13916,7 +13924,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * To call REST services using OpenAPI specification as contract.
+     * To call and expose REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
@@ -13953,7 +13961,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * To call REST services using OpenAPI specification as contract.
+     * To call and expose REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1

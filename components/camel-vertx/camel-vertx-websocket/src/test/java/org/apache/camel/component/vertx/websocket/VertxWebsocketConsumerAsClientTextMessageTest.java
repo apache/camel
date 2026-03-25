@@ -28,7 +28,7 @@ public class VertxWebsocketConsumerAsClientTextMessageTest extends VertxWebSocke
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(5);
 
-        String uri = String.format("vertx-websocket:localhost:%d/echo", port);
+        String uri = String.format("vertx-websocket:localhost:%d/echo", port.getPort());
         for (int i = 1; i <= 5; i++) {
             template.sendBody(uri, "Hello World " + i);
         }
@@ -41,11 +41,11 @@ public class VertxWebsocketConsumerAsClientTextMessageTest extends VertxWebSocke
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/echo", port)
+                fromF("vertx-websocket:localhost:%d/echo", port.getPort())
                         .log("Server consumer received message: ${body}")
-                        .toF("vertx-websocket:localhost:%d/echo?sendToAll=true", port);
+                        .toF("vertx-websocket:localhost:%d/echo?sendToAll=true", port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true", port)
+                fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true", port.getPort())
                         .log("Client consumer received message: ${body}")
                         .to("mock:result");
             }

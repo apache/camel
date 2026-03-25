@@ -13810,6 +13810,44 @@ List of bean.
         </xs:annotation>
       </xs:element>
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="sslContextParameters">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+<![CDATA[
+SSL/TLS context parameters configuration.
+]]>
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence/>
+          <xs:attribute name="id" type="xs:string"/>
+          <xs:attribute name="provider" type="xs:string"/>
+          <xs:attribute name="secureSocketProtocol" type="xs:string"/>
+          <xs:attribute name="certAlias" type="xs:string"/>
+          <xs:attribute name="sessionTimeout" type="xs:string"/>
+          <xs:attribute name="cipherSuites" type="xs:string"/>
+          <xs:attribute name="cipherSuitesInclude" type="xs:string"/>
+          <xs:attribute name="cipherSuitesExclude" type="xs:string"/>
+          <xs:attribute name="namedGroups" type="xs:string"/>
+          <xs:attribute name="namedGroupsInclude" type="xs:string"/>
+          <xs:attribute name="namedGroupsExclude" type="xs:string"/>
+          <xs:attribute name="signatureSchemes" type="xs:string"/>
+          <xs:attribute name="signatureSchemesInclude" type="xs:string"/>
+          <xs:attribute name="signatureSchemesExclude" type="xs:string"/>
+          <xs:attribute name="keyStore" type="xs:string"/>
+          <xs:attribute name="keyStoreType" type="xs:string"/>
+          <xs:attribute name="keyStoreProvider" type="xs:string"/>
+          <xs:attribute name="keystorePassword" type="xs:string"/>
+          <xs:attribute name="trustStore" type="xs:string"/>
+          <xs:attribute name="trustStorePassword" type="xs:string"/>
+          <xs:attribute name="trustAllCertificates" type="xs:string"/>
+          <xs:attribute name="keyManagerAlgorithm" type="xs:string"/>
+          <xs:attribute name="keyManagerProvider" type="xs:string"/>
+          <xs:attribute name="secureRandomAlgorithm" type="xs:string"/>
+          <xs:attribute name="secureRandomProvider" type="xs:string"/>
+          <xs:attribute name="clientAuthentication" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
       <xs:element minOccurs="0" name="dataFormats">
         <xs:annotation>
           <xs:documentation xml:lang="en">

@@ -27,6 +27,7 @@ import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestPojo;
 import org.apache.camel.avro.test.TestReflection;
 import org.apache.camel.avro.test.TestReflectionImpl;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.TestNameExtension;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -40,8 +41,13 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     public static final String REFLECTION_TEST_NAME = "Chucky";
     public static final int REFLECTION_TEST_AGE = 100;
 
-    protected int avroPortMessageInRoute = setupFreePort("avroPortMessageInRoute");
-    protected int avroPortForWrongMessages = setupFreePort("avroPortForWrongMessages");
+    @RegisterExtension
+    AvailablePortFinder.Port avroPortMessageInRouteHolder = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port avroPortForWrongMessagesHolder = AvailablePortFinder.find();
+
+    protected int avroPortMessageInRoute;
+    protected int avroPortForWrongMessages;
 
     Transceiver transceiver;
     Requestor requestor;
@@ -61,6 +67,15 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
     @RegisterExtension
     @Order(10)
     TestNameExtension testNameExtension = new TestNameExtension();
+
+    @Override
+    protected void doPreSetup() throws Exception {
+        super.doPreSetup();
+        avroPortMessageInRoute = avroPortMessageInRouteHolder.getPort();
+        avroPortForWrongMessages = avroPortForWrongMessagesHolder.getPort();
+        System.setProperty("avroPortMessageInRoute", String.valueOf(avroPortMessageInRoute));
+        System.setProperty("avroPortForWrongMessages", String.valueOf(avroPortForWrongMessages));
+    }
 
     protected abstract void initializeTranceiver() throws IOException;
 

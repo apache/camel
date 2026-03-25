@@ -44,7 +44,7 @@ public class ConfigGet extends CamelCommand {
             if (maybeProperty.isPresent()) {
                 printer().println(String.valueOf(maybeProperty.get()));
             } else {
-                printer().println(key + " key not found");
+                printer().printErr(key + " key not found");
             }
         }, !global);
 

@@ -32,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class GrpcConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerConcurrentTest.class);
 
-    private static final int GRPC_ASYNC_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int GRPC_HEADERS_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcAsyncRequestTestPort = AvailablePortFinder.find();
+    @RegisterExtension
+    static AvailablePortFinder.Port grpcHeadersTestPort = AvailablePortFinder.find();
     private static final int CONCURRENT_THREAD_COUNT = 30;
     private static final int ROUNDS_PER_THREAD_COUNT = 10;
     private static final String GRPC_TEST_PING_VALUE = "PING";
@@ -67,7 +70,8 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
             public void run() {
                 final CountDownLatch latch = new CountDownLatch(1);
                 ManagedChannel asyncRequestChannel
-                        = NettyChannelBuilder.forAddress("localhost", GRPC_ASYNC_REQUEST_TEST_PORT).usePlaintext().build();
+                        = NettyChannelBuilder.forAddress("localhost", grpcAsyncRequestTestPort.getPort()).usePlaintext()
+                                .build();
                 PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
 
                 PongResponseStreamObserver responseObserver = new PongResponseStreamObserver(latch);
@@ -107,7 +111,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
             public void run() {
                 int instanceId = createId();
                 final CountDownLatch latch = new CountDownLatch(1);
-                ManagedChannel asyncRequestChannel = NettyChannelBuilder.forAddress("localhost", GRPC_HEADERS_TEST_PORT)
+                ManagedChannel asyncRequestChannel = NettyChannelBuilder.forAddress("localhost", grpcHeadersTestPort.getPort())
                         .userAgent(GRPC_USER_AGENT_PREFIX + instanceId)
                         .usePlaintext().build();
                 PingPongGrpc.PingPongStub asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
@@ -145,11 +149,11 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("grpc://localhost:" + GRPC_ASYNC_REQUEST_TEST_PORT
+                from("grpc://localhost:" + grpcAsyncRequestTestPort.getPort()
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
-                from("grpc://localhost:" + GRPC_HEADERS_TEST_PORT
+                from("grpc://localhost:" + grpcHeadersTestPort.getPort()
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
                         .process(new HeaderExchangeProcessor());
             }

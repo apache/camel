@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -29,9 +30,11 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -102,16 +105,35 @@ public class ListRest extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("URL").dataAlign(HorizontalAlign.LEFT).with(r -> r.url),
-                    new Column().header("METHOD").dataAlign(HorizontalAlign.LEFT).with(r -> r.method),
-                    new Column().header("FIRST").visible(verbose).dataAlign(HorizontalAlign.LEFT).with(this::getKind),
-                    new Column().header("DESCRIPTION").visible(verbose).maxWidth(40, OverflowBehaviour.NEWLINE)
-                            .dataAlign(HorizontalAlign.LEFT).with(r -> r.description),
-                    new Column().header("CONTENT-TYPE").dataAlign(HorizontalAlign.LEFT).with(this::getContent))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("url", r.url);
+                    jo.put("method", r.method);
+                    jo.put("consumes", r.consumes);
+                    jo.put("produces", r.produces);
+                    jo.put("description", r.description);
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                // Flexible column: DESCRIPTION (40)
+                // Fixed columns: PID(8)+NAME(30)+URL(10)+METHOD(6)+FIRST(8)+CONTENT-TYPE(20) ~= 82
+                int tw = terminalWidth();
+                int descW = TerminalWidthHelper.flexWidth(tw, 82, TerminalWidthHelper.noBorderOverhead(7), 15, 40);
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("URL").dataAlign(HorizontalAlign.LEFT).with(r -> r.url),
+                        new Column().header("METHOD").dataAlign(HorizontalAlign.LEFT).with(r -> r.method),
+                        new Column().header("FIRST").visible(verbose).dataAlign(HorizontalAlign.LEFT).with(this::getKind),
+                        new Column().header("DESCRIPTION").visible(verbose).maxWidth(descW, OverflowBehaviour.NEWLINE)
+                                .dataAlign(HorizontalAlign.LEFT).with(r -> r.description),
+                        new Column().header("CONTENT-TYPE").dataAlign(HorizontalAlign.LEFT).with(this::getContent))));
+            }
         }
 
         return 0;

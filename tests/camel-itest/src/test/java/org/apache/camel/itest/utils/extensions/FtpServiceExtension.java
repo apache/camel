@@ -32,18 +32,21 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class FtpServiceExtension implements BeforeAllCallback, AfterAllCallback {
+    private static AvailablePortFinder.Port ftpPortHolder;
     private static int ftpPort;
     private static FtpServer ftpServer;
 
     public FtpServiceExtension() {
         if (ftpPort == 0) {
-            ftpPort = AvailablePortFinder.getNextAvailable();
+            ftpPortHolder = AvailablePortFinder.find();
+            ftpPort = ftpPortHolder.getPort();
         }
     }
 
     public FtpServiceExtension(String property) {
         if (ftpPort == 0) {
-            ftpPort = AvailablePortFinder.getNextAvailable();
+            ftpPortHolder = AvailablePortFinder.find();
+            ftpPort = ftpPortHolder.getPort();
         }
 
         //set them as system properties so Spring can use the property placeholder

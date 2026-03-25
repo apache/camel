@@ -31,6 +31,7 @@ import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CometdProducerConsumerTest extends CamelTestSupport {
 
     private static final String SHOOKHANDS_SESSION_HEADER = "Shookhands";
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port portField = AvailablePortFinder.find();
     private String uri;
 
     @Test
@@ -90,7 +92,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         // act
         Endpoint result = component
                 .createEndpoint("cometd://127.0.0.1:"
-                                + port
+                                + portField.getPort()
                                 + "/service/testArgs?baseResource=file:./target/test-classes/webapp&"
                                 + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2");
 
@@ -117,8 +119,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
 
     @Override
     public void doPreSetup() {
-        port = AvailablePortFinder.getNextAvailable();
-        uri = "cometd://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
+        uri = "cometd://127.0.0.1:" + portField.getPort() + "/service/test?baseResource=file:./target/test-classes/webapp&"
               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2";
     }
 

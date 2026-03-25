@@ -241,9 +241,12 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         }
     }
 
+    // Keep a reference to the port to prevent it from being reused before CXF binds to it
+    private AvailablePortFinder.Port availablePort;
+
     private String getAvailableUrl(String pathEnd) {
-        int availablePort = AvailablePortFinder.getNextAvailable();
-        String url = "http://localhost:" + availablePort
+        availablePort = AvailablePortFinder.find();
+        String url = "http://localhost:" + availablePort.getPort()
                      + "/" + getClass().getSimpleName();
         return url + "/" + pathEnd;
     }

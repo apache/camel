@@ -50,7 +50,7 @@ public class AsyncEndpointJmsTXRollback2IT extends AbstractSpringJMSITSupport {
         getMockEndpoint("mock:after").expectedBodiesReceived("Hi Camel", "Hi Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
-        template.sendBody("activemq:queue:inbox", "Hello Camel");
+        template.sendBody("activemq:queue:inbox.AsyncEndpointJmsTXRollback2IT", "Hello Camel");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -65,7 +65,7 @@ public class AsyncEndpointJmsTXRollback2IT extends AbstractSpringJMSITSupport {
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("activemq:queue:inbox")
+                from("activemq:queue:inbox.AsyncEndpointJmsTXRollback2IT")
                         .transacted()
                         .to("mock:before")
                         .to("log:before")

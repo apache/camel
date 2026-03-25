@@ -28,22 +28,18 @@ import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * A support test class for Telegram tests.
  */
 public class TelegramTestSupport extends CamelTestSupport {
 
-    protected static volatile int port;
+    @RegisterExtension
+    protected static AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     protected String chatId;
     private TelegramMockRoutes mockRoutes;
-
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
 
     /**
      * Construct an inline keyboard sample to be used with an OutgoingTextMessage.
@@ -107,7 +103,7 @@ public class TelegramTestSupport extends CamelTestSupport {
     }
 
     protected TelegramApiConfig getTelegramApiConfig() {
-        return TelegramApiConfig.mock(port);
+        return TelegramApiConfig.mock(port.getPort());
     }
 
     protected TelegramMockRoutes getMockRoutes() {

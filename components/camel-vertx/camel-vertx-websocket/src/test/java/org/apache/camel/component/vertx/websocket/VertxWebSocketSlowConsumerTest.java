@@ -57,9 +57,9 @@ public class VertxWebSocketSlowConsumerTest extends VertxWebSocketTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .toF("vertx-websocket:localhost:%d/slow", port);
+                        .toF("vertx-websocket:localhost:%d/slow", port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/slow", port)
+                fromF("vertx-websocket:localhost:%d/slow", port.getPort())
                         .delay(600).syncDelayed()
                         .to("mock:result");
             }

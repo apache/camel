@@ -23,14 +23,17 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.SshServer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SshComponentTestSupport extends CamelTestSupport {
+    @RegisterExtension
+    AvailablePortFinder.Port portHolder = AvailablePortFinder.find();
     protected SshServer sshd;
     protected int port;
 
     @Override
     public void doPreSetup() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
+        port = portHolder.getPort();
 
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);

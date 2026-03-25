@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -28,6 +29,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.model.Strings;
 import org.apache.camel.util.StringHelper;
@@ -302,6 +304,35 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
     }
 
     protected void printTable(List<Row> rows) {
+        if (jsonOutput) {
+            printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", r.pid);
+                jo.put("name", getName(r));
+                jo.put("routeId", r.routeId);
+                jo.put("group", r.group);
+                jo.put("id", getId(r));
+                jo.put("processor", r.processor);
+                jo.put("status", getStatus(r));
+                jo.put("total", r.total);
+                jo.put("failed", r.failed);
+                jo.put("inflight", r.inflight);
+                jo.put("mean", r.mean);
+                jo.put("min", r.min);
+                jo.put("max", r.max);
+                jo.put("last", r.last);
+                jo.put("delta", getDelta(r));
+                jo.put("sinceLast", getSinceLast(r));
+                return jo;
+            }).collect(Collectors.toList())));
+            return;
+        }
+        // Flexible columns: ID (40), ID desc (60), PROCESSOR (45)
+        // Fixed columns: PID(8)+NAME(30)+GROUP(20)+STATUS(8)+TOTAL(5)+FAIL(4)+INFLIGHT(8)+MEAN(4)+MIN(3)+MAX(3)+LAST(4)+DELTA(5)+SINCE-LAST(10) ~= 112
+        int tw = terminalWidth();
+        int idW = TerminalWidthHelper.flexWidth(tw, 112 + 45, TerminalWidthHelper.noBorderOverhead(15), 15, 40);
+        int idDescW = TerminalWidthHelper.flexWidth(tw, 112 + 45, TerminalWidthHelper.noBorderOverhead(15), 20, 60);
+        int procW = TerminalWidthHelper.flexWidth(tw, 112 + 40, TerminalWidthHelper.noBorderOverhead(15), 20, 45);
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(this::getPid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -310,13 +341,13 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                         .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getGroup),
                 new Column().header("ID").visible(!description && !note).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .maxWidth(idW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
                 new Column().header("ID").visible(description || note).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(60, OverflowBehaviour.NEWLINE)
+                        .maxWidth(idDescW, OverflowBehaviour.NEWLINE)
                         .with(this::getIdAndNoteDescription),
                 new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT).minWidth(25)
-                        .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .maxWidth(procW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getProcessor),
                 new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).headerAlign(HorizontalAlign.CENTER)
                         .with(this::getStatus),

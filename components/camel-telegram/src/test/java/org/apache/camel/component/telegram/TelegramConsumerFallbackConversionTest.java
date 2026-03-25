@@ -73,7 +73,7 @@ public class TelegramConsumerFallbackConversionTest extends TelegramTestSupport 
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
-        return new TelegramMockRoutes(port)
+        return new TelegramMockRoutes(port.getPort())
                 .addEndpoint(
                         "sendMessage",
                         "POST",

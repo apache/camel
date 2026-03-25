@@ -66,9 +66,9 @@ public class RemoveEndpointsTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo").to("jms:queue:foo");
-                from("jms:queue:foo").to("mock:jms-queue");
-                from("jms:topic:bar").to("mock:jms-topic");
+                from("direct:foo").to("jms:queue:foo." + RemoveEndpointsTest.class.getSimpleName());
+                from("jms:queue:foo." + RemoveEndpointsTest.class.getSimpleName()).to("mock:jms-queue");
+                from("jms:topic:bar." + RemoveEndpointsTest.class.getSimpleName()).to("mock:jms-topic");
                 from("seda:mem-queue").to("mock:seda-queue");
             }
         };

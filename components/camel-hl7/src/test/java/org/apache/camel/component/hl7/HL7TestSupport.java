@@ -18,19 +18,15 @@ package org.apache.camel.component.hl7;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class HL7TestSupport extends CamelTestSupport {
 
-    private static int port;
-
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
+    @RegisterExtension
+    static AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     protected static int getPort() {
-        return port;
+        return port.getPort();
     }
 
 }

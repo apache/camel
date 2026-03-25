@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -28,9 +29,11 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -112,23 +115,46 @@ public class ListService extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
-                    new Column().header("DIR").dataAlign(HorizontalAlign.LEFT).with(r -> r.direction),
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(this::getRouteId),
-                    new Column().header("PROTOCOL").dataAlign(HorizontalAlign.LEFT).with(this::getProtocol),
-                    new Column().header("SERVICE").dataAlign(HorizontalAlign.LEFT).with(this::getService),
-                    new Column().header("METADATA").visible(metadata).dataAlign(HorizontalAlign.LEFT).with(this::getMetadata),
-                    new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.hits),
-                    new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getUri),
-                    new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(140, OverflowBehaviour.NEWLINE)
-                            .with(this::getUri))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("component", r.component);
+                    jo.put("direction", r.direction);
+                    jo.put("routeId", getRouteId(r));
+                    jo.put("protocol", getProtocol(r));
+                    jo.put("service", getService(r));
+                    jo.put("total", r.hits);
+                    jo.put("endpoint", r.endpointUri);
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                // Flexible column: ENDPOINT (90/140)
+                // Fixed columns: PID(8)+NAME(30)+COMPONENT(10)+DIR(3)+ROUTE(8)+PROTOCOL(8)+SERVICE(10)+METADATA(10)+TOTAL(5) ~= 92
+                int tw = terminalWidth();
+                int epW = TerminalWidthHelper.flexWidth(tw, 92, TerminalWidthHelper.noBorderOverhead(11), 20, 90);
+                int epWideW = TerminalWidthHelper.flexWidth(tw, 92, TerminalWidthHelper.noBorderOverhead(11), 20, 140);
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("COMPONENT").dataAlign(HorizontalAlign.LEFT).with(r -> r.component),
+                        new Column().header("DIR").dataAlign(HorizontalAlign.LEFT).with(r -> r.direction),
+                        new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(this::getRouteId),
+                        new Column().header("PROTOCOL").dataAlign(HorizontalAlign.LEFT).with(this::getProtocol),
+                        new Column().header("SERVICE").dataAlign(HorizontalAlign.LEFT).with(this::getService),
+                        new Column().header("METADATA").visible(metadata).dataAlign(HorizontalAlign.LEFT)
+                                .with(this::getMetadata),
+                        new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.hits),
+                        new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(epW, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(this::getUri),
+                        new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(epWideW, OverflowBehaviour.NEWLINE)
+                                .with(this::getUri))));
+            }
         }
 
         return 0;

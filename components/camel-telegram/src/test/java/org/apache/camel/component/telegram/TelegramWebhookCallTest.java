@@ -25,15 +25,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests a producer that sends media information.
  */
 public class TelegramWebhookCallTest extends TelegramTestSupport {
-
-    private int port;
 
     @Test
     public void testWebhookCall() throws Exception {
@@ -52,18 +49,13 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
     }
 
     @Override
-    protected void doPreSetup() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
-
-    @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 restConfiguration()
                         .host("localhost")
-                        .port(port);
+                        .port(port.getPort());
 
                 from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false")
                         .id("webhook")

@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -62,7 +61,11 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTestSupport {
 
         assertTrue(response.isFailed(), "should have failed");
         assertNotNull(ex);
-        assertEquals(javax.net.ssl.SSLHandshakeException.class, ex.getClass(), "SSLHandshakeException expected");
+        // Netty may wrap SSLHandshakeException in DecoderException
+        boolean isSslError = ex instanceof javax.net.ssl.SSLHandshakeException
+                || (ex.getCause() instanceof javax.net.ssl.SSLHandshakeException);
+        assertTrue(isSslError,
+                "Expected SSLHandshakeException (possibly wrapped) but got: " + ex.getClass().getName());
 
         MockEndpoint.assertIsSatisfied(context);
     }

@@ -27,14 +27,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AutomatedConversionTest extends CamelTestSupport {
 
-    private static int serverPort;
+    @RegisterExtension
+    AvailablePortFinder.Port serverPort = AvailablePortFinder.find();
     private final int messageCount = 1;
     private final String rfc3164Message
             = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
@@ -42,11 +43,6 @@ public class AutomatedConversionTest extends CamelTestSupport {
               + "         Conveyer1=OK, Conveyer2=OK # %%";
     private final String rfc5424Message
             = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8";
-
-    @BeforeAll
-    public static void initPort() {
-        serverPort = AvailablePortFinder.getNextAvailable();
-    }
 
     @Test
     public void testSendingRawUDP() throws IOException, InterruptedException {
@@ -62,13 +58,13 @@ public class AutomatedConversionTest extends CamelTestSupport {
             InetAddress address = InetAddress.getByName("127.0.0.1");
             for (int i = 0; i < messageCount; i++) {
                 byte[] data = rfc3164Message.getBytes();
-                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort);
+                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
                 Thread.sleep(100);
             }
             for (int i = 0; i < messageCount; i++) {
                 byte[] data = rfc5424Message.getBytes();
-                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort);
+                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
                 Thread.sleep(100);
             }
@@ -85,7 +81,7 @@ public class AutomatedConversionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 // we setup a Syslog listener on a random port.
-                from("mina:udp://127.0.0.1:" + serverPort).unmarshal().syslog().process(new Processor() {
+                from("mina:udp://127.0.0.1:" + serverPort.getPort()).unmarshal().syslog().process(new Processor() {
                     @Override
                     public void process(Exchange ex) {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);

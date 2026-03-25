@@ -32,7 +32,7 @@ public class VertxWebsocketConsumerAsClientMaxReconnectTest extends VertxWebSock
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedBodiesReceived("Hello World");
 
-        String uri = String.format("vertx-websocket:localhost:%d/echo", port);
+        String uri = String.format("vertx-websocket:localhost:%d/echo", port.getPort());
         template.sendBody(uri, "Hello World");
         mockEndpoint.assertIsSatisfied();
 
@@ -69,12 +69,12 @@ public class VertxWebsocketConsumerAsClientMaxReconnectTest extends VertxWebSock
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/echo", port).routeId("server")
+                fromF("vertx-websocket:localhost:%d/echo", port.getPort()).routeId("server")
                         .log("Server consumer: Received message: ${body}")
-                        .toF("vertx-websocket:localhost:%d/echo?sendToAll=true", port);
+                        .toF("vertx-websocket:localhost:%d/echo?sendToAll=true", port.getPort());
 
                 fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&reconnectInterval=10&maxReconnectAttempts=1",
-                        port)
+                        port.getPort())
                         .log("Client consumer 1: Received message: ${body}")
                         .to("mock:result");
             }

@@ -399,6 +399,20 @@ HttpRequest request = context.getAttribute(AS2ClientManager.HTTP_REQUEST, HttpRe
 HttpRequest request = context.getRequest();
 ----
 
+=== camel-couchbase
+
+The `designDocumentName` and `viewName` endpoint options are now deprecated. MapReduce Views were
+deprecated in Couchbase Server 7.0 and do not work with the Magma storage backend (default since
+Couchbase Server 8.0).
+
+The consumer now defaults to SQL++ (N1QL) queries instead of MapReduce Views. A new `statement`
+endpoint option allows providing explicit SQL++ queries. When no `statement` is set and `useView` is
+`false` (the default), the consumer auto-generates a SQL++ query from the endpoint options
+(`bucket`, `collection`, `limit`, `skip`, `descending`, `rangeStartKey`, `rangeEndKey`).
+
+To continue using the deprecated MapReduce Views, set `useView=true` explicitly. See the component
+documentation for migration guidance.
+
 === camel-ftp
 
 The `camel-ftp` component has been refactored to extract shared FTP/SFTP code into a new `camel-ftp-common` module.
@@ -415,6 +429,33 @@ you will need to add the `camel-ftp-common` dependency to your project:
     <version>${camel.version}</version>
 </dependency>
 ----
+
+=== camel-azure (CredentialType standardization)
+
+The component-specific `CredentialType` enums in all Azure components have been deprecated in favor of a single shared
+`org.apache.camel.component.azure.common.CredentialType` enum in the new `camel-azure-common` module. This shared enum
+contains the union of all credential types across all Azure components.
+
+URI-based configuration (e.g., `credentialType=AZURE_IDENTITY`) requires no changes, as the enum value names are identical.
+
+The component configuration classes still use the component-specific enum types for now.
+A future release will migrate the configuration to use the shared enum, at which point
+Java API users should update their imports:
+
+Before:
+[source,java]
+----
+import org.apache.camel.component.azure.storage.blob.CredentialType;
+----
+
+After:
+[source,java]
+----
+import org.apache.camel.component.azure.common.CredentialType;
+----
+
+The deprecated component-specific enums will be removed in a future release. The new `camel-azure-common` module is
+automatically included as a transitive dependency of all Azure components.
 
 === camel-quickfix
 

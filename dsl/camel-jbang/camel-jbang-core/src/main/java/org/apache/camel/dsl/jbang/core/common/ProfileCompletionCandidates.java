@@ -14,26 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.camelevent;
+package org.apache.camel.dsl.jbang.core.common;
 
-import java.util.Map;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.support.DefaultComponent;
+public class ProfileCompletionCandidates implements Iterable<String> {
 
-/**
- * The Event component allows subscribing to Camel internal events such as route events and exchange events.
- */
-@org.apache.camel.spi.annotations.Component("event")
-public class EventComponent extends DefaultComponent {
-
-    public EventComponent() {
+    public ProfileCompletionCandidates() {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EventEndpoint endpoint = new EventEndpoint(uri, this, remaining);
-        setProperties(endpoint, parameters);
-        return endpoint;
+    public Iterator<String> iterator() {
+        return List.of("dev", "test", "prod").iterator();
     }
+
 }

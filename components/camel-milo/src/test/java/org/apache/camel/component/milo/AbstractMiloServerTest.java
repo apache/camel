@@ -30,6 +30,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,15 +44,11 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMiloServerTest.class);
 
-    private int serverPort;
-
-    @Override
-    protected void doPreSetup() throws Exception {
-        this.serverPort = AvailablePortFinder.getNextAvailable();
-    }
+    @RegisterExtension
+    AvailablePortFinder.Port serverPortHolder = AvailablePortFinder.find();
 
     public int getServerPort() {
-        return this.serverPort;
+        return serverPortHolder.getPort();
     }
 
     protected boolean isAddServer() {
@@ -69,7 +66,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
             return uri;
         }
 
-        return uri.replace("@@port@@", Integer.toString(this.serverPort));
+        return uri.replace("@@port@@", Integer.toString(getServerPort()));
     }
 
     public static void testBody(final AssertionClause clause, final Consumer<DataValue> valueConsumer) {
@@ -111,7 +108,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     protected void configureMiloServer(final MiloServerComponent server) throws Exception {
         server.setBindAddresses("localhost");
-        server.setPort(this.serverPort);
+        server.setPort(getServerPort());
         server.setUserAuthenticationCredentials("foo:bar,foo2:bar2");
         server.setUsernameSecurityPolicyUri(SecurityPolicy.None);
         server.setSecurityPoliciesById("None");

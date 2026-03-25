@@ -87,8 +87,53 @@ public final class GoogleVertexAIConstants {
     @Metadata(description = "Whether the content was blocked by safety filters", javaType = "Boolean")
     public static final String CONTENT_BLOCKED = "CamelGoogleVertexAIContentBlocked";
 
-    @Metadata(description = "The number of chunks received in streaming response", javaType = "Integer")
-    public static final String STREAMING_CHUNK_COUNT = "CamelGoogleVertexAIChunkCount";
+    // ==================== Streaming Operation Constants ====================
+
+    @Metadata(label = "producer generateChatStreaming streamRawPredict",
+              description = "The number of streaming chunks received", javaType = "Integer")
+    public static final String CHUNK_COUNT = "CamelGoogleVertexAIChunkCount";
+
+    // ==================== Image Generation Operation Constants ====================
+
+    @Metadata(label = "producer generateImage",
+              description = "The number of images to generate", javaType = "Integer")
+    public static final String IMAGE_NUMBER_OF_IMAGES = "CamelGoogleVertexAIImageNumberOfImages";
+
+    @Metadata(label = "producer generateImage",
+              description = "The aspect ratio for generated images (e.g., 1:1, 16:9, 9:16, 3:4, 4:3)", javaType = "String")
+    public static final String IMAGE_ASPECT_RATIO = "CamelGoogleVertexAIImageAspectRatio";
+
+    @Metadata(label = "producer generateImage",
+              description = "The generated images from an image generation operation",
+              javaType = "java.util.List<com.google.genai.types.Image>")
+    public static final String GENERATED_IMAGES = "CamelGoogleVertexAIGeneratedImages";
+
+    // ==================== Embeddings Operation Constants ====================
+
+    @Metadata(label = "producer generateEmbeddings",
+              description = "The task type for embeddings (e.g., RETRIEVAL_QUERY, RETRIEVAL_DOCUMENT, SEMANTIC_SIMILARITY, CLASSIFICATION, CLUSTERING, QUESTION_ANSWERING, FACT_VERIFICATION)",
+              javaType = "String")
+    public static final String EMBEDDING_TASK_TYPE = "CamelGoogleVertexAIEmbeddingTaskType";
+
+    @Metadata(label = "producer generateEmbeddings",
+              description = "The desired output dimensionality for embeddings", javaType = "Integer")
+    public static final String EMBEDDING_OUTPUT_DIMENSIONALITY = "CamelGoogleVertexAIEmbeddingOutputDimensionality";
+
+    // ==================== Multimodal Operation Constants ====================
+
+    @Metadata(label = "producer generateMultimodal",
+              description = "The media data bytes for multimodal input", javaType = "byte[]")
+    public static final String MEDIA_DATA = "CamelGoogleVertexAIMediaData";
+
+    @Metadata(label = "producer generateMultimodal",
+              description = "The MIME type of the media data (e.g., image/png, image/jpeg, video/mp4, audio/mp3)",
+              javaType = "String")
+    public static final String MEDIA_MIME_TYPE = "CamelGoogleVertexAIMediaMimeType";
+
+    @Metadata(label = "producer generateMultimodal",
+              description = "The GCS URI of the media file for multimodal input (e.g., gs://bucket/image.png)",
+              javaType = "String")
+    public static final String MEDIA_GCS_URI = "CamelGoogleVertexAIMediaGcsUri";
 
     // ==================== rawPredict Operation Constants ====================
 

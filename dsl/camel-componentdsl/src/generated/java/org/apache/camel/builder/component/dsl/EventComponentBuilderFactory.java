@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.camelevent.EventComponent;
+import org.apache.camel.component.camelevent.CamelEventComponent;
 
 /**
  * Subscribe to Camel internal events such as route started/stopped and exchange
@@ -50,7 +50,7 @@ public interface EventComponentBuilderFactory {
     /**
      * Builder for the Event component.
      */
-    interface EventComponentBuilder extends ComponentBuilder<EventComponent> {
+    interface EventComponentBuilder extends ComponentBuilder<CamelEventComponent> {
     
         
         /**
@@ -104,11 +104,11 @@ public interface EventComponentBuilderFactory {
     }
 
     class EventComponentBuilderImpl
-            extends AbstractComponentBuilder<EventComponent>
+            extends AbstractComponentBuilder<CamelEventComponent>
             implements EventComponentBuilder {
         @Override
-        protected EventComponent buildConcreteComponent() {
-            return new EventComponent();
+        protected CamelEventComponent buildConcreteComponent() {
+            return new CamelEventComponent();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -116,8 +116,8 @@ public interface EventComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((EventComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "autowiredEnabled": ((EventComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "bridgeErrorHandler": ((CamelEventComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "autowiredEnabled": ((CamelEventComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

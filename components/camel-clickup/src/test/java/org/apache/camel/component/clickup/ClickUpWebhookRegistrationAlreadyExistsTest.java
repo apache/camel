@@ -138,7 +138,7 @@ public class ClickUpWebhookRegistrationAlreadyExistsTest extends ClickUpTestSupp
 
     @Override
     protected ClickUpMockRoutes createMockRoutes() {
-        ClickUpMockRoutes clickUpMockRoutes = new ClickUpMockRoutes(port);
+        ClickUpMockRoutes clickUpMockRoutes = new ClickUpMockRoutes(port.getPort());
 
         clickUpMockRoutes.addEndpoint(
                 "health",

@@ -35,6 +35,12 @@ public final class GoogleMailStreamConstants {
     public static final String MAIL_SUBJECT = "CamelGoogleMailStreamSubject";
     @Metadata(description = "The ID of the message", javaType = "String")
     public static final String MAIL_ID = "CamelGoogleMailId";
+    @Metadata(description = "The thread ID of the message", javaType = "String")
+    public static final String MAIL_THREAD_ID = "CamelGoogleMailStreamThreadId";
+    @Metadata(description = "The Message-ID of the message", javaType = "String")
+    public static final String MAIL_MESSAGE_ID = "CamelGoogleMailStreamMessageId";
+    @Metadata(description = "The label IDs of the message", javaType = "java.util.List<String>")
+    public static final String MAIL_LABEL_IDS = "CamelGoogleMailStreamLabelIds";
 
     /**
      * Prevent instantiation.

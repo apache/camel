@@ -2,7 +2,7 @@
 :doctitle: Couchbase
 :shortname: couchbase
 :artifactid: camel-couchbase
-:description: Query Couchbase Views with a poll strategy and/or perform various operations against Couchbase databases.
+:description: Query Couchbase databases using SQL (N1QL) queries or MapReduce Views with a poll strategy and/or perform various operations against Couchbase databases.
 :since: 2.19
 :supportlevel: Stable
 :tabs-sync-option:
@@ -43,6 +43,119 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
+
+== Consuming documents
+
+The consumer supports two query modes for polling documents from Couchbase:
+
+=== SQL++ queries (recommended, default)
+
+Since Couchbase Server 7.0, the recommended way to query documents is using SQL++ (formerly N1QL).
+MapReduce Views are deprecated since Couchbase 7.0 and do not work with the Magma storage backend
+(default since Couchbase 8.0).
+
+By default, the consumer uses SQL++ queries. You can either provide an explicit `statement` or
+let the consumer auto-generate one from the endpoint options.
+
+==== Auto-generated queries
+
+The simplest way to consume documents is to just use the existing endpoint options. The consumer
+auto-generates a SQL++ query from `bucket`, `collection`, `limit`, `skip`, `descending`,
+`rangeStartKey`, and `rangeEndKey`:
+
+[source,java]
+----
+// Consumes up to 10 documents in descending order
+from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass&limit=10&descending=true")
+    .to("direct:result");
+----
+
+This generates: `SELECT META().id AS \__id, * FROM \`myBucket\` ORDER BY META().id DESC LIMIT 10`
+
+==== Explicit SQL++ statements
+
+For complex queries (filters, joins, aggregations), set the `statement` option directly:
+
+[source,java]
+----
+from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
+    + "&statement=SELECT META().id AS __id, * FROM `myCollection` WHERE type = 'order' LIMIT 100")
+    .to("direct:result");
+----
+
+The query must include `META().id AS \__id` in the SELECT clause so the consumer can identify each document.
+
+When `fullDocument` is `true` (the default), the consumer fetches the complete document from the KV store using
+the document ID. When `false`, the query result row is used directly as the message body.
+
+NOTE: SQL++ queries require a primary index or appropriate secondary index on the bucket/collection.
+Create one with: `CREATE PRIMARY INDEX ON \`myBucket\`` or via the Couchbase SDK.
+
+=== MapReduce Views (deprecated)
+
+The consumer can also poll documents using MapReduce Views by setting `useView=true` with the
+`designDocumentName` and `viewName` endpoint options. This mode is deprecated and will be removed
+in a future release.
+
+[source,java]
+----
+from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
+    + "&useView=true&designDocumentName=myDoc&viewName=myView&limit=10")
+    .to("direct:result");
+----
+
+=== Migrating from Views to SQL++
+
+To migrate from MapReduce Views to SQL++, simply remove `designDocumentName` and `viewName` from
+your endpoint URI. The `limit`, `skip`, `descending`, `rangeStartKey`, and `rangeEndKey` options
+are automatically translated to SQL++ clauses:
+
+[cols="1,1",options="header"]
+|===
+| View option | SQL++ equivalent
+
+| `designDocumentName` + `viewName`
+| Removed (or replaced by `statement` for custom queries)
+
+| `limit=10`
+| `LIMIT 10`
+
+| `skip=5`
+| `OFFSET 5`
+
+| `descending=true`
+| `ORDER BY META().id DESC`
+
+| `rangeStartKey=A` / `rangeEndKey=Z`
+| `WHERE META().id >= 'A' AND META().id \<= 'Z'`
+
+| `fullDocument=true`
+| Works the same way in both modes
+|===
+
+For example, a view-based consumer:
+
+[source,java]
+----
+from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
+    + "&useView=true&designDocumentName=myDoc&viewName=myView&limit=10&descending=true")
+----
+
+Can be migrated by simply removing the view-specific options:
+
+[source,java]
+----
+from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
+    + "&limit=10&descending=true")
+----
+
+Or with an explicit SQL++ statement for more control:
+
+[source,java]
+----
+from("couchbase:http://localhost?bucket=myBucket&username=user&password=pass"
+    + "&statement=SELECT META().id AS __id, * FROM `myBucket` ORDER BY META().id DESC LIMIT 10")
+----
 
 == Couchbase SDK compatibility
 

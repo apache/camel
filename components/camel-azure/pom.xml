@@ -45,6 +45,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>camel-azure-common</module>
         <module>camel-azure-eventhubs</module>
         <module>camel-azure-eventgrid</module>
         <module>camel-azure-storage-blob</module>

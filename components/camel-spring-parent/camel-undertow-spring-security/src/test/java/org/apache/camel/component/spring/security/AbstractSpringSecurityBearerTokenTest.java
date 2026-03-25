@@ -34,12 +34,13 @@ import org.apache.camel.component.spring.security.keycloak.KeycloakUsernameSubCl
 import org.apache.camel.component.undertow.UndertowComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSupport {
 
-    private static volatile int port;
+    @RegisterExtension
+    static AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     private final MockFilter mockFilter = new MockFilter();
 
@@ -47,13 +48,8 @@ public abstract class AbstractSpringSecurityBearerTokenTest extends CamelTestSup
         return mockFilter;
     }
 
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
-
     protected static int getPort() {
-        return port;
+        return port.getPort();
     }
 
     @Override

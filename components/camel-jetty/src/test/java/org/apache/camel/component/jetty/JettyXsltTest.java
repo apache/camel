@@ -26,6 +26,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyXsltTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     void testClasspath() {
@@ -56,7 +58,7 @@ public class JettyXsltTest extends CamelTestSupport {
 
     @Test
     void testHttp() {
-        String response = template.requestBody("xslt://http://localhost:" + port + "/test?name=greeting.xsl",
+        String response = template.requestBody("xslt://http://localhost:" + port.getPort() + "/test?name=greeting.xsl",
                 "<hello>Camel</hello>", String.class);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>Camel</goodbye>", response);
@@ -64,11 +66,9 @@ public class JettyXsltTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
-
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:" + port + "/test")
+                from("jetty:http://localhost:" + port.getPort() + "/test")
                         .process(exchange -> {
                             String name = exchange.getIn().getHeader("name", String.class);
                             ObjectHelper.notNull(name, "name");

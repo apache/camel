@@ -50,6 +50,9 @@ public class MllpTcpServerCharsetTest extends CamelTestSupport {
     static final String TARGET_URI = "mock://target";
 
     @RegisterExtension
+    AvailablePortFinder.Port mllpClientPort = AvailablePortFinder.find();
+
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject(TARGET_URI)
@@ -59,7 +62,7 @@ public class MllpTcpServerCharsetTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         mllpClient.setMllpHost("localhost");
-        mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
+        mllpClient.setMllpPort(mllpClientPort.getPort());
 
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 

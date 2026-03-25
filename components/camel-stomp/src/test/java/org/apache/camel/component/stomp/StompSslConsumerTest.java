@@ -32,7 +32,7 @@ public class StompSslConsumerTest extends StompConsumerTest {
         return new RouteBuilder() {
             public void configure() {
                 fromF("stomp:test?brokerURL=ssl://localhost:%d&sslContextParameters=#sslContextParameters",
-                        sslServicePort)
+                        sslServicePort.getPort())
                         .transform(body().convertToString())
                         .to("mock:result");
             }

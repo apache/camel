@@ -104,7 +104,9 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
     }
 
     private static int findFreePort() {
-        try (ServerSocket socket = new ServerSocket(0)) {
+        try (ServerSocket socket = new ServerSocket()) {
+            socket.setReuseAddress(true);
+            socket.bind(new java.net.InetSocketAddress((java.net.InetAddress) null, 0), 1);
             return socket.getLocalPort();
         } catch (IOException e) {
             throw new RuntimeException("Failed to find a free port", e);

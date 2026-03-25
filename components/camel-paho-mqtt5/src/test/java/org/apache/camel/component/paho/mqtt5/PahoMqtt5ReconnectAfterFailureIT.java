@@ -35,6 +35,7 @@ import org.apache.camel.test.infra.mosquitto.services.MosquittoService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -43,7 +44,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
 
     public static final String TESTING_ROUTE_ID = "testingRoute";
-    private static int mqttPort = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+
+    static AvailablePortFinder.Port mqttPort = AvailablePortFinder.find();
 
     MosquittoService service;
     CountDownLatch routeStartedLatch = new CountDownLatch(1);
@@ -52,11 +55,11 @@ public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
     MockEndpoint mock;
 
     private static MosquittoService createLocalService() {
-        return new MosquittoLocalContainerService(mqttPort);
+        return new MosquittoLocalContainerService(mqttPort.getPort());
     }
 
     private static MosquittoService createRemoteService() {
-        return new MosquittoRemoteService(mqttPort);
+        return new MosquittoRemoteService(mqttPort.getPort());
     }
 
     @Override
@@ -94,8 +97,9 @@ public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("direct:test").to("paho-mqtt5:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort)
+                from("direct:test")
+                        .to("paho-mqtt5:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + mqttPort.getPort());
+                from("paho-mqtt5:queue?brokerUrl=tcp://localhost:" + mqttPort.getPort())
                         .id(TESTING_ROUTE_ID)
                         .routePolicy(new RoutePolicySupport() {
                             @Override
@@ -127,7 +131,7 @@ public class PahoMqtt5ReconnectAfterFailureIT extends CamelTestSupport {
         mock.expectedBodiesReceived(msg);
 
         // When
-        template.sendBody("paho-mqtt5:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + mqttPort, msg);
+        template.sendBody("paho-mqtt5:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + mqttPort.getPort(), msg);
 
         // Then
         mock.assertIsSatisfied();

@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.ORIGIN_HTTP_HEADER_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestSupport {
 
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
 
     @BindToRegistry("clientOptions")
     HttpClientOptions clientOptions = new HttpClientOptions();
@@ -49,7 +51,7 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
     @Test
     public void testHttpClientOptions() {
         VertxWebsocketEndpoint endpoint = context
-                .getEndpoint("vertx-websocket:localhost:" + PORT + "/options/client?clientOptions=#clientOptions",
+                .getEndpoint("vertx-websocket:localhost:" + PORT.getPort() + "/options/client?clientOptions=#clientOptions",
                         VertxWebsocketEndpoint.class);
 
         assertSame(clientOptions, endpoint.getConfiguration().getClientOptions());
@@ -58,7 +60,7 @@ public class VertxWebsocketEndpointConfigurationTest extends VertxWebSocketTestS
     @Test
     public void testHttpServerOptions() {
         VertxWebsocketEndpoint endpoint = context
-                .getEndpoint("vertx-websocket:localhost:" + PORT + "/options/server?serverOptions=#serverOptions",
+                .getEndpoint("vertx-websocket:localhost:" + PORT.getPort() + "/options/server?serverOptions=#serverOptions",
                         VertxWebsocketEndpoint.class);
 
         assertSame(serverOptions, endpoint.getConfiguration().getServerOptions());

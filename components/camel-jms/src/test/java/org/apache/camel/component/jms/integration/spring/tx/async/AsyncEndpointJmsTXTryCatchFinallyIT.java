@@ -48,7 +48,7 @@ public class AsyncEndpointJmsTXTryCatchFinallyIT extends AbstractSpringJMSITSupp
         getMockEndpoint("mock:catch").expectedMessageCount(0);
         getMockEndpoint("mock:finally").expectedBodiesReceived("Bye Camel");
 
-        template.sendBody("activemq:queue:inbox", "Hello Camel");
+        template.sendBody("activemq:queue:inbox.AsyncEndpointJmsTXTryCatchFinallyIT", "Hello Camel");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -63,7 +63,7 @@ public class AsyncEndpointJmsTXTryCatchFinallyIT extends AbstractSpringJMSITSupp
             public void configure() {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("activemq:queue:inbox")
+                from("activemq:queue:inbox.AsyncEndpointJmsTXTryCatchFinallyIT")
                         .transacted()
                         .to("mock:before")
                         .to("log:before")

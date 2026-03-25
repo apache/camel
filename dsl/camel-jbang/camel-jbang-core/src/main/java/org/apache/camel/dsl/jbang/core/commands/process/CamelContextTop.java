@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -31,6 +32,7 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -144,22 +146,42 @@ public class CamelContextTop extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("JAVA").dataAlign(HorizontalAlign.LEFT).with(this::getJavaVersion),
-                    new Column().header("CAMEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.camelVersion),
-                    new Column().header("PLATFORM").dataAlign(HorizontalAlign.LEFT).with(this::getPlatform),
-                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .with(r -> extractState(r.state)),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                    new Column().header("LOAD").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
-                            .with(this::getLoad),
-                    new Column().header("HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getHeapMemory),
-                    new Column().header("NON-HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getNonHeapMemory),
-                    new Column().header("GC").headerAlign(HorizontalAlign.CENTER).with(this::getGC),
-                    new Column().header("THREADS").headerAlign(HorizontalAlign.CENTER).with(this::getThreads))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("javaVersion", getJavaVersion(r));
+                    jo.put("camelVersion", r.camelVersion);
+                    jo.put("platform", getPlatform(r));
+                    jo.put("status", extractState(r.state));
+                    jo.put("age", r.ago);
+                    jo.put("load", getLoad(r));
+                    jo.put("heap", getHeapMemory(r));
+                    jo.put("nonHeap", getNonHeapMemory(r));
+                    jo.put("gc", getGC(r));
+                    jo.put("threads", getThreads(r));
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("JAVA").dataAlign(HorizontalAlign.LEFT).with(this::getJavaVersion),
+                        new Column().header("CAMEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.camelVersion),
+                        new Column().header("PLATFORM").dataAlign(HorizontalAlign.LEFT).with(this::getPlatform),
+                        new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                                .with(r -> extractState(r.state)),
+                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                        new Column().header("LOAD").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
+                                .with(this::getLoad),
+                        new Column().header("HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getHeapMemory),
+                        new Column().header("NON-HEAP").headerAlign(HorizontalAlign.CENTER).with(this::getNonHeapMemory),
+                        new Column().header("GC").headerAlign(HorizontalAlign.CENTER).with(this::getGC),
+                        new Column().header("THREADS").headerAlign(HorizontalAlign.CENTER).with(this::getThreads))));
+            }
         }
 
         return 0;

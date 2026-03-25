@@ -47,7 +47,8 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
     @RegisterExtension
     static MicroprofileLRAService service = MicroprofileLRAServiceFactory.createService();
 
-    private Integer serverPort;
+    @RegisterExtension
+    AvailablePortFinder.Port serverPortHolder = AvailablePortFinder.find();
 
     private int activeLRAs;
 
@@ -106,9 +107,6 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
     }
 
     protected int getServerPort() {
-        if (serverPort == null) {
-            serverPort = AvailablePortFinder.getNextAvailable();
-        }
-        return serverPort;
+        return serverPortHolder.getPort();
     }
 }

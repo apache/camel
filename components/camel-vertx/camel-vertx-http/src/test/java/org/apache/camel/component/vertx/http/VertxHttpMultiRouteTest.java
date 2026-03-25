@@ -46,7 +46,7 @@ public class VertxHttpMultiRouteTest extends VertxHttpTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().port(port);
+                restConfiguration().port(port.getPort());
 
                 rest()
                         .post("/greeting")
@@ -57,7 +57,7 @@ public class VertxHttpMultiRouteTest extends VertxHttpTestSupport {
 
                 from("direct:greet")
                         .removeHeaders("CamelHttp*")
-                        .toF("vertx-http:http://localhost:%d/hello?httpMethod=POST", port)
+                        .toF("vertx-http:http://localhost:%d/hello?httpMethod=POST", port.getPort())
                         .to("mock:result");
 
                 from("direct:hello")

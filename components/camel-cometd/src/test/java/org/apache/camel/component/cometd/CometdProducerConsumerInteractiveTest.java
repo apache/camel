@@ -23,13 +23,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class CometdProducerConsumerInteractiveTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port portSSL = AvailablePortFinder.find();
     private String uri;
-
-    private int portSSL;
     private String uriSSL;
 
     private final String pwd = "changeit";
@@ -44,12 +46,10 @@ public class CometdProducerConsumerInteractiveTest extends CamelTestSupport {
 
     @Override
     public void setupResources() {
-        port = AvailablePortFinder.getNextAvailable();
-        uri = "cometd://127.0.0.1:" + port + "/channel/test?baseResource=file:./src/test/resources/webapp&"
+        uri = "cometd://127.0.0.1:" + port.getPort() + "/channel/test?baseResource=file:./src/test/resources/webapp&"
               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-        portSSL = AvailablePortFinder.getNextAvailable();
-        uriSSL = "cometds://127.0.0.1:" + portSSL + "/channel/test?baseResource=file:./src/test/resources/webapp&"
+        uriSSL = "cometds://127.0.0.1:" + portSSL.getPort() + "/channel/test?baseResource=file:./src/test/resources/webapp&"
                  + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
     }
 

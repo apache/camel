@@ -28,15 +28,15 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyRfc5425LongMessageTest extends CamelTestSupport {
 
-    private static String uri;
-    private static int serverPort;
+    @RegisterExtension
+    AvailablePortFinder.Port serverPort = AvailablePortFinder.find();
     private static final String MESSAGE = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - "
                                           + "Lorem ipsum dolor sit amet, tempor democritum vix ad, est partiendo laboramus ei. "
                                           + "Munere laudem commune vis ad, et qui altera singulis. Ut assum deleniti sit, vix constituto assueverit appellantur at, et meis voluptua usu. "
@@ -54,12 +54,6 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
     private Rfc5425FrameDecoder decoder = new Rfc5425FrameDecoder();
     @BindToRegistry("encoder")
     private Rfc5425Encoder encoder = new Rfc5425Encoder();
-
-    @BeforeAll
-    public static void initPort() {
-        serverPort = AvailablePortFinder.getNextAvailable();
-        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoders=#encoder";
-    }
 
     @Test
     public void testSendingCamel() throws Exception {
@@ -84,6 +78,8 @@ public class NettyRfc5425LongMessageTest extends CamelTestSupport {
             public void configure() {
                 context.setTracing(true);
                 DataFormat syslogDataFormat = new SyslogDataFormat();
+                String uri = "netty:tcp://localhost:" + serverPort.getPort()
+                             + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoders=#encoder";
 
                 // we setup a Syslog listener on a random port.
                 from(uri).unmarshal(syslogDataFormat).process(new Processor() {

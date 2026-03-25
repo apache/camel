@@ -41,6 +41,7 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.layered.TFramedTransport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +51,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerConcurrentTest.class);
 
-    private static final int THRIFT_SYNC_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
-    private static final int THRIFT_ASYNC_REQUEST_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port thriftSyncPort = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port thriftAsyncPort = AvailablePortFinder.find();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int CONCURRENT_THREAD_COUNT = 30;
     private static final int ROUNDS_PER_THREAD_COUNT = 10;
@@ -72,7 +75,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
 
             @Override
             public void run() throws TTransportException {
-                TTransport transport = new TSocket("localhost", THRIFT_SYNC_REQUEST_TEST_PORT);
+                TTransport transport = new TSocket("localhost", thriftSyncPort.getPort());
                 transport.open();
                 TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
                 Calculator.Client client = (new Calculator.Client.Factory()).getClient(protocol);
@@ -105,7 +108,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
             public void run() throws TTransportException, IOException, InterruptedException {
                 final CountDownLatch latch = new CountDownLatch(1);
 
-                TNonblockingTransport transport = new TNonblockingSocket("localhost", THRIFT_ASYNC_REQUEST_TEST_PORT);
+                TNonblockingTransport transport = new TNonblockingSocket("localhost", thriftAsyncPort.getPort());
                 Calculator.AsyncClient client
                         = (new Calculator.AsyncClient.Factory(new TAsyncClientManager(), new TBinaryProtocol.Factory()))
                                 .getAsyncClient(transport);
@@ -162,11 +165,11 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("thrift://localhost:" + THRIFT_SYNC_REQUEST_TEST_PORT
+                from("thrift://localhost:" + thriftSyncPort.getPort()
                      + "/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
                         .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
 
-                from("thrift://localhost:" + THRIFT_ASYNC_REQUEST_TEST_PORT
+                from("thrift://localhost:" + thriftAsyncPort.getPort()
                      + "/org.apache.camel.component.thrift.generated.Calculator")
                         .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
             }

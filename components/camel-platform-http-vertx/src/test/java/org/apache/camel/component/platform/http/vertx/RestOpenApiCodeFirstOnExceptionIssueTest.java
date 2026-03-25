@@ -24,10 +24,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 
 public class RestOpenApiCodeFirstOnExceptionIssueTest extends CamelTestSupport {
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Override
     protected boolean useJmx() {
@@ -110,11 +113,10 @@ public class RestOpenApiCodeFirstOnExceptionIssueTest extends CamelTestSupport {
 
     @Override
     public CamelContext createCamelContext() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(port);
+        conf.setBindPort(port.getPort());
 
-        RestAssured.port = port;
+        RestAssured.port = port.getPort();
 
         CamelContext context = new DefaultCamelContext();
         context.addService(new VertxPlatformHttpServer(conf));

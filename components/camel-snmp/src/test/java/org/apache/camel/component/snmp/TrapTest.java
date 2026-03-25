@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
@@ -43,6 +44,13 @@ import org.snmp4j.smi.VariableBinding;
 
 public class TrapTest extends SnmpTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TrapTest.class);
+
+    @RegisterExtension
+    AvailablePortFinder.Port portV0 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port portV1 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port portV3 = AvailablePortFinder.find();
 
     @ParameterizedTest
     @MethodSource("supportedVersions")
@@ -93,31 +101,27 @@ public class TrapTest extends SnmpTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                //genrate ports for trap consumers/producers
-                int portV0 = AvailablePortFinder.getNextAvailable();
-                int portV1 = AvailablePortFinder.getNextAvailable();
-                int portV3 = AvailablePortFinder.getNextAvailable();
-
                 from("direct:snmptrapV0")
                         .log(LoggingLevel.INFO, "Sending Trap pdu ${body}")
-                        .to("snmp:127.0.0.1:" + portV0 + "?protocol=udp&type=TRAP&snmpVersion=0");
+                        .to("snmp:127.0.0.1:" + portV0.getPort() + "?protocol=udp&type=TRAP&snmpVersion=0");
 
-                from("snmp:0.0.0.0:" + portV0 + "?protocol=udp&type=TRAP&snmpVersion=0")
+                from("snmp:0.0.0.0:" + portV0.getPort() + "?protocol=udp&type=TRAP&snmpVersion=0")
                         .to("mock:resultV0");
 
                 from("direct:snmptrapV1")
                         .log(LoggingLevel.INFO, "Sending Trap pdu ${body}")
-                        .to("snmp:127.0.0.1:" + portV1 + "?protocol=udp&type=TRAP&snmpVersion=1");
+                        .to("snmp:127.0.0.1:" + portV1.getPort() + "?protocol=udp&type=TRAP&snmpVersion=1");
 
-                from("snmp:0.0.0.0:" + portV1 + "?protocol=udp&type=TRAP&snmpVersion=1")
+                from("snmp:0.0.0.0:" + portV1.getPort() + "?protocol=udp&type=TRAP&snmpVersion=1")
                         .to("mock:resultV1");
 
                 from("direct:snmptrapV3")
                         .log(LoggingLevel.INFO, "Sending Trap pdu ${body}")
-                        .to("snmp:127.0.0.1:" + portV3
+                        .to("snmp:127.0.0.1:" + portV3.getPort()
                             + "?securityName=test&securityLevel=1&protocol=udp&type=TRAP&snmpVersion=3");
 
-                from("snmp:0.0.0.0:" + portV3 + "?securityName=test&securityLevel=1&protocol=udp&type=TRAP&snmpVersion=3")
+                from("snmp:0.0.0.0:" + portV3.getPort()
+                     + "?securityName=test&securityLevel=1&protocol=udp&type=TRAP&snmpVersion=3")
                         .to("mock:resultV3");
             }
         };

@@ -153,8 +153,8 @@ public class EvalExpressionCommand extends ActionWatchCommand {
             for (String h : headers) {
                 JsonObject jo = new JsonObject();
                 if (!h.contains("=")) {
-                    printer().println("Header must be in key=value format, was: " + h);
-                    return 0;
+                    printer().printErr("Header must be in key=value format, was: " + h);
+                    return 1;
                 }
                 jo.put("key", StringHelper.before(h, "="));
                 jo.put("value", StringHelper.after(h, "="));

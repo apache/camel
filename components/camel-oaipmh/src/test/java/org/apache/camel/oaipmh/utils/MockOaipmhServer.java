@@ -47,18 +47,21 @@ public final class MockOaipmhServer {
 
     private int httpPort;
     private int httpsPort;
+    private AvailablePortFinder.Port reservedHttpPort;
+    private AvailablePortFinder.Port reservedHttpsPort;
     private WireMockServer server;
 
-    private MockOaipmhServer(int httpPort, int httpsPort) {
-        this.httpPort = httpPort;
-        this.httpsPort = httpsPort;
+    private MockOaipmhServer(AvailablePortFinder.Port httpPort, AvailablePortFinder.Port httpsPort) {
+        this.reservedHttpPort = httpPort;
+        this.reservedHttpsPort = httpsPort;
+        this.httpPort = httpPort.getPort();
+        this.httpsPort = httpsPort.getPort();
     }
 
     public static MockOaipmhServer create() {
-        int httpPort = AvailablePortFinder.getNextAvailable();
-        int httpsPort = AvailablePortFinder.getNextAvailable();
-        MockOaipmhServer server = new MockOaipmhServer(httpPort, httpsPort);
-        return server;
+        AvailablePortFinder.Port p1 = AvailablePortFinder.find();
+        AvailablePortFinder.Port p2 = AvailablePortFinder.find();
+        return new MockOaipmhServer(p1, p2);
     }
 
     /**
@@ -107,6 +110,14 @@ public final class MockOaipmhServer {
         if (server != null) {
             server.stop();
             server = null;
+        }
+        if (reservedHttpPort != null) {
+            reservedHttpPort.close();
+            reservedHttpPort = null;
+        }
+        if (reservedHttpsPort != null) {
+            reservedHttpsPort.close();
+            reservedHttpsPort = null;
         }
     }
 

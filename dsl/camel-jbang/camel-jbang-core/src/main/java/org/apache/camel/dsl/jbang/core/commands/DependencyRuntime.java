@@ -57,7 +57,7 @@ public class DependencyRuntime extends CamelCommand {
     public Integer doCall() throws Exception {
         // read pom.xml
         if (!Files.exists(pomXml)) {
-            printer().println(String.format("Cannot find %s", pomXml));
+            printer().printErr(String.format("Cannot find %s", pomXml));
             return 1;
         }
 

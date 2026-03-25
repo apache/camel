@@ -77,9 +77,9 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toF("vertx-websocket:localhost:%d/echo?sslContextParameters=#clientSSLParameters", port);
+                        .toF("vertx-websocket:localhost:%d/echo?sslContextParameters=#clientSSLParameters", port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/echo?sslContextParameters=#serverSSLParameters", port)
+                fromF("vertx-websocket:localhost:%d/echo?sslContextParameters=#serverSSLParameters", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
             }
@@ -109,9 +109,9 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .toF("vertx-websocket:localhost:%d/echo?sslContextParameters=#clientSSLParameters", port);
+                        .toF("vertx-websocket:localhost:%d/echo?sslContextParameters=#clientSSLParameters", port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/echo", port)
+                fromF("vertx-websocket:localhost:%d/echo", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
             }
@@ -143,7 +143,7 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test?sslContextParameters=#serverSSLParameters", port)
+                fromF("vertx-websocket:localhost:%d/test?sslContextParameters=#serverSSLParameters", port.getPort())
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
             }
@@ -177,12 +177,13 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/echo?sslContextParameters=#serverSSLParameters", port)
+                fromF("vertx-websocket:localhost:%d/echo?sslContextParameters=#serverSSLParameters", port.getPort())
                         .log("Server consumer received message: ${body}")
                         .toF("vertx-websocket:localhost:%d/echo?sendToAll=true&sslContextParameters=#clientSSLParameters",
-                                port);
+                                port.getPort());
 
-                fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&sslContextParameters=#clientSSLParameters", port)
+                fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&sslContextParameters=#clientSSLParameters",
+                        port.getPort())
                         .log("Client consumer received message: ${body}")
                         .to("mock:result");
             }

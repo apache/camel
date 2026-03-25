@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.mina;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.support.jsse.ClientAuthentication;
@@ -28,25 +30,25 @@ import org.apache.camel.support.jsse.SecureSocketProtocolsParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class BaseMinaTest extends CamelTestSupport {
 
     protected static final String KEY_STORE_PASSWORD = "changeit";
 
-    private static volatile int port;
-
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    // Keep additional Port references alive to prevent port reuse (TOCTOU prevention)
+    private final List<AvailablePortFinder.Port> additionalPorts = new ArrayList<>();
 
     protected int getNextPort() {
-        return AvailablePortFinder.getNextAvailable();
+        AvailablePortFinder.Port p = AvailablePortFinder.find();
+        additionalPorts.add(p);
+        return p.getPort();
     }
 
     protected int getPort() {
-        return port;
+        return port.getPort();
     }
 
     protected boolean isUseSslContext() {

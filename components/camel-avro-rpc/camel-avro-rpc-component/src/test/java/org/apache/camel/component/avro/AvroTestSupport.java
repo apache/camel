@@ -19,16 +19,23 @@ package org.apache.camel.component.avro;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class AvroTestSupport extends CamelTestSupport {
-    protected int port = 9100;
-    protected int avroPort = setupFreePort("avroport");
-    protected int avroPortReflection = setupFreePort("avroPortReflection");
+    @RegisterExtension
+    AvailablePortFinder.Port avroPortHolder = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port avroPortReflectionHolder = AvailablePortFinder.find();
 
-    public int setupFreePort(String name) {
-        port = AvailablePortFinder.getNextAvailable();
-        System.setProperty(name, String.valueOf(port));
-        return port;
+    protected int avroPort;
+    protected int avroPortReflection;
+
+    @Override
+    protected void doPreSetup() throws Exception {
+        avroPort = avroPortHolder.getPort();
+        avroPortReflection = avroPortReflectionHolder.getPort();
+        System.setProperty("avroport", String.valueOf(avroPort));
+        System.setProperty("avroPortReflection", String.valueOf(avroPortReflection));
     }
 
     @Override

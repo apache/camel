@@ -2359,17 +2359,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/flat-cache-npm-4.0.1-12bf2455f7-899fc86bf6.zip/node_modules/flat-cache/",\
           "packageDependencies": [\
             ["flat-cache", "npm:4.0.1"],\
-            ["flatted", "npm:3.3.2"],\
+            ["flatted", "npm:3.4.2"],\
             ["keyv", "npm:4.5.4"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["flatted", [\
-        ["npm:3.3.2", {\
-          "packageLocation": "./.yarn/cache/flatted-npm-3.3.2-6bf77e6e67-ac3c159742.zip/node_modules/flatted/",\
+        ["npm:3.4.2", {\
+          "packageLocation": "./.yarn/cache/flatted-npm-3.4.2-e32280259b-1b2536fccb.zip/node_modules/flatted/",\
           "packageDependencies": [\
-            ["flatted", "npm:3.3.2"]\
+            ["flatted", "npm:3.4.2"]\
           ],\
           "linkType": "HARD"\
         }]\

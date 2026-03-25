@@ -37,7 +37,7 @@ public class JmsSpringValidatorIT extends SpringJMSBasic {
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
         String body = "<?xml version=\"1.0\"?>\n<p>Hello world!</p>";
-        template.sendBody("jms:queue:inbox", body);
+        template.sendBody("jms:queue:inbox.JmsSpringValidatorIT", body);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -49,7 +49,7 @@ public class JmsSpringValidatorIT extends SpringJMSBasic {
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
         String body = "<?xml version=\"1.0\"?>\n<foo>Kaboom</foo>";
-        template.sendBody("jms:queue:inbox", body);
+        template.sendBody("jms:queue:inbox.JmsSpringValidatorIT", body);
 
         MockEndpoint.assertIsSatisfied(context);
     }

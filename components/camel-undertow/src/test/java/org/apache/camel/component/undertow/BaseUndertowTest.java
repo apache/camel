@@ -17,35 +17,29 @@
 package org.apache.camel.component.undertow;
 
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Base class of tests which allocates ports
  */
 public abstract class BaseUndertowTest extends CamelTestSupport {
 
-    private static volatile int port;
-    private static volatile int port2;
-    private final AtomicInteger counter = new AtomicInteger(1);
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
 
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-        port2 = AvailablePortFinder.getNextAvailable();
+    protected int getPort() {
+        return port.getPort();
     }
 
-    protected static int getPort() {
-        return port;
-    }
-
-    protected static int getPort2() {
-        return port2;
+    protected int getPort2() {
+        return port2.getPort();
     }
 
     @Override
@@ -64,11 +58,4 @@ public abstract class BaseUndertowTest extends CamelTestSupport {
         return prop;
     }
 
-    protected int getNextPort() {
-        return AvailablePortFinder.getNextAvailable();
-    }
-
-    protected int getNextPort(int startWithPort) {
-        return AvailablePortFinder.getNextAvailable();
-    }
 }

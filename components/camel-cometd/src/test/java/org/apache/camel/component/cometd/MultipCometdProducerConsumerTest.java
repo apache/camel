@@ -21,15 +21,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unit testing for using a CometdProducer and a CometdConsumer
  */
 public class MultipCometdProducerConsumerTest extends CamelTestSupport {
 
-    private int port1;
+    @RegisterExtension
+    AvailablePortFinder.Port port1 = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port port2 = AvailablePortFinder.find();
     private String uri1;
-    private int port2;
     private String uri2;
 
     @Test
@@ -48,12 +51,10 @@ public class MultipCometdProducerConsumerTest extends CamelTestSupport {
 
     @Override
     public void doPreSetup() {
-        port1 = AvailablePortFinder.getNextAvailable();
-        port2 = AvailablePortFinder.getNextAvailable();
-        uri1 = "cometd://127.0.0.1:" + port1 + "/service/test?baseResource=file:./target/test-classes/webapp&"
+        uri1 = "cometd://127.0.0.1:" + port1.getPort() + "/service/test?baseResource=file:./target/test-classes/webapp&"
                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-        uri2 = "cometd://127.0.0.1:" + port2 + "/service/test?baseResource=file:./target/test-classes/webapp&"
+        uri2 = "cometd://127.0.0.1:" + port2.getPort() + "/service/test?baseResource=file:./target/test-classes/webapp&"
                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
     }
 

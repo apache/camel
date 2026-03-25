@@ -1144,6 +1144,181 @@ public interface Ddb2EndpointBuilderFactory {
             return "CamelAwsDdbWriteCapacity";
         }
         /**
+         * A PartiQL statement that uses parameters.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: ExecuteStatement
+         * 
+         * @return the name of the header {@code AwsDdbStatement}.
+         */
+        public String awsDdbStatement() {
+            return "CamelAwsDdbStatement";
+        }
+        /**
+         * The parameters for the PartiQL statement, if any.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.AttributeValue>} type.
+         * 
+         * Group: ExecuteStatement
+         * 
+         * @return the name of the header {@code AwsDdbStatementParameters}.
+         */
+        public String awsDdbStatementParameters() {
+            return "CamelAwsDdbStatementParameters";
+        }
+        /**
+         * The list of PartiQL statements representing the batch to run.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.BatchStatementRequest>} type.
+         * 
+         * Group: BatchExecuteStatement
+         * 
+         * @return the name of the header {@code AwsDdbBatchStatements}.
+         */
+        public String awsDdbBatchStatements() {
+            return "CamelAwsDdbBatchStatements";
+        }
+        /**
+         * The response items from an ExecuteStatement operation.
+         * 
+         * The option is a: {@code java.util.List<java.util.Map<String,
+         * software.amazon.awssdk.services.dynamodb.model.AttributeValue>>}
+         * type.
+         * 
+         * Group: ExecuteStatement
+         * 
+         * @return the name of the header {@code AwsDdbExecuteStatementItems}.
+         */
+        public String awsDdbExecuteStatementItems() {
+            return "CamelAwsDdbExecuteStatementItems";
+        }
+        /**
+         * The response to each PartiQL statement in the batch.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.BatchStatementResponse>} type.
+         * 
+         * Group: BatchExecuteStatement
+         * 
+         * @return the name of the header {@code AwsDdbBatchStatementResponse}.
+         */
+        public String awsDdbBatchStatementResponse() {
+            return "CamelAwsDdbBatchStatementResponse";
+        }
+        /**
+         * The list of TransactWriteItem objects for a transactional write.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.TransactWriteItem>} type.
+         * 
+         * Group: TransactWriteItems
+         * 
+         * @return the name of the header {@code AwsDdbTransactWriteItems}.
+         */
+        public String awsDdbTransactWriteItems() {
+            return "CamelAwsDdbTransactWriteItems";
+        }
+        /**
+         * A unique client request token for idempotent TransactWriteItems
+         * calls.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: TransactWriteItems
+         * 
+         * @return the name of the header {@code
+         * AwsDdbTransactClientRequestToken}.
+         */
+        public String awsDdbTransactClientRequestToken() {
+            return "CamelAwsDdbTransactClientRequestToken";
+        }
+        /**
+         * The consumed capacity from a TransactWriteItems operation.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity>} type.
+         * 
+         * Group: TransactWriteItems
+         * 
+         * @return the name of the header {@code
+         * AwsDdbTransactWriteConsumedCapacity}.
+         */
+        public String awsDdbTransactWriteConsumedCapacity() {
+            return "CamelAwsDdbTransactWriteConsumedCapacity";
+        }
+        /**
+         * The item collection metrics from a TransactWriteItems operation.
+         * 
+         * The option is a: {@code java.util.Map<String,
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.ItemCollectionMetrics>>} type.
+         * 
+         * Group: TransactWriteItems
+         * 
+         * @return the name of the header {@code
+         * AwsDdbTransactWriteItemCollectionMetrics}.
+         */
+        public String awsDdbTransactWriteItemCollectionMetrics() {
+            return "CamelAwsDdbTransactWriteItemCollectionMetrics";
+        }
+        /**
+         * The list of TransactGetItem objects for a transactional read.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.TransactGetItem>} type.
+         * 
+         * Group: TransactGetItems
+         * 
+         * @return the name of the header {@code AwsDdbTransactGetItems}.
+         */
+        public String awsDdbTransactGetItems() {
+            return "CamelAwsDdbTransactGetItems";
+        }
+        /**
+         * The response from a TransactGetItems operation.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.ItemResponse>} type.
+         * 
+         * Group: TransactGetItems
+         * 
+         * @return the name of the header {@code AwsDdbTransactGetResponse}.
+         */
+        public String awsDdbTransactGetResponse() {
+            return "CamelAwsDdbTransactGetResponse";
+        }
+        /**
+         * A map of table names to lists of WriteRequest objects for batch
+         * writes.
+         * 
+         * The option is a: {@code java.util.Map<String,
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.WriteRequest>>} type.
+         * 
+         * Group: BatchWriteItems
+         * 
+         * @return the name of the header {@code AwsDdbBatchWriteItems}.
+         */
+        public String awsDdbBatchWriteItems() {
+            return "CamelAwsDdbBatchWriteItems";
+        }
+        /**
+         * A map of tables and their respective unprocessed items after a
+         * BatchWriteItems operation.
+         * 
+         * The option is a: {@code java.util.Map<String,
+         * java.util.List<software.amazon.awssdk.services.dynamodb.model.WriteRequest>>} type.
+         * 
+         * Group: BatchWriteItems
+         * 
+         * @return the name of the header {@code
+         * AwsDdbBatchWriteUnprocessedItems}.
+         */
+        public String awsDdbBatchWriteUnprocessedItems() {
+            return "CamelAwsDdbBatchWriteUnprocessedItems";
+        }
+        /**
          * The Filter Expression.
          * 
          * The option is a: {@code String} type.

@@ -45,6 +45,12 @@ public class Ddb2Producer extends DefaultProducer {
             case BatchGetItems:
                 new BatchGetItemsCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
                 break;
+            case BatchWriteItems:
+                new BatchWriteItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case BatchExecuteStatement:
+                new BatchExecuteStatementCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
             case DeleteItem:
                 new DeleteItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
                 break;
@@ -53,6 +59,9 @@ public class Ddb2Producer extends DefaultProducer {
                 break;
             case DescribeTable:
                 new DescribeTableCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case ExecuteStatement:
+                new ExecuteStatementCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
                 break;
             case GetItem:
                 new GetItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
@@ -65,6 +74,12 @@ public class Ddb2Producer extends DefaultProducer {
                 break;
             case Scan:
                 new ScanCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case TransactGetItems:
+                new TransactGetItemsCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case TransactWriteItems:
+                new TransactWriteItemsCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();
                 break;
             case UpdateItem:
                 new UpdateItemCommand(getEndpoint().getDdbClient(), getConfiguration(), exchange).execute();

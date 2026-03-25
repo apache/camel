@@ -40,7 +40,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test?router=#customRouter", port)
+                fromF("vertx-websocket:localhost:%d/test?router=#customRouter", port.getPort())
                         .to("mock:result");
             }
         });
@@ -81,7 +81,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test", port)
+                fromF("vertx-websocket:localhost:%d/test", port.getPort())
                         .to("mock:result");
             }
         });
@@ -118,7 +118,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test?router=#customRouter", port)
+                fromF("vertx-websocket:localhost:%d/test?router=#customRouter", port.getPort())
                         .to("mock:result");
             }
         });
@@ -158,7 +158,7 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("vertx-websocket:localhost:%d/test", port)
+                fromF("vertx-websocket:localhost:%d/test", port.getPort())
                         .to("mock:result");
             }
         });

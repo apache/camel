@@ -2032,6 +2032,7 @@ public class ModelWriter extends BaseWriter {
         doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
         doWriteList(null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
         domElements(def.getSpringOrBlueprintBeans());
+        doWriteList(null, "sslContextParameters", def.getSslContextParameters(), this::doWriteSSLContextParametersDefinition);
         doWriteList("dataFormats", "dataFormat", def.getDataFormats(), this::doWriteDataFormatDefinition);
         doWriteList(null, "restConfiguration", def.getRestConfigurations(), this::doWriteRestConfigurationDefinition);
         doWriteList(null, "rest", def.getRests(), this::doWriteRestDefinition);
@@ -2048,6 +2049,36 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteComponentScanDefinition(String name, ComponentScanDefinition def) throws IOException {
         startElement(name);
         doWriteAttribute("base-package", def.getBasePackage(), null);
+        endElement(name);
+    }
+    protected void doWriteSSLContextParametersDefinition(String name, SSLContextParametersDefinition def) throws IOException {
+        startElement(name);
+        doWriteAttribute("id", def.getId(), null);
+        doWriteAttribute("provider", def.getProvider(), null);
+        doWriteAttribute("secureSocketProtocol", def.getSecureSocketProtocol(), "TLSv1.3");
+        doWriteAttribute("certAlias", def.getCertAlias(), null);
+        doWriteAttribute("sessionTimeout", def.getSessionTimeout(), "86400");
+        doWriteAttribute("cipherSuites", def.getCipherSuites(), null);
+        doWriteAttribute("cipherSuitesInclude", def.getCipherSuitesInclude(), null);
+        doWriteAttribute("cipherSuitesExclude", def.getCipherSuitesExclude(), null);
+        doWriteAttribute("namedGroups", def.getNamedGroups(), null);
+        doWriteAttribute("namedGroupsInclude", def.getNamedGroupsInclude(), null);
+        doWriteAttribute("namedGroupsExclude", def.getNamedGroupsExclude(), null);
+        doWriteAttribute("signatureSchemes", def.getSignatureSchemes(), null);
+        doWriteAttribute("signatureSchemesInclude", def.getSignatureSchemesInclude(), null);
+        doWriteAttribute("signatureSchemesExclude", def.getSignatureSchemesExclude(), null);
+        doWriteAttribute("keyStore", def.getKeyStore(), null);
+        doWriteAttribute("keyStoreType", def.getKeyStoreType(), null);
+        doWriteAttribute("keyStoreProvider", def.getKeyStoreProvider(), null);
+        doWriteAttribute("keystorePassword", def.getKeystorePassword(), null);
+        doWriteAttribute("trustStore", def.getTrustStore(), null);
+        doWriteAttribute("trustStorePassword", def.getTrustStorePassword(), null);
+        doWriteAttribute("trustAllCertificates", def.getTrustAllCertificates(), null);
+        doWriteAttribute("keyManagerAlgorithm", def.getKeyManagerAlgorithm(), null);
+        doWriteAttribute("keyManagerProvider", def.getKeyManagerProvider(), null);
+        doWriteAttribute("secureRandomAlgorithm", def.getSecureRandomAlgorithm(), null);
+        doWriteAttribute("secureRandomProvider", def.getSecureRandomProvider(), null);
+        doWriteAttribute("clientAuthentication", def.getClientAuthentication(), "NONE");
         endElement(name);
     }
     protected void doWriteBatchResequencerConfig(String name, BatchResequencerConfig def) throws IOException {

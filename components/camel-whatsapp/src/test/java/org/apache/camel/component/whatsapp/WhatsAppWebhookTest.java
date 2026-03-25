@@ -27,10 +27,12 @@ import org.apache.camel.component.webhook.WebhookEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class WhatsAppWebhookTest extends WhatsAppTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     public void testWebhookRegistration() throws Exception {
@@ -85,13 +87,8 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
         Assertions.assertThat(mock.getExchanges().get(0).getIn().getBody(String.class)).contains("\"type\": \"text\"");
     }
 
-    @Override
-    protected void doPreSetup() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
-
     protected WhatsAppApiConfig getWhatsAppApiConfig() {
-        return WhatsAppApiConfig.mock(port);
+        return WhatsAppApiConfig.mock(port.getPort());
     }
 
     @Override
@@ -99,7 +96,7 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().host("localhost").port(port);
+                restConfiguration().host("localhost").port(port.getPort());
 
                 from("webhook:whatsapp:" + phoneNumberId + "?webhookAutoRegister=false").id("webhook")
                         .convertBodyTo(String.class).to("mock:endpoint");

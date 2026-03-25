@@ -27,8 +27,6 @@ import org.apache.camel.component.clickup.util.ClickUpTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,13 +43,6 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
     public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_FILENAME = "messages/events/time-tracking-created.json";
     public static final String MESSAGES_EVENTS_TIME_TRACKING_CREATED_SIGNATURE
             = "ac99f10017e28db6839941c184964890ec3262b1d6b1756d33ff53d972d5a361";
-
-    private static int port;
-
-    @BeforeAll
-    public static void initPort() {
-        port = AvailablePortFinder.getNextAvailable();
-    }
 
     @Test
     public void testWebhookCall() throws Exception {
@@ -85,7 +76,7 @@ public class ClickUpWebhookCallTest extends ClickUpTestSupport {
             public void configure() {
                 restConfiguration()
                         .host("localhost")
-                        .port(port);
+                        .port(port.getPort());
 
                 from("webhook:clickup:" + WORKSPACE_ID + "?authorizationToken=" + AUTHORIZATION_TOKEN + "&webhookSecret="
                      + WEBHOOK_SECRET + "&events=" + String.join(",", EVENTS) + "&webhookAutoRegister=false")

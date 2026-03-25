@@ -20,25 +20,58 @@
 # find which modules depend on those artifacts (including transitive
 # dependencies) and runs their tests.
 #
+# Uses the GitHub API to fetch the PR diff (works with shallow clones).
+#
 # Approach:
-#   1. Diff parent/pom.xml to find changed property names
-#   2. Parse parent/pom.xml to map property -> groupId:artifactId
+#   1. Fetch PR diff via GitHub API, extract parent/pom.xml changes
+#   2. Find changed property names from the diff
+#   3. Parse parent/pom.xml to map property -> groupId:artifactId
 #      (detecting BOM imports vs regular dependencies)
-#   3. Use toolbox:tree-find to find all modules depending on those
+#   4. Use toolbox:tree-find to find all modules depending on those
 #      artifacts (direct + transitive)
-#   4. Run tests for affected modules
+#   5. Run tests for affected modules
 
 set -euo pipefail
 
 MAX_MODULES=50
 TOOLBOX_PLUGIN="eu.maveniverse.maven.plugins:toolbox"
 
-# Detect which properties changed in parent/pom.xml compared to the base branch.
+# Fetch the PR diff from the GitHub API and extract only the parent/pom.xml
+# portion. Returns the unified diff for parent/pom.xml, or empty if not changed.
+fetch_parent_pom_diff() {
+  local pr_id="$1"
+  local repository="$2"
+
+  local diff_output
+  diff_output=$(curl -s -w "\n%{http_code}" \
+    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+    -H "Accept: application/vnd.github.v3.diff" \
+    "https://api.github.com/repos/${repository}/pulls/${pr_id}")
+
+  local http_code
+  http_code=$(echo "$diff_output" | tail -n 1)
+  local diff_body
+  diff_body=$(echo "$diff_output" | sed '$d')
+
+  if [[ "$http_code" -lt 200 || "$http_code" -ge 300 || -z "$diff_body" ]]; then
+    echo "WARNING: Failed to fetch PR diff (HTTP $http_code)" >&2
+    return
+  fi
+
+  # Extract only the parent/pom.xml diff section
+  echo "$diff_body" | awk '
+    /^diff --git/ && found { exit }
+    /^diff --git a\/parent\/pom.xml/ { found=1 }
+    found { print }
+  '
+}
+
+# Detect which properties changed in the parent/pom.xml diff.
 # Returns one property name per line.
 detect_changed_properties() {
-  local base_branch="$1"
+  local diff_content="$1"
 
-  git diff "${base_branch}"...HEAD -- parent/pom.xml | \
+  echo "$diff_content" | \
     grep -E '^[+-][[:space:]]*<[^>]+>[^<]*</[^>]+>' | \
     grep -vE '^\+\+\+|^---' | \
     sed -E 's/^[+-][[:space:]]*<([^>]+)>.*/\1/' | \
@@ -116,21 +149,24 @@ find_modules_with_toolbox() {
 
 main() {
   echo "Using MVND_OPTS=$MVND_OPTS"
-  local base_branch=${1}
-  local mavenBinary=${2}
+  local mavenBinary=${1}
+  local prId=${2}
+  local repository=${3}
   local log="detect-dependencies.log"
   local exclusionList="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-lucene,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-csimple-maven-plugin,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel,!:coverage"
 
-  git fetch origin "$base_branch":"$base_branch" 2>/dev/null || true
+  # Fetch diff via GitHub API (works with shallow clones)
+  echo "Fetching PR #${prId} diff from GitHub API..."
+  local parent_diff
+  parent_diff=$(fetch_parent_pom_diff "$prId" "$repository")
 
-  # Check if parent/pom.xml was actually changed
-  if ! git diff --name-only "${base_branch}"...HEAD -- parent/pom.xml | grep -q .; then
+  if [ -z "$parent_diff" ]; then
     echo "parent/pom.xml not changed, nothing to do"
     exit 0
   fi
 
   local changed_props
-  changed_props=$(detect_changed_properties "$base_branch")
+  changed_props=$(detect_changed_properties "$parent_diff")
 
   if [ -z "$changed_props" ]; then
     echo "No property changes detected in parent/pom.xml"
@@ -292,7 +328,8 @@ main() {
   fi
 
   echo "Running targeted tests for affected modules..."
-  $mavenBinary -l $log $MVND_OPTS test -pl "${filtered_ids},${exclusionList}" -amd
+  # Use install instead of test, otherwise test-infra modules fail due to jandex maven plugin
+  $mavenBinary -l $log $MVND_OPTS install -pl "${filtered_ids},${exclusionList}" -amd
   local ret=$?
 
   if [ ${ret} -eq 0 ]; then

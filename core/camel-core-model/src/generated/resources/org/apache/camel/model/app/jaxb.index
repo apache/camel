@@ -6,3 +6,4 @@ BeanPropertiesDefinition
 BeanPropertyDefinition
 BeansDefinition
 ComponentScanDefinition
+SSLContextParametersDefinition

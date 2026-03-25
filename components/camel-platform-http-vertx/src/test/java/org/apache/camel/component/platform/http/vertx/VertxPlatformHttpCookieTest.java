@@ -25,6 +25,7 @@ import org.apache.camel.component.platform.http.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.matcher.RestAssuredMatchers.detailedCookie;
@@ -32,6 +33,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class VertxPlatformHttpCookieTest {
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     // add a cookie using the default cookie configuration
     @Test
@@ -250,12 +253,11 @@ public class VertxPlatformHttpCookieTest {
         return exchange.getProperty(Exchange.COOKIE_HANDLER, CookieHandler.class);
     }
 
-    static CamelContext createCamelContext() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+    CamelContext createCamelContext() throws Exception {
         VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
-        conf.setBindPort(port);
+        conf.setBindPort(port.getPort());
 
-        RestAssured.port = port;
+        RestAssured.port = port.getPort();
 
         CamelContext context = new DefaultCamelContext();
         context.addService(new VertxPlatformHttpServer(conf));

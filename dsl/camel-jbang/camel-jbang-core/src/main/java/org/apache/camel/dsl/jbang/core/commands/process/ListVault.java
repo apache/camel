@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -27,9 +28,11 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -187,17 +190,39 @@ public class ListVault extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("VAULT").dataAlign(HorizontalAlign.LEFT).with(r -> r.vault),
-                    new Column().header("REGION").dataAlign(HorizontalAlign.LEFT).with(r -> r.region),
-                    new Column().header("SECRET").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.secret),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(this::getAgo),
-                    new Column().header("UPDATE").headerAlign(HorizontalAlign.LEFT).with(this::getReloadAgo),
-                    new Column().header("CHECK").headerAlign(HorizontalAlign.LEFT).with(this::getCheckAgo))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("vault", r.vault);
+                    jo.put("region", r.region);
+                    jo.put("secret", r.secret);
+                    jo.put("age", getAgo(r));
+                    jo.put("update", getReloadAgo(r));
+                    jo.put("check", getCheckAgo(r));
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                // Flexible columns: NAME (40), SECRET (40)
+                // Fixed columns: PID(8)+VAULT(10)+REGION(10)+AGE(8)+UPDATE(8)+CHECK(8) ~= 52
+                int tw = terminalWidth();
+                int nameW = TerminalWidthHelper.flexWidth(tw, 52 + 40, TerminalWidthHelper.noBorderOverhead(8), 15, 40);
+                int secretW = TerminalWidthHelper.flexWidth(tw, 52 + nameW, TerminalWidthHelper.noBorderOverhead(8), 15, 40);
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(nameW, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("VAULT").dataAlign(HorizontalAlign.LEFT).with(r -> r.vault),
+                        new Column().header("REGION").dataAlign(HorizontalAlign.LEFT).with(r -> r.region),
+                        new Column().header("SECRET").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(secretW, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.secret),
+                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(this::getAgo),
+                        new Column().header("UPDATE").headerAlign(HorizontalAlign.LEFT).with(this::getReloadAgo),
+                        new Column().header("CHECK").headerAlign(HorizontalAlign.LEFT).with(this::getCheckAgo))));
+            }
         }
 
         return 0;

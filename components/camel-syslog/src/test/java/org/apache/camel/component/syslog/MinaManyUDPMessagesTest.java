@@ -27,24 +27,20 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MinaManyUDPMessagesTest extends CamelTestSupport {
 
-    private static int serverPort;
+    @RegisterExtension
+    AvailablePortFinder.Port serverPort = AvailablePortFinder.find();
     private final int messageCount = 100;
     private final String message
             = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
               + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
               + "         Conveyer1=OK, Conveyer2=OK # %%";
-
-    @BeforeAll
-    public static void initPort() {
-        serverPort = AvailablePortFinder.getNextAvailable();
-    }
 
     @Test
     public void testSendingManyMessages() throws Exception {
@@ -60,7 +56,7 @@ public class MinaManyUDPMessagesTest extends CamelTestSupport {
 
                 byte[] data = message.getBytes();
 
-                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort);
+                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort.getPort());
                 socket.send(packet);
                 Thread.sleep(100);
             }
@@ -80,7 +76,7 @@ public class MinaManyUDPMessagesTest extends CamelTestSupport {
                 DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
-                from("mina:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {
+                from("mina:udp://127.0.0.1:" + serverPort.getPort()).unmarshal(syslogDataFormat).process(new Processor() {
                     public void process(Exchange ex) {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }

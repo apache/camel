@@ -29,6 +29,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -99,11 +100,11 @@ public class CamelThreadDump extends ActionWatchCommand {
 
         List<Long> pids = findPids(name);
         if (pids.isEmpty()) {
-            return 0;
+            return 1;
         } else if (pids.size() > 1) {
             printer().println("Name or pid " + name + " matches " + pids.size()
                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 0;
+            return 1;
         }
 
         // include stack-traces
@@ -190,22 +191,35 @@ public class CamelThreadDump extends ActionWatchCommand {
     }
 
     protected void singleTable(List<Row> rows) {
+        int tw = terminalWidth();
+        int fixedWidth = 8 + 15 + 10 + 10; // ID + STATE + BLOCK + WAIT (approx)
+        int borderOverhead = TerminalWidthHelper.noBorderOverhead(6);
+        int nameWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth + 70, borderOverhead, 20, 60);
+        int stackWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth + nameWidth, borderOverhead, 20, 70);
+
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("ID").headerAlign(HorizontalAlign.CENTER).with(r -> Long.toString(r.id)),
-                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(nameWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
                 new Column().header("STATE").headerAlign(HorizontalAlign.RIGHT).with(r -> r.state),
                 new Column().header("BLOCK").with(this::getBlocked),
                 new Column().header("WAIT").with(this::getWaited),
                 new Column().header("STACKTRACE").headerAlign(HorizontalAlign.RIGHT)
-                        .maxWidth(70, OverflowBehaviour.ELLIPSIS_LEFT).with(this::getStackTrace))));
+                        .maxWidth(stackWidth, OverflowBehaviour.ELLIPSIS_LEFT).with(this::getStackTrace))));
     }
 
     protected void tableAndStackTrace(List<Row> rows) {
+        int tw = terminalWidth();
+        int fixedWidth = 8 + 15 + 10 + 10; // ID + STATE + BLOCK + WAIT (approx)
+        int borderOverhead = TerminalWidthHelper.noBorderOverhead(5);
+        int nameWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth, borderOverhead, 20, 60);
+
         for (Row row : rows) {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(row), Arrays.asList(
                     new Column().header("ID").headerAlign(HorizontalAlign.CENTER).with(r -> Long.toString(r.id)),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(nameWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("STATE").headerAlign(HorizontalAlign.RIGHT).with(r -> r.state),
                     new Column().header("BLOCK").with(this::getBlocked),

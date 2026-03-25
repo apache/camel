@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.spi;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.AsyncCallback;
@@ -49,6 +51,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     private final TransactionTemplate transactionTemplate;
     private final String transactionKey;
     private final LoggingLevel rollbackLoggingLevel;
+    private final Set<Exchange> inflightTransactedExchanges = ConcurrentHashMap.newKeySet();
 
     /**
      * Creates the transaction error handler.
@@ -149,6 +152,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             if (exchange.getUnitOfWork() != null) {
                 exchange.getUnitOfWork().beginTransactedBy(transactionKey);
             }
+            inflightTransactedExchanges.add(exchange);
 
             // do in transaction
             logTransactionBegin(redelivered, ids);
@@ -162,6 +166,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             exchange.setException(e);
             logTransactionRollback(redelivered, ids, e, false);
         } finally {
+            inflightTransactedExchanges.remove(exchange);
             // mark the end of this transaction boundary
             if (exchange.getUnitOfWork() != null) {
                 exchange.getUnitOfWork().endTransactedBy(transactionKey);
@@ -205,6 +210,13 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
                 // and now let process the exchange by the error handler
                 processByErrorHandler(exchange);
+
+                // if forced shutdown is in progress, mark the exchange for rollback
+                if (preparingShutdown) {
+                    LOG.debug("Forced shutdown in progress, marking exchange for rollback: {}",
+                            exchange.getExchangeId());
+                    exchange.setRollbackOnly(true);
+                }
 
                 // after handling and still an exception or marked as rollback only then rollback
                 if (exchange.getException() != null || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
@@ -322,6 +334,20 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             } else {
                 LOG.trace("Transaction rollback ({}) redelivered({}) for {} caught: {}", transactionKey, redelivered, ids,
                         e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        super.prepareShutdown(suspendOnly, forced);
+        if (forced) {
+            // mark all in-flight transacted exchanges for rollback so the transaction
+            // is rolled back before the connection pool is destroyed during shutdown
+            for (Exchange exchange : inflightTransactedExchanges) {
+                LOG.debug("Marking in-flight transacted exchange for rollback due to forced shutdown: {}",
+                        exchange.getExchangeId());
+                exchange.setRollbackOnly(true);
             }
         }
     }

@@ -22,31 +22,33 @@ import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestJettyRedirectTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
 
     @Test
     void testRedirectInvocation() {
-        String response = template.requestBody("http://localhost:" + port + "/metadata/profile/tag", "<hello>Camel</hello>",
+        String response = template.requestBody("http://localhost:" + port.getPort() + "/metadata/profile/tag",
+                "<hello>Camel</hello>",
                 String.class);
         assertEquals("Mock profile", response, "It should support the redirect out of box.");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
-
         return new RouteBuilder() {
             public void configure() {
                 // enable follow redirects
                 HttpComponent http = context.getComponent("http", HttpComponent.class);
                 http.setFollowRedirects(true);
 
-                restConfiguration().component("jetty").host("localhost").scheme("http").port(port).producerComponent("http");
+                restConfiguration().component("jetty").host("localhost").scheme("http").port(port.getPort())
+                        .producerComponent("http");
                 rest("/metadata/profile")
                         .get("/{id}").to("direct:profileLookup")
                         .post("/tag").to("direct:tag");

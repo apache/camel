@@ -48,6 +48,7 @@ import org.apache.hc.core5.http.protocol.HttpDateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -85,13 +86,14 @@ public class AS2MessageTestBase {
 
     protected static final String METHOD = "POST";
     protected static final String TARGET_HOST = "localhost";
-    protected static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    protected static AvailablePortFinder.Port TARGET_PORT = AvailablePortFinder.find();
     protected static final Duration HTTP_SOCKET_TIMEOUT = Duration.ofSeconds(5);
     protected static final Duration HTTP_CONNECTION_TIMEOUT = Duration.ofSeconds(5);
     protected static final Integer HTTP_CONNECTION_POOL_SIZE = 5;
     protected static final Duration HTTP_CONNECTION_POOL_TTL = Duration.ofMinutes(15);
     protected static final Certificate[] VALIDATE_SIGNING_CERTIFICATE_CHAIN = null;
-    protected static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + TARGET_PORT + "/handle-receipts";
+    protected static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + TARGET_PORT.getPort() + "/handle-receipts";
     protected static final String AS2_VERSION = "1.1";
     protected static final String USER_AGENT = "Camel AS2 Endpoint";
     protected static final String REQUEST_URI = "/";
@@ -172,7 +174,7 @@ public class AS2MessageTestBase {
         aSettings.setSenderData(AS2_NAME, FROM, "openas2a_alias");
 
         // Fixed receiver
-        aSettings.setReceiverData(AS2_NAME, "openas2b_alias", "http://" + TARGET_HOST + ":" + TARGET_PORT + "/");
+        aSettings.setReceiverData(AS2_NAME, "openas2b_alias", "http://" + TARGET_HOST + ":" + TARGET_PORT.getPort() + "/");
         aSettings.setReceiverCertificate(issueCert);
 
         // AS2 stuff
@@ -218,7 +220,7 @@ public class AS2MessageTestBase {
         aSettings.setSenderData(AS2_NAME, FROM, "openas2a_alias");
 
         // Fixed receiver
-        aSettings.setReceiverData(AS2_NAME, "openas2b_alias", "http://" + TARGET_HOST + ":" + TARGET_PORT + "/");
+        aSettings.setReceiverData(AS2_NAME, "openas2b_alias", "http://" + TARGET_HOST + ":" + TARGET_PORT.getPort() + "/");
         aSettings.setReceiverCertificate(issueCert);
 
         // AS2 stuff
@@ -253,7 +255,7 @@ public class AS2MessageTestBase {
     protected AS2ClientManager createDefaultClientManager() throws IOException {
         AS2ClientConnection clientConnection = new AS2ClientConnection(
                 AS2_VERSION, USER_AGENT, CLIENT_FQDN,
-                TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT, HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE,
+                TARGET_HOST, TARGET_PORT.getPort(), HTTP_SOCKET_TIMEOUT, HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE,
                 HTTP_CONNECTION_POOL_TTL, null, null);
         return new AS2ClientManager(clientConnection);
     }

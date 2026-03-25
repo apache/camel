@@ -50,13 +50,19 @@ public class KnativeHttpServer extends ServiceSupport {
     private final BlockingQueue<HttpServerRequest> requests;
     private final Handler<RoutingContext> handler;
 
+    private AvailablePortFinder.Port reservedPort;
     private Vertx vertx;
     private Router router;
     private ExecutorService executor;
     private HttpServer server;
 
     public KnativeHttpServer(CamelContext context) {
-        this(context, "localhost", AvailablePortFinder.getNextAvailable(), "/", null);
+        this(context, AvailablePortFinder.find());
+    }
+
+    private KnativeHttpServer(CamelContext context, AvailablePortFinder.Port port) {
+        this(context, "localhost", port.getPort(), "/", null);
+        this.reservedPort = port;
     }
 
     public KnativeHttpServer(CamelContext context, int port) {
@@ -68,7 +74,12 @@ public class KnativeHttpServer extends ServiceSupport {
     }
 
     public KnativeHttpServer(CamelContext context, Handler<RoutingContext> handler) {
-        this(context, "localhost", AvailablePortFinder.getNextAvailable(), "/", handler);
+        this(context, AvailablePortFinder.find(), handler);
+    }
+
+    private KnativeHttpServer(CamelContext context, AvailablePortFinder.Port port, Handler<RoutingContext> handler) {
+        this(context, "localhost", port.getPort(), "/", handler);
+        this.reservedPort = port;
     }
 
     public KnativeHttpServer(CamelContext context, String host, int port, String path) {
@@ -76,11 +87,22 @@ public class KnativeHttpServer extends ServiceSupport {
     }
 
     public KnativeHttpServer(CamelContext context, String host, String path) {
-        this(context, host, AvailablePortFinder.getNextAvailable(), path, null);
+        this(context, host, AvailablePortFinder.find(), path);
+    }
+
+    private KnativeHttpServer(CamelContext context, String host, AvailablePortFinder.Port port, String path) {
+        this(context, host, port.getPort(), path, null);
+        this.reservedPort = port;
     }
 
     public KnativeHttpServer(CamelContext context, String host, String path, Handler<RoutingContext> handler) {
-        this(context, host, AvailablePortFinder.getNextAvailable(), path, handler);
+        this(context, host, AvailablePortFinder.find(), path, handler);
+    }
+
+    private KnativeHttpServer(CamelContext context, String host, AvailablePortFinder.Port port, String path,
+                              Handler<RoutingContext> handler) {
+        this(context, host, port.getPort(), path, handler);
+        this.reservedPort = port;
     }
 
     public KnativeHttpServer(CamelContext context, String host, int port, String path, Handler<RoutingContext> handler) {
@@ -238,6 +260,11 @@ public class KnativeHttpServer extends ServiceSupport {
         if (executor != null) {
             context.getExecutorServiceManager().shutdown(executor);
             executor = null;
+        }
+
+        if (reservedPort != null) {
+            reservedPort.close();
+            reservedPort = null;
         }
     }
 

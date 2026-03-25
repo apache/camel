@@ -54,6 +54,9 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     Logger log = LoggerFactory.getLogger(TcpServerConsumerEndOfDataAndValidationTestSupport.class);
 
     @RegisterExtension
+    AvailablePortFinder.Port mllpClientPort = AvailablePortFinder.find();
+
+    @RegisterExtension
     MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock://complete")
@@ -83,7 +86,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
     protected RouteBuilder createRouteBuilder() {
 
         mllpClient.setMllpHost("localhost");
-        mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
+        mllpClient.setMllpPort(mllpClientPort.getPort());
 
         return new RouteBuilder() {
             @Override

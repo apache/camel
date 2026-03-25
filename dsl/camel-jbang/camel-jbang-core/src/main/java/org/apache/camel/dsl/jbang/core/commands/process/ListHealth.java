@@ -32,11 +32,13 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -189,28 +191,50 @@ public class ListHealth extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
-                    new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getId),
-                    new Column().header("RL").minWidth(4).maxWidth(4).with(this::getLR),
-                    new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
-                            .dataAlign(HorizontalAlign.CENTER)
-                            .with(r -> r.state),
-                    new Column().header("RATE").headerAlign(HorizontalAlign.CENTER)
-                            .dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getRate),
-                    new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
-                            .dataAlign(HorizontalAlign.RIGHT)
-                            .with(this::getSince),
-                    new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.message))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("age", r.ago);
+                    jo.put("id", getId(r));
+                    jo.put("rl", getLR(r));
+                    jo.put("status", r.state);
+                    jo.put("rate", getRate(r));
+                    jo.put("since", getSince(r));
+                    jo.put("message", r.message);
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                // Flexible columns: NAME (40), ID (40), MESSAGE (80)
+                // Fixed columns: PID(8)+AGE(8)+RL(4)+STATUS(6)+RATE(10)+SINCE(10) ~= 46
+                int tw = terminalWidth();
+                int nameW = TerminalWidthHelper.flexWidth(tw, 46 + 40 + 80, TerminalWidthHelper.noBorderOverhead(9), 15, 40);
+                int idW = TerminalWidthHelper.flexWidth(tw, 46 + 40 + 80, TerminalWidthHelper.noBorderOverhead(9), 15, 40);
+                int msgW = TerminalWidthHelper.flexWidth(tw, 46 + nameW + idW, TerminalWidthHelper.noBorderOverhead(9), 20, 80);
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(nameW, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
+                        new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(idW, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(this::getId),
+                        new Column().header("RL").minWidth(4).maxWidth(4).with(this::getLR),
+                        new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
+                                .dataAlign(HorizontalAlign.CENTER)
+                                .with(r -> r.state),
+                        new Column().header("RATE").headerAlign(HorizontalAlign.CENTER)
+                                .dataAlign(HorizontalAlign.RIGHT)
+                                .with(this::getRate),
+                        new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
+                                .dataAlign(HorizontalAlign.RIGHT)
+                                .with(this::getSince),
+                        new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(msgW, OverflowBehaviour.NEWLINE)
+                                .with(r -> r.message))));
+            }
         }
         if (trace) {
             var traces

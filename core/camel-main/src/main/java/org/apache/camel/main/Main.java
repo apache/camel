@@ -68,10 +68,9 @@ public class Main extends MainCommandLineSupport {
         Main main = new Main();
         instance = main;
         int code = main.run(args);
-        if (code != 0) {
-            System.exit(code);
-        }
-        // normal exit
+        // force exit to ensure the JVM terminates even if
+        // components have non-daemon threads still running (e.g. RabbitMQ)
+        System.exit(code);
     }
 
     /**

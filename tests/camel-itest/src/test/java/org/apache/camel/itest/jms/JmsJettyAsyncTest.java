@@ -36,8 +36,10 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
+    @RegisterExtension
+    static AvailablePortFinder.Port portFinder = AvailablePortFinder.find();
     private int size = 100;
-    private int port;
+    private int port = portFinder.getPort();
 
     @Test
     void testJmsJettyAsyncTest() throws Exception {
@@ -45,7 +47,7 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectsNoDuplicates(body());
 
         for (int i = 0; i < size; i++) {
-            template.sendBody("activemq:queue:inbox", Integer.toString(i));
+            template.sendBody("activemq:queue:inbox." + getClass().getSimpleName(), Integer.toString(i));
         }
 
         MockEndpoint.assertIsSatisfied(context, 2, TimeUnit.MINUTES);
@@ -53,13 +55,12 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override
             public void configure() {
                 // enable async consumer to process messages faster
-                from("activemq:queue:inbox?asyncConsumer=false")
+                from("activemq:queue:inbox." + JmsJettyAsyncTest.class.getSimpleName() + "?asyncConsumer=false")
                         .to("http://0.0.0.0:" + port + "/myapp")
                         .to("log:result?groupSize=10", "mock:result");
 

@@ -123,9 +123,14 @@ public final class AvailablePortFinder {
     /**
      * Gets the next available port.
      *
-     * @throws IllegalStateException if there are no ports available
-     * @return                       the available port
+     * @throws     IllegalStateException if there are no ports available
+     * @return                           the available port
+     * @deprecated                       use {@link #find()} instead, which returns a {@link Port} that reserves the
+     *                                   port until released. This method immediately releases the port, creating a race
+     *                                   condition where another process can grab the port before the caller binds to
+     *                                   it.
      */
+    @Deprecated
     public static int getNextAvailable() {
         try (Port port = INSTANCE.findPort()) {
             return port.getPort();
@@ -135,9 +140,11 @@ public final class AvailablePortFinder {
     /**
      * Gets the next available port.
      *
-     * @throws IllegalStateException if there are no ports available
-     * @return                       the available port
+     * @throws     IllegalStateException if there are no ports available
+     * @return                           the available port
+     * @deprecated                       use {@link #find()} instead
      */
+    @Deprecated
     public static int getNextRandomAvailable() {
         Random random = new Random(); // NOSONAR
         int fromPort = random.nextInt(10000, 65500);
@@ -150,12 +157,14 @@ public final class AvailablePortFinder {
     /**
      * Gets the next available port in the given range.
      *
-     * @param  fromPort              port number start range.
-     * @param  toPort                port number end range.
+     * @param      fromPort              port number start range.
+     * @param      toPort                port number end range.
      *
-     * @throws IllegalStateException if there are no ports available
-     * @return                       the available port
+     * @throws     IllegalStateException if there are no ports available
+     * @return                           the available port
+     * @deprecated                       use {@link #find()} instead
      */
+    @Deprecated
     public static int getNextAvailable(int fromPort, int toPort) {
         try (Port port = INSTANCE.findPort(fromPort, toPort)) {
             return port.getPort();
@@ -165,13 +174,15 @@ public final class AvailablePortFinder {
     /**
      * Gets the next available port in the given range.
      *
-     * @param  portNumber            port number start range.
-     * @param  failurePayload        handover data in case port allocation fails (i.e.: a default one to use)
-     * @param  failureHandler        a handler in case the requested port is not available
+     * @param      portNumber            port number start range.
+     * @param      failurePayload        handover data in case port allocation fails (i.e.: a default one to use)
+     * @param      failureHandler        a handler in case the requested port is not available
      *
-     * @throws IllegalStateException if there are no ports available
-     * @return                       the available port
+     * @throws     IllegalStateException if there are no ports available
+     * @return                           the available port
+     * @deprecated                       use {@link #find()} instead
      */
+    @Deprecated
     public static <T> int getSpecificPort(int portNumber, T failurePayload, Function<T, Integer> failureHandler) {
         try (Port port = INSTANCE.findPort(portNumber, portNumber)) {
             return port.getPort();
@@ -189,13 +200,15 @@ public final class AvailablePortFinder {
     /**
      * Probe a port to see if it is free
      *
-     * @param  port                  an integer port number to be tested. If port is 0, then the next available port is
-     *                               returned.
-     * @throws IllegalStateException if the port is not free or, in case of port 0, if there are no ports available at
-     *                               all.
-     * @return                       the port number itself if the port is free or, in case of port 0, the first
-     *                               available port number.
+     * @param      port                  an integer port number to be tested. If port is 0, then the next available port
+     *                                   is returned.
+     * @throws     IllegalStateException if the port is not free or, in case of port 0, if there are no ports available
+     *                                   at all.
+     * @return                           the port number itself if the port is free or, in case of port 0, the first
+     *                                   available port number.
+     * @deprecated                       internal API, do not use directly
      */
+    @Deprecated
     public static int probePort(int port) {
         return AvailablePort.probePort(null, port);
     }

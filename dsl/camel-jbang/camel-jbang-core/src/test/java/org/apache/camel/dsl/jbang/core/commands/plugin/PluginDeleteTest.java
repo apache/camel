@@ -54,7 +54,7 @@ class PluginDeleteTest extends CamelCommandBaseTestSupport {
         command.name = "foo";
         command.doCall();
 
-        Assertions.assertEquals("Plugin foo not found in configuration", printer.getOutput());
+        Assertions.assertEquals("ERROR: Plugin foo not found in configuration", printer.getOutput());
 
         Assertions.assertEquals("{\"plugins\":{}}", PluginHelper.getOrCreatePluginConfig().toJson());
     }

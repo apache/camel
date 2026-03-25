@@ -27,20 +27,21 @@ public class CoAPMethodTest extends CoAPTestSupport {
     @Test
     void testCoAPMethodDefaultGet() {
         // No body means GET
-        String result = template.requestBody("coap://localhost:" + PORT + "/test/a", null, String.class);
+        String result = template.requestBody("coap://localhost:" + PORT.getPort() + "/test/a", null, String.class);
         assertEquals("GET: /test/a", result);
     }
 
     @Test
     void testCoAPMethodDefaultPost() {
         // Providing a body means POST
-        String result = template.requestBody("coap://localhost:" + PORT + "/test/b", "Camel", String.class);
+        String result = template.requestBody("coap://localhost:" + PORT.getPort() + "/test/b", "Camel", String.class);
         assertEquals("Hello Camel", result);
     }
 
     @Test
     void testCoAPMethodHeader() {
-        String result = template.requestBodyAndHeader("coap://localhost:" + PORT + "/test/c", null, CoAPConstants.COAP_METHOD,
+        String result = template.requestBodyAndHeader("coap://localhost:" + PORT.getPort() + "/test/c", null,
+                CoAPConstants.COAP_METHOD,
                 "DELETE", String.class);
         assertEquals("DELETE: /test/c", result);
     }
@@ -50,11 +51,12 @@ public class CoAPMethodTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/a"));
+                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT.getPort()).setBody(constant("GET: /test/a"));
 
-                fromF("coap://localhost:%d/test/b?coapMethodRestrict=POST", PORT).setBody(simple("Hello ${body}"));
+                fromF("coap://localhost:%d/test/b?coapMethodRestrict=POST", PORT.getPort()).setBody(simple("Hello ${body}"));
 
-                fromF("coap://localhost:%d/test/c?coapMethodRestrict=DELETE", PORT).setBody(constant("DELETE: /test/c"));
+                fromF("coap://localhost:%d/test/c?coapMethodRestrict=DELETE", PORT.getPort())
+                        .setBody(constant("DELETE: /test/c"));
             }
         };
     }

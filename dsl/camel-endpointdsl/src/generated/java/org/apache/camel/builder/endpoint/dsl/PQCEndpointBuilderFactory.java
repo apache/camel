@@ -477,6 +477,46 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
+         * The warning threshold for stateful key exhaustion as a fraction of
+         * total signatures (0.0 to 1.0). When the remaining signatures for a
+         * stateful key (XMSS, XMSSMT, LMS/HSS) drop below this fraction of the
+         * total capacity, a WARN log is emitted. When remaining signatures
+         * reach zero, an exception is thrown to prevent key reuse. Set to 0 to
+         * disable warnings.
+         * 
+         * The option is a: <code>double</code> type.
+         * 
+         * Default: 0.1
+         * Group: advanced
+         * 
+         * @param statefulKeyWarningThreshold the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder statefulKeyWarningThreshold(double statefulKeyWarningThreshold) {
+            doSetProperty("statefulKeyWarningThreshold", statefulKeyWarningThreshold);
+            return this;
+        }
+        /**
+         * The warning threshold for stateful key exhaustion as a fraction of
+         * total signatures (0.0 to 1.0). When the remaining signatures for a
+         * stateful key (XMSS, XMSSMT, LMS/HSS) drop below this fraction of the
+         * total capacity, a WARN log is emitted. When remaining signatures
+         * reach zero, an exception is thrown to prevent key reuse. Set to 0 to
+         * disable warnings.
+         * 
+         * The option will be converted to a <code>double</code> type.
+         * 
+         * Default: 0.1
+         * Group: advanced
+         * 
+         * @param statefulKeyWarningThreshold the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder statefulKeyWarningThreshold(String statefulKeyWarningThreshold) {
+            doSetProperty("statefulKeyWarningThreshold", statefulKeyWarningThreshold);
+            return this;
+        }
+        /**
          * In the context of extractSecretKeyFromEncapsulation operation, this
          * option define if we want to have the key set as header.
          * 

@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,9 @@ public class ServerLocalTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+
     @EndpointInject(MOCK_TEST)
     protected MockEndpoint testEndpoint;
 
@@ -53,7 +57,7 @@ public class ServerLocalTest extends CamelTestSupport {
         LOG.info(displayName);
         LOG.info("********************************************************************************");
         final MiloServerComponent component = context().getComponent("milo-server", MiloServerComponent.class);
-        component.setPort(AvailablePortFinder.getNextAvailable());
+        component.setPort(port.getPort());
     }
 
     @Override

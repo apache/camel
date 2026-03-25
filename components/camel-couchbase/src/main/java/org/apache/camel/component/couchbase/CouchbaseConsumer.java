@@ -24,6 +24,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.Scope;
+import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.query.QueryOptions;
+import com.couchbase.client.java.query.QueryResult;
+import com.couchbase.client.java.query.QueryScanConsistency;
 import com.couchbase.client.java.view.ViewOptions;
 import com.couchbase.client.java.view.ViewOrdering;
 import com.couchbase.client.java.view.ViewResult;
@@ -48,11 +52,16 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
 
     private static final Logger LOG = LoggerFactory.getLogger(CouchbaseConsumer.class);
 
+    static final String SQL_DOCUMENT_ID_ALIAS = "__id";
+
     private final Lock lock = new ReentrantLock();
     private final CouchbaseEndpoint endpoint;
     private Bucket bucket;
+    private Scope scope;
     private Collection collection;
     private ViewOptions viewOptions;
+    private boolean useSqlQuery;
+    private String sqlStatement;
 
     private ResumeStrategy resumeStrategy;
 
@@ -66,11 +75,10 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
     protected void doInit() throws Exception {
         super.doInit();
 
-        Scope scope;
         if (endpoint.getScope() != null) {
-            scope = bucket.scope(endpoint.getScope());
+            this.scope = bucket.scope(endpoint.getScope());
         } else {
-            scope = bucket.defaultScope();
+            this.scope = bucket.defaultScope();
         }
 
         if (endpoint.getCollection() != null) {
@@ -79,6 +87,25 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
             this.collection = bucket.defaultCollection();
         }
 
+        // Determine query mode
+        if (endpoint.getStatement() != null) {
+            // Explicit SQL++ statement provided
+            useSqlQuery = true;
+            sqlStatement = endpoint.getStatement();
+        } else if (!endpoint.isUseView()) {
+            // Auto-generate SQL++ from endpoint options
+            useSqlQuery = true;
+            sqlStatement = endpoint.buildSqlQuery();
+            LOG.info("Auto-generated SQL++ query: {}", sqlStatement);
+        } else {
+            // Use deprecated MapReduce views
+            useSqlQuery = false;
+            initViewOptions();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void initViewOptions() {
         this.viewOptions = ViewOptions.viewOptions();
         int limit = endpoint.getLimit();
         if (limit > 0) {
@@ -120,66 +147,137 @@ public class CouchbaseConsumer extends ScheduledBatchPollingConsumer implements 
     protected int poll() throws Exception {
         lock.lock();
         try {
-            ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
-
-            // okay we have some response from CouchBase so lets mark the consumer as ready
-            forceConsumerAsReady();
-
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("ViewResponse: {}", result);
+            if (useSqlQuery) {
+                return pollWithSqlQuery();
+            } else {
+                return pollWithView();
             }
-
-            String consumerProcessedStrategy = endpoint.getConsumerProcessedStrategy();
-
-            Queue<Object> exchanges = new ArrayDeque<>();
-            for (ViewRow row : result.rows()) {
-                Object doc;
-                String id = row.id().get();
-                if (endpoint.isFullDocument()) {
-                    doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout(),
-                            endpoint.getConsumerRetryPause());
-                } else {
-                    doc = row.valueAs(Object.class);
-                }
-
-                // Use String.class instead of the shaded JsonNode class to avoid conflicts
-                // when Jackson is on the classpath (CAMEL-22090). The Couchbase SDK's
-                // auto-detection of non-shaded Jackson would otherwise cause deserialization
-                // failures when trying to deserialize into the shaded JsonNode class.
-                String key = row.keyAs(String.class).orElse(null);
-                String designDocumentName = endpoint.getDesignDocumentName();
-                String viewName = endpoint.getViewName();
-
-                Exchange exchange = createExchange(true);
-                exchange.getIn().setBody(doc);
-                exchange.getIn().setHeader(HEADER_ID, id);
-                exchange.getIn().setHeader(HEADER_KEY, key);
-                exchange.getIn().setHeader(HEADER_DESIGN_DOCUMENT_NAME, designDocumentName);
-                exchange.getIn().setHeader(HEADER_VIEWNAME, viewName);
-
-                if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Deleting doc with ID {}", id);
-                    }
-                    CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
-                            endpoint.getConsumerRetryPause());
-                } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Filtering out ID {}", id);
-                    }
-                    // add filter for already processed docs
-                } else {
-                    LOG.trace("No strategy set for already processed docs, beware of duplicates!");
-                }
-
-                logDetails(id, doc, key, designDocumentName, viewName, exchange);
-                exchanges.add(exchange);
-            }
-
-            return processBatch(exchanges);
         } finally {
             lock.unlock();
         }
+    }
+
+    private int pollWithSqlQuery() throws Exception {
+        QueryOptions queryOptions = QueryOptions.queryOptions()
+                .scanConsistency(QueryScanConsistency.REQUEST_PLUS);
+
+        QueryResult result = scope.query(sqlStatement, queryOptions);
+
+        forceConsumerAsReady();
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("QueryResult: {}", result);
+        }
+
+        String consumerProcessedStrategy = endpoint.getConsumerProcessedStrategy();
+        Queue<Object> exchanges = new ArrayDeque<>();
+
+        for (JsonObject row : result.rowsAsObject()) {
+            String id = row.getString(SQL_DOCUMENT_ID_ALIAS);
+            if (id == null) {
+                LOG.warn("Row does not contain '{}' field. "
+                         + "Ensure your SQL++ query includes META().id AS {} in the SELECT clause. Skipping row.",
+                        SQL_DOCUMENT_ID_ALIAS, SQL_DOCUMENT_ID_ALIAS);
+                continue;
+            }
+
+            Object doc;
+            if (endpoint.isFullDocument()) {
+                doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout(),
+                        endpoint.getConsumerRetryPause());
+            } else {
+                doc = row.toString();
+            }
+
+            Exchange exchange = createExchange(true);
+            exchange.getIn().setBody(doc);
+            exchange.getIn().setHeader(HEADER_ID, id);
+
+            if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Deleting doc with ID {}", id);
+                }
+                CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
+                        endpoint.getConsumerRetryPause());
+            } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Filtering out ID {}", id);
+                }
+            } else {
+                LOG.trace("No strategy set for already processed docs, beware of duplicates!");
+            }
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Created exchange = {}", exchange);
+                LOG.trace("Added Document in body = {}", doc);
+                LOG.trace("ID = {}", id);
+            }
+
+            exchanges.add(exchange);
+        }
+
+        return processBatch(exchanges);
+    }
+
+    @SuppressWarnings("deprecation")
+    private int pollWithView() throws Exception {
+        ViewResult result = bucket.viewQuery(endpoint.getDesignDocumentName(), endpoint.getViewName(), this.viewOptions);
+
+        // okay we have some response from CouchBase so lets mark the consumer as ready
+        forceConsumerAsReady();
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ViewResponse: {}", result);
+        }
+
+        String consumerProcessedStrategy = endpoint.getConsumerProcessedStrategy();
+
+        Queue<Object> exchanges = new ArrayDeque<>();
+        for (ViewRow row : result.rows()) {
+            Object doc;
+            String id = row.id().get();
+            if (endpoint.isFullDocument()) {
+                doc = CouchbaseCollectionOperation.getDocument(collection, id, endpoint.getQueryTimeout(),
+                        endpoint.getConsumerRetryPause());
+            } else {
+                doc = row.valueAs(Object.class);
+            }
+
+            // Use String.class instead of the shaded JsonNode class to avoid conflicts
+            // when Jackson is on the classpath (CAMEL-22090). The Couchbase SDK's
+            // auto-detection of non-shaded Jackson would otherwise cause deserialization
+            // failures when trying to deserialize into the shaded JsonNode class.
+            String key = row.keyAs(String.class).orElse(null);
+            String designDocumentName = endpoint.getDesignDocumentName();
+            String viewName = endpoint.getViewName();
+
+            Exchange exchange = createExchange(true);
+            exchange.getIn().setBody(doc);
+            exchange.getIn().setHeader(HEADER_ID, id);
+            exchange.getIn().setHeader(HEADER_KEY, key);
+            exchange.getIn().setHeader(HEADER_DESIGN_DOCUMENT_NAME, designDocumentName);
+            exchange.getIn().setHeader(HEADER_VIEWNAME, viewName);
+
+            if ("delete".equalsIgnoreCase(consumerProcessedStrategy)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Deleting doc with ID {}", id);
+                }
+                CouchbaseCollectionOperation.removeDocument(collection, id, endpoint.getWriteQueryTimeout(),
+                        endpoint.getConsumerRetryPause());
+            } else if ("filter".equalsIgnoreCase(consumerProcessedStrategy)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Filtering out ID {}", id);
+                }
+                // add filter for already processed docs
+            } else {
+                LOG.trace("No strategy set for already processed docs, beware of duplicates!");
+            }
+
+            logDetails(id, doc, key, designDocumentName, viewName, exchange);
+            exchanges.add(exchange);
+        }
+
+        return processBatch(exchanges);
     }
 
     @Override

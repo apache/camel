@@ -32,7 +32,8 @@ import org.apache.hc.core5.util.Timeout;
  */
 public class HttpTestServer {
 
-    public static final int PORT = AvailablePortFinder.getNextAvailable();
+    private static final AvailablePortFinder.Port PORT_HOLDER = AvailablePortFinder.find();
+    public static final int PORT = PORT_HOLDER.getPort();
 
     /** The request handler registry. */
     private final ServerBootstrap bootstrap;

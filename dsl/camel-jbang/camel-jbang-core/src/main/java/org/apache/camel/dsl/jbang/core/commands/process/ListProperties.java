@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -27,10 +28,12 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -133,22 +136,50 @@ public class ListProperties extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
-                    new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.name),
-                    new Column().header("LOCATION").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.loc),
-                    new Column().header("KEY").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.key),
-                    new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> "" + r.value),
-                    new Column().header("FUNCTION").visible(verbose).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(this::getFunction),
-                    new Column().header("ORIGINAL VALUE").visible(verbose).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> "" + r.originalValue))));
+            if (jsonOutput) {
+                printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                    JsonObject jo = new JsonObject();
+                    jo.put("pid", r.pid);
+                    jo.put("name", r.name);
+                    jo.put("location", r.loc);
+                    jo.put("key", r.key);
+                    jo.put("value", "" + r.value);
+                    jo.put("function", getFunction(r));
+                    jo.put("originalValue", "" + r.originalValue);
+                    return jo;
+                }).collect(Collectors.toList())));
+            } else {
+                // Flexible columns: LOCATION (80), KEY (50), VALUE (80), FUNCTION (50), ORIGINAL VALUE (80)
+                // Fixed columns: PID(8)+NAME(30) ~= 38
+                int tw = terminalWidth();
+                int locW = TerminalWidthHelper.flexWidth(tw, 38 + 50 + 80, TerminalWidthHelper.noBorderOverhead(7), 20, 80);
+                int keyW = TerminalWidthHelper.flexWidth(tw, 38 + 80 + 80, TerminalWidthHelper.noBorderOverhead(7), 15, 50);
+                int valW = TerminalWidthHelper.flexWidth(tw, 38 + 80 + 50, TerminalWidthHelper.noBorderOverhead(7), 20, 80);
+                int funcW = TerminalWidthHelper.flexWidth(tw, 38 + 80 + 50 + 80 + 80, TerminalWidthHelper.noBorderOverhead(7),
+                        15, 50);
+                int origW = TerminalWidthHelper.flexWidth(tw, 38 + 80 + 50 + 80 + 50, TerminalWidthHelper.noBorderOverhead(7),
+                        20, 80);
+                printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
+                        new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.name),
+                        new Column().header("LOCATION").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(locW, OverflowBehaviour.NEWLINE)
+                                .with(r -> r.loc),
+                        new Column().header("KEY").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(keyW, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(r -> r.key),
+                        new Column().header("VALUE").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(valW, OverflowBehaviour.NEWLINE)
+                                .with(r -> "" + r.value),
+                        new Column().header("FUNCTION").visible(verbose).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(funcW, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(this::getFunction),
+                        new Column().header("ORIGINAL VALUE").visible(verbose).dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(origW, OverflowBehaviour.NEWLINE)
+                                .with(r -> "" + r.originalValue))));
+            }
         }
 
         return 0;

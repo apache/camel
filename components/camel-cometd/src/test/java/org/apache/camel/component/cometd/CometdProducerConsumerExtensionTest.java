@@ -37,16 +37,18 @@ import org.cometd.client.http.jetty.JettyHttpClientTransport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CometdProducerConsumerExtensionTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port portSSL = AvailablePortFinder.find();
     private String uri;
-
-    private int portSSL;
     private String uriSSL;
 
     private String pwd = "changeit";
@@ -60,7 +62,7 @@ public class CometdProducerConsumerExtensionTest extends CamelTestSupport {
         httpClient.start();
         try {
             BayeuxClient client = new BayeuxClient(
-                    "http://127.0.0.1:" + port + "/cometd", new JettyHttpClientTransport(null, httpClient));
+                    "http://127.0.0.1:" + port.getPort() + "/cometd", new JettyHttpClientTransport(null, httpClient));
             client.handshake();
             assertTrue(client.waitFor(5000, BayeuxClient.State.CONNECTED));
 
@@ -105,7 +107,7 @@ public class CometdProducerConsumerExtensionTest extends CamelTestSupport {
         httpClient.start();
         try {
             BayeuxClient client = new BayeuxClient(
-                    "https://localhost:" + portSSL + "/cometd", new JettyHttpClientTransport(null, httpClient));
+                    "https://localhost:" + portSSL.getPort() + "/cometd", new JettyHttpClientTransport(null, httpClient));
             client.handshake();
             assertTrue(client.waitFor(5000, BayeuxClient.State.CONNECTED));
 
@@ -135,12 +137,10 @@ public class CometdProducerConsumerExtensionTest extends CamelTestSupport {
 
     @Override
     public void setupResources() {
-        port = AvailablePortFinder.getNextAvailable();
-        uri = "cometd://127.0.0.1:" + port + "/channel/test?baseResource=file:./target/test-classes/webapp&"
+        uri = "cometd://127.0.0.1:" + port.getPort() + "/channel/test?baseResource=file:./target/test-classes/webapp&"
               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-        portSSL = AvailablePortFinder.getNextAvailable();
-        uriSSL = "cometds://127.0.0.1:" + portSSL + "/channel/test?baseResource=file:./target/test-classes/webapp&"
+        uriSSL = "cometds://127.0.0.1:" + portSSL.getPort() + "/channel/test?baseResource=file:./target/test-classes/webapp&"
                  + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
     }
 

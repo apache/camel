@@ -185,6 +185,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         exchange.setPattern(pattern);
         org.apache.camel.Message message = exchange.getIn();
         exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_ID, mail.getId());
+        exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_THREAD_ID, mail.getThreadId());
+        exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_LABEL_IDS, mail.getLabelIds());
         if (getConfiguration().isRaw()) {
             message.setBody(mail.getRaw());
         } else {
@@ -216,6 +218,9 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             }
             if ("BCC".equalsIgnoreCase(headerName)) {
                 message.setHeader(GoogleMailStreamConstants.MAIL_BCC, header.getValue());
+            }
+            if ("MESSAGE-ID".equalsIgnoreCase(headerName)) {
+                message.setHeader(GoogleMailStreamConstants.MAIL_MESSAGE_ID, header.getValue());
             }
         }
     }

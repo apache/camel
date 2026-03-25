@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "azure-common",
+    "title": "Azure Common",
+    "description": "Camel Azure Common utilities shared across Azure components",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "label": "cloud,azure",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-azure-common",
+    "version": "4.19.0-SNAPSHOT"
+  }
+}

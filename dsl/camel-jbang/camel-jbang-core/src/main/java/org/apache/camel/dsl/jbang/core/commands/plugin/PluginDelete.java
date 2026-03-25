@@ -42,7 +42,8 @@ public class PluginDelete extends PluginBaseCommand {
             printer().printf("Plugin %s removed%n", name);
             saveConfig(pluginConfig);
         } else {
-            printer().printf("Plugin %s not found in configuration%n", name);
+            printer().printErr("Plugin %s not found in configuration".formatted(name));
+            return 1;
         }
 
         return 0;

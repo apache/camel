@@ -32,6 +32,7 @@ import org.apache.thrift.transport.layered.TFramedTransport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThriftConsumerSyncTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerSyncTest.class);
-    private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
+    @RegisterExtension
+    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
-    private static Calculator.Client thriftClient;
+    private Calculator.Client thriftClient;
 
     private TProtocol protocol;
     private TTransport transport;
@@ -52,8 +54,8 @@ public class ThriftConsumerSyncTest extends CamelTestSupport {
     @BeforeEach
     public void startThriftClient() throws TTransportException {
         if (transport == null) {
-            LOG.info("Connecting to the Thrift server on port: {}", THRIFT_TEST_PORT);
-            transport = new TSocket("localhost", THRIFT_TEST_PORT);
+            LOG.info("Connecting to the Thrift server on port: {}", thriftTestPort.getPort());
+            transport = new TSocket("localhost", thriftTestPort.getPort());
             transport.open();
             protocol = new TBinaryProtocol(new TFramedTransport(transport));
             thriftClient = (new Calculator.Client.Factory()).getClient(protocol);
@@ -104,7 +106,7 @@ public class ThriftConsumerSyncTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("thrift://localhost:" + THRIFT_TEST_PORT
+                from("thrift://localhost:" + thriftTestPort.getPort()
                      + "/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
                         .to("mock:thrift-service").choice()
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))

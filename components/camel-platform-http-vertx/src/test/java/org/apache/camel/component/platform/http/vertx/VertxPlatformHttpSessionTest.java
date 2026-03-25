@@ -34,6 +34,7 @@ import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.matcher.RestAssuredMatchers.detailedCookie;
@@ -43,6 +44,10 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class VertxPlatformHttpSessionTest {
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port sessionPort = AvailablePortFinder.find();
 
     @Test
     public void testSessionDisabled() throws Exception {
@@ -160,8 +165,7 @@ public class VertxPlatformHttpSessionTest {
 
     @Test
     public void testSessionHandling() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
-        CamelContext context = createCamelContext(port,
+        CamelContext context = createCamelContext(sessionPort.getPort(),
                 sessionConfig -> {
                     sessionConfig.setEnabled(true);
                 });
@@ -177,7 +181,7 @@ public class VertxPlatformHttpSessionTest {
 
                     from("direct:session")
                             .toF("http://localhost:%d/session?cookieHandler=#instanceCookieHander",
-                                    port);
+                                    sessionPort.getPort());
                 }
             });
 
@@ -211,9 +215,8 @@ public class VertxPlatformHttpSessionTest {
 
     private CamelContext createCamelContext(SessionConfigCustomizer customizer)
             throws Exception {
-        int bindPort = AvailablePortFinder.getNextAvailable();
-        RestAssured.port = bindPort;
-        return createCamelContext(bindPort, customizer);
+        RestAssured.port = port.getPort();
+        return createCamelContext(port.getPort(), customizer);
     }
 
     private CamelContext createCamelContext(int bindPort, SessionConfigCustomizer customizer)

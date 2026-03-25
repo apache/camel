@@ -28,11 +28,17 @@ event:eventTypes[?options]
 Where `eventTypes` is a comma-separated list of event types to subscribe to.
 Event types correspond to `CamelEvent.Type` enum values (case-insensitive).
 
-For example:
+Wildcard patterns are supported using a `*` suffix:
 
 ----
-event:RouteStarted,RouteStopped
-event:ExchangeCompleted,ExchangeFailed?filter=myRoute
+event:Route*                          <-- all route events
+event:Exchange*                       <-- all exchange events
+event:CamelContext*                   <-- all context events
+event:Step*                           <-- all step events
+event:Service*                        <-- all service events
+event:*                               <-- all events
+event:RouteStarted,RouteStopped       <-- specific events
+event:Route*,Exchange*                <-- combine wildcards
 ----
 
 // component-configure options: START
@@ -103,27 +109,138 @@ The following event types are available (corresponding to `org.apache.camel.spi.
 - `ServiceStartupFailure`
 - `ServiceStopFailure`
 
+== Wildcard Subscriptions
+
+Instead of listing each event type individually, you can use wildcard patterns with a `*` suffix
+to match all event types that start with a given prefix.
+
+[source,java]
+----
+// Subscribe to all route events (RouteStarted, RouteStopped, RouteAdded, etc.)
+from("event:Route*")
+    .log("Route event: ${header.CamelEventType}");
+
+// Subscribe to all exchange events
+from("event:Exchange*")
+    .log("Exchange event: ${header.CamelEventType}");
+
+// Subscribe to all events
+from("event:*")
+    .log("Event: ${header.CamelEventType}");
+
+// Mix wildcards with specific types
+from("event:Route*,ExchangeFailed")
+    .log("Event: ${header.CamelEventType}");
+----
+
 == Filtering
 
-You can filter events using the `filter` option. For route events, this filters by route ID.
-For exchange events, this filters by the route ID of the exchange (from route).
+You can filter events using the `include` option. For route events, this matches the route ID.
+For exchange events, this matches the route ID of the exchange (from route).
 
 For example, to only receive events for routes `myRoute1` and `myRoute2`:
 
 ----
-event:RouteStarted,RouteStopped?filter=myRoute1,myRoute2
+event:RouteStarted,RouteStopped?include=myRoute1,myRoute2
+----
+
+=== Exclusion Filter
+
+The `exclude` option allows you to exclude events from specific routes.
+This can be used on its own or combined with the `include` option.
+
+----
+event:ExchangeCompleted?exclude=internalRoute
+event:Route*?include=myRoute1,myRoute2&exclude=myRoute2
+----
+
+=== Custom Event Class Filter
+
+The `customEventClass` option allows filtering by a specific custom event class.
+When subscribing to `Custom` events, this restricts delivery to only events
+that are instances of the specified class.
+
+----
+event:Custom?customEventClass=com.example.MyCustomEvent
 ----
 
 == Message Headers
 
-The following headers are set on exchanges created by this component:
+The following headers are set on exchanges created by this component.
+Header constants are defined in `org.apache.camel.component.camelevent.CamelEventConstants`.
+
+=== Common Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
 | Header | Type | Description
-| CamelEventType | String | The event type name (e.g., `RouteStarted`)
-| CamelEventTimestamp | Long | The event timestamp (if available)
-| CamelEventRouteId | String | The route ID (for route events only)
+| CamelEventType | String | The event type name (e.g., `RouteStarted`, `ExchangeCompleted`)
+| CamelEventTimestamp | Long | The event timestamp in milliseconds since epoch (if available)
+|===
+
+=== Route Event Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventRouteId | String | The route ID
+|===
+
+=== Exchange Event Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventExchangeId | String | The exchange ID
+| CamelEventRouteId | String | The route ID of the exchange (from route)
+| CamelEventEndpointUri | String | The from endpoint URI of the exchange
+|===
+
+=== Failure Event Headers
+
+Set on any failure event (`ExchangeFailed`, `RouteRestartingFailure`, `ServiceStartupFailure`, etc.):
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventException | String | The exception message from `FailureEvent.getCause()`
+|===
+
+=== ExchangeSent Event Headers
+
+In addition to the common exchange event headers, `ExchangeSent` events include:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventEndpointUri | String | The endpoint URI the exchange was sent to (overrides the from endpoint URI)
+| CamelEventDuration | Long | The time taken in milliseconds
+|===
+
+=== ExchangeSending Event Headers
+
+In addition to the common exchange event headers, `ExchangeSending` events include:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventEndpointUri | String | The endpoint URI the exchange is being sent to (overrides the from endpoint URI)
+|===
+
+=== ExchangeRedelivery Event Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventRedeliveryAttempt | Integer | The redelivery attempt number
+|===
+
+=== Step Event Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+| Header | Type | Description
+| CamelEventStepId | String | The step ID
 |===
 
 == Message Body
@@ -141,12 +258,156 @@ from("event:RouteStarted,RouteStopped")
     .log("Route ${header.CamelEventRouteId} event: ${header.CamelEventType}");
 ----
 
+Subscribe to all route events using a wildcard:
+
+[source,java]
+----
+from("event:Route*")
+    .log("Route ${header.CamelEventRouteId} event: ${header.CamelEventType}");
+----
+
 Subscribe to exchange completed events for a specific route:
 
 [source,java]
 ----
-from("event:ExchangeCompleted?filter=myRoute")
+from("event:ExchangeCompleted?include=myRoute")
     .log("Exchange completed on route myRoute");
+----
+
+Monitor exchange failures with error details:
+
+[source,java]
+----
+from("event:ExchangeFailed")
+    .log("Exchange ${header.CamelEventExchangeId} failed on route ${header.CamelEventRouteId}: ${header.CamelEventException}");
+----
+
+Monitor exchange latency using ExchangeSent events:
+
+[source,java]
+----
+from("event:ExchangeSent")
+    .log("Exchange sent to ${header.CamelEventEndpointUri} took ${header.CamelEventDuration}ms");
+----
+
+Exclude internal routes from monitoring:
+
+[source,java]
+----
+from("event:ExchangeCompleted?exclude=internalRoute1,internalRoute2")
+    .log("Exchange completed on route ${header.CamelEventRouteId}");
+----
+
+Subscribe to specific custom events:
+
+[source,java]
+----
+from("event:Custom?customEventClass=com.example.MyCustomEvent")
+    .log("Custom event received: ${body}");
+----
+
+== Async Processing
+
+By default, events are processed synchronously on the event notifier thread.
+This means the event notifier is blocked until the route has finished processing the event.
+
+To process events asynchronously, set the `async` option to `true`.
+This dispatches event processing to a thread pool, freeing the event notifier thread immediately.
+
+Use the `asyncPoolSize` option to control the maximum number of concurrent event processing threads (default: 10).
+
+[source,java]
+----
+// Process events asynchronously with default pool size (10)
+from("event:ExchangeCompleted?async=true")
+    .log("Exchange completed: ${header.CamelEventExchangeId}");
+
+// Process events asynchronously with a custom pool size
+from("event:Exchange*?async=true&asyncPoolSize=5")
+    .log("Exchange event: ${header.CamelEventType}");
+----
+
+=== Backpressure
+
+When async processing is enabled, events are placed into a bounded blocking queue
+(default capacity: 1000, configurable via `asyncQueueSize`). When the queue is full,
+the `backpressurePolicy` option controls the behavior:
+
+* `Block` (default) — blocks the event notifier thread until space is available.
+* `Drop` — silently discards the event.
+* `Fail` — throws an exception.
+
+[source,java]
+----
+// Async with a small queue and Drop policy (discard events when overloaded)
+from("event:ExchangeCompleted?async=true&asyncQueueSize=100&backpressurePolicy=Drop")
+    .log("Exchange completed: ${header.CamelEventExchangeId}");
+
+// Async with Fail policy (fail fast if queue is full)
+from("event:Exchange*?async=true&asyncQueueSize=500&backpressurePolicy=Fail")
+    .log("Exchange event: ${header.CamelEventType}");
+----
+
+== Event Batching
+
+For high-throughput scenarios, events can be collected into batches and dispatched as a single
+exchange containing a `java.util.List<CamelEvent>` body. This reduces the overhead of creating
+individual exchanges for each event.
+
+Set `batchSize` to the number of events per batch. The `batchTimeout` option (default: 1000ms)
+controls the maximum time to wait for a full batch before flushing a partial batch.
+
+When batching is enabled, the `CamelEventBatchSize` header is set with the number of events
+in the batch.
+
+[source,java]
+----
+// Collect events in batches of 50, flush every 2 seconds
+from("event:ExchangeCompleted?batchSize=50&batchTimeout=2000")
+    .log("Received batch of ${header.CamelEventBatchSize} events");
+
+// Combine async processing with batching
+from("event:Exchange*?async=true&batchSize=100&batchTimeout=5000")
+    .log("Batch of ${header.CamelEventBatchSize} exchange events");
+----
+
+== JBang Quick Start
+
+You can quickly try the Event component using xref:manual::camel-jbang.adoc[Camel JBang].
+
+Create a file called `event-monitor.yaml`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: "event:Route*"
+      steps:
+        - log: "Route event: ${header.CamelEventType} - route ${header.CamelEventRouteId}"
+
+- route:
+    from:
+      uri: "event:ExchangeCompleted,ExchangeFailed"
+      steps:
+        - log: "Exchange ${header.CamelEventExchangeId} on route ${header.CamelEventRouteId}: ${header.CamelEventType}"
+
+- route:
+    id: myRoute
+    from:
+      uri: "timer:tick"
+      parameters:
+        period: "5000"
+      steps:
+        - setBody:
+            constant: "Hello from myRoute!"
+        - log: "${body}"
+----
+
+Then run it:
+
+[source,bash]
+----
+camel run event-monitor.yaml
 ----
 
 == Distributed Events

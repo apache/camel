@@ -16,6 +16,9 @@
  */
 package org.apache.camel.itest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
@@ -24,10 +27,17 @@ import org.apache.camel.test.AvailablePortFinder;
  */
 public final class ITestSupport {
 
-    static final int PORT1 = AvailablePortFinder.getNextAvailable();
-    static final int PORT2 = AvailablePortFinder.getNextAvailable();
-    static final int PORT3 = AvailablePortFinder.getNextAvailable();
-    static final int PORT4 = AvailablePortFinder.getNextAvailable();
+    private static final AvailablePortFinder.Port P1 = AvailablePortFinder.find();
+    private static final AvailablePortFinder.Port P2 = AvailablePortFinder.find();
+    private static final AvailablePortFinder.Port P3 = AvailablePortFinder.find();
+    private static final AvailablePortFinder.Port P4 = AvailablePortFinder.find();
+    static final int PORT1 = P1.getPort();
+    static final int PORT2 = P2.getPort();
+    static final int PORT3 = P3.getPort();
+    static final int PORT4 = P4.getPort();
+
+    // Keep Port references alive to prevent TOCTOU races
+    private static final List<AvailablePortFinder.Port> DYNAMIC_PORTS = new ArrayList<>();
 
     static {
         //set them as system properties so Spring can use the property placeholder
@@ -42,7 +52,9 @@ public final class ITestSupport {
     }
 
     public static int getPort(String name) {
-        int port = AvailablePortFinder.getNextAvailable();
+        AvailablePortFinder.Port p = AvailablePortFinder.find();
+        DYNAMIC_PORTS.add(p);
+        int port = p.getPort();
         System.setProperty(name, Integer.toString(port));
         return port;
     }

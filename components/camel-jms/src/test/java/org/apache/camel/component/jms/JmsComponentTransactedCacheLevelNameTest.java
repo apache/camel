@@ -63,8 +63,8 @@ public class JmsComponentTransactedCacheLevelNameTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
-        template.sendBody("activemq:queue:foo", "Hello World");
-        template.sendBody("activemq:queue:foo", "Bye World");
+        template.sendBody("activemq:queue:foo.JmsComponentTransactedCacheLevelNameTest", "Hello World");
+        template.sendBody("activemq:queue:foo.JmsComponentTransactedCacheLevelNameTest", "Bye World");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -83,7 +83,7 @@ public class JmsComponentTransactedCacheLevelNameTest extends AbstractJMSTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("activemq:queue:foo?transacted=true")
+                from("activemq:queue:foo.JmsComponentTransactedCacheLevelNameTest?transacted=true")
                         .process(exchange -> {
                             JmsMessage jms = exchange.getIn(JmsMessage.class);
                             assertNotNull(jms);

@@ -32,16 +32,18 @@ import org.cometd.client.http.jetty.JettyHttpClientTransport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CometdProducerConsumerInOutTest extends CamelTestSupport {
 
-    private int port;
+    @RegisterExtension
+    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    @RegisterExtension
+    AvailablePortFinder.Port portSSL = AvailablePortFinder.find();
     private String uri;
-
-    private int portSSL;
     private String uriSSL;
 
     private String pwd = "changeit";
@@ -54,7 +56,7 @@ public class CometdProducerConsumerInOutTest extends CamelTestSupport {
         HttpClient httpClient = new HttpClient();
         httpClient.start();
         try {
-            String bayeuxUrl = "http://127.0.0.1:" + port + "/cometd";
+            String bayeuxUrl = "http://127.0.0.1:" + port.getPort() + "/cometd";
             BayeuxClient client = new BayeuxClient(bayeuxUrl, new JettyHttpClientTransport(null, httpClient));
             client.handshake();
             assertTrue(client.waitFor(5000, BayeuxClient.State.CONNECTED));
@@ -91,7 +93,7 @@ public class CometdProducerConsumerInOutTest extends CamelTestSupport {
         httpClient.start();
         try {
             // Use localhost to match the CN in localhost.p12 and endpoint is still /cometd as this is the only path added to servlet
-            String bayeuxUrl = "https://localhost:" + portSSL + "/cometd";
+            String bayeuxUrl = "https://localhost:" + portSSL.getPort() + "/cometd";
             BayeuxClient client = new BayeuxClient(bayeuxUrl, new JettyHttpClientTransport(null, httpClient));
             client.handshake();
             assertTrue(client.waitFor(5000, BayeuxClient.State.CONNECTED));
@@ -115,13 +117,11 @@ public class CometdProducerConsumerInOutTest extends CamelTestSupport {
 
     @Override
     public void setupResources() {
-        port = AvailablePortFinder.getNextAvailable();
-        uri = "cometd://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
+        uri = "cometd://127.0.0.1:" + port.getPort() + "/service/test?baseResource=file:./target/test-classes/webapp&"
               + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-        portSSL = AvailablePortFinder.getNextAvailable();
         //cometds protocal to start getSslSocketConnector
-        uriSSL = "cometds://127.0.0.1:" + portSSL + "/service/test?baseResource=file:./target/test-classes/webapp&"
+        uriSSL = "cometds://127.0.0.1:" + portSSL.getPort() + "/service/test?baseResource=file:./target/test-classes/webapp&"
                  + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
     }
 

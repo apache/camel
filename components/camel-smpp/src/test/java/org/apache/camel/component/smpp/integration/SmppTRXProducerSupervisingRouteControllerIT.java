@@ -40,6 +40,7 @@ import org.jsmpp.examples.SMPPServerSimulator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,7 +50,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
-    private static int PORT = 8100; // use private port to avoid reusing from previous tests
+    @RegisterExtension
+    static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
     private static final CountDownLatch LATCH = new CountDownLatch(1);
     private static final Thread SMPP_SERVER_SIMULATOR = new Thread(() -> {
         try {
@@ -58,7 +60,7 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
         } catch (Exception e) {
             // ignore
         }
-        System.setProperty("jsmpp.simulator.port", "" + PORT);
+        System.setProperty("jsmpp.simulator.port", "" + PORT.getPort());
         SMPPServerSimulator.main(null);
     });
 
@@ -95,7 +97,6 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
 
     @BeforeAll
     public static void runSMPPServerSimulator() {
-        PORT = AvailablePortFinder.getNextAvailable(8100, 9999);
         SMPP_SERVER_SIMULATOR.start();
     }
 
@@ -137,7 +138,7 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("smpp://j@localhost:" + PORT + "?password=jpwd&systemType=producer" +
+                        .to("smpp://j@localhost:" + PORT.getPort() + "?password=jpwd&systemType=producer" +
                             "&messageReceiverRouteId=testMessageReceiverRouteId");
 
                 from("direct:messageReceiver").id("testMessageReceiverRouteId")

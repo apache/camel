@@ -19,7 +19,7 @@ package org.apache.camel.component.camelevent;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,9 +52,9 @@ public class EventComponentTest extends CamelTestSupport {
 
         // Verify event types
         boolean hasStarted = mock.getExchanges().stream()
-                .anyMatch(e -> "RouteStarted".equals(e.getIn().getHeader("CamelEventType")));
+                .anyMatch(e -> "RouteStarted".equals(e.getIn().getHeader(CamelEventConstants.HEADER_EVENT_TYPE)));
         boolean hasStopped = mock.getExchanges().stream()
-                .anyMatch(e -> "RouteStopped".equals(e.getIn().getHeader("CamelEventType")));
+                .anyMatch(e -> "RouteStopped".equals(e.getIn().getHeader(CamelEventConstants.HEADER_EVENT_TYPE)));
         assertEquals(true, hasStarted, "Should have received RouteStarted event");
         assertEquals(true, hasStopped, "Should have received RouteStopped event");
 
@@ -73,7 +73,7 @@ public class EventComponentTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // Verify event type header
-        String eventType = mock.getExchanges().get(0).getIn().getHeader("CamelEventType", String.class);
+        String eventType = mock.getExchanges().get(0).getIn().getHeader(CamelEventConstants.HEADER_EVENT_TYPE, String.class);
         assertEquals("ExchangeCompleted", eventType);
 
         // Verify the body is ExchangeEvent
@@ -115,16 +115,16 @@ public class EventComponentTest extends CamelTestSupport {
 
         // Should receive both ExchangeCreated and ExchangeCompleted
         boolean hasCreated = mock.getExchanges().stream()
-                .anyMatch(e -> "ExchangeCreated".equals(e.getIn().getHeader("CamelEventType")));
+                .anyMatch(e -> "ExchangeCreated".equals(e.getIn().getHeader(CamelEventConstants.HEADER_EVENT_TYPE)));
         boolean hasCompleted = mock.getExchanges().stream()
-                .anyMatch(e -> "ExchangeCompleted".equals(e.getIn().getHeader("CamelEventType")));
+                .anyMatch(e -> "ExchangeCompleted".equals(e.getIn().getHeader(CamelEventConstants.HEADER_EVENT_TYPE)));
         assertEquals(true, hasCreated, "Should have received ExchangeCreated event");
         assertEquals(true, hasCompleted, "Should have received ExchangeCompleted event");
     }
 
     @Test
     void testInvalidEventType() {
-        assertThrows(IllegalArgumentException.class, () -> EventEndpoint.resolveEventType("InvalidEventType"));
+        assertThrows(IllegalArgumentException.class, () -> CamelEventEndpoint.resolveEventType("InvalidEventType"));
     }
 
     @Test
@@ -155,7 +155,7 @@ public class EventComponentTest extends CamelTestSupport {
                         .to("mock:exchangeEvents");
 
                 // Route with filter
-                from("event:ExchangeCompleted?filter=filteredRoute")
+                from("event:ExchangeCompleted?include=filteredRoute")
                         .routeId("filteredEventConsumer")
                         .to("mock:filteredEvents");
 

@@ -33,6 +33,7 @@ import org.eclipse.neoscada.protocol.iec60870.asdu.types.Value;
 import org.eclipse.neoscada.protocol.iec60870.client.AutoConnectClient.State;
 import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Request;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,33 +86,32 @@ public class ConnectionTest extends CamelTestSupport {
     @EndpointInject(MOCK_SERVER_1)
     protected MockEndpoint testServer1Endpoint;
 
-    private int testPort;
+    @RegisterExtension
+    AvailablePortFinder.Port testPort = AvailablePortFinder.find();
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
 
-        testPort = AvailablePortFinder.getNextAvailable();
-
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(DIRECT_SEND_S_1).toF("iec60870-server:localhost:%s/00-00-00-00-01", testPort);
-                fromF("iec60870-client:localhost:%s/00-00-00-00-01", testPort).to(MOCK_CLIENT_1);
-                fromF("iec60870-client:localhost:%s/00-00-00-00-02", testPort).to(MOCK_CLIENT_2);
+                from(DIRECT_SEND_S_1).toF("iec60870-server:localhost:%s/00-00-00-00-01", testPort.getPort());
+                fromF("iec60870-client:localhost:%s/00-00-00-00-01", testPort.getPort()).to(MOCK_CLIENT_1);
+                fromF("iec60870-client:localhost:%s/00-00-00-00-02", testPort.getPort()).to(MOCK_CLIENT_2);
 
-                from(DIRECT_SEND_C_1).toF("iec60870-client:localhost:%s/00-00-00-01-01", testPort);
-                fromF("iec60870-server:localhost:%s/00-00-00-01-01", testPort).to(MOCK_SERVER_1);
+                from(DIRECT_SEND_C_1).toF("iec60870-client:localhost:%s/00-00-00-01-01", testPort.getPort());
+                fromF("iec60870-server:localhost:%s/00-00-00-01-01", testPort.getPort()).to(MOCK_SERVER_1);
 
                 // Route for interrogation command
-                from(DIRECT_INTERROGATION).toF("iec60870-client:localhost:%s/00-00-00-00-01", testPort);
+                from(DIRECT_INTERROGATION).toF("iec60870-client:localhost:%s/00-00-00-00-01", testPort.getPort());
 
                 // Route for read command
-                from(DIRECT_READ).toF("iec60870-client:localhost:%s/00-00-00-00-01", testPort);
+                from(DIRECT_READ).toF("iec60870-client:localhost:%s/00-00-00-00-01", testPort.getPort());
 
                 // Route for status command - gets connection state without sending protocol commands
                 from(DIRECT_STATUS)
                         .setHeader(Constants.IEC60870_COMMAND_TYPE, constant(Constants.COMMAND_TYPE_STATUS))
-                        .toF("iec60870-client:localhost:%s/00-00-00-00-01", testPort);
+                        .toF("iec60870-client:localhost:%s/00-00-00-00-01", testPort.getPort());
             }
         };
     }

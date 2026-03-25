@@ -95,7 +95,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             "BeanConstructorsDefinition", "constructors",
             "BeanPropertiesDefinition", "properties",
             "BeanPropertyDefinition", "property",
-            "RegistryBeanDefinition", "bean");
+            "RegistryBeanDefinition", "bean",
+            "SSLContextParametersDefinition", "sslContextParameters");
 
     // special when using expression/predicates in the model
     private static final String ONE_OF_TYPE_NAME = "org.apache.camel.model.ExpressionSubElementDefinition";
@@ -237,7 +238,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 aName = av != null ? av.asString() : null;
             }
         }
-        if (aName == null) {
+        if (Strings.isNullOrEmpty(aName)) {
             // special for app package
             String sn = element.name().withoutPackagePrefix();
             aName = APP_NAME_MAPPINGS.get(sn);

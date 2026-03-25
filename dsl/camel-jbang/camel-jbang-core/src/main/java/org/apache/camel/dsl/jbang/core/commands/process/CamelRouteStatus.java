@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -29,12 +30,14 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.model.Strings;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -257,6 +260,38 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     }
 
     protected void printTable(List<Row> rows, boolean remoteVisible) {
+        if (jsonOutput) {
+            printer().println(Jsoner.serialize(rows.stream().map(r -> {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", r.pid);
+                jo.put("name", r.name);
+                jo.put("routeId", r.routeId);
+                jo.put("group", r.group);
+                jo.put("from", r.from);
+                jo.put("remote", r.remote);
+                jo.put("status", getStatus(r));
+                jo.put("age", r.age);
+                jo.put("coverage", r.coverage);
+                jo.put("throughput", getThroughput(r));
+                jo.put("total", r.total);
+                jo.put("failed", r.failed);
+                jo.put("inflight", r.inflight);
+                jo.put("mean", r.mean);
+                jo.put("min", r.min);
+                jo.put("max", r.max);
+                jo.put("last", r.last);
+                jo.put("delta", getDelta(r));
+                jo.put("sinceLast", getSinceLast(r));
+                return jo;
+            }).collect(Collectors.toList())));
+            return;
+        }
+        // Flexible columns: FROM (45/140), ID with description (45)
+        // Fixed columns: PID(8)+NAME(30)+GROUP(20)+ID(20)+REMOTE(6)+STATUS(8)+AGE(8)+COVER(5)+MSG/S(5)+TOTAL(5)+FAIL(4)+INFLIGHT(8)+MEAN(4)+MIN(3)+MAX(3)+LAST(4)+DELTA(5)+SINCE-LAST(10) ~= 156
+        int tw = terminalWidth();
+        int fromW = TerminalWidthHelper.flexWidth(tw, 156, TerminalWidthHelper.noBorderOverhead(21), 20, 45);
+        int fromWideW = TerminalWidthHelper.flexWidth(tw, 156, TerminalWidthHelper.noBorderOverhead(21), 20, 140);
+        int idDescW = TerminalWidthHelper.flexWidth(tw, 156, TerminalWidthHelper.noBorderOverhead(21), 20, 45);
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -268,13 +303,13 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
                 new Column().header("ID").visible(description || note).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(45, OverflowBehaviour.NEWLINE)
+                        .maxWidth(idDescW, OverflowBehaviour.NEWLINE)
                         .with(this::getIdAndNoteDescription),
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .maxWidth(fromW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
                 new Column().header("FROM").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(140, OverflowBehaviour.NEWLINE)
+                        .maxWidth(fromWideW, OverflowBehaviour.NEWLINE)
                         .with(r -> r.from),
                 new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER)
@@ -296,6 +331,12 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     }
 
     protected void printErrorTable(Row er, boolean remoteVisible) {
+        // Flexible columns: FROM (45), ID desc (45), MESSAGE (80)
+        // Fixed columns: PID(8)+NAME(30)+ID(20)+REMOTE(6)+STATUS(8)+PHASE(8)+AGO(8) ~= 88
+        int tw2 = terminalWidth();
+        int errFromW = TerminalWidthHelper.flexWidth(tw2, 88, TerminalWidthHelper.noBorderOverhead(11), 20, 45);
+        int errIdDescW = TerminalWidthHelper.flexWidth(tw2, 88, TerminalWidthHelper.noBorderOverhead(11), 20, 45);
+        int msgW = TerminalWidthHelper.flexWidth(tw2, 88 + errFromW, TerminalWidthHelper.noBorderOverhead(11), 20, 80);
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(er), Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -304,10 +345,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
                 new Column().header("ID").visible(description).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(45, OverflowBehaviour.NEWLINE)
+                        .maxWidth(errIdDescW, OverflowBehaviour.NEWLINE)
                         .with(this::getIdAndNoteDescription),
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .maxWidth(errFromW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
                 new Column().header("FROM").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
                         .with(r -> r.from),
@@ -321,7 +362,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("AGO").headerAlign(HorizontalAlign.CENTER)
                         .with(this::getErrorAgo),
                 new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(80, OverflowBehaviour.NEWLINE)
+                        .maxWidth(msgW, OverflowBehaviour.NEWLINE)
                         .with(r -> r.lastErrorMessage))));
         if (!er.stackTrace.isEmpty()) {
             printer().println();
