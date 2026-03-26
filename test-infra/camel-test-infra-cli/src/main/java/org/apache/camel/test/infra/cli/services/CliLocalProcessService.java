@@ -158,11 +158,25 @@ public class CliLocalProcessService implements CliService {
 
     @Override
     public String execute(String command) {
+        return execute(command, false, false);
+    }
+
+    /**
+     * Alternative method for executing camel-cli commands that has the option to intentionally fail and allows to
+     * retreive stdErr
+     *
+     * @param  command    bash command to be executed
+     * @param  getError   true - return stdErr, false - return stdOut
+     * @param  expectFail whether the command is expected to succeed or not
+     * @return            stdErr or stdOut of the executed command, depending on the value of getError
+     */
+    @Override
+    public String execute(String command, Boolean getError, Boolean expectFail) {
         String camelCommand = getMainCommand() + " " + command;
         if (mavenSettingsFile != null && command.startsWith("run ")) {
             camelCommand += " --maven-settings=" + mavenSettingsFile.toAbsolutePath();
         }
-        return executeGenericCommand(camelCommand);
+        return executeGenericCommand(camelCommand, getError, expectFail);
     }
 
     @Override
@@ -177,6 +191,20 @@ public class CliLocalProcessService implements CliService {
 
     @Override
     public String executeGenericCommand(String command) {
+        return executeGenericCommand(command, false, false);
+    }
+
+    /**
+     * Alternative method for executing bash commands that has the option to intentionally fail and allows to retreive
+     * stdErr
+     *
+     * @param  command    bash command to be executed
+     * @param  getError   true - return stdErr, false - return stdOut
+     * @param  expectFail whether the command is expected to succeed or not
+     * @return            stdErr or stdOut of the executed command, depending on the value of getError
+     */
+    @Override
+    public String executeGenericCommand(String command, Boolean getError, Boolean expectFail) {
         try {
             LOG.debug("Executing command: {}", command);
 
@@ -233,9 +261,16 @@ public class CliLocalProcessService implements CliService {
             }
 
             String stderr = stderrFuture.join();
-
-            if (process.exitValue() != 0) {
+            //Expected to fail and failed
+            if (process.exitValue() != 0 && expectFail) {
+                LOG.debug(String.format("command %s failed with output %s and error %s", command, stdout, stderr));
+                //Expected to succeed but failed
+            } else if (process.exitValue() != 0 && !expectFail) {
                 Assertions.fail(String.format("command %s failed with output %s and error %s", command, stdout, stderr));
+                //Expected to fail but succeeded
+            } else if (process.exitValue() == 0 && expectFail) {
+                Assertions.fail(String.format("command %s was expected to fail but succeeded with output %s and error %s",
+                        command, stdout, stderr));
             }
 
             if (LOG.isDebugEnabled()) {
@@ -246,8 +281,11 @@ public class CliLocalProcessService implements CliService {
                     LOG.debug("result error {}", stderr);
                 }
             }
-
-            return stdout;
+            if (getError) {
+                return stderr;
+            } else {
+                return stdout;
+            }
         } catch (IOException | InterruptedException e) {
             LOG.error("ERROR running command: {}", command, e);
             throw new RuntimeException(e);
