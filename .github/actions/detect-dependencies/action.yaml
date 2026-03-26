@@ -21,17 +21,10 @@ inputs:
   github-token:
     description: 'The github token to access to the API'
     required: false
-  pr-id:
-    description: 'Id of the pull request'
-    required: true
-  github-repo:
-    description: 'The GitHub repository name (example, apache/camel)'
+  base-ref:
+    description: 'The base branch to compare against (defaults to github.base_ref)'
     required: false
-    default: 'apache/camel'
-  skip-mvnd-install:
-    description: 'Skip mvnd installation (use if already installed)'
-    required: false
-    default: 'false'
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -42,54 +35,5 @@ runs:
     - name: maven test
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
-        MVND_DIR: ${{ steps.install-mvnd.outputs.mvnd-dir }}
-        PR_ID: ${{ inputs.pr-id }}
-        GITHUB_REPO: ${{ inputs.github-repo }}
       shell: bash
-      run: ${{ github.action_path }}/detect-test.sh "$MVND_DIR/mvnd" "$PR_ID" "$GITHUB_REPO"
-    - name: Post dependency change comment
-      if: always()
-      uses: actions/github-script@v8
-      with:
-        github-token: ${{ inputs.github-token }}
-        script: |
-          const fs = require('fs');
-          const commentFile = 'detect-dependencies-comment.md';
-          if (!fs.existsSync(commentFile)) return;
-          const body = fs.readFileSync(commentFile, 'utf8').trim();
-          if (!body) return;
-
-          const prNumber = ${{ inputs.pr-id || 0 }};
-          if (!prNumber) {
-            core.warning('Could not determine PR number, skipping dependency comment');
-            return;
-          }
-
-          const marker = '<!-- ci-parent-pom-deps -->';
-
-          try {
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-            });
-            const existing = comments.find(c => c.body && c.body.includes(marker));
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body: body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                body: body,
-              });
-            }
-          } catch (error) {
-            core.warning(`Failed to post dependency change comment: ${error.message}`);
-          }
+      run: ${{ github.action_path }}/detect-test.sh ${{ inputs.base-ref || github.base_ref }} ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd
