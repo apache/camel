@@ -23,18 +23,18 @@ import org.apache.camel.builder.RouteBuilder;
 //
 // Bulk processing example.
 //
-// Demonstrates processing a collection of items in structured batches
+// Demonstrates processing a collection of items in structured bulk operations
 // with chunking, error handling, and result reporting.
 //
 // Run with:
-//   camel run batch.java
+//   camel run bulk.java
 //
-public class batch extends RouteBuilder {
+public class bulk extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
         // Generate a list of 20 items every 5 seconds
-        from("timer:batch?period=5000")
+        from("timer:bulk?period=5000")
                 .process(e -> {
                     List<String> items = new ArrayList<>();
                     for (int i = 1; i <= 20; i++) {

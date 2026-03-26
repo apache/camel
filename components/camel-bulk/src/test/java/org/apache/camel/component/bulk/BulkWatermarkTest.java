@@ -44,15 +44,15 @@ class BulkWatermarkTest extends CamelTestSupport {
     void testIndexBasedWatermarkSkipsAlreadyProcessedItems() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watermark-processed");
 
-        // First batch: items 1-100
-        List<Integer> firstBatch = new ArrayList<>();
+        // First run: items 1-100
+        List<Integer> firstRun = new ArrayList<>();
         for (int i = 1; i <= 100; i++) {
-            firstBatch.add(i);
+            firstRun.add(i);
         }
 
         mock.expectedMessageCount(100);
         Exchange result1 = template.send("direct:watermark", exchange -> {
-            exchange.getIn().setBody(firstBatch);
+            exchange.getIn().setBody(firstRun);
         });
         mock.assertIsSatisfied();
 
@@ -64,17 +64,17 @@ class BulkWatermarkTest extends CamelTestSupport {
         // Verify watermark was stored
         assertEquals("100", watermarkStore.get("watermarkJob"));
 
-        // Second batch: items 1-200 (watermark should skip first 100)
+        // Second run: items 1-200 (watermark should skip first 100)
         mock.reset();
         mock.expectedMessageCount(100);
 
-        List<Integer> secondBatch = new ArrayList<>();
+        List<Integer> secondRun = new ArrayList<>();
         for (int i = 1; i <= 200; i++) {
-            secondBatch.add(i);
+            secondRun.add(i);
         }
 
         Exchange result2 = template.send("direct:watermark", exchange -> {
-            exchange.getIn().setBody(secondBatch);
+            exchange.getIn().setBody(secondRun);
         });
         mock.assertIsSatisfied();
 
@@ -86,7 +86,7 @@ class BulkWatermarkTest extends CamelTestSupport {
         // Verify watermark was updated
         assertEquals("200", watermarkStore.get("watermarkJob"));
 
-        // Verify the second batch processed the right items (101-200)
+        // Verify the second run processed the right items (101-200)
         List<Exchange> exchanges = mock.getExchanges();
         assertEquals(101, exchanges.get(0).getIn().getBody(Integer.class));
         assertEquals(200, exchanges.get(99).getIn().getBody(Integer.class));
@@ -96,18 +96,18 @@ class BulkWatermarkTest extends CamelTestSupport {
     void testValueBasedWatermarkTracking() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:value-watermark-processed");
 
-        // First batch: items with IDs
-        List<Map<String, Object>> firstBatch = new ArrayList<>();
+        // First run: items with IDs
+        List<Map<String, Object>> firstRun = new ArrayList<>();
         for (int i = 1; i <= 50; i++) {
             Map<String, Object> item = new HashMap<>();
             item.put("id", i);
             item.put("name", "item-" + i);
-            firstBatch.add(item);
+            firstRun.add(item);
         }
 
         mock.expectedMessageCount(50);
         Exchange result1 = template.send("direct:value-watermark", exchange -> {
-            exchange.getIn().setBody(firstBatch);
+            exchange.getIn().setBody(firstRun);
         });
         mock.assertIsSatisfied();
 
@@ -118,20 +118,20 @@ class BulkWatermarkTest extends CamelTestSupport {
         // Verify value-based watermark was stored (last item's id = 50)
         assertEquals("50", watermarkStore.get("valueWatermarkJob"));
 
-        // Second batch — watermark header should be set
+        // Second run — watermark header should be set
         mock.reset();
         mock.expectedMessageCount(50);
 
-        List<Map<String, Object>> secondBatch = new ArrayList<>();
+        List<Map<String, Object>> secondRun = new ArrayList<>();
         for (int i = 51; i <= 100; i++) {
             Map<String, Object> item = new HashMap<>();
             item.put("id", i);
             item.put("name", "item-" + i);
-            secondBatch.add(item);
+            secondRun.add(item);
         }
 
         Exchange result2 = template.send("direct:value-watermark", exchange -> {
-            exchange.getIn().setBody(secondBatch);
+            exchange.getIn().setBody(secondRun);
         });
         mock.assertIsSatisfied();
 
@@ -148,29 +148,29 @@ class BulkWatermarkTest extends CamelTestSupport {
     @Test
     void testWatermarkNotUpdatedOnAbort() throws Exception {
         // First run: process 50 items successfully to set watermark
-        List<Integer> firstBatch = new ArrayList<>();
+        List<Integer> firstRun = new ArrayList<>();
         for (int i = 1; i <= 50; i++) {
-            firstBatch.add(i);
+            firstRun.add(i);
         }
         template.send("direct:watermark-abort", exchange -> {
-            exchange.getIn().setBody(firstBatch);
+            exchange.getIn().setBody(firstRun);
         });
         assertEquals("50", watermarkStore.get("abortWatermarkJob"));
 
         // Second run: all items fail (they all throw), triggering abort
-        List<Integer> secondBatch = new ArrayList<>();
+        List<Integer> secondRun = new ArrayList<>();
         for (int i = 1; i <= 100; i++) {
-            secondBatch.add(i);
+            secondRun.add(i);
         }
         Exchange result = template.send("direct:watermark-abort-fail", exchange -> {
-            exchange.getIn().setBody(secondBatch);
+            exchange.getIn().setBody(secondRun);
         });
 
         assertNotNull(result.getException());
 
-        // Watermark should NOT have been updated since the batch was aborted
+        // Watermark should NOT have been updated since the bulk operation was aborted
         assertEquals("50", watermarkStore.get("abortWatermarkJob"),
-                "Watermark should not be updated when batch is aborted");
+                "Watermark should not be updated when bulk operation is aborted");
     }
 
     @Override

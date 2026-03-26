@@ -31,9 +31,9 @@ import org.apache.camel.component.bulk.BulkException;
 // - doTry/doCatch for handling bulk abort
 //
 // Run with:
-//   camel run batch-error-recovery.java
+//   camel run bulk-error-recovery.java
 //
-public class batcherrorrecovery extends RouteBuilder {
+public class bulkerrorrecovery extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
@@ -50,9 +50,9 @@ public class batcherrorrecovery extends RouteBuilder {
                 .doTry()
                     .to("bulk:recoveryJob?steps=direct:primary,direct:recover"
                             + "&acceptPolicy=FAILURES_ONLY&errorThreshold=0.5")
-                    .log("Batch succeeded: ${body}")
+                    .log("Bulk succeeded: ${body}")
                 .doCatch(BulkException.class)
-                    .log("Batch aborted! ${exception.message}")
+                    .log("Bulk aborted! ${exception.message}")
                 .end();
 
         // Primary step: randomly fails ~30% of items

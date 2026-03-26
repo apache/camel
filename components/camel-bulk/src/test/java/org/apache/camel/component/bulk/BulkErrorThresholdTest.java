@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BulkErrorThresholdTest extends CamelTestSupport {
 
     @Test
-    void testErrorThresholdAbortsBatch() throws Exception {
+    void testErrorThresholdAbortsBulk() throws Exception {
         List<Integer> items = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             items.add(i);
@@ -43,7 +43,7 @@ class BulkErrorThresholdTest extends CamelTestSupport {
             exchange.getIn().setBody(items);
         });
 
-        // The batch should have been aborted due to exceeding the error threshold
+        // The bulk operation should have been aborted due to exceeding the error threshold
         Exception exception = result.getException();
         assertNotNull(exception, "Expected BulkException to be thrown");
         assertInstanceOf(BulkException.class, exception);
@@ -82,7 +82,7 @@ class BulkErrorThresholdTest extends CamelTestSupport {
     }
 
     @Test
-    void testMaxFailedRecordsAbortsBatch() throws Exception {
+    void testMaxFailedRecordsAbortsBulk() throws Exception {
         List<Integer> items = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             items.add(i);

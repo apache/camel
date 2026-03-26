@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class BulkTest extends CamelTestSupport {
 
     @Test
-    void testBasicBatchProcessing() throws Exception {
+    void testBasicBulkProcessing() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:processed");
         mock.expectedMessageCount(250);
 

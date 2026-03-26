@@ -25,14 +25,14 @@ import org.apache.camel.builder.RouteBuilder;
 //
 // Multi-step bulk processing example.
 //
-// Demonstrates a batch ETL pipeline with validation, transformation,
+// Demonstrates a bulk ETL pipeline with validation, transformation,
 // and loading steps. Items that fail validation are skipped in
 // subsequent steps using the NO_FAILURES accept policy.
 //
 // Run with:
-//   camel run batch-multistep.java
+//   camel run bulk-multistep.java
 //
-public class batchmultistep extends RouteBuilder {
+public class bulkmultistep extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
@@ -49,7 +49,7 @@ public class batchmultistep extends RouteBuilder {
                     }
                     e.getIn().setBody(records);
                 })
-                .log("Starting ETL batch with ${body.size()} records...")
+                .log("Starting ETL bulk with ${body.size()} records...")
                 .to("bulk:etlJob?steps=direct:validate,direct:transform,direct:load"
                         + "&acceptPolicy=NO_FAILURES&chunkSize=5")
                 .log("ETL complete: ${body}");
