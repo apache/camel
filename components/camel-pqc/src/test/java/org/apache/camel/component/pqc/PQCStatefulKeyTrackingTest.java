@@ -25,6 +25,7 @@ import java.security.Security;
 import java.security.Signature;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -190,5 +191,44 @@ public class PQCStatefulKeyTrackingTest extends CamelTestSupport {
         assertTrue(state.isExhausted(), "Key with 0 remaining should be exhausted");
         assertEquals(0, state.getUsagesRemaining());
         assertEquals(4, state.getIndex());
+    }
+
+    @Test
+    void testProducerExhaustionThrowsException() throws Exception {
+        // Sign 4 times to exhaust the key (XMSS height=2 allows exactly 4)
+        for (int i = 0; i < 4; i++) {
+            resultSigned.reset();
+            resultSigned.expectedMessageCount(1);
+            templateSign.sendBody("message" + i);
+            resultSigned.assertIsSatisfied();
+        }
+
+        // The 5th sign attempt through the producer should throw IllegalStateException
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
+                () -> templateSign.sendBody("message4"));
+        assertInstanceOf(IllegalStateException.class, ex.getCause());
+        assertTrue(ex.getCause().getMessage().contains("exhausted"),
+                "Exception message should mention exhaustion");
+    }
+
+    @Test
+    void testWarningThresholdValidation() {
+        PQCConfiguration config = new PQCConfiguration();
+
+        // Valid values
+        config.setStatefulKeyWarningThreshold(0.0);
+        assertEquals(0.0, config.getStatefulKeyWarningThreshold());
+
+        config.setStatefulKeyWarningThreshold(0.5);
+        assertEquals(0.5, config.getStatefulKeyWarningThreshold());
+
+        config.setStatefulKeyWarningThreshold(1.0);
+        assertEquals(1.0, config.getStatefulKeyWarningThreshold());
+
+        // Invalid values
+        assertThrows(IllegalArgumentException.class,
+                () -> config.setStatefulKeyWarningThreshold(-0.1));
+        assertThrows(IllegalArgumentException.class,
+                () -> config.setStatefulKeyWarningThreshold(1.1));
     }
 }

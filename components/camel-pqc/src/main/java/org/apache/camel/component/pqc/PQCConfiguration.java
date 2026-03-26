@@ -358,6 +358,10 @@ public class PQCConfiguration implements Cloneable {
      * to disable warnings.
      */
     public void setStatefulKeyWarningThreshold(double statefulKeyWarningThreshold) {
+        if (statefulKeyWarningThreshold < 0.0 || statefulKeyWarningThreshold > 1.0) {
+            throw new IllegalArgumentException(
+                    "statefulKeyWarningThreshold must be between 0.0 and 1.0, but was: " + statefulKeyWarningThreshold);
+        }
         this.statefulKeyWarningThreshold = statefulKeyWarningThreshold;
     }
 

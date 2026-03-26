@@ -119,6 +119,14 @@ public class PQCProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    /**
+     * Returns the runtime key pair used by this producer. Used by the health check to read actual key state rather than
+     * the configuration snapshot.
+     */
+    KeyPair getRuntimeKeyPair() {
+        return keyPair;
+    }
+
     @Override
     public void process(Exchange exchange) throws Exception {
         PQCOperations operation = determineOperation(exchange);
@@ -397,7 +405,7 @@ public class PQCProducer extends DefaultProducer {
 
         if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
-            producerHealthCheck = new PQCStatefulKeyHealthCheck(getEndpoint(), id);
+            producerHealthCheck = new PQCStatefulKeyHealthCheck(getEndpoint(), this, id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
             healthCheckRepository.addHealthCheck(producerHealthCheck);
         }
@@ -500,7 +508,9 @@ public class PQCProducer extends DefaultProducer {
     // ========== Hybrid Signature Operations ==========
 
     private void hybridSignature(Exchange exchange)
-            throws InvalidPayloadException, InvalidKeyException, SignatureException {
+            throws Exception {
+        checkStatefulKeyBeforeSign();
+
         String payload = exchange.getMessage().getMandatoryBody(String.class);
         byte[] data = payload.getBytes();
 
@@ -526,6 +536,8 @@ public class PQCProducer extends DefaultProducer {
         exchange.getMessage().setHeader(PQCConstants.HYBRID_SIGNATURE, hybridSig);
         exchange.getMessage().setHeader(PQCConstants.CLASSICAL_SIGNATURE, components.classicalSignature());
         exchange.getMessage().setHeader(PQCConstants.PQC_SIGNATURE, components.pqcSignature());
+
+        persistStatefulKeyStateAfterSign(exchange);
     }
 
     private void hybridVerification(Exchange exchange)
@@ -789,15 +801,9 @@ public class PQCProducer extends DefaultProducer {
         }
 
         PrivateKey privateKey = keyPair.getPrivate();
-        long remaining;
+        long remaining = getStatefulKeyRemaining(privateKey);
 
-        if (privateKey instanceof XMSSPrivateKey) {
-            remaining = ((XMSSPrivateKey) privateKey).getUsagesRemaining();
-        } else if (privateKey instanceof XMSSMTPrivateKey) {
-            remaining = ((XMSSMTPrivateKey) privateKey).getUsagesRemaining();
-        } else if (privateKey instanceof LMSPrivateKey) {
-            remaining = ((LMSPrivateKey) privateKey).getUsagesRemaining();
-        } else {
+        if (remaining < 0) {
             throw new IllegalArgumentException(
                     "getRemainingSignatures is only supported for stateful signature schemes (XMSS, XMSSMT, LMS/HSS). "
                                                + "Key type: " + privateKey.getClass().getName());
@@ -812,22 +818,16 @@ public class PQCProducer extends DefaultProducer {
         }
 
         PrivateKey privateKey = keyPair.getPrivate();
-        StatefulKeyState state;
+        long remaining = getStatefulKeyRemaining(privateKey);
 
-        if (privateKey instanceof XMSSPrivateKey) {
-            XMSSPrivateKey xmssKey = (XMSSPrivateKey) privateKey;
-            state = new StatefulKeyState(privateKey.getAlgorithm(), xmssKey.getIndex(), xmssKey.getUsagesRemaining());
-        } else if (privateKey instanceof XMSSMTPrivateKey) {
-            XMSSMTPrivateKey xmssmtKey = (XMSSMTPrivateKey) privateKey;
-            state = new StatefulKeyState(privateKey.getAlgorithm(), xmssmtKey.getIndex(), xmssmtKey.getUsagesRemaining());
-        } else if (privateKey instanceof LMSPrivateKey) {
-            LMSPrivateKey lmsKey = (LMSPrivateKey) privateKey;
-            state = new StatefulKeyState(privateKey.getAlgorithm(), lmsKey.getIndex(), lmsKey.getUsagesRemaining());
-        } else {
+        if (remaining < 0) {
             throw new IllegalArgumentException(
                     "getKeyState is only supported for stateful signature schemes (XMSS, XMSSMT, LMS/HSS). "
                                                + "Key type: " + privateKey.getClass().getName());
         }
+
+        long index = getStatefulKeyIndex(privateKey);
+        StatefulKeyState state = new StatefulKeyState(privateKey.getAlgorithm(), index, remaining);
 
         exchange.getMessage().setHeader(PQCConstants.KEY_STATE, state);
     }
@@ -863,7 +863,7 @@ public class PQCProducer extends DefaultProducer {
             return;
         }
 
-        if (remaining <= 0) {
+        if (remaining == 0) {
             throw new IllegalStateException(
                     "Stateful key (" + privateKey.getAlgorithm() + ") is exhausted with 0 remaining signatures. "
                                             + "The key must not be reused — generate a new key pair.");
@@ -916,16 +916,16 @@ public class PQCProducer extends DefaultProducer {
         if (metadata != null) {
             metadata.updateLastUsed();
             klm.updateKeyMetadata(keyId, metadata);
-        }
 
-        // Persist the updated key (with new index) so state survives restarts
-        klm.storeKey(keyId, keyPair, metadata);
+            // Persist the updated key (with new index) so state survives restarts
+            klm.storeKey(keyId, keyPair, metadata);
+        }
     }
 
     /**
      * Returns the remaining signatures for a stateful private key, or -1 if the key is not stateful.
      */
-    private long getStatefulKeyRemaining(PrivateKey privateKey) {
+    static long getStatefulKeyRemaining(PrivateKey privateKey) {
         if (privateKey instanceof XMSSPrivateKey) {
             return ((XMSSPrivateKey) privateKey).getUsagesRemaining();
         } else if (privateKey instanceof XMSSMTPrivateKey) {
@@ -940,7 +940,7 @@ public class PQCProducer extends DefaultProducer {
      * Returns the current index (number of signatures already produced) for a stateful private key, or 0 if the key is
      * not stateful.
      */
-    private long getStatefulKeyIndex(PrivateKey privateKey) {
+    static long getStatefulKeyIndex(PrivateKey privateKey) {
         if (privateKey instanceof XMSSPrivateKey) {
             return ((XMSSPrivateKey) privateKey).getIndex();
         } else if (privateKey instanceof XMSSMTPrivateKey) {

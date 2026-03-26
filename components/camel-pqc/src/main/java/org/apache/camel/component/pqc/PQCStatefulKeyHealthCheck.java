@@ -22,28 +22,29 @@ import java.util.Map;
 
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
-import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
-import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
-import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
 /**
  * Health check that reports the state of stateful PQC signature keys (XMSS, XMSSMT, LMS/HSS). These hash-based
- * signature schemes have a finite number of signatures. This health check reports DOWN when a key is exhausted and
- * includes remaining signature capacity as a detail.
+ * signature schemes have a finite number of signatures. This health check reports DOWN when a key is exhausted,
+ * DEGRADED when remaining signatures fall below the warning threshold, and includes remaining signature capacity as a
+ * detail.
  */
 public class PQCStatefulKeyHealthCheck extends AbstractHealthCheck {
 
     private final PQCEndpoint endpoint;
+    private final PQCProducer producer;
 
-    public PQCStatefulKeyHealthCheck(PQCEndpoint endpoint, String clientId) {
+    public PQCStatefulKeyHealthCheck(PQCEndpoint endpoint, PQCProducer producer, String clientId) {
         super("camel", "producer:pqc-stateful-key-" + clientId);
         this.endpoint = endpoint;
+        this.producer = producer;
     }
 
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
-        PQCConfiguration configuration = endpoint.getConfiguration();
-        KeyPair keyPair = configuration.getKeyPair();
+        // Read key state from the producer's runtime keyPair, not from configuration,
+        // to avoid stale state when the key has been rotated or updated at runtime
+        KeyPair keyPair = producer.getRuntimeKeyPair();
 
         if (keyPair == null || keyPair.getPrivate() == null) {
             builder.detail("stateful_key", false);
@@ -52,23 +53,9 @@ public class PQCStatefulKeyHealthCheck extends AbstractHealthCheck {
         }
 
         PrivateKey privateKey = keyPair.getPrivate();
-        long remaining = -1;
-        long index = 0;
         String algorithm = privateKey.getAlgorithm();
-
-        if (privateKey instanceof XMSSPrivateKey) {
-            XMSSPrivateKey xmssKey = (XMSSPrivateKey) privateKey;
-            remaining = xmssKey.getUsagesRemaining();
-            index = xmssKey.getIndex();
-        } else if (privateKey instanceof XMSSMTPrivateKey) {
-            XMSSMTPrivateKey xmssmtKey = (XMSSMTPrivateKey) privateKey;
-            remaining = xmssmtKey.getUsagesRemaining();
-            index = xmssmtKey.getIndex();
-        } else if (privateKey instanceof LMSPrivateKey) {
-            LMSPrivateKey lmsKey = (LMSPrivateKey) privateKey;
-            remaining = lmsKey.getUsagesRemaining();
-            index = lmsKey.getIndex();
-        }
+        long remaining = PQCProducer.getStatefulKeyRemaining(privateKey);
+        long index = PQCProducer.getStatefulKeyIndex(privateKey);
 
         if (remaining < 0) {
             // Not a stateful key - always healthy
@@ -78,24 +65,35 @@ public class PQCStatefulKeyHealthCheck extends AbstractHealthCheck {
             return;
         }
 
+        long totalCapacity = index + remaining;
+
         builder.detail("stateful_key", true);
         builder.detail("algorithm", algorithm);
         builder.detail("remaining_signatures", remaining);
         builder.detail("signatures_used", index);
-        builder.detail("total_capacity", index + remaining);
+        builder.detail("total_capacity", totalCapacity);
 
-        if (remaining <= 0) {
+        if (remaining == 0) {
             builder.message("Stateful key (" + algorithm + ") is exhausted with 0 remaining signatures");
             builder.down();
             return;
         }
 
-        double threshold = configuration.getStatefulKeyWarningThreshold();
-        long totalCapacity = index + remaining;
+        double threshold = endpoint.getConfiguration().getStatefulKeyWarningThreshold();
         if (threshold > 0 && totalCapacity > 0) {
             double fractionRemaining = (double) remaining / totalCapacity;
             builder.detail("fraction_remaining", String.format("%.4f", fractionRemaining));
             builder.detail("warning_threshold", String.valueOf(threshold));
+
+            if (fractionRemaining <= threshold) {
+                builder.message(
+                        "Stateful key (" + algorithm + ") is approaching exhaustion: " + remaining
+                                + " signatures remaining out of " + totalCapacity + " total ("
+                                + String.format("%.1f%%", fractionRemaining * 100) + " remaining)");
+                builder.detail("warning", true);
+                builder.down();
+                return;
+            }
         }
 
         builder.up();
