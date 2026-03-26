@@ -27,6 +27,7 @@ public enum RuntimeType {
     main;
 
     public static final String QUARKUS_VERSION = "${quarkus-version}";
+    public static final String QUARKUS_EXTENSION_REGISTRY_BASE_URL = "${quarkus-extension-registry-base-url}";
     public static final String SPRING_BOOT_VERSION = "${spring-boot-version}";
     public static final String KAMELETS_VERSION = "${camel-kamelets-catalog-version}";
 
