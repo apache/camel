@@ -769,20 +769,6 @@ public interface ComponentsBuilderFactory {
         return AzureStorageQueueComponentBuilderFactory.azureStorageQueue();
     }
     /**
-     * Batch (camel-batch)
-     * Process collections of items in structured batches with chunking, error
-     * thresholds, and watermark tracking.
-     * 
-     * Category: core,scheduling
-     * Since: 4.19
-     * Maven coordinates: org.apache.camel:camel-batch
-     * 
-     * @return the dsl builder
-     */
-    static BatchComponentBuilderFactory.BatchComponentBuilder batch() {
-        return BatchComponentBuilderFactory.batch();
-    }
-    /**
      * Bean (camel-bean)
      * Invoke methods of Java beans stored in Camel registry.
      * 
@@ -860,6 +846,20 @@ public interface ComponentsBuilderFactory {
      */
     static BrowseComponentBuilderFactory.BrowseComponentBuilder browse() {
         return BrowseComponentBuilderFactory.browse();
+    }
+    /**
+     * Bulk (camel-bulk)
+     * Process collections of items in structured bulk operations with chunking,
+     * error thresholds, and watermark tracking.
+     * 
+     * Category: core,scheduling
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-bulk
+     * 
+     * @return the dsl builder
+     */
+    static BulkComponentBuilderFactory.BulkComponentBuilder bulk() {
+        return BulkComponentBuilderFactory.bulk();
     }
     /**
      * Caffeine Cache (camel-caffeine)

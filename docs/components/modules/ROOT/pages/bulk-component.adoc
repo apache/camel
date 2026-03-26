@@ -1,0 +1,1 @@
+../../../../../components/camel-bulk/src/main/docs/bulk-component.adoc

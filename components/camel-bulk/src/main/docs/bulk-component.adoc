@@ -1,0 +1,366 @@
+= Bulk Component
+:doctitle: Bulk
+:shortname: bulk
+:artifactid: camel-bulk
+:description: Process collections of items in structured bulk operations with chunking, error thresholds, and watermark tracking.
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+:core:
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Bulk component provides structured bulk processing for collections of items.
+It handles chunking, error thresholds, multi-step pipelines, watermark-based resume,
+and progress reporting, replacing the need for manual split + aggregate + error handling assembly.
+
+This addresses a common Camel pattern where users combine the Splitter EIP, Aggregator EIP,
+and custom error handling logic to process collections. The Bulk component provides this
+functionality as a single, configurable endpoint.
+
+NOTE: This component is unrelated to `camel-spring-batch`. The `spring-batch` component
+integrates with Spring Batch jobs, while this component provides standalone bulk processing
+without any Spring dependency.
+
+== URI format
+
+----
+bulk:jobName[?options]
+----
+
+Where `jobName` is a unique name identifying the bulk job.
+
+// component-configure options: START
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+== Usage
+
+You send a collection (`List`, `Iterator`, or any body convertible to `Iterator`) to the bulk endpoint.
+The component processes items in configurable chunks with error handling and optional watermark tracking.
+
+=== Basic Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("bulk:myJob?chunkSize=100&processorRef=direct:processItem");
+
+from("direct:processItem")
+    .log("Processing item: ${body}")
+    .to("mock:result");
+----
+====
+
+== Multi-Step Pipelines
+
+The `steps` option enables multi-step bulk processing where items flow through multiple
+processing steps sequentially.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("bulk:etlJob?steps=direct:validate,direct:transform,direct:load&acceptPolicy=NO_FAILURES");
+
+from("direct:validate")
+    .process(exchange -> {
+        // Validate the item — throw exception to mark as failed
+    });
+
+from("direct:transform")
+    .process(exchange -> {
+        // Transform — only items that passed validation reach here (NO_FAILURES)
+    });
+
+from("direct:load")
+    .to("jpa:MyEntity");
+----
+====
+
+=== Accept Policy
+
+The `acceptPolicy` controls which items are eligible for processing in subsequent steps
+(after the first step). Note that the accept policy is global — the same policy applies
+between all steps. The first step always processes all items.
+
+* `ALL` (default) — process all items regardless of prior step results
+* `NO_FAILURES` — skip items that failed in any prior step
+* `FAILURES_ONLY` — only process items that failed (useful for error recovery steps)
+
+==== Error Recovery Pattern
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("bulk:importJob?steps=direct:primary,direct:recovery&acceptPolicy=FAILURES_ONLY");
+
+from("direct:primary")
+    .to("http:primary-api");
+
+from("direct:recovery")
+    .to("http:fallback-api");
+----
+====
+
+Items that fail in the primary step are retried via the recovery step.
+If recovery succeeds, the item is marked as successful.
+
+== Error Threshold
+
+The `errorThreshold` option controls when a bulk job should be aborted based on the ratio of failures.
+The value is a fraction between 0.0 and 1.0:
+
+* `1.0` (default) — never abort, process all items regardless of failures
+* `0.1` — abort if more than 10% of items fail
+* `0.0` — abort on the first failure
+
+The `maxFailedRecords` option provides an absolute count alternative:
+
+* `-1` (default) — disabled, use `errorThreshold` instead
+* `0` — abort on the first failure
+* `10` — abort after more than 10 failures
+
+Both options can be used together — the bulk aborts when either threshold is exceeded.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .doTry()
+        .to("bulk:importJob?processorRef=direct:import&errorThreshold=0.1&maxFailedRecords=50")
+    .doCatch(BulkException.class)
+        .log("Bulk processing aborted: ${exception.message}")
+    .end();
+----
+====
+
+When the threshold is exceeded, a `BulkException` is thrown containing the `BulkResult` with
+full statistics about the bulk execution.
+
+== On Complete Callback
+
+The `onCompleteRef` option specifies an endpoint called after every bulk execution,
+regardless of success or failure. The callback receives the `BulkResult` as the exchange body.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("bulk:importJob?processorRef=direct:import&onCompleteRef=direct:notify");
+
+from("direct:notify")
+    .choice()
+        .when(simple("${body.failureCount} > 0"))
+            .to("slack:#alerts")
+        .otherwise()
+            .log("Bulk completed successfully: ${body}")
+    .end();
+----
+====
+
+== Watermark Tracking
+
+=== Index-Based Watermarks
+
+Watermark tracking enables resume-from-last-position for bulk jobs. By providing a watermark store
+(any `Map<String, String>` bean), the component tracks how many items have been processed and
+skips already-processed items on subsequent runs.
+
+CAUTION: Index-based watermarks assume that items arrive in a stable order across runs and that
+no items are inserted or deleted before the watermark position. If the data source does not
+guarantee stable ordering, use value-based watermarks instead.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:poll?period=60000")
+    .bean("myDataSource", "fetchAllRecords")
+    .to("bulk:syncJob?processorRef=direct:sync&watermarkStore=#myWatermarkStore");
+----
+====
+
+=== Value-Based Watermarks
+
+For datasets where items may change between runs, use `watermarkExpression` to track a
+value from each processed item (e.g., a timestamp or sequence number).
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:poll?period=60000")
+    .to("bulk:syncJob?processorRef=direct:sync"
+        + "&watermarkStore=#myStore&watermarkExpression=${body.lastModified}")
+    .log("Watermark updated, new value: ${header.CamelBulkWatermarkValue}");
+
+// The watermark value is available as a header on the exchange before item processing.
+// To use it for fetching data, read it from the store directly:
+from("timer:poll?period=60000")
+    .process(e -> {
+        Map<String, String> store = e.getContext().getRegistry()
+                .lookupByNameAndType("myStore", Map.class);
+        e.getIn().setHeader("lastWatermark", store.get("syncJob"));
+    })
+    .bean("myDataSource", "fetchRecordsSince(${header.lastWatermark})")
+    .to("bulk:syncJob?processorRef=direct:sync"
+        + "&watermarkStore=#myStore&watermarkExpression=${body.lastModified}");
+----
+====
+
+When `watermarkExpression` is set:
+
+* The current watermark value is set as a `CamelBulkWatermarkValue` header on the exchange before item processing
+* Index-based skipping is disabled — filtering should be done upstream (e.g., in the data source query)
+* After processing, the expression is evaluated on the last successful item and stored
+
+== Error Handling
+
+The bulk component handles errors internally — exceptions thrown by item processors are
+caught and tracked as item failures. This means Camel's route-level error handling
+(`onException`, `errorHandler`) does NOT apply to individual item failures.
+
+To handle bulk-level errors:
+
+* Use `errorThreshold` / `maxFailedRecords` to abort when too many items fail
+* Use `doTry`/`doCatch` around the bulk endpoint to catch `BulkException` on abort
+* Use `onCompleteRef` to get notified of every bulk completion with full statistics
+* Use `acceptPolicy=FAILURES_ONLY` in multi-step pipelines for error recovery patterns
+
+The `BulkResult` object contains the full list of failures with their causes, indices,
+and which step they failed at.
+
+== YAML DSL Example
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+    steps:
+      - to:
+          uri: bulk:myJob
+          parameters:
+            chunkSize: 100
+            processorRef: direct:processItem
+
+- route:
+    from:
+      uri: direct:processItem
+    steps:
+      - log: "Processing item: ${body}"
+      - to: mock:result
+----
+
+== Bulk Job Instance ID
+
+Each bulk execution is assigned a unique UUID, available as the `CamelBulkJobInstanceId` header
+on both the result exchange and each item exchange. This enables tracking concurrent bulk executions.
+
+== Parallel Processing
+
+Enable `parallelProcessing` to process items within each chunk concurrently.
+Note that chunks are still processed sequentially — parallelism applies only to items within a single chunk.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("bulk:fastJob?processorRef=direct:process&parallelProcessing=true");
+----
+====
+
+== Aggregation Strategy
+
+An optional `AggregationStrategy` can collect results from successfully processed items:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("bulk:transformJob?processorRef=direct:transform&aggregationStrategy=#myStrategy");
+----
+====
+
+== Bulk Result
+
+After processing, the exchange body is set to a `BulkResult` object (unless an aggregation strategy
+is configured) containing:
+
+* `jobName` — the bulk job name
+* `jobInstanceId` — unique UUID for this execution
+* `totalItems` — total number of items processed
+* `successCount` — number of successfully processed items
+* `failureCount` — number of failed items
+* `duration` — processing time in milliseconds
+* `aborted` — whether the bulk operation was aborted
+* `failures` — list of `BulkFailure` objects with index, item, cause, and stepIndex
+
+== Output Headers
+
+[width="100%",cols="25%,15%,60%",options="header"]
+|===
+| Header | Type | Description
+| CamelBulkJobName | String | The bulk job name
+| CamelBulkJobInstanceId | String | Unique identifier for this bulk execution
+| CamelBulkTotal | int | Total items processed
+| CamelBulkSuccess | int | Successfully processed items
+| CamelBulkFailed | int | Failed items
+| CamelBulkDuration | long | Total processing time in milliseconds
+| CamelBulkAborted | boolean | Whether the bulk operation was aborted due to error threshold
+| CamelBulkWatermarkValue | String | Current watermark value (when using value-based watermarks)
+|===
+
+== Item Exchange Headers
+
+Each item exchange sent to the processor endpoint receives these headers:
+
+[width="100%",cols="25%,15%,60%",options="header"]
+|===
+| Header | Type | Description
+| CamelBulkJobName | String | The bulk job name
+| CamelBulkJobInstanceId | String | Unique identifier for this bulk execution
+| CamelBulkIndex | int | Zero-based index of this item
+| CamelBulkSize | int | Total number of items in the bulk operation
+| CamelBulkChunkIndex | int | Index of the current chunk
+| CamelBulkStepIndex | int | Index of the current step in a multi-step bulk operation
+|===

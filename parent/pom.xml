@@ -1056,11 +1056,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-batch</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-bean</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1102,6 +1097,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-browse</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bulk</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

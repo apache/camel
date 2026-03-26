@@ -383,7 +383,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-batch</artifactId>
+        <artifactId>camel-bulk</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
       <dependency>
