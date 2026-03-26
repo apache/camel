@@ -31,6 +31,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridKEM;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
@@ -508,7 +509,7 @@ public class PQCProducer extends DefaultProducer {
     // ========== Hybrid Signature Operations ==========
 
     private void hybridSignature(Exchange exchange)
-            throws Exception {
+            throws InvalidPayloadException, InvalidKeyException, SignatureException {
         checkStatefulKeyBeforeSign();
 
         String payload = exchange.getMessage().getMandatoryBody(String.class);
@@ -537,7 +538,11 @@ public class PQCProducer extends DefaultProducer {
         exchange.getMessage().setHeader(PQCConstants.CLASSICAL_SIGNATURE, components.classicalSignature());
         exchange.getMessage().setHeader(PQCConstants.PQC_SIGNATURE, components.pqcSignature());
 
-        persistStatefulKeyStateAfterSign(exchange);
+        try {
+            persistStatefulKeyStateAfterSign(exchange);
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Failed to persist stateful key state after hybrid signing", e);
+        }
     }
 
     private void hybridVerification(Exchange exchange)
@@ -913,13 +918,20 @@ public class PQCProducer extends DefaultProducer {
 
         // Update metadata with current usage
         KeyMetadata metadata = klm.getKeyMetadata(keyId);
-        if (metadata != null) {
-            metadata.updateLastUsed();
-            klm.updateKeyMetadata(keyId, metadata);
-
-            // Persist the updated key (with new index) so state survives restarts
-            klm.storeKey(keyId, keyPair, metadata);
+        if (metadata == null) {
+            LOG.warn(
+                    "No metadata found for stateful key '{}'. The key index has been advanced by the signing operation "
+                     + "but cannot be persisted — on restart this index advance will be lost, which may lead to key reuse. "
+                     + "Ensure a KeyLifecycleManager is properly configured and the key is stored with metadata.",
+                    keyId);
+            return;
         }
+
+        metadata.updateLastUsed();
+        klm.updateKeyMetadata(keyId, metadata);
+
+        // Persist the updated key (with new index) so state survives restarts
+        klm.storeKey(keyId, keyPair, metadata);
     }
 
     /**

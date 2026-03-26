@@ -25,9 +25,9 @@ import org.apache.camel.impl.health.AbstractHealthCheck;
 
 /**
  * Health check that reports the state of stateful PQC signature keys (XMSS, XMSSMT, LMS/HSS). These hash-based
- * signature schemes have a finite number of signatures. This health check reports DOWN when a key is exhausted,
- * DEGRADED when remaining signatures fall below the warning threshold, and includes remaining signature capacity as a
- * detail.
+ * signature schemes have a finite number of signatures. This health check reports DOWN when a key is exhausted, UP with
+ * a {@code warning=true} detail when remaining signatures fall below the warning threshold, and includes remaining
+ * signature capacity as a detail.
  */
 public class PQCStatefulKeyHealthCheck extends AbstractHealthCheck {
 
@@ -91,7 +91,7 @@ public class PQCStatefulKeyHealthCheck extends AbstractHealthCheck {
                                 + " signatures remaining out of " + totalCapacity + " total ("
                                 + String.format("%.1f%%", fractionRemaining * 100) + " remaining)");
                 builder.detail("warning", true);
-                builder.down();
+                builder.up();
                 return;
             }
         }
