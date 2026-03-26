@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.time.Duration;
 import java.util.Properties;
 import java.util.Set;
 
@@ -24,16 +25,24 @@ import org.apache.camel.component.infinispan.InfinispanManager;
 import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.task.ForegroundTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+import org.infinispan.client.hotrod.exceptions.RemoteIllegalLifecycleStateException;
 import org.infinispan.commons.api.BasicCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.infinispan.InfinispanConstants.CACHE_MANAGER_CURRENT;
 
 public class InfinispanRemoteManager extends ServiceSupport implements InfinispanManager<RemoteCacheManager> {
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanRemoteManager.class);
+
     private final InfinispanRemoteConfiguration configuration;
     private CamelContext camelContext;
     private RemoteCacheManager cacheContainer;
@@ -127,7 +136,37 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
         }
 
         if (embeddingStoreEnabled && configuration.isEmbeddingStoreRegisterSchema()) {
-            EmbeddingStoreUtil.registerSchema(configuration, cacheContainer);
+            registerSchemaWithRetry();
+        }
+    }
+
+    /**
+     * Registers the embedding store schema with retry logic to handle the case where Camel and the remote Infinispan
+     * server start up concurrently (e.g., in Kubernetes). The server's internal {@code ___protobuf_metadata} cache may
+     * not be ready yet, causing a {@link RemoteIllegalLifecycleStateException}.
+     */
+    private void registerSchemaWithRetry() throws Exception {
+        Duration timeout = configuration.getEmbeddingStoreSchemaRegistrationTimeout();
+        ForegroundTask task = Tasks.foregroundTask()
+                .withBudget(Budgets.iterationTimeBudget()
+                        .withInterval(Duration.ofSeconds(1))
+                        .withMaxDuration(timeout)
+                        .build())
+                .build();
+
+        boolean registered = task.run(null, () -> {
+            try {
+                EmbeddingStoreUtil.registerSchema(configuration, cacheContainer);
+                return true;
+            } catch (RemoteIllegalLifecycleStateException e) {
+                LOG.debug("Schema registration failed (server not ready), retrying: {}", e.getMessage());
+                return false;
+            }
+        });
+
+        if (!registered) {
+            throw new IllegalStateException(
+                    "Failed to register Infinispan schema after retries. The server may not be fully started.");
         }
     }
 

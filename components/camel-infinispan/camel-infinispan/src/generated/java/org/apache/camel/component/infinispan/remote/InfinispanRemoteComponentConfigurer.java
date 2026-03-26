@@ -55,6 +55,8 @@ public class InfinispanRemoteComponentConfigurer extends PropertyConfigurerSuppo
         case "embeddingStoreEnabled": getOrCreateConfiguration(target).setEmbeddingStoreEnabled(property(camelContext, boolean.class, value)); return true;
         case "embeddingstoreregisterschema":
         case "embeddingStoreRegisterSchema": getOrCreateConfiguration(target).setEmbeddingStoreRegisterSchema(property(camelContext, boolean.class, value)); return true;
+        case "embeddingstoreschemaregistrationtimeout":
+        case "embeddingStoreSchemaRegistrationTimeout": getOrCreateConfiguration(target).setEmbeddingStoreSchemaRegistrationTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "embeddingstoretypename":
         case "embeddingStoreTypeName": getOrCreateConfiguration(target).setEmbeddingStoreTypeName(property(camelContext, java.lang.String.class, value)); return true;
         case "embeddingstorevectorsimilarity":
@@ -122,6 +124,8 @@ public class InfinispanRemoteComponentConfigurer extends PropertyConfigurerSuppo
         case "embeddingStoreEnabled": return boolean.class;
         case "embeddingstoreregisterschema":
         case "embeddingStoreRegisterSchema": return boolean.class;
+        case "embeddingstoreschemaregistrationtimeout":
+        case "embeddingStoreSchemaRegistrationTimeout": return java.time.Duration.class;
         case "embeddingstoretypename":
         case "embeddingStoreTypeName": return java.lang.String.class;
         case "embeddingstorevectorsimilarity":
@@ -185,6 +189,8 @@ public class InfinispanRemoteComponentConfigurer extends PropertyConfigurerSuppo
         case "embeddingStoreEnabled": return getOrCreateConfiguration(target).isEmbeddingStoreEnabled();
         case "embeddingstoreregisterschema":
         case "embeddingStoreRegisterSchema": return getOrCreateConfiguration(target).isEmbeddingStoreRegisterSchema();
+        case "embeddingstoreschemaregistrationtimeout":
+        case "embeddingStoreSchemaRegistrationTimeout": return getOrCreateConfiguration(target).getEmbeddingStoreSchemaRegistrationTimeout();
         case "embeddingstoretypename":
         case "embeddingStoreTypeName": return getOrCreateConfiguration(target).getEmbeddingStoreTypeName();
         case "embeddingstorevectorsimilarity":
