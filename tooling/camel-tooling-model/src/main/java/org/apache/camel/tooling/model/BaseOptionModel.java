@@ -343,6 +343,7 @@ public abstract class BaseOptionModel {
         return text;
     }
 
+    @Deprecated
     public String getShortName(int watermark) {
         String text = Strings.wrapCamelCaseWords(name, watermark, "{zwsp}");
         // ensure the option name starts with lower-case
