@@ -167,7 +167,9 @@
                         <goals>
                             <goal>build</goal>
                             <goal>generate-code</goal>
-                            <goal>generate-code-tests</goal>
+                            <!-- generate-code-tests removed: tests don't use @QuarkusTest,
+                                 and the goal triggers a workspace resolution regression
+                                 in Quarkus 3.34+ (quarkusio/quarkus#53285) -->
                         </goals>
                     </execution>
                 </executions>
