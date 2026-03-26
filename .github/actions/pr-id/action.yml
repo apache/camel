@@ -33,9 +33,12 @@ runs:
   - name: Save new coverage value
     if: github.event_name == 'pull_request'
     shell: bash
+    env:
+      ARTIFACT_NAME: ${{ inputs.artifact-name }}
+      EVENT_NUMBER: ${{ github.event.number }}
     run: |
-      mkdir -p /tmp/${{ inputs.artifact-name }}
-      echo ${{ github.event.number }} > /tmp/${{ inputs.artifact-name }}/id
+      mkdir -p "/tmp/$ARTIFACT_NAME"
+      echo "$EVENT_NUMBER" > "/tmp/$ARTIFACT_NAME/id"
 
   - uses: actions/upload-artifact@v4
     if: github.event_name == 'pull_request'

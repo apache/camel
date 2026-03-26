@@ -42,8 +42,11 @@ runs:
     - name: maven test
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        MVND_DIR: ${{ steps.install-mvnd.outputs.mvnd-dir }}
+        PR_ID: ${{ inputs.pr-id }}
+        GITHUB_REPO: ${{ inputs.github-repo }}
       shell: bash
-      run: ${{ github.action_path }}/detect-test.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd ${{ inputs.pr-id }} ${{ inputs.github-repo }}
+      run: ${{ github.action_path }}/detect-test.sh "$MVND_DIR/mvnd" "$PR_ID" "$GITHUB_REPO"
     - name: Post dependency change comment
       if: always()
       uses: actions/github-script@v8
