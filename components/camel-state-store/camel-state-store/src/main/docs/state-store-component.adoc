@@ -161,6 +161,68 @@ from("direct:init")
 
 == Backends
 
+=== Backend auto-discovery
+
+If no `backend` option is specified on the endpoint, the component automatically looks up a
+`StateStoreBackend` bean from the Camel registry. If exactly one is found, it is used for all
+endpoints. If none is found, the default in-memory backend is used.
+
+This means you can configure a backend once (via Java or properties) and all `state-store`
+endpoints will use it without needing `backend=#beanName` on each endpoint URI.
+
+=== Configuring backends via properties
+
+Backends can be configured entirely via `application.properties` using Camel's `camel.beans.*`
+syntax, without writing any Java code. This is especially useful for YAML DSL or Camel JBang users.
+
+[tabs]
+====
+Caffeine::
++
+[source,properties]
+----
+# application.properties
+camel.beans.caffeineBackend = #class:org.apache.camel.component.statestore.caffeine.CaffeineStateStoreBackend
+camel.beans.caffeineBackend.maximumSize = 50000
+----
+
+Redis::
++
+[source,properties]
+----
+# application.properties
+camel.beans.redisBackend = #class:org.apache.camel.component.statestore.redis.RedisStateStoreBackend
+camel.beans.redisBackend.redisUrl = redis://myhost:6379
+camel.beans.redisBackend.mapName = my-app-state
+----
+
+Infinispan::
++
+[source,properties]
+----
+# application.properties
+camel.beans.infinispanBackend = #class:org.apache.camel.component.statestore.infinispan.InfinispanStateStoreBackend
+camel.beans.infinispanBackend.hosts = myhost:11222
+camel.beans.infinispanBackend.cacheName = my-cache
+----
+====
+
+With the backend configured via properties and auto-discovery, no `backend=#...` reference
+is needed in the route:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:store
+    steps:
+      - setHeader:
+          name: CamelStateStoreKey
+          constant: myKey
+      - to:
+          uri: state-store:myStore?operation=put
+----
+
 === In-Memory (default)
 
 The default backend stores entries in a `ConcurrentHashMap`. TTL expiry is lazy -- entries are
@@ -180,8 +242,10 @@ Add the dependency:
 </dependency>
 ----
 
-Register the backend as a bean and reference it:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 @BindToRegistry("caffeineBackend")
@@ -191,6 +255,17 @@ public CaffeineStateStoreBackend caffeine() {
     return backend;
 }
 ----
+
+Properties::
++
+[source,properties]
+----
+camel.beans.caffeineBackend = #class:org.apache.camel.component.statestore.caffeine.CaffeineStateStoreBackend
+camel.beans.caffeineBackend.maximumSize = 50000
+----
+====
+
+With auto-discovery, the backend is picked up automatically. You can also reference it explicitly:
 
 [source,java]
 ----
@@ -212,8 +287,10 @@ Add the dependency:
 </dependency>
 ----
 
-Configure and register:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 @BindToRegistry("redisBackend")
@@ -224,6 +301,16 @@ public RedisStateStoreBackend redis() {
     return backend;
 }
 ----
+
+Properties::
++
+[source,properties]
+----
+camel.beans.redisBackend = #class:org.apache.camel.component.statestore.redis.RedisStateStoreBackend
+camel.beans.redisBackend.redisUrl = redis://myhost:6379
+camel.beans.redisBackend.mapName = my-app-state
+----
+====
 
 You can also inject a pre-configured `RedissonClient`:
 
@@ -247,8 +334,10 @@ Add the dependency:
 </dependency>
 ----
 
-Configure and register:
-
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 @BindToRegistry("infinispanBackend")
@@ -259,6 +348,16 @@ public InfinispanStateStoreBackend infinispan() {
     return backend;
 }
 ----
+
+Properties::
++
+[source,properties]
+----
+camel.beans.infinispanBackend = #class:org.apache.camel.component.statestore.infinispan.InfinispanStateStoreBackend
+camel.beans.infinispanBackend.hosts = myhost:11222
+camel.beans.infinispanBackend.cacheName = my-cache
+----
+====
 
 You can also inject a pre-configured `RemoteCacheManager`:
 
@@ -322,7 +421,7 @@ public class MyCustomBackend implements StateStoreBackend {
 The `putIfAbsent` and `size` methods have default implementations but can be overridden
 for better performance with backends that support these operations natively.
 
-Then reference it via bean:
+Then reference it via bean or let auto-discovery find it:
 
 [source,java]
 ----

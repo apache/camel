@@ -17,6 +17,7 @@
 package org.apache.camel.component.statestore;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Endpoint;
@@ -42,7 +43,14 @@ public class StateStoreComponent extends DefaultComponent {
         if (explicitBackend != null) {
             return backends.computeIfAbsent(storeName, k -> explicitBackend);
         }
-        return backends.computeIfAbsent(storeName, k -> new InMemoryStateStoreBackend());
+        return backends.computeIfAbsent(storeName, k -> {
+            // Auto-discover a StateStoreBackend from the registry
+            Set<StateStoreBackend> found = getCamelContext().getRegistry().findByType(StateStoreBackend.class);
+            if (found.size() == 1) {
+                return found.iterator().next();
+            }
+            return new InMemoryStateStoreBackend();
+        });
     }
 
     @Override
