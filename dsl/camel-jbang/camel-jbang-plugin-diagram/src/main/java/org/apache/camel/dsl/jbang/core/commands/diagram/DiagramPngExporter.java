@@ -66,7 +66,6 @@ class DiagramPngExporter {
     private final int jolokiaPort;
     private final int hawtioPort;
     private final boolean keepRunning;
-    private final boolean embeddedJolokia;
     private final int timeoutSeconds;
     private final CamelLaunch camelLaunch;
     private boolean jolokiaAttached;
@@ -75,7 +74,7 @@ class DiagramPngExporter {
 
     DiagramPngExporter(CamelJBangMain main, Printer printer, Path output, String browser,
                        String playwrightBrowserPath, String routeId, int jolokiaPort, int hawtioPort, boolean keepRunning,
-                       boolean embeddedJolokia, int timeoutSeconds, CamelLaunch camelLaunch) {
+                       int timeoutSeconds, CamelLaunch camelLaunch) {
         this.main = main;
         this.printer = printer;
         this.output = output;
@@ -85,7 +84,6 @@ class DiagramPngExporter {
         this.jolokiaPort = jolokiaPort;
         this.hawtioPort = hawtioPort;
         this.keepRunning = keepRunning;
-        this.embeddedJolokia = embeddedJolokia;
         this.timeoutSeconds = timeoutSeconds;
         this.camelLaunch = camelLaunch;
     }
@@ -209,9 +207,6 @@ class DiagramPngExporter {
         }
         jolokiaAttached = false;
         jolokiaPid = 0;
-        if (embeddedJolokia) {
-            return waitForJolokia(jolokiaUrl);
-        }
         // Always resolve the target PID and attach/verify Jolokia for that specific process.
         // Using isJolokiaAvailable() as a shortcut is unsafe — the endpoint may belong to a
         // different process (e.g. a leftover from a previous run or a different integration).
@@ -316,10 +311,6 @@ class DiagramPngExporter {
                 conn.disconnect();
             }
         }
-    }
-
-    private boolean isJolokiaAvailable(String jolokiaUrl) {
-        return checkJolokia(jolokiaUrl) == null;
     }
 
     private Process startHawtioProcess(int port) throws Exception {

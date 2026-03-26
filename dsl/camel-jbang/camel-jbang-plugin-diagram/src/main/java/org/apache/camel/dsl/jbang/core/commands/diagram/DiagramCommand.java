@@ -134,7 +134,7 @@ public class DiagramCommand extends CamelCommand {
             if (exportPng) {
                 DiagramPngExporter exporter = new DiagramPngExporter(
                         getMain(), printer(), output, browser, playwrightBrowserPath, routeId, jolokiaPort, port, keepRunning,
-                        false, timeout, camelLaunch);
+                        timeout, camelLaunch);
                 try {
                     exit = exporter.export(target);
                 } catch (IllegalStateException e) {
