@@ -95,7 +95,7 @@ public class GoogleMailUpdateMessageLabelsDataTypeTransformer extends Transforme
             if (stringValue.isBlank()) {
                 return Collections.emptyList();
             }
-            return Arrays.asList(stringValue.split(","));
+            return Arrays.stream(stringValue.split(",")).map(String::trim).toList();
         }
         throw new CamelExecutionException(
                 "Exchange variable '" + variableName + "' must be a List<String> or a comma-separated String, but was: "
