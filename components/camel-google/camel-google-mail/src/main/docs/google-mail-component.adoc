@@ -118,7 +118,7 @@ YAML::
           name: removeLabels
           constant: "INBOX,UNREAD"
       - transformDataType:
-            toType: "google-mail:update-message-labels"
+          toType: "google-mail:update-message-labels"
       - to:
           uri: "google-mail:messages/modify"
 ----
