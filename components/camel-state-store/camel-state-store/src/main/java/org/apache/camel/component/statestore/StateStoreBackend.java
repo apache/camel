@@ -35,6 +35,9 @@ public interface StateStoreBackend {
 
     /**
      * Store a value only if the key does not already exist.
+     * <p>
+     * <b>Note:</b> The default implementation is not atomic. Implementations that require thread safety should override
+     * this method with an atomic version (e.g., using the backing store's native putIfAbsent).
      *
      * @param  key       the key
      * @param  value     the value to store

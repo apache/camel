@@ -22,12 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.support.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The State Store component provides a simple, unified key-value store API with pluggable backends.
  */
 @org.apache.camel.spi.annotations.Component("state-store")
 public class StateStoreComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StateStoreComponent.class);
 
     private final ConcurrentHashMap<String, StateStoreBackend> backends = new ConcurrentHashMap<>();
 
@@ -41,15 +45,29 @@ public class StateStoreComponent extends DefaultComponent {
 
     StateStoreBackend getOrCreateBackend(String storeName, StateStoreBackend explicitBackend) {
         if (explicitBackend != null) {
-            return backends.computeIfAbsent(storeName, k -> explicitBackend);
+            return backends.computeIfAbsent(storeName, k -> {
+                explicitBackend.start();
+                return explicitBackend;
+            });
         }
         return backends.computeIfAbsent(storeName, k -> {
             // Auto-discover a StateStoreBackend from the registry
             Set<StateStoreBackend> found = getCamelContext().getRegistry().findByType(StateStoreBackend.class);
+            StateStoreBackend backend;
             if (found.size() == 1) {
-                return found.iterator().next();
+                backend = found.iterator().next();
+            } else {
+                if (found.size() > 1) {
+                    LOG.warn(
+                            "Found {} StateStoreBackend instances in the registry for store '{}'. "
+                             + "Cannot auto-select — falling back to InMemoryStateStoreBackend. "
+                             + "Use an explicit backend=# reference to choose one.",
+                            found.size(), storeName);
+                }
+                backend = new InMemoryStateStoreBackend();
             }
-            return new InMemoryStateStoreBackend();
+            backend.start();
+            return backend;
         });
     }
 

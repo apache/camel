@@ -60,12 +60,9 @@ public class CaffeineStateStoreBackend implements StateStoreBackend {
 
     @Override
     public Object putIfAbsent(String key, Object value, long ttlMillis) {
-        TimedValue existing = cache.getIfPresent(key);
-        if (existing != null) {
-            return existing.value();
-        }
-        cache.put(key, new TimedValue(value, ttlMillis));
-        return null;
+        TimedValue newValue = new TimedValue(value, ttlMillis);
+        TimedValue existing = cache.asMap().putIfAbsent(key, newValue);
+        return existing != null ? existing.value() : null;
     }
 
     @Override
@@ -86,6 +83,9 @@ public class CaffeineStateStoreBackend implements StateStoreBackend {
 
     @Override
     public void start() {
+        if (cache != null) {
+            return;
+        }
         cache = Caffeine.newBuilder()
                 .maximumSize(maximumSize)
                 .expireAfter(new Expiry<String, TimedValue>() {

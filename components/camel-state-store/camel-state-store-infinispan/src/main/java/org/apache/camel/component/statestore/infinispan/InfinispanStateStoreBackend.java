@@ -23,12 +23,16 @@ import org.apache.camel.component.statestore.StateStoreBackend;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link StateStoreBackend} implementation backed by Infinispan remote (Hot Rod). Supports per-entry TTL via
  * Infinispan's lifespan parameter.
  */
 public class InfinispanStateStoreBackend implements StateStoreBackend {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanStateStoreBackend.class);
 
     private RemoteCacheManager cacheManager;
     private RemoteCache<String, Object> cache;
@@ -84,6 +88,9 @@ public class InfinispanStateStoreBackend implements StateStoreBackend {
 
     @Override
     public void start() {
+        if (cache != null) {
+            return;
+        }
         if (cacheManager == null) {
             ConfigurationBuilder builder = new ConfigurationBuilder();
             builder.addServers(hosts);
@@ -99,6 +106,7 @@ public class InfinispanStateStoreBackend implements StateStoreBackend {
                 return;
             } catch (Exception e) {
                 lastException = e;
+                LOG.warn("Failed to access cache '{}' (attempt {}/10): {}", cacheName, i + 1, e.getMessage());
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ie) {

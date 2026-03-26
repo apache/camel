@@ -30,6 +30,10 @@
     <packaging>jar</packaging>
 
     <name>Camel :: State Store</name>
+
+    <properties>
+        <firstVersion>4.19.0</firstVersion>
+    </properties>
     <description>Camel State Store component for pluggable key-value store operations</description>
 
     <dependencies>

@@ -19,12 +19,15 @@ package org.apache.camel.component.statestore;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StateStoreTest extends CamelTestSupport {
 
@@ -195,6 +198,22 @@ class StateStoreTest extends CamelTestSupport {
                 "direct:get", null,
                 Map.of(StateStoreConstants.KEY, "ttlKey"));
         assertNull(result);
+    }
+
+    @Test
+    void testMissingKeyHeaderThrows() {
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBody("direct:get", (Object) null);
+        });
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+    }
+
+    @Test
+    void testMissingOperationThrows() {
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class, () -> {
+            template.requestBodyAndHeaders("direct:dynamic", "value", Map.of());
+        });
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause());
     }
 
     @Override

@@ -31,7 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
  */
 @UriEndpoint(firstVersion = "4.19.0", scheme = "state-store", title = "State Store",
              syntax = "state-store:storeName", producerOnly = true,
-             remote = false, category = { Category.CACHE },
+             category = { Category.CACHE },
              headersClass = StateStoreConstants.class)
 public class StateStoreEndpoint extends DefaultEndpoint {
 
@@ -42,8 +42,8 @@ public class StateStoreEndpoint extends DefaultEndpoint {
     @UriParam(description = "The default operation to perform", enums = "put,putIfAbsent,get,delete,contains,keys,size,clear")
     private StateStoreOperations operation;
 
-    @UriParam(description = "The backend to use. Default is an in-memory store. Set to a bean reference (e.g. #myBackend) for custom backends.",
-              defaultValue = "memory", label = "advanced")
+    @UriParam(description = "The backend to use. If not set, auto-discovers a single StateStoreBackend from the registry, or falls back to an in-memory store.",
+              label = "advanced")
     private StateStoreBackend backend;
 
     @UriParam(description = "Time-to-live in milliseconds for entries. 0 means no expiry.", defaultValue = "0")
@@ -68,7 +68,6 @@ public class StateStoreEndpoint extends DefaultEndpoint {
         super.doStart();
         StateStoreComponent comp = (StateStoreComponent) getComponent();
         backend = comp.getOrCreateBackend(storeName, backend);
-        backend.start();
     }
 
     public String getStoreName() {
