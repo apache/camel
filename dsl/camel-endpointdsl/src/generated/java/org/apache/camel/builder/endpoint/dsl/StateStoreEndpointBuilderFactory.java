@@ -163,14 +163,14 @@ public interface StateStoreEndpointBuilderFactory {
             return this;
         }
         /**
-         * The backend to use. Default is an in-memory store. Set to a bean
-         * reference (e.g. #myBackend) for custom backends.
+         * The backend to use. If not set, auto-discovers a single
+         * StateStoreBackend from the registry, or falls back to an in-memory
+         * store.
          * 
          * The option is a:
          * <code>org.apache.camel.component.statestore.StateStoreBackend</code>
          * type.
          * 
-         * Default: memory
          * Group: advanced
          * 
          * @param backend the value to set
@@ -181,14 +181,14 @@ public interface StateStoreEndpointBuilderFactory {
             return this;
         }
         /**
-         * The backend to use. Default is an in-memory store. Set to a bean
-         * reference (e.g. #myBackend) for custom backends.
+         * The backend to use. If not set, auto-discovers a single
+         * StateStoreBackend from the registry, or falls back to an in-memory
+         * store.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.statestore.StateStoreBackend</code>
          * type.
          * 
-         * Default: memory
          * Group: advanced
          * 
          * @param backend the value to set
