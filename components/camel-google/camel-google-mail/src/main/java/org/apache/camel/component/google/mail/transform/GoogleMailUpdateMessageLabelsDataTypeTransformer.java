@@ -51,8 +51,6 @@ public class GoogleMailUpdateMessageLabelsDataTypeTransformer extends Transforme
     private static final String DEFAULT_USER_ID = "me";
     private static final String HEADER_USER_ID = GoogleMailConstants.PROPERTY_PREFIX + "userId";
 
-    private volatile Map<String, String> labelNameToIdCache;
-
     @Override
     public void transform(Message message, DataType fromType, DataType toType) throws Exception {
         Exchange exchange = message.getExchange();
@@ -66,7 +64,7 @@ public class GoogleMailUpdateMessageLabelsDataTypeTransformer extends Transforme
         }
 
         String userId = message.getHeader(HEADER_USER_ID, DEFAULT_USER_ID, String.class);
-        Map<String, String> labelMap = getLabelMap(userId);
+        Map<String, String> labelMap = fetchLabelMap(userId);
 
         List<String> addLabelIds = resolveLabelIds(addLabelNames, labelMap, exchange);
         List<String> removeLabelIds = resolveLabelIds(removeLabelNames, labelMap, exchange);
@@ -114,19 +112,6 @@ public class GoogleMailUpdateMessageLabelsDataTypeTransformer extends Transforme
             ids.add(id);
         }
         return ids;
-    }
-
-    private Map<String, String> getLabelMap(String userId) throws Exception {
-        if (labelNameToIdCache != null) {
-            return labelNameToIdCache;
-        }
-        synchronized (this) {
-            if (labelNameToIdCache != null) {
-                return labelNameToIdCache;
-            }
-            labelNameToIdCache = Collections.unmodifiableMap(fetchLabelMap(userId));
-            return labelNameToIdCache;
-        }
     }
 
     private Map<String, String> fetchLabelMap(String userId) throws Exception {

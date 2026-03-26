@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GoogleMailUpdateMessageLabelsDataTypeTransformerTest extends CamelTestSupport {
@@ -54,6 +55,7 @@ class GoogleMailUpdateMessageLabelsDataTypeTransformerTest extends CamelTestSupp
             """;
 
     private GoogleMailUpdateMessageLabelsDataTypeTransformer transformer;
+    private MockGoogleMailClientFactory mockClientFactory;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -64,9 +66,11 @@ class GoogleMailUpdateMessageLabelsDataTypeTransformerTest extends CamelTestSupp
         configuration.setClientSecret("mock-client-secret");
         configuration.setApplicationName("mock");
 
+        mockClientFactory = new MockGoogleMailClientFactory(LABELS_RESPONSE);
+
         final GoogleMailComponent component = new GoogleMailComponent(context);
         component.setConfiguration(configuration);
-        component.setClientFactory(new MockGoogleMailClientFactory(LABELS_RESPONSE));
+        component.setClientFactory(mockClientFactory);
 
         context.addComponent("google-mail", component);
 
@@ -133,6 +137,19 @@ class GoogleMailUpdateMessageLabelsDataTypeTransformerTest extends CamelTestSupp
     }
 
     @Test
+    void testOnlyRemoveLabels() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setVariable("removeLabels", List.of("INBOX"));
+
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        ModifyMessageRequest request = exchange.getMessage().getBody(ModifyMessageRequest.class);
+        assertNotNull(request);
+        assertNull(request.getAddLabelIds());
+        assertEquals(List.of("INBOX"), request.getRemoveLabelIds());
+    }
+
+    @Test
     void testNoLabelsThrowsException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -151,6 +168,8 @@ class GoogleMailUpdateMessageLabelsDataTypeTransformerTest extends CamelTestSupp
 
     @Test
     void testExplicitUserId() throws Exception {
+        int urlCountBefore = mockClientFactory.getRequestUrls().size();
+
         Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setHeader("CamelGoogleMail.userId", "user@example.com");
         exchange.setVariable("addLabels", List.of("Work"));
@@ -160,6 +179,12 @@ class GoogleMailUpdateMessageLabelsDataTypeTransformerTest extends CamelTestSupp
         ModifyMessageRequest request = exchange.getMessage().getBody(ModifyMessageRequest.class);
         assertNotNull(request);
         assertEquals(List.of("Label_789"), request.getAddLabelIds());
+
+        // Verify the userId was forwarded to the Gmail API
+        List<String> newUrls = mockClientFactory.getRequestUrls().subList(urlCountBefore,
+                mockClientFactory.getRequestUrls().size());
+        assertTrue(newUrls.stream().anyMatch(url -> url.contains("/users/user@example.com/")),
+                "Expected Gmail API call with userId 'user@example.com', but URLs were: " + newUrls);
     }
 
     @Test
@@ -225,5 +250,24 @@ class GoogleMailUpdateMessageLabelsDataTypeTransformerTest extends CamelTestSupp
         ModifyMessageRequest request = received.getMessage().getBody(ModifyMessageRequest.class);
         assertNotNull(request);
         assertEquals(List.of("Label_789"), request.getAddLabelIds());
+    }
+
+    @Test
+    void testOnlyRemoveLabelsViaRoute() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.reset();
+        mock.expectedMessageCount(1);
+
+        template.send("direct:input", exchange -> {
+            exchange.setVariable("removeLabels", List.of("INBOX"));
+        });
+
+        mock.assertIsSatisfied();
+
+        Exchange received = mock.getExchanges().get(0);
+        ModifyMessageRequest request = received.getMessage().getBody(ModifyMessageRequest.class);
+        assertNotNull(request);
+        assertNull(request.getAddLabelIds());
+        assertEquals(List.of("INBOX"), request.getRemoveLabelIds());
     }
 }

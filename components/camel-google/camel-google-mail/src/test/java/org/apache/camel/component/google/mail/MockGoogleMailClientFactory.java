@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.google.mail;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.testing.auth.oauth2.MockGoogleCredential;
@@ -36,11 +38,13 @@ public class MockGoogleMailClientFactory implements GoogleMailClientFactory {
     public static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     private final HttpTransport transport;
+    private final List<String> requestUrls = new ArrayList<>();
 
     public MockGoogleMailClientFactory(String jsonContent) {
         transport = new MockHttpTransport() {
             @Override
             public LowLevelHttpRequest buildRequest(String method, String url) {
+                requestUrls.add(url);
                 return new MockLowLevelHttpRequest() {
                     @Override
                     public LowLevelHttpResponse execute() {
@@ -52,6 +56,10 @@ public class MockGoogleMailClientFactory implements GoogleMailClientFactory {
                 };
             }
         };
+    }
+
+    public List<String> getRequestUrls() {
+        return requestUrls;
     }
 
     @Override
