@@ -383,11 +383,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-bulk</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-bean</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
@@ -429,6 +424,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-browse</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-bulk</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
       <dependency>
