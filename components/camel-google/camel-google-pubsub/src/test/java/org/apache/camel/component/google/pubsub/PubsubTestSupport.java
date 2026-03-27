@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 public class PubsubTestSupport extends CamelTestSupport {
     @RegisterExtension
-    public static GooglePubSubService service = GooglePubSubServiceFactory.createService();
+    public static GooglePubSubService service = GooglePubSubServiceFactory.createSingletonService();
 
     public static final String PROJECT_ID;
 
@@ -122,17 +122,21 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     public void createTopic(Topic topic) {
         TopicAdminClient topicAdminClient = createTopicAdminClient();
-
-        topicAdminClient.createTopic(topic);
-
+        try {
+            topicAdminClient.createTopic(topic);
+        } catch (com.google.api.gax.rpc.AlreadyExistsException e) {
+            // Topic already exists in shared emulator — safe to ignore
+        }
         topicAdminClient.shutdown();
     }
 
     public void createSubscription(Subscription subscription) {
         SubscriptionAdminClient subscriptionAdminClient = createSubscriptionAdminClient();
-
-        subscriptionAdminClient.createSubscription(subscription);
-
+        try {
+            subscriptionAdminClient.createSubscription(subscription);
+        } catch (com.google.api.gax.rpc.AlreadyExistsException e) {
+            // Subscription already exists in shared emulator — safe to ignore
+        }
         subscriptionAdminClient.shutdown();
     }
 

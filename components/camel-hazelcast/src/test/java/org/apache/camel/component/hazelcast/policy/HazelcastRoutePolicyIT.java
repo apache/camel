@@ -47,7 +47,7 @@ public class HazelcastRoutePolicyIT {
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastRoutePolicyIT.class);
 
     @RegisterExtension
-    public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
+    public static HazelcastService hazelcastService = HazelcastServiceFactory.createSingletonService();
 
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
     private static final List<String> RESULTS = new ArrayList<>();

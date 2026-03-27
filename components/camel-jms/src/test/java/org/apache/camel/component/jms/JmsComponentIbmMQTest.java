@@ -35,7 +35,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsComponentIbmMQTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static IbmMQService service = IbmMQServiceFactory.createService();
+    public static IbmMQService service = IbmMQServiceFactory.createSingletonService();
 
     @Test
     public void testSend() throws Exception {

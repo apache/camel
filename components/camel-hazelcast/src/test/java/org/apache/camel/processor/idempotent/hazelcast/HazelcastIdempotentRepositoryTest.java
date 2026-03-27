@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
+    public static HazelcastService hazelcastService = HazelcastServiceFactory.createSingletonService();
 
     @RegisterExtension
     public static TestEntityNameGenerator nameGenerator = new TestEntityNameGenerator();

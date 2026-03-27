@@ -60,7 +60,7 @@ public abstract class JBangTestSupport {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @RegisterExtension
-    protected static CliService containerService = CliServiceFactory.createService();
+    protected static CliService containerService = CliServiceFactory.createSingletonService();
 
     private static final String DATA_FOLDER = System.getProperty(CliProperties.DATA_FOLDER);
 

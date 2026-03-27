@@ -37,7 +37,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public abstract class BaseExclusiveKafkaTestSupport implements ConfigurableRoute {
     @Order(1)
     @RegisterExtension
-    protected static KafkaService service = KafkaServiceFactory.createService();
+    protected static KafkaService service = KafkaServiceFactory.createSingletonService();
 
     @Order(2)
     @RegisterExtension
