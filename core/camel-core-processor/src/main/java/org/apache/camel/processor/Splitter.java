@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
@@ -61,6 +62,7 @@ public class Splitter extends MulticastProcessor {
     private static final String SPLIT_FAILURE_TRACKER = "CamelSplitFailureTracker";
     private static final String SPLIT_WATERMARK_OFFSET = "CamelSplitWatermarkOffset";
     private static final String SPLIT_WATERMARK_COUNT = "CamelSplitWatermarkCount";
+    private static final String SPLIT_WATERMARK_LATEST = "CamelSplitWatermarkLatest";
     private final Expression expression;
     private final String delimiter;
     private int group;
@@ -152,6 +154,10 @@ public class Splitter extends MulticastProcessor {
             if (currentWatermark != null) {
                 exchange.setProperty(Exchange.SPLIT_WATERMARK, currentWatermark);
             }
+            // pre-initialize AtomicReference for value-based watermark tracking (thread-safe)
+            if (watermarkExpression != null) {
+                exchange.setProperty(SPLIT_WATERMARK_LATEST, new AtomicReference<String>());
+            }
         }
 
         // wrap callback to build SplitResult and/or update watermark after all items are processed
@@ -169,6 +175,17 @@ public class Splitter extends MulticastProcessor {
                 : callback;
 
         return super.process(exchange, wrappedCallback);
+    }
+
+    @Override
+    protected ProcessorExchangePair createProcessorExchangePair(
+            int index, Processor processor, Exchange exchange, Route route) {
+        ProcessorExchangePair pair = super.createProcessorExchangePair(index, processor, exchange, route);
+        // wrap to evaluate watermark expression on each completed sub-exchange
+        if (watermarkExpression != null) {
+            return new WatermarkProcessorExchangePair(pair, exchange);
+        }
+        return pair;
     }
 
     @Override
@@ -494,6 +511,63 @@ public class Splitter extends MulticastProcessor {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    /**
+     * Wraps a {@link ProcessorExchangePair} to evaluate the watermark expression on each completed sub-exchange.
+     */
+    private final class WatermarkProcessorExchangePair implements ProcessorExchangePair {
+        private final ProcessorExchangePair delegate;
+        private final Exchange original;
+
+        WatermarkProcessorExchangePair(ProcessorExchangePair delegate, Exchange original) {
+            this.delegate = delegate;
+            this.original = original;
+        }
+
+        @Override
+        public int getIndex() {
+            return delegate.getIndex();
+        }
+
+        @Override
+        public Exchange getExchange() {
+            return delegate.getExchange();
+        }
+
+        @Override
+        public org.apache.camel.Producer getProducer() {
+            return delegate.getProducer();
+        }
+
+        @Override
+        public Processor getProcessor() {
+            return delegate.getProcessor();
+        }
+
+        @Override
+        public void begin() {
+            delegate.begin();
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void done() {
+            delegate.done();
+            // evaluate watermark expression on completed sub-exchange (only if no exception)
+            Exchange subExchange = delegate.getExchange();
+            if (subExchange.getException() == null) {
+                String value = watermarkExpression.evaluate(subExchange, String.class);
+                if (value != null) {
+                    // AtomicReference is pre-initialized in process() — safe for parallel use
+                    AtomicReference<String> latestRef
+                            = (AtomicReference<String>) original.getProperty(SPLIT_WATERMARK_LATEST);
+                    latestRef.set(value);
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     private void updateWatermark(Exchange exchange) {
         // don't update watermark if processing was aborted (allows retry)
         if (exchange.getException() != null) {
@@ -501,10 +575,13 @@ public class Splitter extends MulticastProcessor {
         }
 
         if (watermarkExpression != null) {
-            // value-based: evaluate expression on the exchange after split completion
-            String newValue = watermarkExpression.evaluate(exchange, String.class);
-            if (newValue != null) {
-                watermarkStore.put(watermarkKey, newValue);
+            // value-based: use the latest value tracked per-item during processing
+            AtomicReference<String> latestRef = exchange.getProperty(SPLIT_WATERMARK_LATEST, AtomicReference.class);
+            if (latestRef != null) {
+                String newValue = latestRef.get();
+                if (newValue != null) {
+                    watermarkStore.put(watermarkKey, newValue);
+                }
             }
         } else {
             // index-based: compute absolute last index and store it
@@ -519,6 +596,7 @@ public class Splitter extends MulticastProcessor {
         // clean up internal properties
         exchange.removeProperty(SPLIT_WATERMARK_OFFSET);
         exchange.removeProperty(SPLIT_WATERMARK_COUNT);
+        exchange.removeProperty(SPLIT_WATERMARK_LATEST);
     }
 
     private void buildSplitResult(Exchange exchange) {
