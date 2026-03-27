@@ -145,6 +145,8 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
+                // apply PQC named groups for the fallback path
+                SSLEngineFactory.applyPqcNamedGroups(engine);
             }
             return new SslHandler(engine);
         }

@@ -138,6 +138,8 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
             if (configuration.getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(configuration.getEnabledProtocols().split(","));
+                // apply PQC named groups for the fallback path
+                SSLEngineFactory.applyPqcNamedGroups(engine);
             }
             return new SslHandler(engine);
         }
