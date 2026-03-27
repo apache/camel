@@ -78,6 +78,27 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         }
         answer.setSynchronous(isSynchronous);
         answer.setDisabled(isDisabled(camelContext, definition));
+
+        int group = parseInt(definition.getGroup(), 0);
+        if (group > 0) {
+            answer.setGroup(group);
+        }
+
+        String etStr = parseString(definition.getErrorThreshold());
+        double errorThreshold = etStr != null ? Double.parseDouble(etStr) : 0;
+        int maxFailedRecords = parseInt(definition.getMaxFailedRecords(), 0);
+        boolean hasErrorThreshold = errorThreshold > 0 || maxFailedRecords > 0;
+        if (hasErrorThreshold && isStopOnException) {
+            throw new IllegalArgumentException(
+                    "Cannot use both stopOnException and errorThreshold/maxFailedRecords on the Splitter EIP");
+        }
+        if (errorThreshold > 0) {
+            answer.setErrorThreshold(errorThreshold);
+        }
+        if (maxFailedRecords > 0) {
+            answer.setMaxFailedRecords(maxFailedRecords);
+        }
+
         return answer;
     }
 
