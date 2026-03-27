@@ -116,9 +116,11 @@ public final class ContainerEnvironmentUtil {
             if (annotation.serviceImplementationAlias().length > 0) {
                 name += "-" + annotation.serviceImplementationAlias()[0];
             }
-            // Append PID for cross-JVM uniqueness (parallel builds via mvnd)
-            // and instance counter for within-JVM uniqueness (parallel test classes)
-            name += "-" + ProcessHandle.current().pid() + "-" + INSTANCE_COUNTER.incrementAndGet();
+            // In fixed port mode (camel infra run), use clean names for docker exec usability
+            // Otherwise, append PID + counter for cross-JVM and within-JVM uniqueness
+            if (!Boolean.parseBoolean(System.getProperty(INFRA_FIXED_PORT_PROPERTY, "false"))) {
+                name += "-" + ProcessHandle.current().pid() + "-" + INSTANCE_COUNTER.incrementAndGet();
+            }
         } else {
             LOG.warn("InfraService annotation not Found to determine container name alias.");
         }
