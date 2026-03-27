@@ -33,6 +33,7 @@ public class RocketMQNameserverContainer extends GenericContainer<RocketMQNamese
         withTmpFs(Collections.singletonMap("/home/rocketmq/logs", "rw"));
         withCommand("sh", "mqnamesrv");
 
+
         waitingFor(Wait.forListeningPort());
     }
 }
