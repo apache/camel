@@ -41,7 +41,8 @@ public final class SSLEngineFactory {
 
     private static final String SSL_PROTOCOL = "TLSv1.3";
 
-    // PQC named group constants — mirrored from SSLContextParameters to keep this class self-contained
+    // PQC named group constants — keep in sync with SSLContextParameters.PQC_NAMED_GROUP
+    // and SSLContextParameters.PQC_PREFERRED_NAMED_GROUPS
     private static final String PQC_NAMED_GROUP = "X25519MLKEM768";
     private static final List<String> PQC_PREFERRED_NAMED_GROUPS
             = List.of("X25519MLKEM768", "x25519", "secp256r1", "secp384r1");
@@ -150,16 +151,30 @@ public final class SSLEngineFactory {
         }
     }
 
+    /**
+     * @deprecated Unused — all initializer factories create SSLEngines directly via
+     *             {@code sslContext.createSSLEngine()}. Use {@link #applyPqcNamedGroups(SSLEngine)} on engines created
+     *             directly from the SSLContext instead.
+     */
+    @Deprecated(since = "4.19.0")
     public SSLEngine createServerSSLEngine(SSLContext sslContext) {
         SSLEngine serverEngine = sslContext.createSSLEngine();
         serverEngine.setUseClientMode(false);
         serverEngine.setNeedClientAuth(true);
+        applyPqcNamedGroups(serverEngine);
         return serverEngine;
     }
 
+    /**
+     * @deprecated Unused — all initializer factories create SSLEngines directly via
+     *             {@code sslContext.createSSLEngine()}. Use {@link #applyPqcNamedGroups(SSLEngine)} on engines created
+     *             directly from the SSLContext instead.
+     */
+    @Deprecated(since = "4.19.0")
     public SSLEngine createClientSSLEngine(SSLContext sslContext) {
         SSLEngine clientEngine = sslContext.createSSLEngine();
         clientEngine.setUseClientMode(true);
+        applyPqcNamedGroups(clientEngine);
         return clientEngine;
     }
 

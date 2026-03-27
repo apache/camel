@@ -17,6 +17,8 @@
 package org.apache.camel.component.netty;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SSLEngineFactoryTest {
 
@@ -43,16 +46,18 @@ public class SSLEngineFactoryTest {
             Method getNamedGroups = SSLParameters.class.getMethod("getNamedGroups");
             String[] groups = (String[]) getNamedGroups.invoke(engine.getSSLParameters());
             if (groups != null) {
-                boolean pqcAvailable = false;
-                for (String group : groups) {
-                    if ("X25519MLKEM768".equals(group)) {
-                        pqcAvailable = true;
-                        break;
-                    }
-                }
+                List<String> groupList = Arrays.asList(groups);
+                boolean pqcAvailable = groupList.contains("X25519MLKEM768");
                 if (pqcAvailable) {
+                    // Verify preferred ordering: X25519MLKEM768, x25519, secp256r1, secp384r1
                     assertEquals("X25519MLKEM768", groups[0],
                             "PQC named group should be first when available");
+                    int x25519Idx = groupList.indexOf("x25519");
+                    int secp256r1Idx = groupList.indexOf("secp256r1");
+                    if (x25519Idx >= 0 && secp256r1Idx >= 0) {
+                        assertTrue(x25519Idx < secp256r1Idx,
+                                "x25519 should appear before secp256r1 in preferred ordering");
+                    }
                 }
             }
         } catch (NoSuchMethodException e) {
