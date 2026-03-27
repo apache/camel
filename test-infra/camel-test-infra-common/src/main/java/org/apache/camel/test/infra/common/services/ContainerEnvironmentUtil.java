@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.dockerjava.api.model.Version;
 import com.github.dockerjava.api.model.VersionComponent;
@@ -35,6 +36,7 @@ public final class ContainerEnvironmentUtil {
     public static final String INFRA_PORT_PROPERTY = "camel.infra.port";
     public static final String INFRA_FIXED_PORT_PROPERTY = "camel.infra.fixedPort";
     private static final Logger LOG = LoggerFactory.getLogger(ContainerEnvironmentUtil.class);
+    private static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger(0);
 
     private static boolean dockerAvailable;
     private static boolean environmentCheckState;
@@ -114,9 +116,9 @@ public final class ContainerEnvironmentUtil {
             if (annotation.serviceImplementationAlias().length > 0) {
                 name += "-" + annotation.serviceImplementationAlias()[0];
             }
-            // Append PID to avoid Docker container name conflicts when multiple
-            // modules run tests in separate JVMs (e.g., via mvnd parallel builds)
-            name += "-" + ProcessHandle.current().pid();
+            // Append PID for cross-JVM uniqueness (parallel builds via mvnd)
+            // and instance counter for within-JVM uniqueness (parallel test classes)
+            name += "-" + ProcessHandle.current().pid() + "-" + INSTANCE_COUNTER.incrementAndGet();
         } else {
             LOG.warn("InfraService annotation not Found to determine container name alias.");
         }
