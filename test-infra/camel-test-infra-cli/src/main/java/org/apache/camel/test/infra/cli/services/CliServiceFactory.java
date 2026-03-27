@@ -16,9 +16,79 @@
  */
 package org.apache.camel.test.infra.cli.services;
 
+import java.util.stream.Stream;
+
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class CliServiceFactory {
+
+    private static class SingletonCliService extends SingletonService<CliService> implements CliService {
+        public SingletonCliService(CliService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String execute(String command) {
+            return getService().execute(command);
+        }
+
+        @Override
+        public String executeBackground(String command) {
+            return getService().executeBackground(command);
+        }
+
+        @Override
+        public String executeGenericCommand(String command) {
+            return getService().executeGenericCommand(command);
+        }
+
+        @Override
+        public void copyFileInternally(String source, String destination) {
+            getService().copyFileInternally(source, destination);
+        }
+
+        @Override
+        public String getMountPoint() {
+            return getService().getMountPoint();
+        }
+
+        @Override
+        public String getContainerLogs() {
+            return getService().getContainerLogs();
+        }
+
+        @Override
+        public int getDevConsolePort() {
+            return getService().getDevConsolePort();
+        }
+
+        @Override
+        public Stream<String> listDirectory(String directoryPath) {
+            return getService().listDirectory(directoryPath);
+        }
+
+        @Override
+        public String id() {
+            return getService().id();
+        }
+
+        @Override
+        public String version() {
+            return getService().version();
+        }
+
+        @Override
+        public int getSshPort() {
+            return getService().getSshPort();
+        }
+
+        @Override
+        public String getSshPassword() {
+            return getService().getSshPassword();
+        }
+    }
+
     private CliServiceFactory() {
 
     }
@@ -32,5 +102,23 @@ public final class CliServiceFactory {
                 .addLocalMapping(CliLocalContainerService::new)
                 .addMapping("local-camel-cli-process", CliLocalProcessService::new)
                 .build();
+    }
+
+    public static CliService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final CliService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<CliService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonCliService(new CliLocalContainerService(), CliLocalContainerService.CONTAINER_NAME))
+                    .addMapping("local-camel-cli-process",
+                            () -> new SingletonCliService(
+                                    new CliLocalProcessService(),
+                                    CliLocalContainerService.CONTAINER_NAME));
+            INSTANCE = instance.build();
+        }
     }
 }
