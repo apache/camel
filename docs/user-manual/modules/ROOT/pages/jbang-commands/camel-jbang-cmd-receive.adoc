@@ -28,7 +28,7 @@ camel cmd receive [options]
 | `--logging-color` | Use colored logging | true | boolean
 | `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys |  | boolean
 | `--only-body` | Show only message body in received messages | false | boolean
-| `--output` | Output format (text or json) |  | String
+| `--output` | Output format (auto, true, false) |  | String
 | `--prefix` | Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off. | auto | String
 | `--pretty` | Pretty print message body when using JSon or XML format |  | boolean
 | `--prop,--property` | Additional properties; override existing (only applicable when NOT using an existing running Camel) |  | String
