@@ -97,7 +97,7 @@ class SplitterWatermarkTest extends ContextTestSupport {
         // no previous watermark, so SPLIT_WATERMARK should not be set
         assertNull(result.getProperty(Exchange.SPLIT_WATERMARK));
 
-        // watermark expression evaluates ${body} on the aggregated exchange (last item)
+        // watermark expression evaluated per-item: last successful item's body is stored
         assertEquals("2024-01-03", store.get("dateJob"));
     }
 
@@ -141,8 +141,6 @@ class SplitterWatermarkTest extends ContextTestSupport {
 
                 from("direct:value")
                         .split(body())
-                        // use aggregation strategy that keeps the last exchange, so ${body} reflects the last item
-                        .aggregationStrategy((oldExchange, newExchange) -> newExchange)
                         .watermarkStore(store, "dateJob")
                         .watermarkExpression("${body}")
                         .to("mock:split3");
