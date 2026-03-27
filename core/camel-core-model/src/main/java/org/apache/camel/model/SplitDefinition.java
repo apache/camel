@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -44,6 +45,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     private AggregationStrategy aggregationStrategyBean;
     @XmlTransient
     private Processor onPrepareProcessor;
+    @XmlTransient
+    @SuppressWarnings("rawtypes")
+    private Map watermarkStoreBean;
 
     @XmlAttribute
     @Metadata(defaultValue = ",")
@@ -94,6 +98,15 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String maxFailedRecords;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.util.Map")
+    private String watermarkStore;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String watermarkKey;
+    @XmlAttribute
+    @Metadata(label = "advanced")
+    private String watermarkExpression;
 
     public SplitDefinition() {
     }
@@ -119,6 +132,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.group = source.group;
         this.errorThreshold = source.errorThreshold;
         this.maxFailedRecords = source.maxFailedRecords;
+        this.watermarkStoreBean = source.watermarkStoreBean;
+        this.watermarkStore = source.watermarkStore;
+        this.watermarkKey = source.watermarkKey;
+        this.watermarkExpression = source.watermarkExpression;
     }
 
     public SplitDefinition(Expression expression) {
@@ -661,6 +678,62 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return this;
     }
 
+    /**
+     * Sets a watermark store and key for resume-from-last-position support. When configured, the Splitter tracks
+     * progress and can skip already-processed items on subsequent runs.
+     * <p/>
+     * With index-based watermarking (no {@code watermarkExpression}), items up to the stored index are automatically
+     * skipped. With value-based watermarking (with {@code watermarkExpression}), the stored value is exposed as an
+     * exchange property ({@link org.apache.camel.Exchange#SPLIT_WATERMARK}) for upstream filtering.
+     * <p/>
+     * The watermark is only updated on successful completion — aborted runs preserve the previous watermark to allow
+     * retry.
+     *
+     * @param  store the Map to store watermark state in
+     * @param  key   the key to use in the store
+     * @return       the builder
+     */
+    @SuppressWarnings("rawtypes")
+    public SplitDefinition watermarkStore(Map store, String key) {
+        this.watermarkStoreBean = store;
+        setWatermarkKey(key);
+        return this;
+    }
+
+    /**
+     * Sets a reference to a watermark store (a {@code Map<String, String>}) in the registry.
+     *
+     * @param  watermarkStore reference to the store bean
+     * @return                the builder
+     */
+    public SplitDefinition watermarkStore(String watermarkStore) {
+        setWatermarkStore(watermarkStore);
+        return this;
+    }
+
+    /**
+     * Sets the key to use in the watermark store.
+     *
+     * @param  watermarkKey the key
+     * @return              the builder
+     */
+    public SplitDefinition watermarkKey(String watermarkKey) {
+        setWatermarkKey(watermarkKey);
+        return this;
+    }
+
+    /**
+     * Sets a Simple expression to evaluate on the exchange after split completion to determine the new watermark value.
+     * When set, enables value-based watermarking instead of index-based.
+     *
+     * @param  watermarkExpression the Simple expression
+     * @return                     the builder
+     */
+    public SplitDefinition watermarkExpression(String watermarkExpression) {
+        setWatermarkExpression(watermarkExpression);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -851,5 +924,43 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      */
     public void setMaxFailedRecords(String maxFailedRecords) {
         this.maxFailedRecords = maxFailedRecords;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public Map getWatermarkStoreBean() {
+        return watermarkStoreBean;
+    }
+
+    public String getWatermarkStore() {
+        return watermarkStore;
+    }
+
+    /**
+     * Sets a reference to a watermark store (a {@code Map<String, String>}) in the registry.
+     */
+    public void setWatermarkStore(String watermarkStore) {
+        this.watermarkStore = watermarkStore;
+    }
+
+    public String getWatermarkKey() {
+        return watermarkKey;
+    }
+
+    /**
+     * Sets the key to use in the watermark store.
+     */
+    public void setWatermarkKey(String watermarkKey) {
+        this.watermarkKey = watermarkKey;
+    }
+
+    public String getWatermarkExpression() {
+        return watermarkExpression;
+    }
+
+    /**
+     * Sets a Simple expression to evaluate on the exchange after split completion to determine the new watermark value.
+     */
+    public void setWatermarkExpression(String watermarkExpression) {
+        this.watermarkExpression = watermarkExpression;
     }
 }

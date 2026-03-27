@@ -16848,7 +16848,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "stopOnException", type = "boolean", defaultValue = "false", description = "Will now stop further processing if an exception or failure occurred during processing of an org.apache.camel.Exchange and the caused exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by the error handler (such as using onException). In all situations the splitter will stop further processing. This is the same behavior as in pipeline, which is used by the routing engine. The default behavior is to not stop but continue processing till the end", displayName = "Stop On Exception"),
                     @YamlProperty(name = "streaming", type = "boolean", defaultValue = "false", description = "When in streaming mode, then the splitter splits the original message on-demand, and each split message is processed one by one. This reduces memory usage as the splitter do not split all the messages first, but then we do not know the total size, and therefore the org.apache.camel.Exchange#SPLIT_SIZE is empty. In non-streaming mode (default) the splitter will split each message first, to know the total size, and then process each message one by one. This requires to keep all the split messages in memory and therefore requires more memory. The total size is provided in the org.apache.camel.Exchange#SPLIT_SIZE header. The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies out-of-order, e.g. in the order they come back. If disabled, Camel will process replies in the same order as the messages was split.", displayName = "Streaming"),
                     @YamlProperty(name = "synchronous", type = "boolean", defaultValue = "false", description = "Sets whether synchronous processing should be strictly used. When enabled then the same thread is used to continue routing after the split is complete, even if parallel processing is enabled.", displayName = "Synchronous"),
-                    @YamlProperty(name = "timeout", type = "string", defaultValue = "0", description = "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.", displayName = "Timeout")
+                    @YamlProperty(name = "timeout", type = "string", defaultValue = "0", description = "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.", displayName = "Timeout"),
+                    @YamlProperty(name = "watermarkExpression", type = "string"),
+                    @YamlProperty(name = "watermarkKey", type = "string"),
+                    @YamlProperty(name = "watermarkStore", type = "string")
             }
     )
     public static class SplitDefinitionDeserializer extends YamlDeserializerBase<SplitDefinition> {
@@ -16954,6 +16957,21 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "timeout": {
                     String val = asText(node);
                     target.setTimeout(val);
+                    break;
+                }
+                case "watermarkExpression": {
+                    String val = asText(node);
+                    target.setWatermarkExpression(val);
+                    break;
+                }
+                case "watermarkKey": {
+                    String val = asText(node);
+                    target.setWatermarkKey(val);
+                    break;
+                }
+                case "watermarkStore": {
+                    String val = asText(node);
+                    target.setWatermarkStore(val);
                     break;
                 }
                 case "id": {
