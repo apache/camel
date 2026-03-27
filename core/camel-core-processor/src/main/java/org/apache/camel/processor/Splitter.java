@@ -59,11 +59,16 @@ public class Splitter extends MulticastProcessor {
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private static final String SINGLE_DELIMITER_MARKER = "single";
     private static final String SPLIT_FAILURE_TRACKER = "CamelSplitFailureTracker";
+    private static final String SPLIT_WATERMARK_OFFSET = "CamelSplitWatermarkOffset";
+    private static final String SPLIT_WATERMARK_COUNT = "CamelSplitWatermarkCount";
     private final Expression expression;
     private final String delimiter;
     private int group;
     private double errorThreshold;
     private int maxFailedRecords;
+    private Map<String, String> watermarkStore;
+    private String watermarkKey;
+    private Expression watermarkExpression;
 
     public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
                     AggregationStrategy aggregationStrategy, boolean parallelProcessing,
@@ -104,6 +109,9 @@ public class Splitter extends MulticastProcessor {
     protected void doInit() throws Exception {
         super.doInit();
         expression.init(getCamelContext());
+        if (watermarkExpression != null) {
+            watermarkExpression.init(getCamelContext());
+        }
     }
 
     @Override
@@ -137,10 +145,25 @@ public class Splitter extends MulticastProcessor {
             exchange.setProperty(SPLIT_FAILURE_TRACKER, new SplitFailureTracker());
         }
 
-        // wrap callback to build SplitResult after all items are processed
-        AsyncCallback wrappedCallback = hasErrorThreshold
+        // set current watermark value as exchange property before processing
+        boolean hasWatermark = watermarkStore != null && watermarkKey != null;
+        if (hasWatermark) {
+            String currentWatermark = watermarkStore.get(watermarkKey);
+            if (currentWatermark != null) {
+                exchange.setProperty(Exchange.SPLIT_WATERMARK, currentWatermark);
+            }
+        }
+
+        // wrap callback to build SplitResult and/or update watermark after all items are processed
+        boolean needsWrapping = hasErrorThreshold || hasWatermark;
+        AsyncCallback wrappedCallback = needsWrapping
                 ? doneSync -> {
-                    buildSplitResult(exchange);
+                    if (hasErrorThreshold) {
+                        buildSplitResult(exchange);
+                    }
+                    if (hasWatermark) {
+                        updateWatermark(exchange);
+                    }
                     callback.done(doneSync);
                 }
                 : callback;
@@ -191,6 +214,7 @@ public class Splitter extends MulticastProcessor {
         private Exchange copy;
         private final Route route;
         private final Exchange original;
+        private final int watermarkOffset;
 
         private SplitterIterable(Exchange exchange, Object value) {
             this.original = exchange;
@@ -205,6 +229,24 @@ public class Splitter extends MulticastProcessor {
             } else {
                 rawIterator = ObjectHelper.createIterator(value, delimiter);
             }
+
+            // index-based watermarking: skip items up to the stored watermark index
+            int skipCount = 0;
+            if (watermarkStore != null && watermarkKey != null && watermarkExpression == null) {
+                String storedIndex = watermarkStore.get(watermarkKey);
+                if (storedIndex != null) {
+                    int skipTo = Integer.parseInt(storedIndex);
+                    while (rawIterator.hasNext() && skipCount <= skipTo) {
+                        rawIterator.next();
+                        skipCount++;
+                    }
+                }
+            }
+            this.watermarkOffset = skipCount;
+            if (skipCount > 0) {
+                exchange.setProperty(SPLIT_WATERMARK_OFFSET, skipCount);
+            }
+
             // wrap with GroupIterator if group > 0 to chunk items into List batches
             this.iterator = group > 0 ? new GroupIterator(rawIterator, group) : rawIterator;
 
@@ -230,6 +272,10 @@ public class Splitter extends MulticastProcessor {
                     if (!answer) {
                         // we are now closed
                         closed = true;
+                        // store item count for watermark tracking
+                        if (watermarkStore != null && watermarkKey != null && watermarkExpression == null) {
+                            original.setProperty(SPLIT_WATERMARK_COUNT, index);
+                        }
                         // nothing more so we need to close the expression value in case it needs to be
                         try {
                             close();
@@ -367,6 +413,30 @@ public class Splitter extends MulticastProcessor {
         this.maxFailedRecords = maxFailedRecords;
     }
 
+    public Map<String, String> getWatermarkStore() {
+        return watermarkStore;
+    }
+
+    public void setWatermarkStore(Map<String, String> watermarkStore) {
+        this.watermarkStore = watermarkStore;
+    }
+
+    public String getWatermarkKey() {
+        return watermarkKey;
+    }
+
+    public void setWatermarkKey(String watermarkKey) {
+        this.watermarkKey = watermarkKey;
+    }
+
+    public Expression getWatermarkExpression() {
+        return watermarkExpression;
+    }
+
+    public void setWatermarkExpression(Expression watermarkExpression) {
+        this.watermarkExpression = watermarkExpression;
+    }
+
     @Override
     protected boolean shouldContinueOnFailure(Exchange subExchange, Exchange original, int index) {
         SplitFailureTracker tracker = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
@@ -422,6 +492,33 @@ public class Splitter extends MulticastProcessor {
         List<SplitFailure> getFailures() {
             return Collections.unmodifiableList(failures);
         }
+    }
+
+    private void updateWatermark(Exchange exchange) {
+        // don't update watermark if processing was aborted (allows retry)
+        if (exchange.getException() != null) {
+            return;
+        }
+
+        if (watermarkExpression != null) {
+            // value-based: evaluate expression on the exchange after split completion
+            String newValue = watermarkExpression.evaluate(exchange, String.class);
+            if (newValue != null) {
+                watermarkStore.put(watermarkKey, newValue);
+            }
+        } else {
+            // index-based: compute absolute last index and store it
+            int offset = exchange.getProperty(SPLIT_WATERMARK_OFFSET, 0, Integer.class);
+            Integer count = exchange.getProperty(SPLIT_WATERMARK_COUNT, Integer.class);
+            if (count != null && count > 0) {
+                int lastAbsoluteIndex = offset + count - 1;
+                watermarkStore.put(watermarkKey, String.valueOf(lastAbsoluteIndex));
+            }
+        }
+
+        // clean up internal properties
+        exchange.removeProperty(SPLIT_WATERMARK_OFFSET);
+        exchange.removeProperty(SPLIT_WATERMARK_COUNT);
     }
 
     private void buildSplitResult(Exchange exchange) {
