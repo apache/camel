@@ -20,15 +20,18 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.ssl.SslHandshakeCompletionEvent;
+import org.apache.camel.component.netty.NettyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Closes the channel when an SSL/TLS handshake failure is detected.
+ * Ensures channel closure on SSL/TLS handshake failure as a defense-in-depth safety net, complementing Netty's built-in
+ * behavior.
  * <p>
- * This handler replaces the removed Netty 3.x {@code SslHandler.setCloseOnSSLException(true)} functionality. It listens
- * for {@link SslHandshakeCompletionEvent} and closes the channel on failure, preventing failed SSL connections from
- * remaining open.
+ * Netty 4.x's {@code SslHandler} already closes the channel on handshake failure natively. This handler provides an
+ * explicit safety net by listening for {@link SslHandshakeCompletionEvent} and closing the channel on failure,
+ * replacing the removed Netty 3.x {@code SslHandler.setCloseOnSSLException(true)} API that was commented out since the
+ * Netty 4 migration (CAMEL-6555).
  */
 @ChannelHandler.Sharable
 public class SslHandshakeFailureHandler extends ChannelInboundHandlerAdapter {
@@ -43,7 +46,7 @@ public class SslHandshakeFailureHandler extends ChannelInboundHandlerAdapter {
             if (!handshakeEvent.isSuccess()) {
                 LOG.debug("SSL/TLS handshake failed on channel {}, closing: {}",
                         ctx.channel(), handshakeEvent.cause().getMessage());
-                ctx.close();
+                NettyHelper.close(ctx.channel());
             }
         }
         super.userEventTriggered(ctx, evt);
