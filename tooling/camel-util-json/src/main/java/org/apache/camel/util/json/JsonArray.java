@@ -112,9 +112,9 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
         } else if (returnable instanceof Number) {
             /* A number can be used to construct a BigDecimal. */
             returnable = new BigDecimal(returnable.toString());
-        } else if (returnable instanceof String) {
+        } else if (returnable instanceof String str) {
             /* A number can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return (BigDecimal) returnable;
     }
@@ -129,8 +129,8 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
      */
     public Boolean getBoolean(final int index) {
         Object returnable = this.get(index);
-        if (returnable instanceof String) {
-            returnable = Boolean.valueOf((String) returnable);
+        if (returnable instanceof String str) {
+            returnable = Boolean.valueOf(str);
         }
         return (Boolean) returnable;
     }
@@ -151,9 +151,9 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).byteValue();
     }
@@ -194,9 +194,9 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).doubleValue();
     }
@@ -288,9 +288,9 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).floatValue();
     }
@@ -311,9 +311,9 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).intValue();
     }
@@ -334,9 +334,9 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).longValue();
     }
@@ -377,9 +377,9 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).shortValue();
     }
