@@ -115,7 +115,7 @@ public final class ContainerEnvironmentUtil {
                 name += "-" + annotation.serviceImplementationAlias()[0];
             }
             // Append PID to avoid Docker container name conflicts when multiple
-            // modules run tests in parallel (e.g., via mvnd with multiple threads)
+            // modules run tests in separate JVMs (e.g., via mvnd parallel builds)
             name += "-" + ProcessHandle.current().pid();
         } else {
             LOG.warn("InfraService annotation not Found to determine container name alias.");
