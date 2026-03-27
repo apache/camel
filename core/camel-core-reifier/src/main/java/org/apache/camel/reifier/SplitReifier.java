@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
 
@@ -97,6 +98,22 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         }
         if (maxFailedRecords > 0) {
             answer.setMaxFailedRecords(maxFailedRecords);
+        }
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> watermarkStore = definition.getWatermarkStoreBean();
+        if (watermarkStore == null && definition.getWatermarkStore() != null) {
+            watermarkStore = mandatoryLookup(definition.getWatermarkStore(), Map.class);
+        }
+        String watermarkKey = parseString(definition.getWatermarkKey());
+        if (watermarkStore != null && watermarkKey != null) {
+            answer.setWatermarkStore(watermarkStore);
+            answer.setWatermarkKey(watermarkKey);
+            String watermarkExprStr = parseString(definition.getWatermarkExpression());
+            if (watermarkExprStr != null) {
+                Expression watermarkExpr = camelContext.resolveLanguage("simple").createExpression(watermarkExprStr);
+                answer.setWatermarkExpression(watermarkExpr);
+            }
         }
 
         return answer;
