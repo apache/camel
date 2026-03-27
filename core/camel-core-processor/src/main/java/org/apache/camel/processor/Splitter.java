@@ -25,7 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
@@ -37,9 +39,11 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SplitResult;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -54,8 +58,12 @@ public class Splitter extends MulticastProcessor {
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private static final String SINGLE_DELIMITER_MARKER = "single";
+    private static final String SPLIT_FAILURE_TRACKER = "CamelSplitFailureTracker";
     private final Expression expression;
     private final String delimiter;
+    private int group;
+    private double errorThreshold;
+    private int maxFailedRecords;
 
     public Splitter(CamelContext camelContext, Route route, Expression expression, Processor destination,
                     AggregationStrategy aggregationStrategy, boolean parallelProcessing,
@@ -123,7 +131,21 @@ public class Splitter extends MulticastProcessor {
             setAggregationStrategyOnExchange(exchange, original);
         }
 
-        return super.process(exchange, callback);
+        // create failure tracker if error thresholds are configured
+        boolean hasErrorThreshold = errorThreshold > 0 || maxFailedRecords > 0;
+        if (hasErrorThreshold) {
+            exchange.setProperty(SPLIT_FAILURE_TRACKER, new SplitFailureTracker());
+        }
+
+        // wrap callback to build SplitResult after all items are processed
+        AsyncCallback wrappedCallback = hasErrorThreshold
+                ? doneSync -> {
+                    buildSplitResult(exchange);
+                    callback.done(doneSync);
+                }
+                : callback;
+
+        return super.process(exchange, wrappedCallback);
     }
 
     @Override
@@ -143,6 +165,14 @@ public class Splitter extends MulticastProcessor {
             // force any exceptions occurred during creation of exchange paris to be thrown
             // before returning the answer;
             throw exchange.getException();
+        }
+
+        // store total items count in tracker for SplitResult reporting
+        if (answer instanceof Collection<?> coll) {
+            SplitFailureTracker tracker = exchange.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+            if (tracker != null) {
+                tracker.setTotalItems(coll.size());
+            }
         }
 
         return answer;
@@ -166,14 +196,17 @@ public class Splitter extends MulticastProcessor {
             this.original = exchange;
             this.value = value;
 
+            Iterator<?> rawIterator;
             if (IGNORE_DELIMITER_MARKER.equalsIgnoreCase(delimiter)) {
-                this.iterator = ObjectHelper.createIterator(value, null);
+                rawIterator = ObjectHelper.createIterator(value, null);
             } else if (SINGLE_DELIMITER_MARKER.equalsIgnoreCase(delimiter)) {
                 // force single element
-                this.iterator = ObjectHelper.createIterator(List.of(value));
+                rawIterator = ObjectHelper.createIterator(List.of(value));
             } else {
-                this.iterator = ObjectHelper.createIterator(value, delimiter);
+                rawIterator = ObjectHelper.createIterator(value, delimiter);
             }
+            // wrap with GroupIterator if group > 0 to chunk items into List batches
+            this.iterator = group > 0 ? new GroupIterator(rawIterator, group) : rawIterator;
 
             this.copy = copyAndPrepareSubExchange(exchange);
             this.route = ExchangeHelper.getRoute(exchange);
@@ -308,6 +341,108 @@ public class Splitter extends MulticastProcessor {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public int getGroup() {
+        return group;
+    }
+
+    public void setGroup(int group) {
+        this.group = group;
+    }
+
+    public double getErrorThreshold() {
+        return errorThreshold;
+    }
+
+    public void setErrorThreshold(double errorThreshold) {
+        this.errorThreshold = errorThreshold;
+    }
+
+    public int getMaxFailedRecords() {
+        return maxFailedRecords;
+    }
+
+    public void setMaxFailedRecords(int maxFailedRecords) {
+        this.maxFailedRecords = maxFailedRecords;
+    }
+
+    @Override
+    protected boolean shouldContinueOnFailure(Exchange subExchange, Exchange original, int index) {
+        SplitFailureTracker tracker = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+        if (tracker == null) {
+            return super.shouldContinueOnFailure(subExchange, original, index);
+        }
+
+        // record the failure
+        tracker.recordFailure(index, subExchange.getException());
+
+        // check if we've exceeded the max failed records
+        if (maxFailedRecords > 0 && tracker.getFailureCount() >= maxFailedRecords) {
+            return false;
+        }
+        // check if we've exceeded the error ratio threshold
+        if (errorThreshold > 0) {
+            double ratio = (double) tracker.getFailureCount() / (index + 1);
+            if (ratio >= errorThreshold) {
+                return false;
+            }
+        }
+
+        // continue processing - clear the exception so aggregation proceeds normally
+        subExchange.setException(null);
+        return true;
+    }
+
+    static final class SplitFailureTracker {
+        private final AtomicInteger failureCount = new AtomicInteger();
+        private final AtomicInteger totalItems = new AtomicInteger();
+        private final CopyOnWriteArrayList<SplitFailure> failures = new CopyOnWriteArrayList<>();
+
+        record SplitFailure(int index, Exception exception) {
+        }
+
+        void recordFailure(int index, Exception exception) {
+            failureCount.incrementAndGet();
+            failures.add(new SplitFailure(index, exception));
+        }
+
+        void setTotalItems(int count) {
+            totalItems.set(count);
+        }
+
+        int getTotalItems() {
+            return totalItems.get();
+        }
+
+        int getFailureCount() {
+            return failureCount.get();
+        }
+
+        List<SplitFailure> getFailures() {
+            return Collections.unmodifiableList(failures);
+        }
+    }
+
+    private void buildSplitResult(Exchange exchange) {
+        SplitFailureTracker tracker = exchange.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+        if (tracker == null) {
+            return;
+        }
+
+        int totalItems = tracker.getTotalItems();
+        boolean aborted = exchange.getException() != null;
+
+        List<SplitResult.Failure> failures = new ArrayList<>();
+        for (SplitFailureTracker.SplitFailure f : tracker.getFailures()) {
+            failures.add(new SplitResult.Failure(f.index(), f.exception()));
+        }
+
+        SplitResult result = new SplitResult(totalItems, tracker.getFailureCount(), failures, aborted);
+        exchange.setProperty(ExchangePropertyKey.SPLIT_RESULT, result);
+
+        // remove internal tracker
+        exchange.removeProperty(SPLIT_FAILURE_TRACKER);
     }
 
     private Exchange copyAndPrepareSubExchange(Exchange exchange) {
