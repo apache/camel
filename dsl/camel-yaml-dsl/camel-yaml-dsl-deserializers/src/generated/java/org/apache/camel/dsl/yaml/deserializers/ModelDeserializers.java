@@ -16833,9 +16833,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "delimiter", type = "string", defaultValue = ",", description = "Delimiter used in splitting messages. Can be turned off using the value false. To force not splitting then the delimiter can be set to single to use the value as a single list, this can be needed in some special situations. The default value is comma.", displayName = "Delimiter"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Disables this EIP from the route.", displayName = "Disabled"),
+                    @YamlProperty(name = "errorThreshold", type = "number"),
                     @YamlProperty(name = "executorService", type = "string", description = "To use a custom Thread Pool to be used for parallel processing. Notice if you set this option, then parallel processing is automatically implied, and you do not have to enable that option as well.", displayName = "Executor Service"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression of how to split the message body, such as as-is, using a tokenizer, or using a xpath.", displayName = "Expression", oneOf = "expression"),
+                    @YamlProperty(name = "group", type = "number"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "maxFailedRecords", type = "number"),
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
                     @YamlProperty(name = "onPrepare", type = "string", description = "Uses the Processor when preparing the org.apache.camel.Exchange to be sent. This can be used to deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.", displayName = "On Prepare"),
                     @YamlProperty(name = "parallelAggregate", type = "boolean", deprecated = true, defaultValue = "false", description = "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.", displayName = "Parallel Aggregate"),
@@ -16888,6 +16891,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDisabled(val);
                     break;
                 }
+                case "errorThreshold": {
+                    String val = asText(node);
+                    target.setErrorThreshold(val);
+                    break;
+                }
                 case "executorService": {
                     String val = asText(node);
                     target.setExecutorService(val);
@@ -16896,6 +16904,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
+                    break;
+                }
+                case "group": {
+                    String val = asText(node);
+                    target.setGroup(val);
+                    break;
+                }
+                case "maxFailedRecords": {
+                    String val = asText(node);
+                    target.setMaxFailedRecords(val);
                     break;
                 }
                 case "onPrepare": {

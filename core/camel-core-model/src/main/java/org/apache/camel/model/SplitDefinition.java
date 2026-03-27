@@ -85,6 +85,15 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String shareUnitOfWork;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    private String group;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Double")
+    private String errorThreshold;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    private String maxFailedRecords;
 
     public SplitDefinition() {
     }
@@ -107,6 +116,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.executorService = source.executorService;
         this.onPrepare = source.onPrepare;
         this.shareUnitOfWork = source.shareUnitOfWork;
+        this.group = source.group;
+        this.errorThreshold = source.errorThreshold;
+        this.maxFailedRecords = source.maxFailedRecords;
     }
 
     public SplitDefinition(Expression expression) {
@@ -566,6 +578,89 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         return this;
     }
 
+    /**
+     * Groups N split messages into a single message with a {@link java.util.List} body. This allows processing items in
+     * chunks instead of one at a time.
+     *
+     * @param  group the number of items per group
+     * @return       the builder
+     */
+    public SplitDefinition group(int group) {
+        return group(Integer.toString(group));
+    }
+
+    /**
+     * Groups N split messages into a single message with a {@link java.util.List} body. This allows processing items in
+     * chunks instead of one at a time.
+     *
+     * @param  group the number of items per group
+     * @return       the builder
+     */
+    public SplitDefinition group(String group) {
+        setGroup(group);
+        return this;
+    }
+
+    /**
+     * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation. For
+     * example, 0.1 means abort if more than 10% of items fail. When the threshold is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. When set, individual item failures are tracked
+     * but processing continues until the threshold is exceeded.
+     *
+     * @param  errorThreshold the failure ratio threshold (0.0-1.0)
+     * @return                the builder
+     */
+    public SplitDefinition errorThreshold(double errorThreshold) {
+        return errorThreshold(Double.toString(errorThreshold));
+    }
+
+    /**
+     * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation. For
+     * example, 0.1 means abort if more than 10% of items fail. When the threshold is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. When set, individual item failures are tracked
+     * but processing continues until the threshold is exceeded.
+     *
+     * @param  errorThreshold the failure ratio threshold (0.0-1.0)
+     * @return                the builder
+     */
+    public SplitDefinition errorThreshold(String errorThreshold) {
+        setErrorThreshold(errorThreshold);
+        return this;
+    }
+
+    /**
+     * Sets the maximum number of failed records before aborting the split operation. When the count is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. Can be combined with {@code errorThreshold} —
+     * processing aborts when either threshold is exceeded.
+     *
+     * @param  maxFailedRecords the maximum number of allowed failures
+     * @return                  the builder
+     */
+    public SplitDefinition maxFailedRecords(int maxFailedRecords) {
+        return maxFailedRecords(Integer.toString(maxFailedRecords));
+    }
+
+    /**
+     * Sets the maximum number of failed records before aborting the split operation. When the count is exceeded, a
+     * {@link org.apache.camel.CamelExchangeException} is thrown.
+     * <p/>
+     * This option is mutually exclusive with {@code stopOnException}. Can be combined with {@code errorThreshold} —
+     * processing aborts when either threshold is exceeded.
+     *
+     * @param  maxFailedRecords the maximum number of allowed failures
+     * @return                  the builder
+     */
+    public SplitDefinition maxFailedRecords(String maxFailedRecords) {
+        setMaxFailedRecords(maxFailedRecords);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -722,5 +817,39 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     public void setExecutorService(String executorService) {
         this.executorService = executorService;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    /**
+     * Groups N split messages into a single message with a {@link java.util.List} body. This allows processing items in
+     * chunks instead of one at a time.
+     */
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getErrorThreshold() {
+        return errorThreshold;
+    }
+
+    /**
+     * Sets the error threshold as a fraction (0.0-1.0) of failed items before aborting the split operation.
+     */
+    public void setErrorThreshold(String errorThreshold) {
+        this.errorThreshold = errorThreshold;
+    }
+
+    public String getMaxFailedRecords() {
+        return maxFailedRecords;
+    }
+
+    /**
+     * Sets the maximum number of failed records before aborting the split operation.
+     */
+    public void setMaxFailedRecords(String maxFailedRecords) {
+        this.maxFailedRecords = maxFailedRecords;
     }
 }
