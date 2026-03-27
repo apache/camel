@@ -313,21 +313,18 @@ public class Export extends ExportBaseCommand {
         Files.createDirectories(docker);
         String[] ids = gav.split(":");
 
+        Map<String, Object> model = new HashMap<>();
+        model.put("ArtifactId", ids[1]);
+        model.put("Version", ids[2]);
+        model.put("AppJar", ids[1] + "-" + ids[2] + ".jar");
+
         String ftlName = "Dockerfile" + javaVersion + ".ftl";
         String context;
         try {
-            Map<String, Object> model = new HashMap<>();
-            model.put("ArtifactId", ids[1]);
-            model.put("Version", ids[2]);
-            model.put("AppJar", ids[1] + "-" + ids[2] + ".jar");
             context = TemplateHelper.processTemplate(ftlName, model);
         } catch (IOException e) {
             // fallback to JDK 21 template
             printer().printf("No Dockerfile template for Java %s, falling back to Java 21 template%n", javaVersion);
-            Map<String, Object> model = new HashMap<>();
-            model.put("ArtifactId", ids[1]);
-            model.put("Version", ids[2]);
-            model.put("AppJar", ids[1] + "-" + ids[2] + ".jar");
             context = TemplateHelper.processTemplate("Dockerfile21.ftl", model);
         }
         Files.writeString(docker.resolve("Dockerfile"), context);

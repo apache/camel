@@ -1933,15 +1933,13 @@ public class Run extends CamelCommand {
             throw new FileNotFoundException("Cannot find file: " + filePath);
         }
 
-        {
-            Map<String, Object> model = new HashMap<>();
-            model.put("Spec", filePath.toString());
-            String content = TemplateHelper.processTemplate("rest-dsl.yaml.ftl", model);
-            Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
+        Map<String, Object> model = new HashMap<>();
+        model.put("Spec", filePath.toString());
+        String content = TemplateHelper.processTemplate("rest-dsl.yaml.ftl", model);
+        Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
 
-            // we need to include the spec on the classpath
-            files.add(openapi);
-        }
+        // we need to include the spec on the classpath
+        files.add(openapi);
     }
 
     private boolean knownFile(String file) throws Exception {
