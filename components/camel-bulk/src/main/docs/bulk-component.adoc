@@ -290,10 +290,60 @@ and which step they failed at.
 Each bulk execution is assigned a unique UUID, available as the `CamelBulkJobInstanceId` header
 on both the result exchange and each item exchange. This enables tracking concurrent bulk executions.
 
+== Transaction Support
+
+The bulk component provides two modes of transaction support, mirroring the behavior of the Splitter EIP.
+
+=== Transaction Context Propagation
+
+When the parent exchange is transacted (e.g., inside a `transacted()` block), the bulk component
+automatically propagates the transaction context to each item exchange:
+
+* Each item exchange is marked as transacted via `setTransacted(true)`
+* A shared `TRANSACTION_CONTEXT_DATA` map is set on all item exchanges, allowing them to
+  participate in the same transaction context
+
+When the parent exchange is transacted and `parallelProcessing` is enabled, the bulk component
+forces sequential processing and logs a warning. Parallel processing within a transaction
+would violate transaction isolation guarantees.
+
+=== Shared Unit of Work (`shareUnitOfWork`)
+
+The `shareUnitOfWork` option provides all-or-nothing transaction semantics, similar to the
+Splitter EIP's `shareUnitOfWork` option. When enabled:
+
+* Each item exchange shares the parent exchange's `UnitOfWork`
+* If _any_ item fails (even below the error threshold), the parent exchange is marked
+  for rollback via `setRollbackOnly(true)`
+* The `BulkResult` is still set as the body for reporting purposes
+* If the error threshold is exceeded, a `BulkException` is thrown as normal (which will
+  also cause rollback)
+
+This is useful when you need guaranteed consistency: either all items succeed, or the
+entire operation is rolled back.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .transacted()
+    .to("bulk:importJob?processorRef=direct:import&shareUnitOfWork=true");
+----
+====
+
+NOTE: When `shareUnitOfWork` is enabled and `parallelProcessing` is also enabled, the component
+forces sequential processing (same behavior as with transacted exchanges).
+
 == Parallel Processing
 
 Enable `parallelProcessing` to process items within each chunk concurrently.
 Note that chunks are still processed sequentially — parallelism applies only to items within a single chunk.
+
+NOTE: Parallel processing is automatically disabled (with a warning) when the exchange is transacted
+or when `shareUnitOfWork` is enabled, to preserve transaction semantics.
 
 [tabs]
 ====

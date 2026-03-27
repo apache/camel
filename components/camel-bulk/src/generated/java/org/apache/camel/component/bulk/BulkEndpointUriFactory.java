@@ -23,7 +23,7 @@ public class BulkEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(15);
         props.add("acceptPolicy");
         props.add("aggregationStrategy");
         props.add("chunkSize");
@@ -34,6 +34,7 @@ public class BulkEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("onCompleteRef");
         props.add("parallelProcessing");
         props.add("processorRef");
+        props.add("shareUnitOfWork");
         props.add("steps");
         props.add("watermarkExpression");
         props.add("watermarkKey");

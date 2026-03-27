@@ -90,6 +90,11 @@ public class BulkEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "false", description = "Process items within each chunk in parallel")
     private boolean parallelProcessing;
 
+    @UriParam(defaultValue = "false", description = "If enabled, the bulk operation shares the parent exchange's UnitOfWork. "
+                                                    + "This means that if any item fails, the entire exchange is marked for rollback. "
+                                                    + "This provides all-or-nothing transaction semantics, similar to the Splitter EIP's shareUnitOfWork option.")
+    private boolean shareUnitOfWork;
+
     public BulkEndpoint(String uri, BulkComponent component, String jobName) {
         super(uri, component);
         this.jobName = jobName;
@@ -253,5 +258,13 @@ public class BulkEndpoint extends DefaultEndpoint {
 
     public void setParallelProcessing(boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
+    }
+
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork;
+    }
+
+    public void setShareUnitOfWork(boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
     }
 }

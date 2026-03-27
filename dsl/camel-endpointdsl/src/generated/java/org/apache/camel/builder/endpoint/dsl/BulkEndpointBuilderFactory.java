@@ -256,6 +256,42 @@ public interface BulkEndpointBuilderFactory {
             return this;
         }
         /**
+         * If enabled, the bulk operation shares the parent exchange's
+         * UnitOfWork. This means that if any item fails, the entire exchange is
+         * marked for rollback. This provides all-or-nothing transaction
+         * semantics, similar to the Splitter EIP's shareUnitOfWork option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param shareUnitOfWork the value to set
+         * @return the dsl builder
+         */
+        default BulkEndpointBuilder shareUnitOfWork(boolean shareUnitOfWork) {
+            doSetProperty("shareUnitOfWork", shareUnitOfWork);
+            return this;
+        }
+        /**
+         * If enabled, the bulk operation shares the parent exchange's
+         * UnitOfWork. This means that if any item fails, the entire exchange is
+         * marked for rollback. This provides all-or-nothing transaction
+         * semantics, similar to the Splitter EIP's shareUnitOfWork option.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param shareUnitOfWork the value to set
+         * @return the dsl builder
+         */
+        default BulkEndpointBuilder shareUnitOfWork(String shareUnitOfWork) {
+            doSetProperty("shareUnitOfWork", shareUnitOfWork);
+            return this;
+        }
+        /**
          * Comma-separated list of endpoint URIs or bean references for
          * multi-step bulk processing. Items flow through each step
          * sequentially. Use with acceptPolicy to filter items between steps.

@@ -55,6 +55,7 @@ public class BulkProducer extends DefaultProducer {
     private Map<String, String> watermarkStore;
     private Expression watermarkExpr;
     private ExecutorService executorService;
+    private Map<String, Object> txData;
 
     public BulkProducer(BulkEndpoint endpoint) {
         super(endpoint);
@@ -109,8 +110,27 @@ public class BulkProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        // Reset per-invocation transaction context data
+        txData = null;
+
         String jobInstanceId = UUID.randomUUID().toString();
         long startTime = System.currentTimeMillis();
+
+        // Determine if parallel processing should be forced to sequential
+        boolean forceSequential = false;
+        if (endpoint.isParallelProcessing()) {
+            if (exchange.isTransacted()) {
+                LOG.warn("Bulk job '{}': parallel processing is not supported in a transacted context. "
+                         + "Falling back to sequential processing.",
+                        endpoint.getJobName());
+                forceSequential = true;
+            } else if (endpoint.isShareUnitOfWork()) {
+                LOG.warn("Bulk job '{}': parallel processing is not supported with shareUnitOfWork enabled. "
+                         + "Falling back to sequential processing.",
+                        endpoint.getJobName());
+                forceSequential = true;
+            }
+        }
 
         // Set watermark header early so it's available during processing
         if (watermarkStore != null && watermarkExpr != null) {
@@ -171,7 +191,7 @@ public class BulkProducer extends DefaultProducer {
             for (int chunkIndex = 0; chunkIndex < chunks.size() && !aborted; chunkIndex++) {
                 List<Integer> chunk = chunks.get(chunkIndex);
 
-                if (endpoint.isParallelProcessing()) {
+                if (endpoint.isParallelProcessing() && !forceSequential) {
                     processChunkParallel(
                             items, itemExchanges, chunk, stepIndex, chunkIndex, stepProcessor, failureMap);
                     aborted = isThresholdExceeded(failureMap.size(), totalItems);
@@ -217,6 +237,11 @@ public class BulkProducer extends DefaultProducer {
         setResultHeaders(exchange, result, jobInstanceId);
 
         LOG.debug("Bulk job '{}' [{}] completed: {}", endpoint.getJobName(), jobInstanceId, result);
+
+        // When shareUnitOfWork is enabled, any failure marks the exchange for rollback
+        if (endpoint.isShareUnitOfWork() && failureCount > 0 && !aborted) {
+            exchange.setRollbackOnly(true);
+        }
 
         // On Complete fires before potential exception
         fireOnComplete(exchange, result);
@@ -314,6 +339,21 @@ public class BulkProducer extends DefaultProducer {
         itemExchange.getIn().setHeader(BulkConstants.BULK_JOB_NAME, endpoint.getJobName());
         itemExchange.getIn().setHeader(BulkConstants.BULK_INDEX, index);
         itemExchange.getIn().setHeader(BulkConstants.BULK_SIZE, totalSize);
+
+        // Propagate transaction context from the parent exchange
+        itemExchange.getExchangeExtension().setTransacted(parent.isTransacted());
+        if (parent.isTransacted() && itemExchange.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
+            if (txData == null) {
+                txData = new ConcurrentHashMap<>();
+            }
+            itemExchange.setProperty(Exchange.TRANSACTION_CONTEXT_DATA, txData);
+        }
+
+        // Share the parent's UnitOfWork when shareUnitOfWork is enabled
+        if (endpoint.isShareUnitOfWork()) {
+            itemExchange.getExchangeExtension().setUnitOfWork(parent.getUnitOfWork());
+        }
+
         return itemExchange;
     }
 

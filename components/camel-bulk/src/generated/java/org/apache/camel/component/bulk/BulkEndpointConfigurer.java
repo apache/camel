@@ -41,6 +41,8 @@ public class BulkEndpointConfigurer extends PropertyConfigurerSupport implements
         case "parallelProcessing": target.setParallelProcessing(property(camelContext, boolean.class, value)); return true;
         case "processorref":
         case "processorRef": target.setProcessorRef(property(camelContext, java.lang.String.class, value)); return true;
+        case "shareunitofwork":
+        case "shareUnitOfWork": target.setShareUnitOfWork(property(camelContext, boolean.class, value)); return true;
         case "steps": target.setSteps(property(camelContext, java.lang.String.class, value)); return true;
         case "watermarkexpression":
         case "watermarkExpression": target.setWatermarkExpression(property(camelContext, java.lang.String.class, value)); return true;
@@ -73,6 +75,8 @@ public class BulkEndpointConfigurer extends PropertyConfigurerSupport implements
         case "parallelProcessing": return boolean.class;
         case "processorref":
         case "processorRef": return java.lang.String.class;
+        case "shareunitofwork":
+        case "shareUnitOfWork": return boolean.class;
         case "steps": return java.lang.String.class;
         case "watermarkexpression":
         case "watermarkExpression": return java.lang.String.class;
@@ -106,6 +110,8 @@ public class BulkEndpointConfigurer extends PropertyConfigurerSupport implements
         case "parallelProcessing": return target.isParallelProcessing();
         case "processorref":
         case "processorRef": return target.getProcessorRef();
+        case "shareunitofwork":
+        case "shareUnitOfWork": return target.isShareUnitOfWork();
         case "steps": return target.getSteps();
         case "watermarkexpression":
         case "watermarkExpression": return target.getWatermarkExpression();
