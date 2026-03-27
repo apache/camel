@@ -206,7 +206,8 @@ const sources = {
         '../core/camel-base/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../core/camel-main/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../components/{*,*/*}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
-        '../dsl/**/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../dsl/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../dsl/{*,*/!(target)}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
       ],
       destination: 'components/modules/others/pages',
       keep: [
