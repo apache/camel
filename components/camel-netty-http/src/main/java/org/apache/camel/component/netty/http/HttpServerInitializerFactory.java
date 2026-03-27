@@ -37,6 +37,7 @@ import org.apache.camel.component.netty.ChannelHandlerFactory;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.ServerInitializerFactory;
+import org.apache.camel.component.netty.handlers.SslHandshakeFailureHandler;
 import org.apache.camel.component.netty.http.handlers.HttpInboundStreamHandler;
 import org.apache.camel.component.netty.http.handlers.HttpOutboundStreamHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
@@ -83,9 +84,6 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
 
         ChannelHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
-            //TODO must close on SSL exception
-            // sslHandler.setCloseOnSSLException(true);
-
             if (sslHandler instanceof ChannelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
                 sslHandler = ((ChannelHandlerFactory) sslHandler).newChannelHandler();
@@ -93,6 +91,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
 
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             pipeline.addLast("ssl", sslHandler);
+            pipeline.addLast("sslHandshakeFailure", SslHandshakeFailureHandler.INSTANCE);
         }
 
         pipeline.addLast("decoder", new HttpRequestDecoder(

@@ -30,6 +30,7 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
+import org.apache.camel.component.netty.handlers.SslHandshakeFailureHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +57,9 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
 
         SslHandler sslHandler = configureClientSSLOnDemand();
         if (sslHandler != null) {
-            //TODO  must close on SSL exception
-            //sslHandler.setCloseOnSSLException(true);
             LOG.debug("Client SSL handler configured and added to the ChannelPipeline: {}", sslHandler);
             addToPipeline("ssl", channelPipeline, sslHandler);
+            addToPipeline("sslHandshakeFailure", channelPipeline, SslHandshakeFailureHandler.INSTANCE);
         }
 
         List<ChannelHandler> decoders = producer.getConfiguration().getDecodersAsList();
