@@ -18,6 +18,7 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,6 +42,8 @@ import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KubernetesBaseTestSupport {
+
+    protected final String runPlatformDir = "target/tests/" + getClass().getSimpleName();
 
     private KubernetesMockServer k8sServer;
     protected KubernetesClient kubernetesClient;
@@ -70,6 +74,7 @@ public class KubernetesBaseTestSupport {
     @AfterAll
     public void cleanup() {
         k8sServer.destroy();
+        FileUtil.removeDir(new File(runPlatformDir));
     }
 
     protected static InputStream getKubernetesManifestAsStream(String printerOutput) {

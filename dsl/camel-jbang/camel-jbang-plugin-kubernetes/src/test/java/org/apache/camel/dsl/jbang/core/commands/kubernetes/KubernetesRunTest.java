@@ -91,7 +91,7 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
         Assertions.assertEquals(0, exit);
 
         Properties materializedProps = new Properties();
-        String propsFilepath = ".camel-jbang-run/my-route-props/src/main/resources/application.properties";
+        String propsFilepath = runPlatformDir + "/my-route-props/src/main/resources/application.properties";
         try (FileInputStream input = new FileInputStream(new File(propsFilepath))) {
             materializedProps.load(input);
         }
@@ -240,7 +240,12 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
         var argsArr = Optional.ofNullable(args).orElse(new String[0]);
         var argsLst = new ArrayList<>(Arrays.asList(argsArr));
         var jbangMain = new CamelJBangMain().withPrinter(printer);
-        KubernetesRun command = new KubernetesRun(jbangMain, files);
+        KubernetesRun command = new KubernetesRun(jbangMain, files) {
+            @Override
+            String getRunPlatformDir() {
+                return runPlatformDir;
+            }
+        };
         CommandLine.populateCommand(command, argsLst.toArray(new String[0]));
         command.imageBuild = false;
         command.imagePush = false;

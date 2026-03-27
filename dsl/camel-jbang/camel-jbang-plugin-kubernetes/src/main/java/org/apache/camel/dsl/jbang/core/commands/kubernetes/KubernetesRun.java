@@ -424,8 +424,12 @@ public class KubernetesRun extends KubernetesBaseCommand {
         return 0;
     }
 
+    String getRunPlatformDir() {
+        return ".camel-jbang-run";
+    }
+
     private String getIndexedWorkingDir(String projectName) {
-        var workingDir = RUN_PLATFORM_DIR + File.separator + projectName;
+        var workingDir = getRunPlatformDir() + File.separator + projectName;
         if (devModeReloadCount > 0) {
             workingDir += "-%03d".formatted(devModeReloadCount);
         }
