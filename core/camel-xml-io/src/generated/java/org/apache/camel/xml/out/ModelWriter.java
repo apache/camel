@@ -1769,6 +1769,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("executorService", def.getExecutorService(), null);
         doWriteAttribute("onPrepare", def.getOnPrepare(), null);
         doWriteAttribute("shareUnitOfWork", def.getShareUnitOfWork(), null);
+        doWriteAttribute("group", def.getGroup(), null);
+        doWriteAttribute("errorThreshold", def.getErrorThreshold(), null);
+        doWriteAttribute("maxFailedRecords", def.getMaxFailedRecords(), null);
+        doWriteAttribute("watermarkStore", def.getWatermarkStore(), null);
+        doWriteAttribute("watermarkKey", def.getWatermarkKey(), null);
+        doWriteAttribute("watermarkExpression", def.getWatermarkExpression(), null);
         doWriteOutputExpressionNodeElements(def);
         endElement(name);
     }
