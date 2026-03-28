@@ -35,8 +35,7 @@ public class CaffeineStateStoreBackend implements StateStoreBackend {
 
     @Override
     public Object put(String key, Object value, long ttlMillis) {
-        TimedValue previous = cache.getIfPresent(key);
-        cache.put(key, new TimedValue(value, ttlMillis));
+        TimedValue previous = cache.asMap().put(key, new TimedValue(value, ttlMillis));
         return previous != null ? previous.value() : null;
     }
 
@@ -48,8 +47,7 @@ public class CaffeineStateStoreBackend implements StateStoreBackend {
 
     @Override
     public Object delete(String key) {
-        TimedValue previous = cache.getIfPresent(key);
-        cache.invalidate(key);
+        TimedValue previous = cache.asMap().remove(key);
         return previous != null ? previous.value() : null;
     }
 

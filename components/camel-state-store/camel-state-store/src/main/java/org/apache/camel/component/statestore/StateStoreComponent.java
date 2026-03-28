@@ -43,6 +43,11 @@ public class StateStoreComponent extends DefaultComponent {
         return endpoint;
     }
 
+    /**
+     * Returns the backend for the given store name, creating one if needed. Uses first-one-wins semantics: if a backend
+     * already exists for this store name, subsequent calls return the existing one regardless of the explicit backend
+     * passed.
+     */
     StateStoreBackend getOrCreateBackend(String storeName, StateStoreBackend explicitBackend) {
         if (explicitBackend != null) {
             return backends.computeIfAbsent(storeName, k -> {

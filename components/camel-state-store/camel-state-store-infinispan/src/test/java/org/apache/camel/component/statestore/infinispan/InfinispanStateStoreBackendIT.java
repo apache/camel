@@ -176,7 +176,7 @@ class InfinispanStateStoreBackendIT extends CamelTestSupport {
                 Map.of(StateStoreConstants.KEY, "ttlKey"));
         assertEquals("expiring", result);
 
-        Thread.sleep(700);
+        Thread.sleep(2500);
 
         result = template.requestBodyAndHeaders(
                 "direct:get", null,

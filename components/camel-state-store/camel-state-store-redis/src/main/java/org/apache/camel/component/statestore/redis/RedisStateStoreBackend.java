@@ -96,6 +96,7 @@ public class RedisStateStoreBackend implements StateStoreBackend {
 
     @Override
     public void stop() {
+        mapCache = null;
         if (managedRedisson && redisson != null) {
             redisson.shutdown();
             redisson = null;

@@ -120,6 +120,7 @@ public class InfinispanStateStoreBackend implements StateStoreBackend {
 
     @Override
     public void stop() {
+        cache = null;
         if (managedCacheManager && cacheManager != null) {
             cacheManager.stop();
             cacheManager = null;

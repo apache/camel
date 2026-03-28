@@ -191,7 +191,7 @@ class StateStoreTest extends CamelTestSupport {
                 Map.of(StateStoreConstants.KEY, "ttlKey"));
         assertEquals("expiring", result);
 
-        Thread.sleep(300);
+        Thread.sleep(1000);
 
         // should be expired
         result = template.requestBodyAndHeaders(

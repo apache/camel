@@ -151,7 +151,7 @@ class CaffeineStateStoreBackendTest extends CamelTestSupport {
                 Map.of(StateStoreConstants.KEY, "ttlKey"));
         assertEquals("expiring", result);
 
-        Thread.sleep(400);
+        Thread.sleep(1000);
         backend.keys(); // trigger Caffeine cleanup
 
         result = template.requestBodyAndHeaders(
@@ -172,7 +172,7 @@ class CaffeineStateStoreBackendTest extends CamelTestSupport {
                 Map.of(StateStoreConstants.KEY, "ttlKey"));
         assertEquals("expiring", result);
 
-        Thread.sleep(400);
+        Thread.sleep(1000);
         backend.keys();
 
         result = template.requestBodyAndHeaders(

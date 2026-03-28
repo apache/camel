@@ -76,16 +76,15 @@ public class InMemoryStateStoreBackend implements StateStoreBackend {
     @Override
     public Object putIfAbsent(String key, Object value, long ttlMillis) {
         long expiresAt = ttlMillis > 0 ? System.currentTimeMillis() + ttlMillis : 0;
-        Entry existing = store.putIfAbsent(key, new Entry(value, expiresAt));
-        if (existing != null) {
-            if (existing.isExpired()) {
-                // expired, replace it
-                store.replace(key, existing, new Entry(value, expiresAt));
-                return null;
+        Object[] result = new Object[1];
+        store.compute(key, (k, current) -> {
+            if (current == null || current.isExpired()) {
+                return new Entry(value, expiresAt);
             }
-            return existing.value();
-        }
-        return null;
+            result[0] = current.value();
+            return current;
+        });
+        return result[0];
     }
 
     @Override

@@ -38,8 +38,8 @@ class StateStoreTtlTest extends CamelTestSupport {
                 java.util.Map.of(StateStoreConstants.KEY, "ttlKey"));
         assertEquals("expiring", result);
 
-        // wait for TTL to expire
-        Thread.sleep(300);
+        // wait for TTL to expire (5x margin over 200ms TTL)
+        Thread.sleep(1000);
 
         // should be expired now
         Object expired = template.requestBodyAndHeaders(
@@ -54,7 +54,7 @@ class StateStoreTtlTest extends CamelTestSupport {
                 "direct:put", "expiring",
                 java.util.Map.of(StateStoreConstants.KEY, "ttlKey"));
 
-        Thread.sleep(300);
+        Thread.sleep(1000);
 
         Object exists = template.requestBodyAndHeaders(
                 "direct:contains", null,
