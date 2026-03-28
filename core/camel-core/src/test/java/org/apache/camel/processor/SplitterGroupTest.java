@@ -20,12 +20,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.SplitResult;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SplitterGroupTest extends ContextTestSupport {
 
@@ -91,6 +95,25 @@ class SplitterGroupTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    void testGroupWithMaxFailedRecords() throws Exception {
+        // 9 items grouped by 3. Processor throws if the chunk contains "FAIL".
+        // Items: a, b, FAIL, d, e, f, g, h, i → chunks [a,b,FAIL], [d,e,f], [g,h,i]
+        // First chunk triggers failure, maxFailedRecords=2, so processing continues
+        MockEndpoint mock = getMockEndpoint("mock:group-fail");
+        mock.expectedMinimumMessageCount(2); // at least the 2 non-failing chunks
+
+        Exchange result = template.send("direct:group-fail",
+                e -> e.getIn().setBody(Arrays.asList("a", "b", "FAIL", "d", "e", "f", "g", "h", "i")));
+
+        mock.assertIsSatisfied();
+
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertNotNull(splitResult);
+        assertEquals(1, splitResult.getFailureCount());
+        assertFalse(splitResult.isAborted());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -103,6 +126,18 @@ class SplitterGroupTest extends ContextTestSupport {
                 from("direct:parallel")
                         .split(body()).group(3).parallelProcessing()
                         .to("mock:parallel-split");
+
+                from("direct:group-fail")
+                        .split(body()).group(3).maxFailedRecords(2)
+                        .process(exchange -> {
+                            List<?> chunk = exchange.getIn().getBody(List.class);
+                            for (Object item : chunk) {
+                                if ("FAIL".equals(item)) {
+                                    throw new IllegalArgumentException("Chunk contains FAIL");
+                                }
+                            }
+                        })
+                        .to("mock:group-fail");
             }
         };
     }

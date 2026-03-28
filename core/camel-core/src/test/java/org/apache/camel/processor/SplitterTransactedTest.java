@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.SplitResult;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.resume.ResumeStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SplitterTransactedTest extends ContextTestSupport {
 
     private final Map<String, String> store = new ConcurrentHashMap<>();
+    private final ResumeStrategy strategy = new SplitterTestResumeStrategy(store);
 
     @Test
     void testGroupTransacted() throws Exception {
@@ -197,12 +199,12 @@ class SplitterTransactedTest extends ContextTestSupport {
                         .to("mock:result");
 
                 from("direct:watermark")
-                        .split(body()).watermarkStore(store, "txJob")
+                        .split(body()).resumeStrategy(strategy, "txJob")
                         .to("mock:watermark");
 
                 from("direct:valuewm")
                         .split(body())
-                        .watermarkStore(store, "txDateJob")
+                        .resumeStrategy(strategy, "txDateJob")
                         .watermarkExpression("${body}")
                         .to("mock:valuewm");
             }
