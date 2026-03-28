@@ -1140,6 +1140,7 @@ public class ModelParser extends BaseParser {
                 case "onPrepare": def.setOnPrepare(val); yield true;
                 case "parallelAggregate": def.setParallelAggregate(val); yield true;
                 case "parallelProcessing": def.setParallelProcessing(val); yield true;
+                case "resumeStrategy": def.setResumeStrategy(val); yield true;
                 case "shareUnitOfWork": def.setShareUnitOfWork(val); yield true;
                 case "stopOnException": def.setStopOnException(val); yield true;
                 case "streaming": def.setStreaming(val); yield true;
@@ -1147,7 +1148,6 @@ public class ModelParser extends BaseParser {
                 case "timeout": def.setTimeout(val); yield true;
                 case "watermarkExpression": def.setWatermarkExpression(val); yield true;
                 case "watermarkKey": def.setWatermarkKey(val); yield true;
-                case "watermarkStore": def.setWatermarkStore(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, outputExpressionNodeElementHandler(), noValueHandler());
     }
