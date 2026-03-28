@@ -148,25 +148,34 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
     private void registerSchemaWithRetry() throws Exception {
         Duration timeout = configuration.getEmbeddingStoreSchemaRegistrationTimeout();
         ForegroundTask task = Tasks.foregroundTask()
+                .withName("infinispan-schema-registration")
                 .withBudget(Budgets.iterationTimeBudget()
                         .withInterval(Duration.ofSeconds(1))
                         .withMaxDuration(timeout)
                         .build())
                 .build();
 
-        boolean registered = task.run(null, () -> {
+        final boolean[] firstAttempt = { true };
+        boolean registered = task.run(camelContext, () -> {
             try {
                 EmbeddingStoreUtil.registerSchema(configuration, cacheContainer);
                 return true;
             } catch (RemoteIllegalLifecycleStateException e) {
-                LOG.debug("Schema registration failed (server not ready), retrying: {}", e.getMessage());
+                if (firstAttempt[0]) {
+                    firstAttempt[0] = false;
+                    LOG.info("Infinispan server not ready for schema registration, will retry for up to {}: {}",
+                            timeout, e.getMessage());
+                } else {
+                    LOG.debug("Schema registration failed (server not ready), retrying: {}", e.getMessage());
+                }
                 return false;
             }
         });
 
         if (!registered) {
             throw new IllegalStateException(
-                    "Failed to register Infinispan schema after retries. The server may not be fully started.");
+                    "Failed to register Infinispan schema after " + timeout
+                                            + " of retries. The server may not be fully started.");
         }
     }
 
