@@ -16,7 +16,6 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
 
@@ -31,6 +30,7 @@ import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.AggregationStrategyBiFunctionAdapter;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
+import org.apache.camel.resume.ResumeStrategy;
 
 public class SplitReifier extends ExpressionReifier<SplitDefinition> {
 
@@ -93,6 +93,14 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             throw new IllegalArgumentException(
                     "Cannot use both stopOnException and errorThreshold/maxFailedRecords on the Splitter EIP");
         }
+        if (errorThreshold != 0 && (errorThreshold < 0 || errorThreshold > 1.0)) {
+            throw new IllegalArgumentException(
+                    "errorThreshold must be between 0.0 and 1.0, but was: " + errorThreshold);
+        }
+        if (maxFailedRecords < 0) {
+            throw new IllegalArgumentException(
+                    "maxFailedRecords must not be negative, but was: " + maxFailedRecords);
+        }
         if (errorThreshold > 0) {
             answer.setErrorThreshold(errorThreshold);
         }
@@ -100,16 +108,27 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             answer.setMaxFailedRecords(maxFailedRecords);
         }
 
-        @SuppressWarnings("unchecked")
-        Map<String, String> watermarkStore = definition.getWatermarkStoreBean();
-        if (watermarkStore == null && definition.getWatermarkStore() != null) {
-            watermarkStore = mandatoryLookup(definition.getWatermarkStore(), Map.class);
+        ResumeStrategy resumeStrategy = definition.getResumeStrategyBean();
+        if (resumeStrategy == null && definition.getResumeStrategy() != null) {
+            resumeStrategy = mandatoryLookup(definition.getResumeStrategy(), ResumeStrategy.class);
+        }
+        if (resumeStrategy != null) {
+            CamelContextAware.trySetCamelContext(resumeStrategy, camelContext);
         }
         String watermarkKey = parseString(definition.getWatermarkKey());
-        if (watermarkStore != null && watermarkKey != null) {
-            answer.setWatermarkStore(watermarkStore);
+        String watermarkExprStr = parseString(definition.getWatermarkExpression());
+        // validate watermark configuration completeness
+        if ((resumeStrategy != null) != (watermarkKey != null)) {
+            throw new IllegalArgumentException(
+                    "Both resumeStrategy and watermarkKey must be configured together on the Splitter EIP");
+        }
+        if (watermarkExprStr != null && resumeStrategy == null) {
+            throw new IllegalArgumentException(
+                    "watermarkExpression requires resumeStrategy and watermarkKey on the Splitter EIP");
+        }
+        if (resumeStrategy != null && watermarkKey != null) {
+            answer.setResumeStrategy(resumeStrategy);
             answer.setWatermarkKey(watermarkKey);
-            String watermarkExprStr = parseString(definition.getWatermarkExpression());
             if (watermarkExprStr != null) {
                 Expression watermarkExpr = camelContext.resolveLanguage("simple").createExpression(watermarkExprStr);
                 answer.setWatermarkExpression(watermarkExpr);

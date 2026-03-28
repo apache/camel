@@ -54,6 +54,27 @@ uses `InOnly` pattern.
 
 Removed 2 deprecated methods in Java DSL for `throttler` EIP.
 
+==== Split EIP enhancements
+
+The Split EIP has been enhanced with the following new features:
+
+* **Chunking with `group`**: Groups N split items together into a single message with a `java.util.List` body,
+  allowing batch processing of split items.
+* **Error thresholds**: Two new options `maxFailedRecords` (max failure count) and `errorThreshold`
+  (max failure ratio 0.0-1.0) allow the splitter to continue through individual failures while stopping
+  when error rates become unacceptable. These are mutually exclusive with `stopOnException`.
+* **SplitResult**: When error thresholds are configured, a `SplitResult` object is available as the
+  `CamelSplitResult` exchange property after the split completes, providing total items, success/failure
+  counts, and individual failure details (index and exception).
+* **Watermark tracking**: New options `resumeStrategy`, `watermarkKey`, and `watermarkExpression` enable
+  incremental processing using Camel's `ResumeStrategy` SPI to track progress. Index-based watermarking
+  automatically skips previously processed items; value-based watermarking uses a custom expression
+  to extract watermark values. The previous watermark value is exposed as the `CamelSplitWatermark`
+  exchange property. Any `ResumeStrategy` implementation can be used — from in-memory for testing to
+  Kafka-backed for production.
+
+See the xref:components:eips:split-eip.adoc[Split EIP] documentation for details and examples.
+
 ==== ErrorRegistry
 
 A new `ErrorRegistry` SPI has been added to `CamelContext` for capturing routing errors.
