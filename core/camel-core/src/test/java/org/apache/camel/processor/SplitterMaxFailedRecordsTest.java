@@ -92,6 +92,20 @@ class SplitterMaxFailedRecordsTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    void testMaxFailedRecordsWithParallelProcessing() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:parallel");
+        mock.expectedMinimumMessageCount(0);
+
+        Exchange result = template.send("direct:parallel",
+                e -> e.getIn().setBody(Arrays.asList("a", "FAIL", "b", "FAIL", "c", "FAIL", "d")));
+
+        mock.assertIsSatisfied();
+
+        assertNotNull(result.getException(), "Should have exception in parallel mode");
+        assertTrue(mock.getReceivedCounter() < 7, "Should stop before processing all items in parallel mode");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -106,6 +120,16 @@ class SplitterMaxFailedRecordsTest extends ContextTestSupport {
                             }
                         })
                         .to("mock:split");
+
+                from("direct:parallel")
+                        .split(body()).maxFailedRecords(2).parallelProcessing()
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("FAIL".equals(body)) {
+                                throw new IllegalArgumentException("Simulated failure for: " + body);
+                            }
+                        })
+                        .to("mock:parallel");
             }
         };
     }

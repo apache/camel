@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -29,6 +28,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -46,8 +46,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlTransient
     private Processor onPrepareProcessor;
     @XmlTransient
-    @SuppressWarnings("rawtypes")
-    private Map watermarkStoreBean;
+    private ResumeStrategy resumeStrategyBean;
 
     @XmlAttribute
     @Metadata(defaultValue = ",")
@@ -99,8 +98,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @Metadata(label = "advanced", javaType = "java.lang.Integer")
     private String maxFailedRecords;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.util.Map")
-    private String watermarkStore;
+    @Metadata(label = "advanced", javaType = "org.apache.camel.resume.ResumeStrategy")
+    private String resumeStrategy;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String watermarkKey;
@@ -132,8 +131,8 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.group = source.group;
         this.errorThreshold = source.errorThreshold;
         this.maxFailedRecords = source.maxFailedRecords;
-        this.watermarkStoreBean = source.watermarkStoreBean;
-        this.watermarkStore = source.watermarkStore;
+        this.resumeStrategyBean = source.resumeStrategyBean;
+        this.resumeStrategy = source.resumeStrategy;
         this.watermarkKey = source.watermarkKey;
         this.watermarkExpression = source.watermarkExpression;
     }
@@ -625,6 +624,10 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * <p/>
      * This option is mutually exclusive with {@code stopOnException}. When set, individual item failures are tracked
      * but processing continues until the threshold is exceeded.
+     * <p/>
+     * <b>Note:</b> When combined with {@code parallelProcessing}, the failure ratio may vary between runs because
+     * parallel items complete in non-deterministic order. For deterministic abort behavior with parallel processing,
+     * prefer {@code maxFailedRecords} (absolute count) over {@code errorThreshold} (ratio).
      *
      * @param  errorThreshold the failure ratio threshold (0.0-1.0)
      * @return                the builder
@@ -679,7 +682,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * Sets a watermark store and key for resume-from-last-position support. When configured, the Splitter tracks
+     * Sets a {@link ResumeStrategy} and key for resume-from-last-position support. When configured, the Splitter tracks
      * progress and can skip already-processed items on subsequent runs.
      * <p/>
      * With index-based watermarking (no {@code watermarkExpression}), items up to the stored index are automatically
@@ -689,25 +692,36 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * The watermark is only updated on successful completion — aborted runs preserve the previous watermark to allow
      * retry.
      *
-     * @param  store the Map to store watermark state in
-     * @param  key   the key to use in the store
-     * @return       the builder
+     * @param  strategy the ResumeStrategy to persist watermark state
+     * @param  key      the key to use in the strategy
+     * @return          the builder
      */
-    @SuppressWarnings("rawtypes")
-    public SplitDefinition watermarkStore(Map store, String key) {
-        this.watermarkStoreBean = store;
+    public SplitDefinition resumeStrategy(ResumeStrategy strategy, String key) {
+        this.resumeStrategyBean = strategy;
         setWatermarkKey(key);
         return this;
     }
 
     /**
-     * Sets a reference to a watermark store (a {@code Map<String, String>}) in the registry.
+     * Sets a {@link ResumeStrategy} for resume-from-last-position support. The watermark key must also be configured
+     * via {@link #watermarkKey(String)}.
      *
-     * @param  watermarkStore reference to the store bean
+     * @param  strategy the ResumeStrategy to persist watermark state
+     * @return          the builder
+     */
+    public SplitDefinition resumeStrategy(ResumeStrategy strategy) {
+        this.resumeStrategyBean = strategy;
+        return this;
+    }
+
+    /**
+     * Sets a reference to a {@link ResumeStrategy} in the registry.
+     *
+     * @param  resumeStrategy reference to the strategy bean
      * @return                the builder
      */
-    public SplitDefinition watermarkStore(String watermarkStore) {
-        setWatermarkStore(watermarkStore);
+    public SplitDefinition resumeStrategy(String resumeStrategy) {
+        setResumeStrategy(resumeStrategy);
         return this;
     }
 
@@ -723,8 +737,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     }
 
     /**
-     * Sets a Simple expression to evaluate on the exchange after split completion to determine the new watermark value.
-     * When set, enables value-based watermarking instead of index-based.
+     * Sets a Simple expression to evaluate on each completed sub-exchange to determine the new watermark value. When
+     * set, enables value-based watermarking instead of index-based. The expression is evaluated using the Simple
+     * language.
      *
      * @param  watermarkExpression the Simple expression
      * @return                     the builder
@@ -926,20 +941,19 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
         this.maxFailedRecords = maxFailedRecords;
     }
 
-    @SuppressWarnings("rawtypes")
-    public Map getWatermarkStoreBean() {
-        return watermarkStoreBean;
+    public ResumeStrategy getResumeStrategyBean() {
+        return resumeStrategyBean;
     }
 
-    public String getWatermarkStore() {
-        return watermarkStore;
+    public String getResumeStrategy() {
+        return resumeStrategy;
     }
 
     /**
-     * Sets a reference to a watermark store (a {@code Map<String, String>}) in the registry.
+     * Sets a reference to a {@link ResumeStrategy} in the registry for resume-from-last-position support.
      */
-    public void setWatermarkStore(String watermarkStore) {
-        this.watermarkStore = watermarkStore;
+    public void setResumeStrategy(String resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
     }
 
     public String getWatermarkKey() {

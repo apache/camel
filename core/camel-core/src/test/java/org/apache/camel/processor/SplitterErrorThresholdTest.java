@@ -90,6 +90,34 @@ class SplitterErrorThresholdTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    void testErrorThresholdWithParallelProcessing() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:parallel-split");
+        mock.expectedMinimumMessageCount(0);
+
+        Exchange result = template.send("direct:parallel",
+                e -> e.getIn().setBody(Arrays.asList("FAIL", "FAIL", "a", "b", "c")));
+
+        mock.assertIsSatisfied();
+
+        assertNotNull(result.getException(), "Should have an exception when error threshold exceeded in parallel mode");
+    }
+
+    @Test
+    void testCombinedErrorThresholdAndMaxFailedRecords() throws Exception {
+        // maxFailedRecords=10 (very high), errorThreshold=0.3 (30%)
+        // First item FAIL: ratio=1/1=100% >= 30% -> stop due to errorThreshold
+        MockEndpoint mock = getMockEndpoint("mock:combined");
+        mock.expectedMinimumMessageCount(0);
+
+        Exchange result = template.send("direct:combined",
+                e -> e.getIn().setBody(Arrays.asList("FAIL", "a", "b", "c")));
+
+        mock.assertIsSatisfied();
+
+        assertNotNull(result.getException(), "Should stop when errorThreshold exceeded even with high maxFailedRecords");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -104,6 +132,26 @@ class SplitterErrorThresholdTest extends ContextTestSupport {
                             }
                         })
                         .to("mock:split");
+
+                from("direct:parallel")
+                        .split(body()).errorThreshold(0.5).parallelProcessing()
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("FAIL".equals(body)) {
+                                throw new IllegalArgumentException("Simulated failure for: " + body);
+                            }
+                        })
+                        .to("mock:parallel-split");
+
+                from("direct:combined")
+                        .split(body()).maxFailedRecords(10).errorThreshold(0.3)
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("FAIL".equals(body)) {
+                                throw new IllegalArgumentException("Simulated failure for: " + body);
+                            }
+                        })
+                        .to("mock:combined");
             }
         };
     }

@@ -1038,6 +1038,355 @@ BuildCombinedResponse: (id=1,item=A);(id=2,item=B);(id=3,item=C)
 Response to caller: Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]
 ----
 
+=== Chunking with group
+
+The `group` option on the Split EIP allows grouping N split items together into a single message
+with a `java.util.List` body. This is useful when you want to process items in batches rather than
+one at a time.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .split(body()).group(3)
+        .to("mock:batch");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <split group="3">
+        <simple>${body}</simple>
+        <to uri="mock:batch"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - split:
+            group: "3"
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: mock:batch
+----
+====
+
+If the input has 7 items, the route above produces 3 exchanges: one with items 1-3, one with items 4-6,
+and one with item 7.
+
+NOTE: This `group` option is on the Split EIP definition itself and works with any expression.
+It is different from the `group` option on the xref:components:languages:tokenize-language.adoc[Tokenize] language,
+which groups tokenized text lines together.
+
+=== Error handling with maxFailedRecords and errorThreshold
+
+The `stopOnException` option is all-or-nothing: a single failure stops the entire split.
+For more fine-grained control, the Splitter provides two error threshold options that let processing
+continue through some failures while stopping when the error rate becomes unacceptable.
+
+==== maxFailedRecords
+
+The `maxFailedRecords` option sets the maximum number of failed split items before aborting.
+Processing continues as long as the failure count stays below this threshold. When the threshold
+is reached, the splitter stops and sets an exception on the exchange.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .split(body()).maxFailedRecords(5)
+        .process(exchange -> {
+            // processing logic that may throw exceptions
+        })
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <split maxFailedRecords="5">
+        <simple>${body}</simple>
+        <process ref="myProcessor"/>
+        <to uri="mock:result"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - split:
+            maxFailedRecords: "5"
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - process:
+                  ref: myProcessor
+              - to:
+                  uri: mock:result
+----
+====
+
+In this example, the first 4 failures are tolerated and processing continues.
+When the 5th failure occurs, the splitter stops and the exchange will have an exception set.
+
+==== errorThreshold
+
+The `errorThreshold` option sets the maximum allowed failure ratio as a fraction between 0.0 and 1.0.
+After each failure, the ratio of failed items to total processed items is calculated. If this ratio
+meets or exceeds the threshold, the splitter stops.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .split(body()).errorThreshold(0.5)
+        .process(exchange -> {
+            // processing logic that may throw exceptions
+        })
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <split errorThreshold="0.5">
+        <simple>${body}</simple>
+        <process ref="myProcessor"/>
+        <to uri="mock:result"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - split:
+            errorThreshold: "0.5"
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - process:
+                  ref: myProcessor
+              - to:
+                  uri: mock:result
+----
+====
+
+In this example, if 50% or more of the processed items have failed, the splitter stops.
+
+Both `maxFailedRecords` and `errorThreshold` can be combined. The splitter stops when either
+threshold is exceeded.
+
+IMPORTANT: The `stopOnException` option is mutually exclusive with `maxFailedRecords` and
+`errorThreshold`. You cannot use `stopOnException` together with either of these options.
+
+NOTE: When using `errorThreshold` with `parallelProcessing`, the failure ratio may vary slightly
+between runs because the ratio is calculated as failures are reported, and the order in which
+parallel items complete is non-deterministic. For deterministic abort behavior with parallel
+processing, prefer `maxFailedRecords` (absolute count) over `errorThreshold` (ratio).
+
+==== SplitResult
+
+When `maxFailedRecords` or `errorThreshold` is configured, the splitter makes a
+`SplitResult` object available as an exchange property (`CamelSplitResult`) after the split completes.
+This provides structured information about the outcome:
+
+[source,java]
+----
+Exchange result = template.send("direct:start",
+        e -> e.getIn().setBody(myItems));
+
+SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+if (splitResult != null) {
+    int total = splitResult.getTotalItems();       // total items processed
+    int success = splitResult.getSuccessCount();   // successful items
+    int failures = splitResult.getFailureCount();  // failed items
+    boolean aborted = splitResult.isAborted();     // true if a threshold was exceeded
+
+    // inspect individual failures
+    for (SplitResult.Failure failure : splitResult.getFailures()) {
+        int index = failure.index();               // 0-based index of failed item
+        Exception ex = failure.exception();        // the exception that occurred
+    }
+}
+----
+
+=== Watermark tracking
+
+The Splitter supports watermark tracking for incremental processing scenarios using Camel's
+`ResumeStrategy` SPI. A watermark records how far processing has progressed, so subsequent
+runs can skip already-processed items.
+
+This is useful when processing a data source repeatedly (e.g., polling a database or file)
+where you want to resume from where the last run left off. You can use any `ResumeStrategy`
+implementation for persistence — from a simple in-memory strategy for testing to a Kafka-backed
+strategy for production use.
+
+==== Index-based watermark
+
+The simplest form uses the split index as the watermark. On each run, items up to and including
+the stored watermark index are skipped. After successful processing, the watermark is updated
+to the last processed index.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+ResumeStrategy strategy = ... // any ResumeStrategy implementation
+
+from("direct:start")
+    .split(body()).resumeStrategy(strategy, "myJob")
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <split resumeStrategy="#myStrategy" watermarkKey="myJob">
+        <simple>${body}</simple>
+        <to uri="mock:result"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - split:
+            resumeStrategy: "#myStrategy"
+            watermarkKey: myJob
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
+On the first run with 5 items, all are processed and the watermark is stored as `"4"` (the last 0-based index).
+On the next run with the same 5 items, items 0 through 4 are skipped and nothing is processed.
+If the data source grows to 8 items, only items 5, 6, and 7 are processed.
+
+==== Value-based watermark
+
+For more control, you can use a `watermarkExpression` to extract a watermark value from each processed item.
+The value from the last successfully processed item (by index order) is stored.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+ResumeStrategy strategy = ... // any ResumeStrategy implementation
+
+from("direct:start")
+    .split(body())
+        .resumeStrategy(strategy, "dateJob")
+        .watermarkExpression("${body}")
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <split resumeStrategy="#myStrategy" watermarkKey="dateJob" watermarkExpression="${body}">
+        <simple>${body}</simple>
+        <to uri="mock:result"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - split:
+            resumeStrategy: "#myStrategy"
+            watermarkKey: dateJob
+            watermarkExpression: "${body}"
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
+With value-based watermarking, the previous watermark value is exposed as the exchange property
+`CamelSplitWatermark` before split processing begins. You can use this to filter items in your
+processing logic.
+
+NOTE: The `watermarkExpression` option uses the Simple language for expression evaluation.
+
+NOTE: The watermark is only updated when the split completes successfully. If the split is aborted
+(e.g., due to exceeding `maxFailedRecords`), the watermark is not updated, which allows the
+failed batch to be retried.
+
+IMPORTANT: Watermark tracking assumes sequential route invocations (e.g., batch jobs triggered by
+a `timer` or `scheduler`). If multiple exchanges hit the same route concurrently, they will read
+the same watermark and may process duplicate items. Use a single-consumer pattern for watermark-based routes.
+
 === Stop processing in case of exception
 
 The Splitter will by default continue to process

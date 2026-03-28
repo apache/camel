@@ -43,9 +43,17 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SplitResult;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
+import org.apache.camel.resume.Offset;
+import org.apache.camel.resume.OffsetKey;
+import org.apache.camel.resume.ResumeStrategy;
+import org.apache.camel.resume.ResumeStrategyConfiguration;
+import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.resume.OffsetKeys;
+import org.apache.camel.support.resume.Offsets;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -63,12 +71,17 @@ public class Splitter extends MulticastProcessor {
     private static final String SPLIT_WATERMARK_OFFSET = "CamelSplitWatermarkOffset";
     private static final String SPLIT_WATERMARK_COUNT = "CamelSplitWatermarkCount";
     private static final String SPLIT_WATERMARK_LATEST = "CamelSplitWatermarkLatest";
+
+    private record IndexedWatermark(int index, String value) {
+    }
+
     private final Expression expression;
     private final String delimiter;
     private int group;
     private double errorThreshold;
     private int maxFailedRecords;
-    private Map<String, String> watermarkStore;
+    private ResumeStrategy resumeStrategy;
+    private final ConcurrentHashMap<String, String> watermarkCache = new ConcurrentHashMap<>();
     private String watermarkKey;
     private Expression watermarkExpression;
 
@@ -103,17 +116,65 @@ public class Splitter extends MulticastProcessor {
     }
 
     @Override
-    protected void doBuild() throws Exception {
-        super.doBuild();
-    }
-
-    @Override
     protected void doInit() throws Exception {
         super.doInit();
         expression.init(getCamelContext());
         if (watermarkExpression != null) {
             watermarkExpression.init(getCamelContext());
         }
+        if (resumeStrategy != null && watermarkKey != null) {
+            ServiceHelper.startService(resumeStrategy);
+            resumeStrategy.loadCache();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (resumeStrategy != null) {
+            ServiceHelper.stopService(resumeStrategy);
+        }
+        super.doStop();
+    }
+
+    /**
+     * Reads the current watermark value. Checks the local cache first (populated from previous exchanges), then falls
+     * back to the strategy's resume cache (populated by {@code loadCache()} on init or backed by external storage).
+     */
+    private String readCurrentWatermark() {
+        String value = watermarkCache.get(watermarkKey);
+        if (value != null) {
+            return value;
+        }
+        return readFromStrategyCache();
+    }
+
+    private String readFromStrategyCache() {
+        try {
+            ResumeStrategyConfiguration config = resumeStrategy.getResumeStrategyConfiguration();
+            if (config != null) {
+                ResumeCache<?> cache = config.getResumeCache();
+                if (cache != null) {
+                    String[] result = new String[1];
+                    cache.forEach((key, value) -> {
+                        String keyStr = key instanceof OffsetKey<?> ok
+                                ? String.valueOf(ok.getValue()) : String.valueOf(key);
+                        if (watermarkKey.equals(keyStr) && value != null) {
+                            result[0] = toWatermarkString(value);
+                            return false;
+                        }
+                        return true;
+                    });
+                    return result[0];
+                }
+            }
+        } catch (Exception e) {
+            // best-effort
+        }
+        return null;
+    }
+
+    private static String toWatermarkString(Object value) {
+        return value instanceof Offset<?> o ? String.valueOf(o.getValue()) : String.valueOf(value);
     }
 
     @Override
@@ -148,15 +209,15 @@ public class Splitter extends MulticastProcessor {
         }
 
         // set current watermark value as exchange property before processing
-        boolean hasWatermark = watermarkStore != null && watermarkKey != null;
+        boolean hasWatermark = resumeStrategy != null && watermarkKey != null;
         if (hasWatermark) {
-            String currentWatermark = watermarkStore.get(watermarkKey);
+            String currentWatermark = readCurrentWatermark();
             if (currentWatermark != null) {
                 exchange.setProperty(Exchange.SPLIT_WATERMARK, currentWatermark);
             }
             // pre-initialize AtomicReference for value-based watermark tracking (thread-safe)
             if (watermarkExpression != null) {
-                exchange.setProperty(SPLIT_WATERMARK_LATEST, new AtomicReference<String>());
+                exchange.setProperty(SPLIT_WATERMARK_LATEST, new AtomicReference<IndexedWatermark>());
             }
         }
 
@@ -207,14 +268,6 @@ public class Splitter extends MulticastProcessor {
             throw exchange.getException();
         }
 
-        // store total items count in tracker for SplitResult reporting
-        if (answer instanceof Collection<?> coll) {
-            SplitFailureTracker tracker = exchange.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
-            if (tracker != null) {
-                tracker.setTotalItems(coll.size());
-            }
-        }
-
         return answer;
     }
 
@@ -232,6 +285,8 @@ public class Splitter extends MulticastProcessor {
         private final Route route;
         private final Exchange original;
         private final int watermarkOffset;
+        // tracks individual (raw) item count, independent of grouping
+        private final AtomicInteger rawItemCount = new AtomicInteger();
 
         private SplitterIterable(Exchange exchange, Object value) {
             this.original = exchange;
@@ -249,8 +304,12 @@ public class Splitter extends MulticastProcessor {
 
             // index-based watermarking: skip items up to the stored watermark index
             int skipCount = 0;
-            if (watermarkStore != null && watermarkKey != null && watermarkExpression == null) {
-                String storedIndex = watermarkStore.get(watermarkKey);
+            if (resumeStrategy != null && watermarkKey != null && watermarkExpression == null) {
+                // reuse watermark already read in process() and set as exchange property
+                String storedIndex = exchange.getProperty(Exchange.SPLIT_WATERMARK, String.class);
+                if (storedIndex == null) {
+                    storedIndex = readCurrentWatermark();
+                }
                 if (storedIndex != null) {
                     int skipTo = Integer.parseInt(storedIndex);
                     while (rawIterator.hasNext() && skipCount <= skipTo) {
@@ -264,8 +323,23 @@ public class Splitter extends MulticastProcessor {
                 exchange.setProperty(SPLIT_WATERMARK_OFFSET, skipCount);
             }
 
+            // wrap rawIterator in a counting decorator to track individual items
+            // consumed, independent of any GroupIterator chunking
+            Iterator<?> countingIterator = new Iterator<>() {
+                @Override
+                public boolean hasNext() {
+                    return rawIterator.hasNext();
+                }
+
+                @Override
+                public Object next() {
+                    rawItemCount.incrementAndGet();
+                    return rawIterator.next();
+                }
+            };
+
             // wrap with GroupIterator if group > 0 to chunk items into List batches
-            this.iterator = group > 0 ? new GroupIterator(rawIterator, group) : rawIterator;
+            this.iterator = group > 0 ? new GroupIterator(countingIterator, group) : countingIterator;
 
             this.copy = copyAndPrepareSubExchange(exchange);
             this.route = ExchangeHelper.getRoute(exchange);
@@ -289,9 +363,13 @@ public class Splitter extends MulticastProcessor {
                     if (!answer) {
                         // we are now closed
                         closed = true;
-                        // store item count for watermark tracking
-                        if (watermarkStore != null && watermarkKey != null && watermarkExpression == null) {
-                            original.setProperty(SPLIT_WATERMARK_COUNT, index);
+                        // store raw item count for watermark tracking (guard against
+                        // re-iteration in MulticastProcessor.doDone which re-creates
+                        // the iterator to release exchanges).
+                        // Use rawItemCount (individual items) not index (which counts chunks when group > 0)
+                        if (resumeStrategy != null && watermarkKey != null && watermarkExpression == null
+                                && original.getProperty(SPLIT_WATERMARK_COUNT) == null) {
+                            original.setProperty(SPLIT_WATERMARK_COUNT, rawItemCount.get());
                         }
                         // nothing more so we need to close the expression value in case it needs to be
                         try {
@@ -335,6 +413,12 @@ public class Splitter extends MulticastProcessor {
                         } else {
                             Message in = newExchange.getIn();
                             in.setBody(part);
+                        }
+                        // track total items for SplitResult (works in both streaming and non-streaming mode)
+                        SplitFailureTracker tracker
+                                = original.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
+                        if (tracker != null) {
+                            tracker.incrementTotalItems();
                         }
                         return createProcessorExchangePair(index++, processor, newExchange, route);
                     } else {
@@ -430,12 +514,12 @@ public class Splitter extends MulticastProcessor {
         this.maxFailedRecords = maxFailedRecords;
     }
 
-    public Map<String, String> getWatermarkStore() {
-        return watermarkStore;
+    public ResumeStrategy getResumeStrategy() {
+        return resumeStrategy;
     }
 
-    public void setWatermarkStore(Map<String, String> watermarkStore) {
-        this.watermarkStore = watermarkStore;
+    public void setResumeStrategy(ResumeStrategy resumeStrategy) {
+        this.resumeStrategy = resumeStrategy;
     }
 
     public String getWatermarkKey() {
@@ -476,7 +560,9 @@ public class Splitter extends MulticastProcessor {
             }
         }
 
-        // continue processing - clear the exception so aggregation proceeds normally
+        // Continue processing — clear the exception from the sub-exchange so that aggregation
+        // proceeds normally. The failure is already recorded in the tracker above, so the
+        // SplitResult will still contain the failure details even though the exception is cleared.
         subExchange.setException(null);
         return true;
     }
@@ -484,18 +570,15 @@ public class Splitter extends MulticastProcessor {
     static final class SplitFailureTracker {
         private final AtomicInteger failureCount = new AtomicInteger();
         private final AtomicInteger totalItems = new AtomicInteger();
-        private final CopyOnWriteArrayList<SplitFailure> failures = new CopyOnWriteArrayList<>();
-
-        record SplitFailure(int index, Exception exception) {
-        }
+        private final CopyOnWriteArrayList<SplitResult.Failure> failures = new CopyOnWriteArrayList<>();
 
         void recordFailure(int index, Exception exception) {
             failureCount.incrementAndGet();
-            failures.add(new SplitFailure(index, exception));
+            failures.add(new SplitResult.Failure(index, exception));
         }
 
-        void setTotalItems(int count) {
-            totalItems.set(count);
+        void incrementTotalItems() {
+            totalItems.incrementAndGet();
         }
 
         int getTotalItems() {
@@ -506,12 +589,11 @@ public class Splitter extends MulticastProcessor {
             return failureCount.get();
         }
 
-        List<SplitFailure> getFailures() {
-            return Collections.unmodifiableList(failures);
+        List<SplitResult.Failure> getFailures() {
+            return List.copyOf(failures);
         }
     }
 
-    @SuppressWarnings("unchecked")
     /**
      * Wraps a {@link ProcessorExchangePair} to evaluate the watermark expression on each completed sub-exchange.
      */
@@ -558,10 +640,16 @@ public class Splitter extends MulticastProcessor {
             if (subExchange.getException() == null) {
                 String value = watermarkExpression.evaluate(subExchange, String.class);
                 if (value != null) {
-                    // AtomicReference is pre-initialized in process() — safe for parallel use
-                    AtomicReference<String> latestRef
-                            = (AtomicReference<String>) original.getProperty(SPLIT_WATERMARK_LATEST);
-                    latestRef.set(value);
+                    int itemIndex = delegate.getIndex();
+                    // Use accumulateAndGet to keep the value from the highest-indexed item.
+                    // This ensures deterministic behavior in parallel processing mode.
+                    AtomicReference<IndexedWatermark> latestRef
+                            = (AtomicReference<IndexedWatermark>) original.getProperty(SPLIT_WATERMARK_LATEST);
+                    latestRef.accumulateAndGet(
+                            new IndexedWatermark(itemIndex, value),
+                            (existing, candidate) -> existing == null || candidate.index() > existing.index()
+                                    ? candidate
+                                    : existing);
                 }
             }
         }
@@ -575,12 +663,13 @@ public class Splitter extends MulticastProcessor {
         }
 
         if (watermarkExpression != null) {
-            // value-based: use the latest value tracked per-item during processing
-            AtomicReference<String> latestRef = exchange.getProperty(SPLIT_WATERMARK_LATEST, AtomicReference.class);
+            // value-based: use the value from the highest-indexed item tracked during processing
+            AtomicReference<IndexedWatermark> latestRef
+                    = exchange.getProperty(SPLIT_WATERMARK_LATEST, AtomicReference.class);
             if (latestRef != null) {
-                String newValue = latestRef.get();
-                if (newValue != null) {
-                    watermarkStore.put(watermarkKey, newValue);
+                IndexedWatermark latest = latestRef.get();
+                if (latest != null) {
+                    persistWatermark(latest.value());
                 }
             }
         } else {
@@ -589,7 +678,7 @@ public class Splitter extends MulticastProcessor {
             Integer count = exchange.getProperty(SPLIT_WATERMARK_COUNT, Integer.class);
             if (count != null && count > 0) {
                 int lastAbsoluteIndex = offset + count - 1;
-                watermarkStore.put(watermarkKey, String.valueOf(lastAbsoluteIndex));
+                persistWatermark(String.valueOf(lastAbsoluteIndex));
             }
         }
 
@@ -599,21 +688,24 @@ public class Splitter extends MulticastProcessor {
         exchange.removeProperty(SPLIT_WATERMARK_LATEST);
     }
 
+    private void persistWatermark(String value) {
+        watermarkCache.put(watermarkKey, value);
+        try {
+            resumeStrategy.updateLastOffset(OffsetKeys.of(watermarkKey), Offsets.of(value));
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
     private void buildSplitResult(Exchange exchange) {
         SplitFailureTracker tracker = exchange.getProperty(SPLIT_FAILURE_TRACKER, SplitFailureTracker.class);
         if (tracker == null) {
             return;
         }
 
-        int totalItems = tracker.getTotalItems();
         boolean aborted = exchange.getException() != null;
-
-        List<SplitResult.Failure> failures = new ArrayList<>();
-        for (SplitFailureTracker.SplitFailure f : tracker.getFailures()) {
-            failures.add(new SplitResult.Failure(f.index(), f.exception()));
-        }
-
-        SplitResult result = new SplitResult(totalItems, tracker.getFailureCount(), failures, aborted);
+        SplitResult result
+                = new SplitResult(tracker.getTotalItems(), tracker.getFailureCount(), tracker.getFailures(), aborted);
         exchange.setProperty(ExchangePropertyKey.SPLIT_RESULT, result);
 
         // remove internal tracker

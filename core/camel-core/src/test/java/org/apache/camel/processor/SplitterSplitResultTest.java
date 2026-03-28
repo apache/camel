@@ -81,6 +81,32 @@ class SplitterSplitResultTest extends ContextTestSupport {
     }
 
     @Test
+    void testSplitResultInStreamingMode() throws Exception {
+        Exchange result = template.send("direct:streaming",
+                e -> e.getIn().setBody(Arrays.asList("a", "FAIL", "b", "c", "d")));
+
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertNotNull(splitResult, "SplitResult should be set in streaming mode");
+        assertEquals(5, splitResult.getTotalItems());
+        assertEquals(1, splitResult.getFailureCount());
+        assertEquals(4, splitResult.getSuccessCount());
+        assertFalse(splitResult.isAborted());
+    }
+
+    @Test
+    void testSplitResultWithParallelProcessing() throws Exception {
+        Exchange result = template.send("direct:parallel",
+                e -> e.getIn().setBody(Arrays.asList("a", "FAIL", "b", "c")));
+
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertNotNull(splitResult, "SplitResult should be set in parallel mode");
+        assertEquals(4, splitResult.getTotalItems());
+        assertEquals(1, splitResult.getFailureCount());
+        assertEquals(3, splitResult.getSuccessCount());
+        assertFalse(splitResult.isAborted());
+    }
+
+    @Test
     void testNoSplitResultWithoutErrorThreshold() throws Exception {
         // plain split without error threshold should not set SplitResult
         Exchange result = template.send("direct:plain",
@@ -117,6 +143,26 @@ class SplitterSplitResultTest extends ContextTestSupport {
 
                 from("direct:plain")
                         .split(body())
+                        .to("mock:split");
+
+                from("direct:streaming")
+                        .split(body()).streaming().maxFailedRecords(10)
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("FAIL".equals(body)) {
+                                throw new IllegalArgumentException("Simulated failure for: " + body);
+                            }
+                        })
+                        .to("mock:split");
+
+                from("direct:parallel")
+                        .split(body()).parallelProcessing().maxFailedRecords(10)
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("FAIL".equals(body)) {
+                                throw new IllegalArgumentException("Simulated failure for: " + body);
+                            }
+                        })
                         .to("mock:split");
             }
         };

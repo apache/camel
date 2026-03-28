@@ -16843,6 +16843,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "onPrepare", type = "string", description = "Uses the Processor when preparing the org.apache.camel.Exchange to be sent. This can be used to deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.", displayName = "On Prepare"),
                     @YamlProperty(name = "parallelAggregate", type = "boolean", deprecated = true, defaultValue = "false", description = "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.", displayName = "Parallel Aggregate"),
                     @YamlProperty(name = "parallelProcessing", type = "boolean", defaultValue = "false", description = "If enabled then processing each split messages occurs concurrently. Note the caller thread will still wait until all messages has been fully processed, before it continues. It's only processing the sub messages from the splitter which happens concurrently. When parallel processing is enabled, then the Camel routing engin will continue processing using last used thread from the parallel thread pool. However, if you want to use the original thread that called the splitter, then make sure to enable the synchronous option as well. In parallel processing mode, you may want to also synchronous = true to force this EIP to process the sub-tasks using the upper bounds of the thread-pool. If using synchronous = false then Camel will allow its reactive routing engine to use as many threads as possible, which may be available due to sub-tasks using other thread-pools such as CompletableFuture.runAsync or others.", displayName = "Parallel Processing"),
+                    @YamlProperty(name = "resumeStrategy", type = "string", description = "Sets a reference to a ResumeStrategy in the registry for resume-from-last-position support.", displayName = "Resume Strategy"),
                     @YamlProperty(name = "shareUnitOfWork", type = "boolean", defaultValue = "false", description = "Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub messages. Splitter will by default not share unit of work between the parent exchange and each split exchange. This means each split exchange has its own individual unit of work.", displayName = "Share Unit Of Work"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "stopOnException", type = "boolean", defaultValue = "false", description = "Will now stop further processing if an exception or failure occurred during processing of an org.apache.camel.Exchange and the caused exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by the error handler (such as using onException). In all situations the splitter will stop further processing. This is the same behavior as in pipeline, which is used by the routing engine. The default behavior is to not stop but continue processing till the end", displayName = "Stop On Exception"),
@@ -16850,8 +16851,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "synchronous", type = "boolean", defaultValue = "false", description = "Sets whether synchronous processing should be strictly used. When enabled then the same thread is used to continue routing after the split is complete, even if parallel processing is enabled.", displayName = "Synchronous"),
                     @YamlProperty(name = "timeout", type = "string", defaultValue = "0", description = "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.", displayName = "Timeout"),
                     @YamlProperty(name = "watermarkExpression", type = "string", description = "Sets a Simple expression to evaluate on the exchange after split completion to determine the new watermark value.", displayName = "Watermark Expression"),
-                    @YamlProperty(name = "watermarkKey", type = "string", description = "Sets the key to use in the watermark store.", displayName = "Watermark Key"),
-                    @YamlProperty(name = "watermarkStore", type = "string", description = "Sets a reference to a watermark store (a Map ) in the registry.", displayName = "Watermark Store")
+                    @YamlProperty(name = "watermarkKey", type = "string", description = "Sets the key to use in the watermark store.", displayName = "Watermark Key")
             }
     )
     public static class SplitDefinitionDeserializer extends YamlDeserializerBase<SplitDefinition> {
@@ -16934,6 +16934,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setParallelProcessing(val);
                     break;
                 }
+                case "resumeStrategy": {
+                    String val = asText(node);
+                    target.setResumeStrategy(val);
+                    break;
+                }
                 case "shareUnitOfWork": {
                     String val = asText(node);
                     target.setShareUnitOfWork(val);
@@ -16967,11 +16972,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "watermarkKey": {
                     String val = asText(node);
                     target.setWatermarkKey(val);
-                    break;
-                }
-                case "watermarkStore": {
-                    String val = asText(node);
-                    target.setWatermarkStore(val);
                     break;
                 }
                 case "id": {
