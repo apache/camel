@@ -1221,6 +1221,10 @@ threshold is exceeded.
 IMPORTANT: The `stopOnException` option is mutually exclusive with `maxFailedRecords` and
 `errorThreshold`. You cannot use `stopOnException` together with either of these options.
 
+NOTE: When error thresholds are configured, individual item exceptions are cleared from sub-exchanges
+after being recorded in the `SplitResult`. This means a custom `AggregationStrategy` will not see
+individual item exceptions — use the `SplitResult` exchange property to access failure details instead.
+
 NOTE: When using `errorThreshold` with `parallelProcessing`, the failure ratio may vary slightly
 between runs because the ratio is calculated as failures are reported, and the order in which
 parallel items complete is non-deterministic. For deterministic abort behavior with parallel
@@ -1239,7 +1243,7 @@ Exchange result = template.send("direct:start",
 
 SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
 if (splitResult != null) {
-    int total = splitResult.getTotalItems();       // total items processed
+    int total = splitResult.getTotalItems();       // total items (or chunks when group() is used)
     int success = splitResult.getSuccessCount();   // successful items
     int failures = splitResult.getFailureCount();  // failed items
     boolean aborted = splitResult.isAborted();     // true if a threshold was exceeded

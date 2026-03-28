@@ -56,6 +56,8 @@ import org.apache.camel.support.resume.Offsets;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -64,6 +66,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
  */
 public class Splitter extends MulticastProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Splitter.class);
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private static final String SINGLE_DELIMITER_MARKER = "single";
@@ -168,7 +172,8 @@ public class Splitter extends MulticastProcessor {
                 }
             }
         } catch (Exception e) {
-            // best-effort
+            LOG.debug("Failed to read watermark from resume strategy cache for key '{}': {}",
+                    watermarkKey, e.getMessage(), e);
         }
         return null;
     }

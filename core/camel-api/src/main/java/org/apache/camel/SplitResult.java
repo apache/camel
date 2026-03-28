@@ -49,7 +49,8 @@ public final class SplitResult {
     }
 
     /**
-     * The total number of items that were prepared for splitting.
+     * The total number of items that were prepared for splitting. When {@code group()} is used, this counts the number
+     * of chunks (groups), not the number of individual elements within them.
      */
     public int getTotalItems() {
         return totalItems;
