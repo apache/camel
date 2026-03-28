@@ -19,6 +19,10 @@ package org.apache.camel.component.jacksonxml;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 
 public class MyModule extends Module {
 
@@ -34,10 +38,26 @@ public class MyModule extends Module {
 
     @Override
     public void setupModule(SetupContext context) {
-        context.setNamingStrategy(new PropertyNamingStrategy.PropertyNamingStrategyBase() {
+        context.setNamingStrategy(new PropertyNamingStrategy() {
             @Override
-            public String translate(String propertyName) {
-                return "my-" + propertyName;
+            public String nameForField(MapperConfig<?> config, AnnotatedField field, String defaultName) {
+                return "my-" + defaultName;
+            }
+
+            @Override
+            public String nameForGetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
+                return "my-" + defaultName;
+            }
+
+            @Override
+            public String nameForSetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
+                return "my-" + defaultName;
+            }
+
+            @Override
+            public String nameForConstructorParameter(
+                    MapperConfig<?> config, AnnotatedParameter ctorParam, String defaultName) {
+                return "my-" + defaultName;
             }
         });
     }
