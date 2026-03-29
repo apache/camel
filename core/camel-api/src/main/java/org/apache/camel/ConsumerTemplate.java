@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Template for working with Camel and consuming {@link Message} instances in an {@link Exchange} from an
  * {@link Endpoint}. <br/>
@@ -112,6 +114,7 @@ public interface ConsumerTemplate extends Service {
      * @return             the returned exchange, or <tt>null</tt> if no response
      * @see                #doneUoW(Exchange)
      */
+    @Nullable
     Exchange receive(String endpointUri, long timeout);
 
     /**
@@ -124,6 +127,7 @@ public interface ConsumerTemplate extends Service {
      * @return          the returned exchange, or <tt>null</tt> if no response
      * @see             #doneUoW(Exchange)
      */
+    @Nullable
     Exchange receive(Endpoint endpoint, long timeout);
 
     /**
@@ -134,6 +138,7 @@ public interface ConsumerTemplate extends Service {
      * @param  endpointUri the endpoint to receive from
      * @return             the returned exchange, or <tt>null</tt> if no response
      */
+    @Nullable
     Exchange receiveNoWait(String endpointUri);
 
     /**
@@ -144,6 +149,7 @@ public interface ConsumerTemplate extends Service {
      * @param  endpoint the endpoint to receive from
      * @return          the returned exchange, or <tt>null</tt> if no response
      */
+    @Nullable
     Exchange receiveNoWait(Endpoint endpoint);
 
     /**
@@ -169,6 +175,7 @@ public interface ConsumerTemplate extends Service {
      * @param  timeout     timeout in millis to wait for a response
      * @return             the returned response body, or <tt>null</tt> if no response
      */
+    @Nullable
     Object receiveBody(String endpointUri, long timeout);
 
     /**
@@ -178,6 +185,7 @@ public interface ConsumerTemplate extends Service {
      * @param  timeout  timeout in millis to wait for a response
      * @return          the returned response body, or <tt>null</tt> if no response
      */
+    @Nullable
     Object receiveBody(Endpoint endpoint, long timeout);
 
     /**
@@ -186,6 +194,7 @@ public interface ConsumerTemplate extends Service {
      * @param  endpointUri the endpoint to receive from
      * @return             the returned response body, or <tt>null</tt> if no response
      */
+    @Nullable
     Object receiveBodyNoWait(String endpointUri);
 
     /**
@@ -194,6 +203,7 @@ public interface ConsumerTemplate extends Service {
      * @param  endpoint the endpoint to receive from
      * @return          the returned response body, or <tt>null</tt> if no response
      */
+    @Nullable
     Object receiveBodyNoWait(Endpoint endpoint);
 
     /**
@@ -222,7 +232,7 @@ public interface ConsumerTemplate extends Service {
      * @param  type        the expected response type
      * @return             the returned response body, or <tt>null</tt> if no response
      */
-    <T> T receiveBody(String endpointUri, long timeout, Class<T> type);
+    <T> @Nullable T receiveBody(String endpointUri, long timeout, Class<T> type);
 
     /**
      * Receives from the endpoint, waiting until there is a response or the timeout occurs
@@ -232,7 +242,7 @@ public interface ConsumerTemplate extends Service {
      * @param  type     the expected response type
      * @return          the returned response body, or <tt>null</tt> if no response
      */
-    <T> T receiveBody(Endpoint endpoint, long timeout, Class<T> type);
+    <T> @Nullable T receiveBody(Endpoint endpoint, long timeout, Class<T> type);
 
     /**
      * Receives from the endpoint, not waiting for a response if non exists.
@@ -241,7 +251,7 @@ public interface ConsumerTemplate extends Service {
      * @param  type        the expected response type
      * @return             the returned response body, or <tt>null</tt> if no response
      */
-    <T> T receiveBodyNoWait(String endpointUri, Class<T> type);
+    <T> @Nullable T receiveBodyNoWait(String endpointUri, Class<T> type);
 
     /**
      * Receives from the endpoint, not waiting for a response if non exists.
@@ -250,7 +260,7 @@ public interface ConsumerTemplate extends Service {
      * @param  type     the expected response type
      * @return          the returned response body, or <tt>null</tt> if no response
      */
-    <T> T receiveBodyNoWait(Endpoint endpoint, Class<T> type);
+    <T> @Nullable T receiveBodyNoWait(Endpoint endpoint, Class<T> type);
 
     /**
      * If you have used any of the <tt>receive</tt> methods which returns a {@link Exchange} type then you need to

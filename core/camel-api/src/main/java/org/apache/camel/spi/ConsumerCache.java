@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Cache containing created {@link PollingConsumer}.
@@ -55,6 +56,7 @@ public interface ConsumerCache extends Service {
      * @param  endpoint the endpoint to receive from
      * @return          the message exchange received.
      */
+    @Nullable
     Exchange receive(Endpoint endpoint);
 
     /**
@@ -71,6 +73,7 @@ public interface ConsumerCache extends Service {
      * @return          the message exchange if one was available within the timeout period, or <tt>null</tt> if the
      *                  timeout expired
      */
+    @Nullable
     Exchange receive(Endpoint endpoint, long timeout);
 
     /**
@@ -84,6 +87,7 @@ public interface ConsumerCache extends Service {
      *
      * @return          the message exchange if one is immediately available otherwise <tt>null</tt>
      */
+    @Nullable
     Exchange receiveNoWait(Endpoint endpoint);
 
     /**

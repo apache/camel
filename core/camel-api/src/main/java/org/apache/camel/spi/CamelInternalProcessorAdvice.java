@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An advice (before and after) to execute cross-cutting functionality in the Camel routing engine.
@@ -37,6 +38,7 @@ public interface CamelInternalProcessorAdvice<T> {
      *                   method, or use <tt>null</tt> for no state.
      * @throws Exception is thrown if error during the call.
      */
+    @Nullable
     T before(Exchange exchange) throws Exception;
 
     /**
@@ -46,7 +48,7 @@ public interface CamelInternalProcessorAdvice<T> {
      * @param  data      the state, if any, returned in the {@link #before(org.apache.camel.Exchange)} method.
      * @throws Exception is thrown if error during the call.
      */
-    void after(Exchange exchange, T data) throws Exception;
+    void after(Exchange exchange, @Nullable T data) throws Exception;
 
     /**
      * Whether this advice has state or not.

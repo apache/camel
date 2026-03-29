@@ -23,13 +23,15 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents a set of regular expression based filter patterns for including and excluding content of some type.
  */
 public class FilterParameters extends JsseParameters {
 
-    protected List<String> include;
-    protected List<String> exclude;
+    protected @Nullable List<String> include;
+    protected @Nullable List<String> exclude;
 
     /**
      * Returns a live copy of the list of patterns to include. The list of excludes takes precedence over the include

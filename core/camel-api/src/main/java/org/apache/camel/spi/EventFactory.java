@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory to create {@link CamelEvent events} that are emitted when such an event occur.
@@ -303,7 +304,7 @@ public interface EventFactory {
      */
     CamelEvent createExchangeFailureHandlingEvent(
             Exchange exchange, Processor failureHandler,
-            boolean deadLetterChannel, String deadLetterUri);
+            boolean deadLetterChannel, @Nullable String deadLetterUri);
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} has failed but was handled by the Camel
@@ -320,7 +321,7 @@ public interface EventFactory {
      */
     CamelEvent createExchangeFailureHandledEvent(
             Exchange exchange, Processor failureHandler,
-            boolean deadLetterChannel, String deadLetterUri);
+            boolean deadLetterChannel, @Nullable String deadLetterUri);
 
     /**
      * Creates an {@link CamelEvent} when an {@link org.apache.camel.Exchange} is about to be redelivered

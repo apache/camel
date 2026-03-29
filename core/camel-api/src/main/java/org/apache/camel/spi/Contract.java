@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A Contract which represents the input type and/or output type of the {@link Endpoint} or {@link Processor}.
@@ -30,7 +31,7 @@ public class Contract {
     private boolean validateOutput;
     private String contractString;
 
-    public DataType getInputType() {
+    public @Nullable DataType getInputType() {
         return inputType;
     }
 
@@ -54,7 +55,7 @@ public class Contract {
         this.contractString = null;
     }
 
-    public DataType getOutputType() {
+    public @Nullable DataType getOutputType() {
         return outputType;
     }
 

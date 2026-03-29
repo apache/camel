@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helper for invoking {@link HealthCheck}'s.
@@ -56,7 +57,7 @@ public final class HealthCheckHelper {
      * @param camelContext  the camel context
      * @param exposureLevel level of exposure (full, oneline or default)
      */
-    public static Collection<HealthCheck.Result> invoke(CamelContext camelContext, String exposureLevel) {
+    public static Collection<HealthCheck.Result> invoke(CamelContext camelContext, @Nullable String exposureLevel) {
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false,
                 exposureLevel);
     }
@@ -75,7 +76,7 @@ public final class HealthCheckHelper {
      * @param camelContext  the camel context
      * @param exposureLevel level of exposure (full, oneline or default)
      */
-    public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext, String exposureLevel) {
+    public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext, @Nullable String exposureLevel) {
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.READINESS),
                 check -> !check.isReadiness(), exposureLevel);
     }
@@ -94,7 +95,7 @@ public final class HealthCheckHelper {
      * @param camelContext  the camel context
      * @param exposureLevel level of exposure (full, oneline or default)
      */
-    public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext, String exposureLevel) {
+    public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext, @Nullable String exposureLevel) {
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.LIVENESS),
                 check -> !check.isLiveness(), exposureLevel);
     }
@@ -131,7 +132,7 @@ public final class HealthCheckHelper {
             CamelContext camelContext,
             Function<HealthCheck, Map<String, Object>> optionsSupplier,
             Predicate<HealthCheck> filter,
-            String exposureLevel) {
+            @Nullable String exposureLevel) {
 
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
 
@@ -206,7 +207,7 @@ public final class HealthCheckHelper {
      * @param  context the camel context
      * @return         the health check registry, or <tt>null</tt> if health-check is not enabled.
      */
-    public static HealthCheckRegistry getHealthCheckRegistry(CamelContext context) {
+    public static @Nullable HealthCheckRegistry getHealthCheckRegistry(CamelContext context) {
         return context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
     }
 
@@ -217,7 +218,7 @@ public final class HealthCheckHelper {
      * @param  id      the id of the health check
      * @return         the health check, or <tt>null</tt> if no health check exists with this id
      */
-    public static HealthCheck getHealthCheck(CamelContext context, String id) {
+    public static @Nullable HealthCheck getHealthCheck(CamelContext context, String id) {
         HealthCheck answer = null;
 
         HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
@@ -248,7 +249,7 @@ public final class HealthCheckHelper {
      * @param  type    the expected type of the health check repository
      * @return         the health check, or <tt>null</tt> if no health check exists with this id
      */
-    public static <T extends HealthCheck> T getHealthCheck(CamelContext context, String id, Class<T> type) {
+    public static <T extends HealthCheck> @Nullable T getHealthCheck(CamelContext context, String id, Class<T> type) {
         HealthCheck answer = getHealthCheck(context, id);
         if (answer != null) {
             return type.cast(answer);
@@ -263,7 +264,7 @@ public final class HealthCheckHelper {
      * @param  id      the id of the health check repository
      * @return         the health check repository, or <tt>null</tt> if no health check repository exists with this id
      */
-    public static HealthCheckRepository getHealthCheckRepository(CamelContext context, String id) {
+    public static @Nullable HealthCheckRepository getHealthCheckRepository(CamelContext context, String id) {
         HealthCheckRepository answer = null;
 
         HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
@@ -294,7 +295,8 @@ public final class HealthCheckHelper {
      * @param  type    the expected type of the health check repository
      * @return         the health check repository, or <tt>null</tt> if no health check repository exists with this id
      */
-    public static <T extends HealthCheckRepository> T getHealthCheckRepository(CamelContext context, String id, Class<T> type) {
+    public static <T extends HealthCheckRepository> @Nullable T getHealthCheckRepository(
+            CamelContext context, String id, Class<T> type) {
         HealthCheckRepository answer = getHealthCheckRepository(context, id);
         if (answer != null) {
             return type.cast(answer);

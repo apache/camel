@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Internal {@link Processor} that Camel routing engine used during routing for cross cutting functionality such as:
@@ -54,7 +55,7 @@ public interface InternalProcessor extends AsyncProcessor {
      * @param  type the type of the advice
      * @return      the advice if exists, or <tt>null</tt> if no advices has been added with the given type.
      */
-    <T> T getAdvice(Class<T> type);
+    <T> @Nullable T getAdvice(Class<T> type);
 
     /**
      * Removes an {@link CamelInternalProcessorAdvice} advice from the list of advices.

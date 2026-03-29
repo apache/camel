@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Registry for {@link EndpointServiceLocation} to make it easy to find information about usage of external services
@@ -49,11 +50,13 @@ public interface EndpointServiceRegistry extends StaticService {
          *
          * @return the address or null if no address can be determined.
          */
+        @Nullable
         String getServiceUrl();
 
         /**
          * Get the protocol the service is using such as http, amqp, tcp.
          */
+        @Nullable
         String getServiceProtocol();
 
         /**
@@ -63,7 +66,7 @@ public interface EndpointServiceRegistry extends StaticService {
          *
          * @return optional metadata or null if no data
          */
-        default Map<String, String> getServiceMetadata() {
+        default @Nullable Map<String, String> getServiceMetadata() {
             return null;
         }
 

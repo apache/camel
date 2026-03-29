@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -46,7 +47,7 @@ public class CamelLogger {
         this(log, level, null);
     }
 
-    public CamelLogger(Logger log, LoggingLevel level, String marker) {
+    public CamelLogger(Logger log, LoggingLevel level, @Nullable String marker) {
         this.log = log;
         setLevel(level);
         setMarker(marker);
@@ -60,7 +61,7 @@ public class CamelLogger {
         this(logName, level, null);
     }
 
-    public CamelLogger(String logName, LoggingLevel level, String marker) {
+    public CamelLogger(String logName, LoggingLevel level, @Nullable String marker) {
         this(LoggerFactory.getLogger(logName), level, marker);
     }
 
@@ -138,15 +139,15 @@ public class CamelLogger {
         this.log = LoggerFactory.getLogger(logName);
     }
 
-    public Marker getMarker() {
+    public @Nullable Marker getMarker() {
         return marker;
     }
 
-    public void setMarker(Marker marker) {
+    public void setMarker(@Nullable Marker marker) {
         this.marker = marker;
     }
 
-    public void setMarker(String marker) {
+    public void setMarker(@Nullable String marker) {
         if (ObjectHelper.isNotEmpty(marker)) {
             this.marker = MarkerFactory.getMarker(marker);
         } else {
@@ -217,7 +218,7 @@ public class CamelLogger {
         }
     }
 
-    public static void log(Logger log, LoggingLevel level, Marker marker, String message, Throwable th) {
+    public static void log(Logger log, LoggingLevel level, @Nullable Marker marker, String message, Throwable th) {
         if (marker == null) {
             log(log, level, message, th);
             return;

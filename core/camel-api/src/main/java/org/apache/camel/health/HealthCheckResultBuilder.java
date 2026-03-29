@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import org.apache.camel.Builder;
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A builder helper to create a {@link HealthCheck} result.
@@ -30,34 +31,34 @@ import org.apache.camel.util.ObjectHelper;
 public final class HealthCheckResultBuilder implements Builder<HealthCheck.Result> {
 
     private final HealthCheck check;
-    private String message;
-    private Throwable error;
-    private Map<String, Object> details;
-    private HealthCheck.State state;
+    private @Nullable String message;
+    private @Nullable Throwable error;
+    private @Nullable Map<String, Object> details;
+    private HealthCheck.@Nullable State state;
 
     private HealthCheckResultBuilder(HealthCheck check) {
         this.check = check;
     }
 
-    public String message() {
+    public @Nullable String message() {
         return this.message;
     }
 
-    public HealthCheckResultBuilder message(String message) {
+    public HealthCheckResultBuilder message(@Nullable String message) {
         this.message = message;
         return this;
     }
 
-    public Throwable error() {
+    public @Nullable Throwable error() {
         return this.error;
     }
 
-    public HealthCheckResultBuilder error(Throwable error) {
+    public HealthCheckResultBuilder error(@Nullable Throwable error) {
         this.error = error;
         return this;
     }
 
-    public Object detail(String key) {
+    public @Nullable Object detail(String key) {
         return this.details != null ? this.details.get(key) : null;
     }
 
@@ -78,7 +79,7 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
         return this;
     }
 
-    public HealthCheck.State state() {
+    public HealthCheck.@Nullable State state() {
         return this.state;
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Pluggable strategy for invoking {@link InvokeOnHeader}.
@@ -39,5 +40,6 @@ public interface InvokeOnHeaderStrategy {
      *                   returned, then this value is stored as result on the message body.
      * @throws Exception is thrown if error invoking the method.
      */
+    @Nullable
     Object invoke(Object target, String key, Exchange exchange, AsyncCallback callback) throws Exception;
 }

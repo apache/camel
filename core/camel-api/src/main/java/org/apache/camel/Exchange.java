@@ -22,6 +22,7 @@ import org.apache.camel.clock.Clock;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.annotations.ConstantProvider;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An Exchange is the message container holding the information during the entire routing of a {@link Message} received
@@ -343,6 +344,7 @@ public interface Exchange extends VariableAware {
      * @param  key the exchange key
      * @return     the value of the given property or <tt>null</tt> if there is no property for the given key
      */
+    @Nullable
     Object getProperty(ExchangePropertyKey key);
 
     /**
@@ -353,7 +355,7 @@ public interface Exchange extends VariableAware {
      * @return      the value of the given property or <tt>null</tt> if there is no property for the given name or
      *              <tt>null</tt> if it cannot be converted to the given type
      */
-    <T> T getProperty(ExchangePropertyKey key, Class<T> type);
+    <T> @Nullable T getProperty(ExchangePropertyKey key, Class<T> type);
 
     /**
      * Returns a property associated with this exchange by name and specifying the type required
@@ -364,7 +366,7 @@ public interface Exchange extends VariableAware {
      * @return              the value of the given property or <tt>defaultValue</tt> if there is no property for the
      *                      given name or <tt>null</tt> if it cannot be converted to the given type
      */
-    <T> T getProperty(ExchangePropertyKey key, Object defaultValue, Class<T> type);
+    <T> @Nullable T getProperty(ExchangePropertyKey key, Object defaultValue, Class<T> type);
 
     /**
      * Sets a property on the exchange
@@ -372,7 +374,7 @@ public interface Exchange extends VariableAware {
      * @param key   the exchange key
      * @param value to associate with the name
      */
-    void setProperty(ExchangePropertyKey key, Object value);
+    void setProperty(ExchangePropertyKey key, @Nullable Object value);
 
     /**
      * Removes the given property on the exchange
@@ -380,6 +382,7 @@ public interface Exchange extends VariableAware {
      * @param  key the exchange key
      * @return     the old value of the property
      */
+    @Nullable
     Object removeProperty(ExchangePropertyKey key);
 
     /**
@@ -388,6 +391,7 @@ public interface Exchange extends VariableAware {
      * @param  name the name of the property
      * @return      the value of the given property or <tt>null</tt> if there is no property for the given name
      */
+    @Nullable
     Object getProperty(String name);
 
     /**
@@ -398,7 +402,7 @@ public interface Exchange extends VariableAware {
      * @return      the value of the given property or <tt>null</tt> if there is no property for the given name or
      *              <tt>null</tt> if it cannot be converted to the given type
      */
-    <T> T getProperty(String name, Class<T> type);
+    <T> @Nullable T getProperty(String name, Class<T> type);
 
     /**
      * Returns a property associated with this exchange by name and specifying the type required
@@ -409,7 +413,7 @@ public interface Exchange extends VariableAware {
      * @return              the value of the given property or <tt>defaultValue</tt> if there is no property for the
      *                      given name or <tt>null</tt> if it cannot be converted to the given type
      */
-    <T> T getProperty(String name, Object defaultValue, Class<T> type);
+    <T> @Nullable T getProperty(String name, Object defaultValue, Class<T> type);
 
     /**
      * Sets a property on the exchange
@@ -417,7 +421,7 @@ public interface Exchange extends VariableAware {
      * @param name  of the property
      * @param value to associate with the name
      */
-    void setProperty(String name, Object value);
+    void setProperty(String name, @Nullable Object value);
 
     /**
      * Removes the given property on the exchange
@@ -425,6 +429,7 @@ public interface Exchange extends VariableAware {
      * @param  name of the property
      * @return      the old value of the property
      */
+    @Nullable
     Object removeProperty(String name);
 
     /**
@@ -475,6 +480,7 @@ public interface Exchange extends VariableAware {
      *              repository. If no repo-id is provided, then variables will be from the current exchange.
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
      */
+    @Nullable
     Object getVariable(String name);
 
     /**
@@ -486,7 +492,7 @@ public interface Exchange extends VariableAware {
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name or
      *              <tt>null</tt> if it cannot be converted to the given type
      */
-    <T> T getVariable(String name, Class<T> type);
+    <T> @Nullable T getVariable(String name, Class<T> type);
 
     /**
      * Returns a variable by name and specifying the type required
@@ -498,7 +504,7 @@ public interface Exchange extends VariableAware {
      * @return              the value of the given variable or <tt>defaultValue</tt> if there is no variable for the
      *                      given name or <tt>null</tt> if it cannot be converted to the given type
      */
-    <T> T getVariable(String name, Object defaultValue, Class<T> type);
+    <T> @Nullable T getVariable(String name, Object defaultValue, Class<T> type);
 
     /**
      * Sets a variable on the exchange
@@ -507,7 +513,7 @@ public interface Exchange extends VariableAware {
      *              If no repo-id is provided, then variables will be stored in the current exchange.
      * @param value the value of the variable
      */
-    void setVariable(String name, Object value);
+    void setVariable(String name, @Nullable Object value);
 
     /**
      * Removes the given variable
@@ -518,6 +524,7 @@ public interface Exchange extends VariableAware {
      *              repository. If no repo-id is provided, then the variable from the current exchange will be removed
      * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
      */
+    @Nullable
     Object removeVariable(String name);
 
     /**
@@ -554,7 +561,7 @@ public interface Exchange extends VariableAware {
      * @param  type the given type
      * @return      the message as the given type or <tt>null</tt> if not possible to covert to given type
      */
-    <T> T getMessage(Class<T> type);
+    <T> @Nullable T getMessage(Class<T> type);
 
     /**
      * Replace the current message instance.
@@ -569,7 +576,7 @@ public interface Exchange extends VariableAware {
      * @param  type the given type
      * @return      the message as the given type or <tt>null</tt> if not possible to covert to given type
      */
-    <T> T getIn(Class<T> type);
+    <T> @Nullable T getIn(Class<T> type);
 
     /**
      * Sets the inbound message instance
@@ -611,7 +618,7 @@ public interface Exchange extends VariableAware {
      * @deprecated      use {@link #getMessage(Class)}
      */
     @Deprecated(since = "3.0.0")
-    <T> T getOut(Class<T> type);
+    <T> @Nullable T getOut(Class<T> type);
 
     /**
      * Returns whether an OUT message has been set or not.
@@ -636,6 +643,7 @@ public interface Exchange extends VariableAware {
      *
      * @return the exception (or null if no faults)
      */
+    @Nullable
     Exception getException();
 
     /**
@@ -649,7 +657,7 @@ public interface Exchange extends VariableAware {
      * @param  type the exception type
      * @return      the exception (or <tt>null</tt> if no caused exception matched)
      */
-    <T> T getException(Class<T> type);
+    <T> @Nullable T getException(Class<T> type);
 
     /**
      * Sets the exception associated with this exchange
@@ -659,7 +667,7 @@ public interface Exchange extends VariableAware {
      *
      * @param t the caused exception
      */
-    void setException(Throwable t);
+    void setException(@Nullable Throwable t);
 
     /**
      * Returns true if this exchange failed due to an exception
@@ -741,6 +749,7 @@ public interface Exchange extends VariableAware {
      * getContext().getRoute(getFromRouteId()).getEndpoint()
      * </pre>
      */
+    @Nullable
     Endpoint getFromEndpoint();
 
     /**
@@ -750,11 +759,13 @@ public interface Exchange extends VariableAware {
      * Note: In case this message exchange has been cloned through another parent message exchange then this method
      * would return the <tt>fromRouteId<tt> property of that exchange.
      */
+    @Nullable
     String getFromRouteId();
 
     /**
      * Returns the unit of work that this exchange belongs to; which may map to zero, one or more physical transactions
      */
+    @Nullable
     UnitOfWork getUnitOfWork();
 
     /**

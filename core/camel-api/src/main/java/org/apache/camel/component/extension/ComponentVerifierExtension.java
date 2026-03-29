@@ -28,6 +28,7 @@ import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.Exc
 import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.GroupErrorAttribute;
 import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.HttpErrorAttribute;
 import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.StandardErrorCode;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines the interface used for validating component/endpoint parameters. The central method of this interface is
@@ -153,6 +154,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          *
          * @return the error description (if available)
          */
+        @Nullable
         String getDescription();
 
         /**
@@ -179,7 +181,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @param  attribute the attribute to lookup
          * @return           the detail value or null if no such attribute exists
          */
-        default Object getDetail(Attribute attribute) {
+        default @Nullable Object getDetail(Attribute attribute) {
             Map<Attribute, Object> details = getDetails();
             if (details != null) {
                 return details.get(attribute);
@@ -193,7 +195,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @param  attribute the attribute to lookup
          * @return           the detail value or null if no such attribute exists
          */
-        default Object getDetail(String attribute) {
+        default @Nullable Object getDetail(String attribute) {
             return getDetail(asAttribute(attribute));
         }
 

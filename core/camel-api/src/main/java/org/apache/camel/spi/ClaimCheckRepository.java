@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Access to a repository of keys to implement the <a href="http://camel.apache.org/claim-check.html">Claim Check</a>
@@ -52,6 +53,7 @@ public interface ClaimCheckRepository extends Service {
      *
      * @param key the claim check key
      */
+    @Nullable
     Exchange get(String key);
 
     /**
@@ -60,6 +62,7 @@ public interface ClaimCheckRepository extends Service {
      * @param  key the claim check key
      * @return     the removed exchange, or <tt>null</tt> if the key did not exists.
      */
+    @Nullable
     Exchange getAndRemove(String key);
 
     /**
@@ -70,6 +73,7 @@ public interface ClaimCheckRepository extends Service {
     /**
      * Pops the repository and returns the latest. Or returns <tt>null</tt> if the stack is empty.
      */
+    @Nullable
     Exchange pop();
 
     /**

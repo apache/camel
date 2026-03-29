@@ -17,6 +17,7 @@
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to CyberArk Conjur Vault.
@@ -24,87 +25,87 @@ import org.apache.camel.spi.Metadata;
 public class CyberArkVaultConfiguration extends VaultConfiguration {
 
     @Metadata
-    private String url;
+    private @Nullable String url;
     @Metadata
-    private String account;
+    private @Nullable String account;
     @Metadata(secret = true)
-    private String username;
+    private @Nullable String username;
     @Metadata(secret = true)
-    private String password;
+    private @Nullable String password;
     @Metadata(secret = true)
-    private String apiKey;
+    private @Nullable String apiKey;
     @Metadata
-    private String authToken;
+    private @Nullable String authToken;
     @Metadata
     private boolean verifySsl = true;
     @Metadata
-    private String certificatePath;
+    private @Nullable String certificatePath;
     @Metadata
-    private String secrets;
+    private @Nullable String secrets;
 
-    public String getUrl() {
+    public @Nullable String getUrl() {
         return url;
     }
 
     /**
      * The CyberArk Conjur instance URL
      */
-    public void setUrl(String url) {
+    public void setUrl(@Nullable String url) {
         this.url = url;
     }
 
-    public String getAccount() {
+    public @Nullable String getAccount() {
         return account;
     }
 
     /**
      * The CyberArk Conjur account name
      */
-    public void setAccount(String account) {
+    public void setAccount(@Nullable String account) {
         this.account = account;
     }
 
-    public String getUsername() {
+    public @Nullable String getUsername() {
         return username;
     }
 
     /**
      * The username for authentication
      */
-    public void setUsername(String username) {
+    public void setUsername(@Nullable String username) {
         this.username = username;
     }
 
-    public String getPassword() {
+    public @Nullable String getPassword() {
         return password;
     }
 
     /**
      * The password for authentication
      */
-    public void setPassword(String password) {
+    public void setPassword(@Nullable String password) {
         this.password = password;
     }
 
-    public String getApiKey() {
+    public @Nullable String getApiKey() {
         return apiKey;
     }
 
     /**
      * The API key for authentication
      */
-    public void setApiKey(String apiKey) {
+    public void setApiKey(@Nullable String apiKey) {
         this.apiKey = apiKey;
     }
 
-    public String getAuthToken() {
+    public @Nullable String getAuthToken() {
         return authToken;
     }
 
     /**
      * Pre-authenticated token to use
      */
-    public void setAuthToken(String authToken) {
+    public void setAuthToken(@Nullable String authToken) {
         this.authToken = authToken;
     }
 
@@ -119,25 +120,25 @@ public class CyberArkVaultConfiguration extends VaultConfiguration {
         this.verifySsl = verifySsl;
     }
 
-    public String getCertificatePath() {
+    public @Nullable String getCertificatePath() {
         return certificatePath;
     }
 
     /**
      * Path to the SSL certificate for verification
      */
-    public void setCertificatePath(String certificatePath) {
+    public void setCertificatePath(@Nullable String certificatePath) {
         this.certificatePath = certificatePath;
     }
 
-    public String getSecrets() {
+    public @Nullable String getSecrets() {
         return secrets;
     }
 
     /**
      * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
      */
-    public void setSecrets(String secrets) {
+    public void setSecrets(@Nullable String secrets) {
         this.secrets = secrets;
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents an object which is aware of HTTP responses.
  */
@@ -34,10 +36,11 @@ public interface HttpResponseAware {
     /**
      * The HTTP status line
      */
+    @Nullable
     String getHttpResponseStatus();
 
     /**
      * Sets the HTTP status line
      */
-    void setHttpResponseStatus(String status);
+    void setHttpResponseStatus(@Nullable String status);
 }

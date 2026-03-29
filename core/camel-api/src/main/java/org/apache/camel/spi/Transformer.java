@@ -21,6 +21,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * <a href="http://camel.apache.org/transformer.html">Transformer</a> performs message transformation according to the
@@ -32,10 +33,10 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class Transformer extends ServiceSupport implements CamelContextAware {
 
-    private CamelContext camelContext;
-    private String name;
-    private DataType from;
-    private DataType to;
+    private @Nullable CamelContext camelContext;
+    private @Nullable String name;
+    private @Nullable DataType from;
+    private @Nullable DataType to;
 
     public Transformer() {
         if (this.getClass().isAnnotationPresent(DataTypeTransformer.class)) {
@@ -70,21 +71,21 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     /**
      * Get the transformer name that represents the supported data type model.
      */
-    public String getName() {
+    public @Nullable String getName() {
         return name;
     }
 
     /**
      * Get 'from' data type.
      */
-    public DataType getFrom() {
+    public @Nullable DataType getFrom() {
         return from;
     }
 
     /**
      * Get 'to' data type.
      */
-    public DataType getTo() {
+    public @Nullable DataType getTo() {
         return to;
     }
 
@@ -133,7 +134,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     }
 
     @Override
-    public CamelContext getCamelContext() {
+    public @Nullable CamelContext getCamelContext() {
         return this.camelContext;
     }
 

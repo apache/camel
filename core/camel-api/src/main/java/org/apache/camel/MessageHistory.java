@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents the history of a Camel {@link Message} how it was routed by the Camel routing engine.
  */
@@ -63,6 +65,7 @@ public interface MessageHistory {
     /**
      * A read-only copy of the message at the point of this history (if this has been enabled).
      */
+    @Nullable
     Message getMessage();
 
     /**

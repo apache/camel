@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A {@link PollingConsumer} that are used by dynamic Poll and PollEnrich EIPs to facilitate components that can use
  * information from the current {@link Exchange} during the poll.
@@ -35,6 +37,7 @@ public interface DynamicPollingConsumer extends PollingConsumer {
      *
      * @return          the message exchange received.
      */
+    @Nullable
     Exchange receive(Exchange exchange);
 
     /**
@@ -46,6 +49,7 @@ public interface DynamicPollingConsumer extends PollingConsumer {
      *
      * @return the message exchange if one is immediately available otherwise <tt>null</tt>
      */
+    @Nullable
     Exchange receiveNoWait(Exchange exchange);
 
     /**
@@ -61,5 +65,6 @@ public interface DynamicPollingConsumer extends PollingConsumer {
      * @return         the message exchange if one was available within the timeout period, or <tt>null</tt> if the
      *                 timeout expired
      */
+    @Nullable
     Exchange receive(Exchange exchange, long timeout);
 }

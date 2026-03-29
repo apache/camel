@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
 
     private final String headerName;
@@ -59,7 +61,7 @@ public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
         return valueDescription(value);
     }
 
-    static String valueDescription(Object value) {
+    static String valueDescription(@Nullable Object value) {
         if (value == null) {
             return "null";
         }

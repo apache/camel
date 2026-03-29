@@ -16,15 +16,17 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception caused when an invalid property name is used on an object
  */
 public class InvalidPropertyException extends RuntimeCamelException {
 
-    private final transient Object owner;
+    private final transient @Nullable Object owner;
     private final String propertyName;
 
-    public InvalidPropertyException(Object owner, String propertyName) {
+    public InvalidPropertyException(@Nullable Object owner, String propertyName) {
         this(owner, propertyName, owner != null ? owner.getClass() : Object.class);
     }
 
@@ -38,7 +40,7 @@ public class InvalidPropertyException extends RuntimeCamelException {
         return propertyName;
     }
 
-    public Object getOwner() {
+    public @Nullable Object getOwner() {
         return owner;
     }
 }

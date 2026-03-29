@@ -17,14 +17,15 @@
 package org.apache.camel;
 
 import org.apache.camel.util.URISupport;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Exception when failing to create a {@link org.apache.camel.Route}.
  */
 public class FailedToCreateRouteException extends RuntimeCamelException {
 
-    private final String routeId;
-    private final String location;
+    private final @Nullable String routeId;
+    private final @Nullable String location;
 
     public FailedToCreateRouteException(String cause) {
         super("Failed to create route because: " + cause);
@@ -32,14 +33,14 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
         this.location = null;
     }
 
-    public FailedToCreateRouteException(String routeId, String location, String route, String cause) {
+    public FailedToCreateRouteException(String routeId, @Nullable String location, String route, String cause) {
         super("Failed to create route: " + routeId + (location != null ? " (source: " + location + ")" : "") + ": "
               + getRouteMessage(route) + " because: " + cause);
         this.routeId = routeId;
         this.location = location;
     }
 
-    public FailedToCreateRouteException(String routeId, String location, String route, Throwable cause) {
+    public FailedToCreateRouteException(String routeId, @Nullable String location, String route, Throwable cause) {
         super("Failed to create route: " + routeId + (location != null ? " (source: " + location + ")" : "") + ": "
               + getRouteMessage(route) + " because: " + getExceptionMessage(cause),
               cause);
@@ -47,7 +48,7 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
         this.location = location;
     }
 
-    public FailedToCreateRouteException(String routeId, String location, String route, String at, Throwable cause) {
+    public FailedToCreateRouteException(String routeId, @Nullable String location, String route, String at, Throwable cause) {
         super("Failed to create route: " + routeId + (location != null ? " (source: " + location + ")" : "") + " at: >>> " + at
               + " <<< in route: " + getRouteMessage(route)
               + " because: " + getExceptionMessage(cause), cause);
@@ -55,11 +56,11 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
         this.location = location;
     }
 
-    public String getRouteId() {
+    public @Nullable String getRouteId() {
         return routeId;
     }
 
-    public String getLocation() {
+    public @Nullable String getLocation() {
         return location;
     }
 

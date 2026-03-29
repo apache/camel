@@ -16,11 +16,13 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A runtime exception caused by a specific message {@link Exchange}
  */
 public class RuntimeExchangeException extends RuntimeCamelException {
-    private final transient Exchange exchange;
+    private final transient @Nullable Exchange exchange;
 
     public RuntimeExchangeException(String message, Exchange exchange) {
         super(createMessage(message, exchange));
@@ -37,11 +39,11 @@ public class RuntimeExchangeException extends RuntimeCamelException {
      * <p/>
      * Can be <tt>null</tt>
      */
-    public Exchange getExchange() {
+    public @Nullable Exchange getExchange() {
         return exchange;
     }
 
-    protected static String createMessage(String message, Exchange exchange) {
+    protected static String createMessage(String message, @Nullable Exchange exchange) {
         if (exchange != null) {
             return message + " on the exchange: " + exchange;
         } else {

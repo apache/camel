@@ -16,13 +16,15 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception caused when a mandatory variable is not available
  */
 public class NoSuchVariableException extends CamelExchangeException {
 
     private final String variableName;
-    private final transient Class<?> type;
+    private final transient @Nullable Class<?> type;
 
     public NoSuchVariableException(Exchange exchange, String variableName) {
         super(String.format(
@@ -46,7 +48,7 @@ public class NoSuchVariableException extends CamelExchangeException {
         return variableName;
     }
 
-    public Class<?> getType() {
+    public @Nullable Class<?> getType() {
         return type;
     }
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An <a href="http://camel.apache.org/expression.html">expression</a> provides a plugin strategy for evaluating
  * expressions on a message exchange.
@@ -37,7 +39,7 @@ public interface Expression {
      * @param  type     the expected type of the evaluation result
      * @return          the value of the expression
      */
-    <T> T evaluate(Exchange exchange, Class<T> type);
+    <T> @Nullable T evaluate(Exchange exchange, Class<T> type);
 
     /**
      * Initialize the expression with the given camel context

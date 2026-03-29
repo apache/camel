@@ -25,6 +25,8 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.X509ExtendedKeyManager;
 import javax.net.ssl.X509KeyManager;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * KeyManager to select a key with desired alias while delegating processing to specified KeyManager Can be used both
  * with server and client sockets
@@ -45,42 +47,44 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager {
     }
 
     @Override
-    public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
+    public @Nullable String chooseClientAlias(String[] keyType, Principal @Nullable [] issuers, @Nullable Socket socket) {
         return keyAlias == null ? keyManager.chooseClientAlias(keyType, issuers, socket) : keyAlias;
     }
 
     @Override
-    public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
+    public @Nullable String chooseServerAlias(String keyType, Principal @Nullable [] issuers, @Nullable Socket socket) {
         return keyAlias == null ? keyManager.chooseServerAlias(keyType, issuers, socket) : keyAlias;
     }
 
     @Override
-    public String[] getClientAliases(String keyType, Principal[] issuers) {
+    public String @Nullable [] getClientAliases(String keyType, Principal @Nullable [] issuers) {
         return keyManager.getClientAliases(keyType, issuers);
     }
 
     @Override
-    public String[] getServerAliases(String keyType, Principal[] issuers) {
+    public String @Nullable [] getServerAliases(String keyType, Principal @Nullable [] issuers) {
         return keyManager.getServerAliases(keyType, issuers);
     }
 
     @Override
-    public X509Certificate[] getCertificateChain(String alias) {
+    public X509Certificate @Nullable [] getCertificateChain(String alias) {
         return keyManager.getCertificateChain(alias);
     }
 
     @Override
-    public PrivateKey getPrivateKey(String alias) {
+    public @Nullable PrivateKey getPrivateKey(String alias) {
         return keyManager.getPrivateKey(alias);
     }
 
     @Override
-    public String chooseEngineServerAlias(String keyType, Principal[] issuers, SSLEngine engine) {
+    public @Nullable String chooseEngineServerAlias(
+            String keyType, Principal @Nullable [] issuers, @Nullable SSLEngine engine) {
         return keyAlias == null ? super.chooseEngineServerAlias(keyType, issuers, engine) : keyAlias;
     }
 
     @Override
-    public String chooseEngineClientAlias(String[] keyType, Principal[] issuers, SSLEngine engine) {
+    public @Nullable String chooseEngineClientAlias(
+            String[] keyType, Principal @Nullable [] issuers, @Nullable SSLEngine engine) {
         return keyAlias == null ? super.chooseEngineClientAlias(keyType, issuers, engine) : keyAlias;
     }
 }

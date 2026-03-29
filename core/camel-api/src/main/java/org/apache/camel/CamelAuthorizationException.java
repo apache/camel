@@ -16,13 +16,15 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception thrown for either authentication or authorization errors occurring in a Camel exchange. Intended to be
  * used when a user is denied an action and Camel should not process the message as a result.
  */
 public class CamelAuthorizationException extends CamelExchangeException {
 
-    private final String policyId;
+    private final @Nullable String policyId;
 
     public CamelAuthorizationException(String message, Exchange exchange) {
         super(message, exchange);
@@ -34,7 +36,7 @@ public class CamelAuthorizationException extends CamelExchangeException {
         policyId = exchange.getIn().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, String.class);
     }
 
-    public String getPolicyId() {
+    public @Nullable String getPolicyId() {
         return policyId;
     }
 

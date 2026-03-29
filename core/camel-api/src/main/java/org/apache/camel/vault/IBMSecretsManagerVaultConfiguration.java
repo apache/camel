@@ -17,6 +17,7 @@
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to IBM Secrets Manager Vault Secrets.
@@ -24,45 +25,45 @@ import org.apache.camel.spi.Metadata;
 public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
-    private String token;
+    private @Nullable String token;
     @Metadata
-    private String serviceUrl;
+    private @Nullable String serviceUrl;
     @Metadata
     private boolean refreshEnabled;
     @Metadata
-    private String secrets;
+    private @Nullable String secrets;
     @Metadata
-    private String eventStreamTopic;
+    private @Nullable String eventStreamTopic;
     @Metadata
-    private String eventStreamBootstrapServers;
+    private @Nullable String eventStreamBootstrapServers;
     @Metadata
-    private String eventStreamUsername;
+    private @Nullable String eventStreamUsername;
     @Metadata
-    private String eventStreamPassword;
+    private @Nullable String eventStreamPassword;
     @Metadata
-    private String eventStreamGroupId;
+    private @Nullable String eventStreamGroupId;
     @Metadata(defaultValue = "3000")
     private long eventStreamConsumerPollTimeout = 3000;
 
-    public String getToken() {
+    public @Nullable String getToken() {
         return token;
     }
 
     /**
      * Token to access IBM Secrets Manager vault
      */
-    public void setToken(String token) {
+    public void setToken(@Nullable String token) {
         this.token = token;
     }
 
-    public String getServiceUrl() {
+    public @Nullable String getServiceUrl() {
         return serviceUrl;
     }
 
     /**
      * Service URL to access IBM Secrets Manager vault
      */
-    public void setServiceUrl(String serviceUrl) {
+    public void setServiceUrl(@Nullable String serviceUrl) {
         this.serviceUrl = serviceUrl;
     }
 
@@ -77,29 +78,29 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
         this.refreshEnabled = refreshEnabled;
     }
 
-    public String getSecrets() {
+    public @Nullable String getSecrets() {
         return secrets;
     }
 
     /**
      * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
      */
-    public void setSecrets(String secrets) {
+    public void setSecrets(@Nullable String secrets) {
         this.secrets = secrets;
     }
 
-    public String getEventStreamTopic() {
+    public @Nullable String getEventStreamTopic() {
         return eventStreamTopic;
     }
 
     /**
      * Specify the topic name for consuming notification on IBM Event Stream
      */
-    public void setEventStreamTopic(String eventStreamTopic) {
+    public void setEventStreamTopic(@Nullable String eventStreamTopic) {
         this.eventStreamTopic = eventStreamTopic;
     }
 
-    public String getEventStreamBootstrapServers() {
+    public @Nullable String getEventStreamBootstrapServers() {
         return eventStreamBootstrapServers;
     }
 
@@ -107,40 +108,40 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
      * Specify the Bootstrap servers for consuming notification on IBM Event Stream. Multiple servers can be separated
      * by comma.
      */
-    public void setEventStreamBootstrapServers(String eventStreamBootstrapServers) {
+    public void setEventStreamBootstrapServers(@Nullable String eventStreamBootstrapServers) {
         this.eventStreamBootstrapServers = eventStreamBootstrapServers;
     }
 
-    public String getEventStreamUsername() {
+    public @Nullable String getEventStreamUsername() {
         return eventStreamUsername;
     }
 
     /**
      * Specify the username to access IBM Event Stream
      */
-    public void setEventStreamUsername(String eventStreamUsername) {
+    public void setEventStreamUsername(@Nullable String eventStreamUsername) {
         this.eventStreamUsername = eventStreamUsername;
     }
 
-    public String getEventStreamPassword() {
+    public @Nullable String getEventStreamPassword() {
         return eventStreamPassword;
     }
 
     /**
      * Specify the password to access IBM Event Stream
      */
-    public void setEventStreamPassword(String eventStreamPassword) {
+    public void setEventStreamPassword(@Nullable String eventStreamPassword) {
         this.eventStreamPassword = eventStreamPassword;
     }
 
-    public String getEventStreamGroupId() {
+    public @Nullable String getEventStreamGroupId() {
         return eventStreamGroupId;
     }
 
     /**
      * Specify the Consumer Group ID to access IBM Event Stream
      */
-    public void setEventStreamGroupId(String eventStreamGroupId) {
+    public void setEventStreamGroupId(@Nullable String eventStreamGroupId) {
         this.eventStreamGroupId = eventStreamGroupId;
     }
 

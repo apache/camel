@@ -47,6 +47,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 import org.apache.camel.support.jsse.FilterParameters.Patterns;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +120,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         SET_SIGNATURE_SCHEMES = sss;
     }
 
-    static String[] getNamedGroupsFromParams(SSLParameters params) {
+    static String @Nullable [] getNamedGroupsFromParams(SSLParameters params) {
         if (GET_NAMED_GROUPS == null) {
             return null;
         }
@@ -166,51 +167,51 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     /**
      * The optional explicitly configured cipher suites for this configuration.
      */
-    private CipherSuitesParameters cipherSuites;
+    private @Nullable CipherSuitesParameters cipherSuites;
 
     /**
      * The optional cipher suite filter configuration for this configuration.
      */
-    private FilterParameters cipherSuitesFilter;
+    private @Nullable FilterParameters cipherSuitesFilter;
 
     /**
      * The optional explicitly configured secure socket protocol names for this configuration.
      */
-    private SecureSocketProtocolsParameters secureSocketProtocols;
+    private @Nullable SecureSocketProtocolsParameters secureSocketProtocols;
 
     /**
      * The option secure socket protocol name filter configuration for this configuration.
      */
-    private FilterParameters secureSocketProtocolsFilter;
+    private @Nullable FilterParameters secureSocketProtocolsFilter;
 
     /**
      * The optional explicitly configured named groups (key exchange groups) for this configuration. Named groups
      * control which key exchange algorithms are available during the TLS handshake, including post-quantum hybrid
      * groups such as X25519MLKEM768.
      */
-    private NamedGroupsParameters namedGroups;
+    private @Nullable NamedGroupsParameters namedGroups;
 
     /**
      * The optional named groups filter configuration for this configuration.
      */
-    private FilterParameters namedGroupsFilter;
+    private @Nullable FilterParameters namedGroupsFilter;
 
     /**
      * The optional explicitly configured signature schemes for this configuration. Signature schemes control which
      * signature algorithms are available during the TLS handshake, including post-quantum signature algorithms such as
      * ML-DSA.
      */
-    private SignatureSchemesParameters signatureSchemes;
+    private @Nullable SignatureSchemesParameters signatureSchemes;
 
     /**
      * The optional signature schemes filter configuration for this configuration.
      */
-    private FilterParameters signatureSchemesFilter;
+    private @Nullable FilterParameters signatureSchemesFilter;
 
     /**
      * The optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
      */
-    private String sessionTimeout;
+    private @Nullable String sessionTimeout;
 
     protected List<SNIServerName> getSNIHostNames() {
         return Collections.emptyList();
@@ -223,7 +224,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * <p/>
      * These values override any filters supplied in {@link #setCipherSuitesFilter(FilterParameters)}
      */
-    public CipherSuitesParameters getCipherSuites() {
+    public @Nullable CipherSuitesParameters getCipherSuites() {
         return cipherSuites;
     }
 
@@ -236,7 +237,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *
      * @param cipherSuites the suite configuration
      */
-    public void setCipherSuites(CipherSuitesParameters cipherSuites) {
+    public void setCipherSuites(@Nullable CipherSuitesParameters cipherSuites) {
         this.cipherSuites = cipherSuites;
     }
 
@@ -248,7 +249,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * These values are ignored if {@link #setCipherSuites(CipherSuitesParameters)} is called with a non {@code null}
      * argument.
      */
-    public FilterParameters getCipherSuitesFilter() {
+    public @Nullable FilterParameters getCipherSuitesFilter() {
         return cipherSuitesFilter;
     }
 
@@ -262,7 +263,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *
      * @param cipherSuitesFilter the filter configuration
      */
-    public void setCipherSuitesFilter(FilterParameters cipherSuitesFilter) {
+    public void setCipherSuitesFilter(@Nullable FilterParameters cipherSuitesFilter) {
         this.cipherSuitesFilter = cipherSuitesFilter;
     }
 
@@ -273,7 +274,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * <p/>
      * These values override any filters supplied in {@link #setSecureSocketProtocolsFilter(FilterParameters)}
      */
-    public SecureSocketProtocolsParameters getSecureSocketProtocols() {
+    public @Nullable SecureSocketProtocolsParameters getSecureSocketProtocols() {
         return secureSocketProtocols;
     }
 
@@ -284,7 +285,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * <p/>
      * These values override any filters supplied in {@link #setSecureSocketProtocolsFilter(FilterParameters)}
      */
-    public void setSecureSocketProtocols(SecureSocketProtocolsParameters secureSocketProtocols) {
+    public void setSecureSocketProtocols(@Nullable SecureSocketProtocolsParameters secureSocketProtocols) {
         this.secureSocketProtocols = secureSocketProtocols;
     }
 
@@ -296,7 +297,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * These values are ignored if {@link #setSecureSocketProtocols(SecureSocketProtocolsParameters)} is called with a
      * non-{@code null} argument.
      */
-    public FilterParameters getSecureSocketProtocolsFilter() {
+    public @Nullable FilterParameters getSecureSocketProtocolsFilter() {
         return secureSocketProtocolsFilter;
     }
 
@@ -310,7 +311,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *
      * @param secureSocketProtocolsFilter the filter configuration
      */
-    public void setSecureSocketProtocolsFilter(FilterParameters secureSocketProtocolsFilter) {
+    public void setSecureSocketProtocolsFilter(@Nullable FilterParameters secureSocketProtocolsFilter) {
         this.secureSocketProtocolsFilter = secureSocketProtocolsFilter;
     }
 
@@ -324,7 +325,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * <p/>
      * These values override any filters supplied in {@link #setNamedGroupsFilter(FilterParameters)}
      */
-    public NamedGroupsParameters getNamedGroups() {
+    public @Nullable NamedGroupsParameters getNamedGroups() {
         return namedGroups;
     }
 
@@ -340,7 +341,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *
      * @param namedGroups the named groups configuration
      */
-    public void setNamedGroups(NamedGroupsParameters namedGroups) {
+    public void setNamedGroups(@Nullable NamedGroupsParameters namedGroups) {
         this.namedGroups = namedGroups;
     }
 
@@ -352,7 +353,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * These values are ignored if {@link #setNamedGroups(NamedGroupsParameters)} is called with a non {@code null}
      * argument.
      */
-    public FilterParameters getNamedGroupsFilter() {
+    public @Nullable FilterParameters getNamedGroupsFilter() {
         return namedGroupsFilter;
     }
 
@@ -366,7 +367,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *
      * @param namedGroupsFilter the filter configuration
      */
-    public void setNamedGroupsFilter(FilterParameters namedGroupsFilter) {
+    public void setNamedGroupsFilter(@Nullable FilterParameters namedGroupsFilter) {
         this.namedGroupsFilter = namedGroupsFilter;
     }
 
@@ -380,7 +381,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * <p/>
      * These values override any filters supplied in {@link #setSignatureSchemesFilter(FilterParameters)}
      */
-    public SignatureSchemesParameters getSignatureSchemes() {
+    public @Nullable SignatureSchemesParameters getSignatureSchemes() {
         return signatureSchemes;
     }
 
@@ -396,7 +397,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *
      * @param signatureSchemes the signature schemes configuration
      */
-    public void setSignatureSchemes(SignatureSchemesParameters signatureSchemes) {
+    public void setSignatureSchemes(@Nullable SignatureSchemesParameters signatureSchemes) {
         this.signatureSchemes = signatureSchemes;
     }
 
@@ -408,7 +409,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * These values are ignored if {@link #setSignatureSchemes(SignatureSchemesParameters)} is called with a non
      * {@code null} argument.
      */
-    public FilterParameters getSignatureSchemesFilter() {
+    public @Nullable FilterParameters getSignatureSchemesFilter() {
         return signatureSchemesFilter;
     }
 
@@ -422,14 +423,14 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *
      * @param signatureSchemesFilter the filter configuration
      */
-    public void setSignatureSchemesFilter(FilterParameters signatureSchemesFilter) {
+    public void setSignatureSchemesFilter(@Nullable FilterParameters signatureSchemesFilter) {
         this.signatureSchemesFilter = signatureSchemesFilter;
     }
 
     /**
      * Returns the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
      */
-    public String getSessionTimeout() {
+    public @Nullable String getSessionTimeout() {
         return sessionTimeout;
     }
 
@@ -438,7 +439,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *
      * @param sessionTimeout the timeout value or {@code null} to use the default
      */
-    public void setSessionTimeout(String sessionTimeout) {
+    public void setSessionTimeout(@Nullable String sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
     }
 

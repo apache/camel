@@ -23,6 +23,7 @@ import javax.management.ObjectName;
 import org.apache.camel.ManagementMBeansLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Camel JMX service agent
@@ -74,7 +75,7 @@ public interface ManagementAgent extends Service {
      * @param  mbean the client interface, such as from the {@link org.apache.camel.api.management.mbean} package.
      * @return       the client or <tt>null</tt> if mbean does not exist
      */
-    <T> T newProxyClient(ObjectName name, Class<T> mbean);
+    <T> @Nullable T newProxyClient(ObjectName name, Class<T> mbean);
 
     /**
      * Get the MBeanServer which hosts managed objects.
@@ -84,6 +85,7 @@ public interface ManagementAgent extends Service {
      *
      * @return the MBeanServer
      */
+    @Nullable
     MBeanServer getMBeanServer();
 
     /**

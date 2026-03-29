@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A registry for dev console.
@@ -59,6 +60,7 @@ public interface DevConsoleRegistry extends CamelContextAware, StaticService, Id
      *
      * @return either {@link DevConsole}, or <tt>null</tt> if none found.
      */
+    @Nullable
     DevConsole resolveById(String id);
 
     /**
@@ -95,7 +97,7 @@ public interface DevConsoleRegistry extends CamelContextAware, StaticService, Id
      *
      * This registry is not used by the camel context, but it is up to the implementation to properly use it.
      */
-    static DevConsoleRegistry get(CamelContext context) {
+    static @Nullable DevConsoleRegistry get(CamelContext context) {
         return context.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
     }
 

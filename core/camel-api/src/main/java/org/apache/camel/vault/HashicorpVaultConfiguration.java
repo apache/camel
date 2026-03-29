@@ -17,6 +17,7 @@
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to Hashicorp Vault Secrets.
@@ -24,65 +25,65 @@ import org.apache.camel.spi.Metadata;
 public class HashicorpVaultConfiguration extends VaultConfiguration {
 
     @Metadata(secret = true)
-    private String token;
+    private @Nullable String token;
     @Metadata
-    private String host;
+    private @Nullable String host;
     @Metadata
-    private String port;
+    private @Nullable String port;
     @Metadata
-    private String scheme;
+    private @Nullable String scheme;
     @Metadata
     private boolean cloud;
     @Metadata
-    private String namespace;
+    private @Nullable String namespace;
     @Metadata
     private boolean refreshEnabled;
     @Metadata(defaultValue = "60000")
     private long refreshPeriod = 60000;
     @Metadata
-    private String secrets;
+    private @Nullable String secrets;
 
-    public String getToken() {
+    public @Nullable String getToken() {
         return token;
     }
 
     /**
      * Token to access hashicorp vault
      */
-    public void setToken(String token) {
+    public void setToken(@Nullable String token) {
         this.token = token;
     }
 
-    public String getHost() {
+    public @Nullable String getHost() {
         return host;
     }
 
     /**
      * Host to access hashicorp vault
      */
-    public void setHost(String host) {
+    public void setHost(@Nullable String host) {
         this.host = host;
     }
 
-    public String getPort() {
+    public @Nullable String getPort() {
         return port;
     }
 
     /**
      * Port to access hashicorp vault
      */
-    public void setPort(String port) {
+    public void setPort(@Nullable String port) {
         this.port = port;
     }
 
-    public String getScheme() {
+    public @Nullable String getScheme() {
         return scheme;
     }
 
     /**
      * Scheme to access hashicorp vault
      */
-    public void setScheme(String scheme) {
+    public void setScheme(@Nullable String scheme) {
         this.scheme = scheme;
     }
 
@@ -97,14 +98,14 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
         this.cloud = cloud;
     }
 
-    public String getNamespace() {
+    public @Nullable String getNamespace() {
         return namespace;
     }
 
     /**
      * If the Hashicorp Vault instance is deployed on Hashicorp Cloud, this field will determine the namespace
      */
-    public void setNamespace(String namespace) {
+    public void setNamespace(@Nullable String namespace) {
         this.namespace = namespace;
     }
 
@@ -130,14 +131,14 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
         this.refreshPeriod = refreshPeriod;
     }
 
-    public String getSecrets() {
+    public @Nullable String getSecrets() {
         return secrets;
     }
 
     /**
      * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
      */
-    public void setSecrets(String secrets) {
+    public void setSecrets(@Nullable String secrets) {
         this.secrets = secrets;
     }
 }

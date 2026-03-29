@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Indicates that an object is able to use the global {@link SSLContextParameters} if configured.
@@ -26,7 +27,7 @@ public interface SSLContextParametersAware extends CamelContextAware {
     /**
      * Returns the global {@link SSLContextParameters} if enabled on the implementing object, null otherwise.
      */
-    default SSLContextParameters retrieveGlobalSslContextParameters() {
+    default @Nullable SSLContextParameters retrieveGlobalSslContextParameters() {
         if (isUseGlobalSslContextParameters()) {
             return getCamelContext().getSSLContextParameters();
         }

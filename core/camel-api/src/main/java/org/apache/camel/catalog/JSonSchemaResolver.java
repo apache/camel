@@ -16,6 +16,8 @@
  */
 package org.apache.camel.catalog;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Pluggable resolver to load JSON schema files for components, data formats, languages etc.
  */
@@ -32,6 +34,7 @@ public interface JSonSchemaResolver {
      * @param  name the component name
      * @return      component details in JSon
      */
+    @Nullable
     String getComponentJSonSchema(String name);
 
     /**
@@ -40,6 +43,7 @@ public interface JSonSchemaResolver {
      * @param  name the data format name
      * @return      data format details in JSon
      */
+    @Nullable
     String getDataFormatJSonSchema(String name);
 
     /**
@@ -48,6 +52,7 @@ public interface JSonSchemaResolver {
      * @param  name the language name
      * @return      language details in JSon
      */
+    @Nullable
     String getLanguageJSonSchema(String name);
 
     /**
@@ -56,6 +61,7 @@ public interface JSonSchemaResolver {
      * @param  name the transformer name
      * @return      transformer details in JSon
      */
+    @Nullable
     String getTransformerJSonSchema(String name);
 
     /**
@@ -64,6 +70,7 @@ public interface JSonSchemaResolver {
      * @param  name the dev console name
      * @return      dev console details in JSon
      */
+    @Nullable
     String getDevConsoleJSonSchema(String name);
 
     /**
@@ -72,6 +79,7 @@ public interface JSonSchemaResolver {
      * @param  name the other (miscellaneous) name
      * @return      other (miscellaneous) details in JSon
      */
+    @Nullable
     String getOtherJSonSchema(String name);
 
     /**
@@ -80,6 +88,7 @@ public interface JSonSchemaResolver {
      * @param  name the model name
      * @return      model details in JSon
      */
+    @Nullable
     String getModelJSonSchema(String name);
 
     /**
@@ -87,6 +96,7 @@ public interface JSonSchemaResolver {
      *
      * @return the camel-main json schema
      */
+    @Nullable
     String getMainJsonSchema();
 
     /**
@@ -94,6 +104,7 @@ public interface JSonSchemaResolver {
      *
      * @return the camel-jbang json schema
      */
+    @Nullable
     String getJBangJsonSchema();
 
     /**
@@ -102,6 +113,7 @@ public interface JSonSchemaResolver {
      * @param  name the pojo bean name
      * @return      model details in JSon
      */
+    @Nullable
     String getPojoBeanJSonSchema(String name);
 
 }

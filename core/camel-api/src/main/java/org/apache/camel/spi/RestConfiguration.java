@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and
  * {@link org.apache.camel.spi.RestApiConsumerFactory} for Camel components to support the Camel
@@ -49,37 +51,37 @@ public class RestConfiguration {
         none;
     }
 
-    private String component;
-    private String apiComponent;
-    private String producerComponent;
-    private String producerApiDoc;
-    private String scheme;
-    private String host;
+    private @Nullable String component;
+    private @Nullable String apiComponent;
+    private @Nullable String producerComponent;
+    private @Nullable String producerApiDoc;
+    private @Nullable String scheme;
+    private @Nullable String host;
     private boolean useXForwardHeaders;
-    private String apiHost;
+    private @Nullable String apiHost;
     private int port;
-    private String contextPath;
-    private String apiContextPath;
-    private String apiContextRouteId;
+    private @Nullable String contextPath;
+    private @Nullable String apiContextPath;
+    private @Nullable String apiContextRouteId;
     private boolean apiVendorExtension;
     private RestHostNameResolver hostNameResolver = RestHostNameResolver.allLocalIp;
     private RestBindingMode bindingMode = RestBindingMode.off;
-    private String bindingPackageScan;
+    private @Nullable String bindingPackageScan;
     private boolean skipBindingOnErrorCode = true;
     private boolean clientRequestValidation;
     private boolean clientResponseValidation;
     private boolean inlineRoutes = true;
     private boolean enableCORS;
     private boolean enableNoContentResponse;
-    private String jsonDataFormat;
-    private String xmlDataFormat;
-    private Map<String, Object> componentProperties;
-    private Map<String, Object> endpointProperties;
-    private Map<String, Object> consumerProperties;
-    private Map<String, Object> dataFormatProperties;
-    private Map<String, Object> apiProperties;
-    private Map<String, String> corsHeaders;
-    private Map<String, String> validationLevels;
+    private @Nullable String jsonDataFormat;
+    private @Nullable String xmlDataFormat;
+    private @Nullable Map<String, Object> componentProperties;
+    private @Nullable Map<String, Object> endpointProperties;
+    private @Nullable Map<String, Object> consumerProperties;
+    private @Nullable Map<String, Object> dataFormatProperties;
+    private @Nullable Map<String, Object> apiProperties;
+    private @Nullable Map<String, String> corsHeaders;
+    private @Nullable Map<String, String> validationLevels;
 
     /**
      * Gets the name of the Camel component to use as the REST consumer
@@ -87,7 +89,7 @@ public class RestConfiguration {
      * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable
      *         implementation
      */
-    public String getComponent() {
+    public @Nullable String getComponent() {
         return component;
     }
 
@@ -105,7 +107,7 @@ public class RestConfiguration {
      *
      * @return the component name
      */
-    public String getApiComponent() {
+    public @Nullable String getApiComponent() {
         return apiComponent;
     }
 
@@ -124,7 +126,7 @@ public class RestConfiguration {
      * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable
      *         implementation
      */
-    public String getProducerComponent() {
+    public @Nullable String getProducerComponent() {
         return producerComponent;
     }
 
@@ -141,7 +143,7 @@ public class RestConfiguration {
      * Gets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
      * parameters are valid accordingly to the api document.
      */
-    public String getProducerApiDoc() {
+    public @Nullable String getProducerApiDoc() {
         return producerApiDoc;
     }
 
@@ -162,7 +164,7 @@ public class RestConfiguration {
      *
      * @return the hostname, or <tt>null</tt> to use default hostname
      */
-    public String getHost() {
+    public @Nullable String getHost() {
         return host;
     }
 
@@ -197,7 +199,7 @@ public class RestConfiguration {
         this.useXForwardHeaders = useXForwardHeaders;
     }
 
-    public String getApiHost() {
+    public @Nullable String getApiHost() {
         return apiHost;
     }
 
@@ -215,7 +217,7 @@ public class RestConfiguration {
      *
      * @return the scheme, or <tt>null</tt> to use default scheme
      */
-    public String getScheme() {
+    public @Nullable String getScheme() {
         return scheme;
     }
 
@@ -251,7 +253,7 @@ public class RestConfiguration {
      *
      * @return the context path, or <tt>null</tt> if none configured.
      */
-    public String getContextPath() {
+    public @Nullable String getContextPath() {
         return contextPath;
     }
 
@@ -268,7 +270,7 @@ public class RestConfiguration {
         this.contextPath = contextPath;
     }
 
-    public String getApiContextPath() {
+    public @Nullable String getApiContextPath() {
         return apiContextPath;
     }
 
@@ -284,7 +286,7 @@ public class RestConfiguration {
         this.apiContextPath = contextPath;
     }
 
-    public String getApiContextRouteId() {
+    public @Nullable String getApiContextRouteId() {
         return apiContextRouteId;
     }
 
@@ -366,7 +368,7 @@ public class RestConfiguration {
         this.bindingMode = RestBindingMode.valueOf(bindingMode);
     }
 
-    public String getBindingPackageScan() {
+    public @Nullable String getBindingPackageScan() {
         return bindingPackageScan;
     }
 
@@ -496,7 +498,7 @@ public class RestConfiguration {
      *
      * @return the name, or <tt>null</tt> to use default
      */
-    public String getJsonDataFormat() {
+    public @Nullable String getJsonDataFormat() {
         return jsonDataFormat;
     }
 
@@ -520,7 +522,7 @@ public class RestConfiguration {
      *
      * @return the name, or <tt>null</tt> to use default
      */
-    public String getXmlDataFormat() {
+    public @Nullable String getXmlDataFormat() {
         return xmlDataFormat;
     }
 
@@ -541,7 +543,7 @@ public class RestConfiguration {
      *
      * @return additional options
      */
-    public Map<String, Object> getComponentProperties() {
+    public @Nullable Map<String, Object> getComponentProperties() {
         return componentProperties;
     }
 
@@ -559,7 +561,7 @@ public class RestConfiguration {
      *
      * @return additional options
      */
-    public Map<String, Object> getEndpointProperties() {
+    public @Nullable Map<String, Object> getEndpointProperties() {
         return endpointProperties;
     }
 
@@ -577,7 +579,7 @@ public class RestConfiguration {
      *
      * @return additional options
      */
-    public Map<String, Object> getConsumerProperties() {
+    public @Nullable Map<String, Object> getConsumerProperties() {
         return consumerProperties;
     }
 
@@ -595,7 +597,7 @@ public class RestConfiguration {
      *
      * @return additional options
      */
-    public Map<String, Object> getDataFormatProperties() {
+    public @Nullable Map<String, Object> getDataFormatProperties() {
         return dataFormatProperties;
     }
 
@@ -608,7 +610,7 @@ public class RestConfiguration {
         this.dataFormatProperties = dataFormatProperties;
     }
 
-    public Map<String, Object> getApiProperties() {
+    public @Nullable Map<String, Object> getApiProperties() {
         return apiProperties;
     }
 
@@ -626,7 +628,7 @@ public class RestConfiguration {
      *
      * @return the CORS headers
      */
-    public Map<String, String> getCorsHeaders() {
+    public @Nullable Map<String, String> getCorsHeaders() {
         return corsHeaders;
     }
 
@@ -644,7 +646,7 @@ public class RestConfiguration {
      *
      * @return the validation levels
      */
-    public Map<String, String> getValidationLevels() {
+    public @Nullable Map<String, String> getValidationLevels() {
         return validationLevels;
     }
 

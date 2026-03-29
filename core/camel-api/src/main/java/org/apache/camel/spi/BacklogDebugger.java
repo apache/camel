@@ -24,6 +24,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.StatefulService;
 import org.apache.camel.util.StopWatch;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which can be used from JMX with
@@ -312,6 +313,7 @@ public interface BacklogDebugger extends StatefulService {
      * @param  id node id for the breakpoint
      * @return    the suspended exchange or null if there isn't one suspended at the given breakpoint.
      */
+    @Nullable
     Exchange getSuspendedExchange(String id);
 
     /**
@@ -320,6 +322,7 @@ public interface BacklogDebugger extends StatefulService {
      * @param  id node id for the breakpoint
      * @return    the trace event or null if there isn't one suspended at the given breakpoint.
      */
+    @Nullable
     BacklogTracerEventMessage getSuspendedBreakpointMessage(String id);
 
     /**

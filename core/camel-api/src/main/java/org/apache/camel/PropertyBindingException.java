@@ -16,18 +16,20 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Error binding property to a bean.
  */
 public class PropertyBindingException extends RuntimeCamelException {
 
     private final Object target;
-    private final String propertyName;
-    private final Object value;
-    private final String optionPrefix;
-    private final String optionKey;
+    private final @Nullable String propertyName;
+    private final @Nullable Object value;
+    private final @Nullable String optionPrefix;
+    private final @Nullable String optionKey;
 
-    public PropertyBindingException(Object target, String propertyName, Object value) {
+    public PropertyBindingException(Object target, @Nullable String propertyName, @Nullable Object value) {
         this.target = target;
         this.propertyName = propertyName;
         this.value = value;
@@ -35,7 +37,7 @@ public class PropertyBindingException extends RuntimeCamelException {
         this.optionKey = null;
     }
 
-    public PropertyBindingException(Object target, String propertyName, Object value, Throwable e) {
+    public PropertyBindingException(Object target, @Nullable String propertyName, @Nullable Object value, Throwable e) {
         initCause(e);
         this.target = target;
         this.propertyName = propertyName;
@@ -53,8 +55,8 @@ public class PropertyBindingException extends RuntimeCamelException {
         this.optionKey = null;
     }
 
-    public PropertyBindingException(Object target, String propertyName, Object value, String optionPrefix, String optionKey,
-                                    Throwable e) {
+    public PropertyBindingException(Object target, @Nullable String propertyName, @Nullable Object value,
+                                    @Nullable String optionPrefix, @Nullable String optionKey, Throwable e) {
         initCause(e);
         this.target = target;
         this.propertyName = propertyName;
@@ -82,19 +84,19 @@ public class PropertyBindingException extends RuntimeCamelException {
         return target;
     }
 
-    public String getPropertyName() {
+    public @Nullable String getPropertyName() {
         return propertyName;
     }
 
-    public Object getValue() {
+    public @Nullable Object getValue() {
         return value;
     }
 
-    public String getOptionPrefix() {
+    public @Nullable String getOptionPrefix() {
         return optionPrefix;
     }
 
-    public String getOptionKey() {
+    public @Nullable String getOptionKey() {
         return optionKey;
     }
 

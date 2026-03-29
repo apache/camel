@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception caused when a mandatory property is not available on a message {@link Exchange}
  *
@@ -24,13 +26,13 @@ package org.apache.camel;
 public class NoSuchPropertyException extends CamelExchangeException {
 
     private final String propertyName;
-    private final transient Class<?> type;
+    private final transient @Nullable Class<?> type;
 
     public NoSuchPropertyException(Exchange exchange, String propertyName) {
         this(exchange, propertyName, null);
     }
 
-    public NoSuchPropertyException(Exchange exchange, String propertyName, Class<?> type) {
+    public NoSuchPropertyException(Exchange exchange, String propertyName, @Nullable Class<?> type) {
         super("No '" + propertyName + "' exchange property available" + (type != null ? " of type: " + type.getName() : "")
               + reason(exchange, propertyName), exchange);
         this.propertyName = propertyName;
@@ -41,7 +43,7 @@ public class NoSuchPropertyException extends CamelExchangeException {
         return propertyName;
     }
 
-    public Class<?> getType() {
+    public @Nullable Class<?> getType() {
         return type;
     }
 
@@ -50,7 +52,7 @@ public class NoSuchPropertyException extends CamelExchangeException {
         return valueDescription(value);
     }
 
-    static String valueDescription(Object value) {
+    static String valueDescription(@Nullable Object value) {
         if (value == null) {
             return "";
         }

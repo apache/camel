@@ -28,19 +28,20 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class that provides optional integration with core Camel capabilities.
  */
 public class JsseParameters implements CamelContextAware {
 
-    private CamelContext context;
+    private @Nullable CamelContext context;
 
     /**
      * @see #setCamelContext(CamelContext)
      */
     @Override
-    public CamelContext getCamelContext() {
+    public @Nullable CamelContext getCamelContext() {
         return context;
     }
 

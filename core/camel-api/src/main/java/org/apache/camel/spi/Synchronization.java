@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides a hook for custom {@link org.apache.camel.Processor} or {@link org.apache.camel.Component} instances to
@@ -46,7 +47,7 @@ public interface Synchronization {
      *
      * @return An instance of {@link SynchronizationRouteAware} or null if unset for this synchronization
      */
-    default SynchronizationRouteAware getRouteSynchronization() {
+    default @Nullable SynchronizationRouteAware getRouteSynchronization() {
         return null;
     }
 

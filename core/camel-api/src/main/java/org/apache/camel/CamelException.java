@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Base class for all Camel checked exceptions typically thrown by a {@link Processor}
  */
@@ -24,15 +26,15 @@ public class CamelException extends Exception {
     public CamelException() {
     }
 
-    public CamelException(String message) {
+    public CamelException(@Nullable String message) {
         super(message);
     }
 
-    public CamelException(String message, Throwable cause) {
+    public CamelException(@Nullable String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 
-    public CamelException(Throwable cause) {
+    public CamelException(@Nullable Throwable cause) {
         super(cause);
     }
 }

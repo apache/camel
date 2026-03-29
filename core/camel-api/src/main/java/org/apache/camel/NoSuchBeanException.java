@@ -16,12 +16,14 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A runtime exception if a given bean could not be found in the {@link org.apache.camel.spi.Registry}
  */
 public class NoSuchBeanException extends RuntimeCamelException {
 
-    private final String name;
+    private final @Nullable String name;
 
     public NoSuchBeanException(String name) {
         super("No bean could be found in the registry for: " + name);
@@ -35,7 +37,7 @@ public class NoSuchBeanException extends RuntimeCamelException {
         this.name = name;
     }
 
-    public NoSuchBeanException(String name, String type) {
+    public NoSuchBeanException(@Nullable String name, String type) {
         super("No bean could be found in the registry" + (name != null ? " for: " + name : "") + " of type: " + type);
         this.name = name;
     }
@@ -50,7 +52,7 @@ public class NoSuchBeanException extends RuntimeCamelException {
         this.name = name;
     }
 
-    public String getName() {
+    public @Nullable String getName() {
         return name;
     }
 }

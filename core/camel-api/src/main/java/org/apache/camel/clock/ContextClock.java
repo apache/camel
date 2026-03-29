@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.EnumMap;
 
 import org.apache.camel.ContextEvents;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An event clock that tracks the pass of time for different types of context-related events (see {@link ContextEvents})
@@ -44,7 +45,7 @@ public final class ContextClock implements EventClock<ContextEvents> {
     }
 
     @Override
-    public Clock get(ContextEvents event) {
+    public @Nullable Clock get(ContextEvents event) {
         return events.get(event);
     }
 

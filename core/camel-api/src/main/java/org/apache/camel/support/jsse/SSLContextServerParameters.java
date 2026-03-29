@@ -27,6 +27,7 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.RuntimeCamelException;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +35,9 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextServerParameters.class);
 
-    protected String clientAuthentication;
+    protected @Nullable String clientAuthentication;
 
-    public String getClientAuthentication() {
+    public @Nullable String getClientAuthentication() {
         return clientAuthentication;
     }
 
@@ -46,7 +47,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
      *
      * @param value the desired configuration options or {@code null} to use the defaults
      */
-    public void setClientAuthentication(String value) {
+    public void setClientAuthentication(@Nullable String value) {
         this.clientAuthentication = value;
     }
 

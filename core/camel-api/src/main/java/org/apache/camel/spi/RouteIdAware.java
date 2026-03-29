@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * To allow objects to be injected with the route id
  * <p/>
@@ -26,6 +28,7 @@ public interface RouteIdAware {
     /**
      * Gets the route id
      */
+    @Nullable
     String getRouteId();
 
     /**

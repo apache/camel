@@ -18,6 +18,8 @@ package org.apache.camel;
 
 import java.io.Serial;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Base class for all Camel unchecked exceptions.
  */
@@ -27,15 +29,15 @@ public class RuntimeCamelException extends RuntimeException {
     public RuntimeCamelException() {
     }
 
-    public RuntimeCamelException(String message) {
+    public RuntimeCamelException(@Nullable String message) {
         super(message);
     }
 
-    public RuntimeCamelException(String message, Throwable cause) {
+    public RuntimeCamelException(@Nullable String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 
-    public RuntimeCamelException(Throwable cause) {
+    public RuntimeCamelException(@Nullable Throwable cause) {
         super(cause);
     }
 

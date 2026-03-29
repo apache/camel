@@ -21,32 +21,34 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Details result of validating configuration properties (eg application.properties for camel-main).
  */
 public class ConfigurationPropertiesValidationResult extends PropertiesValidationResult implements Serializable {
 
-    private String fileName;
-    private String text;
+    private @Nullable String fileName;
+    private @Nullable String text;
     private int lineNumber;
     private boolean accepted;
 
     public ConfigurationPropertiesValidationResult() {
     }
 
-    public String getFileName() {
+    public @Nullable String getFileName() {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
+    public void setFileName(@Nullable String fileName) {
         this.fileName = fileName;
     }
 
-    public String getText() {
+    public @Nullable String getText() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(@Nullable String text) {
         this.text = text;
     }
 
@@ -72,7 +74,7 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
      * @param  includeHeader whether to include a header
      * @return               the summary, or <tt>null</tt> if no validation errors
      */
-    public String summaryErrorMessage(boolean includeHeader) {
+    public @Nullable String summaryErrorMessage(boolean includeHeader) {
         return summaryErrorMessage(includeHeader, true, false);
     }
 
@@ -84,7 +86,7 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
      * @param  includeWarnings  whether to include warnings as an error or not
      * @return                  the summary, or <tt>null</tt> if no validation errors
      */
-    public String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated, boolean includeWarnings) {
+    public @Nullable String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated, boolean includeWarnings) {
         boolean ok = isSuccess();
 
         // special check if we should ignore deprecated options being used

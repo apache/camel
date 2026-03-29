@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An interface to represent an object which wishes to be injected with the {@link Resource}
  */
@@ -35,6 +37,7 @@ public interface ResourceAware {
     /**
      * Gets the {@link Resource}.
      */
+    @Nullable
     Resource getResource();
 
     /**

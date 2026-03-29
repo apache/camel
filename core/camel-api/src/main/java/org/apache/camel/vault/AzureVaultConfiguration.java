@@ -17,6 +17,7 @@
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to Azure Key Vault.
@@ -24,13 +25,13 @@ import org.apache.camel.spi.Metadata;
 public class AzureVaultConfiguration extends VaultConfiguration {
 
     @Metadata
-    private String vaultName;
+    private @Nullable String vaultName;
     @Metadata(secret = true)
-    private String clientId;
+    private @Nullable String clientId;
     @Metadata(secret = true)
-    private String clientSecret;
+    private @Nullable String clientSecret;
     @Metadata(secret = true)
-    private String tenantId;
+    private @Nullable String tenantId;
     @Metadata
     private boolean azureIdentityEnabled;
     @Metadata
@@ -38,57 +39,57 @@ public class AzureVaultConfiguration extends VaultConfiguration {
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
     @Metadata
-    private String secrets;
+    private @Nullable String secrets;
     @Metadata(secret = true)
-    private String eventhubConnectionString;
+    private @Nullable String eventhubConnectionString;
     @Metadata(secret = true)
-    private String blobAccessKey;
+    private @Nullable String blobAccessKey;
     @Metadata
-    private String blobAccountName;
+    private @Nullable String blobAccountName;
     @Metadata
-    private String blobContainerName;
+    private @Nullable String blobContainerName;
 
-    public String getVaultName() {
+    public @Nullable String getVaultName() {
         return vaultName;
     }
 
     /**
      * The vault Name in Azure Key Vault
      */
-    public void setVaultName(String vaultName) {
+    public void setVaultName(@Nullable String vaultName) {
         this.vaultName = vaultName;
     }
 
-    public String getClientId() {
+    public @Nullable String getClientId() {
         return clientId;
     }
 
     /**
      * The client Id for accessing Azure Key Vault
      */
-    public void setClientId(String clientId) {
+    public void setClientId(@Nullable String clientId) {
         this.clientId = clientId;
     }
 
-    public String getClientSecret() {
+    public @Nullable String getClientSecret() {
         return clientSecret;
     }
 
     /**
      * The client Secret for accessing Azure Key Vault
      */
-    public void setClientSecret(String clientSecret) {
+    public void setClientSecret(@Nullable String clientSecret) {
         this.clientSecret = clientSecret;
     }
 
-    public String getTenantId() {
+    public @Nullable String getTenantId() {
         return tenantId;
     }
 
     /**
      * The Tenant Id for accessing Azure Key Vault
      */
-    public void setTenantId(String tenantId) {
+    public void setTenantId(@Nullable String tenantId) {
         this.tenantId = tenantId;
     }
 
@@ -125,58 +126,58 @@ public class AzureVaultConfiguration extends VaultConfiguration {
         this.refreshPeriod = refreshPeriod;
     }
 
-    public String getSecrets() {
+    public @Nullable String getSecrets() {
         return secrets;
     }
 
     /**
      * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
      */
-    public void setSecrets(String secrets) {
+    public void setSecrets(@Nullable String secrets) {
         this.secrets = secrets;
     }
 
-    public String getEventhubConnectionString() {
+    public @Nullable String getEventhubConnectionString() {
         return eventhubConnectionString;
     }
 
     /**
      * The Eventhubs connection String for Key Vault Secret events notifications
      */
-    public void setEventhubConnectionString(String eventhubConnectionString) {
+    public void setEventhubConnectionString(@Nullable String eventhubConnectionString) {
         this.eventhubConnectionString = eventhubConnectionString;
     }
 
-    public String getBlobAccessKey() {
+    public @Nullable String getBlobAccessKey() {
         return blobAccessKey;
     }
 
     /**
      * The Eventhubs Blob Access Key for CheckpointStore purpose
      */
-    public void setBlobAccessKey(String blobAccessKey) {
+    public void setBlobAccessKey(@Nullable String blobAccessKey) {
         this.blobAccessKey = blobAccessKey;
     }
 
-    public String getBlobAccountName() {
+    public @Nullable String getBlobAccountName() {
         return blobAccountName;
     }
 
     /**
      * The Eventhubs Blob Account Name for CheckpointStore purpose
      */
-    public void setBlobAccountName(String blobAccountName) {
+    public void setBlobAccountName(@Nullable String blobAccountName) {
         this.blobAccountName = blobAccountName;
     }
 
-    public String getBlobContainerName() {
+    public @Nullable String getBlobContainerName() {
         return blobContainerName;
     }
 
     /**
      * The Eventhubs Blob Container Name for CheckpointStore purpose
      */
-    public void setBlobContainerName(String blobContainerName) {
+    public void setBlobContainerName(@Nullable String blobContainerName) {
         this.blobContainerName = blobContainerName;
     }
 }

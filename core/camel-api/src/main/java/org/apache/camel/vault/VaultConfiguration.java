@@ -16,20 +16,22 @@
  */
 package org.apache.camel.vault;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Base configuration for access to Vaults.
  */
 public class VaultConfiguration {
 
-    private AwsVaultConfiguration aws;
-    private GcpVaultConfiguration gcp;
-    private AzureVaultConfiguration azure;
-    private HashicorpVaultConfiguration hashicorp;
-    private KubernetesVaultConfiguration kubernetes;
-    private KubernetesConfigMapVaultConfiguration kubernetesConfigmaps;
-    private IBMSecretsManagerVaultConfiguration ibmSecretsManager;
-    private SpringCloudConfigConfiguration springConfig;
-    private CyberArkVaultConfiguration cyberark;
+    private @Nullable AwsVaultConfiguration aws;
+    private @Nullable GcpVaultConfiguration gcp;
+    private @Nullable AzureVaultConfiguration azure;
+    private @Nullable HashicorpVaultConfiguration hashicorp;
+    private @Nullable KubernetesVaultConfiguration kubernetes;
+    private @Nullable KubernetesConfigMapVaultConfiguration kubernetesConfigmaps;
+    private @Nullable IBMSecretsManagerVaultConfiguration ibmSecretsManager;
+    private @Nullable SpringCloudConfigConfiguration springConfig;
+    private @Nullable CyberArkVaultConfiguration cyberark;
 
     /**
      * AWS Vault Configuration
@@ -118,75 +120,75 @@ public class VaultConfiguration {
         return cyberark;
     }
 
-    public AwsVaultConfiguration getAwsVaultConfiguration() {
+    public @Nullable AwsVaultConfiguration getAwsVaultConfiguration() {
         return aws;
     }
 
-    public void setAwsVaultConfiguration(AwsVaultConfiguration aws) {
+    public void setAwsVaultConfiguration(@Nullable AwsVaultConfiguration aws) {
         this.aws = aws;
     }
 
-    public GcpVaultConfiguration getGcpVaultConfiguration() {
+    public @Nullable GcpVaultConfiguration getGcpVaultConfiguration() {
         return gcp;
     }
 
-    public void setGcpVaultConfiguration(GcpVaultConfiguration gcp) {
+    public void setGcpVaultConfiguration(@Nullable GcpVaultConfiguration gcp) {
         this.gcp = gcp;
     }
 
-    public AzureVaultConfiguration getAzureVaultConfiguration() {
+    public @Nullable AzureVaultConfiguration getAzureVaultConfiguration() {
         return azure;
     }
 
-    public void setAzureVaultConfiguration(AzureVaultConfiguration azure) {
+    public void setAzureVaultConfiguration(@Nullable AzureVaultConfiguration azure) {
         this.azure = azure;
     }
 
-    public HashicorpVaultConfiguration getHashicorpVaultConfiguration() {
+    public @Nullable HashicorpVaultConfiguration getHashicorpVaultConfiguration() {
         return hashicorp;
     }
 
-    public void setHashicorpVaultConfiguration(HashicorpVaultConfiguration hashicorp) {
+    public void setHashicorpVaultConfiguration(@Nullable HashicorpVaultConfiguration hashicorp) {
         this.hashicorp = hashicorp;
     }
 
-    public KubernetesVaultConfiguration getKubernetesVaultConfiguration() {
+    public @Nullable KubernetesVaultConfiguration getKubernetesVaultConfiguration() {
         return kubernetes;
     }
 
-    public void setKubernetesVaultConfiguration(KubernetesVaultConfiguration kubernetes) {
+    public void setKubernetesVaultConfiguration(@Nullable KubernetesVaultConfiguration kubernetes) {
         this.kubernetes = kubernetes;
     }
 
-    public KubernetesConfigMapVaultConfiguration getKubernetesConfigMapVaultConfiguration() {
+    public @Nullable KubernetesConfigMapVaultConfiguration getKubernetesConfigMapVaultConfiguration() {
         return kubernetesConfigmaps;
     }
 
-    public void setKubernetesConfigMapVaultConfiguration(KubernetesConfigMapVaultConfiguration kubernetesConfigmaps) {
+    public void setKubernetesConfigMapVaultConfiguration(@Nullable KubernetesConfigMapVaultConfiguration kubernetesConfigmaps) {
         this.kubernetesConfigmaps = kubernetesConfigmaps;
     }
 
-    public IBMSecretsManagerVaultConfiguration getIBMSecretsManagerVaultConfiguration() {
+    public @Nullable IBMSecretsManagerVaultConfiguration getIBMSecretsManagerVaultConfiguration() {
         return ibmSecretsManager;
     }
 
-    public void setIBMSecretsManagerVaultConfiguration(IBMSecretsManagerVaultConfiguration ibmSecretsManager) {
+    public void setIBMSecretsManagerVaultConfiguration(@Nullable IBMSecretsManagerVaultConfiguration ibmSecretsManager) {
         this.ibmSecretsManager = ibmSecretsManager;
     }
 
-    public SpringCloudConfigConfiguration getSpringCloudConfigConfiguration() {
+    public @Nullable SpringCloudConfigConfiguration getSpringCloudConfigConfiguration() {
         return springConfig;
     }
 
-    public void setSpringCloudConfigConfiguration(SpringCloudConfigConfiguration springCloudConfigConfiguration) {
+    public void setSpringCloudConfigConfiguration(@Nullable SpringCloudConfigConfiguration springCloudConfigConfiguration) {
         this.springConfig = springCloudConfigConfiguration;
     }
 
-    public CyberArkVaultConfiguration getCyberArkVaultConfiguration() {
+    public @Nullable CyberArkVaultConfiguration getCyberArkVaultConfiguration() {
         return cyberark;
     }
 
-    public void setCyberArkVaultConfiguration(CyberArkVaultConfiguration cyberark) {
+    public void setCyberArkVaultConfiguration(@Nullable CyberArkVaultConfiguration cyberark) {
         this.cyberark = cyberark;
     }
 }

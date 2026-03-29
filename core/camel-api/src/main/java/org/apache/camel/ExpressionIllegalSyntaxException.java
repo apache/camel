@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception thrown if the expression contains illegal syntax.
  */
@@ -27,7 +29,7 @@ public class ExpressionIllegalSyntaxException extends RuntimeCamelException {
         this(expression, null);
     }
 
-    public ExpressionIllegalSyntaxException(String expression, Throwable cause) {
+    public ExpressionIllegalSyntaxException(String expression, @Nullable Throwable cause) {
         super("Illegal syntax: " + expression, cause);
         this.expression = expression;
     }

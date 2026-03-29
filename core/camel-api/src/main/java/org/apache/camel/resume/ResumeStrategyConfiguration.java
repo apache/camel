@@ -18,20 +18,21 @@
 package org.apache.camel.resume;
 
 import org.apache.camel.resume.cache.ResumeCache;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Basic configuration holder for resume strategies
  */
 public abstract class ResumeStrategyConfiguration {
-    private Cacheable.FillPolicy cacheFillPolicy;
-    private ResumeCache<?> resumeCache;
+    private Cacheable.@Nullable FillPolicy cacheFillPolicy;
+    private @Nullable ResumeCache<?> resumeCache;
 
     /**
      * Gets the {@link org.apache.camel.resume.Cacheable.FillPolicy} for the cache used in the strategy
      *
      * @return the fill policy to use
      */
-    public Cacheable.FillPolicy getCacheFillPolicy() {
+    public Cacheable.@Nullable FillPolicy getCacheFillPolicy() {
         return cacheFillPolicy;
     }
 
@@ -53,7 +54,7 @@ public abstract class ResumeStrategyConfiguration {
      */
     public abstract String resumeStrategyService();
 
-    public ResumeCache<?> getResumeCache() {
+    public @Nullable ResumeCache<?> getResumeCache() {
         return resumeCache;
     }
 

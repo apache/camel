@@ -43,6 +43,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.StartupStepRecorder;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
@@ -60,28 +61,28 @@ public interface ExtendedCamelContext {
      */
     void setName(String name);
 
-    default String getName() {
+    default @Nullable String getName() {
         return null;
     }
 
     /**
      * Sets the description of this Camel application.
      */
-    void setDescription(String description);
+    void setDescription(@Nullable String description);
 
-    default String getDescription() {
+    default @Nullable String getDescription() {
         return null;
     }
 
     /**
      * Sets the profile Camel should run as (dev,test,prod).
      */
-    void setProfile(String profile);
+    void setProfile(@Nullable String profile);
 
     /**
      * The profile Camel should run as (dev,test,prod). Returns null if no profile has been set.
      */
-    default String getProfile() {
+    default @Nullable String getProfile() {
         return null;
     }
 
@@ -102,7 +103,7 @@ public interface ExtendedCamelContext {
      */
     void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler);
 
-    default Registry getRegistry() {
+    default @Nullable Registry getRegistry() {
         return null;
     }
 
@@ -175,7 +176,7 @@ public interface ExtendedCamelContext {
      *                     ScopedValue compatibility
      */
     @Deprecated(since = "4.19.0")
-    void createRoute(String routeId);
+    void createRoute(@Nullable String routeId);
 
     /**
      * Indicates whether current thread is creating a route as part of starting Camel.
@@ -185,6 +186,7 @@ public interface ExtendedCamelContext {
      * @return the route id currently being created/started, or <tt>null</tt> if not.
      * @see    #createRoute(String)
      */
+    @Nullable
     String getCreateRoute();
 
     /**
@@ -233,7 +235,7 @@ public interface ExtendedCamelContext {
      *                         {@link #createProcessor(String, Callable)} for ScopedValue compatibility
      */
     @Deprecated(since = "4.19.0")
-    void createProcessor(String processorId);
+    void createProcessor(@Nullable String processorId);
 
     /**
      * Indicates whether current thread is creating a processor as part of starting Camel.
@@ -243,6 +245,7 @@ public interface ExtendedCamelContext {
      * @return the current id of the processor being created
      * @see    #createProcessor(String)
      */
+    @Nullable
     String getCreateProcessor();
 
     /**
@@ -336,6 +339,7 @@ public interface ExtendedCamelContext {
      * @param  uri the URI of the endpoint
      * @return     the registered endpoint or <tt>null</tt> if not registered
      */
+    @Nullable
     Endpoint hasEndpoint(NormalizedEndpointUri uri);
 
     /**
@@ -509,11 +513,12 @@ public interface ExtendedCamelContext {
      *
      * @param options optional parameters to configure {@link org.apache.camel.spi.ManagementAgent}.
      */
-    void setupManagement(Map<String, Object> options);
+    void setupManagement(@Nullable Map<String, Object> options);
 
     /**
      * Gets a list of {@link LogListener} (can be null if empty).
      */
+    @Nullable
     Set<LogListener> getLogListeners();
 
     /**
@@ -577,6 +582,7 @@ public interface ExtendedCamelContext {
     /**
      * Gets the {@link EndpointUriFactory} for the given component name.
      */
+    @Nullable
     EndpointUriFactory getEndpointUriFactory(String scheme);
 
     /**
@@ -615,6 +621,7 @@ public interface ExtendedCamelContext {
     /**
      * Used during unit-testing where it is possible to specify a set of routes to exclude from discovery
      */
+    @Nullable
     String getTestExcludeRoutes();
 
     /**
@@ -638,6 +645,7 @@ public interface ExtendedCamelContext {
      *
      * @return the base package name (can be null if not configured)
      */
+    @Nullable
     String getBasePackageScan();
 
     /**
@@ -647,7 +655,7 @@ public interface ExtendedCamelContext {
      *
      * @param basePackageScan the base package name
      */
-    void setBasePackageScan(String basePackageScan);
+    void setBasePackageScan(@Nullable String basePackageScan);
 
     /**
      * Camel comes with a default set of sensitive keywords which are automatically masked. This option allows to add
@@ -655,6 +663,7 @@ public interface ExtendedCamelContext {
      *
      * @see org.apache.camel.util.SensitiveUtils
      */
+    @Nullable
     String getAdditionalSensitiveKeywords();
 
     /**
@@ -663,7 +672,7 @@ public interface ExtendedCamelContext {
      *
      * @see org.apache.camel.util.SensitiveUtils
      */
-    void setAdditionalSensitiveKeywords(String additionalSensitiveKeywords);
+    void setAdditionalSensitiveKeywords(@Nullable String additionalSensitiveKeywords);
 
     /**
      * Gets the {@link AutoMockInterceptStrategy} strategies.
@@ -682,7 +691,7 @@ public interface ExtendedCamelContext {
      * @param  type the type of the extension
      * @return      the extension, or <tt>null</tt> if no extension has been installed.
      */
-    <T> T getContextPlugin(Class<T> type);
+    <T> @Nullable T getContextPlugin(Class<T> type);
 
     /**
      * Whether a plugin of the given type is already in use

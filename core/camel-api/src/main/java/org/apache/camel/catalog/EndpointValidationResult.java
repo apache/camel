@@ -23,26 +23,28 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Details result of validating endpoint uri.
  */
 public class EndpointValidationResult extends PropertiesValidationResult implements Serializable {
 
-    private final String uri;
+    private final @Nullable String uri;
 
-    private Set<String> lenient;
-    private Set<String> notConsumerOnly;
-    private Set<String> notProducerOnly;
+    private @Nullable Set<String> lenient;
+    private @Nullable Set<String> notConsumerOnly;
+    private @Nullable Set<String> notProducerOnly;
 
     public EndpointValidationResult() {
         this(null);
     }
 
-    public EndpointValidationResult(String uri) {
+    public EndpointValidationResult(@Nullable String uri) {
         this.uri = uri;
     }
 
-    public String getUri() {
+    public @Nullable String getUri() {
         return uri;
     }
 
@@ -82,15 +84,15 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
         }
     }
 
-    public Set<String> getNotConsumerOnly() {
+    public @Nullable Set<String> getNotConsumerOnly() {
         return notConsumerOnly;
     }
 
-    public Set<String> getNotProducerOnly() {
+    public @Nullable Set<String> getNotProducerOnly() {
         return notProducerOnly;
     }
 
-    public Set<String> getLenient() {
+    public @Nullable Set<String> getLenient() {
         return lenient;
     }
 
@@ -100,7 +102,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
      * @param  includeHeader whether to include a header
      * @return               the summary, or <tt>null</tt> if no validation errors
      */
-    public String summaryErrorMessage(boolean includeHeader) {
+    public @Nullable String summaryErrorMessage(boolean includeHeader) {
         return summaryErrorMessage(includeHeader, true, false);
     }
 
@@ -112,7 +114,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
      * @param  includeWarnings  whether to include warnings as an error or not
      * @return                  the summary, or <tt>null</tt> if no validation errors
      */
-    public String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated, boolean includeWarnings) {
+    public @Nullable String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated, boolean includeWarnings) {
         boolean ok = isSuccess();
 
         // special check if we should ignore deprecated options being used

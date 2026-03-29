@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.util.StringHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents the data type URN which is used for message data type contract.
@@ -76,7 +77,7 @@ public class DataType {
         return scheme;
     }
 
-    public String getName() {
+    public @Nullable String getName() {
         return name;
     }
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A pluggable strategy to be able to convert objects <a href="http://camel.apache.org/type-converter.html">to different
  * types</a> such as to and from String, InputStream/OutputStream, Reader/Writer, Document, byte[], ByteBuffer etc
@@ -39,7 +41,7 @@ public interface TypeConverter {
      * @return                         the converted value, or <tt>null</tt> if not possible to convert
      * @throws TypeConversionException is thrown if error during type conversion
      */
-    <T> T convertTo(Class<T> type, Object value) throws TypeConversionException;
+    <T> @Nullable T convertTo(Class<T> type, @Nullable Object value) throws TypeConversionException;
 
     /**
      * Converts the value to the specified type in the context of an exchange
@@ -52,7 +54,8 @@ public interface TypeConverter {
      * @return                         the converted value, or <tt>null</tt> if not possible to convert
      * @throws TypeConversionException is thrown if error during type conversion
      */
-    <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException;
+    <T> @Nullable T convertTo(Class<T> type, @Nullable Exchange exchange, @Nullable Object value)
+            throws TypeConversionException;
 
     /**
      * Converts the value to the specified type
@@ -63,7 +66,8 @@ public interface TypeConverter {
      * @throws TypeConversionException            is thrown if error during type conversion
      * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
      */
-    <T> T mandatoryConvertTo(Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException;
+    <T> T mandatoryConvertTo(Class<T> type, @Nullable Object value)
+            throws TypeConversionException, NoTypeConversionAvailableException;
 
     /**
      * Converts the value to the specified type in the context of an exchange
@@ -77,7 +81,7 @@ public interface TypeConverter {
      * @throws TypeConversionException            is thrown if error during type conversion
      * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
      */
-    <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value)
+    <T> T mandatoryConvertTo(Class<T> type, @Nullable Exchange exchange, @Nullable Object value)
             throws TypeConversionException, NoTypeConversionAvailableException;
 
     /**
@@ -89,7 +93,7 @@ public interface TypeConverter {
      * @param  value the value to be converted
      * @return       the converted value, or <tt>null</tt> if not possible to convert
      */
-    <T> T tryConvertTo(Class<T> type, Object value);
+    <T> @Nullable T tryConvertTo(Class<T> type, @Nullable Object value);
 
     /**
      * Tries to convert the value to the specified type in the context of an exchange, returning <tt>null</tt> if not
@@ -105,5 +109,5 @@ public interface TypeConverter {
      * @param  value    the value to be converted
      * @return          the converted value, or <tt>null</tt> if not possible to convert
      */
-    <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value);
+    <T> @Nullable T tryConvertTo(Class<T> type, @Nullable Exchange exchange, @Nullable Object value);
 }

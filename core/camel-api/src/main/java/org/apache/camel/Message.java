@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.trait.message.MessageTrait;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implements the <a href="http://camel.apache.org/message.html">Message</a> pattern and represents an inbound or
@@ -98,6 +99,7 @@ public interface Message {
      * @param  name name of header
      * @return      the value of the given header or <tt>null</tt> if there is no header for the given name
      */
+    @Nullable
     Object getHeader(String name);
 
     /**
@@ -129,7 +131,7 @@ public interface Message {
      *                                 given name
      * @throws TypeConversionException is thrown if error during type conversion
      */
-    <T> T getHeader(String name, Class<T> type);
+    <T> @Nullable T getHeader(String name, Class<T> type);
 
     /**
      * Returns a header associated with this message by name and specifying the type required
@@ -140,7 +142,7 @@ public interface Message {
      * @return              the value of the given header or <tt>defaultValue</tt> if there is no header for the given
      *                      name or <tt>null</tt> if it cannot be converted to the given type
      */
-    <T> T getHeader(String name, Object defaultValue, Class<T> type);
+    <T> @Nullable T getHeader(String name, Object defaultValue, Class<T> type);
 
     /**
      * Returns a header associated with this message by name and specifying the type required
@@ -152,7 +154,7 @@ public interface Message {
      *                              <tt>defaultValueSupplier</tt> if there is no header for the given name or
      *                              <tt>null</tt> if it cannot be converted to the given type
      */
-    <T> T getHeader(String name, Supplier<Object> defaultValueSupplier, Class<T> type);
+    <T> @Nullable T getHeader(String name, Supplier<Object> defaultValueSupplier, Class<T> type);
 
     /**
      * Sets a header on the message
@@ -160,7 +162,7 @@ public interface Message {
      * @param name  of the header
      * @param value to associate with the name
      */
-    void setHeader(String name, Object value);
+    void setHeader(String name, @Nullable Object value);
 
     /**
      * Removes the named header from this message
@@ -168,6 +170,7 @@ public interface Message {
      * @param  name name of the header
      * @return      the old value of the header
      */
+    @Nullable
     Object removeHeader(String name);
 
     /**
@@ -232,6 +235,7 @@ public interface Message {
      *
      * @return the body, can be <tt>null</tt>
      */
+    @Nullable
     Object getBody();
 
     /**
@@ -264,7 +268,7 @@ public interface Message {
      * @see                            org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange,
      *                                 Class)
      */
-    <T> T getBody(Class<T> type);
+    <T> @Nullable T getBody(Class<T> type);
 
     /**
      * Returns the mandatory body as the specified type
@@ -290,7 +294,7 @@ public interface Message {
      *
      * @param body the body
      */
-    void setBody(Object body);
+    void setBody(@Nullable Object body);
 
     /**
      * Sets the body of the message as a specific type
@@ -298,7 +302,7 @@ public interface Message {
      * @param body the body
      * @param type the type of the body
      */
-    <T> void setBody(Object body, Class<T> type);
+    <T> void setBody(@Nullable Object body, Class<T> type);
 
     /**
      * Creates a copy of this message so that it can be used and possibly modified further in another exchange.
@@ -334,7 +338,7 @@ public interface Message {
      * @param message the other message
      * @param newBody the new body to use
      */
-    void copyFromWithNewBody(Message message, Object newBody);
+    void copyFromWithNewBody(Message message, @Nullable Object newBody);
 
     /**
      * Checks whether the message has a given {@link MessageTrait}
@@ -350,6 +354,7 @@ public interface Message {
      * @param  trait the {@link MessageTrait} to obtain the payload
      * @return       The trait payload or null if not available
      */
+    @Nullable
     Object getPayloadForTrait(MessageTrait trait);
 
     /**

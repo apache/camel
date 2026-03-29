@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A predicate which evaluates a binary expression.
  * <p/>
@@ -55,6 +57,7 @@ public interface BinaryPredicate extends Predicate {
      * @param  exchange the message exchange
      * @return          <tt>null</tt> if the predicate matches.
      */
+    @Nullable
     String matchesReturningFailureMessage(Exchange exchange);
 
 }

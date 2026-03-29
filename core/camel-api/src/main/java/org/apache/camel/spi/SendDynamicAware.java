@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Used for components that can optimise the usage of {@link org.apache.camel.processor.SendDynamicProcessor} (toD) to
@@ -117,6 +118,7 @@ public interface SendDynamicAware extends Service, CamelContextAware {
      * @return           the static uri, or <tt>null</tt> to not let toD use this optimisation.
      * @throws Exception is thrown if error resolving the static uri.
      */
+    @Nullable
     String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception;
 
     /**
@@ -128,6 +130,7 @@ public interface SendDynamicAware extends Service, CamelContextAware {
      * @return           the processor, or <tt>null</tt> to not let toD use this optimisation.
      * @throws Exception is thrown if error creating the pre processor.
      */
+    @Nullable
     Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception;
 
     /**
@@ -139,6 +142,7 @@ public interface SendDynamicAware extends Service, CamelContextAware {
      * @return           the post processor, or <tt>null</tt> if no post processor is needed.
      * @throws Exception is thrown if error creating the post processor.
      */
+    @Nullable
     Processor createPostProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception;
 
 }

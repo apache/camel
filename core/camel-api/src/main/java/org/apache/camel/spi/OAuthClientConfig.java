@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Configuration for OAuth 2.0 Client Credentials grant.
  * <p/>
@@ -24,15 +26,15 @@ package org.apache.camel.spi;
  */
 public class OAuthClientConfig {
 
-    private String clientId;
-    private String clientSecret;
-    private String tokenEndpoint;
-    private String scope;
+    private @Nullable String clientId;
+    private @Nullable String clientSecret;
+    private @Nullable String tokenEndpoint;
+    private @Nullable String scope;
     private boolean cacheTokens = true;
     private long cachedTokensDefaultExpirySeconds = 3600;
     private long cachedTokensExpirationMarginSeconds = 5;
 
-    public String getClientId() {
+    public @Nullable String getClientId() {
         return clientId;
     }
 
@@ -41,7 +43,7 @@ public class OAuthClientConfig {
         return this;
     }
 
-    public String getClientSecret() {
+    public @Nullable String getClientSecret() {
         return clientSecret;
     }
 
@@ -50,7 +52,7 @@ public class OAuthClientConfig {
         return this;
     }
 
-    public String getTokenEndpoint() {
+    public @Nullable String getTokenEndpoint() {
         return tokenEndpoint;
     }
 
@@ -59,11 +61,11 @@ public class OAuthClientConfig {
         return this;
     }
 
-    public String getScope() {
+    public @Nullable String getScope() {
         return scope;
     }
 
-    public OAuthClientConfig setScope(String scope) {
+    public OAuthClientConfig setScope(@Nullable String scope) {
         this.scope = scope;
         return this;
     }
