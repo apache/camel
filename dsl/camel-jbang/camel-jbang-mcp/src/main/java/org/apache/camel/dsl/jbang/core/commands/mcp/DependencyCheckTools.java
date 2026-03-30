@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -52,26 +53,50 @@ public class DependencyCheckTools {
                         + "detects outdated Camel dependencies compared to the latest catalog version, "
                         + "missing Maven dependencies for components used in routes, "
                         + "and version conflicts between the Camel BOM and explicit dependency overrides. "
-                        + "Returns actionable recommendations with corrected dependency snippets.")
+                        + "Returns actionable recommendations with corrected dependency snippets. "
+                        + "POM content is automatically sanitized to remove sensitive data (passwords, tokens, API keys, "
+                        + "repository credentials) unless sanitizePom is set to false.")
     public String camel_dependency_check(
-            @ToolArg(description = "The pom.xml file content") String pomContent,
+            @ToolArg(description = "The pom.xml file content. "
+                                   + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
+                                   + "Sensitive content is automatically detected and masked.") String pomContent,
             @ToolArg(description = "Route definitions (YAML, XML, or Java DSL) to check for missing component dependencies. "
                                    + "Multiple routes can be provided concatenated.") String routes,
             @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
             @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
             @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+                                   + "When provided, overrides camelVersion.") String platformBom,
+            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials "
+                                   + "and stripping <servers> and <distributionManagement> sections") Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);
         }
 
         try {
+            // Sanitize POM content
+            String processedPom = pomContent;
+            List<String> sanitizationWarnings = new ArrayList<>();
+            if (sanitizePom == null || sanitizePom) {
+                PomSanitizer.SanitizationResult sr = PomSanitizer.sanitize(pomContent);
+                processedPom = sr.pomContent();
+                for (String pattern : sr.detectedPatterns()) {
+                    sanitizationWarnings.add("Sensitive data detected and masked: " + pattern);
+                }
+            }
+
             CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
 
-            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(pomContent);
+            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(processedPom);
 
             JsonObject result = new JsonObject();
+
+            // Add sanitization warnings if any
+            if (!sanitizationWarnings.isEmpty()) {
+                JsonArray sanitizationArr = new JsonArray();
+                sanitizationWarnings.forEach(sanitizationArr::add);
+                result.put("sanitizationWarnings", sanitizationArr);
+            }
 
             // Project info
             JsonObject projectInfo = new JsonObject();
@@ -93,7 +118,7 @@ public class DependencyCheckTools {
             result.put("missingDependencies", missingDeps);
 
             // 3. Check for version conflicts (explicit overrides when BOM is present)
-            JsonArray conflicts = checkVersionConflicts(pomContent, pom);
+            JsonArray conflicts = checkVersionConflicts(processedPom, pom);
             result.put("versionConflicts", conflicts);
 
             // 4. Build recommendations

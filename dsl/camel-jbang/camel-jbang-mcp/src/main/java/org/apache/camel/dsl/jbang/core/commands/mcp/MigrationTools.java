@@ -50,21 +50,38 @@ public class MigrationTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Analyze a Camel project's pom.xml to detect the runtime type (main, spring-boot, quarkus, "
                         + "wildfly, karaf), Camel version, Java version, and Camel component dependencies. "
-                        + "This is the first step in a migration workflow.")
+                        + "This is the first step in a migration workflow. "
+                        + "POM content is automatically sanitized to remove sensitive data (passwords, tokens, API keys, "
+                        + "repository credentials) unless sanitizePom is set to false.")
     public ProjectAnalysisResult camel_migration_analyze(
-            @ToolArg(description = "The pom.xml file content") String pomContent) {
+            @ToolArg(description = "The pom.xml file content. "
+                                   + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
+                                   + "Sensitive content is automatically detected and masked.") String pomContent,
+            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials "
+                                   + "and stripping <servers> and <distributionManagement> sections") Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);
         }
 
         try {
-            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(pomContent);
+            // Sanitize POM content
+            String processedPom = pomContent;
+            List<String> sanitizationWarnings = new ArrayList<>();
+            if (sanitizePom == null || sanitizePom) {
+                PomSanitizer.SanitizationResult sr = PomSanitizer.sanitize(pomContent);
+                processedPom = sr.pomContent();
+                for (String pattern : sr.detectedPatterns()) {
+                    sanitizationWarnings.add("Sensitive data detected and masked: " + pattern);
+                }
+            }
+
+            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(processedPom);
 
             String runtimeType = pom.runtimeType();
             int majorVersion = pom.majorVersion();
 
-            List<String> warnings = new ArrayList<>();
+            List<String> warnings = new ArrayList<>(sanitizationWarnings);
             if (pom.camelVersion() == null) {
                 warnings.add("Could not detect Camel version from pom.xml. "
                              + "Check if the version is defined in a parent POM.");
