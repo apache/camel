@@ -143,7 +143,7 @@ jobs:
           -Dsonar.pullrequest.github.summary_comment=true
           -Dsonar.projectKey=apache_camel
           -Dsonar.organization=apache
-          -Dsonar.token=${{ secrets.SONARCLOUD_TOKEN }}
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
           -B -V
         env:
           MAVEN_OPTS: "-XX:+UseG1GC -XX:InitialHeapSize=2g -XX:MaxHeapSize=6g -XX:+UseStringDeduplication"
