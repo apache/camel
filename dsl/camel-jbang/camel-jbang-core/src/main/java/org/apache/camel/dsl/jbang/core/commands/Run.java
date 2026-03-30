@@ -1490,7 +1490,7 @@ public class Run extends CamelCommand {
         }
 
         if (javaVersion != null) {
-            jbangArgs.add("--java-version=" + javaVersion);
+            jbangArgs.add("--java=" + javaVersion);
         }
         if (repositories != null) {
             jbangArgs.add("--repos=" + repositories);
