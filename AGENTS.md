@@ -61,6 +61,7 @@ When creating a PR, **always identify and request reviews** from the most releva
 - For component-specific changes, prefer reviewers who have recently worked on that component.
 - For cross-cutting changes (core, API), include committers with broader project knowledge.
 - Request review from **at least 2 relevant committers** using `gh pr edit --add-reviewer`.
+- When all comments on the Pull Request are addressed (by providing a fix or providing more explanation) and the PR checks are green, re-request review on existing reviewers so that they are aware that the new changeset is ready to be reviewed.
 
 ### Merge Requirements
 
