@@ -46,7 +46,8 @@ public class ExplainTools {
     /**
      * Tool to get enriched context for a Camel route.
      */
-    @Tool(description = "Get enriched context for a Camel route including documentation for all components and EIPs used. "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get enriched context for a Camel route including documentation for all components and EIPs used. "
                         +
                         "Returns structured data with component descriptions, EIP explanations, and route structure. " +
                         "Use this context to understand and explain the route.")

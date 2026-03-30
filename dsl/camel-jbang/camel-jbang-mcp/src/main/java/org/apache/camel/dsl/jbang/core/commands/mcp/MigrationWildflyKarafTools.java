@@ -42,7 +42,8 @@ public class MigrationWildflyKarafTools {
     /**
      * WildFly/Karaf migration guidance with archetype-based project creation.
      */
-    @Tool(description = "Get migration guidance for Camel projects running on WildFly, Karaf, or WAR-based "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get migration guidance for Camel projects running on WildFly, Karaf, or WAR-based "
                         + "application servers. Returns the Maven archetype command to create a new target project, "
                         + "migration steps, and relevant migration guide URLs. "
                         + "IMPORTANT: When migrating to a different runtime (e.g., WildFly to Quarkus, Karaf to Spring Boot), "

@@ -58,7 +58,8 @@ public class TransformTools {
     /**
      * Tool to validate a Camel route or endpoint URI.
      */
-    @Tool(description = "Validate a Camel endpoint URI or route definition. " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Validate a Camel endpoint URI or route definition. " +
                         "Checks syntax, required options, and valid parameter names.")
     public ValidationResult camel_validate_route(
             @ToolArg(description = "Camel endpoint URI to validate (e.g., 'kafka:myTopic?brokers=localhost:9092')") String uri,
@@ -154,7 +155,8 @@ public class TransformTools {
     /**
      * Tool to transform routes between DSL formats.
      */
-    @Tool(description = "Transform a Camel route between different DSL formats (YAML, XML). " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Transform a Camel route between different DSL formats (YAML, XML). " +
                         "Note: Java to YAML/XML transformation has limitations.")
     public TransformResult camel_transform_route(
             @ToolArg(description = "Route definition to transform") String route,
@@ -261,7 +263,8 @@ public class TransformTools {
     /**
      * Tool to validate a YAML DSL route definition against the Camel YAML DSL JSON schema.
      */
-    @Tool(description = "Validate a YAML DSL route definition against the Camel YAML DSL JSON schema. "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Validate a YAML DSL route definition against the Camel YAML DSL JSON schema. "
                         + "Checks for valid DSL elements, correct route structure, and returns detailed schema validation errors.")
     public YamlDslValidationResult camel_validate_yaml_dsl(
             @ToolArg(description = "YAML DSL route definition to validate") String route) {

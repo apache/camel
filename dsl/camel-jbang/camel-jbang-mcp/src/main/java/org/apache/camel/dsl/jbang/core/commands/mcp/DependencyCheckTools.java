@@ -47,7 +47,8 @@ public class DependencyCheckTools {
     /**
      * Tool to check Camel dependency hygiene for a project.
      */
-    @Tool(description = "Check Camel project dependency hygiene. Given a pom.xml (and optionally route definitions), "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Check Camel project dependency hygiene. Given a pom.xml (and optionally route definitions), "
                         + "detects outdated Camel dependencies compared to the latest catalog version, "
                         + "missing Maven dependencies for components used in routes, "
                         + "and version conflicts between the Camel BOM and explicit dependency overrides. "
