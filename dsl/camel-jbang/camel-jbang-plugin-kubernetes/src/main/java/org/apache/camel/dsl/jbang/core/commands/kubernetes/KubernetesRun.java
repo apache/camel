@@ -231,7 +231,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     boolean mavenApacheSnapshotEnabled = true;
 
-    @CommandLine.Option(names = { "--java-version" }, description = "Java version", defaultValue = "21")
+    @CommandLine.Option(names = { "--java-version", "--java" }, description = "Java version", defaultValue = "21")
     String javaVersion = "21";
 
     @CommandLine.Option(names = { "--camel-version" },
