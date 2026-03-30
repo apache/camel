@@ -120,9 +120,10 @@
         <!-- reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2026-02-17T16:11:10Z</project.build.outputTimestamp>
 
+        <!-- Tell SonarCloud which Java source level to use for analysis -->
+        <sonar.java.source>${jdk.version}</sonar.java.source>
         <!-- NOTE: this is required to correctly map each module coverage in Sonarqube. The ${maven.multiModuleProjectDirectory} may require some change
             when upgrading to Maven 4.x, according to any of the new variables that will replace this one. -->
-        <sonar.java.source>${jdk.version}</sonar.java.source>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${maven.multiModuleProjectDirectory}/coverage/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
