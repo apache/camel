@@ -50,7 +50,6 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         return createAggregator();
     }
 
-    @SuppressWarnings("java:S2095") // ExecutorService lifecycle is managed by AggregateProcessor via shutdownThreadPool flag
     protected AggregateProcessor createAggregator() throws Exception {
         Processor childProcessor = this.createChildProcessor(true);
 
@@ -77,6 +76,8 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
         boolean parallel = parseBoolean(definition.getParallelProcessing(), false);
         boolean shutdownThreadPool = willCreateNewThreadPool(definition, parallel);
+        // ExecutorService lifecycle is managed by AggregateProcessor via shutdownThreadPool flag
+        @SuppressWarnings("java:S2095")
         ExecutorService threadPool = getConfiguredExecutorService("Aggregator", definition, parallel);
         if (threadPool == null && !parallel) {
             // executor service is mandatory for the Aggregator

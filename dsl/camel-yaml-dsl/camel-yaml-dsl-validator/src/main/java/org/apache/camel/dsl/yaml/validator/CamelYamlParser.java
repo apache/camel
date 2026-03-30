@@ -49,8 +49,9 @@ import org.apache.camel.support.ResourceHelper;
  */
 public class CamelYamlParser {
 
-    @SuppressWarnings("java:S2095") // Registry is owned by CamelContext; CamelContext is stopped in finally block
     public List<ValidationMessage> parse(File file) throws Exception {
+        // CamelContext is stopped in finally block
+        @SuppressWarnings("java:S2095")
         CamelContext camelContext = null;
         try {
             DefaultRegistry registry = new DefaultRegistry();
