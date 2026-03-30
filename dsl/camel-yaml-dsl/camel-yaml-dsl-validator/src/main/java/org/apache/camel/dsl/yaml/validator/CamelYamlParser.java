@@ -50,14 +50,10 @@ import org.apache.camel.support.ResourceHelper;
 public class CamelYamlParser {
 
     public List<ValidationMessage> parse(File file) throws Exception {
-        // CamelContext is stopped in finally block
-        @SuppressWarnings("java:S2095")
-        CamelContext camelContext = null;
-        try {
-            DefaultRegistry registry = new DefaultRegistry();
-            registry.addBeanRepository(new StubBeanRepository("*"));
+        DefaultRegistry registry = new DefaultRegistry();
+        registry.addBeanRepository(new StubBeanRepository("*"));
 
-            camelContext = new DefaultCamelContext(registry);
+        try (CamelContext camelContext = new DefaultCamelContext(registry)) {
             camelContext.setAutoStartup(false);
             camelContext.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                     (name, context) -> new StubComponent());
@@ -103,10 +99,6 @@ public class CamelYamlParser {
             ValidationMessage vm = ValidationMessage.builder().type("parser")
                     .messageSupplier(() -> e.getClass().getName() + ": " + e.getMessage()).build();
             return List.of(vm);
-        } finally {
-            if (camelContext != null) {
-                camelContext.stop();
-            }
         }
     }
 
