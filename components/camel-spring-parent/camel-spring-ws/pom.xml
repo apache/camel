@@ -147,6 +147,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>net.javacrumbs</groupId>
             <artifactId>smock-springws</artifactId>
             <version>0.9.0</version>
