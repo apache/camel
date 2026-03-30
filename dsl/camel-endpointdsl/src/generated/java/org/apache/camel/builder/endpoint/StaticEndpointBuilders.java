@@ -15149,6 +15149,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String path) {
         return splunk("splunk", path);
     }
@@ -15170,6 +15171,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String componentName, String path) {
         return SplunkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

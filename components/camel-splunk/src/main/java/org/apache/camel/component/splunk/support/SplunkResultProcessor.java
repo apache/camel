@@ -21,6 +21,7 @@ import org.apache.camel.component.splunk.event.SplunkEvent;
 /**
  * Processes splunk results
  */
+@Deprecated(since = "4.19")
 public interface SplunkResultProcessor {
     void process(SplunkEvent splunkData);
 }

@@ -554,6 +554,10 @@ All properties default to `0`, which means the Apache MINA SSHD defaults are use
 
 The older logic used for MDC (enabled via `camel.main.useMdcLogging = true`) is deprecated in favor of `camel-mdc` component.
 
+=== camel-splunk (Deprecation)
+
+The `camel-splunk` component is deprecated. The Splunk Java SDK it depends on is no longer actively maintained.
+
 === camel-tracing (Deprecation)
 
 The `camel-tracing` and related components (`camel-opentelemetry` and `camel-observation`) are now deprecated. You should move your implementation to the newer `camel-telemetry` components (`camel-opentelemetry2` and `camel-micrometer-observability`). We have implemented these new components in order to fix certain design flaws (mainly, span duplications) identified in the older components.

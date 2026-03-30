@@ -32,6 +32,7 @@ import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.19")
 public abstract class SplunkDataWriter implements DataWriter {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkDataWriter.class);
 
