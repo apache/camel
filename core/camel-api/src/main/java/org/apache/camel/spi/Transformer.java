@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
@@ -56,7 +58,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     }
 
     public Transformer(String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name, "name");
     }
 
     /**
@@ -93,7 +95,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
      * Set the name for this transformer. Usually a combination of scheme and name.
      */
     public Transformer setName(String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name, "name");
         return this;
     }
 
@@ -104,7 +106,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
      * @param scheme supported data type scheme
      * @param name   transformer name
      */
-    public Transformer setName(String scheme, String name) {
+    public Transformer setName(@Nullable String scheme, @Nullable String name) {
         if (ObjectHelper.isNotEmpty(scheme)) {
             if (ObjectHelper.isNotEmpty(name)) {
                 this.name = scheme + ":" + name;
@@ -120,16 +122,16 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     /**
      * Set 'from' data type.
      */
-    public Transformer setFrom(String from) {
-        this.from = new DataType(from);
+    public Transformer setFrom(@Nullable String from) {
+        this.from = from != null ? new DataType(from) : null;
         return this;
     }
 
     /**
      * Set 'to' data type.
      */
-    public Transformer setTo(String to) {
-        this.to = new DataType(to);
+    public Transformer setTo(@Nullable String to) {
+        this.to = to != null ? new DataType(to) : null;
         return this;
     }
 
@@ -140,7 +142,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     @Override
     public void setCamelContext(CamelContext context) {
-        this.camelContext = context;
+        this.camelContext = Objects.requireNonNull(context, "context");
     }
 
     @Override

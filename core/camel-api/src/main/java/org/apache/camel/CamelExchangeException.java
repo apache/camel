@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.io.Serial;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -28,13 +29,17 @@ public class CamelExchangeException extends CamelException {
     // exchange is not guaranteed to be serializable so we set it as transient
     private final transient @Nullable Exchange exchange;
 
-    public CamelExchangeException(String message, Exchange exchange) {
-        super(CamelExchangeException.createExceptionMessage(message, exchange, null));
+    public CamelExchangeException(String message, @Nullable Exchange exchange) {
+        super(CamelExchangeException.createExceptionMessage(
+                Objects.requireNonNull(message, "message"), exchange, null));
         this.exchange = exchange;
     }
 
-    public CamelExchangeException(String message, Exchange exchange, Throwable cause) {
-        super(CamelExchangeException.createExceptionMessage(message, exchange, cause), cause);
+    public CamelExchangeException(String message, @Nullable Exchange exchange, Throwable cause) {
+        super(CamelExchangeException.createExceptionMessage(
+                Objects.requireNonNull(message, "message"), exchange,
+                Objects.requireNonNull(cause, "cause")),
+              cause);
         this.exchange = exchange;
     }
 
