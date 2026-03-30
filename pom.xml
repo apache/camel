@@ -122,6 +122,7 @@
 
         <!-- NOTE: this is required to correctly map each module coverage in Sonarqube. The ${maven.multiModuleProjectDirectory} may require some change
             when upgrading to Maven 4.x, according to any of the new variables that will replace this one. -->
+        <sonar.java.source>17</sonar.java.source>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${maven.multiModuleProjectDirectory}/coverage/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>

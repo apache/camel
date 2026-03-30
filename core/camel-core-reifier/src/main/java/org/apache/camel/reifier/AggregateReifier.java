@@ -50,6 +50,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         return createAggregator();
     }
 
+    @SuppressWarnings("java:S2095") // ExecutorService lifecycle is managed by AggregateProcessor via shutdownThreadPool flag
     protected AggregateProcessor createAggregator() throws Exception {
         Processor childProcessor = this.createChildProcessor(true);
 
