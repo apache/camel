@@ -94,6 +94,7 @@ public interface EndpointServiceRegistry extends StaticService {
         /**
          * The route id where this service is used as route consumer, or used in the route by a send processor.
          */
+        @Nullable
         String getRouteId();
 
     }

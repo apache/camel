@@ -16,12 +16,14 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Is thrown if the payload from the exchange could not be retrieved because of being null, wrong class type etc.
  */
 public class InvalidPayloadException extends CamelExchangeException {
 
-    private final transient Class<?> type;
+    private final transient @Nullable Class<?> type;
 
     public InvalidPayloadException(Exchange exchange, Class<?> type) {
         this(exchange, type, exchange.getIn());
@@ -43,7 +45,7 @@ public class InvalidPayloadException extends CamelExchangeException {
     /**
      * The expected type of the body
      */
-    public Class<?> getType() {
+    public @Nullable Class<?> getType() {
         return type;
     }
 }

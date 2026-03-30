@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An optional interface an {@link Endpoint} may choose to implement which allows it to expose a way of browsing the
@@ -80,7 +81,7 @@ public interface BrowsableEndpoint extends Endpoint {
      * @param  filter filter to filter among the messages to include.
      * @return        the exchanges on this endpoint
      */
-    default List<Exchange> getExchanges(int limit, Predicate filter) {
+    default List<Exchange> getExchanges(int limit, @Nullable Predicate filter) {
         List<Exchange> answer = getExchanges();
         if (filter != null) {
             answer = (List<Exchange>) answer.stream().filter(filter).collect(Collectors.toList());

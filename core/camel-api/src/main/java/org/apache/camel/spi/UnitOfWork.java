@@ -137,8 +137,9 @@ public interface UnitOfWork {
      * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If its disabled an
      * <tt>IllegalStateException</tt> is thrown.
      *
-     * @return the original IN {@link Message}
+     * @return the original IN {@link Message}, or {@code null} if the original message is not available
      */
+    @Nullable
     Message getOriginalInMessage();
 
     /**

@@ -49,11 +49,11 @@ public class DataType {
     public static final DataType ANY = new DataType(ANY_TYPE_URN);
 
     private final String scheme;
-    private String name;
+    private @Nullable String name;
     private boolean isJavaType;
-    private String typeString;
+    private @Nullable String typeString;
 
-    public DataType(String urn) {
+    public DataType(@Nullable String urn) {
         if (urn != null) {
             String[] split = StringHelper.splitOnCharacter(urn, ":", 2);
             scheme = split[0];
@@ -97,16 +97,16 @@ public class DataType {
         return this.typeString;
     }
 
-    public static boolean isAnyType(DataType dataType) {
+    public static boolean isAnyType(@Nullable DataType dataType) {
         return dataType == null || DataType.ANY.equals(dataType);
     }
 
-    public static boolean isJavaType(DataType dataType) {
+    public static boolean isJavaType(@Nullable DataType dataType) {
         return dataType != null && dataType.isJavaType();
     }
 
     @Override
-    public boolean equals(Object target) {
+    public boolean equals(@Nullable Object target) {
         if (target instanceof DataType targetDt) {
             String targetScheme = targetDt.getScheme();
             String targetName = targetDt.getName();

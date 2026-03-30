@@ -142,7 +142,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         }
     }
 
-    private static String[] getSignatureSchemesFromParams(SSLParameters params) {
+    private static String @Nullable [] getSignatureSchemesFromParams(SSLParameters params) {
         if (GET_SIGNATURE_SCHEMES == null) {
             return null;
         }
@@ -1165,9 +1165,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *
      * @return                            the filtered named groups array, or {@code null} if no configuration is needed
      */
-    private String[] resolveNamedGroups(
-            String[] currentNamedGroups, List<String> enabledNamedGroups,
-            Patterns enabledNamedGroupsPatterns) {
+    private String @Nullable [] resolveNamedGroups(
+            String @Nullable [] currentNamedGroups, @Nullable List<String> enabledNamedGroups,
+            @Nullable Patterns enabledNamedGroupsPatterns) {
 
         if (enabledNamedGroups == null && enabledNamedGroupsPatterns == null) {
             return null;
@@ -1200,9 +1200,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @return                                 the filtered signature schemes array, or {@code null} if no configuration
      *                                         is needed
      */
-    private String[] resolveSignatureSchemes(
-            String[] currentSignatureSchemes, List<String> enabledSignatureSchemes,
-            Patterns enabledSignatureSchemesPatterns) {
+    private String @Nullable [] resolveSignatureSchemes(
+            String @Nullable [] currentSignatureSchemes, @Nullable List<String> enabledSignatureSchemes,
+            @Nullable Patterns enabledSignatureSchemesPatterns) {
 
         if (enabledSignatureSchemes == null && enabledSignatureSchemesPatterns == null) {
             return null;

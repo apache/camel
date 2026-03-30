@@ -243,6 +243,7 @@ public interface Route extends RuntimeConfiguration {
      *
      * @return a navigator for {@link Processor}.
      */
+    @Nullable
     Navigate<Processor> navigate();
 
     /**
@@ -413,6 +414,7 @@ public interface Route extends RuntimeConfiguration {
     Collection<Processor> getOnExceptions();
 
     // called at runtime
+    @Nullable
     Processor getOnException(String onExceptionId);
 
     // called at completion time

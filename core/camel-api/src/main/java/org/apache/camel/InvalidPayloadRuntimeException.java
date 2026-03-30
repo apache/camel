@@ -16,12 +16,14 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Runtime version of the {@link InvalidPayloadException}.
  */
 public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
 
-    private final transient Class<?> type;
+    private final transient @Nullable Class<?> type;
 
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type) {
         this(exchange, type, exchange.getIn());
@@ -47,7 +49,7 @@ public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
     /**
      * The expected type of the body
      */
-    public Class<?> getType() {
+    public @Nullable Class<?> getType() {
         return type;
     }
 }

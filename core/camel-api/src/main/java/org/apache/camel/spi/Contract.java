@@ -25,11 +25,11 @@ import org.jspecify.annotations.Nullable;
  */
 public class Contract {
 
-    private DataType inputType;
-    private DataType outputType;
+    private @Nullable DataType inputType;
+    private @Nullable DataType outputType;
     private boolean validateInput;
     private boolean validateOutput;
-    private String contractString;
+    private @Nullable String contractString;
 
     public @Nullable DataType getInputType() {
         return inputType;
@@ -114,7 +114,7 @@ public class Contract {
     }
 
     @Override
-    public boolean equals(Object target) {
+    public boolean equals(@Nullable Object target) {
         if (!(target instanceof Contract)) {
             return false;
         }

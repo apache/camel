@@ -156,16 +156,18 @@ public interface ConsumerTemplate extends Service {
      * Receives from the endpoint, waiting until there is a response
      *
      * @param  endpointUri the endpoint to receive from
-     * @return             the returned response body
+     * @return             the returned response body, or <tt>null</tt> if no body
      */
+    @Nullable
     Object receiveBody(String endpointUri);
 
     /**
      * Receives from the endpoint, waiting until there is a response
      *
      * @param  endpoint the endpoint to receive from
-     * @return          the returned response body
+     * @return          the returned response body, or <tt>null</tt> if no body
      */
+    @Nullable
     Object receiveBody(Endpoint endpoint);
 
     /**
@@ -211,18 +213,18 @@ public interface ConsumerTemplate extends Service {
      *
      * @param  endpointUri the endpoint to receive from
      * @param  type        the expected response type
-     * @return             the returned response body
+     * @return             the returned response body, or <tt>null</tt> if no body
      */
-    <T> T receiveBody(String endpointUri, Class<T> type);
+    <T> @Nullable T receiveBody(String endpointUri, Class<T> type);
 
     /**
      * Receives from the endpoint, waiting until there is a response
      *
      * @param  endpoint the endpoint to receive from
      * @param  type     the expected response type
-     * @return          the returned response body
+     * @return          the returned response body, or <tt>null</tt> if no body
      */
-    <T> T receiveBody(Endpoint endpoint, Class<T> type);
+    <T> @Nullable T receiveBody(Endpoint endpoint, Class<T> type);
 
     /**
      * Receives from the endpoint, waiting until there is a response or the timeout occurs

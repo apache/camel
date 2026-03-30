@@ -175,6 +175,7 @@ public interface StreamCachingStrategy extends StaticService {
      */
     void setSpoolDirectory(File path);
 
+    @Nullable
     File getSpoolDirectory();
 
     void setSpoolDirectory(String path);
@@ -205,6 +206,7 @@ public interface StreamCachingStrategy extends StaticService {
      */
     void setSpoolUsedHeapMemoryLimit(SpoolUsedHeapMemoryLimit bounds);
 
+    @Nullable
     SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit();
 
     /**

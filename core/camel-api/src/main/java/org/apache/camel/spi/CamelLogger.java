@@ -33,7 +33,7 @@ import org.slf4j.MarkerFactory;
 public class CamelLogger {
     private Logger log;
     private LoggingLevel level;
-    private Marker marker;
+    private @Nullable Marker marker;
 
     public CamelLogger() {
         this(LoggerFactory.getLogger(CamelLogger.class));

@@ -20,6 +20,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory used by {@link Consumer} to create Camel {@link Exchange} holding the incoming message received by the
@@ -47,6 +48,7 @@ public interface ExchangeFactory extends PooledObjectFactory<Exchange>, NonManag
     /**
      * The consumer using this factory.
      */
+    @Nullable
     Consumer getConsumer();
 
     /**

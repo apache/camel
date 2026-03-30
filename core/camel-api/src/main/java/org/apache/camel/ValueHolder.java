@@ -18,6 +18,8 @@ package org.apache.camel;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Holder object for a given value.
  */
@@ -33,7 +35,7 @@ public class ValueHolder<V> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) {
             return true;
         }

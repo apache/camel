@@ -91,6 +91,7 @@ public interface Message {
      *
      * @return the exchange
      */
+    @Nullable
     Exchange getExchange();
 
     /**

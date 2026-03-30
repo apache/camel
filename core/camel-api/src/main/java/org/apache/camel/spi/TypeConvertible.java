@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import static org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType;
 
 /**
@@ -71,7 +73,7 @@ public final class TypeConvertible<F, T> {
      * @param  that the TypeConvertible being tested against this instance
      * @return      true if there is a conversion match between the give TypeConvertible and this instance.
      */
-    public boolean matchesPrimitive(TypeConvertible<?, ?> that) {
+    public boolean matchesPrimitive(@Nullable TypeConvertible<?, ?> that) {
         if (that != null && that.getTo() != null) {
             return match(this.from, this.to, that.from, convertPrimitiveTypeToWrapperType(that.to));
         }
@@ -88,7 +90,9 @@ public final class TypeConvertible<F, T> {
      * @param  thatTo   The class instance that defines the source "to" type (that is: Class&lt;F&gt;.class)
      * @return          true if there is a conversion match between the source types to the target types
      */
-    private static boolean match(Class<?> thisFrom, Class<?> thisTo, Class<?> thatFrom, Class<?> thatTo) {
+    private static boolean match(
+            Class<?> thisFrom, Class<?> thisTo, @Nullable Class<?> thatFrom,
+            @Nullable Class<?> thatTo) {
         if (thatFrom == null || thatTo == null) {
             return false;
         }
@@ -165,7 +169,7 @@ public final class TypeConvertible<F, T> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) {
             return true;
         }

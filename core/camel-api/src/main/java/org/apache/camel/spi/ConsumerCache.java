@@ -124,5 +124,6 @@ public interface ConsumerCache extends Service {
     /**
      * Gets the endpoint statistics
      */
+    @Nullable
     EndpointUtilizationStatistics getEndpointUtilizationStatistics();
 }

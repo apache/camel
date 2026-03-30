@@ -16,31 +16,35 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception thrown if evaluation of the expression failed.
  */
 public class ExpressionEvaluationException extends RuntimeCamelException {
 
-    private final transient Expression expression;
-    private final transient Exchange exchange;
+    private final transient @Nullable Expression expression;
+    private final transient @Nullable Exchange exchange;
 
-    public ExpressionEvaluationException(Expression expression, Exchange exchange, Throwable cause) {
+    public ExpressionEvaluationException(
+                                         @Nullable Expression expression, Exchange exchange, @Nullable Throwable cause) {
         super(cause);
         this.expression = expression;
         this.exchange = exchange;
     }
 
-    public ExpressionEvaluationException(Expression expression, String message, Exchange exchange, Throwable cause) {
+    public ExpressionEvaluationException(
+                                         Expression expression, String message, Exchange exchange, @Nullable Throwable cause) {
         super(message, cause);
         this.expression = expression;
         this.exchange = exchange;
     }
 
-    public Expression getExpression() {
+    public @Nullable Expression getExpression() {
         return expression;
     }
 
-    public Exchange getExchange() {
+    public @Nullable Exchange getExchange() {
         return exchange;
     }
 }

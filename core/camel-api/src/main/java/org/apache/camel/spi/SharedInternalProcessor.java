@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A Shared (thread safe) internal {@link Processor} that Camel routing engine used during routing for cross cutting
@@ -50,11 +51,13 @@ public interface SharedInternalProcessor extends Processor {
     /**
      * Asynchronous API
      */
-    boolean process(Exchange exchange, AsyncCallback originalCallback, AsyncProcessor processor, Processor resultProcessor);
+    boolean process(
+            Exchange exchange, AsyncCallback originalCallback, AsyncProcessor processor,
+            @Nullable Processor resultProcessor);
 
     /**
      * Synchronous API
      */
-    void process(Exchange exchange, AsyncProcessor processor, Processor resultProcessor);
+    void process(Exchange exchange, AsyncProcessor processor, @Nullable Processor resultProcessor);
 
 }

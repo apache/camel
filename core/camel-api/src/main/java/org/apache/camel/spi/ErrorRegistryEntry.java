@@ -61,6 +61,7 @@ public interface ErrorRegistryEntry {
     /**
      * The exception message
      */
+    @Nullable
     String exceptionMessage();
 
     /**

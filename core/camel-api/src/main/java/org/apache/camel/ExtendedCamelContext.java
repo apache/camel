@@ -437,6 +437,7 @@ public interface ExtendedCamelContext {
      *
      * @return the builder
      */
+    @Nullable
     ErrorHandlerFactory getErrorHandlerFactory();
 
     /**

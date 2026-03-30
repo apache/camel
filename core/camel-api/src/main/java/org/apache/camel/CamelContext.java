@@ -357,8 +357,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * {@link #getComponent(String, boolean, boolean)}.
      *
      * @param  componentName the name of the component
-     * @return               the component
+     * @return               the component, or <tt>null</tt> if not found and could not be auto created
      */
+    @Nullable
     Component getComponent(String componentName);
 
     /**
@@ -369,8 +370,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @param  name                 the name of the component
      * @param  autoCreateComponents whether or not the component should be lazily created if it does not already exist
-     * @return                      the component
+     * @return                      the component, or <tt>null</tt> if not found
      */
+    @Nullable
     Component getComponent(String name, boolean autoCreateComponents);
 
     /**
@@ -379,8 +381,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  name                 the name of the component
      * @param  autoCreateComponents whether or not the component should be lazily created if it does not already exist
      * @param  autoStart            whether to auto start the component if {@link CamelContext} is already started.
-     * @return                      the component
+     * @return                      the component, or <tt>null</tt> if not found
      */
+    @Nullable
     Component getComponent(String name, boolean autoCreateComponents, boolean autoStart);
 
     /**

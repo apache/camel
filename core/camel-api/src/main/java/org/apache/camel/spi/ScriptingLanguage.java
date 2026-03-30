@@ -34,5 +34,5 @@ public interface ScriptingLanguage {
      * @param  resultType the expected result type
      * @return            the result of the evaluation
      */
-    <T> T evaluate(String script, @Nullable Map<String, Object> bindings, Class<T> resultType);
+    <T> @Nullable T evaluate(String script, @Nullable Map<String, Object> bindings, Class<T> resultType);
 }
