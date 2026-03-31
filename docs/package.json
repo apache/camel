@@ -27,6 +27,6 @@
     "set-value": "^4.1.0",
     "glob-parent": "^6.0.2",
     "semver": "^7.5.4",
-    "brace-expansion": "^2.0.2"
+    "brace-expansion": "^2.0.3"
   }
 }
