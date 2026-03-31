@@ -699,8 +699,12 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
                 () -> executionLimitOptions.maxIdleSeconds > 0
                         ? String.valueOf(executionLimitOptions.maxIdleSeconds) : null);
-        if (serverOptions.port != -1 && serverOptions.port != 8080) {
-            writeSetting(main, profileProperties, "camel.server.port", () -> String.valueOf(serverOptions.port));
+        if (serverOptions.port != -1) {
+            // enable the main HTTP server when --port is explicitly specified
+            writeSetting(main, profileProperties, "camel.server.enabled", "true");
+            if (serverOptions.port != 8080) {
+                writeSetting(main, profileProperties, "camel.server.port", () -> String.valueOf(serverOptions.port));
+            }
         }
         if (serverOptions.port == 0 && serverOptions.managementPort == -1) {
             // use same port for management
