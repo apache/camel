@@ -558,6 +558,24 @@ The older logic used for MDC (enabled via `camel.main.useMdcLogging = true`) is 
 
 The `camel-splunk` component is deprecated. The Splunk Java SDK it depends on is no longer actively maintained.
 
+Users who only need to **send events to Splunk** can migrate to `camel-splunk-hec`, which uses the
+Splunk HTTP Event Collector (HEC) over standard HTTPS with no dependency on the Splunk Java SDK.
+
+However, `camel-splunk-hec` is a **producer-only** component. The following `camel-splunk` capabilities
+have no equivalent in `camel-splunk-hec`:
+
+* **Consumer (search)**: normal searches, real-time searches, and saved-search execution are not supported.
+* **TCP streaming**: the `tcp` producer publish type (raw socket streaming to a Splunk TCP input) is not available.
+* **SUBMIT and STREAM publish types**: only HEC-based ingestion is supported.
+
+If your routes only produce events to Splunk (using the `submit` or `stream` publish types), switching
+to `camel-splunk-hec` is straightforward — configure the HEC token, index, sourceType, and source on
+the endpoint. If your routes consume (search) data from Splunk, there is currently no direct replacement
+within Apache Camel, and you will need to use the Splunk REST API directly or keep using `camel-splunk`
+until it is removed.
+
+NOTE: `camel-splunk-hec` is NOT deprecated and remains actively maintained.
+
 === camel-tracing (Deprecation)
 
 The `camel-tracing` and related components (`camel-opentelemetry` and `camel-observation`) are now deprecated. You should move your implementation to the newer `camel-telemetry` components (`camel-opentelemetry2` and `camel-micrometer-observability`). We have implemented these new components in order to fix certain design flaws (mainly, span duplications) identified in the older components.
