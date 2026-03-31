@@ -22,15 +22,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 
 /**
  * Utility to detect and sanitize sensitive data in POM content before processing.
  * <p>
- * Scans for common credential patterns (passwords, tokens, API keys, secrets) and optionally strips or masks them. Also
- * removes {@code <servers>} and {@code <distributionManagement>} sections which may contain private repository
- * credentials and URLs.
+ * Scans for common credential patterns (passwords, tokens, API keys, secrets) in XML element values and masks them.
+ * Property placeholders (e.g., {@code ${db.password}}) are preserved since they reference external values and do not
+ * contain actual secrets.
+ * <p>
+ * <b>Limitations:</b> Detection is tag-name-based using keyword matching. This means:
+ * <ul>
+ * <li><b>False positives</b> — non-secret values in elements whose names happen to contain a keyword (e.g.,
+ * {@code <password-policy>strict</password-policy>},
+ * {@code <token-refresh-interval>300</token-refresh-interval>}).</li>
+ * <li><b>False negatives</b> — actual secrets in elements with non-obvious names (e.g., credentials embedded in JDBC
+ * URLs, or elements named {@code <my.credential>} where the singular form is not in the keyword list).</li>
+ * </ul>
+ * This heuristic is a best-effort safety net, not a guarantee. Users should still avoid passing sensitive data.
  */
 final class PomSanitizer {
 
@@ -50,21 +61,13 @@ final class PomSanitizer {
                                                                              + "</\\1>",
             Pattern.CASE_INSENSITIVE);
 
-    /** Pattern matching {@code <servers>...</servers>} sections. */
-    private static final Pattern SERVERS_SECTION_PATTERN = Pattern.compile(
-            "<servers>.*?</servers>", Pattern.DOTALL);
-
-    /** Pattern matching {@code <distributionManagement>...</distributionManagement>} sections. */
-    private static final Pattern DIST_MGMT_SECTION_PATTERN = Pattern.compile(
-            "<distributionManagement>.*?</distributionManagement>", Pattern.DOTALL);
-
     private PomSanitizer() {
     }
 
     /**
      * Detect sensitive content patterns in POM content.
      *
-     * @return list of descriptions of detected sensitive patterns
+     * @return list of element names that contain sensitive values
      */
     static List<String> detectSensitiveContent(String pomContent) {
         Set<String> findings = new LinkedHashSet<>();
@@ -78,20 +81,11 @@ final class PomSanitizer {
             }
         }
 
-        if (SERVERS_SECTION_PATTERN.matcher(pomContent).find()) {
-            findings.add("<servers> section (may contain repository credentials)");
-        }
-
-        if (DIST_MGMT_SECTION_PATTERN.matcher(pomContent).find()) {
-            findings.add("<distributionManagement> section (may contain private repository URLs)");
-        }
-
         return new ArrayList<>(findings);
     }
 
     /**
-     * Sanitize POM content by masking sensitive element values and stripping credential sections ({@code <servers>} and
-     * {@code <distributionManagement>}).
+     * Sanitize POM content by masking sensitive element values.
      * <p>
      * Property placeholders (e.g., {@code ${db.password}}) are preserved since they do not contain actual secret
      * values.
@@ -113,24 +107,40 @@ final class PomSanitizer {
                     "<" + mr.group(1) + ">***MASKED***</" + mr.group(1) + ">");
         });
 
-        // Strip servers section
-        sanitized = SERVERS_SECTION_PATTERN.matcher(sanitized).replaceAll("");
-
-        // Strip distributionManagement section
-        sanitized = DIST_MGMT_SECTION_PATTERN.matcher(sanitized).replaceAll("");
-
-        boolean wasSanitized = !sanitized.equals(pomContent);
-
         if (!detected.isEmpty()) {
             LOG.warnf("Sensitive data detected in pomContent: %s. Content was sanitized before processing.", detected);
         }
 
-        return new SanitizationResult(sanitized, detected, wasSanitized);
+        return new SanitizationResult(sanitized, detected);
+    }
+
+    /**
+     * Process POM content with optional sanitization. This is the entry point for tool methods.
+     *
+     * @param  pomContent the raw POM content
+     * @param  sanitize   if {@code null} or {@code true}, sanitize; if {@code false}, skip sanitization
+     * @return            processed result with content and any warnings
+     */
+    static ProcessedPom process(String pomContent, Boolean sanitize) {
+        if (sanitize != null && !sanitize) {
+            return new ProcessedPom(pomContent, List.of());
+        }
+        SanitizationResult sr = sanitize(pomContent);
+        List<String> warnings = new ArrayList<>();
+        if (!sr.detectedPatterns().isEmpty()) {
+            warnings.add("Sensitive data detected and masked: "
+                         + sr.detectedPatterns().stream().collect(Collectors.joining(", ")));
+        }
+        return new ProcessedPom(sr.pomContent(), warnings);
     }
 
     record SanitizationResult(
             String pomContent,
-            List<String> detectedPatterns,
-            boolean wasSanitized) {
+            List<String> detectedPatterns) {
+    }
+
+    record ProcessedPom(
+            String content,
+            List<String> warnings) {
     }
 }

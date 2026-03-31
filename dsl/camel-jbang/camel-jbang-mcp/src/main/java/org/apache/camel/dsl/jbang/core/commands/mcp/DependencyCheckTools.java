@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -54,8 +53,8 @@ public class DependencyCheckTools {
                         + "missing Maven dependencies for components used in routes, "
                         + "and version conflicts between the Camel BOM and explicit dependency overrides. "
                         + "Returns actionable recommendations with corrected dependency snippets. "
-                        + "POM content is automatically sanitized to remove sensitive data (passwords, tokens, API keys, "
-                        + "repository credentials) unless sanitizePom is set to false.")
+                        + "POM content is automatically sanitized to mask sensitive data (passwords, tokens, API keys) "
+                        + "unless sanitizePom is set to false.")
     public String camel_dependency_check(
             @ToolArg(description = "The pom.xml file content. "
                                    + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
@@ -66,35 +65,25 @@ public class DependencyCheckTools {
             @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
             @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
                                    + "When provided, overrides camelVersion.") String platformBom,
-            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials "
-                                   + "and stripping <servers> and <distributionManagement> sections") Boolean sanitizePom) {
+            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials") Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);
         }
 
         try {
-            // Sanitize POM content
-            String processedPom = pomContent;
-            List<String> sanitizationWarnings = new ArrayList<>();
-            if (sanitizePom == null || sanitizePom) {
-                PomSanitizer.SanitizationResult sr = PomSanitizer.sanitize(pomContent);
-                processedPom = sr.pomContent();
-                for (String pattern : sr.detectedPatterns()) {
-                    sanitizationWarnings.add("Sensitive data detected and masked: " + pattern);
-                }
-            }
+            PomSanitizer.ProcessedPom processed = PomSanitizer.process(pomContent, sanitizePom);
 
             CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
 
-            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(processedPom);
+            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(processed.content());
 
             JsonObject result = new JsonObject();
 
             // Add sanitization warnings if any
-            if (!sanitizationWarnings.isEmpty()) {
+            if (!processed.warnings().isEmpty()) {
                 JsonArray sanitizationArr = new JsonArray();
-                sanitizationWarnings.forEach(sanitizationArr::add);
+                processed.warnings().forEach(sanitizationArr::add);
                 result.put("sanitizationWarnings", sanitizationArr);
             }
 
@@ -118,7 +107,7 @@ public class DependencyCheckTools {
             result.put("missingDependencies", missingDeps);
 
             // 3. Check for version conflicts (explicit overrides when BOM is present)
-            JsonArray conflicts = checkVersionConflicts(processedPom, pom);
+            JsonArray conflicts = checkVersionConflicts(processed.content(), pom);
             result.put("versionConflicts", conflicts);
 
             // 4. Build recommendations

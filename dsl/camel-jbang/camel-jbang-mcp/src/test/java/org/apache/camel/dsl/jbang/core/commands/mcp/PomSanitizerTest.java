@@ -74,49 +74,6 @@ class PomSanitizerTest {
             </project>
             """;
 
-    // A POM with servers section
-    private static final String POM_WITH_SERVERS = """
-            <project>
-                <properties>
-                    <camel.version>4.10.0</camel.version>
-                </properties>
-                <servers>
-                    <server>
-                        <id>my-repo</id>
-                        <username>admin</username>
-                        <password>repoPassword</password>
-                    </server>
-                </servers>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-core</artifactId>
-                    </dependency>
-                </dependencies>
-            </project>
-            """;
-
-    // A POM with distributionManagement section
-    private static final String POM_WITH_DIST_MGMT = """
-            <project>
-                <properties>
-                    <camel.version>4.10.0</camel.version>
-                </properties>
-                <distributionManagement>
-                    <repository>
-                        <id>internal-releases</id>
-                        <url>https://private.repo.example.com/releases</url>
-                    </repository>
-                </distributionManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-core</artifactId>
-                    </dependency>
-                </dependencies>
-            </project>
-            """;
-
     // A POM with multiple sensitive patterns
     private static final String POM_WITH_MULTIPLE_SENSITIVE = """
             <project>
@@ -126,18 +83,6 @@ class PomSanitizerTest {
                     <apiKey>key_12345</apiKey>
                     <accessKey>AKIA1234567890</accessKey>
                 </properties>
-                <servers>
-                    <server>
-                        <id>repo</id>
-                        <password>pass</password>
-                    </server>
-                </servers>
-                <distributionManagement>
-                    <repository>
-                        <id>releases</id>
-                        <url>https://repo.example.com/releases</url>
-                    </repository>
-                </distributionManagement>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.camel</groupId>
@@ -191,18 +136,6 @@ class PomSanitizerTest {
     }
 
     @Test
-    void detectsServersSection() {
-        List<String> findings = PomSanitizer.detectSensitiveContent(POM_WITH_SERVERS);
-        assertThat(findings).anyMatch(f -> f.contains("<servers>"));
-    }
-
-    @Test
-    void detectsDistributionManagementSection() {
-        List<String> findings = PomSanitizer.detectSensitiveContent(POM_WITH_DIST_MGMT);
-        assertThat(findings).anyMatch(f -> f.contains("<distributionManagement>"));
-    }
-
-    @Test
     void noDetectionForCleanPom() {
         List<String> findings = PomSanitizer.detectSensitiveContent(CLEAN_POM);
         assertThat(findings).isEmpty();
@@ -238,26 +171,9 @@ class PomSanitizerTest {
     }
 
     @Test
-    void stripsServersSection() {
-        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(POM_WITH_SERVERS);
-        assertThat(result.pomContent()).doesNotContain("<servers>");
-        assertThat(result.pomContent()).doesNotContain("repoPassword");
-        assertThat(result.wasSanitized()).isTrue();
-    }
-
-    @Test
-    void stripsDistributionManagement() {
-        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(POM_WITH_DIST_MGMT);
-        assertThat(result.pomContent()).doesNotContain("<distributionManagement>");
-        assertThat(result.pomContent()).doesNotContain("private.repo.example.com");
-        assertThat(result.wasSanitized()).isTrue();
-    }
-
-    @Test
     void cleanPomUnchanged() {
         PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(CLEAN_POM);
         assertThat(result.pomContent()).isEqualTo(CLEAN_POM);
-        assertThat(result.wasSanitized()).isFalse();
         assertThat(result.detectedPatterns()).isEmpty();
     }
 
@@ -275,23 +191,7 @@ class PomSanitizerTest {
         assertThat(result.pomContent()).doesNotContain("myAppSecret");
         assertThat(result.pomContent()).doesNotContain("key_12345");
         assertThat(result.pomContent()).doesNotContain("AKIA1234567890");
-        assertThat(result.pomContent()).doesNotContain("<servers>");
-        assertThat(result.pomContent()).doesNotContain("<distributionManagement>");
-        assertThat(result.wasSanitized()).isTrue();
         assertThat(result.detectedPatterns().size()).isGreaterThanOrEqualTo(3);
-    }
-
-    @Test
-    void resultReportsWasSanitized() {
-        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(POM_WITH_CREDENTIALS);
-        assertThat(result.wasSanitized()).isTrue();
-        assertThat(result.detectedPatterns()).isNotEmpty();
-    }
-
-    @Test
-    void resultReportsNotSanitizedForCleanPom() {
-        PomSanitizer.SanitizationResult result = PomSanitizer.sanitize(CLEAN_POM);
-        assertThat(result.wasSanitized()).isFalse();
     }
 
     @Test
@@ -313,5 +213,29 @@ class PomSanitizerTest {
         String pom = "<project><properties><passphrase>my-passphrase</passphrase></properties></project>";
         List<String> findings = PomSanitizer.detectSensitiveContent(pom);
         assertThat(findings).anyMatch(f -> f.contains("passphrase"));
+    }
+
+    // ---- Process helper tests ----
+
+    @Test
+    void processReturnsSingleSummaryWarning() {
+        PomSanitizer.ProcessedPom result = PomSanitizer.process(POM_WITH_CREDENTIALS, null);
+        assertThat(result.warnings()).hasSize(1);
+        assertThat(result.warnings().get(0)).contains("db.password");
+        assertThat(result.warnings().get(0)).contains("api.token");
+    }
+
+    @Test
+    void processSkipsSanitizationWhenFalse() {
+        PomSanitizer.ProcessedPom result = PomSanitizer.process(POM_WITH_CREDENTIALS, false);
+        assertThat(result.warnings()).isEmpty();
+        assertThat(result.content()).isEqualTo(POM_WITH_CREDENTIALS);
+    }
+
+    @Test
+    void processNoWarningsForCleanPom() {
+        PomSanitizer.ProcessedPom result = PomSanitizer.process(CLEAN_POM, null);
+        assertThat(result.warnings()).isEmpty();
+        assertThat(result.content()).isEqualTo(CLEAN_POM);
     }
 }

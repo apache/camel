@@ -50,34 +50,24 @@ public class MigrationWildflyKarafTools {
                         + "you MUST use the archetype command returned by this tool to create a new project. "
                         + "Do NOT manually rewrite the pom.xml — always generate a new project with the archetype first, "
                         + "then migrate routes and source files into it. "
-                        + "POM content is automatically sanitized to remove sensitive data (passwords, tokens, API keys, "
-                        + "repository credentials) unless sanitizePom is set to false.")
+                        + "POM content is automatically sanitized to mask sensitive data (passwords, tokens, API keys) "
+                        + "unless sanitizePom is set to false.")
     public WildflyKarafMigrationResult camel_migration_wildfly_karaf(
             @ToolArg(description = "The pom.xml file content of the WildFly/Karaf project. "
                                    + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
                                    + "Sensitive content is automatically detected and masked.") String pomContent,
             @ToolArg(description = "Target runtime: spring-boot or quarkus (default: quarkus)") String targetRuntime,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
-            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials "
-                                   + "and stripping <servers> and <distributionManagement> sections") Boolean sanitizePom) {
+            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials") Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);
         }
 
         try {
-            // Sanitize POM content
-            String processedPom = pomContent;
-            List<String> sanitizationWarnings = new ArrayList<>();
-            if (sanitizePom == null || sanitizePom) {
-                PomSanitizer.SanitizationResult sr = PomSanitizer.sanitize(pomContent);
-                processedPom = sr.pomContent();
-                for (String pattern : sr.detectedPatterns()) {
-                    sanitizationWarnings.add("Sensitive data detected and masked: " + pattern);
-                }
-            }
+            PomSanitizer.ProcessedPom processed = PomSanitizer.process(pomContent, sanitizePom);
 
-            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(processedPom);
+            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(processed.content());
 
             String sourceRuntime = pom.isWildfly() ? "wildfly" : pom.isKaraf() ? "karaf" : "unknown";
             String resolvedTarget = targetRuntime != null && !targetRuntime.isBlank()
@@ -101,7 +91,7 @@ public class MigrationWildflyKarafTools {
                     .collect(Collectors.toList());
 
             // Warnings specific to the source runtime
-            List<String> warnings = new ArrayList<>(sanitizationWarnings);
+            List<String> warnings = new ArrayList<>(processed.warnings());
             if ("karaf".equals(sourceRuntime)) {
                 warnings.add("Blueprint XML is not supported in Camel 3.x+. "
                              + "Routes must be converted to YAML DSL, XML DSL, or Java DSL.");
