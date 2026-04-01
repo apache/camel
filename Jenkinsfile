@@ -141,7 +141,7 @@ pipeline {
                     stage('Test') {
                         steps {
                             echo "Do Test for ${PLATFORM}-${JDK_NAME}"
-                            timeout(unit: 'HOURS', time: 7) {
+                            timeout(unit: 'MINUTES', time: 600) {
                                 script {
                                     if ("${PLATFORM}" == "ubuntu-avx") {
                                         if ("${JDK_NAME}" == "jdk_21_latest") {
