@@ -1,6 +1,6 @@
 [ {
   "service" : "org.apache.camel.test.infra.milvus.services.MilvusInfraService",
-  "description" : "Milvus Vector Database",
+  "description" : "Milvus is an open source vector database for AI applications",
   "implementation" : "org.apache.camel.test.infra.milvus.services.MilvusLocalContainerInfraService",
   "alias" : [ "milvus" ],
   "aliasImplementation" : [ ],
@@ -36,7 +36,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.iggy.services.IggyInfraService",
-  "description" : "Iggy distributed message streaming platform",
+  "description" : "Iggy is a persistent message streaming platform",
   "implementation" : "org.apache.camel.test.infra.iggy.services.IggyLocalContainerInfraService",
   "alias" : [ "iggy" ],
   "aliasImplementation" : [ ],
@@ -72,7 +72,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.redis.services.RedisInfraService",
-  "description" : "In Memory Database",
+  "description" : "Redis is an open source in-memory data store",
   "implementation" : "org.apache.camel.test.infra.redis.services.RedisLocalContainerInfraService",
   "alias" : [ "redis" ],
   "aliasImplementation" : [ ],
@@ -81,7 +81,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.elasticsearch.services.ElasticSearchInfraService",
-  "description" : "NoSQL Database Elasticsearch",
+  "description" : "Elasticsearch is a distributed search and analytics engine",
   "implementation" : "org.apache.camel.test.infra.elasticsearch.services.ElasticSearchLocalContainerInfraService",
   "alias" : [ "elasticsearch" ],
   "aliasImplementation" : [ ],
@@ -108,7 +108,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.nats.services.NatsInfraService",
-  "description" : "Messaging Platform NATS",
+  "description" : "NATS is a high-performance messaging system for cloud native applications",
   "implementation" : "org.apache.camel.test.infra.nats.services.NatsLocalContainerInfraService",
   "alias" : [ "nats" ],
   "aliasImplementation" : [ ],
@@ -126,7 +126,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
-  "description" : "Postgres SQL Database",
+  "description" : "PostgreSQL is an open source object-relational database",
   "implementation" : "org.apache.camel.test.infra.postgres.services.PostgresLocalContainerInfraService",
   "alias" : [ "postgres" ],
   "aliasImplementation" : [ ],
@@ -144,7 +144,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
-  "description" : "Vault is a tool for securely accessing secrets",
+  "description" : "HashiCorp Vault is a tool for securely accessing secrets",
   "implementation" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultLocalContainerInfraService",
   "alias" : [ "hashicorp" ],
   "aliasImplementation" : [ "vault" ],
@@ -171,7 +171,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.solr.services.SolrInfraService",
-  "description" : "Apache Solr is a Search Platform",
+  "description" : "Apache Solr is an open source search platform",
   "implementation" : "org.apache.camel.test.infra.solr.services.SolrLocalContainerInfraService",
   "alias" : [ "solr" ],
   "aliasImplementation" : [ ],
@@ -180,7 +180,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.couchbase.services.CouchbaseInfraService",
-  "description" : "NoSQL database Couchbase",
+  "description" : "Couchbase is a distributed NoSQL cloud database",
   "implementation" : "org.apache.camel.test.infra.couchbase.services.CouchbaseLocalContainerInfraService",
   "alias" : [ "couchbase" ],
   "aliasImplementation" : [ ],
@@ -198,7 +198,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.couchdb.services.CouchDbInfraService",
-  "description" : "SQL Clustered database CouchDB",
+  "description" : "Apache CouchDB is an open source NoSQL document database",
   "implementation" : "org.apache.camel.test.infra.couchdb.services.CouchDbLocalContainerInfraService",
   "alias" : [ "couchdb" ],
   "aliasImplementation" : [ ],
@@ -207,7 +207,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.keycloak.services.KeycloakInfraService",
-  "description" : "Identity and access management solution",
+  "description" : "Keycloak is an open source identity and access management solution",
   "implementation" : "org.apache.camel.test.infra.keycloak.services.KeycloakLocalContainerInfraService",
   "alias" : [ "keycloak" ],
   "aliasImplementation" : [ ],
@@ -216,7 +216,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
-  "description" : "MQTT Platform HiveMQ",
+  "description" : "HiveMQ is an MQTT-based messaging platform for IoT",
   "implementation" : "org.apache.camel.test.infra.hivemq.services.LocalHiveMQInfraService",
   "alias" : [ "hive-mq" ],
   "aliasImplementation" : [ ],
@@ -225,7 +225,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.ibmmq.services.IbmMQInfraService",
-  "description" : "IBM MQ messaging middleware",
+  "description" : "IBM MQ is enterprise messaging middleware for reliable communication",
   "implementation" : "org.apache.camel.test.infra.ibmmq.services.IbmMQLocalContainerInfraService",
   "alias" : [ "ibmmq" ],
   "aliasImplementation" : [ ],
@@ -243,7 +243,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.smb.services.SmbLocalContainerInfraService",
-  "description" : "SAMBA File Server",
+  "description" : "Samba provides file sharing services using the SMB protocol",
   "implementation" : "org.apache.camel.test.infra.smb.services.SmbLocalContainerInfraService",
   "alias" : [ "smb" ],
   "aliasImplementation" : [ ],
@@ -261,7 +261,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.xmpp.services.XmppInfraService",
-  "description" : "Test XMPP Server",
+  "description" : "XMPP is an open communication protocol for messaging",
   "implementation" : "org.apache.camel.test.infra.xmpp.services.XmppLocalContainerInfraService",
   "alias" : [ "xmpp" ],
   "aliasImplementation" : [ ],
@@ -270,7 +270,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.pulsar.services.PulsarInfraService",
-  "description" : "Distributed messaging and streaming platform",
+  "description" : "Apache Pulsar is a distributed messaging and streaming platform",
   "implementation" : "org.apache.camel.test.infra.pulsar.services.PulsarLocalContainerInfraService",
   "alias" : [ "pulsar" ],
   "aliasImplementation" : [ ],
@@ -306,7 +306,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.google.pubsub.services.GooglePubSubInfraService",
-  "description" : "Google Cloud SDK Tool",
+  "description" : "Google Cloud Pub/Sub is a messaging service for event-driven systems",
   "implementation" : "org.apache.camel.test.infra.google.pubsub.services.GooglePubSubLocalContainerInfraService",
   "alias" : [ "google" ],
   "aliasImplementation" : [ "pub-sub" ],
@@ -315,7 +315,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.chatscript.services.ChatScriptInfraService",
-  "description" : "ChatBot Engine",
+  "description" : "ChatScript is an open source chatbot engine",
   "implementation" : "org.apache.camel.test.infra.chatscript.services.ChatScriptLocalContainerInfraService",
   "alias" : [ "chat-script" ],
   "aliasImplementation" : [ ],
@@ -333,7 +333,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.ignite.services.IgniteInfraService",
-  "description" : "Distributed Database Apache Ignite",
+  "description" : "Apache Ignite is a distributed database for high-performance computing",
   "implementation" : "org.apache.camel.test.infra.ignite.services.IgniteEmbeddedInfraService",
   "alias" : [ "ignite" ],
   "aliasImplementation" : [ ],
@@ -342,7 +342,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.rabbitmq.services.RabbitMQInfraService",
-  "description" : "Messaging and streaming broker",
+  "description" : "RabbitMQ is an open source message and streaming broker",
   "implementation" : "org.apache.camel.test.infra.rabbitmq.services.RabbitMQLocalContainerInfraService",
   "alias" : [ "rabbitmq" ],
   "aliasImplementation" : [ ],
@@ -360,7 +360,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.neo4j.services.Neo4jInfraService",
-  "description" : "Neo4j Database",
+  "description" : "Neo4j is a graph database management system",
   "implementation" : "org.apache.camel.test.infra.neo4j.services.Neo4jLocalContainerInfraService",
   "alias" : [ "neo4j" ],
   "aliasImplementation" : [ ],
@@ -405,7 +405,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.cassandra.services.CassandraInfraService",
-  "description" : "Apache Cassandra NoSQL Database",
+  "description" : "Apache Cassandra is a distributed NoSQL database",
   "implementation" : "org.apache.camel.test.infra.cassandra.services.CassandraLocalContainerInfraService",
   "alias" : [ "cassandra" ],
   "aliasImplementation" : [ ],
@@ -423,7 +423,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.hazelcast.services.HazelcastInfraService",
-  "description" : "In Memory Database Hazelcast",
+  "description" : "Hazelcast is a distributed in-memory computing platform",
   "implementation" : "org.apache.camel.test.infra.hazelcast.services.HazelcastEmbeddedInfraService",
   "alias" : [ "hazelcast" ],
   "aliasImplementation" : [ ],
@@ -432,7 +432,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
-  "description" : "MQTT Platform HiveMQ",
+  "description" : "HiveMQ is an MQTT-based messaging platform for IoT",
   "implementation" : "org.apache.camel.test.infra.hivemq.services.LocalHiveMQSparkplugTCKInfraService",
   "alias" : [ "hive-mq" ],
   "aliasImplementation" : [ "sparkplug" ],
@@ -441,7 +441,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
-  "description" : "Postgres SQL Database with pgvector extension",
+  "description" : "PostgreSQL with pgvector extension for vector similarity search",
   "implementation" : "org.apache.camel.test.infra.postgres.services.PostgresVectorLocalContainerInfraService",
   "alias" : [ "postgres-vector", "pgvector" ],
   "aliasImplementation" : [ ],
@@ -459,7 +459,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.minio.services.MinioInfraService",
-  "description" : "MinIO Object Storage, S3 compatible",
+  "description" : "MinIO is a high-performance S3 compatible object storage",
   "implementation" : "org.apache.camel.test.infra.minio.services.MinioLocalContainerInfraService",
   "alias" : [ "minio" ],
   "aliasImplementation" : [ ],
@@ -495,7 +495,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
-  "description" : "Distributed Database For High‑Performance Applications With In‑Memory Speed",
+  "description" : "Infinispan is a distributed in-memory key/value data store",
   "implementation" : "org.apache.camel.test.infra.infinispan.services.InfinispanLocalContainerInfraService",
   "alias" : [ "infinispan" ],
   "aliasImplementation" : [ ],
@@ -504,7 +504,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.weaviate.services.WeaviateInfraService",
-  "description" : "Weaviate Vector Database",
+  "description" : "Weaviate is an open source vector database",
   "implementation" : "org.apache.camel.test.infra.weaviate.services.WeaviateLocalContainerInfraService",
   "alias" : [ "weaviate" ],
   "aliasImplementation" : [ ],
@@ -522,7 +522,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.qdrant.services.QdrantInfraService",
-  "description" : "Vector Database and Vector Search Engine",
+  "description" : "Qdrant is a vector similarity search engine and database",
   "implementation" : "org.apache.camel.test.infra.qdrant.services.QdrantLocalContainerInfraService",
   "alias" : [ "qdrant" ],
   "aliasImplementation" : [ ],
@@ -540,7 +540,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.ollama.services.OllamaInfraService",
-  "description" : "Build and run LLMs with Ollama",
+  "description" : "Ollama is a tool for running large language models locally",
   "implementation" : "org.apache.camel.test.infra.ollama.services.OllamaLocalContainerInfraService",
   "alias" : [ "ollama" ],
   "aliasImplementation" : [ ],
@@ -558,7 +558,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.docling.services.DoclingInfraService",
-  "description" : "Document processing and conversion service",
+  "description" : "Docling is a document processing and conversion toolkit",
   "implementation" : "org.apache.camel.test.infra.docling.services.DoclingLocalContainerInfraService",
   "alias" : [ "docling" ],
   "aliasImplementation" : [ ],
@@ -585,7 +585,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.pinecone.services.PineconeInfraService",
-  "description" : "Pinecone Vector Database",
+  "description" : "Pinecone is a vector database for machine learning applications",
   "implementation" : "org.apache.camel.test.infra.pinecone.services.PineconeLocalContainerInfraService",
   "alias" : [ "pinecone" ],
   "aliasImplementation" : [ ],
@@ -603,7 +603,7 @@
   "version" : "4.19.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.mongodb.services.MongoDBInfraService",
-  "description" : "MongoDB NoSql Database",
+  "description" : "MongoDB is a document-oriented NoSQL database",
   "implementation" : "org.apache.camel.test.infra.mongodb.services.MongoDBLocalContainerInfraService",
   "alias" : [ "mongodb" ],
   "aliasImplementation" : [ ],

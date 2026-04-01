@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @InfraService(service = XmppInfraService.class,
-              description = "Test XMPP Server",
+              description = "XMPP is an open communication protocol for messaging",
               serviceAlias = { "xmpp" })
 public class XmppLocalContainerInfraService implements XmppInfraService, ContainerService<XmppServerContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(XmppLocalContainerInfraService.class);
