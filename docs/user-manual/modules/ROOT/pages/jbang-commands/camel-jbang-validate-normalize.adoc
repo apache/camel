@@ -1,0 +1,52 @@
+= camel validate normalize
+
+Normalize YAML routes to canonical (explicit) form.
+
+This command parses YAML routes and rewrites them in canonical form, expanding all shorthands and
+implicit expressions. For example, `log: "$\{body}"` becomes `log: { message: "$\{body}" }` and
+`setBody: { simple: "Hello" }` becomes `setBody: { expression: { simple: { expression: "Hello" } } }`.
+
+The normalized output is valid against both the classic and canonical schemas.
+
+See the xref:components:others:yaml-dsl.adoc#_schema_variants[YAML DSL Schema Variants] documentation for details
+on the differences between the classic and canonical schemas.
+
+
+== Usage
+
+[source,bash]
+----
+camel validate normalize [options] <files>
+----
+
+
+== Options
+
+[cols="2,5,1,2",options="header"]
+|===
+| Option | Description | Default | Type
+| `--output` | File or directory to write normalized output. If not specified, output is printed to console. |  | String
+| `-h,--help` | Display the help and sub-commands |  | boolean
+|===
+
+
+== Examples
+
+Normalize a YAML route and print to console:
+[source,bash]
+----
+camel validate normalize myroute.yaml
+----
+
+Normalize and write to a file:
+[source,bash]
+----
+camel validate normalize --output normalized.yaml myroute.yaml
+----
+
+Normalize multiple files into a directory:
+[source,bash]
+----
+camel validate normalize --output normalized/ routes/*.yaml
+----
+

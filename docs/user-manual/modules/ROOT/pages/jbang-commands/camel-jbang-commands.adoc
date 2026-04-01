@@ -42,5 +42,6 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-trace.adoc[camel trace] | Tail message traces from running Camel integrations
 | xref:jbang-commands/camel-jbang-transform.adoc[camel transform] | Transform message or Camel routes
 | xref:jbang-commands/camel-jbang-update.adoc[camel update] | Update Camel project
+| xref:jbang-commands/camel-jbang-validate.adoc[camel validate] | Validate Camel source code
 | xref:jbang-commands/camel-jbang-version.adoc[camel version] | Manage Camel versions
 |===
