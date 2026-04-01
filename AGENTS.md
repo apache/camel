@@ -56,7 +56,7 @@ When creating a PR, **always identify and request reviews** from the most releva
 - Run `git log --format='%an' --since='1 year' -- <affected-files> | sort | uniq -c | sort -rn | head -10`
   to find who has been most active on the affected files.
 - Use `git blame` on key modified files to identify who wrote the code being changed.
-- Cross-reference with the [committer list](https://camel.apache.org/community/team/#committers)
+- Cross-reference with the [committer list](https://home.apache.org/committers-by-project.html#camel)
   to ensure you request reviews from active committers (not just contributors).
 - For component-specific changes, prefer reviewers who have recently worked on that component.
 - For cross-cutting changes (core, API), include committers with broader project knowledge.
