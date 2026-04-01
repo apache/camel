@@ -18,6 +18,8 @@ package org.apache.camel.component.jms.reply;
 
 import java.math.BigInteger;
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
@@ -98,7 +100,13 @@ public class QueueReplyManager extends ReplyManagerSupport {
 
     private final class DestinationResolverDelegate implements DestinationResolver {
         private final DestinationResolver delegate;
-        private Destination destination;
+        // Use a dedicated lock instead of BaseService.lock to avoid deadlock
+        // during shutdown: BaseService.stop() holds its lock while calling
+        // doStop() -> listenerContainer.destroy() -> doShutdown() which waits
+        // for listener threads to finish. If a listener thread needs to resolve
+        // the destination, it would deadlock trying to acquire BaseService.lock.
+        private final Lock destinationLock = new ReentrantLock();
+        private volatile Destination destination;
 
         DestinationResolverDelegate(DestinationResolver delegate) {
             this.delegate = delegate;
@@ -109,7 +117,12 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 Session session, String destinationName,
                 boolean pubSubDomain)
                 throws JMSException {
-            QueueReplyManager.this.lock.lock();
+            // fast path: destination already resolved
+            Destination answer = destination;
+            if (answer != null) {
+                return answer;
+            }
+            destinationLock.lock();
             try {
                 // resolve the reply to destination
                 if (destination == null) {
@@ -117,7 +130,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
                     setReplyTo(destination);
                 }
             } finally {
-                QueueReplyManager.this.lock.unlock();
+                destinationLock.unlock();
             }
             return destination;
         }
