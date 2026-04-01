@@ -642,7 +642,9 @@ Canonical::
 ====
 
 Both forms are accepted by the Camel runtime. The classic schema validates both forms, while the
-canonical schema only validates the explicit form.
+canonical schema only validates the explicit form. In other words, the canonical form is a strict subset
+of the classic form: any YAML file that validates against the canonical schema will also validate against
+the classic schema and work with the Camel runtime.
 
 The canonical schema is intended for use by tooling (IDEs, code generators, AI assistants) that benefits from
 a simpler, more predictable schema structure. The classic schema remains the default for human-authored YAML.
