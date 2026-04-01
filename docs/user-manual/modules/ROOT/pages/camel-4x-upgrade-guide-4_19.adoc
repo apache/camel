@@ -236,14 +236,18 @@ This applies to all `camel-test-infra-*` artifacts, including `camel-test-infra-
 
 === camel-yaml-dsl
 
-A new strict JSON Schema variant (`camelYamlDsl-strict.json`) has been added alongside the existing classic
-schema (`camelYamlDsl.json`). The strict schema removes all implicit patterns (string shorthands, inline
+A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
+schema (`camelYamlDsl.json`). The canonical schema removes all implicit patterns (string shorthands, inline
 expressions, `oneOf`/`anyOf`/`not` constructs) to provide a simpler, more predictable schema for tooling
 such as IDEs, code generators, and AI assistants. See the xref:components:others:yaml-dsl.adoc[YAML DSL]
 documentation for details.
 
-The `YamlValidator` class now accepts a `boolean strict` constructor parameter to validate against the
-strict schema.
+The `YamlValidator` class now accepts a `boolean canonical` constructor parameter to validate against the
+canonical schema.
+
+A new `camel yaml normalize` command has been added to Camel JBang. It rewrites YAML routes from the
+classic (shorthand) form to the canonical (explicit) form. The `camel validate yaml` command also
+supports a new `--canonical` flag to validate against the canonical schema.
 
 === camel-yaml-io / camel-xml-io
 

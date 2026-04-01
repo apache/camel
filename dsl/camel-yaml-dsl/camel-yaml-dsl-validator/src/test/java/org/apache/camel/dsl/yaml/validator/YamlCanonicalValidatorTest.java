@@ -22,78 +22,78 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class YamlStrictValidatorTest {
+public class YamlCanonicalValidatorTest {
 
-    private static YamlValidator strictValidator;
+    private static YamlValidator canonicalValidator;
     private static YamlValidator classicValidator;
 
     @BeforeAll
     public static void setup() throws Exception {
-        strictValidator = new YamlValidator(true);
-        strictValidator.init();
+        canonicalValidator = new YamlValidator(true);
+        canonicalValidator.init();
         classicValidator = new YamlValidator();
         classicValidator.init();
     }
 
     @Test
-    public void testExplicitFormPassesStrictValidation() throws Exception {
-        // Explicit form (no shorthands, expression wrapper used) should pass strict validation
-        var report = strictValidator.validate(new File("src/test/resources/strict-valid.yaml"));
+    public void testExplicitFormPassesCanonicalValidation() throws Exception {
+        // Explicit form (no shorthands, expression wrapper used) should pass canonical validation
+        var report = canonicalValidator.validate(new File("src/test/resources/canonical-valid.yaml"));
         Assertions.assertTrue(report.isEmpty(),
-                "Explicit form should pass strict validation but got: " + report);
+                "Explicit form should pass canonical validation but got: " + report);
     }
 
     @Test
     public void testExplicitFormPassesClassicValidation() throws Exception {
         // Explicit form should also pass classic validation
-        var report = classicValidator.validate(new File("src/test/resources/strict-valid.yaml"));
+        var report = classicValidator.validate(new File("src/test/resources/canonical-valid.yaml"));
         Assertions.assertTrue(report.isEmpty(),
                 "Explicit form should pass classic validation but got: " + report);
     }
 
     @Test
-    public void testLogStringShorthandFailsStrictValidation() throws Exception {
-        // log: "${body}" is a string shorthand, not allowed in strict mode
-        var report = strictValidator.validate(new File("src/test/resources/strict-invalid-log-shorthand.yaml"));
+    public void testLogStringShorthandFailsCanonicalValidation() throws Exception {
+        // log: "${body}" is a string shorthand, not allowed in canonical mode
+        var report = canonicalValidator.validate(new File("src/test/resources/canonical-invalid-log-shorthand.yaml"));
         Assertions.assertFalse(report.isEmpty(),
-                "Log string shorthand should fail strict validation");
+                "Log string shorthand should fail canonical validation");
     }
 
     @Test
     public void testLogStringShorthandPassesClassicValidation() throws Exception {
         // log: "${body}" should pass classic validation (string shorthand is allowed)
-        var report = classicValidator.validate(new File("src/test/resources/strict-invalid-log-shorthand.yaml"));
+        var report = classicValidator.validate(new File("src/test/resources/canonical-invalid-log-shorthand.yaml"));
         Assertions.assertTrue(report.isEmpty(),
                 "Log string shorthand should pass classic validation but got: " + report);
     }
 
     @Test
-    public void testInlineExpressionFailsStrictValidation() throws Exception {
-        // setBody: { simple: "..." } uses inline expression (no expression wrapper), not allowed in strict mode
-        var report = strictValidator.validate(new File("src/test/resources/strict-invalid-inline-expression.yaml"));
+    public void testInlineExpressionFailsCanonicalValidation() throws Exception {
+        // setBody: { simple: "..." } uses inline expression (no expression wrapper), not allowed in canonical mode
+        var report = canonicalValidator.validate(new File("src/test/resources/canonical-invalid-inline-expression.yaml"));
         Assertions.assertFalse(report.isEmpty(),
-                "Inline expression should fail strict validation");
+                "Inline expression should fail canonical validation");
     }
 
     @Test
     public void testInlineExpressionPassesClassicValidation() throws Exception {
         // setBody: { simple: "..." } should pass classic validation (inline expression is allowed)
-        var report = classicValidator.validate(new File("src/test/resources/strict-invalid-inline-expression.yaml"));
+        var report = classicValidator.validate(new File("src/test/resources/canonical-invalid-inline-expression.yaml"));
         Assertions.assertTrue(report.isEmpty(),
                 "Inline expression should pass classic validation but got: " + report);
     }
 
     @Test
-    public void testClassicValidFilesPassStrictWhenExplicit() throws Exception {
+    public void testClassicValidFilesPassCanonicalWhenExplicit() throws Exception {
         // foo.yaml uses implicit forms (log: "${body}", setBody: { simple: ... })
         // It should still pass classic validation
         var report = classicValidator.validate(new File("src/test/resources/foo.yaml"));
         Assertions.assertTrue(report.isEmpty(),
                 "foo.yaml should pass classic validation but got: " + report);
 
-        // foo.yaml uses implicit forms, so it should fail strict validation
-        var strictReport = strictValidator.validate(new File("src/test/resources/foo.yaml"));
-        Assertions.assertFalse(strictReport.isEmpty(),
-                "foo.yaml uses implicit forms and should fail strict validation");
+        // foo.yaml uses implicit forms, so it should fail canonical validation
+        var canonicalReport = canonicalValidator.validate(new File("src/test/resources/foo.yaml"));
+        Assertions.assertFalse(canonicalReport.isEmpty(),
+                "foo.yaml uses implicit forms and should fail canonical validation");
     }
 }

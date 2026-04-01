@@ -289,17 +289,17 @@
                             <outputFile>src/generated/resources/schema/camelYamlDsl.json</outputFile>
                         </configuration>
                     </execution>
-                    <!-- strict camelCase -->
+                    <!-- canonical camelCase -->
                     <execution>
-                        <id>generate-yaml-schema-strict</id>
+                        <id>generate-yaml-schema-canonical</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate-yaml-schema</goal>
                         </goals>
                         <configuration>
                             <additionalProperties>false</additionalProperties>
-                            <strict>true</strict>
-                            <outputFile>src/generated/resources/schema/camelYamlDsl-strict.json</outputFile>
+                            <canonical>true</canonical>
+                            <outputFile>src/generated/resources/schema/camelYamlDsl-canonical.json</outputFile>
                         </configuration>
                     </execution>
                 </executions>

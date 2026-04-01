@@ -39,22 +39,22 @@ public class YamlValidator {
 
     private static final String DRAFT = "http://json-schema.org/draft-04/schema#";
     private static final String LOCATION = "/schema/camelYamlDsl.json";
-    private static final String LOCATION_STRICT = "/schema/camelYamlDsl-strict.json";
+    private static final String LOCATION_CANONICAL = "/schema/camelYamlDsl-canonical.json";
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    private final boolean strict;
+    private final boolean canonical;
     private JsonSchema schema;
 
     public YamlValidator() {
         this(false);
     }
 
-    public YamlValidator(boolean strict) {
-        this.strict = strict;
+    public YamlValidator(boolean canonical) {
+        this.canonical = canonical;
     }
 
-    public boolean isStrict() {
-        return strict;
+    public boolean isCanonical() {
+        return canonical;
     }
 
     public List<ValidationMessage> validate(File file) throws Exception {
@@ -72,7 +72,7 @@ public class YamlValidator {
     }
 
     public void init() throws Exception {
-        String location = strict ? LOCATION_STRICT : LOCATION;
+        String location = canonical ? LOCATION_CANONICAL : LOCATION;
         var model = mapper.readTree(YamlValidator.class.getResourceAsStream(location));
         var factory = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(model));
         var config = SchemaValidatorsConfig.builder().locale(Locale.ENGLISH).build();

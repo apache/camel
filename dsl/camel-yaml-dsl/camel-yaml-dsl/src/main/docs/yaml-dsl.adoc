@@ -482,9 +482,9 @@ While these shorthands make hand-written YAML more concise, they also increase t
 JSON Schema with `oneOf`, `anyOf`, and `not` constructs. This can cause problems for tooling such as
 IDE auto-completion, schema-based code generators, and AI assistants that struggle with these patterns.
 
-=== Strict Schema (`camelYamlDsl-strict.json`)
+=== Canonical Schema (`camelYamlDsl-canonical.json`)
 
-The strict schema removes all implicit patterns:
+The canonical schema removes all implicit patterns:
 
 * No string shorthands: EIPs like `log` must use the object form with explicit properties.
 * No implicit expressions: Expression-aware EIPs require the `expression` wrapper.
@@ -504,7 +504,7 @@ This results in a schema that is approximately 25% smaller and significantly eas
         - log: "${body}"
 ----
 
-.Strict (explicit) form
+.Canonical (explicit) form
 [source,yaml]
 ----
 - route:
@@ -520,20 +520,45 @@ This results in a schema that is approximately 25% smaller and significantly eas
 ----
 
 Both forms are accepted by the Camel runtime. The classic schema validates both forms, while the
-strict schema only validates the explicit form.
+canonical schema only validates the explicit form.
 
-The strict schema is intended for use by tooling (IDEs, code generators, AI assistants) that benefits from
+The canonical schema is intended for use by tooling (IDEs, code generators, AI assistants) that benefits from
 a simpler, more predictable schema structure. The classic schema remains the default for human-authored YAML.
 
-The `YamlValidator` class supports both schemas:
+=== Normalizing YAML routes
+
+To convert existing YAML routes from the classic (shorthand) form to the canonical (explicit) form,
+use the Camel JBang `normalize` command:
+
+[source,bash]
+----
+camel yaml normalize myroute.yaml
+----
+
+This will parse the YAML routes and rewrite them in canonical form, expanding all shorthands and
+implicit expressions. The output is printed to the console by default, or can be written to a file
+or directory using the `--output` option.
+
+=== Validating with the canonical schema
+
+To validate YAML routes against the canonical schema using Camel JBang:
+
+[source,bash]
+----
+camel validate yaml --canonical myroute.yaml
+----
+
+This will report any shorthands or implicit forms that are not valid in the canonical schema.
+
+The `YamlValidator` class supports both schemas programmatically:
 
 [source,java]
 ----
 // Classic validation (default)
 YamlValidator validator = new YamlValidator();
 
-// Strict validation
-YamlValidator strictValidator = new YamlValidator(true);
+// Canonical validation
+YamlValidator canonicalValidator = new YamlValidator(true);
 ----
 
 == External examples
