@@ -23,7 +23,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(148);
+        Set<String> props = new HashSet<>(154);
         props.add("additionalProperties");
         props.add("archiveDestinationName");
         props.add("archiveLogHours");
@@ -77,13 +77,16 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("logMiningBufferEhcacheEventsConfig");
         props.add("logMiningBufferEhcacheGlobalConfig");
         props.add("logMiningBufferEhcacheProcessedtransactionsConfig");
+        props.add("logMiningBufferEhcacheRollbacksConfig");
         props.add("logMiningBufferEhcacheSchemachangesConfig");
         props.add("logMiningBufferEhcacheTransactionsConfig");
         props.add("logMiningBufferInfinispanCacheEvents");
         props.add("logMiningBufferInfinispanCacheGlobal");
         props.add("logMiningBufferInfinispanCacheProcessedTransactions");
+        props.add("logMiningBufferInfinispanCacheRollbacks");
         props.add("logMiningBufferInfinispanCacheSchemaChanges");
         props.add("logMiningBufferInfinispanCacheTransactions");
+        props.add("logMiningBufferTrackRsId");
         props.add("logMiningBufferTransactionEventsThreshold");
         props.add("logMiningBufferType");
         props.add("logMiningClientidExcludeList");
@@ -105,6 +108,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("logMiningTransactionRetentionMs");
         props.add("logMiningUsernameExcludeList");
         props.add("logMiningUsernameIncludeList");
+        props.add("logMiningWindowMaxMs");
         props.add("maxBatchSize");
         props.add("maxQueueSize");
         props.add("maxQueueSizeInBytes");
@@ -153,6 +157,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("snapshotLockTimeoutMs");
         props.add("snapshotLockingMode");
         props.add("snapshotMaxThreads");
+        props.add("snapshotMaxThreadsMultiplier");
         props.add("snapshotMode");
         props.add("snapshotModeConfigurationBasedSnapshotData");
         props.add("snapshotModeConfigurationBasedSnapshotOnDataError");
@@ -172,6 +177,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("topicPrefix");
         props.add("transactionMetadataFactory");
         props.add("unavailableValuePlaceholder");
+        props.add("xstreamOutServerName");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Map<String, String> prefixes = new HashMap<>(1);

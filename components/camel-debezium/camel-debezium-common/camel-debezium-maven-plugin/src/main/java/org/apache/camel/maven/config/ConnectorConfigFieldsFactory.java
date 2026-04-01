@@ -76,7 +76,19 @@ public final class ConnectorConfigFieldsFactory {
 
     private static String retrieveDbzFieldWithReflection(final java.lang.reflect.Field reflectionField) {
         try {
-            return ((Field) reflectionField.get(null)).name();
+            Object object = reflectionField.get(null);
+            if (object instanceof Field field) {
+                return field.name();
+            } else if (object instanceof String fieldString) {
+                String removedDotAndCapitalize = Stream
+                        .of(fieldString.split("."))
+                        .map(field -> StringUtils.capitalize(field))
+                        .collect(Collectors.joining(""));
+                return StringUtils.uncapitalize(removedDotAndCapitalize);
+            } else {
+                throw new IllegalArgumentException(
+                        "Error occurred in field : " + reflectionField.getName() + " retrieved value is " + object);
+            }
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Error occurred in field : " + reflectionField.getName());
         }

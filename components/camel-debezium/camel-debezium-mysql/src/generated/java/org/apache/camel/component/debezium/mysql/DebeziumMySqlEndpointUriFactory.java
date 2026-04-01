@@ -23,10 +23,12 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(124);
+        Set<String> props = new HashSet<>(127);
         props.add("additionalProperties");
         props.add("bigintUnsignedHandlingMode");
         props.add("binlogBufferSize");
+        props.add("binlogNetReadTimeout");
+        props.add("binlogNetWriteTimeout");
         props.add("bridgeErrorHandler");
         props.add("columnExcludeList");
         props.add("columnIncludeList");
@@ -126,6 +128,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("snapshotLockTimeoutMs");
         props.add("snapshotLockingMode");
         props.add("snapshotMaxThreads");
+        props.add("snapshotMaxThreadsMultiplier");
         props.add("snapshotMode");
         props.add("snapshotModeConfigurationBasedSnapshotData");
         props.add("snapshotModeConfigurationBasedSnapshotOnDataError");
