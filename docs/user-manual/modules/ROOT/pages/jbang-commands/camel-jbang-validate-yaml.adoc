@@ -47,3 +47,25 @@ Validate multiple files:
 camel validate yaml routes/*.yaml
 ----
 
+=== Sample output
+
+Given a YAML route using the shorthand `log: "$\{body}"`, validating with `--canonical` will report errors
+because the canonical schema requires the explicit object form:
+
+[source,bash]
+----
+$ camel validate yaml --canonical myroute.yaml
+myroute.yaml: INVALID
+  - $.from.steps[0].log: string found, object expected
+----
+
+The same file validates successfully against the classic schema (the default):
+
+[source,bash]
+----
+$ camel validate yaml myroute.yaml
+myroute.yaml: VALID
+----
+
+Use `camel validate normalize` to convert the file to canonical form before re-validating.
+

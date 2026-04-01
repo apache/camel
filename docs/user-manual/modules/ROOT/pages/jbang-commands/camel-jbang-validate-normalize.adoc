@@ -50,3 +50,37 @@ Normalize multiple files into a directory:
 camel validate normalize --output normalized/ routes/*.yaml
 ----
 
+=== Before and after
+
+Given the following YAML route using classic shorthands:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:yaml
+      steps:
+        - setBody:
+            simple: "Hello Camel from ${routeId}"
+        - log: "${body}"
+----
+
+Running `camel validate normalize myroute.yaml` produces the canonical form:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:yaml
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Hello Camel from ${routeId}"
+        - log:
+            message: "${body}"
+----
+
+All shorthands and implicit expressions are expanded to their explicit equivalents.
+The output is valid against both the classic and canonical schemas.
+
