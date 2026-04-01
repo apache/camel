@@ -245,14 +245,20 @@ class DoclingServeProducerIT extends DoclingITestSupport {
 
         assertNotNull(taskId, "Task ID should not be null");
 
-        // Wait a bit for processing
-        Thread.sleep(1000);
+        // Poll until completed (the async future may take longer than a fixed sleep)
+        ConversionStatus status = null;
+        int maxAttempts = 120;
+        for (int i = 0; i < maxAttempts; i++) {
+            status = template.requestBody("direct:check-status", taskId, ConversionStatus.class);
+            assertNotNull(status, "Status should not be null");
+            assertNotNull(status.getTaskId(), "Status task ID should not be null");
 
-        // Check status
-        ConversionStatus status = template.requestBody("direct:check-status", taskId, ConversionStatus.class);
+            if (status.getStatus() == Status.COMPLETED || status.getStatus() == Status.FAILED) {
+                break;
+            }
+            Thread.sleep(1000);
+        }
 
-        assertNotNull(status, "Status should not be null");
-        assertNotNull(status.getTaskId(), "Status task ID should not be null");
         assertThat(status.getStatus()).isEqualTo(Status.COMPLETED);
 
         LOG.info("Successfully checked status for task {}: {}", taskId, status.getStatus());
