@@ -39,7 +39,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -159,13 +158,16 @@ public class DoclingProducer extends DefaultProducer {
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
     private ObjectMapper objectMapper;
-    private final Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks = new ConcurrentHashMap<>();
-    private final AtomicLong taskIdCounter = new AtomicLong();
+    private Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks;
+    private AtomicLong taskIdCounter;
 
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
         this.objectMapper = new ObjectMapper();
+        DoclingComponent component = (DoclingComponent) endpoint.getComponent();
+        this.pendingAsyncTasks = component.getPendingAsyncTasks();
+        this.taskIdCounter = component.getTaskIdCounter();
     }
 
     @Override
@@ -204,9 +206,6 @@ public class DoclingProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        // Cancel any pending async tasks
-        pendingAsyncTasks.forEach((id, future) -> future.cancel(true));
-        pendingAsyncTasks.clear();
         if (doclingServeApi != null) {
             doclingServeApi = null;
             LOG.info("DoclingServeApi reference cleared");
