@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.sjms.reply;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
@@ -65,7 +68,10 @@ public class QueueReplyManager extends ReplyManagerSupport {
 
     private final class DestinationResolverDelegate implements DestinationCreationStrategy {
         private final DestinationCreationStrategy delegate;
-        private Destination destination;
+        // Use a dedicated lock instead of BaseService.lock to avoid deadlock
+        // during shutdown (same issue as CAMEL-23194 in camel-jms)
+        private final Lock destinationLock = new ReentrantLock();
+        private volatile Destination destination;
 
         DestinationResolverDelegate(DestinationCreationStrategy delegate) {
             this.delegate = delegate;
@@ -73,7 +79,12 @@ public class QueueReplyManager extends ReplyManagerSupport {
 
         @Override
         public Destination createDestination(Session session, String destinationName, boolean topic) throws JMSException {
-            QueueReplyManager.this.lock.lock();
+            // fast path: destination already resolved
+            Destination answer = destination;
+            if (answer != null) {
+                return answer;
+            }
+            destinationLock.lock();
             try {
                 // resolve the reply to destination
                 if (destination == null) {
@@ -81,7 +92,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
                     setReplyTo(destination);
                 }
             } finally {
-                QueueReplyManager.this.lock.unlock();
+                destinationLock.unlock();
             }
             return destination;
         }
