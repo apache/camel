@@ -154,13 +154,15 @@ public class PahoConsumer extends DefaultConsumer {
                     try {
                         PahoConsumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
-                        throw new RuntimeException(e);
+                        getExceptionHandler().handleException(
+                                "Error acknowledging MQTT message with ID: " + mqttMessage.getId(),
+                                exchange, e);
                     }
                 }
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    LOG.error("Rollback due to error processing Exchange ID: {}", exchange.getExchangeId(),
+                    LOG.debug("Rollback due to error processing Exchange ID: {}", exchange.getExchangeId(),
                             exchange.getException());
                 }
             });

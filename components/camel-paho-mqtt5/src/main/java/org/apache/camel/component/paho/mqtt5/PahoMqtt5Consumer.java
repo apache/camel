@@ -167,7 +167,9 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
                     try {
                         PahoMqtt5Consumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
-                        throw new RuntimeException(e);
+                        getExceptionHandler().handleException(
+                                "Error acknowledging MQTT message with ID: " + mqttMessage.getId(),
+                                exchange, e);
                     }
                 }
 
