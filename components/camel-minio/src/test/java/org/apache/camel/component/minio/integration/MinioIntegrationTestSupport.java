@@ -23,7 +23,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @DisabledIfSystemProperty(named = "os.arch", matches = "(?i)ppc64le",
-        disabledReason = "No ppc64le-compatible MinIO container image available")
+                          disabledReason = "No ppc64le-compatible MinIO container image available")
 class MinioIntegrationTestSupport extends CamelTestSupport {
     @RegisterExtension
     static MinioService service = MinioServiceFactory.createService();
