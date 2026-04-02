@@ -675,6 +675,206 @@ public interface OpenAIEndpointBuilderFactory {
             doSetProperty("oauthProfile", oauthProfile);
             return this;
         }
+        /**
+         * SSLContextParameters to use for configuring SSL/TLS. When set, takes
+         * precedence over the individual sslTruststore, sslKeystore, and
+         * sslProtocol options.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * SSLContextParameters to use for configuring SSL/TLS. When set, takes
+         * precedence over the individual sslTruststore, sslKeystore, and
+         * sslProtocol options.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslContextParameters(String sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+        /**
+         * The endpoint identification algorithm to validate the server hostname
+         * using the server certificate. Set to an empty string or 'none' to
+         * disable hostname verification.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: https
+         * Group: security
+         * 
+         * @param sslEndpointAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslEndpointAlgorithm(String sslEndpointAlgorithm) {
+            doSetProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
+            return this;
+        }
+        /**
+         * The algorithm used by the key manager factory for SSL connections.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: SunX509
+         * Group: security
+         * 
+         * @param sslKeymanagerAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslKeymanagerAlgorithm(String sslKeymanagerAlgorithm) {
+            doSetProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
+            return this;
+        }
+        /**
+         * The password of the private key in the key store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslKeyPassword(String sslKeyPassword) {
+            doSetProperty("sslKeyPassword", sslKeyPassword);
+            return this;
+        }
+        /**
+         * The location of the key store file. This is optional and can be used
+         * for two-way authentication for the OpenAI API.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystoreLocation the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslKeystoreLocation(String sslKeystoreLocation) {
+            doSetProperty("sslKeystoreLocation", sslKeystoreLocation);
+            return this;
+        }
+        /**
+         * The store password for the key store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslKeystorePassword the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslKeystorePassword(String sslKeystorePassword) {
+            doSetProperty("sslKeystorePassword", sslKeystorePassword);
+            return this;
+        }
+        /**
+         * The file format of the key store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: JKS
+         * Group: security
+         * 
+         * @param sslKeystoreType the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslKeystoreType(String sslKeystoreType) {
+            doSetProperty("sslKeystoreType", sslKeystoreType);
+            return this;
+        }
+        /**
+         * The SSL protocol used to generate the SSLContext.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: TLSv1.3
+         * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslProtocol(String sslProtocol) {
+            doSetProperty("sslProtocol", sslProtocol);
+            return this;
+        }
+        /**
+         * The algorithm used by the trust manager factory for SSL connections.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: PKIX
+         * Group: security
+         * 
+         * @param sslTrustmanagerAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslTrustmanagerAlgorithm(String sslTrustmanagerAlgorithm) {
+            doSetProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
+            return this;
+        }
+        /**
+         * The location of the trust store file, used to validate the server's
+         * certificate.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststoreLocation the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslTruststoreLocation(String sslTruststoreLocation) {
+            doSetProperty("sslTruststoreLocation", sslTruststoreLocation);
+            return this;
+        }
+        /**
+         * The password for the trust store file. If a password is not set, the
+         * configured trust store can still be used, but integrity checking is
+         * disabled.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param sslTruststorePassword the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslTruststorePassword(String sslTruststorePassword) {
+            doSetProperty("sslTruststorePassword", sslTruststorePassword);
+            return this;
+        }
+        /**
+         * The file format of the trust store file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: JKS
+         * Group: security
+         * 
+         * @param sslTruststoreType the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder sslTruststoreType(String sslTruststoreType) {
+            doSetProperty("sslTruststoreType", sslTruststoreType);
+            return this;
+        }
     }
 
     /**
