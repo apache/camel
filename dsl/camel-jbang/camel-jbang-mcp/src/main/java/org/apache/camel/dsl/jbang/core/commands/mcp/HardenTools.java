@@ -48,7 +48,8 @@ public class HardenTools {
     /**
      * Tool to get security hardening context for a Camel route.
      */
-    @Tool(description = "Get security hardening analysis context for a Camel route. " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get security hardening analysis context for a Camel route. " +
                         "Returns security-sensitive components, potential vulnerabilities, " +
                         "and security best practices. Use this context to provide security " +
                         "hardening recommendations for the route.")

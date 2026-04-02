@@ -57,9 +57,9 @@ public class MailProducer extends DefaultAsyncProducer {
             MimeMessage mimeMessage;
 
             final Object body = exchange.getIn().getBody();
-            if (body instanceof MimeMessage) {
+            if (body instanceof MimeMessage mimeMsg) {
                 // Body is directly a MimeMessage
-                mimeMessage = (MimeMessage) body;
+                mimeMessage = mimeMsg;
             } else {
                 // Create a message with exchange data
                 mimeMessage = new MimeMessage(mailSender.getSession());

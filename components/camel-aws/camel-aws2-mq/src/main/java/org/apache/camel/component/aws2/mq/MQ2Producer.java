@@ -119,10 +119,10 @@ public class MQ2Producer extends DefaultProducer {
     private void listBrokers(MqClient mqClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListBrokersRequest) {
+            if (payload instanceof ListBrokersRequest listBrokersRequest) {
                 ListBrokersResponse result;
                 try {
-                    result = mqClient.listBrokers((ListBrokersRequest) payload);
+                    result = mqClient.listBrokers(listBrokersRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Brokers command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -167,10 +167,10 @@ public class MQ2Producer extends DefaultProducer {
         List<User> users;
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateBrokerRequest) {
+            if (payload instanceof CreateBrokerRequest createBrokerRequest) {
                 CreateBrokerResponse result;
                 try {
-                    result = mqClient.createBroker((CreateBrokerRequest) payload);
+                    result = mqClient.createBroker(createBrokerRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -240,10 +240,10 @@ public class MQ2Producer extends DefaultProducer {
         String brokerId;
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteBrokerRequest) {
+            if (payload instanceof DeleteBrokerRequest deleteBrokerRequest) {
                 DeleteBrokerResponse result;
                 try {
-                    result = mqClient.deleteBroker((DeleteBrokerRequest) payload);
+                    result = mqClient.deleteBroker(deleteBrokerRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -275,10 +275,10 @@ public class MQ2Producer extends DefaultProducer {
         String brokerId;
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RebootBrokerRequest) {
+            if (payload instanceof RebootBrokerRequest rebootBrokerRequest) {
                 RebootBrokerResponse result;
                 try {
-                    result = mqClient.rebootBroker((RebootBrokerRequest) payload);
+                    result = mqClient.rebootBroker(rebootBrokerRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Reboot Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -311,10 +311,10 @@ public class MQ2Producer extends DefaultProducer {
         ConfigurationId configurationId;
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UpdateBrokerRequest) {
+            if (payload instanceof UpdateBrokerRequest updateBrokerRequest) {
                 UpdateBrokerResponse result;
                 try {
-                    result = mqClient.updateBroker((UpdateBrokerRequest) payload);
+                    result = mqClient.updateBroker(updateBrokerRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Update Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -352,10 +352,10 @@ public class MQ2Producer extends DefaultProducer {
         String brokerId;
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DescribeBrokerRequest) {
+            if (payload instanceof DescribeBrokerRequest describeBrokerRequest) {
                 DescribeBrokerResponse result;
                 try {
-                    result = mqClient.describeBroker((DescribeBrokerRequest) payload);
+                    result = mqClient.describeBroker(describeBrokerRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Reboot Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

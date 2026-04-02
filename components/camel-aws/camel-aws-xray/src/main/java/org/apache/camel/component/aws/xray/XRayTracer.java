@@ -264,8 +264,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         @Override
         public void notify(CamelEvent event) throws Exception {
 
-            if (event instanceof ExchangeSendingEvent) {
-                ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
+            if (event instanceof ExchangeSendingEvent ese) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("-> {} - target: {} (routeId: {})",
                             event.getClass().getSimpleName(), ese.getEndpoint(),
@@ -304,19 +303,17 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                     LOG.trace("Ignoring creation of XRay subsegment as no segment exists in the current thread");
                 }
 
-            } else if (event instanceof ExchangeSentEvent) {
-                ExchangeSentEvent ese = (ExchangeSentEvent) event;
+            } else if (event instanceof ExchangeSentEvent ese) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("-> {} - target: {} (routeId: {})",
                             event.getClass().getSimpleName(), ese.getEndpoint(), ese.getExchange().getFromRouteId());
                 }
 
                 Entity entity = getTraceEntityFromExchange(ese.getExchange());
-                if (entity instanceof Subsegment) {
+                if (entity instanceof Subsegment subsegment) {
                     AWSXRay.setTraceEntity(entity);
                     SegmentDecorator sd = getSegmentDecorator(ese.getEndpoint());
                     try {
-                        Subsegment subsegment = (Subsegment) entity;
                         sd.post(subsegment, ese.getExchange(), ese.getEndpoint());
                         subsegment.close();
                         if (LOG.isTraceEnabled()) {

@@ -56,7 +56,7 @@ public final class HttpUtil {
         int codeToUse = currentCode == null ? defaultCode : currentCode;
 
         if (codeToUse != INTERNAL_SERVER_ERROR) {
-            if (body == null || body instanceof String && ((String) body).isBlank()) {
+            if (body == null || body instanceof String str && str.isBlank()) {
                 // no content
                 codeToUse = currentCode == null ? NO_CONTENT : currentCode;
             }

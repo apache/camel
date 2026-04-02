@@ -938,12 +938,12 @@ public class PQCProducer extends DefaultProducer {
      * Returns the remaining signatures for a stateful private key, or -1 if the key is not stateful.
      */
     static long getStatefulKeyRemaining(PrivateKey privateKey) {
-        if (privateKey instanceof XMSSPrivateKey) {
-            return ((XMSSPrivateKey) privateKey).getUsagesRemaining();
-        } else if (privateKey instanceof XMSSMTPrivateKey) {
-            return ((XMSSMTPrivateKey) privateKey).getUsagesRemaining();
-        } else if (privateKey instanceof LMSPrivateKey) {
-            return ((LMSPrivateKey) privateKey).getUsagesRemaining();
+        if (privateKey instanceof XMSSPrivateKey xmssPrivateKey) {
+            return xmssPrivateKey.getUsagesRemaining();
+        } else if (privateKey instanceof XMSSMTPrivateKey xmssmtPrivateKey) {
+            return xmssmtPrivateKey.getUsagesRemaining();
+        } else if (privateKey instanceof LMSPrivateKey lmsPrivateKey) {
+            return lmsPrivateKey.getUsagesRemaining();
         }
         return -1;
     }
@@ -953,12 +953,12 @@ public class PQCProducer extends DefaultProducer {
      * not stateful.
      */
     static long getStatefulKeyIndex(PrivateKey privateKey) {
-        if (privateKey instanceof XMSSPrivateKey) {
-            return ((XMSSPrivateKey) privateKey).getIndex();
-        } else if (privateKey instanceof XMSSMTPrivateKey) {
-            return ((XMSSMTPrivateKey) privateKey).getIndex();
-        } else if (privateKey instanceof LMSPrivateKey) {
-            return ((LMSPrivateKey) privateKey).getIndex();
+        if (privateKey instanceof XMSSPrivateKey xmssPrivateKey) {
+            return xmssPrivateKey.getIndex();
+        } else if (privateKey instanceof XMSSMTPrivateKey xmssmtPrivateKey) {
+            return xmssmtPrivateKey.getIndex();
+        } else if (privateKey instanceof LMSPrivateKey lmsPrivateKey) {
+            return lmsPrivateKey.getIndex();
         }
         return 0;
     }

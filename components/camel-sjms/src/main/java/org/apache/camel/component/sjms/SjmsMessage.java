@@ -103,8 +103,7 @@ public class SjmsMessage extends DefaultMessage {
         getHeaders().clear();
 
         boolean copyMessageId = true;
-        if (that instanceof SjmsMessage) {
-            SjmsMessage thatMessage = (SjmsMessage) that;
+        if (that instanceof SjmsMessage thatMessage) {
             this.jmsMessage = thatMessage.jmsMessage;
             if (this.jmsMessage != null) {
                 // for performance lets not copy the messageID if we are a JMS message
@@ -302,10 +301,10 @@ public class SjmsMessage extends DefaultMessage {
         String result = null;
         if (destination == null) {
             result = "null destination!" + File.separator;
-        } else if (destination instanceof Topic) {
-            result = "topic" + File.separator + ((Topic) destination).getTopicName() + File.separator;
-        } else if (destination instanceof Queue) {
-            result = "queue" + File.separator + ((Queue) destination).getQueueName() + File.separator;
+        } else if (destination instanceof Topic topic) {
+            result = "topic" + File.separator + topic.getTopicName() + File.separator;
+        } else if (destination instanceof Queue queue) {
+            result = "queue" + File.separator + queue.getQueueName() + File.separator;
         }
         return result;
     }

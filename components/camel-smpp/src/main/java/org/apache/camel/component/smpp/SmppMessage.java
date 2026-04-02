@@ -60,17 +60,16 @@ public class SmppMessage extends DefaultMessage {
     }
 
     public boolean isDeliverSm() {
-        return command instanceof DeliverSm && !((DeliverSm) command).isSmscDeliveryReceipt();
+        return command instanceof DeliverSm deliverSm && !deliverSm.isSmscDeliveryReceipt();
     }
 
     public boolean isDeliveryReceipt() {
-        return command instanceof DeliverSm && ((DeliverSm) command).isSmscDeliveryReceipt();
+        return command instanceof DeliverSm deliverSm && deliverSm.isSmscDeliveryReceipt();
     }
 
     @Override
     protected Object createBody() {
-        if (command instanceof MessageRequest) {
-            MessageRequest msgRequest = (MessageRequest) command;
+        if (command instanceof MessageRequest msgRequest) {
             byte[] shortMessage = msgRequest.getShortMessage();
             if (shortMessage == null || shortMessage.length == 0) {
                 return null;

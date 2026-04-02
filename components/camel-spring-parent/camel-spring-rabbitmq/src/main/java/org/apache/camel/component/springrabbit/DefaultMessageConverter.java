@@ -46,12 +46,12 @@ public class DefaultMessageConverter extends AbstractMessageConverter implements
         boolean text = body instanceof String;
         byte[] data;
         try {
-            if (body instanceof String) {
+            if (body instanceof String str) {
                 String encoding = messageProperties.getContentEncoding();
                 if (encoding != null) {
-                    data = ((String) body).getBytes(encoding);
+                    data = str.getBytes(encoding);
                 } else {
-                    data = ((String) body).getBytes(defaultCharset);
+                    data = str.getBytes(defaultCharset);
                     messageProperties.setContentEncoding(defaultCharset);
                 }
             } else {

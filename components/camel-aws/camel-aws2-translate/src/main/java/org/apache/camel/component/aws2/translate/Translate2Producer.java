@@ -90,10 +90,10 @@ public class Translate2Producer extends DefaultProducer {
     private void translateText(TranslateClient translateClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof TranslateTextRequest) {
+            if (payload instanceof TranslateTextRequest translateTextRequest) {
                 TranslateTextResponse result;
                 try {
-                    result = translateClient.translateText((TranslateTextRequest) payload);
+                    result = translateClient.translateText(translateTextRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Translate Text command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

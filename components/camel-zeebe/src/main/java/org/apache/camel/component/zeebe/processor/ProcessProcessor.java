@@ -35,12 +35,12 @@ public class ProcessProcessor extends AbstractBaseProcessor {
 
         if (exchange.getMessage().getBody() instanceof ProcessRequest) {
             message = exchange.getMessage().getBody(ProcessRequest.class);
-        } else if (exchange.getMessage().getBody() instanceof ProcessResponse) {
+        } else if (exchange.getMessage().getBody() instanceof ProcessResponse processResponse) {
             message = new ProcessRequest();
-            message.setProcessInstanceKey(((ProcessResponse) exchange.getMessage().getBody()).getProcessInstanceKey());
-            message.setProcessId(((ProcessResponse) exchange.getMessage().getBody()).getProcessId());
-            message.setProcessVersion(((ProcessResponse) exchange.getMessage().getBody()).getProcessVersion());
-            message.setProcessKey(((ProcessResponse) exchange.getMessage().getBody()).getProcessKey());
+            message.setProcessInstanceKey(processResponse.getProcessInstanceKey());
+            message.setProcessId(processResponse.getProcessId());
+            message.setProcessVersion(processResponse.getProcessVersion());
+            message.setProcessKey(processResponse.getProcessKey());
         } else if (exchange.getMessage().getBody() instanceof String) {
             try {
                 String bodyString = exchange.getMessage().getBody(String.class);

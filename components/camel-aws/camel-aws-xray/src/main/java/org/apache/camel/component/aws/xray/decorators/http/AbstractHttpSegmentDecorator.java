@@ -55,8 +55,8 @@ public abstract class AbstractHttpSegmentDecorator extends AbstractSegmentDecora
     protected String getHttpMethod(Exchange exchange, Endpoint endpoint) {
         // 1. Use method provided in header.
         Object method = exchange.getIn().getHeader(Exchange.HTTP_METHOD);
-        if (method instanceof String) {
-            return (String) method;
+        if (method instanceof String stringMethod) {
+            return stringMethod;
         }
 
         // 2. GET if query string is provided in header.
@@ -80,12 +80,12 @@ public abstract class AbstractHttpSegmentDecorator extends AbstractSegmentDecora
 
     protected String getHttpUrl(Exchange exchange, Endpoint endpoint) {
         Object url = exchange.getIn().getHeader(Exchange.HTTP_URL);
-        if (url instanceof String) {
-            return (String) url;
+        if (url instanceof String stringUrl) {
+            return stringUrl;
         } else {
             Object uri = exchange.getIn().getHeader(Exchange.HTTP_URI);
-            if (uri instanceof String) {
-                return (String) uri;
+            if (uri instanceof String stringUri) {
+                return stringUri;
             } else {
                 // Try to obtain from endpoint
                 int index = endpoint.getEndpointUri().lastIndexOf("http:");

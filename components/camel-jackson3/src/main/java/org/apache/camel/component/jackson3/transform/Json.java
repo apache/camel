@@ -120,8 +120,8 @@ public final class Json {
             Iterator<JsonNode> it = json.iterator();
             while (it.hasNext()) {
                 Object item = it.next();
-                if (item instanceof StringNode) {
-                    jsonBeans.add(StringHelper.removeLeadingAndEndingQuotes(((StringNode) item).asText()));
+                if (item instanceof StringNode stringNode) {
+                    jsonBeans.add(StringHelper.removeLeadingAndEndingQuotes(stringNode.asText()));
                 } else {
                     jsonBeans.add(mapper().writeValueAsString(item));
                 }

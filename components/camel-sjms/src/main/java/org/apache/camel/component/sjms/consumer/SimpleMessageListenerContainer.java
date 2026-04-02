@@ -147,9 +147,9 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             try {
                 doOnMessage(message);
             } catch (Exception e) {
-                if (e instanceof JMSException) {
+                if (e instanceof JMSException jmsException) {
                     if (endpoint.getExceptionListener() != null) {
-                        endpoint.getExceptionListener().onException((JMSException) e);
+                        endpoint.getExceptionListener().onException(jmsException);
                     }
                 } else {
                     LOG.warn("Execution of JMS message listener failed. This exception is ignored.", e);

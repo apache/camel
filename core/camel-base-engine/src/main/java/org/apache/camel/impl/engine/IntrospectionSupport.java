@@ -478,16 +478,14 @@ final class IntrospectionSupport {
                             "Cannot set property: " + name + " as a Map because target bean has no setter method for the Map");
                 }
             }
-            if (obj instanceof Map) {
-                Map<Object, Object> map = (Map) obj;
+            if (obj instanceof Map map) {
                 if (context != null && refName != null && value == null) {
                     String s = refName.replace("#", "");
                     value = CamelContextHelper.lookup(context, s);
                 }
                 map.put(lookupKey, value);
                 return true;
-            } else if (obj instanceof List) {
-                List<Object> list = (List) obj;
+            } else if (obj instanceof List list) {
                 if (context != null && refName != null && value == null) {
                     String s = refName.replace("#", "");
                     value = CamelContextHelper.lookup(context, s);

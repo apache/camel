@@ -627,8 +627,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      * @throws MessagingException In case capability check fails
      */
     private static boolean hasSortCapability(Store store) throws MessagingException {
-        if (store instanceof IMAPStore) {
-            IMAPStore imapStore = (IMAPStore) store;
+        if (store instanceof IMAPStore imapStore) {
             if (imapStore.hasCapability("SORT*")) {
                 return true;
             }

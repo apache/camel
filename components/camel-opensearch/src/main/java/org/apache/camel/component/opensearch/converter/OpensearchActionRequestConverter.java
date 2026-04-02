@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -66,8 +65,8 @@ public final class OpensearchActionRequestConverter {
     // Index requests
     private static IndexOperation.Builder<?> createIndexOperationBuilder(Object document, Exchange exchange)
             throws IOException {
-        if (document instanceof IndexOperation.Builder) {
-            return (IndexOperation.Builder<?>) document;
+        if (document instanceof IndexOperation.Builder<?> indexOpBuilder) {
+            return indexOpBuilder;
         }
         JacksonJsonpMapper mapper = createMapper();
         IndexOperation.Builder<Object> builder = new IndexOperation.Builder<>();
@@ -155,34 +154,34 @@ public final class OpensearchActionRequestConverter {
 
     @Converter
     public static GetRequest.Builder toGetRequestBuilder(Object document, Exchange exchange) {
-        if (document instanceof GetRequest.Builder) {
-            return (GetRequest.Builder) document;
+        if (document instanceof GetRequest.Builder getReqBuilder) {
+            return getReqBuilder;
         }
-        if (document instanceof String) {
+        if (document instanceof String string) {
             return new GetRequest.Builder()
                     .index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class))
-                    .id((String) document);
+                    .id(string);
         }
         return null;
     }
 
     @Converter
     public static DeleteRequest.Builder toDeleteRequestBuilder(Object document, Exchange exchange) {
-        if (document instanceof DeleteRequest.Builder) {
-            return (DeleteRequest.Builder) document;
+        if (document instanceof DeleteRequest.Builder deleteReqBuilder) {
+            return deleteReqBuilder;
         }
-        if (document instanceof String) {
+        if (document instanceof String string) {
             return new DeleteRequest.Builder()
                     .index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class))
-                    .id((String) document);
+                    .id(string);
         }
         return null;
     }
 
     @Converter
     public static DeleteIndexRequest.Builder toDeleteIndexRequestBuilder(Object document, Exchange exchange) {
-        if (document instanceof DeleteIndexRequest.Builder) {
-            return (DeleteIndexRequest.Builder) document;
+        if (document instanceof DeleteIndexRequest.Builder deleteIdxReqBuilder) {
+            return deleteIdxReqBuilder;
         }
         if (document instanceof String) {
             return new DeleteIndexRequest.Builder()
@@ -193,15 +192,15 @@ public final class OpensearchActionRequestConverter {
 
     @Converter
     public static MgetRequest.Builder toMgetRequestBuilder(Object documents, Exchange exchange) {
-        if (documents instanceof MgetRequest.Builder) {
-            return (MgetRequest.Builder) documents;
+        if (documents instanceof MgetRequest.Builder mgetReqBuilder) {
+            return mgetReqBuilder;
         }
         if (documents instanceof Iterable<?> documentIterable) {
             MgetRequest.Builder builder = new MgetRequest.Builder();
             builder.index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class));
             for (Object document : documentIterable) {
-                if (document instanceof String) {
-                    builder.ids((String) document);
+                if (document instanceof String string) {
+                    builder.ids(string);
                 } else {
                     LOG.warn(
                             "Cannot convert document id of type {} into a String",
@@ -218,12 +217,11 @@ public final class OpensearchActionRequestConverter {
     public static SearchRequest.Builder toSearchRequestBuilder(Object queryObject, Exchange exchange) throws IOException {
         String indexName = exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class);
 
-        if (queryObject instanceof SearchRequest.Builder) {
-            SearchRequest.Builder builder = (SearchRequest.Builder) queryObject;
-            if (builder.build().index().isEmpty()) {
-                builder.index(indexName);
+        if (queryObject instanceof SearchRequest.Builder searchReqBuilder) {
+            if (searchReqBuilder.build().index().isEmpty()) {
+                searchReqBuilder.index(indexName);
             }
-            return builder;
+            return searchReqBuilder;
         }
         SearchRequest.Builder builder = new SearchRequest.Builder();
 
@@ -273,24 +271,24 @@ public final class OpensearchActionRequestConverter {
 
     @Converter
     public static BulkRequest.Builder toBulkRequestBuilder(Object documents, Exchange exchange) throws IOException {
-        if (documents instanceof BulkRequest.Builder) {
-            return (BulkRequest.Builder) documents;
+        if (documents instanceof BulkRequest.Builder bulkReqBuilder) {
+            return bulkReqBuilder;
         }
-        if (documents instanceof Iterable) {
+        if (documents instanceof Iterable<?> documentIterable) {
             BulkRequest.Builder builder = new BulkRequest.Builder();
             builder.index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class));
-            for (Object document : (List<?>) documents) {
-                if (document instanceof BulkOperationVariant) {
-                    builder.operations(((BulkOperationVariant) document)._toBulkOperation());
-                } else if (document instanceof DeleteOperation.Builder) {
+            for (Object document : documentIterable) {
+                if (document instanceof BulkOperationVariant bulkOpVariant) {
+                    builder.operations(bulkOpVariant._toBulkOperation());
+                } else if (document instanceof DeleteOperation.Builder deleteOpBuilder) {
                     builder.operations(
-                            new BulkOperation.Builder().delete(((DeleteOperation.Builder) document).build()).build());
-                } else if (document instanceof UpdateOperation.Builder) {
+                            new BulkOperation.Builder().delete(deleteOpBuilder.build()).build());
+                } else if (document instanceof UpdateOperation.Builder<?> updateOpBuilder) {
                     builder.operations(
-                            new BulkOperation.Builder().update(((UpdateOperation.Builder<?>) document).build()).build());
-                } else if (document instanceof CreateOperation.Builder) {
+                            new BulkOperation.Builder().update(updateOpBuilder.build()).build());
+                } else if (document instanceof CreateOperation.Builder<?> createOpBuilder) {
                     builder.operations(
-                            new BulkOperation.Builder().create(((CreateOperation.Builder<?>) document).build()).build());
+                            new BulkOperation.Builder().create(createOpBuilder.build()).build());
                 } else {
                     builder.operations(
                             new BulkOperation.Builder().index(createIndexOperationBuilder(document, exchange).build()).build());

@@ -47,7 +47,8 @@ public class MigrationTools {
     /**
      * Step 1: Analyze a project's pom.xml to detect runtime, Camel version, Java version, and components.
      */
-    @Tool(description = "Analyze a Camel project's pom.xml to detect the runtime type (main, spring-boot, quarkus, "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Analyze a Camel project's pom.xml to detect the runtime type (main, spring-boot, quarkus, "
                         + "wildfly, karaf), Camel version, Java version, and Camel component dependencies. "
                         + "This is the first step in a migration workflow.")
     public ProjectAnalysisResult camel_migration_analyze(
@@ -96,7 +97,8 @@ public class MigrationTools {
     /**
      * Step 2: Check compatibility and provide relevant migration guide references.
      */
-    @Tool(description = "Check migration compatibility for Camel components by providing relevant migration guide "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Check migration compatibility for Camel components by providing relevant migration guide "
                         + "URLs and Java version requirements. The LLM should consult the migration guides for "
                         + "detailed component rename mappings and API changes.")
     public CompatibilityResult camel_migration_compatibility(
@@ -194,7 +196,8 @@ public class MigrationTools {
     /**
      * Step 3: Get Maven commands to run OpenRewrite migration recipes.
      */
-    @Tool(description = "Get Maven commands to run Camel OpenRewrite migration recipes for upgrading between versions. "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get Maven commands to run Camel OpenRewrite migration recipes for upgrading between versions. "
                         + "Returns the exact Maven commands to execute on the project. "
                         + "PREREQUISITE: The project MUST compile successfully ('mvn clean compile' must pass) "
                         + "BEFORE running the OpenRewrite recipes. If the project does not compile, fix the build "
@@ -278,7 +281,8 @@ public class MigrationTools {
     /**
      * Search migration guides for a specific term.
      */
-    @Tool(description = "Search Camel migration and upgrade guides for a specific term or component name. "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Search Camel migration and upgrade guides for a specific term or component name. "
                         + "Returns matching snippets from the official guides with version info and URLs. "
                         + "Supports fuzzy matching for typo tolerance. "
                         + "Use this instead of web search when looking up migration-related changes, "

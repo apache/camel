@@ -182,8 +182,8 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
     private Message getMessage(Exchange exchange) {
         Object body = exchange.getMessage().getBody();
         Message msg;
-        if (body instanceof Message) {
-            msg = (Message) body;
+        if (body instanceof Message bodyMessage) {
+            msg = bodyMessage;
         } else {
             MessageProperties mp = getEndpoint().getMessagePropertiesConverter().toMessageProperties(exchange);
             msg = getEndpoint().getMessageConverter().toMessage(body, mp);

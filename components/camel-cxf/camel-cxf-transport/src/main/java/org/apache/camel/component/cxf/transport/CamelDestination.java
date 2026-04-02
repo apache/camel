@@ -288,8 +288,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
                 camelExchange.setException(exception);
             }
             OutputStream outputStream = outMessage.getContent(OutputStream.class);
-            if (outputStream instanceof CachedOutputStream) {
-                camelExchange.getOut().setBody(((CachedOutputStream) outputStream).getInputStream());
+            if (outputStream instanceof CachedOutputStream cachedOutputStream) {
+                camelExchange.getOut().setBody(cachedOutputStream.getInputStream());
             } else {
                 camelExchange.getOut().setBody(outputStream);
             }

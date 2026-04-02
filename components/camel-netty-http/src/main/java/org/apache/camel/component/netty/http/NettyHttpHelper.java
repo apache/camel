@@ -106,8 +106,8 @@ public final class NettyHttpHelper {
                 if (is != null) {
                     try {
                         Object body = deserializeJavaObjectFromStream(is);
-                        if (body instanceof Exception) {
-                            return (Exception) body;
+                        if (body instanceof Exception exception) {
+                            return exception;
                         }
                     } catch (Exception e) {
                         return e;

@@ -92,16 +92,16 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         for (OptionalParameter optionalParameter : optionalParameters) {
 
             String value = null;
-            if (optionalParameter instanceof COctetString) {
-                value = ((COctetString) optionalParameter).getValueAsString();
-            } else if (optionalParameter instanceof OctetString) {
-                value = ((OctetString) optionalParameter).getValueAsString();
-            } else if (optionalParameter instanceof Int) {
-                value = String.valueOf(((Int) optionalParameter).getValue());
-            } else if (optionalParameter instanceof Short) {
-                value = String.valueOf(((Short) optionalParameter).getValue());
-            } else if (optionalParameter instanceof Byte) {
-                value = String.valueOf(((Byte) optionalParameter).getValue());
+            if (optionalParameter instanceof COctetString cOctetString) {
+                value = cOctetString.getValueAsString();
+            } else if (optionalParameter instanceof OctetString octetString) {
+                value = octetString.getValueAsString();
+            } else if (optionalParameter instanceof Int intParam) {
+                value = String.valueOf(intParam.getValue());
+            } else if (optionalParameter instanceof Short shortParam) {
+                value = String.valueOf(shortParam.getValue());
+            } else if (optionalParameter instanceof Byte byteParam) {
+                value = String.valueOf(byteParam.getValue());
             } else if (optionalParameter instanceof Null) {
                 value = null;
             }
@@ -118,20 +118,20 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
 
         Map<java.lang.Short, Object> optParams = new HashMap<>();
         for (OptionalParameter optPara : optionalParameters) {
-            if (COctetString.class.isInstance(optPara)) {
-                optParams.put(java.lang.Short.valueOf(optPara.tag), ((COctetString) optPara).getValueAsString());
-            } else if (org.jsmpp.bean.OptionalParameter.OctetString.class.isInstance(optPara)) {
-                optParams.put(java.lang.Short.valueOf(optPara.tag), ((OctetString) optPara).getValue());
-            } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
+            if (optPara instanceof COctetString cOctetString) {
+                optParams.put(java.lang.Short.valueOf(optPara.tag), cOctetString.getValueAsString());
+            } else if (optPara instanceof OctetString octetString) {
+                optParams.put(java.lang.Short.valueOf(optPara.tag), octetString.getValue());
+            } else if (optPara instanceof Byte byteParam) {
                 optParams.put(java.lang.Short.valueOf(optPara.tag),
-                        java.lang.Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
-            } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
+                        java.lang.Byte.valueOf(byteParam.getValue()));
+            } else if (optPara instanceof Short shortParam) {
                 optParams.put(java.lang.Short.valueOf(optPara.tag),
-                        java.lang.Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
-            } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
+                        java.lang.Short.valueOf(shortParam.getValue()));
+            } else if (optPara instanceof Int intParam) {
                 optParams.put(java.lang.Short.valueOf(optPara.tag),
-                        Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
-            } else if (Null.class.isInstance(optPara)) {
+                        Integer.valueOf(intParam.getValue()));
+            } else if (optPara instanceof Null) {
                 optParams.put(java.lang.Short.valueOf(optPara.tag), null);
             }
         }

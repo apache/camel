@@ -67,7 +67,7 @@ public final class BeanModelHelper {
             String script = resolveScript(context, def);
             // create bean via the script
             final Language lan = context.resolveLanguage(def.getScriptLanguage());
-            final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
+            final ScriptingLanguage slan = lan instanceof ScriptingLanguage sl ? sl : null;
             String fqn = def.getType();
             if (fqn.startsWith("#class:")) {
                 fqn = fqn.substring(7);
@@ -178,7 +178,7 @@ public final class BeanModelHelper {
                 clazz = Object.class;
             }
             final String script = resolveScript(camelContext, def);
-            final ScriptingLanguage slan = lan instanceof ScriptingLanguage ? (ScriptingLanguage) lan : null;
+            final ScriptingLanguage slan = lan instanceof ScriptingLanguage sl ? sl : null;
             if (slan != null) {
                 // scripting language should be evaluated with route template context as binding
                 // and memorize so the script is only evaluated once and the local bean is the same

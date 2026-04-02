@@ -69,9 +69,9 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         List<ChannelHandler> encoders = consumer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
-            if (encoder instanceof ChannelHandlerFactory) {
+            if (encoder instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
+                encoder = channelHandlerFactory.newChannelHandler();
             }
             addToPipeline("encoder-" + x, channelPipeline, encoder);
         }
@@ -79,9 +79,9 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         List<ChannelHandler> decoders = consumer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
-            if (decoder instanceof ChannelHandlerFactory) {
+            if (decoder instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
+                decoder = channelHandlerFactory.newChannelHandler();
             }
             addToPipeline("decoder-" + x, channelPipeline, decoder);
         }

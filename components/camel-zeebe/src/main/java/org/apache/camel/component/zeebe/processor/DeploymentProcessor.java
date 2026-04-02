@@ -43,18 +43,18 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
         if (headerResourceName != null && (body instanceof String || body instanceof byte[] || body instanceof InputStream)) {
             message = new DeploymentRequest();
             message.setName(headerResourceName);
-            if (body instanceof String) {
-                message.setContent(((String) body).getBytes());
-            } else if (body instanceof byte[]) {
-                message.setContent((byte[]) body);
+            if (body instanceof String bodyString) {
+                message.setContent(bodyString.getBytes());
+            } else if (body instanceof byte[] bodyBytes) {
+                message.setContent(bodyBytes);
             } else {
                 message.setContent(((InputStream) body).readAllBytes());
             }
-        } else if (body instanceof DeploymentRequest) {
-            message = (DeploymentRequest) body;
-        } else if (body instanceof String) {
+        } else if (body instanceof DeploymentRequest deploymentRequest) {
+            message = deploymentRequest;
+        } else if (body instanceof String bodyString) {
             try {
-                message = objectMapper.readValue((String) body, DeploymentRequest.class);
+                message = objectMapper.readValue(bodyString, DeploymentRequest.class);
             } catch (JsonProcessingException jsonProcessingException) {
                 throw new IllegalArgumentException("Cannot convert body to DeploymentRequestMessage", jsonProcessingException);
             }
@@ -78,15 +78,15 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
 
         exchange.getMessage().setHeader(ZeebeConstants.IS_SUCCESS, resultMessage.isSuccess());
         if (resultMessage.isSuccess()) {
-            if (resultMessage instanceof ProcessDeploymentResponse) {
+            if (resultMessage instanceof ProcessDeploymentResponse processDeploymentResponse) {
                 exchange.getMessage().setHeader(ZeebeConstants.RESOURCE_NAME,
-                        ((ProcessDeploymentResponse) resultMessage).getResourceName());
+                        processDeploymentResponse.getResourceName());
                 exchange.getMessage().setHeader(ZeebeConstants.BPMN_PROCESS_ID,
-                        ((ProcessDeploymentResponse) resultMessage).getBpmnProcessId());
+                        processDeploymentResponse.getBpmnProcessId());
                 exchange.getMessage().setHeader(ZeebeConstants.PROCESS_DEFINITION_KEY,
-                        ((ProcessDeploymentResponse) resultMessage).getProcessDefinitionKey());
+                        processDeploymentResponse.getProcessDefinitionKey());
                 exchange.getMessage().setHeader(ZeebeConstants.VERSION,
-                        ((ProcessDeploymentResponse) resultMessage).getVersion());
+                        processDeploymentResponse.getVersion());
             }
         } else {
             exchange.getMessage().setHeader(ZeebeConstants.ERROR_MESSAGE, resultMessage.getErrorMessage());

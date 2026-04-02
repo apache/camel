@@ -84,9 +84,9 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
 
         ChannelHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
-            if (sslHandler instanceof ChannelHandlerFactory) {
+            if (sslHandler instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                sslHandler = ((ChannelHandlerFactory) sslHandler).newChannelHandler();
+                sslHandler = channelHandlerFactory.newChannelHandler();
             }
 
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
@@ -99,9 +99,9 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         List<ChannelHandler> decoders = consumer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
-            if (decoder instanceof ChannelHandlerFactory) {
+            if (decoder instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
+                decoder = channelHandlerFactory.newChannelHandler();
             }
             pipeline.addLast("decoder-" + x, decoder);
         }
@@ -109,9 +109,9 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         List<ChannelHandler> encoders = consumer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
-            if (encoder instanceof ChannelHandlerFactory) {
+            if (encoder instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
+                encoder = channelHandlerFactory.newChannelHandler();
             }
             pipeline.addLast("encoder-" + x, encoder);
         }

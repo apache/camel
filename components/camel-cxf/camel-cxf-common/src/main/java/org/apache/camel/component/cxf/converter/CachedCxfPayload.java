@@ -69,10 +69,10 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
             // We have to do some delegation on the XMLStreamReader for StAXSource and StaxSource
             // that re-injects the missing namespaces into the XMLStreamReader.
             // Replace all other Sources that are not DOMSources with DOMSources.
-            if (source instanceof StaxSource) {
-                reader = ((StaxSource) source).getXMLStreamReader();
-            } else if (source instanceof StAXSource) {
-                reader = ((StAXSource) source).getXMLStreamReader();
+            if (source instanceof StaxSource staxSource) {
+                reader = staxSource.getXMLStreamReader();
+            } else if (source instanceof StAXSource stAXSource) {
+                reader = stAXSource.getXMLStreamReader();
             }
             if (reader != null) {
                 Map<String, String> nsmap = getNsMap();
@@ -127,8 +127,8 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
         ListIterator<Source> li = getBodySources().listIterator();
         while (li.hasNext()) {
             Source source = li.next();
-            if (source instanceof StreamCache) {
-                li.set((Source) (((StreamCache) source)).copy(exchange));
+            if (source instanceof StreamCache streamCache) {
+                li.set((Source) streamCache.copy(exchange));
             }
         }
     }
@@ -154,8 +154,8 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     @Override
     public void reset() {
         for (Source source : getBodySources()) {
-            if (source instanceof StreamCache) {
-                ((StreamCache) source).reset();
+            if (source instanceof StreamCache streamCache) {
+                streamCache.reset();
             }
         }
     }
@@ -167,8 +167,8 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
             return;
         }
         Source body = getBodySources().get(0);
-        if (body instanceof StreamCache) {
-            ((StreamCache) body).writeTo(os);
+        if (body instanceof StreamCache streamCache) {
+            streamCache.writeTo(os);
         } else {
             try {
                 StaxUtils.copy(body, os);
@@ -182,7 +182,7 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     public boolean inMemory() {
         boolean inMemory = true;
         for (Source source : getBodySources()) {
-            if (source instanceof StreamCache && !((StreamCache) source).inMemory()) {
+            if (source instanceof StreamCache streamCache && !streamCache.inMemory()) {
                 inMemory = false;
             }
         }

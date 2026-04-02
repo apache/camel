@@ -72,7 +72,8 @@ public class DiagnoseTools {
     /**
      * Tool to diagnose Camel errors from stack traces or error messages.
      */
-    @Tool(description = "Diagnose a Camel error from a stack trace or error message. "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Diagnose a Camel error from a stack trace or error message. "
                         + "Returns the identified component/EIP involved, common causes for the error, "
                         + "links to relevant Camel documentation, and suggested fixes. "
                         + "Covers the most common Camel exceptions including NoSuchEndpointException, "

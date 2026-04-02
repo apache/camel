@@ -194,11 +194,11 @@ public class NettyHttpComponent extends NettyComponent
             } else {
                 binding = getNettyHttpBinding();
             }
-            if (binding instanceof RestNettyHttpBinding) {
-                NettyHttpBinding copy = ((RestNettyHttpBinding) binding).copy();
+            if (binding instanceof RestNettyHttpBinding restNettyHttpBinding) {
+                NettyHttpBinding copy = restNettyHttpBinding.copy();
                 answer.setNettyHttpBinding(copy);
-            } else if (binding instanceof DefaultNettyHttpBinding) {
-                NettyHttpBinding copy = ((DefaultNettyHttpBinding) binding).copy();
+            } else if (binding instanceof DefaultNettyHttpBinding defaultNettyHttpBinding) {
+                NettyHttpBinding copy = defaultNettyHttpBinding.copy();
                 answer.setNettyHttpBinding(copy);
             }
         }
@@ -246,8 +246,7 @@ public class NettyHttpComponent extends NettyComponent
             configuration.setSsl(true);
         }
 
-        if (configuration instanceof NettyHttpConfiguration) {
-            final NettyHttpConfiguration httpConfiguration = (NettyHttpConfiguration) configuration;
+        if (configuration instanceof NettyHttpConfiguration httpConfiguration) {
 
             httpConfiguration.setPath(uri.getPath());
 
