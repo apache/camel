@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration test for {@link HazelcastRoutePolicy} that verifies leader election and route management using Hazelcast
@@ -63,15 +62,14 @@ public class HazelcastRoutePolicyIT {
             executor.submit(() -> run(id, results, latch));
         }
 
-        assertTrue(latch.await(1, TimeUnit.MINUTES), "All nodes should complete within timeout");
+        assertThat(latch.await(1, TimeUnit.MINUTES)).as("All nodes should complete within timeout").isTrue();
         executor.shutdown();
-        assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS), "Executor should terminate cleanly");
+        assertThat(executor.awaitTermination(30, TimeUnit.SECONDS)).as("Executor should terminate cleanly").isTrue();
 
         assertThat(results).containsExactlyInAnyOrderElementsOf(CLIENTS);
     }
 
     private static void run(String id, List<String> results, CountDownLatch latch) {
-        DefaultCamelContext context = null;
         HazelcastInstance instance = null;
         try {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
@@ -86,39 +84,37 @@ public class HazelcastRoutePolicyIT {
             policy.setLockValue("node-" + id);
             policy.setTryLockTimeout(5, TimeUnit.SECONDS);
 
-            context = new DefaultCamelContext();
-            context.disableJMX();
-            context.getCamelContextExtension().setName("context-" + id);
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("timer:hazelcast?delay=1000&period=1000")
-                            .routeId("route-" + id)
-                            .routePolicy(policy)
-                            .log("From ${routeId}")
-                            .process(e -> contextLatch.countDown());
+            try (DefaultCamelContext context = new DefaultCamelContext()) {
+                context.disableJMX();
+                context.getCamelContextExtension().setName("context-" + id);
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("timer:hazelcast?delay=1000&period=1000")
+                                .routeId("route-" + id)
+                                .routePolicy(policy)
+                                .log("From ${routeId}")
+                                .process(e -> contextLatch.countDown());
+                    }
+                });
+
+                // Deterministic staggered startup based on node index
+                Thread.sleep(Integer.parseInt(id) * 200L);
+
+                LOGGER.info("Starting CamelContext on node: {}", id);
+                context.start();
+                LOGGER.info("Started CamelContext on node: {}", id);
+
+                if (contextLatch.await(30, TimeUnit.SECONDS)) {
+                    LOGGER.info("Node {} completed {} events successfully", id, events);
+                    results.add(id);
+                } else {
+                    LOGGER.warn("Node {} timed out waiting for route events (expected {} events)", id, events);
                 }
-            });
-
-            // Staggered startup
-            Thread.sleep(ThreadLocalRandom.current().nextInt(500));
-
-            LOGGER.info("Starting CamelContext on node: {}", id);
-            context.start();
-            LOGGER.info("Started CamelContext on node: {}", id);
-
-            if (contextLatch.await(30, TimeUnit.SECONDS)) {
-                LOGGER.info("Node {} completed successfully", id);
-                results.add(id);
-            } else {
-                LOGGER.warn("Node {} timed out waiting for route events", id);
             }
         } catch (Exception e) {
             LOGGER.warn("Node {} failed: {}", id, e.getMessage(), e);
         } finally {
-            if (context != null) {
-                context.stop();
-            }
             if (instance != null) {
                 instance.shutdown();
             }
