@@ -35,7 +35,7 @@ camel export [options]
 | `--hawtio` | Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus) | false | boolean
 | `--hawtio-version` | Version of the Hawtio web console | HawtioVersion.HAWTIO_VERSION | String
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
-| `--java-version` | Java version | 21 | String
+| `--java-version,--java` | Java version | 21 | String
 | `--kamelets-version` | Apache Camel Kamelets version | RuntimeType.KAMELETS_VERSION | String
 | `--lazy-bean` | Whether to use lazy bean initialization (can help with complex classloading issues | true | boolean
 | `--local-kamelet-dir` | Local directory for loading Kamelets (takes precedence) |  | String

@@ -34,7 +34,7 @@ camel run [options]
 | `--gav` | The Maven group:artifact:version (used during exporting) |  | String
 | `--health` _(deprecated)_ | Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default) | false | boolean
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
-| `--java-version` | Java version | 21 | String
+| `--java-version,--java` | Java version | 21 | String
 | `--jfr` | Enables Java Flight Recorder saving recording to disk on exit | false | boolean
 | `--jfr-profile` | Java Flight Recorder profile to use (such as default or profile) |  | String
 | `--jvm-debug` | To enable JVM remote debugging on port 4004 by default. The supported values are true to enable the remote debugging, false to disable the remote debugging or a number to use a custom port |  | int
