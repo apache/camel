@@ -43,7 +43,7 @@ public class CmdStartStopITCase extends JBangTestSupport {
         String process = executeBackground(String.format("run %s/FromDirectoryRoute.java", mountPoint()));
         executeBackground(String.format("run %s/route2.yaml", mountPoint()));
         checkLogContains("Hello world!");
-        execute("cmd stop-route " + getPID(process));
+        execute("cmd stop-route " + process);
         checkCommandOutputsPattern("get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
                 ASSERTION_WAIT_SECONDS);
@@ -82,7 +82,7 @@ public class CmdStartStopITCase extends JBangTestSupport {
         executeBackground(String.format("run %s/route2.yaml", mountPoint()));
         checkLogContains("Hello world!");
         execute("cmd stop-route");
-        execute("cmd start-route " + getPID(process));
+        execute("cmd start-route " + process);
         checkCommandOutputsPattern("get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
                 ASSERTION_WAIT_SECONDS);
@@ -111,7 +111,7 @@ public class CmdStartStopITCase extends JBangTestSupport {
         execInContainer(String.format("chmod +x %s/watch-sleep", mountPoint()));
         Assertions.assertThat(
                 execInContainer(String.format("%s/watch-sleep", mountPoint())))
-                .as("watch command should output PID" + getPID(process))
-                .contains(getPID(process));
+                .as("watch command should output PID" + process)
+                .contains(process);
     }
 }

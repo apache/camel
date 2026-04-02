@@ -156,7 +156,7 @@ public class RunCommandITCase extends JBangTestSupport {
         final String process = executeBackground(String.format("run %s/cheese.xml --camel-version=%s", mountPoint(), version));
         checkLogContainsPattern(String.format(" Apache Camel %s .* started", version));
         checkLogContains(DEFAULT_MSG);
-        execute("stop " + getPID(process));
+        execute("stop " + process);
     }
 
     @Test

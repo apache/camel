@@ -37,7 +37,7 @@ public class JolokiaITCase extends JBangTestSupport {
                 .contains("\"agentContext\":\"/jolokia\"");
         Assertions.assertThat(execute("jolokia FromDirectoryRoute --stop"))
                 .as("Jolokia should stop")
-                .contains("Stopped Jolokia for PID " + getPID(process));
+                .contains("Stopped Jolokia for PID " + process);
     }
 
     @Test
