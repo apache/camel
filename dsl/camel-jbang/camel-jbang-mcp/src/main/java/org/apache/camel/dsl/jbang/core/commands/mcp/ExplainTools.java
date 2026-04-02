@@ -28,8 +28,6 @@ import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
 
 /**
  * MCP Tool for providing enriched context about Camel routes.
@@ -51,7 +49,7 @@ public class ExplainTools {
                         +
                         "Returns structured data with component descriptions, EIP explanations, and route structure. " +
                         "Use this context to understand and explain the route.")
-    public String camel_route_context(
+    public RouteContextResult camel_route_context(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
             @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format,
             @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
@@ -68,52 +66,31 @@ public class ExplainTools {
 
             String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
 
-            JsonObject result = new JsonObject();
-            result.put("format", resolvedFormat);
-            result.put("route", route);
-
             // Extract and document components
             List<String> componentNames = extractComponents(route, catalog);
-            JsonArray components = new JsonArray();
+            List<RouteComponent> components = new ArrayList<>();
             for (String comp : componentNames) {
                 ComponentModel model = catalog.componentModel(comp);
                 if (model != null) {
-                    JsonObject compJson = new JsonObject();
-                    compJson.put("name", comp);
-                    compJson.put("title", model.getTitle());
-                    compJson.put("description", model.getDescription());
-                    compJson.put("label", model.getLabel());
-                    compJson.put("syntax", model.getSyntax());
-                    compJson.put("producerOnly", model.isProducerOnly());
-                    compJson.put("consumerOnly", model.isConsumerOnly());
-                    components.add(compJson);
+                    components.add(new RouteComponent(
+                            comp, model.getTitle(), model.getDescription(), model.getLabel(),
+                            model.getSyntax(), model.isProducerOnly(), model.isConsumerOnly()));
                 }
             }
-            result.put("components", components);
 
             // Extract and document EIPs
             List<String> eipNames = extractEips(route, catalog);
-            JsonArray eips = new JsonArray();
+            List<RouteEip> eips = new ArrayList<>();
             for (String eip : eipNames) {
                 EipModel model = catalog.eipModel(eip);
                 if (model != null) {
-                    JsonObject eipJson = new JsonObject();
-                    eipJson.put("name", eip);
-                    eipJson.put("title", model.getTitle());
-                    eipJson.put("description", model.getDescription());
-                    eipJson.put("label", model.getLabel());
-                    eips.add(eipJson);
+                    eips.add(new RouteEip(eip, model.getTitle(), model.getDescription(), model.getLabel()));
                 }
             }
-            result.put("eips", eips);
 
-            // Add summary counts
-            JsonObject summary = new JsonObject();
-            summary.put("componentCount", components.size());
-            summary.put("eipCount", eips.size());
-            result.put("summary", summary);
+            RouteContextSummary summary = new RouteContextSummary(components.size(), eips.size());
 
-            return result.toJson();
+            return new RouteContextResult(resolvedFormat, route, components, eips, summary);
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -174,5 +151,23 @@ public class ExplainTools {
             sb.append(Character.toLowerCase(c));
         }
         return sb.toString();
+    }
+
+    // Result records
+
+    public record RouteContextResult(
+            String format, String route, List<RouteComponent> components,
+            List<RouteEip> eips, RouteContextSummary summary) {
+    }
+
+    public record RouteComponent(
+            String name, String title, String description, String label,
+            String syntax, boolean producerOnly, boolean consumerOnly) {
+    }
+
+    public record RouteEip(String name, String title, String description, String label) {
+    }
+
+    public record RouteContextSummary(int componentCount, int eipCount) {
     }
 }
