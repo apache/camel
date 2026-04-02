@@ -19,8 +19,11 @@ package org.apache.camel.component.minio.integration;
 import org.apache.camel.test.infra.minio.services.MinioService;
 import org.apache.camel.test.infra.minio.services.MinioServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+@DisabledIfSystemProperty(named = "os.arch", matches = "(?i)ppc64le",
+        disabledReason = "No ppc64le-compatible MinIO container image available")
 class MinioIntegrationTestSupport extends CamelTestSupport {
     @RegisterExtension
     static MinioService service = MinioServiceFactory.createService();
