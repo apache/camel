@@ -18,6 +18,7 @@ package org.apache.camel.micrometer.observability;
 
 import java.util.Map;
 
+import io.micrometer.tracing.Tracer;
 import org.apache.camel.telemetry.Span;
 
 public class MicrometerObservabilitySpanAdapter implements Span {
@@ -25,9 +26,12 @@ public class MicrometerObservabilitySpanAdapter implements Span {
     private static final String DEFAULT_EVENT_NAME = "log";
 
     private final io.micrometer.tracing.Span span;
+    private final Tracer tracer;
+    private Tracer.SpanInScope spanInScope;
 
-    public MicrometerObservabilitySpanAdapter(io.micrometer.tracing.Span span) {
+    public MicrometerObservabilitySpanAdapter(io.micrometer.tracing.Span span, Tracer tracer) {
         this.span = span;
+        this.tracer = tracer;
     }
 
     @Override
@@ -64,14 +68,18 @@ public class MicrometerObservabilitySpanAdapter implements Span {
 
     protected void activate() {
         this.span.start();
+        this.spanInScope = this.tracer.withSpan(this.span);
+    }
+
+    protected void deactivate() {
+        if (this.spanInScope != null) {
+            this.spanInScope.close();
+            this.spanInScope = null;
+        }
     }
 
     protected void close() {
         this.span.end();
-    }
-
-    protected void deactivate() {
-
     }
 
     @Override

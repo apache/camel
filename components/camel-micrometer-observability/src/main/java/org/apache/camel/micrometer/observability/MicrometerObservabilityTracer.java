@@ -140,7 +140,7 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
             }
             span.name(spanName);
 
-            return new MicrometerObservabilitySpanAdapter(span);
+            return new MicrometerObservabilitySpanAdapter(span, tracer);
         }
 
         @Override
