@@ -167,8 +167,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--empty" }, defaultValue = "false", description = "Run an empty Camel without loading source files")
     public boolean empty;
 
-    @CommandLine.Option(names = { "--java-version" },
-                        description = "Java version", defaultValue = "21")
+    @CommandLine.Option(names = {
+            "--java-version",
+            "--java" }, description = "Java version", defaultValue = "21")
     protected String javaVersion = "21";
 
     @Option(names = { "--camel-version" }, description = "To run using a different Camel version than the default version.")
@@ -1528,7 +1529,10 @@ public class Run extends CamelCommand {
         }
 
         if (javaVersion != null) {
-            jbangArgs.add("--java-version=" + javaVersion);
+            jbangArgs.add("--java=" + javaVersion);
+            // remove from cmds so it is not passed to the older Camel version
+            // which may not recognize the --java alias
+            cmds.removeIf(arg -> arg.startsWith("--java-version") || arg.startsWith("--java="));
         }
         if (repositories != null) {
             jbangArgs.add("--repos=" + repositories);
