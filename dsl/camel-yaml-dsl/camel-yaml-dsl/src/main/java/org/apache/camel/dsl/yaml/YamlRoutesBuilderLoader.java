@@ -602,6 +602,13 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         }
 
         if (params != null && !params.isEmpty()) {
+            // Wrap property placeholder values with RAW to prevent URL encoding
+            params.replaceAll((k, v) -> {
+                if (v instanceof String && ((String) v).contains("{{")) {
+                    return "RAW(" + v + ")";
+                }
+                return v;
+            });
             String query = URISupport.createQueryString(params);
             uri = uri + "?" + query;
         }
