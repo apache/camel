@@ -136,6 +136,22 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
                     return extractor.get(key) == null ? null : (String) extractor.get(key);
                 });
 
+                // If no trace headers were found in the carrier, any parent context in
+                // the builder came from the thread-local scope (e.g., Context.current()
+                // for OTel). This can be stale when async processing moves span lifecycle
+                // to a different thread, leaving the original thread's scope un-cleaned.
+                // Force a root span in that case to prevent trace contamination.
+                boolean hasTraceHeaders = false;
+                for (String field : propagator.fields()) {
+                    if (extractor.get(field) != null) {
+                        hasTraceHeaders = true;
+                        break;
+                    }
+                }
+                if (!hasTraceHeaders) {
+                    builder.setNoParent();
+                }
+
                 span = builder.start();
             }
             span.name(spanName);

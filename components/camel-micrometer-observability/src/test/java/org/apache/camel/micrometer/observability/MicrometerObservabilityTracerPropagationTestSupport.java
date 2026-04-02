@@ -23,6 +23,7 @@ import io.micrometer.tracing.otel.bridge.OtelCurrentTraceContext;
 import io.micrometer.tracing.otel.bridge.OtelPropagator;
 import io.micrometer.tracing.otel.bridge.OtelTracer;
 import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.CamelContext;
@@ -42,6 +43,11 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        // Clear any stale OTel context left by previous tests (e.g., from async thread
+        // handoff where deactivate() ran on a different thread). OtelPropagator.extract()
+        // reads Context.current() directly, so stale spans would become unwanted parents.
+        Context.root().makeCurrent();
+
         CamelContext context = super.createCamelContext();
 
         ContextPropagators propagators = otelExtension.getPropagators();
