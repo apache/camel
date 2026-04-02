@@ -43,7 +43,9 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(GeoCoderNominatimProducer.class);
 
     private final GeoCoderEndpoint endpoint;
-    private final CloseableHttpClient httpClient = HttpClients.createDefault();
+    private final CloseableHttpClient httpClient = HttpClients.custom()
+            .setUserAgent(System.getProperty("http.agent", "Apache Camel"))
+            .build();
 
     public GeoCoderNominatimProducer(GeoCoderEndpoint endpoint) {
         super(endpoint);
