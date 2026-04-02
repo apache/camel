@@ -323,6 +323,10 @@
                                     <exclude>**/openssl-server.cnf</exclude>
                                     <exclude>**/keystore</exclude>
                                     <exclude>**/cacerts</exclude>
+                                    <exclude>**/cert_user_ca</exclude>
+                                    <exclude>**/cert_host_ca</exclude>
+                                    <exclude>**/cert_user_key</exclude>
+                                    <exclude>**/cert_host_key</exclude>
                                     <exclude>**/cxf.extension</exclude>
                                     <exclude>**/dhis.conf</exclude>
                                     <exclude>**/driver.conf</exclude>

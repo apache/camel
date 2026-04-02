@@ -52,6 +52,20 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private byte[] privateKey;
     @UriParam(label = "security", secret = true)
     private String privateKeyPassphrase;
+    @UriParam(label = "security", secret = true,
+              description = "Set the OpenSSH certificate file path for certificate-based authentication.")
+    private String certFile;
+    @UriParam(label = "security", secret = true,
+              description = "Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.")
+    @Metadata(supportFileReference = true)
+    private String certUri;
+    @UriParam(label = "security", secret = true,
+              description = "Set the OpenSSH certificate as a byte array for certificate-based authentication.")
+    private byte[] certBytes;
+    @UriParam(label = "security",
+              description = "Set a comma separated list of CA signature algorithms accepted for host certificate verification."
+                            + " If not specified the default list from JSch will be used (matches OpenSSH 8.2+ defaults).")
+    private String caSignatureAlgorithms;
     @UriParam(label = "security", secret = true)
     private KeyPair keyPair;
     @UriParam(defaultValue = "no", enums = "no,yes", label = "security")
@@ -215,6 +229,51 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     @Deprecated
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
+    }
+
+    public String getCertFile() {
+        return certFile;
+    }
+
+    /**
+     * Set the OpenSSH certificate file path for certificate-based authentication.
+     */
+    public void setCertFile(String certFile) {
+        this.certFile = certFile;
+    }
+
+    public String getCertUri() {
+        return certUri;
+    }
+
+    /**
+     * Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.
+     */
+    public void setCertUri(String certUri) {
+        this.certUri = certUri;
+    }
+
+    public byte[] getCertBytes() {
+        return certBytes;
+    }
+
+    /**
+     * Set the OpenSSH certificate as a byte array for certificate-based authentication.
+     */
+    public void setCertBytes(byte[] certBytes) {
+        this.certBytes = certBytes;
+    }
+
+    public String getCaSignatureAlgorithms() {
+        return caSignatureAlgorithms;
+    }
+
+    /**
+     * Set a comma separated list of CA signature algorithms accepted for host certificate verification. If not
+     * specified the default list from JSch will be used (matches OpenSSH 8.2+ defaults).
+     */
+    public void setCaSignatureAlgorithms(String caSignatureAlgorithms) {
+        this.caSignatureAlgorithms = caSignatureAlgorithms;
     }
 
     public KeyPair getKeyPair() {

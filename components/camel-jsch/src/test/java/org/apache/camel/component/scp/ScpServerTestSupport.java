@@ -45,7 +45,6 @@ import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +87,6 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @BeforeEach
     public void doPreSetup() throws Exception {
         deleteDirectory(getScpPath());
         createDirectory(getScpPath());

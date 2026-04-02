@@ -92,6 +92,30 @@ to the API specification.
 All together this would make Camel behave similar for Rest DSL for both _code first_ and _contract first_ style.
 
 
+=== camel-ftp (SFTP) and camel-jsch (SCP)
+
+==== JSch upgrade
+
+The JSch library used by the SFTP and SCP components has been upgraded from 2.27.7 to 2.28.0.
+This version adds support for OpenSSH certificate authentication.
+
+==== OpenSSH certificate authentication
+
+The SFTP and SCP components now support OpenSSH certificate-based authentication via three new
+endpoint parameters: `certFile`, `certUri`, and `certBytes`. These allow providing an OpenSSH
+user certificate (generated with `ssh-keygen -s`) alongside the private key.
+
+A new `caSignatureAlgorithms` parameter (SFTP and SCP only) allows configuring which CA signature
+algorithms JSch will accept.
+
+When a certificate is loaded, Camel automatically adds its key type to JSch's
+`PubkeyAcceptedAlgorithms` if it is not already present. This ensures that RSA certificates
+(key type `ssh-rsa-cert-v01@openssh.com`) work out of the box, even though JSch's defaults
+exclude SHA-1 based algorithms since OpenSSH 8.2+.
+
+See the xref:components::sftp-component.adoc[SFTP] and xref:components::scp-component.adoc[SCP]
+component documentation for usage examples.
+
 === Component deprecation
 
 The `camel-olingo2` and `camel-olingo4` component are deprecated.

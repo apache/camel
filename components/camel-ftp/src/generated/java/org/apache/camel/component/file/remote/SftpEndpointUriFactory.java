@@ -23,7 +23,7 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(135);
+        Set<String> props = new HashSet<>(139);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -38,6 +38,10 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("bridgeErrorHandler");
         props.add("browseLimit");
         props.add("bulkRequests");
+        props.add("caSignatureAlgorithms");
+        props.add("certBytes");
+        props.add("certFile");
+        props.add("certUri");
         props.add("charset");
         props.add("checksumFileAlgorithm");
         props.add("checksumWriteFile");
@@ -160,7 +164,10 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("useUserKnownHostsFile");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(10);
+        Set<String> secretProps = new HashSet<>(13);
+        secretProps.add("certBytes");
+        secretProps.add("certFile");
+        secretProps.add("certUri");
         secretProps.add("keyPair");
         secretProps.add("knownHosts");
         secretProps.add("knownHostsFile");

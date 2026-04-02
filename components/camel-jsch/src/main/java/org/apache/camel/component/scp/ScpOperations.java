@@ -22,7 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
 import com.jcraft.jsch.ChannelExec;
@@ -252,6 +252,67 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         return true;
     }
 
+    /**
+     * Resolves certificate bytes from the configuration's certFile, certUri, or certBytes. Returns null if no
+     * certificate is configured.
+     */
+    private byte[] resolveCertificateBytes(ScpConfiguration config) throws JSchException {
+        if (ObjectHelper.isNotEmpty(config.getCertFile())) {
+            String name = config.getCertFile();
+            if (!name.startsWith("classpath:")) {
+                name = "file:" + name;
+            }
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), name)) {
+                return endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
+            } catch (Exception e) {
+                throw new JSchException("Cannot read certificate file: " + config.getCertFile(), e);
+            }
+        }
+        if (ObjectHelper.isNotEmpty(config.getCertUri())) {
+            String name = config.getCertUri();
+            if (!name.startsWith("classpath:")) {
+                name = "file:" + name;
+            }
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), name)) {
+                return endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
+            } catch (Exception e) {
+                throw new JSchException("Cannot read certificate resource: " + config.getCertUri(), e);
+            }
+        }
+        if (config.getCertBytes() != null) {
+            return config.getCertBytes();
+        }
+        return null;
+    }
+
+    /**
+     * Detects the OpenSSH certificate key type from the given certificate data. OpenSSH certificate files use text
+     * format: "key-type base64-data [comment]".
+     *
+     * @return the certificate key type (e.g., "ssh-rsa-cert-v01@openssh.com" or "ssh-rsa-cert") or null
+     */
+    private static String detectCertKeyType(byte[] certData) {
+        if (certData == null) {
+            return null;
+        }
+        String certLine = new String(certData, StandardCharsets.UTF_8).trim();
+        int space = certLine.indexOf(' ');
+        if (space > 0) {
+            String keyType = certLine.substring(0, space);
+            if (
+            // ssh key type format for rfc until draft 03
+            // https://datatracker.ietf.org/doc/html/draft-miller-ssh-cert-03.html
+            keyType.endsWith("-cert-v01@openssh.com") ||
+            // ssh key type format for rfc from draft 04
+            // https://datatracker.ietf.org/doc/html/draft-miller-ssh-cert-04.html
+                    keyType.endsWith("-cert")) {
+
+                return keyType;
+            }
+        }
+        return null;
+    }
+
     private Session createSession(ScpConfiguration config) {
         ObjectHelper.notNull(config, "ScpConfiguration");
         try {
@@ -264,6 +325,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 ciphers.put("cipher.c2s", config.getCiphers());
                 JSch.setConfig(ciphers);
             }
+            // Resolve certificate bytes once — used for both identity loading and key type detection
+            byte[] certData = resolveCertificateBytes(config);
             if (ObjectHelper.isNotEmpty(config.getPrivateKeyFile())) {
                 LOG.trace("Using private keyfile: {}", config.getPrivateKeyFile());
                 String pkfp = config.getPrivateKeyFilePassphrase();
@@ -275,23 +338,23 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 }
                 try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), name)) {
                     byte[] data = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(byte[].class, is);
-                    jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
+                    jsch.addIdentity("camel-jsch", data, certData, pkfp != null ? pkfp.getBytes() : null);
                 } catch (Exception e) {
                     throw new GenericFileOperationFailedException(
                             "Cannot load private keyfile: " + config.getPrivateKeyFile(), e);
                 }
             } else if (ObjectHelper.isNotEmpty(config.getPrivateKeyBytes())) {
-                LOG.trace("Using private key bytes: {}", config.getPrivateKeyBytes());
+                LOG.trace("Using private key bytes");
 
                 String pkfp = config.getPrivateKeyFilePassphrase();
 
                 byte[] data = config.getPrivateKeyBytes();
 
                 try {
-                    jsch.addIdentity("camel-jsch", data, null, pkfp != null ? pkfp.getBytes() : null);
+                    jsch.addIdentity("camel-jsch", data, certData, pkfp != null ? pkfp.getBytes() : null);
                 } catch (Exception e) {
                     throw new GenericFileOperationFailedException(
-                            "Cannot load private key bytes: " + Arrays.toString(config.getPrivateKeyBytes()), e);
+                            "Cannot load private key bytes", e);
                 }
             }
 
@@ -331,6 +394,27 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             if (ObjectHelper.isNotEmpty(config.getPreferredAuthentications())) {
                 LOG.trace("Using preferredAuthentications: {}", config.getPreferredAuthentications());
                 session.setConfig("PreferredAuthentications", config.getPreferredAuthentications());
+            }
+
+            // set the CASignatureAlgorithms
+            if (ObjectHelper.isNotEmpty(config.getCaSignatureAlgorithms())) {
+                LOG.trace("Using CASignatureAlgorithms: {}", config.getCaSignatureAlgorithms());
+                session.setConfig("ca_signature_algorithms", config.getCaSignatureAlgorithms());
+            }
+
+            // Auto-configure PubkeyAcceptedAlgorithms for certificate authentication.
+            // JSch's defaults exclude SHA-1 based algorithms (matching OpenSSH 8.2+ policy),
+            // which includes ssh-rsa-cert-v01@openssh.com (or ssh-rsa-cert per newer RFC
+            // drafts). If the loaded certificate uses a key type not in the accepted list,
+            // JSch silently skips the certificate identity and auth fails.
+            // Detect the cert type and add it if missing.
+            String certKeyType = detectCertKeyType(certData);
+            if (certKeyType != null) {
+                String defaults = JSch.getConfig("PubkeyAcceptedAlgorithms");
+                if (defaults != null && !defaults.contains(certKeyType)) {
+                    session.setConfig("PubkeyAcceptedAlgorithms", certKeyType + "," + defaults);
+                    LOG.debug("Added certificate key type {} to PubkeyAcceptedAlgorithms", certKeyType);
+                }
             }
 
             int timeout = config.getConnectTimeout();
