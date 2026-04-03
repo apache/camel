@@ -162,7 +162,7 @@ public class PahoConsumer extends DefaultConsumer {
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    LOG.debug("Rollback due to error processing Exchange ID: {}", exchange.getExchangeId(),
+                    LOG.error("Rollback due to error processing Exchange ID: {}", exchange.getExchangeId(),
                             exchange.getException());
                 }
             });
