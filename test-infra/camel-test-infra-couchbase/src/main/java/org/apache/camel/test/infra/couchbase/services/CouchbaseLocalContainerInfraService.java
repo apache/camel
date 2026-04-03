@@ -22,6 +22,7 @@ import java.util.Collections;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.manager.bucket.BucketSettings;
 import com.couchbase.client.java.manager.bucket.BucketType;
+import com.couchbase.client.java.manager.bucket.StorageBackend;
 import com.couchbase.client.java.manager.view.DesignDocument;
 import com.couchbase.client.java.manager.view.View;
 import com.couchbase.client.java.view.DesignDocumentNamespace;
@@ -145,7 +146,8 @@ public class CouchbaseLocalContainerInfraService implements CouchbaseInfraServic
 
         Cluster cluster = Cluster.connect(getConnectionString(), username(), password());
         cluster.buckets().createBucket(
-                BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE));
+                BucketSettings.create(bucketName).bucketType(BucketType.COUCHBASE)
+                        .storageBackend(StorageBackend.COUCHSTORE));
 
         DesignDocument designDoc = new DesignDocument(
                 designDocumentName(),
