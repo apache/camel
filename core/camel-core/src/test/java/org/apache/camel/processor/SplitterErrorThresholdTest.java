@@ -17,14 +17,19 @@
 package org.apache.camel.processor;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.SplitResult;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SplitterErrorThresholdTest extends ContextTestSupport {
@@ -118,6 +123,71 @@ class SplitterErrorThresholdTest extends ContextTestSupport {
         assertNotNull(result.getException(), "Should stop when errorThreshold exceeded even with high maxFailedRecords");
     }
 
+    @Test
+    void testErrorThresholdEmptyInput() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMessageCount(0);
+
+        Exchange result = template.send("direct:start",
+                e -> e.getIn().setBody(Collections.emptyList()));
+
+        mock.assertIsSatisfied();
+
+        // SplitResult should be set even with empty input
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertNotNull(splitResult);
+        assertEquals(0, splitResult.getTotalItems());
+        assertEquals(0, splitResult.getFailureCount());
+        assertFalse(splitResult.isAborted());
+    }
+
+    @Test
+    void testErrorThresholdExactBoundary() throws Exception {
+        // items: a, FAIL, b, c — errorThreshold=0.5
+        // item 0: a ok
+        // item 1: FAIL → failCount=1, ratio=1/2=50% ≥ 50% → stop
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMinimumMessageCount(0);
+
+        Exchange result = template.send("direct:start",
+                e -> e.getIn().setBody(Arrays.asList("a", "FAIL", "b", "c")));
+
+        mock.assertIsSatisfied();
+
+        assertNotNull(result.getException(), "Should stop at exact boundary (ratio == threshold)");
+    }
+
+    @Test
+    void testErrorThresholdJustBelowBoundary() throws Exception {
+        // items: a, b, FAIL, d — errorThreshold=0.5
+        // item 0: a ok, item 1: b ok
+        // item 2: FAIL → failCount=1, ratio=1/3=33% < 50% → continue
+        // item 3: d ok
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMessageCount(3); // a, b, d succeed
+
+        Exchange result = template.send("direct:start",
+                e -> e.getIn().setBody(Arrays.asList("a", "b", "FAIL", "d")));
+
+        mock.assertIsSatisfied();
+        assertNull(result.getException(), "Should not stop when ratio is below threshold");
+    }
+
+    @Test
+    void testMaxFailedRecordsExactBoundary() throws Exception {
+        // maxFailedRecords=2, items: a, FAIL, b, FAIL, c
+        // fail #1 at index 1 (count=1 < 2 → continue)
+        // fail #2 at index 3 (count=2 >= 2 → stop)
+        MockEndpoint mock = getMockEndpoint("mock:maxfail");
+        mock.expectedMinimumMessageCount(2); // at least a, b
+
+        Exchange result = template.send("direct:maxfail",
+                e -> e.getIn().setBody(Arrays.asList("a", "FAIL", "b", "FAIL", "c")));
+
+        mock.assertIsSatisfied();
+        assertNotNull(result.getException(), "Should stop at exact maxFailedRecords boundary");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -152,6 +222,16 @@ class SplitterErrorThresholdTest extends ContextTestSupport {
                             }
                         })
                         .to("mock:combined");
+
+                from("direct:maxfail")
+                        .split(body()).maxFailedRecords(2)
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("FAIL".equals(body)) {
+                                throw new IllegalArgumentException("Simulated failure for: " + body);
+                            }
+                        })
+                        .to("mock:maxfail");
             }
         };
     }
