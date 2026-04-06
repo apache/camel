@@ -17,18 +17,22 @@
 package org.apache.camel.processor;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.SplitResult;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.resume.ResumeStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class SplitterWatermarkTest extends ContextTestSupport {
@@ -187,6 +191,101 @@ class SplitterWatermarkTest extends ContextTestSupport {
         assertEquals("4", store.get("parallelIdxJob"));
     }
 
+    @Test
+    void testValueBasedWatermarkExpressionReturnsNull() throws Exception {
+        // watermarkExpression=${header.wm} — some items won't have the header, so expression returns null
+        MockEndpoint mock = getMockEndpoint("mock:null-expr");
+        mock.expectedMessageCount(3);
+
+        template.sendBody("direct:null-expr", Arrays.asList("a", "b", "c"));
+
+        mock.assertIsSatisfied();
+
+        // only items where the header is set contribute to the watermark
+        // the processor sets the header only for "b", so watermark should be "wm-b"
+        assertEquals("wm-b", store.get("nullExprJob"));
+    }
+
+    @Test
+    void testValueBasedWatermarkAllItemsFail() throws Exception {
+        // all items fail → no watermark expression evaluated → latestRef stays null → no watermark persisted
+        MockEndpoint mock = getMockEndpoint("mock:all-fail-wm");
+        mock.expectedMessageCount(0);
+
+        Exchange result = template.send("direct:all-fail-wm",
+                e -> e.getIn().setBody(Arrays.asList("FAIL", "FAIL", "FAIL")));
+
+        mock.assertIsSatisfied();
+
+        // watermark should NOT be persisted (all items failed)
+        assertNull(store.get("allFailJob"), "Watermark should not be persisted when all items fail");
+    }
+
+    @Test
+    void testCombinedErrorThresholdAndWatermark() throws Exception {
+        // both errorThreshold and watermark together
+        MockEndpoint mock = getMockEndpoint("mock:combined-wm");
+        mock.expectedMessageCount(4);
+
+        Exchange result = template.send("direct:combined-wm",
+                e -> e.getIn().setBody(Arrays.asList("a", "FAIL", "b", "c", "d")));
+
+        mock.assertIsSatisfied();
+
+        // watermark should be updated (processing succeeded overall)
+        assertEquals("4", store.get("combinedJob"));
+
+        // SplitResult should be set (errorThreshold is configured)
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertNotNull(splitResult);
+        assertEquals(5, splitResult.getTotalItems());
+        assertEquals(1, splitResult.getFailureCount());
+        assertFalse(splitResult.isAborted());
+    }
+
+    @Test
+    void testIndexBasedWatermarkEmptyInput() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMessageCount(0);
+
+        template.sendBody("direct:index", Collections.emptyList());
+
+        mock.assertIsSatisfied();
+
+        // no items processed, watermark should not be set
+        assertNull(store.get("testJob"), "Watermark should not be set for empty input");
+    }
+
+    @Test
+    void testIndexBasedWatermarkFirstRunSingleItem() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:index", List.of("only"));
+
+        mock.assertIsSatisfied();
+
+        assertEquals("0", store.get("testJob"), "Watermark should be 0 for single item");
+    }
+
+    @Test
+    void testValueBasedWatermarkNoUpdateOnAbort() throws Exception {
+        // value-based watermark should NOT update when processing is aborted
+        store.put("abortValJob", "previous");
+
+        MockEndpoint mock = getMockEndpoint("mock:abort-val-wm");
+        mock.expectedMinimumMessageCount(0);
+
+        template.send("direct:abort-val-wm",
+                e -> e.getIn().setBody(Arrays.asList("FAIL", "FAIL", "a")));
+
+        mock.assertIsSatisfied();
+
+        // watermark should retain its previous value
+        assertEquals("previous", store.get("abortValJob"),
+                "Watermark should not be updated when processing is aborted");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -226,6 +325,54 @@ class SplitterWatermarkTest extends ContextTestSupport {
                         .split(body()).parallelProcessing()
                         .resumeStrategy(strategy, "parallelIdxJob")
                         .to("mock:parallel-idx");
+
+                from("direct:null-expr")
+                        .split(body())
+                        .resumeStrategy(strategy, "nullExprJob")
+                        .watermarkExpression("${header.wm}")
+                        .process(exchange -> {
+                            // only set the watermark header for specific items
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("b".equals(body)) {
+                                exchange.getIn().setHeader("wm", "wm-b");
+                            }
+                        })
+                        .to("mock:null-expr");
+
+                from("direct:all-fail-wm")
+                        .split(body())
+                        .resumeStrategy(strategy, "allFailJob")
+                        .watermarkExpression("${body}")
+                        .maxFailedRecords(10)
+                        .process(exchange -> {
+                            throw new IllegalArgumentException("All fail");
+                        })
+                        .to("mock:all-fail-wm");
+
+                from("direct:combined-wm")
+                        .split(body())
+                        .resumeStrategy(strategy, "combinedJob")
+                        .maxFailedRecords(5)
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("FAIL".equals(body)) {
+                                throw new IllegalArgumentException("Simulated");
+                            }
+                        })
+                        .to("mock:combined-wm");
+
+                from("direct:abort-val-wm")
+                        .split(body())
+                        .resumeStrategy(strategy, "abortValJob")
+                        .watermarkExpression("${body}")
+                        .maxFailedRecords(2)
+                        .process(exchange -> {
+                            String body = exchange.getIn().getBody(String.class);
+                            if ("FAIL".equals(body)) {
+                                throw new IllegalArgumentException("Simulated failure");
+                            }
+                        })
+                        .to("mock:abort-val-wm");
             }
         };
     }
