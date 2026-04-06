@@ -133,6 +133,7 @@ final class JolokiaAttacher {
                 version = props.getProperty("version");
             }
         } catch (Exception ignored) {
+            // could not read pom.properties — fall back to scanning ~/.m2
         }
         Path m2Base = Path.of(System.getProperty("user.home"), ".m2", "repository", "org", "jolokia", "jolokia-agent-jvm");
         if (!Files.isDirectory(m2Base)) {
@@ -161,7 +162,7 @@ final class JolokiaAttacher {
         }
     }
 
-    private int compareVersions(String a, String b) {
+    int compareVersions(String a, String b) {
         String[] pa = a.split("[.\\-]");
         String[] pb = b.split("[.\\-]");
         for (int i = 0; i < Math.max(pa.length, pb.length); i++) {
@@ -204,28 +205,31 @@ final class JolokiaAttacher {
         String matchPattern = pattern;
         ProcessHandle.allProcesses()
                 .filter(ph -> ph.pid() != current)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        String pName = ProcessHelper.extractName(root, ph);
-                        pName = FileUtil.onlyName(pName);
-                        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, matchPattern)) {
-                            pids.add(ph.pid());
-                        } else {
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, matchPattern)) {
-                                    pids.add(ph.pid());
-                                }
-                            }
-                        }
-                    }
-                });
+                .forEach(ph -> matchCamelProcess(ph, matchPattern, pids));
         return pids;
+    }
+
+    private void matchCamelProcess(ProcessHandle ph, String matchPattern, List<Long> pids) {
+        JsonObject root = loadStatus(ph.pid());
+        if (root == null) {
+            return;
+        }
+        String pName = ProcessHelper.extractName(root, ph);
+        pName = FileUtil.onlyName(pName);
+        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, matchPattern)) {
+            pids.add(ph.pid());
+            return;
+        }
+        JsonObject context = (JsonObject) root.get("context");
+        if (context != null) {
+            pName = context.getString("name");
+            if ("CamelJBang".equals(pName)) {
+                pName = null;
+            }
+            if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, matchPattern)) {
+                pids.add(ph.pid());
+            }
+        }
     }
 
     private JsonObject loadStatus(long pid) {
@@ -251,7 +255,7 @@ final class JolokiaAttacher {
         }
     }
 
-    private int findAvailablePort(int fromPort, int toPort) {
+    int findAvailablePort(int fromPort, int toPort) {
         for (int port = fromPort; port <= toPort; port++) {
             if (isPortFree(port)) {
                 return port;
@@ -260,7 +264,7 @@ final class JolokiaAttacher {
         throw new IllegalStateException("Cannot find free port");
     }
 
-    private boolean isPortFree(int port) {
+    boolean isPortFree(int port) {
         try (var socket = new java.net.ServerSocket()) {
             socket.setReuseAddress(true);
             socket.bind(new java.net.InetSocketAddress((java.net.InetAddress) null, port), 1);

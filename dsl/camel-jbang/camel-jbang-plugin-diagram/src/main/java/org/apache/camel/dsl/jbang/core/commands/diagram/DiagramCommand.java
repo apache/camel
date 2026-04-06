@@ -53,6 +53,8 @@ public class DiagramCommand extends CamelCommand {
                         defaultValue = "hawtio")
     String renderer = "hawtio";
 
+    static final String RENDERER_HAWTIO = "hawtio";
+
     @CommandLine.Option(names = { "--port" },
                         description = "Port number to use for Hawtio web console (port 8888 by default)", defaultValue = "8888")
     int port = 8888;
@@ -96,8 +98,8 @@ public class DiagramCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        String selectedRenderer = renderer == null ? "hawtio" : renderer.toLowerCase(Locale.ROOT);
-        if (!"hawtio".equals(selectedRenderer)) {
+        String selectedRenderer = renderer == null ? RENDERER_HAWTIO : renderer.toLowerCase(Locale.ROOT);
+        if (!RENDERER_HAWTIO.equals(selectedRenderer)) {
             printer().printErr("Unsupported renderer: " + renderer);
             return 1;
         }

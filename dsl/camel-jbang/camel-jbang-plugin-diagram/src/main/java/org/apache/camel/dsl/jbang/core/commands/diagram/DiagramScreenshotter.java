@@ -85,7 +85,7 @@ final class DiagramScreenshotter {
         this.timeoutMs = (long) timeoutSeconds * 1000;
     }
 
-    private void run() throws Exception {
+    private void run() {
         DiagramScripts scripts = new DiagramScripts();
         Playwright.CreateOptions createOptions = new Playwright.CreateOptions();
         createOptions.setEnv(Map.of("PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD", "1"));
@@ -280,6 +280,7 @@ final class DiagramScreenshotter {
                     return;
                 }
             } catch (Exception ignored) {
+                // connection not yet available — keep polling
             } finally {
                 if (conn != null) {
                     conn.disconnect();

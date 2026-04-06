@@ -48,6 +48,7 @@ class DiagramPngExporter {
      * Playwright version to download on demand. Must match playwright-version property in the parent POM.
      */
     private static final String PLAYWRIGHT_VERSION = "1.58.0";
+    private static final String PLAYWRIGHT_ARTIFACT_ID = "playwright";
 
     /**
      * Holds metadata for a Camel integration process that has been launched but may not yet have reached Running state.
@@ -136,22 +137,32 @@ class DiagramPngExporter {
     }
 
     /**
+     * Extracts the Camel context phase from a status JSON, or 0 if unavailable.
+     */
+    private int loadCamelPhase(long pid) {
+        JsonObject root = loadCamelStatus(pid);
+        if (root == null) {
+            return 0;
+        }
+        JsonObject context = (JsonObject) root.get("context");
+        if (context == null) {
+            return 0;
+        }
+        Object phaseObj = context.get("phase");
+        if (phaseObj instanceof Number number) {
+            return number.intValue();
+        }
+        return 0;
+    }
+
+    /**
      * Waits for the launched Camel integration to reach Running state (phase=5).
      */
     private boolean waitForCamelRunning(CamelLaunch launch) throws InterruptedException {
         StopWatch watch = new StopWatch();
         int state = 0;
         while (launch.process().isAlive() && watch.taken() < (long) timeoutSeconds * 1000 && state < 5) {
-            JsonObject root = loadCamelStatus(launch.pid());
-            if (root != null) {
-                JsonObject context = (JsonObject) root.get("context");
-                if (context != null) {
-                    Object phaseObj = context.get("phase");
-                    if (phaseObj instanceof Number number) {
-                        state = number.intValue();
-                    }
-                }
-            }
+            state = loadCamelPhase(launch.pid());
             if (state < 5) {
                 Thread.sleep(200);
             }
@@ -226,21 +237,6 @@ class DiagramPngExporter {
         return 0;
     }
 
-    private int waitForJolokia(String jolokiaUrl) throws InterruptedException {
-        String lastError = null;
-        for (int i = 0; i < 30; i++) {
-            String error = checkJolokia(jolokiaUrl);
-            if (error == null) {
-                return 0;
-            }
-            lastError = error;
-            Thread.sleep(1000);
-        }
-        printer.printErr("Jolokia endpoint not available at " + jolokiaUrl
-                         + (lastError != null ? " (" + lastError + ")" : ""));
-        return 1;
-    }
-
     /**
      * Waits for the Hawtio HTTP server to be available. This is called in the parent process so that the Playwright
      * subprocess can connect immediately without waiting.
@@ -265,6 +261,7 @@ class DiagramPngExporter {
                     return;
                 }
             } catch (Exception ignored) {
+                // connection not yet available — keep polling
             } finally {
                 if (conn != null) {
                     conn.disconnect();
@@ -286,7 +283,7 @@ class DiagramPngExporter {
         }
     }
 
-    private String checkJolokia(String jolokiaUrl) {
+    String checkJolokia(String jolokiaUrl) {
         HttpURLConnection conn = null;
         try {
             String probeUrl = jolokiaUrl.endsWith("/") ? jolokiaUrl + "version" : jolokiaUrl + "/version";
@@ -326,7 +323,7 @@ class DiagramPngExporter {
         return pb.start();
     }
 
-    private void stopProcess(Process process) {
+    void stopProcess(Process process) {
         if (process == null) {
             return;
         }
@@ -388,10 +385,10 @@ class DiagramPngExporter {
      * Returns true if the Playwright JAR is already present in the local Maven repository, meaning no network download
      * is needed.
      */
-    private boolean isPlaywrightCached() {
+    boolean isPlaywrightCached() {
         String home = System.getProperty("user.home", "");
-        Path jar = Path.of(home, ".m2", "repository", "com", "microsoft", "playwright",
-                "playwright", PLAYWRIGHT_VERSION, "playwright-" + PLAYWRIGHT_VERSION + ".jar");
+        Path jar = Path.of(home, ".m2", "repository", "com", "microsoft", PLAYWRIGHT_ARTIFACT_ID,
+                PLAYWRIGHT_ARTIFACT_ID, PLAYWRIGHT_VERSION, PLAYWRIGHT_ARTIFACT_ID + "-" + PLAYWRIGHT_VERSION + ".jar");
         return Files.exists(jar);
     }
 
@@ -403,7 +400,7 @@ class DiagramPngExporter {
         try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
             downloader.setClassLoader(cl);
             downloader.start();
-            downloader.downloadDependency("com.microsoft.playwright", "playwright", PLAYWRIGHT_VERSION);
+            downloader.downloadDependency("com.microsoft.playwright", PLAYWRIGHT_ARTIFACT_ID, PLAYWRIGHT_VERSION);
         }
         return Arrays.stream(cl.getURLs())
                 .map(url -> {
@@ -437,14 +434,14 @@ class DiagramPngExporter {
         return Path.of(location.toURI());
     }
 
-    private String buildClassPath(List<Path> playwrightJars, Path pluginJar) {
+    String buildClassPath(List<Path> playwrightJars, Path pluginJar) {
         return playwrightJars.stream()
                 .map(Path::toString)
                 .collect(Collectors.joining(File.pathSeparator))
                + File.pathSeparator + pluginJar;
     }
 
-    private static String getJavaExecutable() {
+    static String getJavaExecutable() {
         String javaHome = System.getProperty("java.home");
         if (javaHome != null) {
             String exe = javaHome + File.separator + "bin" + File.separator + "java";
@@ -458,7 +455,7 @@ class DiagramPngExporter {
         return "java";
     }
 
-    private String resolveBrowserPath() {
+    String resolveBrowserPath() {
         if (playwrightBrowserPath != null && !playwrightBrowserPath.isBlank()) {
             return playwrightBrowserPath;
         }

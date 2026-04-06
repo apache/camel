@@ -39,6 +39,10 @@
         <label>jbang</label>
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
+        <!-- DiagramScreenshotter is a standalone subprocess entry point that requires a live
+             Playwright browser — it cannot be meaningfully unit-tested without integration
+             infrastructure and is therefore excluded from coverage analysis. -->
+        <sonar.coverage.exclusions>**/DiagramScreenshotter.java</sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
@@ -51,6 +55,12 @@
             <artifactId>playwright</artifactId>
             <version>${playwright-version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
