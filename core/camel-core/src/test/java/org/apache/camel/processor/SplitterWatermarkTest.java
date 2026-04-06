@@ -212,7 +212,7 @@ class SplitterWatermarkTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:all-fail-wm");
         mock.expectedMessageCount(0);
 
-        Exchange result = template.send("direct:all-fail-wm",
+        template.send("direct:all-fail-wm",
                 e -> e.getIn().setBody(Arrays.asList("FAIL", "FAIL", "FAIL")));
 
         mock.assertIsSatisfied();
