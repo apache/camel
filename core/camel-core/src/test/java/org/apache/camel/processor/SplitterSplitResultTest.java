@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -104,6 +105,65 @@ class SplitterSplitResultTest extends ContextTestSupport {
         assertEquals(1, splitResult.getFailureCount());
         assertEquals(3, splitResult.getSuccessCount());
         assertFalse(splitResult.isAborted());
+    }
+
+    @Test
+    void testSplitResultToString() throws Exception {
+        Exchange result = template.send("direct:tolerant",
+                e -> e.getIn().setBody(Arrays.asList("a", "FAIL", "b", "c")));
+
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertNotNull(splitResult);
+
+        String str = splitResult.toString();
+        assertTrue(str.contains("total=4"), "toString should contain total: " + str);
+        assertTrue(str.contains("success=3"), "toString should contain success: " + str);
+        assertTrue(str.contains("failures=1"), "toString should contain failures: " + str);
+        assertTrue(str.contains("aborted=false"), "toString should contain aborted: " + str);
+    }
+
+    @Test
+    void testSplitResultToStringWhenAborted() throws Exception {
+        Exchange result = template.send("direct:strict",
+                e -> e.getIn().setBody(Arrays.asList("FAIL", "FAIL", "a")));
+
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertNotNull(splitResult);
+
+        String str = splitResult.toString();
+        assertTrue(str.contains("aborted=true"), "toString should contain aborted=true: " + str);
+    }
+
+    @Test
+    void testSplitResultConstructorWithNullFailures() {
+        SplitResult result = new SplitResult(5, 0, null, false);
+        assertEquals(5, result.getTotalItems());
+        assertEquals(0, result.getFailureCount());
+        assertEquals(5, result.getSuccessCount());
+        assertFalse(result.isAborted());
+        assertNotNull(result.getFailures());
+        assertTrue(result.getFailures().isEmpty());
+    }
+
+    @Test
+    void testSplitResultEmptyInput() throws Exception {
+        Exchange result = template.send("direct:tolerant",
+                e -> e.getIn().setBody(Collections.emptyList()));
+
+        SplitResult splitResult = result.getProperty(Exchange.SPLIT_RESULT, SplitResult.class);
+        assertNotNull(splitResult, "SplitResult should be set even with empty input");
+        assertEquals(0, splitResult.getTotalItems());
+        assertEquals(0, splitResult.getFailureCount());
+        assertEquals(0, splitResult.getSuccessCount());
+        assertFalse(splitResult.isAborted());
+    }
+
+    @Test
+    void testSplitResultFailureRecord() {
+        Exception cause = new IllegalArgumentException("test error");
+        SplitResult.Failure failure = new SplitResult.Failure(3, cause);
+        assertEquals(3, failure.index());
+        assertEquals(cause, failure.exception());
     }
 
     @Test

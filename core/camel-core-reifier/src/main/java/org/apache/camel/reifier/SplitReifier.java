@@ -85,6 +85,13 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
             answer.setGroup(group);
         }
 
+        configureErrorThreshold(answer, isStopOnException);
+        configureWatermark(answer);
+
+        return answer;
+    }
+
+    private void configureErrorThreshold(Splitter answer, boolean isStopOnException) {
         String etStr = parseString(definition.getErrorThreshold());
         double errorThreshold = etStr != null ? Double.parseDouble(etStr) : 0;
         int maxFailedRecords = parseInt(definition.getMaxFailedRecords(), 0);
@@ -107,7 +114,9 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         if (maxFailedRecords > 0) {
             answer.setMaxFailedRecords(maxFailedRecords);
         }
+    }
 
+    private void configureWatermark(Splitter answer) {
         ResumeStrategy resumeStrategy = definition.getResumeStrategyBean();
         if (resumeStrategy == null && definition.getResumeStrategy() != null) {
             resumeStrategy = mandatoryLookup(definition.getResumeStrategy(), ResumeStrategy.class);
@@ -117,7 +126,6 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
         }
         String watermarkKey = parseString(definition.getWatermarkKey());
         String watermarkExprStr = parseString(definition.getWatermarkExpression());
-        // validate watermark configuration completeness
         if ((resumeStrategy != null) != (watermarkKey != null)) {
             throw new IllegalArgumentException(
                     "Both resumeStrategy and watermarkKey must be configured together on the Splitter EIP");
@@ -134,8 +142,6 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
                 answer.setWatermarkExpression(watermarkExpr);
             }
         }
-
-        return answer;
     }
 
     private AggregationStrategy createAggregationStrategy() {

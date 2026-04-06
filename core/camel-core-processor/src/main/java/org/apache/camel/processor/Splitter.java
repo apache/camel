@@ -207,40 +207,49 @@ public class Splitter extends MulticastProcessor {
             setAggregationStrategyOnExchange(exchange, original);
         }
 
-        // create failure tracker if error thresholds are configured
+        boolean hasErrorThreshold = setupFailureTracking(exchange);
+        boolean hasWatermark = setupWatermarkTracking(exchange);
+        AsyncCallback wrappedCallback = wrapCallback(callback, exchange, hasErrorThreshold, hasWatermark);
+
+        return super.process(exchange, wrappedCallback);
+    }
+
+    private boolean setupFailureTracking(Exchange exchange) {
         boolean hasErrorThreshold = errorThreshold > 0 || maxFailedRecords > 0;
         if (hasErrorThreshold) {
             exchange.setProperty(SPLIT_FAILURE_TRACKER, new SplitFailureTracker());
         }
+        return hasErrorThreshold;
+    }
 
-        // set current watermark value as exchange property before processing
+    private boolean setupWatermarkTracking(Exchange exchange) {
         boolean hasWatermark = resumeStrategy != null && watermarkKey != null;
         if (hasWatermark) {
             String currentWatermark = readCurrentWatermark();
             if (currentWatermark != null) {
                 exchange.setProperty(Exchange.SPLIT_WATERMARK, currentWatermark);
             }
-            // pre-initialize AtomicReference for value-based watermark tracking (thread-safe)
             if (watermarkExpression != null) {
                 exchange.setProperty(SPLIT_WATERMARK_LATEST, new AtomicReference<IndexedWatermark>());
             }
         }
+        return hasWatermark;
+    }
 
-        // wrap callback to build SplitResult and/or update watermark after all items are processed
-        boolean needsWrapping = hasErrorThreshold || hasWatermark;
-        AsyncCallback wrappedCallback = needsWrapping
-                ? doneSync -> {
-                    if (hasErrorThreshold) {
-                        buildSplitResult(exchange);
-                    }
-                    if (hasWatermark) {
-                        updateWatermark(exchange);
-                    }
-                    callback.done(doneSync);
-                }
-                : callback;
-
-        return super.process(exchange, wrappedCallback);
+    private AsyncCallback wrapCallback(
+            AsyncCallback callback, Exchange exchange, boolean hasErrorThreshold, boolean hasWatermark) {
+        if (!hasErrorThreshold && !hasWatermark) {
+            return callback;
+        }
+        return doneSync -> {
+            if (hasErrorThreshold) {
+                buildSplitResult(exchange);
+            }
+            if (hasWatermark) {
+                updateWatermark(exchange);
+            }
+            callback.done(doneSync);
+        };
     }
 
     @Override
@@ -289,7 +298,6 @@ public class Splitter extends MulticastProcessor {
         private Exchange copy;
         private final Route route;
         private final Exchange original;
-        private final int watermarkOffset;
         // tracks individual (raw) item count, independent of grouping
         private final AtomicInteger rawItemCount = new AtomicInteger();
 
@@ -323,7 +331,6 @@ public class Splitter extends MulticastProcessor {
                     }
                 }
             }
-            this.watermarkOffset = skipCount;
             if (skipCount > 0) {
                 exchange.setProperty(SPLIT_WATERMARK_OFFSET, skipCount);
             }
