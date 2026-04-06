@@ -25,6 +25,7 @@ import com.splunk.Receiver;
 import com.splunk.Service;
 import org.apache.camel.component.splunk.SplunkEndpoint;
 
+@Deprecated(since = "4.19")
 public class SubmitDataWriter extends SplunkDataWriter {
     private String index;
 

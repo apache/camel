@@ -32,7 +32,7 @@ import org.testcontainers.milvus.MilvusContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = MilvusInfraService.class,
-              description = "Milvus Vector Database",
+              description = "Milvus is an open source vector database for AI applications",
               serviceAlias = { "milvus" })
 public class MilvusLocalContainerInfraService implements MilvusInfraService, ContainerService<MilvusContainer> {
 

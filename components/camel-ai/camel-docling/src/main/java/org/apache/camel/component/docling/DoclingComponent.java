@@ -17,7 +17,11 @@
 package org.apache.camel.component.docling;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
+import ai.docling.serve.api.convert.response.ConvertDocumentResponse;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -32,6 +36,11 @@ public class DoclingComponent extends DefaultComponent {
 
     @Metadata
     DoclingConfiguration configuration;
+
+    // Shared across all producers so that SUBMIT_ASYNC_CONVERSION and CHECK_CONVERSION_STATUS
+    // (which may resolve to different endpoints/producers) can see each other's tasks.
+    private final Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks = new ConcurrentHashMap<>();
+    private final AtomicLong taskIdCounter = new AtomicLong();
 
     public DoclingComponent() {
         this(null);
@@ -59,6 +68,21 @@ public class DoclingComponent extends DefaultComponent {
      */
     public void setConfiguration(DoclingConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    Map<String, CompletableFuture<ConvertDocumentResponse>> getPendingAsyncTasks() {
+        return pendingAsyncTasks;
+    }
+
+    AtomicLong getTaskIdCounter() {
+        return taskIdCounter;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        pendingAsyncTasks.forEach((id, future) -> future.cancel(true));
+        pendingAsyncTasks.clear();
+        super.doStop();
     }
 
 }

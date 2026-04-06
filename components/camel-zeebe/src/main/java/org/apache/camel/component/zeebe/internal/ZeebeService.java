@@ -46,6 +46,7 @@ import org.apache.camel.component.zeebe.model.ProcessResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.19.0")
 public class ZeebeService {
     private static final Logger LOG = LoggerFactory.getLogger(ZeebeService.class);
 

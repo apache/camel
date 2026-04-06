@@ -29,7 +29,7 @@ import org.testcontainers.pulsar.PulsarContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = PulsarInfraService.class,
-              description = "Distributed messaging and streaming platform",
+              description = "Apache Pulsar is a distributed messaging and streaming platform",
               serviceAlias = { "pulsar" })
 public class PulsarLocalContainerInfraService implements PulsarInfraService, ContainerService<PulsarContainer> {
 

@@ -64,6 +64,16 @@ public abstract class BaseSftpConfiguration extends RemoteFileConfiguration {
               description = "Set the private key file passphrase so that the SFTP endpoint can do private key verification.")
     private String privateKeyPassphrase;
     @UriParam(label = "security", secret = true,
+              description = "Set the OpenSSH certificate file path for certificate-based authentication.")
+    private String certFile;
+    @UriParam(label = "security", secret = true,
+              description = "Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.")
+    @Metadata(supportFileReference = true)
+    private String certUri;
+    @UriParam(label = "security", secret = true,
+              description = "Set the OpenSSH certificate as a byte array for certificate-based authentication.")
+    private byte[] certBytes;
+    @UriParam(label = "security", secret = true,
               description = "Sets a key pair of the public and private key so to that the SFTP endpoint can do public/private key verification.")
     private KeyPair keyPair;
     @UriParam(label = "advanced",
@@ -221,6 +231,39 @@ public abstract class BaseSftpConfiguration extends RemoteFileConfiguration {
      */
     public void setPrivateKeyPassphrase(String privateKeyFilePassphrase) {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
+    }
+
+    public String getCertFile() {
+        return certFile;
+    }
+
+    /**
+     * Set the OpenSSH certificate file path for certificate-based authentication.
+     */
+    public void setCertFile(String certFile) {
+        this.certFile = certFile;
+    }
+
+    public String getCertUri() {
+        return certUri;
+    }
+
+    /**
+     * Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.
+     */
+    public void setCertUri(String certUri) {
+        this.certUri = certUri;
+    }
+
+    public byte[] getCertBytes() {
+        return certBytes;
+    }
+
+    /**
+     * Set the OpenSSH certificate as a byte array for certificate-based authentication.
+     */
+    public void setCertBytes(byte[] certBytes) {
+        this.certBytes = certBytes;
     }
 
     public KeyPair getKeyPair() {

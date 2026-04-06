@@ -17,5 +17,6 @@
 
 package org.apache.camel.component.zeebe.model;
 
+@Deprecated(since = "4.19.0")
 public interface ZeebeMessage {
 }

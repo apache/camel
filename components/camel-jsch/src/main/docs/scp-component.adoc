@@ -51,6 +51,19 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
+== OpenSSH Certificate Authentication
+
+Camel supports OpenSSH certificate-based authentication for SCP connections, where a user's public key is signed by a Certificate Authority (CA). This is configured using the `certFile`, `certUri`, or `certBytes` parameters alongside the private key:
+
+[source,java]
+----
+to("scp://host/path?username=myuser"
+   + "&privateKeyFile=/path/to/user_key"
+   + "&certFile=/path/to/user_key-cert.pub");
+----
+
+See the xref:sftp-component.adoc[SFTP component] documentation for more details on certificate authentication options.
+
 == Limitations
 
 Currently, camel-jsch only supports a

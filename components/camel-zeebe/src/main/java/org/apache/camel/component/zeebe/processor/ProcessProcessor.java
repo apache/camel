@@ -25,6 +25,7 @@ import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.component.zeebe.model.ProcessRequest;
 import org.apache.camel.component.zeebe.model.ProcessResponse;
 
+@Deprecated(since = "4.19.0")
 public class ProcessProcessor extends AbstractBaseProcessor {
     public ProcessProcessor(ZeebeEndpoint endpoint) {
         super(endpoint);

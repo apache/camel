@@ -92,6 +92,7 @@
 ** xref:browse-component.adoc[Browse]
 ** xref:caffeine-cache-component.adoc[Caffeine Cache]
 ** xref:caffeine-loadcache-component.adoc[Caffeine LoadCache]
+** xref:camunda-component.adoc[Camunda]
 ** xref:cql-component.adoc[Cassandra CQL]
 ** xref:chunk-component.adoc[Chunk]
 ** xref:class-component.adoc[Class]

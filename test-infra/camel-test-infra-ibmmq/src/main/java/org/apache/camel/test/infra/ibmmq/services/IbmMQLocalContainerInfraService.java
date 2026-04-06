@@ -29,7 +29,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = IbmMQInfraService.class,
-              description = "IBM MQ messaging middleware",
+              description = "IBM MQ is enterprise messaging middleware for reliable communication",
               serviceAlias = "ibmmq")
 public class IbmMQLocalContainerInfraService implements IbmMQInfraService, ContainerService<GenericContainer<?>> {
 

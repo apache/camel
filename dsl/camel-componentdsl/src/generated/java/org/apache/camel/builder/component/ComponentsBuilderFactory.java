@@ -875,6 +875,20 @@ public interface ComponentsBuilderFactory {
         return CaffeineLoadcacheComponentBuilderFactory.caffeineLoadcache();
     }
     /**
+     * Camunda (camel-camunda)
+     * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
+     * Client.
+     * 
+     * Category: workflow,saas
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-camunda
+     * 
+     * @return the dsl builder
+     */
+    static CamundaComponentBuilderFactory.CamundaComponentBuilder camunda() {
+        return CamundaComponentBuilderFactory.camunda();
+    }
+    /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
      * 

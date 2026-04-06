@@ -28,7 +28,7 @@
 
     <artifactId>camel-zeebe</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Zeebe</name>
+    <name>Camel :: Zeebe (deprecated)</name>
     <description>Camel Zeebe support</description>
 
     <properties>

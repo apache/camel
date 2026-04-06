@@ -23,7 +23,7 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = HiveMQInfraService.class,
-              description = "MQTT Platform HiveMQ",
+              description = "HiveMQ is an MQTT-based messaging platform for IoT",
               serviceAlias = "hive-mq")
 public class LocalHiveMQInfraService extends AbstractLocalHiveMQService<LocalHiveMQInfraService> {
 

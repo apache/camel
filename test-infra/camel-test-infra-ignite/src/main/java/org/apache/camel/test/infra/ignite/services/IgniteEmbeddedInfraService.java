@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @InfraService(service = IgniteInfraService.class,
-              description = "Distributed Database Apache Ignite",
+              description = "Apache Ignite is a distributed database for high-performance computing",
               serviceAlias = "ignite")
 public class IgniteEmbeddedInfraService implements IgniteInfraService {
     private static final Logger LOG = LoggerFactory.getLogger(IgniteEmbeddedInfraService.class);

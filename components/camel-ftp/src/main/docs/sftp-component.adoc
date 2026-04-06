@@ -38,6 +38,45 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== OpenSSH Certificate Authentication
+
+Camel supports OpenSSH certificate-based authentication for SFTP connections, where a user's public key is signed by a Certificate Authority (CA) rather than being individually authorized on the server. This is common in enterprise environments using tools like HashiCorp Vault or custom CA infrastructure.
+
+To use certificate authentication, provide the certificate file alongside the private key:
+
+[source,java]
+----
+from("sftp://host:22/path"
+     + "?username=myuser"
+     + "&privateKeyFile=/path/to/user_key"
+     + "&certFile=/path/to/user_key-cert.pub")
+    .to("direct:result");
+----
+
+The certificate can also be loaded from a classpath resource using `certUri`:
+
+[source,java]
+----
+from("sftp://host:22/path"
+     + "?username=myuser"
+     + "&privateKeyFile=/path/to/user_key"
+     + "&certUri=classpath:user_key-cert.pub")
+    .to("direct:result");
+----
+
+Or provided as raw bytes using `certBytes` (useful when the certificate is loaded programmatically, e.g., from a vault).
+
+NOTE: When a certificate is loaded, Camel automatically adds the certificate's key type to
+JSch's `PubkeyAcceptedAlgorithms` if it is not already present. This ensures certificate
+authentication works even when the key type has been removed from JSch's defaults due to
+SHA-1 deprecation (e.g., `ssh-rsa-cert-v01@openssh.com`). Both the legacy vendor-prefixed
+key type names (`<algorithm>-cert-v01@openssh.com`, used through
+https://datatracker.ietf.org/doc/html/draft-miller-ssh-cert-03[draft-03]) and the
+standardized short names (`<algorithm>-cert`, introduced in
+https://datatracker.ietf.org/doc/html/draft-miller-ssh-cert-04[draft-04]) are recognized.
+If you need to control the CA signature algorithms that JSch will accept, use the
+`caSignatureAlgorithms` parameter.
+
 === Restoring Deprecated Key Types and Algorithms
 
 As of Camel 3.17.0, key types and algorithms that use SHA1 have been deprecated. These can be restored, if necessary, by setting JSch configuration directly. E.g.:

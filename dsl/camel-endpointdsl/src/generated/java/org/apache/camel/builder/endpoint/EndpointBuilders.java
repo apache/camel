@@ -53,6 +53,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.CaffeineCacheEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CaffeineLoadCacheEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CamelEventEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.CamundaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ChatScriptEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory,

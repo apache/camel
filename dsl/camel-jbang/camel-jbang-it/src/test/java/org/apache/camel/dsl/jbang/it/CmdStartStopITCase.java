@@ -36,7 +36,7 @@ public class CmdStartStopITCase extends JBangTestSupport {
         executeBackground(String.format("run --source-dir=%s", mountPoint()));
         checkLogContains("Hello world!");
         execute("cmd stop-route --id=route1");
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern("get route --wide-uri",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -49,7 +49,7 @@ public class CmdStartStopITCase extends JBangTestSupport {
         executeBackground(String.format("run %s/route2.yaml", mountPoint()));
         checkLogContains("Hello world!");
         execute("cmd stop-route " + process);
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern("get route --wide-uri",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -61,7 +61,7 @@ public class CmdStartStopITCase extends JBangTestSupport {
         executeBackground(String.format("run --source-dir=%s", mountPoint()));
         checkLogContains("Hello world!");
         execute("cmd stop-route");
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern("get route --wide-uri",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -74,7 +74,7 @@ public class CmdStartStopITCase extends JBangTestSupport {
         checkLogContains("Hello world!");
         execute("cmd stop-route");
         execute("cmd start-route --id=route1");
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern("get route --wide-uri",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -88,7 +88,7 @@ public class CmdStartStopITCase extends JBangTestSupport {
         checkLogContains("Hello world!");
         execute("cmd stop-route");
         execute("cmd start-route " + process);
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern("get route --wide-uri",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
                 ASSERTION_WAIT_SECONDS);
     }
@@ -101,7 +101,7 @@ public class CmdStartStopITCase extends JBangTestSupport {
         checkLogContains("Hello world!");
         execute("cmd stop-route");
         execute("cmd start-route");
-        checkCommandOutputsPattern("get route",
+        checkCommandOutputsPattern("get route --wide-uri",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
                 ASSERTION_WAIT_SECONDS);
     }

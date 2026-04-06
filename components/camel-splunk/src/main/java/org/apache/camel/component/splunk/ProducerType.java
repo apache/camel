@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.splunk;
 
+@Deprecated(since = "4.19")
 public enum ProducerType {
     TCP,
     SUBMIT,
