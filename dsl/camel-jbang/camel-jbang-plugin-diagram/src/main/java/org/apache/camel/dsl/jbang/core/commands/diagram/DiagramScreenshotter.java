@@ -269,7 +269,7 @@ final class DiagramScreenshotter {
         while (System.currentTimeMillis() < deadline) {
             HttpURLConnection conn = null;
             try {
-                conn = (HttpURLConnection) URI.create(url).toURL().openConnection();
+                conn = (HttpURLConnection) URI.create(url).toURL().openConnection(); //NOSONAR java:S5332
                 conn.setConnectTimeout(1000);
                 conn.setReadTimeout(1000);
                 conn.setRequestMethod("GET");

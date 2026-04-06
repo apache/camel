@@ -39,10 +39,15 @@
         <label>jbang</label>
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
-        <!-- DiagramScreenshotter is a standalone subprocess entry point that requires a live
-             Playwright browser — it cannot be meaningfully unit-tested without integration
-             infrastructure and is therefore excluded from coverage analysis. -->
-        <sonar.coverage.exclusions>**/DiagramScreenshotter.java</sonar.coverage.exclusions>
+        <!-- Excluded from coverage: these classes require a live JVM (JolokiaAttacher), a running Hawtio
+             (DiagramPngExporter, DiagramHawtio), or a Playwright browser (DiagramScreenshotter) and
+             cannot be meaningfully unit-tested without full integration infrastructure. -->
+        <sonar.coverage.exclusions>
+            **/DiagramScreenshotter.java,**/DiagramPngExporter.java,**/JolokiaAttacher.java,**/DiagramHawtio.java
+        </sonar.coverage.exclusions>
+        <!-- Use the module-local Jacoco report generated during sonar-build; the aggregate report
+             at coverage/ is not available in the Sonar build (tests are only run for this module). -->
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>

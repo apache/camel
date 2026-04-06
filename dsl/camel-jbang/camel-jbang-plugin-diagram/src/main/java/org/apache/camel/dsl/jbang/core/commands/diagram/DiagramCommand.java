@@ -134,9 +134,7 @@ public class DiagramCommand extends CamelCommand {
             }
 
             if (exportPng) {
-                DiagramPngExporter exporter = new DiagramPngExporter(
-                        getMain(), printer(), output, browser, playwrightBrowserPath, routeId, jolokiaPort, port, keepRunning,
-                        timeout, camelLaunch);
+                DiagramPngExporter exporter = newPngExporter(camelLaunch);
                 try {
                     exit = exporter.export(target);
                 } catch (IllegalStateException e) {
@@ -146,7 +144,7 @@ public class DiagramCommand extends CamelCommand {
                 return exit;
             }
 
-            Hawtio hawtio = new DiagramHawtio(getMain(), printer(), target);
+            Hawtio hawtio = newHawtio(target);
             List<String> hawtioArgs = new ArrayList<>();
             if (target != null && !target.isBlank()) {
                 hawtioArgs.add(target);
@@ -173,7 +171,7 @@ public class DiagramCommand extends CamelCommand {
      * integration to reach Running state is handled by {@link DiagramPngExporter}, which starts Hawtio in parallel to
      * reduce overall startup time.
      */
-    private DiagramPngExporter.CamelLaunch launchCamelProcess(String runName) throws Exception {
+    protected DiagramPngExporter.CamelLaunch launchCamelProcess(String runName) throws Exception {
         List<String> cmd = new ArrayList<>();
         RunHelper.addCamelCLICommand(cmd);
         cmd.add("run");
@@ -192,6 +190,16 @@ public class DiagramCommand extends CamelCommand {
 
         Process p = pb.start();
         return new DiagramPngExporter.CamelLaunch(p, p.pid(), logPath, runName);
+    }
+
+    protected Hawtio newHawtio(String target) {
+        return new DiagramHawtio(getMain(), printer(), target);
+    }
+
+    protected DiagramPngExporter newPngExporter(DiagramPngExporter.CamelLaunch camelLaunch) {
+        return new DiagramPngExporter(
+                getMain(), printer(), output, browser, playwrightBrowserPath, routeId, jolokiaPort, port, keepRunning,
+                timeout, camelLaunch);
     }
 
     static class FilesConsumer extends ParameterConsumer<DiagramCommand> {

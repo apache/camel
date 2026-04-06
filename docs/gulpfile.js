@@ -327,7 +327,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       }
     })
 
-    return gulp.src(source, { ignore: ['**/target/**', '**/.*/**'] })
+    return gulp.src(source, { ignore: ['**/target/**', '**/target', '**/.*/**', '**/.*'] })
       .pipe(filterFn)
       .pipe(
         map((file, done) => {

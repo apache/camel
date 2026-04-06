@@ -248,7 +248,7 @@ class DiagramPngExporter {
             }
             HttpURLConnection conn = null;
             try {
-                conn = (HttpURLConnection) URI.create(hawtioUrl).toURL().openConnection();
+                conn = (HttpURLConnection) URI.create(hawtioUrl).toURL().openConnection(); //NOSONAR java:S5332
                 conn.setConnectTimeout(500);
                 conn.setReadTimeout(500);
                 conn.setRequestMethod("GET");
@@ -288,7 +288,7 @@ class DiagramPngExporter {
         try {
             String probeUrl = jolokiaUrl.endsWith("/") ? jolokiaUrl + "version" : jolokiaUrl + "/version";
             URL url = URI.create(probeUrl).toURL();
-            conn = (HttpURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection(); //NOSONAR java:S5332
             conn.setConnectTimeout(1000);
             conn.setReadTimeout(1000);
             conn.setRequestMethod("GET");
