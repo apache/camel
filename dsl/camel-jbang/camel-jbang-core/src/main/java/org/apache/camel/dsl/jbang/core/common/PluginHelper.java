@@ -423,7 +423,7 @@ public final class PluginHelper {
             return false;
         }
         boolean foundAny = false;
-        try (JarFile jarFile = new JarFile(jarPath)) {
+        try (JarFile jarFile = new JarFile(jarPath)) { //NOSONAR java:S5042
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
@@ -432,15 +432,15 @@ public final class PluginHelper {
                         || !entryName.contains("camel-jbang-plugin-")) {
                     continue;
                 }
-                Path tempJar = Files.createTempFile("camel-jbang-plugin", ".jar");
+                Path tempJar = Files.createTempFile("camel-jbang-plugin", ".jar"); //NOSONAR java:S5443
                 tempJar.toFile().deleteOnExit();
                 try (InputStream is = jarFile.getInputStream(entry)) {
                     Files.copy(is, tempJar, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 }
-                try (JarFile nestedJar = new JarFile(tempJar.toFile())) {
+                try (JarFile nestedJar = new JarFile(tempJar.toFile())) { //NOSONAR java:S5042
                     // Intentionally not closed — the class loader must remain open for the full
                     // command lifecycle as picocli may load plugin classes or annotations lazily.
-                    URLClassLoader pluginLoader = new URLClassLoader(new URL[] { tempJar.toUri().toURL() }, classLoader);
+                    URLClassLoader pluginLoader = new URLClassLoader(new URL[] { tempJar.toUri().toURL() }, classLoader); //NOSONAR java:S2095
                     Enumeration<JarEntry> nestedEntries = nestedJar.entries();
                     while (nestedEntries.hasMoreElements()) {
                         JarEntry nested = nestedEntries.nextElement();

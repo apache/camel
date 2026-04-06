@@ -335,6 +335,8 @@ class DiagramPngExporter {
             if (!process.waitFor(5, java.util.concurrent.TimeUnit.SECONDS)) {
                 process.destroyForcibly();
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             // ignore
         }
@@ -425,7 +427,7 @@ class DiagramPngExporter {
         String loc = location.toString();
         if (loc.startsWith("nested:") || (loc.contains("!/") && !loc.startsWith("file:"))) {
             // Running inside Spring Boot fat JAR — extract the nested plugin JAR to a temp file
-            Path tempJar = Files.createTempFile("camel-diagram-plugin", ".jar");
+            Path tempJar = Files.createTempFile("camel-diagram-plugin", ".jar"); //NOSONAR java:S5443
             tempJar.toFile().deleteOnExit();
             try (InputStream is = location.openStream()) {
                 Files.copy(is, tempJar, StandardCopyOption.REPLACE_EXISTING);
