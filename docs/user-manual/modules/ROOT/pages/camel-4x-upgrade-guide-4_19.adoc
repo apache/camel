@@ -160,6 +160,21 @@ After:
             uri: mock:end
 ----
 
+=== camel-platform-http-main
+
+When `authenticationEnabled` is set to `true` and no explicit `authenticationPath` is configured,
+the default authentication path is now `/*`. This means all subpaths under the configured context path
+are protected by authentication.
+
+Previously, the authentication path defaulted to the value of `path` (e.g. `/api`), which only covered
+that exact path. If you relied on this behavior and need selective path protection, set
+`authenticationPath` explicitly:
+
+[source,properties]
+----
+camel.server.authenticationPath=/secure/*
+----
+
 === camel-csimple (Deprecation)
 
 The `csimple` (compiled simple) language has been deprecated. Use the `simple` language instead.
