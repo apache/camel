@@ -1004,6 +1004,12 @@ public class Run extends CamelCommand {
         if (!skipPlugins) {
             activePlugins = PluginHelper.getActivePlugins(getMain(), repositories);
 
+            // Let plugins customize the run environment (e.g., set config directories)
+            // before dependency resolution, so plugin exporters can scan the right locations
+            for (Plugin plugin : activePlugins.values()) {
+                plugin.getRunCustomizer().ifPresent(customizer -> customizer.beforeRun(main, files));
+            }
+
             Set<PluginExporter> exporters = activePlugins.values()
                     .stream()
                     .map(Plugin::getExporter)
@@ -1025,11 +1031,6 @@ public class Run extends CamelCommand {
             var joined = String.join(",", dependencies);
             main.addInitialProperty(DEPENDENCIES, joined);
             writeSettings(DEPENDENCIES, joined);
-        }
-
-        // Let plugins customize the run before KameletMain starts
-        for (Plugin plugin : activePlugins.values()) {
-            plugin.getRunCustomizer().ifPresent(customizer -> customizer.beforeRun(main, files));
         }
 
         // Block --camel-version when running from camel-launcher
