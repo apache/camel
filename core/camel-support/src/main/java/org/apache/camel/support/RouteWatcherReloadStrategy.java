@@ -34,7 +34,6 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.spi.ContextServiceLoaderPluginResolver;
 import org.apache.camel.spi.GroovyScriptCompiler;
-import org.apache.camel.spi.ContextServiceLoaderPluginResolver;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesReload;
 import org.apache.camel.spi.PropertiesSource;
