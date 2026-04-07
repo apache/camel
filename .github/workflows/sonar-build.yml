@@ -58,6 +58,18 @@ jobs:
       - name: Build with Maven
         run: ./mvnw install -B -Dquickly
 
+      # Run core tests with JaCoCo and generate aggregated coverage report.
+      # The source modules must be in the reactor so report-aggregate can
+      # map execution data from camel-core tests to their classes.
+      # TODO: Once incremental-build.sh supports module detection in the sonar
+      #       workflow, replace the hardcoded -pl with detected affected modules
+      #       to get coverage on components too (see PR #22247).
+      - name: Run tests with coverage and generate report
+        run: >
+          ./mvnw verify -B -Dcoverage
+          -pl core/camel-api,core/camel-util,core/camel-support,core/camel-management-api,core/camel-management,core/camel-base,core/camel-base-engine,core/camel-core-engine,core/camel-core-languages,core/camel-core-model,core/camel-core-processor,core/camel-core-reifier,core/camel-core,coverage
+          -Dmaven.test.failure.ignore=true
+
       - name: Prepare compiled classes artifact
         shell: bash
         run: find . -name "target" -type d | tar -czf target.tar.gz -T -
