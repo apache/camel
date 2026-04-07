@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -23,6 +24,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -423,24 +425,28 @@ public final class PluginHelper {
             return false;
         }
         boolean foundAny = false;
-        try (JarFile jarFile = new JarFile(jarPath)) { //NOSONAR java:S5042
+        try (JarFile jarFile = new JarFile(new File(jarPath).getCanonicalFile())) {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
-                if (!entryName.startsWith("BOOT-INF/lib/") || !entryName.endsWith(".jar")
-                        || !entryName.contains("camel-jbang-plugin-")) {
+                // Validate entry name against path traversal before filtering to plugin JARs
+                if (entryName.contains("..") || !entryName.startsWith("BOOT-INF/lib/")
+                        || !entryName.endsWith(".jar") || !entryName.contains("camel-jbang-plugin-")) {
                     continue;
                 }
-                Path tempJar = Files.createTempFile("camel-jbang-plugin", ".jar"); //NOSONAR java:S5443
+                Path tempDir = createRestrictedTempDir("camel-jbang-plugin");
+                tempDir.toFile().deleteOnExit();
+                Path tempJar = tempDir.resolve("plugin.jar");
                 tempJar.toFile().deleteOnExit();
                 try (InputStream is = jarFile.getInputStream(entry)) {
                     Files.copy(is, tempJar, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 }
-                try (JarFile nestedJar = new JarFile(tempJar.toFile())) { //NOSONAR java:S5042
-                    // Intentionally not closed — the class loader must remain open for the full
-                    // command lifecycle as picocli may load plugin classes or annotations lazily.
-                    URLClassLoader pluginLoader = new URLClassLoader(new URL[] { tempJar.toUri().toURL() }, classLoader); //NOSONAR java:S2095
+                // URLClassLoader.close() only prevents loading new classes; already-loaded class
+                // definitions remain accessible for the command lifecycle.
+                try (JarFile nestedJar = new JarFile(tempJar.toFile().getCanonicalFile());
+                     URLClassLoader pluginLoader = new URLClassLoader(
+                             new URL[] { tempJar.toUri().toURL() }, classLoader)) {
                     Enumeration<JarEntry> nestedEntries = nestedJar.entries();
                     while (nestedEntries.hasMoreElements()) {
                         JarEntry nested = nestedEntries.nextElement();
@@ -461,6 +467,16 @@ public final class PluginHelper {
             // Ignore errors
         }
         return foundAny;
+    }
+
+    private static Path createRestrictedTempDir(String prefix) throws IOException {
+        try {
+            return Files.createTempDirectory(prefix,
+                    PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
+        } catch (UnsupportedOperationException ignored) {
+            // Non-POSIX system (e.g. Windows) — fall back to default temp directory
+            return Files.createTempDirectory(prefix);
+        }
     }
 
     private static boolean loadPluginFromProperties(
