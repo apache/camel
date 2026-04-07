@@ -76,14 +76,16 @@ public class YamlNormalizeCommand extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         int count = 0;
+        int errors = 0;
         for (String n : files) {
             if (!matchFile(n)) {
                 continue;
             }
             String normalized = normalize(new File(n));
             if (normalized == null) {
-                printer().println("Error normalizing: " + n);
-                return 1;
+                printer().printErr("Error normalizing: " + n);
+                errors++;
+                continue;
             }
             if (output != null) {
                 Path outPath = Path.of(output);
@@ -99,16 +101,14 @@ public class YamlNormalizeCommand extends CamelCommand {
         if (output != null) {
             printer().println("Normalized " + count + " file(s) to " + output);
         }
-        return 0;
+        return errors > 0 ? 1 : 0;
     }
 
     private String normalize(File file) throws Exception {
-        CamelContext camelContext = null;
-        try {
-            DefaultRegistry registry = new DefaultRegistry();
-            registry.addBeanRepository(new StubBeanRepository("*"));
+        DefaultRegistry registry = new DefaultRegistry();
+        registry.addBeanRepository(new StubBeanRepository("*"));
 
-            camelContext = new DefaultCamelContext(registry);
+        try (CamelContext camelContext = new DefaultCamelContext(registry)) {
             camelContext.setAutoStartup(false);
             camelContext.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                     (name, context) -> new StubComponent());
@@ -120,19 +120,20 @@ public class YamlNormalizeCommand extends CamelCommand {
                     (name, context) -> new StubTransformer());
 
             PropertiesComponent pc = (PropertiesComponent) camelContext.getPropertiesComponent();
-            pc.addInitialProperty("camel.component.properties.ignore-missing-property", "true");
-            pc.addInitialProperty("camel.component.properties.ignore-missing-location", "true");
+            pc.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+            pc.addInitialProperty("camel.component.properties.ignoreMissingLocation", "true");
             pc.setPropertiesParser(new DummyPropertiesParser(camelContext));
 
             DummyTypeConverter ec = new DummyTypeConverter();
-            camelContext.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Override);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Integer.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Long.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Double.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Float.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
+            var tcr = camelContext.getTypeConverterRegistry();
+            tcr.setTypeConverterExists(TypeConverterExists.Override);
+            tcr.addTypeConverter(Integer.class, String.class, ec);
+            tcr.addTypeConverter(Long.class, String.class, ec);
+            tcr.addTypeConverter(Double.class, String.class, ec);
+            tcr.addTypeConverter(Float.class, String.class, ec);
+            tcr.addTypeConverter(Byte.class, String.class, ec);
+            tcr.addTypeConverter(Boolean.class, String.class, ec);
+            tcr.addFallbackTypeConverter(ec, false);
 
             StubEipReifier.registerStubEipReifiers(camelContext);
 
@@ -160,10 +161,6 @@ public class YamlNormalizeCommand extends CamelCommand {
             RoutesDefinition rd = new RoutesDefinition();
             rd.setRoutes(routes);
             return dumper.dumpModelAsYaml(camelContext, rd, false, false, false, false);
-        } finally {
-            if (camelContext != null) {
-                camelContext.stop();
-            }
         }
     }
 
