@@ -587,6 +587,12 @@ Five new configuration properties have been added to the SSH endpoint to expose 
 
 All properties default to `0`, which means the Apache MINA SSHD defaults are used. This is an additive change with no impact on existing configurations.
 
+=== camel-json-validator
+
+The JSON validation library `com.networknt:json-schema-validator` used by `camel-json-validator` has been upgraded from 1.x to 2.x.
+
+The `json-schema-validator` https://github.com/networknt/json-schema-validator/blob/master/doc/migration-2.0.0.md[migration guide] can help to migrate your applications if you refer to types that have been updated or removed in 2.x.
+
 === MDC older logic (Deprecation)
 
 The older logic used for MDC (enabled via `camel.main.useMdcLogging = true`) is deprecated in favor of `camel-mdc` component.
