@@ -26,13 +26,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -414,12 +412,14 @@ class DiagramPngExporter {
     }
 
     private static Path createRestrictedTempDir(String prefix) throws IOException {
+        Path camelDir = CommandLineHelper.getCamelDir();
+        Files.createDirectories(camelDir);
         try {
-            Set<PosixFilePermission> ownerOnly = PosixFilePermissions.fromString("rwx------");
-            return Files.createTempDirectory(prefix, PosixFilePermissions.asFileAttribute(ownerOnly));
+            return Files.createTempDirectory(camelDir, prefix,
+                    PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
         } catch (UnsupportedOperationException ignored) {
-            // Non-POSIX system (e.g. Windows) — fall back to default temp directory
-            return Files.createTempDirectory(prefix);
+            // Non-POSIX system (e.g. Windows) — create temp dir inside user's camel directory
+            return Files.createTempDirectory(camelDir, prefix);
         }
     }
 

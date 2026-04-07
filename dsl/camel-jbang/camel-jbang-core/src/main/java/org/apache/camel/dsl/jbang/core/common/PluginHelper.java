@@ -16,17 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -426,20 +431,22 @@ public final class PluginHelper {
         }
         boolean foundAny = false;
         try (JarFile jarFile = new JarFile(new File(jarPath).getCanonicalFile())) {
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String entryName = entry.getName();
-                // Validate entry name against path traversal before filtering to plugin JARs
-                if (entryName.contains("..") || !entryName.startsWith("BOOT-INF/lib/")
-                        || !entryName.endsWith(".jar") || !entryName.contains("camel-jbang-plugin-")) {
+            // Read the Spring Boot classpath index to get plugin JAR names without iterating entries
+            List<String> pluginEntryPaths = readPluginEntryPaths(jarFile);
+            for (String entryPath : pluginEntryPaths) {
+                String pluginName = extractPluginName(entryPath);
+                if (pluginName == null) {
+                    continue;
+                }
+                JarEntry pluginJarEntry = jarFile.getJarEntry(entryPath);
+                if (pluginJarEntry == null) {
                     continue;
                 }
                 Path tempDir = createRestrictedTempDir("camel-jbang-plugin");
                 tempDir.toFile().deleteOnExit();
                 Path tempJar = tempDir.resolve("plugin.jar");
                 tempJar.toFile().deleteOnExit();
-                try (InputStream is = jarFile.getInputStream(entry)) {
+                try (InputStream is = jarFile.getInputStream(pluginJarEntry)) {
                     Files.copy(is, tempJar, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 }
                 // URLClassLoader.close() only prevents loading new classes; already-loaded class
@@ -447,17 +454,13 @@ public final class PluginHelper {
                 try (JarFile nestedJar = new JarFile(tempJar.toFile().getCanonicalFile());
                      URLClassLoader pluginLoader = new URLClassLoader(
                              new URL[] { tempJar.toUri().toURL() }, classLoader)) {
-                    Enumeration<JarEntry> nestedEntries = nestedJar.entries();
-                    while (nestedEntries.hasMoreElements()) {
-                        JarEntry nested = nestedEntries.nextElement();
-                        String nestedName = nested.getName();
-                        if (nestedName.startsWith(PLUGIN_SERVICE_DIR) && !nestedName.endsWith("/")) {
-                            String pluginName = nestedName.substring(nestedName.lastIndexOf("/") + 1);
-                            try (InputStream entryStream = nestedJar.getInputStream(nested)) {
-                                if (loadPluginFromProperties(commandLine, main, target, pluginLoader, entryStream,
-                                        pluginName)) {
-                                    foundAny = true;
-                                }
+                    // Access the service descriptor directly by name — no entry iteration needed
+                    JarEntry serviceEntry = nestedJar.getJarEntry(PLUGIN_SERVICE_DIR + pluginName);
+                    if (serviceEntry != null) {
+                        try (InputStream entryStream = nestedJar.getInputStream(serviceEntry)) {
+                            if (loadPluginFromProperties(commandLine, main, target, pluginLoader, entryStream,
+                                    pluginName)) {
+                                foundAny = true;
                             }
                         }
                     }
@@ -469,13 +472,58 @@ public final class PluginHelper {
         return foundAny;
     }
 
+    /**
+     * Reads BOOT-INF/classpath.idx from the given fat JAR to obtain the list of nested plugin JARs. Using a direct
+     * index lookup avoids iterating all JAR entries.
+     */
+    private static List<String> readPluginEntryPaths(JarFile jarFile) throws IOException {
+        List<String> result = new ArrayList<>();
+        JarEntry idxEntry = jarFile.getJarEntry("BOOT-INF/classpath.idx");
+        if (idxEntry == null) {
+            return result;
+        }
+        try (InputStream is = jarFile.getInputStream(idxEntry);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // classpath.idx format: - "BOOT-INF/lib/some-jar-1.0.jar"
+                String cleaned = line.trim();
+                if (cleaned.startsWith("- \"") && cleaned.endsWith("\"")) {
+                    cleaned = cleaned.substring(3, cleaned.length() - 1);
+                }
+                if (cleaned.contains("camel-jbang-plugin-") && cleaned.endsWith(".jar")
+                        && !cleaned.contains("..")) {
+                    result.add(cleaned);
+                }
+            }
+        }
+        return result;
+    }
+
+    private static String extractPluginName(String entryPath) {
+        String filename = entryPath.substring(entryPath.lastIndexOf('/') + 1);
+        String prefix = "camel-jbang-plugin-";
+        if (!filename.startsWith(prefix)) {
+            return null;
+        }
+        String rest = filename.substring(prefix.length());
+        for (int i = 0; i < rest.length() - 1; i++) {
+            if (rest.charAt(i) == '-' && Character.isDigit(rest.charAt(i + 1))) {
+                return rest.substring(0, i);
+            }
+        }
+        return rest.endsWith(".jar") ? rest.substring(0, rest.length() - 4) : rest;
+    }
+
     private static Path createRestrictedTempDir(String prefix) throws IOException {
+        Path camelDir = CommandLineHelper.getCamelDir();
+        Files.createDirectories(camelDir);
         try {
-            return Files.createTempDirectory(prefix,
+            return Files.createTempDirectory(camelDir, prefix,
                     PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
         } catch (UnsupportedOperationException ignored) {
-            // Non-POSIX system (e.g. Windows) — fall back to default temp directory
-            return Files.createTempDirectory(prefix);
+            // Non-POSIX system (e.g. Windows) — create temp dir inside user's camel directory
+            return Files.createTempDirectory(camelDir, prefix);
         }
     }
 
