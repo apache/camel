@@ -19,16 +19,20 @@ package org.apache.camel.dsl.jbang.core.commands.diagram;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -242,30 +246,18 @@ class DiagramPngExporter {
      * subprocess can connect immediately without waiting.
      */
     private void waitForHawtio(String hawtioUrl, Process hawtioProcess) throws InterruptedException {
+        URI uri = URI.create(hawtioUrl);
+        String host = uri.getHost();
+        int port = uri.getPort();
         for (int i = 0; i < 60; i++) {
             if (!hawtioProcess.isAlive()) {
                 return; // subprocess will detect Hawtio not running
             }
-            HttpURLConnection conn = null;
-            try {
-                conn = (HttpURLConnection) URI.create(hawtioUrl).toURL().openConnection(); //NOSONAR java:S5332
-                conn.setConnectTimeout(500);
-                conn.setReadTimeout(500);
-                conn.setRequestMethod("GET");
-                int code = conn.getResponseCode();
-                // Accept 2xx/3xx/4xx (except 404) as "server is up": Hawtio may respond
-                // with 401 (auth), 403 (CSRF), or 405 (method) before its routes are fully
-                // initialised — all mean the HTTP listener is already accepting connections.
-                // 404 is excluded because it means the endpoint itself is not yet available.
-                if (code >= 200 && code < 500 && code != 404) {
-                    return;
-                }
-            } catch (Exception ignored) {
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress(host, port), 500);
+                return; // TCP port is accepting connections — server is up
+            } catch (IOException ignored) {
                 // connection not yet available — keep polling
-            } finally {
-                if (conn != null) {
-                    conn.disconnect();
-                }
             }
             Thread.sleep(500);
         }
@@ -284,29 +276,14 @@ class DiagramPngExporter {
     }
 
     String checkJolokia(String jolokiaUrl) {
-        HttpURLConnection conn = null;
-        try {
-            String probeUrl = jolokiaUrl.endsWith("/") ? jolokiaUrl + "version" : jolokiaUrl + "/version";
-            URL url = URI.create(probeUrl).toURL();
-            conn = (HttpURLConnection) url.openConnection(); //NOSONAR java:S5332
-            conn.setConnectTimeout(1000);
-            conn.setReadTimeout(1000);
-            conn.setRequestMethod("GET");
-            int code = conn.getResponseCode();
-            // Accept 2xx/3xx/4xx (except 404) as "server is up": Jolokia may respond
-            // with 401 (auth), 403 (CSRF), or 405 (method) before fully initialised —
-            // all mean the HTTP listener is already accepting connections.
-            // 404 is excluded because it means the endpoint itself is not yet available.
-            if (code >= 200 && code < 500 && code != 404) {
-                return null;
-            }
-            return "HTTP " + code;
+        URI uri = URI.create(jolokiaUrl);
+        String host = uri.getHost();
+        int port = uri.getPort();
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(host, port), 1000);
+            return null; // TCP port is accepting connections — Jolokia is up
         } catch (Exception e) {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
         }
     }
 
@@ -423,8 +400,10 @@ class DiagramPngExporter {
         URL location = DiagramPngExporter.class.getProtectionDomain().getCodeSource().getLocation();
         String loc = location.toString();
         if (loc.startsWith("nested:") || (loc.contains("!/") && !loc.startsWith("file:"))) {
-            // Running inside Spring Boot fat JAR — extract the nested plugin JAR to a temp file
-            Path tempJar = Files.createTempFile("camel-diagram-plugin", ".jar"); //NOSONAR java:S5443
+            // Running inside Spring Boot fat JAR — extract the nested plugin JAR to a restricted temp dir
+            Path tempDir = createRestrictedTempDir("camel-diagram-");
+            tempDir.toFile().deleteOnExit();
+            Path tempJar = tempDir.resolve("camel-diagram-plugin.jar");
             tempJar.toFile().deleteOnExit();
             try (InputStream is = location.openStream()) {
                 Files.copy(is, tempJar, StandardCopyOption.REPLACE_EXISTING);
@@ -432,6 +411,16 @@ class DiagramPngExporter {
             return tempJar;
         }
         return Path.of(location.toURI());
+    }
+
+    private static Path createRestrictedTempDir(String prefix) throws IOException {
+        try {
+            Set<PosixFilePermission> ownerOnly = PosixFilePermissions.fromString("rwx------");
+            return Files.createTempDirectory(prefix, PosixFilePermissions.asFileAttribute(ownerOnly));
+        } catch (UnsupportedOperationException ignored) {
+            // Non-POSIX system (e.g. Windows) — fall back to default temp directory
+            return Files.createTempDirectory(prefix);
+        }
     }
 
     String buildClassPath(List<Path> playwrightJars, Path pluginJar) {

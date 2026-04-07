@@ -155,13 +155,12 @@ class DiagramPngExporterTest {
     }
 
     @Test
-    void checkJolokiaReturnsErrorOnHttp404() throws IOException {
+    void checkJolokiaReturnsNullWhenPortIsListening() throws IOException {
+        // TCP socket check: any open port means service is up, regardless of HTTP response code
         HttpServer server = startServer(404);
         try {
             DiagramPngExporter exp = exporter(Path.of("out.png"), "chromium");
-            String result = exp.checkJolokia("http://127.0.0.1:" + server.getAddress().getPort() + "/jolokia");
-            assertNotNull(result);
-            assertTrue(result.contains("404"), "Expected '404' in: " + result);
+            assertNull(exp.checkJolokia("http://127.0.0.1:" + server.getAddress().getPort() + "/jolokia"));
         } finally {
             server.stop(0);
         }

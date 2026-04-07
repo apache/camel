@@ -410,7 +410,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       return done()
     }
 
-    return gulp.src(source, { ignore: ['**/target/**', '**/.*/**'] }) // asciidoc files
+    return gulp.src(source, { ignore: ['**/target/**', '**/target', '**/.*/**', '**/.*'] }) // asciidoc files
       .pipe(through2.obj(extractExamples)) // extracted example files
       // symlink links from a fixed directory, i.e. we could link to
       // the example files from `destination`, that would not work for

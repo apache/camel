@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.diagram;
 
-import java.net.HttpURLConnection;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -265,26 +267,16 @@ final class DiagramScreenshotter {
     }
 
     private void waitForEndpoint(String url) {
+        URI uri = URI.create(url);
+        String host = uri.getHost();
+        int port = uri.getPort();
         long deadline = System.currentTimeMillis() + timeoutMs;
         while (System.currentTimeMillis() < deadline) {
-            HttpURLConnection conn = null;
-            try {
-                conn = (HttpURLConnection) URI.create(url).toURL().openConnection(); //NOSONAR java:S5332
-                conn.setConnectTimeout(1000);
-                conn.setReadTimeout(1000);
-                conn.setRequestMethod("GET");
-                int code = conn.getResponseCode();
-                // Accept any non-404 response including 4xx: Hawtio's CORS/auth responses indicate
-                // the server is up even if the specific endpoint requires authentication.
-                if (code >= 200 && code < 500 && code != 404) {
-                    return;
-                }
-            } catch (Exception ignored) {
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress(host, port), 1000);
+                return; // TCP port is accepting connections — server is up
+            } catch (IOException ignored) {
                 // connection not yet available — keep polling
-            } finally {
-                if (conn != null) {
-                    conn.disconnect();
-                }
             }
             try {
                 Thread.sleep(200);
