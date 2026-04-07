@@ -967,8 +967,11 @@ public class Run extends CamelCommand {
         addRuntimeSpecificDependenciesFromProperties(profileProperties);
 
         // Add plugin dependencies
+        Map<String, Plugin> activePlugins = Collections.emptyMap();
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
+            activePlugins = PluginHelper.getActivePlugins(getMain(), repositories);
+
+            Set<PluginExporter> exporters = activePlugins.values()
                     .stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
@@ -989,6 +992,11 @@ public class Run extends CamelCommand {
             var joined = String.join(",", dependencies);
             main.addInitialProperty(DEPENDENCIES, joined);
             writeSettings(DEPENDENCIES, joined);
+        }
+
+        // Let plugins customize the run before KameletMain starts
+        for (Plugin plugin : activePlugins.values()) {
+            plugin.getRunCustomizer().ifPresent(customizer -> customizer.beforeRun(main, files));
         }
 
         // Block --camel-version when running from camel-launcher
