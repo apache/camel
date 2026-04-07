@@ -11,6 +11,23 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+== Upgrading from 4.18.1 to 4.18.2
+
+=== camel-platform-http-main
+
+When `authenticationEnabled` is set to `true` and no explicit `authenticationPath` is configured,
+the default authentication path is now `/*`. This means all subpaths under the configured context path
+are protected by authentication.
+
+Previously, the authentication path defaulted to the value of `path` (e.g. `/api`), which only covered
+that exact path. If you relied on this behavior and need selective path protection, set
+`authenticationPath` explicitly:
+
+[source,properties]
+----
+camel.server.authenticationPath=/secure/*
+----
+
 == Upgrading Camel 4.17 to 4.18
 
 === camel-simple
@@ -90,7 +107,6 @@ can affect HTTP request validation as vertx/Quarkus is now also performing this 
 to the API specification.
 
 All together this would make Camel behave similar for Rest DSL for both _code first_ and _contract first_ style.
-
 
 === camel-ftp (SFTP) and camel-jsch (SCP)
 

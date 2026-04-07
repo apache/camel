@@ -26,7 +26,6 @@ import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
 
 import static io.vertx.ext.web.handler.BasicAuthHandler.DEFAULT_REALM;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 public class BasicAuthenticationConfigurer implements MainAuthenticationConfigurer {
 
@@ -35,12 +34,7 @@ public class BasicAuthenticationConfigurer implements MainAuthenticationConfigur
             AuthenticationConfig authenticationConfig,
             HttpServerConfigurationProperties properties) {
         String authPropertiesFileName = properties.getBasicPropertiesFile();
-        String path
-                = isNotEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : properties.getPath();
-        // root means to authenticate everything
-        if ("/".equals(path)) {
-            path = "/*";
-        }
+        String path = resolveAuthenticationPath(properties.getAuthenticationPath(), properties.getPath());
         String realm = properties.getAuthenticationRealm() != null ? properties.getAuthenticationRealm() : DEFAULT_REALM;
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
@@ -64,12 +58,7 @@ public class BasicAuthenticationConfigurer implements MainAuthenticationConfigur
             AuthenticationConfig authenticationConfig,
             HttpManagementServerConfigurationProperties properties) {
         String authPropertiesFileName = properties.getBasicPropertiesFile();
-        String path
-                = isNotEmpty(properties.getAuthenticationPath()) ? properties.getAuthenticationPath() : properties.getPath();
-        // root means to authenticate everything
-        if ("/".equals(path)) {
-            path = "/*";
-        }
+        String path = resolveAuthenticationPath(properties.getAuthenticationPath(), properties.getPath());
         String realm = properties.getAuthenticationRealm() != null ? properties.getAuthenticationRealm() : DEFAULT_REALM;
 
         AuthenticationConfigEntry entry = new AuthenticationConfigEntry();
