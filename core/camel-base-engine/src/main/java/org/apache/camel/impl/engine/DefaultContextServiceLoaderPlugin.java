@@ -77,6 +77,21 @@ public class DefaultContextServiceLoaderPlugin extends ServiceSupport implements
     }
 
     @Override
+    public void onReload() {
+        if (contextServicePlugins != null) {
+            for (ContextServicePlugin plugin : contextServicePlugins) {
+                try {
+                    plugin.onReload(camelContext);
+                } catch (Exception e) {
+                    LOG.warn(
+                            "Reloading of plugin {} failed, however the exception will be ignored so other plugins can be reloaded. Reason: {}",
+                            plugin.getClass().getName(), e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
         if (contextServicePlugins != null) {
             for (ContextServicePlugin plugin : contextServicePlugins) {
