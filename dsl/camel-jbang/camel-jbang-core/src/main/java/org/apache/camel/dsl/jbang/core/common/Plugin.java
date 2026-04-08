@@ -45,7 +45,8 @@ public interface Plugin {
 
     /**
      * The plugin may provide an optional run customizer that is called after the Run command has resolved file
-     * arguments and configured dependencies, but before KameletMain.run() builds the CamelContext.
+     * arguments and basic dependencies, but before plugin exporter dependencies are added and KameletMain.run() builds
+     * the CamelContext.
      *
      * @return the plugin specific run customizer implementation, otherwise empty
      */

@@ -972,9 +972,10 @@ public class Run extends CamelCommand {
             activePlugins = PluginHelper.getActivePlugins(getMain(), repositories);
 
             // Let plugins customize the run environment (e.g., set config directories)
-            // before dependency resolution, so plugin exporters can scan the right locations
+            // before plugin exporter dependencies are added, so exporters can scan the right locations
             for (Plugin plugin : activePlugins.values()) {
-                plugin.getRunCustomizer().ifPresent(customizer -> customizer.beforeRun(main, files));
+                plugin.getRunCustomizer()
+                        .ifPresent(customizer -> customizer.beforeRun(main, Collections.unmodifiableList(files)));
             }
 
             Set<PluginExporter> exporters = activePlugins.values()
