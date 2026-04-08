@@ -96,6 +96,10 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     @UriParam(label = "advanced")
     private String additionalHosts;
 
+    // Connection string
+    @UriParam(label = "advanced")
+    private String connectionString;
+
     // Persistence and replication parameters
     @UriParam(label = "producer", defaultValue = "0")
     private int persistTo;
@@ -323,6 +327,19 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
      */
     public void setAdditionalHosts(String additionalHosts) {
         this.additionalHosts = additionalHosts;
+    }
+
+    public String getConnectionString() {
+        return connectionString;
+    }
+
+    /**
+     * The Couchbase SDK connection string to use (e.g., couchbase://hostname:11210). When set, this takes precedence
+     * over the hostname and port options for the SDK connection. This is useful when the KV port is not the default
+     * 11210, for example when connecting to a container with dynamic port mappings.
+     */
+    public void setConnectionString(String connectionString) {
+        this.connectionString = connectionString;
     }
 
     public int getPersistTo() {
@@ -653,26 +670,24 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
 
     //create from couchbase-client
     private Bucket createClient() throws Exception {
-        List<URI> hosts = Arrays.asList(makeBootstrapURI());
-        String connectionString;
-
         if (bucket == null || bucket.isEmpty()) {
             throw new CamelException(COUCHBASE_URI_ERROR);
         }
 
         ClusterEnvironment env = createClusterEnvironment();
 
-        String addHosts = hosts.stream()
-                .map(URI::getHost)
-                .collect(Collectors.joining(","));
-
-        if (!addHosts.isEmpty()) {
-            connectionString = addHosts;
+        String connStr;
+        if (connectionString != null && !connectionString.isEmpty()) {
+            connStr = connectionString;
         } else {
-            connectionString = hostname;
+            List<URI> hosts = Arrays.asList(makeBootstrapURI());
+            String addHosts = hosts.stream()
+                    .map(URI::getHost)
+                    .collect(Collectors.joining(","));
+            connStr = !addHosts.isEmpty() ? addHosts : hostname;
         }
 
-        Cluster cluster = Cluster.connect(connectionString, ClusterOptions
+        Cluster cluster = Cluster.connect(connStr, ClusterOptions
                 .clusterOptions(username, password)
                 .environment(env));
 

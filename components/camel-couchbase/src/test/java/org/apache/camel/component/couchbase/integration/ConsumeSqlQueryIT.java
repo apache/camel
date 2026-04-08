@@ -140,8 +140,11 @@ public class ConsumeSqlQueryIT extends CamelTestSupport {
     }
 
     public String getConnectionUri() {
-        return String.format("couchbase:http://%s:%d?bucket=%s&username=%s&password=%s", service.getHostname(),
-                service.getPort(), bucketName, service.getUsername(), service.getPassword());
+        return String.format(
+                "couchbase:http://%s:%d?bucket=%s&username=%s&password=%s&connectionString=%s",
+                service.getHostname(),
+                service.getPort(), bucketName, service.getUsername(), service.getPassword(),
+                service.getConnectionString());
     }
 
     @Override
