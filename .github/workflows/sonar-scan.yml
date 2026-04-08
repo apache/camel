@@ -28,7 +28,9 @@ concurrency:
 
 jobs:
   sonar:
+    # Temporarily disabled until SonarCloud quality gate is adjusted (INFRA-27808)
     if: >
+      false &&
       github.event.workflow_run.conclusion == 'success' &&
       github.repository == 'apache/camel'
     name: Sonar Analysis

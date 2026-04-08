@@ -37,7 +37,8 @@ concurrency:
 
 jobs:
   build:
-    if: github.repository == 'apache/camel'
+    # Temporarily disabled until SonarCloud quality gate is adjusted (INFRA-27808)
+    if: false && github.repository == 'apache/camel'
     name: Build for Sonar Analysis
     runs-on: ubuntu-latest
     steps:
@@ -85,12 +86,18 @@ jobs:
 
       - name: Prepare pull request metadata
         shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TARGET_ARTIFACT_ID: ${{ steps.target-upload.outputs.artifact-id }}
         run: |
-          echo "${{ github.event.pull_request.number }}" > pr-event.txt
-          echo "${{ github.event.pull_request.head.ref }}" >> pr-event.txt
-          echo "${{ github.event.pull_request.base.ref }}" >> pr-event.txt
-          echo "${{ github.event.pull_request.head.sha }}" >> pr-event.txt
-          echo "${{ steps.target-upload.outputs.artifact-id }}" >> pr-event.txt
+          echo "$PR_NUMBER" > pr-event.txt
+          echo "$PR_HEAD_REF" >> pr-event.txt
+          echo "$PR_BASE_REF" >> pr-event.txt
+          echo "$PR_HEAD_SHA" >> pr-event.txt
+          echo "$TARGET_ARTIFACT_ID" >> pr-event.txt
 
       - name: Upload pull request metadata
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
