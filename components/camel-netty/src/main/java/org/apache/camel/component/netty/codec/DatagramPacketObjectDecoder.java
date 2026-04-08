@@ -31,7 +31,11 @@ public class DatagramPacketObjectDecoder extends MessageToMessageDecoder<Address
     private final ObjectDecoder delegateDecoder;
 
     public DatagramPacketObjectDecoder(ClassResolver resolver) {
-        delegateDecoder = new ObjectDecoder(resolver);
+        this(resolver, null);
+    }
+
+    public DatagramPacketObjectDecoder(ClassResolver resolver, String deserializationFilter) {
+        delegateDecoder = new ObjectDecoder(resolver, deserializationFilter);
     }
 
     @Override
