@@ -68,7 +68,6 @@ jobs:
       - name: mvn test
         uses: ./.github/actions/incremental-build
         with:
-          mode: test
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
           artifact-upload-suffix: main-java-${{ matrix.java }}

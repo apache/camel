@@ -1,0 +1,121 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Posts the CI test summary comment on PRs.
+# Uses workflow_run trigger so it runs in the base repo context with
+# full permissions — this allows posting comments on fork PRs too.
+
+name: Post CI test comment
+
+on:
+  workflow_run:
+    workflows: ["Build and test"]
+    types:
+      - completed
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' ||
+      github.event.workflow_run.event == 'workflow_dispatch'
+    permissions:
+      pull-requests: write
+      actions: read
+    steps:
+      - name: Download CI comment artifact
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: ${{ github.event.workflow_run.id }},
+            });
+            const match = artifacts.data.artifacts.find(a => a.name === 'ci-comment');
+            if (!match) {
+              core.info('No ci-comment artifact found, skipping');
+              return;
+            }
+            const download = await github.rest.actions.downloadArtifact({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              artifact_id: match.id,
+              archive_format: 'zip',
+            });
+            const fs = require('fs');
+            fs.writeFileSync('${{ github.workspace }}/ci-comment.zip', Buffer.from(download.data));
+      - name: Extract artifact
+        run: |
+          if [ -f ci-comment.zip ]; then
+            unzip -o ci-comment.zip -d ci-comment-artifact
+          fi
+      - name: Post or update PR comment
+        if: always()
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const prFile = 'ci-comment-artifact/pr-number';
+            const commentFile = 'ci-comment-artifact/incremental-test-comment.md';
+
+            if (!fs.existsSync(prFile)) {
+              core.info('No PR number file found, skipping');
+              return;
+            }
+            const prNumber = parseInt(fs.readFileSync(prFile, 'utf8').trim(), 10);
+            if (!prNumber) {
+              core.warning('Invalid PR number, skipping');
+              return;
+            }
+
+            if (!fs.existsSync(commentFile)) {
+              core.info('No comment file found, skipping');
+              return;
+            }
+            const body = fs.readFileSync(commentFile, 'utf8').trim();
+            if (!body) return;
+
+            const marker = '<!-- ci-tested-modules -->';
+
+            try {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+              });
+              const existing = comments.find(c => c.body && c.body.includes(marker));
+
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body: body,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body: body,
+                });
+              }
+            } catch (error) {
+              core.warning(`Failed to post CI test summary comment: ${error.message}`);
+            }
