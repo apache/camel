@@ -36,7 +36,7 @@ public final class NettyPayloadHelper {
         //Helper class
     }
 
-    public static Object getIn(NettyEndpoint endpoint, Exchange exchange) {
+    public static Object getRequestPayload(NettyEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange, true, endpoint.getConfiguration().isAllowSerializedHeaders());
@@ -51,17 +51,17 @@ public final class NettyPayloadHelper {
         }
     }
 
-    public static Object getOut(NettyEndpoint endpoint, Exchange exchange) {
+    public static Object getResponsePayload(NettyEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange);
         } else {
             // normal transfer using the body only
-            return exchange.getOut().getBody();
+            return exchange.getMessage().getBody();
         }
     }
 
-    public static void setIn(Exchange exchange, Object payload) {
+    public static void setPayload(Exchange exchange, Object payload) {
         if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
             DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
         } else if (payload instanceof AddressedEnvelope) {
@@ -72,37 +72,15 @@ public final class NettyPayloadHelper {
                 DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
             } else {
                 // need to take out the payload here
-                exchange.getIn().setBody(dp.content());
+                exchange.getMessage().setBody(dp.content());
             }
             // setup the sender address here for sending the response message back
             exchange.setProperty(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
             // setup the remote address to the message header at the same time
-            exchange.getIn().setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
+            exchange.getMessage().setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
         } else {
             // normal transfer using the body only
-            exchange.getIn().setBody(payload);
-        }
-    }
-
-    public static void setOut(Exchange exchange, Object payload) {
-        if (payload instanceof DefaultExchangeHolder defaultExchangeHolder) {
-            DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
-        } else if (payload instanceof AddressedEnvelope) {
-            @SuppressWarnings("unchecked")
-            AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>) payload;
-            // need to check if the content is ExchangeHolder
-            if (dp.content() instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
-            } else {
-                // need to take out the payload here
-                exchange.getOut().setBody(dp.content());
-            }
-            // setup the sender address here for sending the response message back
-            exchange.setProperty(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
-        } else {
-            // normal transfer using the body only and preserve the headers
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-            exchange.getOut().setBody(payload);
+            exchange.getMessage().setBody(payload);
         }
     }
 

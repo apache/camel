@@ -202,7 +202,7 @@ public class AvroListener {
         }
 
         if (ExchangeHelper.isOutCapable(exchange)) {
-            response = exchange.getOut().getBody();
+            response = exchange.getMessage().getBody();
         } else {
             response = null;
         }

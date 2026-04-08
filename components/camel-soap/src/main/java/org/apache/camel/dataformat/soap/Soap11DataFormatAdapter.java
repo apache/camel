@@ -161,7 +161,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
                 } else {
                     returnHeaders = anyHeaderElements;
                 }
-                exchange.getOut().setHeader(SoapDataFormat.SOAP_UNMARSHALLED_HEADER_LIST, returnHeaders);
+                exchange.getMessage().setHeader(SoapDataFormat.SOAP_UNMARSHALLED_HEADER_LIST, returnHeaders);
             }
         }
 

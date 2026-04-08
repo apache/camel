@@ -80,16 +80,9 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     public void process(Exchange exchange) throws Exception {
         InputStream stream = exchange.getIn().getMandatoryBody(InputStream.class);
         try {
-            // lets setup the out message before we invoke the signing
-            // so that it can mutate it if necessary
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
+            Message out = exchange.getMessage();
             verify(stream, out);
             clearMessageHeaders(out);
-        } catch (Exception e) {
-            // remove OUT message, as an exception occurred
-            exchange.setOut(null);
-            throw e;
         } finally {
             IOHelper.close(stream, "input stream");
         }

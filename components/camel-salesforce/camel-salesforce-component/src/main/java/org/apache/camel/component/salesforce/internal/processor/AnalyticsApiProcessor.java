@@ -216,18 +216,14 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
 
     private void processResponse(
             Exchange exchange, Object body, Map<String, String> headers, SalesforceException ex, AsyncCallback callback) {
-        final Message out = exchange.getOut();
+        final Message message = exchange.getMessage();
         if (ex != null) {
             exchange.setException(ex);
         } else {
-            out.setBody(body);
+            message.setBody(body);
         }
 
-        // copy headers
-        final Message inboundMessage = exchange.getIn();
-        final Map<String, Object> outputHeaders = out.getHeaders();
-        outputHeaders.putAll(inboundMessage.getHeaders());
-        outputHeaders.putAll(headers);
+        message.getHeaders().putAll(headers);
 
         // signal exchange completion
         callback.done(false);

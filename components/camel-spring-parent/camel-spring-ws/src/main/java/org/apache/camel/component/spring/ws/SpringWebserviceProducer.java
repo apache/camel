@@ -37,7 +37,6 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ws.WebServiceMessage;
@@ -107,13 +106,8 @@ public class SpringWebserviceProducer extends DefaultProducer {
                     @Override
                     public void doWithMessage(WebServiceMessage responseMessage) throws IOException, TransformerException {
                         SoapMessage soapMessage = (SoapMessage) responseMessage;
-                        if (ExchangeHelper.isOutCapable(exchange)) {
-                            exchange.getOut().copyFromWithNewBody(exchange.getIn(), soapMessage.getPayloadSource());
-                            populateHeaderAndAttachmentsFromResponse(exchange.getOut(AttachmentMessage.class), soapMessage);
-                        } else {
-                            exchange.getIn().setBody(soapMessage.getPayloadSource());
-                            populateHeaderAndAttachmentsFromResponse(exchange.getIn(AttachmentMessage.class), soapMessage);
-                        }
+                        exchange.getMessage().setBody(soapMessage.getPayloadSource());
+                        populateHeaderAndAttachmentsFromResponse(exchange.getMessage(AttachmentMessage.class), soapMessage);
 
                     }
                 });

@@ -78,9 +78,7 @@ public class PullRequestStateProducer extends AbstractGitHubProducer {
 
         CommitStatus response = commitService.createStatus(getRepository(), pullRequestNumberSHA, status);
 
-        // copy the header of in message to the out message
-        exchange.getOut().copyFrom(exchange.getIn());
-        exchange.getOut().setBody(response);
+        exchange.getMessage().setBody(response);
     }
 
 }

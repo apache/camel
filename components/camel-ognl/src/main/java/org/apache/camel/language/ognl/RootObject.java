@@ -49,6 +49,7 @@ public class RootObject {
         return exchange.getIn();
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     public Message getResponse() {
         return exchange.getOut();

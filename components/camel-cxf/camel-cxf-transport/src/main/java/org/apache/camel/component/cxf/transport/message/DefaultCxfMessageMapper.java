@@ -107,9 +107,7 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
             return;
         }
 
-        Map<String, Object> camelHeaders = exchange.getOut().getHeaders();
-        // copy the in message header to out message
-        camelHeaders.putAll(exchange.getIn().getHeaders());
+        Map<String, Object> camelHeaders = exchange.getMessage().getHeaders();
 
         Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>) cxfMessage.get(Message.PROTOCOL_HEADERS));
 

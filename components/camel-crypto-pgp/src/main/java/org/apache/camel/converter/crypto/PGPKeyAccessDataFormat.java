@@ -221,7 +221,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
                     "Cannot PGP encrypt message. No public encryption key found for the User Ids " + userids
                                                + " in the public keyring. Either specify other User IDs or add correct public keys to the keyring.");
         }
-        exchange.getOut().setHeader(NUMBER_OF_ENCRYPTION_KEYS, Integer.valueOf(keys.size()));
+        exchange.getMessage().setHeader(NUMBER_OF_ENCRYPTION_KEYS, Integer.valueOf(keys.size()));
 
         InputStream input = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, graph);
 
@@ -336,7 +336,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             return null;
         }
 
-        exchange.getOut().setHeader(NUMBER_OF_SIGNING_KEYS, Integer.valueOf(sigSecretKeysWithPrivateKeyAndUserId.size()));
+        exchange.getMessage().setHeader(NUMBER_OF_SIGNING_KEYS, Integer.valueOf(sigSecretKeysWithPrivateKeyAndUserId.size()));
 
         List<PGPSignatureGenerator> sigGens = new ArrayList<>();
         for (PGPSecretKeyAndPrivateKeyAndUserId sigSecretKeyWithPrivateKeyAndUserId : sigSecretKeysWithPrivateKeyAndUserId) {

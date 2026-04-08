@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
@@ -368,15 +369,17 @@ public class BeanExpression implements Expression, Predicate {
             // force to use InOut to retrieve the result on the OUT message
             resultExchange.setPattern(ExchangePattern.InOut);
             processor.process(resultExchange);
-            // the response is always stored in OUT
-            result = resultExchange.hasOut() ? resultExchange.getOut().getBody() : null;
+            // the bean component creates an OUT for non-void methods on OUT-capable exchanges,
+            // so getResponse() returns null for void methods (no result) and the OUT for non-void
+            Message response = ExchangeHelper.getResponse(resultExchange);
+            result = response != null ? response.getBody() : null;
 
             // propagate properties and headers from result
             if (resultExchange.hasProperties()) {
                 exchange.getProperties().putAll(resultExchange.getProperties());
             }
-            if (resultExchange.hasOut() && resultExchange.getOut().hasHeaders()) {
-                exchange.getIn().getHeaders().putAll(resultExchange.getOut().getHeaders());
+            if (response != null && response.hasHeaders()) {
+                exchange.getIn().getHeaders().putAll(response.getHeaders());
             }
 
             // propagate exceptions

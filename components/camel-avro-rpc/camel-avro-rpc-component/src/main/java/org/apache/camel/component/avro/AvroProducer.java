@@ -58,9 +58,7 @@ public abstract class AvroProducer extends DefaultAsyncProducer {
                 public void handleResult(Object result) {
                     // got result from avro, so set it on the exchange and invoke the callback
                     try {
-                        // propagate headers
-                        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-                        exchange.getOut().setBody(result);
+                        exchange.getMessage().setBody(result);
                     } finally {
                         callback.done(false);
                     }

@@ -161,7 +161,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
 
         if (result != null) {
             if (ExchangeHelper.isOutCapable(exchange)) {
-                exchange.setOut(result);
+                ExchangeHelper.setResponse(exchange, result);
             } else {
                 exchange.setIn(result);
             }
@@ -222,7 +222,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
                     final Exception cause = new HttpOperationFailedException(uri, code, statusText, null, headers, bodyText);
 
                     if (ExchangeHelper.isOutCapable(exchange)) {
-                        exchange.setOut(result);
+                        ExchangeHelper.setResponse(exchange, result);
                     } else {
                         exchange.setIn(result);
                     }

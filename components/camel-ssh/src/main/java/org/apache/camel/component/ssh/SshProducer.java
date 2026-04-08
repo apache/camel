@@ -72,13 +72,10 @@ public class SshProducer extends DefaultProducer {
             }
             SshResult result = SshHelper.sendExecCommand(headers, command, endpoint, client);
 
-            // propagate headers
-            exchange.getOut().getHeaders().putAll(in.getHeaders());
-
             // store result
-            exchange.getOut().setBody(result.getStdout());
-            exchange.getOut().setHeader(SshConstants.EXIT_VALUE, result.getExitValue());
-            exchange.getOut().setHeader(SshConstants.STDERR, result.getStderr());
+            exchange.getMessage().setBody(result.getStdout());
+            exchange.getMessage().setHeader(SshConstants.EXIT_VALUE, result.getExitValue());
+            exchange.getMessage().setHeader(SshConstants.STDERR, result.getStderr());
         } catch (Exception e) {
             throw new CamelExchangeException("Cannot execute command: " + command, exchange, e);
         }

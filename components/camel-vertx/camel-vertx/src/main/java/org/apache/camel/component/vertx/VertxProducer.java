@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,8 +92,6 @@ public class VertxProducer extends DefaultAsyncProducer {
         @Override
         public void handle(AsyncResult<Message<Object>> event) {
             try {
-                // preserve headers
-                MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
                 Throwable e = event.cause();
                 if (e != null) {
                     exchange.setException(e);

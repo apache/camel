@@ -28,6 +28,7 @@ import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.component.netty.NettyProducer;
+import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,19 +188,15 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         // set the result on either IN or OUT on the original exchange depending on its pattern
         if (ExchangeHelper.isOutCapable(exchange)) {
-            exchange.setOut(message);
+            ExchangeHelper.setResponse(exchange, message);
         } else {
             exchange.setIn(message);
         }
 
         try {
             // should channel be closed after complete?
-            Boolean close;
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-            } else {
-                close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-            }
+            Boolean close
+                    = exchange.getMessage().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
 
             // check the setting on the exchange property
             if (close == null) {
@@ -257,10 +254,14 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         // set the result on either IN or OUT on the original exchange depending on its pattern
         if (ExchangeHelper.isOutCapable(exchange)) {
-            NettyPayloadHelper.setOut(exchange, body);
-            return exchange.getOut();
+            // DefaultExchangeHolder unmarshals its own OUT, so only pre-create one for normal payloads
+            if (!(body instanceof DefaultExchangeHolder)) {
+                ExchangeHelper.createResponseFromInput(exchange);
+            }
+            NettyPayloadHelper.setPayload(exchange, body);
+            return exchange.getMessage();
         } else {
-            NettyPayloadHelper.setIn(exchange, body);
+            NettyPayloadHelper.setPayload(exchange, body);
             return exchange.getIn();
         }
     }

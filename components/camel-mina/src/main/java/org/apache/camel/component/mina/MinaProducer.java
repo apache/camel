@@ -31,7 +31,6 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
@@ -136,7 +135,7 @@ public class MinaProducer extends DefaultProducer {
                     IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
         }
 
-        Object body = MinaPayloadHelper.getIn(getEndpoint(), exchange);
+        Object body = MinaPayloadHelper.getRequestPayload(getEndpoint(), exchange);
         if (body == null) {
             noReplyLogger.log("No payload to send for exchange: " + exchange);
             return; // exit early since nothing to write
@@ -184,12 +183,7 @@ public class MinaProducer extends DefaultProducer {
                 maybeDisconnectOnTimeout();
                 throw new ExchangeTimedOutException(exchange, timeout);
             } else {
-                // set the result on either IN or OUT on the original exchange depending on its pattern
-                if (ExchangeHelper.isOutCapable(exchange)) {
-                    MinaPayloadHelper.setOut(exchange, handler.getMessage());
-                } else {
-                    MinaPayloadHelper.setIn(exchange, handler.getMessage());
-                }
+                MinaPayloadHelper.setPayload(exchange, handler.getMessage());
             }
         }
     }
@@ -210,12 +204,7 @@ public class MinaProducer extends DefaultProducer {
         }
 
         // should session be closed after complete?
-        Boolean close;
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            close = exchange.getOut().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-        } else {
-            close = exchange.getIn().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-        }
+        Boolean close = exchange.getMessage().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
 
         // should we disconnect, the header can override the configuration
         boolean disconnect = getEndpoint().getConfiguration().isDisconnect();

@@ -54,12 +54,7 @@ public class ServerResponseFutureListener implements ChannelFutureListener {
         }
 
         // should channel be closed after complete?
-        Boolean close;
-        if (exchange.hasOut()) {
-            close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-        } else {
-            close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-        }
+        Boolean close = exchange.getMessage().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
 
         // check the setting on the exchange property
         if (close == null) {

@@ -183,17 +183,15 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
         // process JSON response for TypeReference
         try {
-            final Message out = exchange.getOut();
-            final Message in = exchange.getIn();
-            out.copyFrom(in);
-            out.getHeaders().putAll(headers);
+            final Message message = exchange.getMessage();
+            message.getHeaders().putAll(headers);
 
             if (ex != null) {
                 // if an exception is reported we should not lose it
                 if (shouldReport(ex)) {
                     exchange.setException(ex);
                 } else {
-                    out.setBody(null);
+                    message.setBody(null);
                 }
             } else if (responseEntity != null) {
                 // do we need to un-marshal a response
@@ -213,7 +211,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                         response = responseEntity;
                     }
                 }
-                out.setBody(response);
+                message.setBody(response);
             }
         } catch (IOException e) {
             String msg = "Error parsing JSON response: " + e.getMessage();
@@ -265,28 +263,26 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             AsyncCallback callback) {
         // process JSON response for TypeReference
         try {
-            final Message out = exchange.getOut();
-            final Message in = exchange.getIn();
-            out.copyFrom(in);
-            out.getHeaders().putAll(headers);
+            final Message message = exchange.getMessage();
+            message.getHeaders().putAll(headers);
 
             if (ex != null) {
                 // if an exception is reported we should not lose it
                 if (shouldReport(ex)) {
                     exchange.setException(ex);
                 } else {
-                    out.setBody(null);
+                    message.setBody(null);
                 }
             } else if (responseEntity != null) {
                 // do we need to un-marshal a response
                 final AbstractQueryRecordsBase<?> response;
                 Class<?> responseClass = exchange.getProperty(RESPONSE_CLASS, Class.class);
                 response = (AbstractQueryRecordsBase<?>) objectMapper.readValue(responseEntity, responseClass);
-                out.setHeader(HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE, response.getTotalSize());
+                message.setHeader(HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE, response.getTotalSize());
                 QueryResultIterator<?> iterator
                         = new QueryResultIterator(
                                 objectMapper, responseClass, restClient, determineHeaders(exchange), response);
-                out.setBody(iterator);
+                message.setBody(iterator);
             }
         } catch (Exception e) {
             String msg = "Error parsing JSON response: " + e.getMessage();

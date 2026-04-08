@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -79,8 +80,8 @@ public class UnwrapStreamProcessor extends AsyncProcessorSupport {
                         Exchange copy = (Exchange) body;
                         exchange.setException(copy.getException());
                         exchange.setIn(copy.getIn());
-                        if (copy.hasOut()) {
-                            exchange.setOut(copy.getOut());
+                        if (ExchangeHelper.hasResponse(copy)) {
+                            ExchangeHelper.setResponse(exchange, copy.getMessage());
                         }
                         exchange.getProperties().clear();
                         exchange.getProperties().putAll(copy.getProperties());

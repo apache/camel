@@ -125,7 +125,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getOut());
+                return function.apply(exchange.getMessage());
             }
         });
     }
@@ -215,7 +215,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getOut().getBody());
+                return function.apply(exchange.getMessage().getBody());
             }
         });
     }
@@ -228,8 +228,8 @@ public class MockExpressionClause<T> implements Expression, Predicate {
             @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                        exchange.getOut().getBody(),
-                        exchange.getOut().getHeaders());
+                        exchange.getMessage().getBody(),
+                        exchange.getMessage().getHeaders());
             }
         });
     }
@@ -241,7 +241,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
         return delegate.expression(new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getOut().getBody(expectedType));
+                return function.apply(exchange.getMessage().getBody(expectedType));
             }
         });
     }
@@ -254,8 +254,8 @@ public class MockExpressionClause<T> implements Expression, Predicate {
             @Override
             public Object evaluate(Exchange exchange) {
                 return function.apply(
-                        exchange.getOut().getBody(expectedType),
-                        exchange.getOut().getHeaders());
+                        exchange.getMessage().getBody(expectedType),
+                        exchange.getMessage().getHeaders());
             }
         });
     }

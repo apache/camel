@@ -55,9 +55,7 @@ public class PullRequestFilesProducer extends AbstractGitHubProducer {
 
         java.util.List<CommitFile> response = pullRequestService.getFiles(getRepository(), pullRequestNumber);
 
-        // copy the header of in message to the out message
-        exchange.getOut().copyFrom(exchange.getIn());
-        exchange.getOut().setBody(response);
+        exchange.getMessage().setBody(response);
     }
 
 }

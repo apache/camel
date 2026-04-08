@@ -213,7 +213,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
                 if (!factory.skipHeader()) {
                     Map<String, Object> headerObjMap = createModel(headerFactory, line, count.intValue());
-                    exchange.getOut().setHeader(CAMEL_BINDY_FIXED_LENGTH_HEADER, headerObjMap);
+                    exchange.getMessage().setHeader(CAMEL_BINDY_FIXED_LENGTH_HEADER, headerObjMap);
                 }
             }
 
@@ -242,7 +242,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 if (factory.hasFooter()) {
                     if (!factory.skipFooter()) {
                         Map<String, Object> footerObjMap = createModel(footerFactory, thisLine, count.intValue());
-                        exchange.getOut().setHeader(CAMEL_BINDY_FIXED_LENGTH_FOOTER, footerObjMap);
+                        exchange.getMessage().setHeader(CAMEL_BINDY_FIXED_LENGTH_FOOTER, footerObjMap);
                     }
                 } else {
                     model = createModel(factory, thisLine, count.intValue());

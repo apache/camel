@@ -175,11 +175,10 @@ public class CompositeSObjectCollectionsProcessor extends AbstractSalesforceProc
             if (exception != null) {
                 exchange.setException(exception);
             } else {
-                Message in = exchange.getIn();
-                Message out = exchange.getOut();
+                Message message = exchange.getMessage();
                 List<?> response = responseBody.get();
-                out.copyFromWithNewBody(in, response);
-                out.getHeaders().putAll(headers);
+                message.setBody(response);
+                message.getHeaders().putAll(headers);
             }
         } finally {
             callback.done(false);

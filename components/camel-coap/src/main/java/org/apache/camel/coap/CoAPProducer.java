@@ -17,7 +17,6 @@
 package org.apache.camel.coap;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
@@ -80,12 +79,11 @@ public class CoAPProducer extends DefaultProducer {
         }
 
         if (response != null) {
-            CoAPHelper.convertCoapResponseToMessage(response, exchange.getOut());
+            CoAPHelper.convertCoapResponseToMessage(response, exchange.getMessage());
         }
 
         if (method.equalsIgnoreCase(CoAPConstants.METHOD_PING)) {
-            Message resp = exchange.getOut();
-            resp.setBody(pingResponse);
+            exchange.getMessage().setBody(pingResponse);
         }
     }
 

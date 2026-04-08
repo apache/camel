@@ -171,7 +171,7 @@ public class RocketMQReplyManagerSupport extends ServiceSupport implements Reply
     }
 
     private static void processReceivedReply(ReplyHolder holder) {
-        Message message = holder.getExchange().getOut();
+        Message message = holder.getExchange().getMessage();
         MessageExt messageExt = holder.getMessageExt();
         message.setBody(messageExt.getBody());
         RocketMQMessageConverter.populateHeadersByMessageExt(message, messageExt);

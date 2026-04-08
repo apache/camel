@@ -65,12 +65,14 @@ import net.sf.saxon.value.StringValue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -658,12 +660,13 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         dynamicQueryContext.setParameter(
                 StructuredQName.fromClarkName("exchange"),
                 getAsParameter(exchange));
-        if (exchange.hasOut() && exchange.getPattern().isOutCapable()) {
+        Message response = ExchangeHelper.getResponse(exchange);
+        if (response != null && exchange.getPattern().isOutCapable()) {
             dynamicQueryContext.setParameter(
                     StructuredQName.fromClarkName("out.body"),
-                    getAsParameter(exchange.getOut().getBody()));
+                    getAsParameter(response.getBody()));
 
-            addParameters(dynamicQueryContext, exchange.getOut().getHeaders(), "out.headers.");
+            addParameters(dynamicQueryContext, response.getHeaders(), "out.headers.");
         }
     }
 

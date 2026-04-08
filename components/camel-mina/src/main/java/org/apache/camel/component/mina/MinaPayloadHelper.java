@@ -32,7 +32,7 @@ public final class MinaPayloadHelper {
         //Utility Class
     }
 
-    public static Object getIn(MinaEndpoint endpoint, Exchange exchange) {
+    public static Object getRequestPayload(MinaEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange);
@@ -42,32 +42,22 @@ public final class MinaPayloadHelper {
         }
     }
 
-    public static Object getOut(MinaEndpoint endpoint, Exchange exchange) {
+    public static Object getResponsePayload(MinaEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return DefaultExchangeHolder.marshal(exchange);
         } else {
             // normal transfer using the body only
-            return exchange.getOut().getBody();
+            return exchange.getMessage().getBody();
         }
     }
 
-    public static void setIn(Exchange exchange, Object payload) {
+    public static void setPayload(Exchange exchange, Object payload) {
         if (payload instanceof DefaultExchangeHolder) {
             DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else {
             // normal transfer using the body only
-            exchange.getIn().setBody(payload);
-        }
-    }
-
-    public static void setOut(Exchange exchange, Object payload) {
-        if (payload instanceof DefaultExchangeHolder) {
-            DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
-        } else {
-            // normal transfer using the body only and preserve the headers
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-            exchange.getOut().setBody(payload);
+            exchange.getMessage().setBody(payload);
         }
     }
 }

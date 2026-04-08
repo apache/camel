@@ -78,7 +78,7 @@ public class SinkConverter {
 
     @SuppressWarnings("rawtypes")
     public static Map toMap(JavaSink.ResultMap resultBeans, Exchange exchange) {
-        Message outMessage = exchange.getOut();
+        Message outMessage = exchange.getMessage();
         outMessage.setBody(resultBeans);
 
         @SuppressWarnings("unchecked")

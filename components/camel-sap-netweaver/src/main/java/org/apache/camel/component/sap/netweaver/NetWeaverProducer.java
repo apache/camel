@@ -57,7 +57,7 @@ public class NetWeaverProducer extends DefaultProducer {
         LOG.debug("Calling SAP Net-Weaver {} with command {}", http, command);
         http.process(httpExchange);
 
-        String data = httpExchange.getOut().getBody(String.class);
+        String data = httpExchange.getMessage().getBody(String.class);
 
         if (data != null && getEndpoint().isJsonAsMap() && getEndpoint().isJson()) {
             // map json string to json map
