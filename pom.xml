@@ -125,6 +125,9 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${maven.multiModuleProjectDirectory}/coverage/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.cpd.exclusions>
+            components/camel-jackson3/**,components/camel-jackson3xml/**,components/camel-test/camel-test-junit6/**
+        </sonar.cpd.exclusions>
 
         <cyclonedx-maven-plugin-version>2.9.1</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.7.3</flatten-maven-plugin-version>
