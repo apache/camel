@@ -71,7 +71,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private String jwtKeystoreType;
     @Metadata(label = "security")
     private String jwtKeystorePath;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String jwtKeystorePassword;
 
     public HttpManagementServerConfigurationProperties(MainConfigurationProperties parent) {

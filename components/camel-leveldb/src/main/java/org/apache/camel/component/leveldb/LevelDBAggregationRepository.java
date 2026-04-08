@@ -72,7 +72,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     private int maximumRedeliveries;
     @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterUri;
-    @Metadata(label = "advanced",
+    @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
     @Metadata(label = "advanced",

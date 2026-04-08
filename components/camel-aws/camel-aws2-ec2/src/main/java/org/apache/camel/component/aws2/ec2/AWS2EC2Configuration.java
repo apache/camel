@@ -34,11 +34,11 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
     @UriParam(label = "producer")
     @Metadata(label = "advanced", autowired = true)
     private Ec2Client amazonEc2Client;
-    @UriParam(label = "producer,security", secret = true)
+    @UriParam(label = "producer,security", security = "secret")
     private String accessKey;
-    @UriParam(label = "producer,security", secret = true)
+    @UriParam(label = "producer,security", security = "secret")
     private String secretKey;
-    @UriParam(label = "producer,security", secret = true)
+    @UriParam(label = "producer,security", security = "secret")
     private String sessionToken;
     @UriParam(label = "producer")
     @Metadata(required = true)
@@ -53,7 +53,7 @@ public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
     private String region;
     @UriParam
     private boolean pojoRequest;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
     private boolean overrideEndpoint;
