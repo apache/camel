@@ -268,6 +268,77 @@ YAML::
 ----
 ====
 
+==== Using with PGVector
+
+This example shows how to embed text and store it in PostgreSQL with pgvector:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:store")
+    .to("langchain4j-embeddings:embed")
+    .setHeader(PgVectorHeaders.ACTION).constant(PgVectorAction.UPSERT)
+    .transformDataType(new DataType("pgvector:embeddings"))
+    .to("pgvector:myCollection");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:store"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - setHeader:
+          name: CamelPgVectorAction
+          constant: UPSERT
+      - transform:
+          dataType: "pgvector:embeddings"
+      - to: "pgvector:myCollection"
+----
+====
+
+Similarity search with PGVector and RAG:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:search")
+    .to("langchain4j-embeddings:embed")
+    .transformDataType(new DataType("pgvector:embeddings"))
+    .setHeader(PgVectorHeaders.ACTION, constant(PgVectorAction.SIMILARITY_SEARCH))
+    .to("pgvector:myCollection")
+    .transformDataType(new DataType("pgvector:rag"));
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:search"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - transform:
+          dataType: "pgvector:embeddings"
+      - setHeader:
+          name: CamelPgVectorAction
+          constant: SIMILARITY_SEARCH
+      - to: "pgvector:myCollection"
+      - transform:
+          dataType: "pgvector:rag"
+----
+====
+
 ==== Using with LangChain4j Embedding Store Component
 
 For a simpler integration, use the `langchain4j-embeddingstore` component which provides a unified interface:

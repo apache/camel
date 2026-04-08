@@ -13371,6 +13371,46 @@ public class StaticEndpointBuilders {
         return PgEventEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * Syntax: <code>pgvector:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection (table) name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PgVectorEndpointBuilderFactory.PgVectorEndpointBuilder pgvector(String path) {
+        return pgvector("pgvector", path);
+    }
+    /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * Syntax: <code>pgvector:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection (table) name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PgVectorEndpointBuilderFactory.PgVectorEndpointBuilder pgvector(String componentName, String path) {
+        return PgVectorEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
      * 

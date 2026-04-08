@@ -461,6 +461,7 @@
         <pdfbox-version>3.0.7</pdfbox-version>
         <pgjdbc-driver-version>42.7.10</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
+        <pgvector-version>0.1.6</pgvector-version>
         <picocli-version>4.7.7</picocli-version>
         <pinecone-client-version>3.1.0</pinecone-client-version>
         <plc4x-version>0.13.1</plc4x-version>
@@ -2390,6 +2391,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-pgevent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-pgvector</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

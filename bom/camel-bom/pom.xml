@@ -1909,6 +1909,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-pgvector</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-pinecone</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>

@@ -543,6 +543,8 @@ For single-input requests, the component returns a raw `List<Float>` embedding v
 
 ==== PostgreSQL + pgvector (Recommended)
 
+Using the xref:pgvector-component.adoc[PGVector] component:
+
 [source,yaml]
 ----
 # Index documents in PostgreSQL with pgvector
@@ -557,11 +559,42 @@ For single-input requests, the component returns a raw `List<Float>` embedding v
             uri: openai:embeddings
             parameters:
               embeddingModel: nomic-embed-text
-        - setVariable:
-            name: embedding
-            simple: "${body.toString()}"
+        - setHeader:
+            name: CamelPgVectorAction
+            constant: UPSERT
+        - setHeader:
+            name: CamelPgVectorTextContent
+            simple: "${variable.text}"
         - to:
-            uri: sql:INSERT INTO documents (content, embedding) VALUES (:#text, :#embedding::vector)
+            uri: pgvector:documents
+
+# Similarity search
+- route:
+    from:
+      uri: direct:search
+      steps:
+        - to:
+            uri: openai:embeddings
+            parameters:
+              embeddingModel: nomic-embed-text
+        - setHeader:
+            name: CamelPgVectorAction
+            constant: SIMILARITY_SEARCH
+        - setHeader:
+            name: CamelPgVectorQueryTopK
+            constant: 5
+        - to:
+            uri: pgvector:documents
+----
+
+The pgvector component handles table creation, HNSW indexing, upsert with conflict resolution, and similarity search with configurable distance types (cosine, euclidean, inner product). See the xref:pgvector-component.adoc[PGVector component documentation] for details.
+
+For custom table schemas, complex queries (joins, CTEs), or integration with existing PostgreSQL tables, you can use `camel-sql` directly with the pgvector extension:
+
+[source,yaml]
+----
+- to:
+    uri: sql:INSERT INTO documents (content, embedding) VALUES (:#text, :#embedding::vector)
 ----
 
 ==== Alternative: Dedicated Vector Databases
