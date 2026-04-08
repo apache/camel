@@ -21,20 +21,20 @@ import java.util.List;
 import org.apache.camel.main.KameletMain;
 
 /**
- * Plugin hook that runs after the Run command has resolved file arguments and configured dependencies, but before
- * {@link KameletMain#run()} builds the CamelContext.
+ * Plugin hook that runs after the Run command has resolved file arguments and basic dependencies, but before plugin
+ * exporter dependencies are added and {@link KameletMain#run()} builds the CamelContext.
  *
  * This allows plugins to customize the environment (system properties, config directories, initial properties) based on
- * the file arguments passed to the run command.
+ * the file arguments passed to the run command, so that plugin exporters can scan the right locations.
  */
 public interface PluginRunCustomizer {
 
     /**
-     * Called after the Run command has resolved file arguments and configured dependencies, but before
-     * KameletMain.run() builds the CamelContext.
+     * Called after the Run command has resolved file arguments and basic dependencies, but before plugin exporter
+     * dependencies are added and KameletMain.run() builds the CamelContext.
      *
      * @param main  the KameletMain instance (for adding initial properties)
-     * @param files the resolved file arguments passed to the run command
+     * @param files the resolved file arguments passed to the run command (read-only)
      */
     void beforeRun(KameletMain main, List<String> files);
 }
