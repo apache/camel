@@ -127,8 +127,11 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
 
-      - id: install-packages
-        uses: ./.github/actions/install-packages
+      - name: Install packages
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -qqy --no-install-recommends libtinfo6
 
       - name: Run Sonar Analysis
         shell: bash
@@ -143,10 +146,10 @@ jobs:
           -Dsonar.pullrequest.github.summary_comment=true
           -Dsonar.projectKey=apache_camel
           -Dsonar.organization=apache
-          -Dsonar.token=${{ secrets.SONARCLOUD_TOKEN }}
           -B -V
         env:
           MAVEN_OPTS: "-XX:+UseG1GC -XX:InitialHeapSize=2g -XX:MaxHeapSize=6g -XX:+UseStringDeduplication"
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
 
       - name: Update PR check status
         uses: actions/github-script@v7
