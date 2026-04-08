@@ -162,7 +162,7 @@
         <dropbox-version>7.0.0</dropbox-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
-        <ehcache3-version>3.11.1</ehcache3-version>
+        <ehcache3-version>3.12.0</ehcache3-version>
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
         <elasticsearch-java-client-version>9.3.1</elasticsearch-java-client-version>
