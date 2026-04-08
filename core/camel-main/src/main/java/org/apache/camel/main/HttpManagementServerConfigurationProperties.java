@@ -44,13 +44,17 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private String jolokiaPath = "/observe/jolokia";
 
     private boolean infoEnabled;
+    @Metadata(security = "insecure:dev")
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
     private boolean jolokiaEnabled;
     private boolean metricsEnabled;
+    @Metadata(security = "insecure:dev")
     private boolean uploadEnabled;
     private String uploadSourceDir;
+    @Metadata(security = "insecure:dev")
     private boolean downloadEnabled;
+    @Metadata(security = "insecure:dev")
     private boolean sendEnabled;
 
     @Metadata(label = "security")

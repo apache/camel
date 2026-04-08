@@ -79,9 +79,10 @@ public class MainConfigurationDevConsole extends AbstractDevConsole {
                 String loc = startupConfiguration.getLocation(k);
                 Object defaultValue = startupConfiguration.getDefaultValue(k);
 
+                boolean sensitive = MainHelper.containsSensitive(getCamelContext(), k, v);
                 JsonObject jo = new JsonObject();
                 jo.put("key", k);
-                jo.put("value", v);
+                jo.put("value", sensitive ? "xxxxxx" : v);
                 if (defaultValue != null) {
                     jo.put("defaultValue", defaultValue);
                 }
@@ -89,7 +90,7 @@ public class MainConfigurationDevConsole extends AbstractDevConsole {
                 pc.getResolvedValue(k).ifPresent(r -> {
                     String ov = r.originalValue();
                     if (ov != null) {
-                        jo.put("originalValue", ov);
+                        jo.put("originalValue", sensitive ? "xxxxxx" : ov);
                     }
                     String src = r.source();
                     if (src != null) {

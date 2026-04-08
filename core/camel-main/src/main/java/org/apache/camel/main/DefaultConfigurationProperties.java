@@ -63,6 +63,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int consumerTemplateCacheSize = 1000;
     private boolean loadTypeConverters;
     private boolean loadHealthChecks;
+    @Metadata(security = "insecure:dev")
     private boolean devConsoleEnabled;
     private boolean modeline;
     private int logDebugMaxChars;

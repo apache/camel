@@ -51,6 +51,22 @@ public class ProfileConfigurer {
             }
         }
 
+        if ("dev".equals(profile)) {
+            // dev profile allows insecure:dev options by default since those features
+            // (devConsole, upload, etc.) are expected in development.
+            // Users can still override this explicitly via camel.security.insecureDevPolicy=warn/fail.
+            if (config.securityConfig().getInsecureDevPolicy() == null) {
+                config.securityConfig().setInsecureDevPolicy("allow");
+            }
+        }
+
+        if ("prod".equals(profile)) {
+            // production profile defaults security policy to "fail" so that insecure
+            // configurations prevent startup. Users can still override this explicitly
+            // via camel.security.policy=warn (or allow) in their properties.
+            config.securityConfig().setPolicy("fail");
+        }
+
         configureCommon(camelContext, profile, config);
     }
 
