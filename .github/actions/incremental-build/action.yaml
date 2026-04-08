@@ -33,10 +33,6 @@ inputs:
     description: 'The GitHub repository name (example, apache/camel)'
     required: false
     default: ${{ github.repository }}
-  artifact-upload-suffix:
-    description: 'Suffix for artifacts stored'
-    required: false
-    default: ''
   extra-modules:
     description: 'Additional modules to test (comma-separated paths, e.g. from /component-test)'
     required: false
@@ -56,9 +52,3 @@ runs:
         EXTRA_MODULES: ${{ inputs.extra-modules }}
       shell: bash
       run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "$PR_ID" "$GITHUB_REPO" "$EXTRA_MODULES"
-    - name: archive logs
-      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-      if: always()
-      with:
-        name: incremental-test-${{ inputs.artifact-upload-suffix }}.log
-        path: incremental-test.log
