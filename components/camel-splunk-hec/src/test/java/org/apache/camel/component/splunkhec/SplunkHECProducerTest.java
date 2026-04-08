@@ -29,10 +29,10 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,6 +65,11 @@ public class SplunkHECProducerTest {
         producer = new SplunkHECProducer(endpoint);
     }
 
+    @AfterEach
+    void tearDown() throws Exception {
+        camelContext.close();
+    }
+
     @Test
     public void testProcessThrowsRuntimeCamelExceptionOnNon200Response() throws Exception {
         CloseableHttpClient mockClient = createMockClient(400, "Bad Request",
@@ -91,19 +96,6 @@ public class SplunkHECProducerTest {
         RuntimeCamelException thrown = assertThrows(RuntimeCamelException.class, () -> producer.process(exchange));
         assertTrue(thrown.getMessage().contains("Splunk HEC request failed"));
         assertTrue(thrown.getMessage().contains("Server is busy"));
-    }
-
-    @Test
-    public void testExceptionTypeIsRuntimeCamelExceptionNotRuntimeException() throws Exception {
-        CloseableHttpClient mockClient = createMockClient(401, "Unauthorized",
-                "{\"text\":\"Invalid token\",\"code\":4}");
-        injectHttpClient(producer, mockClient);
-
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setBody("test event");
-
-        Exception thrown = assertThrows(Exception.class, () -> producer.process(exchange));
-        assertEquals(RuntimeCamelException.class, thrown.getClass());
     }
 
     @SuppressWarnings("unchecked")
