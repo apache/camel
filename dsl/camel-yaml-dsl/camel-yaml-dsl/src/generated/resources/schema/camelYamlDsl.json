@@ -11372,11 +11372,17 @@
           "mimeMultipart" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
           },
+          "ocsf" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
+          },
           "parquetAvro" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
           },
           "pgp" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
+          },
+          "pqc" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PQCDataFormat"
           },
           "protobuf" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ProtobufDataFormat"
@@ -17575,9 +17581,13 @@
               }, {
                 "required" : [ "mimeMultipart" ]
               }, {
+                "required" : [ "ocsf" ]
+              }, {
                 "required" : [ "parquetAvro" ]
               }, {
                 "required" : [ "pgp" ]
+              }, {
+                "required" : [ "pqc" ]
               }, {
                 "required" : [ "protobuf" ]
               }, {
@@ -17822,6 +17832,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "ocsf" ],
+            "properties" : {
+              "ocsf" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "parquetAvro" ],
             "properties" : {
               "parquetAvro" : {
@@ -17834,6 +17852,14 @@
             "properties" : {
               "pgp" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "pqc" ],
+            "properties" : {
+              "pqc" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PQCDataFormat"
               }
             }
           }, {
@@ -18014,8 +18040,10 @@
           "jsonApi" : { },
           "lzf" : { },
           "mimeMultipart" : { },
+          "ocsf" : { },
           "parquetAvro" : { },
           "pgp" : { },
+          "pqc" : { },
           "protobuf" : { },
           "rss" : { },
           "smooks" : { },

@@ -1241,6 +1241,8 @@ public class ModelWriter extends BaseWriter {
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) v);
                 case "OcsfDataFormat" -> doWriteOcsfDataFormat("ocsf", (OcsfDataFormat) v);
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
+                case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
+                case "PQCDataFormat" -> doWritePQCDataFormat("pqc", (PQCDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
                 case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
@@ -1254,8 +1256,6 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
-                case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
-                case "PQCDataFormat" -> doWritePQCDataFormat("pqc", (PQCDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
@@ -2006,6 +2006,8 @@ public class ModelWriter extends BaseWriter {
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) v);
                 case "OcsfDataFormat" -> doWriteOcsfDataFormat("ocsf", (OcsfDataFormat) v);
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
+                case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
+                case "PQCDataFormat" -> doWritePQCDataFormat("pqc", (PQCDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
                 case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
@@ -2019,8 +2021,6 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
-                case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
-                case "PQCDataFormat" -> doWritePQCDataFormat("pqc", (PQCDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
@@ -2570,8 +2570,10 @@ public class ModelWriter extends BaseWriter {
                 case "JsonApiDataFormat" -> doWriteJsonApiDataFormat("jsonApi", (JsonApiDataFormat) v);
                 case "LZFDataFormat" -> doWriteLZFDataFormat("lzf", (LZFDataFormat) v);
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) v);
+                case "OcsfDataFormat" -> doWriteOcsfDataFormat("ocsf", (OcsfDataFormat) v);
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
                 case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
+                case "PQCDataFormat" -> doWritePQCDataFormat("pqc", (PQCDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
                 case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
@@ -3740,7 +3742,10 @@ public class ModelWriter extends BaseWriter {
                 case "JsonApiDataFormat" -> doWriteJsonApiDataFormat("jsonApi", (JsonApiDataFormat) v);
                 case "LZFDataFormat" -> doWriteLZFDataFormat("lzf", (LZFDataFormat) v);
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) v);
+                case "OcsfDataFormat" -> doWriteOcsfDataFormat("ocsf", (OcsfDataFormat) v);
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
+                case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
+                case "PQCDataFormat" -> doWritePQCDataFormat("pqc", (PQCDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
                 case "SmooksDataFormat" -> doWriteSmooksDataFormat("smooks", (SmooksDataFormat) v);
@@ -3754,7 +3759,6 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityFixedDataFormat" -> doWriteUniVocityFixedDataFormat("univocityFixed", (UniVocityFixedDataFormat) v);
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
-                case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
