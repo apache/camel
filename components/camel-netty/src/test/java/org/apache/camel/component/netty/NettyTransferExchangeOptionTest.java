@@ -90,6 +90,7 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
         return exchange;
     }
 
+    @SuppressWarnings("deprecation")
     private void assertExchange(Exchange exchange, boolean hasException) {
         if (!hasException) {
             Message out = exchange.getOut();
@@ -120,6 +121,7 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
             public void configure() {
                 from("netty:tcp://localhost:{{port}}?transferExchange=true&encoders=#encoder&decoders=#decoder")
                         .process(new Processor() {
+                            @SuppressWarnings("deprecation")
                             public void process(Exchange e) {
                                 assertNotNull(e.getIn().getBody());
                                 assertNotNull(e.getIn().getHeaders());

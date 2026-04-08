@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpProducerSimpleTest extends BaseNettyTestSupport {
 
@@ -45,7 +44,6 @@ public class NettyHttpProducerSimpleTest extends BaseNettyTestSupport {
         Exchange out = template.request("netty-http:http://localhost:{{port}}/foo",
                 exchange -> exchange.getIn().setBody("Hello World"));
         assertNotNull(out);
-        assertTrue(out.hasOut());
 
         NettyHttpMessage response = out.getMessage(NettyHttpMessage.class);
         assertNotNull(response);

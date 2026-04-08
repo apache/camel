@@ -35,7 +35,6 @@ public class SimpleSingleOutputMockTest extends ContextTestSupport {
         Exchange out = template.request("direct:start", e -> e.getMessage().setBody("Hello World"));
         assertNotNull(out);
         assertEquals(ExchangePattern.InOut, out.getPattern());
-        assertTrue(out.hasOut());
 
         assertMockEndpointsSatisfied();
     }

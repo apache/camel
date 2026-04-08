@@ -25,13 +25,14 @@ import org.w3c.dom.Document;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -63,10 +64,7 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
         Exchange exchange = sendJaxWsDispatchMessage(name, true);
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
 
-        org.apache.camel.Message response = exchange.getOut();
-        assertNotNull(response, "The response message must not be null");
-
-        assertNull(response.getBody(), "The response body must be null");
+        assertFalse(ExchangeHelper.hasResponse(exchange), "The oneway response must not have a response message");
     }
 
     protected Exchange sendJaxWsDispatchMessage(final String name, final boolean oneway) {

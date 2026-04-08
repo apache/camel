@@ -40,6 +40,23 @@ is backward-compatible with peers that do not support PQC.
 
 See xref:camel-configuration-utilities.adoc[JSSE Utility] for full details on PQC TLS configuration.
 
+==== Exchange getOut/hasOut/setOut deprecation migration
+
+The deprecated `Exchange.getOut()`, `hasOut()`, and `setOut()` methods have been replaced throughout
+the codebase with `Exchange.getMessage()` and five new utility methods in `ExchangeHelper`:
+
+- `ExchangeHelper.hasResponse(exchange)` -- checks if a response (OUT) message exists, without side effects.
+- `ExchangeHelper.getResponse(exchange)` -- returns the response message, or `null` if none exists.
+  Unlike `getOut()`, this does *not* lazily create an empty message.
+- `ExchangeHelper.setResponse(exchange, message)` -- explicitly sets or clears the response message.
+- `ExchangeHelper.createResponse(exchange)` -- creates a new empty response message and returns it.
+  This is the non-deprecated equivalent of the lazy-creation side effect of `getOut()`.
+- `ExchangeHelper.createResponseFromInput(exchange)` -- creates a response by copying the input message
+  (headers, body, attachments) and returns it. Use this when the response should inherit the input message's headers.
+
+Component developers who currently use `getOut()`, `hasOut()`, or `setOut()` should migrate to these utilities.
+A follow-up change will add these methods directly to the `Exchange` interface.
+
 The WireTap EIP has removed the `pattern` option from its model (not in use) as wiretap always
 uses `InOnly` pattern.
 

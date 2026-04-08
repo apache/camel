@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Streams;
@@ -68,13 +69,13 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
     @Test
     public void withoutHeader() throws Exception {
         exchange.getIn().getHeaders().clear();
-        exchange.getOut().getHeaders().clear();
+        exchange.getMessage().getHeaders().clear();
 
         if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
             exchange.getIn(AttachmentMessage.class).getAttachments().clear();
         }
-        if (exchange.getOut(AttachmentMessage.class).hasAttachments()) {
-            exchange.getOut(AttachmentMessage.class).getAttachments().clear();
+        if (exchange.getMessage(AttachmentMessage.class).hasAttachments()) {
+            exchange.getMessage(AttachmentMessage.class).getAttachments().clear();
         }
 
         filter.filterProducer(exchange, message);
@@ -88,17 +89,20 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void removeCamelInternalHeaderAttributes() throws Exception {
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO, "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION,
+        ExchangeHelper.createResponse(exchange).getHeaders().put(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION,
                 "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION,
+        exchange.getMessage().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, "mustBeRemoved");
+        exchange.getMessage().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO,
                 "mustBeRemoved");
-        exchange.getOut().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, "mustBeRemoved");
+        exchange.getMessage().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO,
+                "mustBeRemoved");
+        exchange.getMessage().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION,
+                "mustBeRemoved");
+        exchange.getMessage().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION,
+                "mustBeRemoved");
+        exchange.getMessage().getHeaders().put(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, "mustBeRemoved");
 
-        exchange.getOut().getHeaders().put("breadcrumbId", "mustBeRemoved");
+        exchange.getMessage().getHeaders().put("breadcrumbId", "mustBeRemoved");
 
         filter.filterConsumer(exchange, message);
 
@@ -110,8 +114,8 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void consumerWithHeader() throws Exception {
-        exchange.getOut().getHeaders().put("headerAttributeKey", "testAttributeValue");
-        exchange.getOut().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "myElement"));
+        ExchangeHelper.createResponse(exchange).getHeaders().put("headerAttributeKey", "testAttributeValue");
+        exchange.getMessage().getHeaders().put("headerAttributeElement", new QName("http://shouldBeInHeader", "myElement"));
         filter.filterConsumer(exchange, message);
 
         Assertions.assertThat(message.getAttachments()).isExhausted();

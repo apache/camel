@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +64,7 @@ public class EnricherTest extends ContextTestSupport {
         mock.assertIsSatisfied();
         assertEquals("test", exchange.getIn().getBody());
         assertEquals("failed", exchange.getException().getMessage());
-        assertFalse(exchange.hasOut());
+        assertFalse(ExchangeHelper.hasResponse(exchange));
     }
 
     // -------------------------------------------------------------
@@ -86,7 +87,7 @@ public class EnricherTest extends ContextTestSupport {
         });
         assertEquals("bar", exchange.getIn().getHeader("foo"));
         assertEquals("test:blah", exchange.getIn().getBody());
-        assertTrue(exchange.hasOut());
+        assertTrue(ExchangeHelper.hasResponse(exchange));
         assertNull(exchange.getException());
     }
 
@@ -99,7 +100,7 @@ public class EnricherTest extends ContextTestSupport {
         });
         assertEquals("test", exchange.getIn().getBody());
         assertEquals("failed", exchange.getException().getMessage());
-        assertFalse(exchange.hasOut());
+        assertFalse(ExchangeHelper.hasResponse(exchange));
     }
 
     @Override

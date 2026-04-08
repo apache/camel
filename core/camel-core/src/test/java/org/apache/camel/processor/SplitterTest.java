@@ -33,6 +33,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -101,7 +102,7 @@ public class SplitterTest extends ContextTestSupport {
             }
         });
 
-        assertFalse(result.hasOut(), "Should not have out");
+        assertFalse(ExchangeHelper.hasResponse(result), "Should not have out");
     }
 
     @Test

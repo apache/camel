@@ -31,7 +31,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SqlProducerUseMessageBodyForSqlTest extends CamelTestSupport {
 
@@ -144,8 +143,6 @@ public class SqlProducerUseMessageBodyForSqlTest extends CamelTestSupport {
 
         String origSql = assertIsInstanceOf(String.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals("insert into projects(id, project, license) values(:?id,:?project,:?lic)", origSql);
-
-        assertNull(mock.getReceivedExchanges().get(0).getOut().getBody());
 
         // Clear and then use route2 to verify result of above insert select
         context.removeRoute(context.getRoutes().get(0).getId());

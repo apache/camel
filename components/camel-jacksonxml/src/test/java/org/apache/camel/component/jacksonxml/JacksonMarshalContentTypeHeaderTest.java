@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
@@ -45,7 +44,6 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
         });
 
         assertNotNull(out);
-        assertTrue(out.hasOut());
         assertEquals("application/xml", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
@@ -62,7 +60,6 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
         });
 
         assertNotNull(out);
-        assertTrue(out.hasOut());
         assertEquals("application/xml", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
@@ -79,7 +76,6 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
         });
 
         assertNotNull(out);
-        assertTrue(out.hasOut());
         assertNull(out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 

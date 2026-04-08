@@ -139,7 +139,7 @@ public class MessageHelperTest {
         message = new DefaultExchange(context).getIn();
 
         Message source = message;
-        Message target = message.getExchange().getOut();
+        Message target = new DefaultMessage(context);
 
         DefaultHeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
         headerFilterStrategy.setInFilterPattern("foo");

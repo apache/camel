@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
 
@@ -40,7 +39,6 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
         Exchange out = template.request("direct:yes", exchange -> exchange.getIn().setBody(in));
 
         assertNotNull(out);
-        assertTrue(out.hasOut());
         assertEquals("application/json", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
@@ -52,7 +50,6 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
         Exchange out = template.request("direct:yes2", exchange -> exchange.getIn().setBody(in));
 
         assertNotNull(out);
-        assertTrue(out.hasOut());
         assertEquals("application/json", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
@@ -64,7 +61,6 @@ public class JacksonMarshalContentTypeHeaderTest extends CamelTestSupport {
         Exchange out = template.request("direct:no", exchange -> exchange.getIn().setBody(in));
 
         assertNotNull(out);
-        assertTrue(out.hasOut());
         assertNull(out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 

@@ -38,7 +38,7 @@ public class RestUndertowProducerThrowExceptionErrorTest extends BaseUndertowTes
         Exchange out = fluentTemplate.withHeader("id", "777").to("direct:start").request(Exchange.class);
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not have thrown exception");
-        assertEquals(500, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(500, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 
     @Override

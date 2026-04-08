@@ -49,12 +49,14 @@ public class OgnlTest extends LanguageTestSupport {
         assertExpression("@org.apache.camel.language.ognl.Animal1@getClassName()", "Animal");
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetOutFalseKeepsNullOutMessage() {
         assertExpression("exchange.hasOut()", false);
         assertFalse(exchange.hasOut());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testResponseCreatesOutMessage() {
         assertExpression("response.body", null);
