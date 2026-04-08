@@ -207,7 +207,8 @@ const sources = {
         '../core/camel-main/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../components/{*,*/*}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../dsl/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
-        '../dsl/{*,*/!(target)}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../dsl/*/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../dsl/*/*/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
       ],
       destination: 'components/modules/others/pages',
       keep: [
@@ -315,6 +316,28 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
     })
   }
 
+  // Wraps gulp.src() to handle ENOENT errors from race conditions when
+  // builds run concurrently (e.g., test execution deleting target/surefire
+  // while the glob scans directories). Uses a passthrough stream to
+  // decouple error handling from gulp's task tracking.
+  const resilientSrc = (source, options) => {
+    const passthrough = through2.obj()
+    const src = gulp.src(source, options)
+
+    src.on('data', (file) => passthrough.push(file))
+    src.on('end', () => passthrough.push(null))
+    src.on('error', (err) => {
+      if (err.code === 'ENOENT' && err.path && err.path.includes(`${path.sep}target${path.sep}`)) {
+        console.warn(`⚠️ Ignoring ENOENT in build directory: ${err.path}`)
+        passthrough.push(null)
+      } else {
+        passthrough.destroy(err)
+      }
+    })
+
+    return passthrough
+  }
+
   // creates symlinks from source to destination that satisfy the
   // given filter removing the basedir from a path, i.e. symlinking
   // from a flat hiearchy
@@ -327,7 +350,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       }
     })
 
-    return gulp.src(source, { ignore: ['**/target/**'] })
+    return resilientSrc(source, { ignore: ['**/target/**', '**/target'] })
       .pipe(filterFn)
       .pipe(
         map((file, done) => {
@@ -410,7 +433,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       return done()
     }
 
-    return gulp.src(source, { ignore: ['**/target/**'] }) // asciidoc files
+    return resilientSrc(source, { ignore: ['**/target/**', '**/target'] }) // asciidoc files
       .pipe(through2.obj(extractExamples)) // extracted example files
       // symlink links from a fixed directory, i.e. we could link to
       // the example files from `destination`, that would not work for
