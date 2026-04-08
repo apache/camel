@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.util.ObjectHelper;
@@ -137,8 +138,8 @@ public class DefaultExchangeHolder implements Serializable {
         }
         payload.inBody = checkSerializableBody("in body", exchange, exchange.getIn().getBody());
         payload.safeSetInHeaders(exchange, allowSerializedValues);
-        if (exchange.hasOut()) {
-            payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
+        if (ExchangeHelper.hasResponse(exchange)) {
+            payload.outBody = checkSerializableBody("out body", exchange, exchange.getMessage().getBody());
             payload.safeSetOutHeaders(exchange, allowSerializedValues);
         }
         if (includeProperties) {
@@ -168,9 +169,10 @@ public class DefaultExchangeHolder implements Serializable {
             exchange.getIn().setHeaders(payload.inHeaders);
         }
         if (payload.outBody != null) {
-            exchange.getOut().setBody(payload.outBody);
+            // reuse existing response message to preserve its type (e.g. JmsMessage)
+            ExchangeHelper.createResponse(exchange).setBody(payload.outBody);
             if (payload.outHeaders != null) {
-                exchange.getOut().setHeaders(payload.outHeaders);
+                exchange.getMessage().setHeaders(payload.outHeaders);
             }
         }
         if (payload.properties != null) {
@@ -249,9 +251,10 @@ public class DefaultExchangeHolder implements Serializable {
 
     @Deprecated(since = "3.0.0")
     private Map<String, Object> safeSetOutHeaders(Exchange exchange, boolean allowSerializedValues) {
-        if (exchange.hasOut() && exchange.getOut().hasHeaders()) {
+        if (ExchangeHelper.hasResponse(exchange) && exchange.getMessage().hasHeaders()) {
             Map<String, Object> map
-                    = checkValidHeaderObjects("out headers", exchange, exchange.getOut().getHeaders(), allowSerializedValues);
+                    = checkValidHeaderObjects("out headers", exchange, exchange.getMessage().getHeaders(),
+                            allowSerializedValues);
             if (map != null && !map.isEmpty()) {
                 outHeaders = new LinkedHashMap<>(map);
             }

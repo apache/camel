@@ -76,12 +76,13 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
             }
             final Message out;
             if (allowNullBody && body == null) {
-                // The body is null, and it is an allowed value so let's skip the unmarshalling
-                out = exchange.getOut();
+                // The body is null, and it is an allowed value so let's skip the unmarshalling;
+                // use empty response (not in.copy()) so the null body is preserved
+                out = ExchangeHelper.createResponse(exchange);
             } else {
                 // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
-                out = exchange.getOut();
-                out.copyFrom(in);
+                ExchangeHelper.setResponse(exchange, in.copy());
+                out = exchange.getMessage();
                 if (body instanceof InputStream is) {
                     stream = is;
                     result = dataFormat.unmarshal(exchange, stream);
@@ -103,7 +104,7 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
                     ExchangeHelper.setVariable(exchange, variableReceive, value);
                 } else {
                     // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
-                    exchange.setOut(msg);
+                    ExchangeHelper.setResponse(exchange, msg);
                 }
             } else {
                 // result should be stored in variable instead of message body
@@ -115,7 +116,7 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
             }
         } catch (Exception e) {
             // remove OUT message, as an exception occurred
-            exchange.setOut(null);
+            ExchangeHelper.setResponse(exchange, null);
             exchange.setException(e);
         } finally {
             // The Iterator will close the stream itself

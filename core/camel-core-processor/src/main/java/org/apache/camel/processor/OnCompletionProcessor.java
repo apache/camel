@@ -224,11 +224,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
             // to cause side effects of the original exchange
             // (the original thread will run in parallel)
             answer = ExchangeHelper.createCorrelatedCopy(exchange, false);
-            if (answer.hasOut()) {
-                // move OUT to IN (pipes and filters)
-                answer.setIn(answer.getOut());
-                answer.setOut(null);
-            }
+            ExchangeHelper.prepareOutToIn(answer);
             // set MEP to InOnly as this onCompletion is a fire and forget
             answer.setPattern(ExchangePattern.InOnly);
         } else {

@@ -69,8 +69,8 @@ public class TransformProcessor extends BaseProcessorSupport implements Traceabl
                 old.setBody(newBody);
 
                 // but the message must be on OUT
-                if (!exchange.hasOut()) {
-                    exchange.setOut(exchange.getIn());
+                if (!ExchangeHelper.hasResponse(exchange)) {
+                    ExchangeHelper.setResponse(exchange, exchange.getIn());
                 }
             }
 

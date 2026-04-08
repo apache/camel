@@ -567,9 +567,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         LOG.trace("Using the original IN message body instead of current");
                         exchange.getIn().setBody(original.getBody());
                     }
-                    if (exchange.hasOut()) {
+                    if (ExchangeHelper.hasResponse(exchange)) {
                         LOG.trace("Removing the out message to avoid some uncertain behavior");
-                        exchange.setOut(null);
+                        ExchangeHelper.setResponse(exchange, null);
                     }
                 }
 
@@ -1285,7 +1285,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
             // we are redelivering so copy from original back to exchange
             exchange.getIn().copyFrom(this.original.getIn());
-            exchange.setOut(null);
+            ExchangeHelper.setResponse(exchange, null);
             // reset cached streams so they can be read again
             MessageHelper.resetStreamCache(exchange.getIn());
 
@@ -1490,9 +1490,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         LOG.trace("Using the original IN message body instead of current");
                         exchange.getIn().setBody(original.getBody());
                     }
-                    if (exchange.hasOut()) {
+                    if (ExchangeHelper.hasResponse(exchange)) {
                         LOG.trace("Removing the out message to avoid some uncertain behavior");
-                        exchange.setOut(null);
+                        ExchangeHelper.setResponse(exchange, null);
                     }
                 }
 
