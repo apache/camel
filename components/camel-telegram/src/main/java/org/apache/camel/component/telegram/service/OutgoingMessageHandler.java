@@ -22,8 +22,8 @@ import org.apache.camel.component.telegram.model.OutgoingMessage;
 
 abstract class OutgoingMessageHandler<T extends OutgoingMessage> extends TelegramMessageHandler<T> {
 
-    public OutgoingMessageHandler(TelegramApiClient apiClient, String uri, String contentType,
-                                  Class<? extends MessageResult> resultClass) {
+    protected OutgoingMessageHandler(TelegramApiClient apiClient, String uri, String contentType,
+                                     Class<? extends MessageResult> resultClass) {
         super(apiClient, uri, contentType, resultClass);
     }
 

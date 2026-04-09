@@ -28,6 +28,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -118,6 +119,12 @@ public class ListVariable extends ProcessWatchCommand {
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
+                // Flexible columns: TYPE (40), KEY (50), VALUE (80)
+                // Fixed columns: PID(8)+NAME(30)+REPO(8) ~= 46
+                int tw = terminalWidth();
+                int typeW = TerminalWidthHelper.flexWidth(tw, 46 + 50 + 80, TerminalWidthHelper.noBorderOverhead(6), 15, 40);
+                int keyW = TerminalWidthHelper.flexWidth(tw, 46 + 40 + 80, TerminalWidthHelper.noBorderOverhead(6), 15, 50);
+                int valW = TerminalWidthHelper.flexWidth(tw, 46 + 40 + 50, TerminalWidthHelper.noBorderOverhead(6), 20, 80);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
@@ -125,11 +132,12 @@ public class ListVariable extends ProcessWatchCommand {
                                 .with(r -> r.name),
                         new Column().header("REPO").headerAlign(HorizontalAlign.CENTER).with(r -> r.id),
                         new Column().header("TYPE").headerAlign(HorizontalAlign.CENTER)
-                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(r -> r.type),
+                                .maxWidth(typeW, OverflowBehaviour.ELLIPSIS_LEFT).with(r -> r.type),
                         new Column().header("KEY").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .maxWidth(keyW, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> r.key),
-                        new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT).maxWidth(80, OverflowBehaviour.NEWLINE)
+                        new Column().header("VALUE").headerAlign(HorizontalAlign.RIGHT)
+                                .maxWidth(valW, OverflowBehaviour.NEWLINE)
                                 .with(this::getValue))));
             }
         }

@@ -46,6 +46,7 @@ import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.OcsfDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.PQCDataFormat;
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
@@ -284,6 +285,13 @@ public final class DataFormatBuilderFactory {
      */
     public PGPDataFormat.Builder pgp() {
         return new PGPDataFormat.Builder();
+    }
+
+    /**
+     * Uses the PQC (Post-Quantum Cryptography) data format
+     */
+    public PQCDataFormat.Builder pqc() {
+        return new PQCDataFormat.Builder();
     }
 
     /**

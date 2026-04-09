@@ -294,8 +294,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             setServiceFactory(sfb, serviceFactoryBean);
         }
 
-        if (sfb instanceof JaxWsServerFactoryBean && handlers != null) {
-            ((JaxWsServerFactoryBean) sfb).setHandlers(handlers);
+        if (sfb instanceof JaxWsServerFactoryBean jaxWsServerFactoryBean && handlers != null) {
+            jaxWsServerFactoryBean.setHandlers(handlers);
         }
         if (getTransportId() != null) {
             sfb.setTransportId(getTransportId());
@@ -994,8 +994,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
-        if (cxfBinding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware) cxfBinding).setHeaderFilterStrategy(headerFilterStrategy);
+        if (cxfBinding instanceof HeaderFilterStrategyAware headerFilterStrategyAware) {
+            headerFilterStrategyAware.setHeaderFilterStrategy(headerFilterStrategy);
         }
     }
 
@@ -1164,8 +1164,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (cxfBinding == null) {
             cxfBinding = new DefaultCxfBinding();
         }
-        if (cxfBinding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware) cxfBinding).setHeaderFilterStrategy(getHeaderFilterStrategy());
+        if (cxfBinding instanceof HeaderFilterStrategyAware headerFilterStrategyAware) {
+            headerFilterStrategyAware.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
     }
 
@@ -1331,18 +1331,16 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         private String findName(List<Source> sources, int i) {
             Source source = sources.get(i);
             XMLStreamReader r = null;
-            if (source instanceof DOMSource) {
-                Node nd = ((DOMSource) source).getNode();
-                if (nd instanceof Document) {
-                    nd = ((Document) nd).getDocumentElement();
+            if (source instanceof DOMSource domSource) {
+                Node nd = domSource.getNode();
+                if (nd instanceof Document document) {
+                    nd = document.getDocumentElement();
                 }
                 return nd.getLocalName();
-            } else if (source instanceof StaxSource) {
-                StaxSource s = (StaxSource) source;
-                r = s.getXMLStreamReader();
-            } else if (source instanceof StAXSource) {
-                StAXSource s = (StAXSource) source;
-                r = s.getXMLStreamReader();
+            } else if (source instanceof StaxSource staxSource) {
+                r = staxSource.getXMLStreamReader();
+            } else if (source instanceof StAXSource stAXSource) {
+                r = stAXSource.getXMLStreamReader();
             } else if (source instanceof StreamSource || source instanceof SAXSource) {
                 //flip to stax so we can get the name
                 r = StaxUtils.createXMLStreamReader(source);

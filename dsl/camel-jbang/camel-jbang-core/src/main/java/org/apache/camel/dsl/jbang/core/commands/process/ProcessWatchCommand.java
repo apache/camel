@@ -40,7 +40,7 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
 
     private CommandHelper.ReadConsoleTask waitUserTask;
 
-    public ProcessWatchCommand(CamelJBangMain main) {
+    protected ProcessWatchCommand(CamelJBangMain main) {
         super(main);
     }
 

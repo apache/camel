@@ -158,12 +158,12 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     protected final T definition;
 
-    public ProcessorReifier(Route route, T definition) {
+    protected ProcessorReifier(Route route, T definition) {
         super(route);
         this.definition = definition;
     }
 
-    public ProcessorReifier(CamelContext camelContext, T definition) {
+    protected ProcessorReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
     }

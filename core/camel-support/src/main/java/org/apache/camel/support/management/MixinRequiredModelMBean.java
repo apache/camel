@@ -72,8 +72,8 @@ public class MixinRequiredModelMBean extends RequiredModelMBean {
             answer = super.invoke(opName, opArgs, sig);
         }
         // mask the answer if enabled and it was a String type (we cannot mask other types)
-        if (mask && answer instanceof String && ObjectHelper.isNotEmpty(answer) && isMaskOperation(opName)) {
-            answer = mask(opName, (String) answer);
+        if (mask && answer instanceof String str && ObjectHelper.isNotEmpty(answer) && isMaskOperation(opName)) {
+            answer = mask(opName, str);
         }
         return answer;
     }

@@ -37,6 +37,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -165,6 +166,13 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         first.exchangeId, status, elapsed, ago, first.pid, first.name);
                 printer().println(s);
 
+                int tw = terminalWidth();
+                int fixedWidth = 6 + 20 + 10 + 12; // direction + ID + ELAPSED + EXCHANGE
+                int borderOverhead = TerminalWidthHelper.noBorderOverhead(6);
+                int flexTotal = tw - fixedWidth - borderOverhead;
+                int processorWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth + 60, borderOverhead, 20, 55);
+                int messageWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth + processorWidth, borderOverhead, 20, 60);
+
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("").dataAlign(HorizontalAlign.LEFT)
                                 .minWidth(6).maxWidth(6)
@@ -173,7 +181,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                                 .minWidth(10).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(this::getId),
                         new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT)
-                                .minWidth(40).maxWidth(55, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .minWidth(20).maxWidth(processorWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(this::getProcessor),
                         new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT)
                                 .maxWidth(10, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -182,7 +190,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                                 .maxWidth(12, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(this::getExchangeId),
                         new Column().header("").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(60, OverflowBehaviour.NEWLINE)
+                                .maxWidth(messageWidth, OverflowBehaviour.NEWLINE)
                                 .with(this::getMessage))));
 
                 JsonObject cause = last.exception;
@@ -313,6 +321,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
         answer.add(new AttributedString(""));
 
         // build full table with all data so the table sizing are always the same when scrolling
+        int tw = terminalWidth();
+        int itFixedWidth = 6 + 20 + 10 + 12; // direction + ID + ELAPSED + EXCHANGE
+        int itBorderOverhead = TerminalWidthHelper.noBorderOverhead(6);
+        int itProcessorWidth = TerminalWidthHelper.flexWidth(tw, itFixedWidth, itBorderOverhead, 20, 55);
+
         String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("").dataAlign(HorizontalAlign.LEFT)
                         .minWidth(6).maxWidth(6)
@@ -321,7 +334,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         .minWidth(10).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
                 new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(40).maxWidth(55, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .minWidth(20).maxWidth(itProcessorWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getProcessor),
                 new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT)
                         .maxWidth(10, OverflowBehaviour.ELLIPSIS_RIGHT)

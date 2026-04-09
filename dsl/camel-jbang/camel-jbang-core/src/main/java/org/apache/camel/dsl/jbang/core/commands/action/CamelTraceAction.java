@@ -60,7 +60,11 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "trace",
                      description = "Tail message traces from running Camel integrations", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel trace hello",
+                             "  camel trace *" })
 public class CamelTraceAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;

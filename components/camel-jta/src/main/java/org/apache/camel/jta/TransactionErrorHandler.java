@@ -18,7 +18,9 @@ package org.apache.camel.jta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.transaction.TransactionRolledbackException;
 
@@ -58,6 +60,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
     private JtaTransactionPolicy transactionPolicy;
     private final String transactionKey;
     private final LoggingLevel rollbackLoggingLevel;
+    private final Set<Exchange> inflightTransactedExchanges = ConcurrentHashMap.newKeySet();
 
     /**
      * Creates the transaction error handler.
@@ -133,6 +136,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         try {
             // mark the beginning of this transaction boundary
             exchange.getUnitOfWork().beginTransactedBy(transactionKey);
+            inflightTransactedExchanges.add(exchange);
             // do in transaction
             logTransactionBegin(redelivered, ids);
             doInTransactionTemplate(exchange);
@@ -145,6 +149,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
             exchange.setException(e);
             logTransactionRollback(redelivered, ids, e, false);
         } finally {
+            inflightTransactedExchanges.remove(exchange);
             // mark the end of this transaction boundary
             exchange.getUnitOfWork().endTransactedBy(transactionKey);
         }
@@ -195,6 +200,13 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
 
                 // and now let process the exchange by the error handler
                 processByErrorHandler(exchange);
+
+                // if forced shutdown is in progress, mark the exchange for rollback
+                if (preparingShutdown) {
+                    LOG.debug("Forced shutdown in progress, marking exchange for rollback: {}",
+                            exchange.getExchangeId());
+                    exchange.setRollbackOnly(true);
+                }
 
                 // after handling and still an exception or marked as rollback
                 // only then rollback
@@ -346,5 +358,14 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         // prepare for shutdown, eg do not allow redelivery if configured
         LOG.trace("Prepare shutdown on error handler {}", this);
         preparingShutdown = true;
+        if (forced) {
+            // mark all in-flight transacted exchanges for rollback so the transaction
+            // is rolled back before the connection pool is destroyed during shutdown
+            for (Exchange exchange : inflightTransactedExchanges) {
+                LOG.debug("Marking in-flight transacted exchange for rollback due to forced shutdown: {}",
+                        exchange.getExchangeId());
+                exchange.setRollbackOnly(true);
+            }
+        }
     }
 }

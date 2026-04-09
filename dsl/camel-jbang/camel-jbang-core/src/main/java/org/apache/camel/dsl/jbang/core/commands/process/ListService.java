@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -129,6 +130,11 @@ public class ListService extends ProcessWatchCommand {
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
+                // Flexible column: ENDPOINT (90/140)
+                // Fixed columns: PID(8)+NAME(30)+COMPONENT(10)+DIR(3)+ROUTE(8)+PROTOCOL(8)+SERVICE(10)+METADATA(10)+TOTAL(5) ~= 92
+                int tw = terminalWidth();
+                int epW = TerminalWidthHelper.flexWidth(tw, 92, TerminalWidthHelper.noBorderOverhead(11), 20, 90);
+                int epWideW = TerminalWidthHelper.flexWidth(tw, 92, TerminalWidthHelper.noBorderOverhead(11), 20, 140);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
@@ -143,10 +149,10 @@ public class ListService extends ProcessWatchCommand {
                                 .with(this::getMetadata),
                         new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> "" + r.hits),
                         new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .maxWidth(epW, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(this::getUri),
                         new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(140, OverflowBehaviour.NEWLINE)
+                                .maxWidth(epWideW, OverflowBehaviour.NEWLINE)
                                 .with(this::getUri))));
             }
         }

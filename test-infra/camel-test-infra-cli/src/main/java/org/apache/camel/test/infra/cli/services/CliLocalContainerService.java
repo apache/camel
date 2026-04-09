@@ -116,6 +116,20 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
         return executeGenericCommand(getMainCommand() + " " + command);
     }
 
+    /**
+     * Alternative method for executing camel-cli commands that has the option to intentionally fail and allows to
+     * return stdErr
+     *
+     * @param  command    camel-cli command to be executed
+     * @param  getError   true - return stdErr, false - return stdOut
+     * @param  expectFail whether or not the command is expected to fail or not
+     * @return            stdErr or stdOut of the executed command, depending on the value of getError
+     */
+    @Override
+    public String execute(String command, Boolean getError, Boolean expectFail) {
+        return executeGenericCommand(getMainCommand() + " " + command, getError, expectFail);
+    }
+
     @Override
     public String executeBackground(String command) {
         final String pid = StringHelper.after(execute(command.concat(" --background")), "PID:").trim();
@@ -124,11 +138,35 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public String executeGenericCommand(String command) {
+        return executeGenericCommand(command, false, false);
+    }
+
+    /**
+     * Alternative method for executing bash commands that has the option to intentionally fail and allows to return
+     * stdErr
+     *
+     * @param  command    bash command to be executed
+     * @param  getError   true - return stdErr, false - return stdOut
+     * @param  expectFail whether the command is expected to succeed or not
+     * @return            stdErr or stdOut of the executed command, depending on the value of getError
+     */
+    @Override
+    public String executeGenericCommand(String command, Boolean getError, Boolean expectFail) {
         try {
             LOG.debug("Executing command: {}", command);
             Container.ExecResult execResult = container.execInContainer("/bin/bash", "-c", command);
-            if (execResult.getExitCode() != 0) {
+            //Expected to fail and failed
+            if (execResult.getExitCode() != 0 && expectFail) {
+                LOG.debug(String.format("command %s failed with output %s and error %s", command, execResult.getStdout(),
+                        execResult.getStderr()));
+                //Expected to succeed but failed
+            } else if (execResult.getExitCode() != 0 && !expectFail) {
                 Assertions.fail(String.format("command %s failed with output %s and error %s", command, execResult.getStdout(),
+                        execResult.getStderr()));
+                //Expected to fail but succeeded
+            } else if (execResult.getExitCode() == 0 && expectFail) {
+                Assertions.fail(String.format("command %s was expected to fail but succeeded with output %s and error %s",
+                        command, execResult.getStdout(),
                         execResult.getStderr()));
             }
             if (LOG.isDebugEnabled()) {
@@ -139,7 +177,11 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                     LOG.debug("result error {}", execResult.getStderr());
                 }
             }
-            return execResult.getStdout();
+            if (getError) {
+                return execResult.getStderr();
+            } else {
+                return execResult.getStdout();
+            }
         } catch (Exception e) {
             LOG.error("ERROR running generic command: {}", command, e);
             throw new RuntimeException(e);

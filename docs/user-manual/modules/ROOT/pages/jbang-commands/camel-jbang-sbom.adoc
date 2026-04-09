@@ -27,6 +27,7 @@ camel sbom [options]
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--dir,--directory` | Directory where the project will be exported | . | String
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| `--dry-run` | Preview export without writing files | false | boolean
 | `--exclude` | Exclude files by name or pattern |  | List
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--gav` | The Maven group:artifact:version |  | String
@@ -34,12 +35,12 @@ camel sbom [options]
 | `--hawtio` | Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus) | false | boolean
 | `--hawtio-version` | Version of the Hawtio web console | HawtioVersion.HAWTIO_VERSION | String
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
-| `--java-version` | Java version (21, 25) | 21 | String
+| `--java-version,--java` | Java version (21, 25) | 21 | String
 | `--kamelets-version` | Apache Camel Kamelets version | RuntimeType.KAMELETS_VERSION | String
 | `--lazy-bean` | Whether to use lazy bean initialization (can help with complex classloading issues | true | boolean
 | `--local-kamelet-dir` | Local directory for loading Kamelets (takes precedence) |  | String
 | `--logging` | Can be used to turn on logging to console (logs by default to file in <user home>/.camel directory) | false | boolean
-| `--logging-level` | Logging level | info | String
+| `--logging-level` | Logging level (ERROR, WARN, INFO, DEBUG, TRACE) | info | String
 | `--main-classname` | The class name of the Camel Main application class | CamelApplication | String
 | `--management-port` | To use a dedicated port for HTTP management |  | int
 | `--maven-apache-snapshot-enabled` | Whether downloading JARs from ASF Maven Snapshot repository is enabled | true | boolean
@@ -55,20 +56,22 @@ camel sbom [options]
 | `--package-name` | For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. Use false to turn off and not include package name in the Java source files. |  | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
 | `--port` | Embeds a local HTTP server on this port |  | int
-| `--profile` | Profile to export (dev, test, or prod). |  | String
+| `--profile` | Profile to export (dev, test, prod). |  | String
 | `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String
 | `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
 | `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
+| `--quarkus-package-type` | Quarkus package type (uber-jar or fast-jar) | uber-jar | String
 | `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
 | `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
-| `--runtime` | Runtime () |  | RuntimeType
+| `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--sbom-format` | The SBOM format, possible values are cyclonedx or spdx | CYCLONEDX_FORMAT | String
 | `--sbom-output-format` | The SBOM output format, possible values are json or xml | SBOM_JSON_FORMAT | String
 | `--skip-plugins` | Skip plugins during export | false | boolean
 | `--spdx-plugin-version` | The SPDX Maven Plugin version | 0.7.4 | String
 | `--spring-boot-version` | Spring Boot version | RuntimeType.SPRING_BOOT_VERSION | String
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
+| `--yes,-y` | Automatically answer yes to confirmation prompts (e.g. when using --clean-dir) | false | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

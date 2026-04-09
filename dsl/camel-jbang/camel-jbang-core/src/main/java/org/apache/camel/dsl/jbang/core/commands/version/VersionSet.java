@@ -25,7 +25,12 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "set", description = "Set/change current Camel version", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel version set 4.10.0",
+                             "  camel version set --runtime=spring-boot 4.10.0",
+                             "  camel version set --reset" })
 public class VersionSet extends CamelCommand {
 
     @CommandLine.Parameters(description = "Camel version", arity = "0..1")

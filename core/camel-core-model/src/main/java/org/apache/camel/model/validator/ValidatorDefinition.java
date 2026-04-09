@@ -44,7 +44,7 @@ public abstract class ValidatorDefinition implements CopyableDefinition<Validato
         return type;
     }
 
-    public ValidatorDefinition() {
+    protected ValidatorDefinition() {
     }
 
     protected ValidatorDefinition(ValidatorDefinition source) {

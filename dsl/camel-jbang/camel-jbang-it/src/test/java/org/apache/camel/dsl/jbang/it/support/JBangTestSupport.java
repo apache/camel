@@ -110,6 +110,7 @@ public abstract class JBangTestSupport {
         COMP_MAPPING_TEMPLATE("transform.xml", "/jbang/it/data-mapping/components/transform.xml"),
         FORMATS_MAPPING_DATA("data.csv", "/jbang/it/data-mapping/data-formats/data.csv"),
         STUB_ROUTE("StubRoute.java", "/jbang/it/StubRoute.java"),
+        HISTORY_ROUTE("HistoryRoute.java", "/jbang/it/HistoryRoute.java"),
         USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml");
 
         private String name;
@@ -135,6 +136,10 @@ public abstract class JBangTestSupport {
 
     protected String execute(final String command) {
         return containerService.execute(command);
+    }
+
+    protected String execute(final String command, Boolean getError, Boolean expectFail) {
+        return containerService.execute(command, getError, expectFail);
     }
 
     protected String executeBackground(final String command) {
@@ -170,7 +175,7 @@ public abstract class JBangTestSupport {
     protected void assertFileInDataFolderContains(String file, String contains) throws IOException {
         final Path toVerify = Path.of(containerDataFolder, file);
         Assertions.assertThat(new String(Files.readAllBytes(toVerify)))
-                .as("file" + toVerify + " should contain" + contains)
+                .as("file " + toVerify + " should contain " + contains)
                 .contains(contains);
     }
 
@@ -182,13 +187,25 @@ public abstract class JBangTestSupport {
 
     protected void checkCommandOutputs(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command  " + getMainCommand() + " " + command + "should output " + contains)
+                .as("command  " + getMainCommand() + " " + command + " should output " + contains)
+                .contains(contains);
+    }
+
+    protected void checkCommandFailsWithError(String command, String error) {
+        Assertions.assertThat(execute(command, true, true))
+                .as("command " + getMainCommand() + " " + command + " should fail with error " + error)
+                .contains(error);
+    }
+
+    protected void checkCommandFailsWithOutput(String command, String contains) {
+        Assertions.assertThat(execute(command, false, true))
+                .as("command " + getMainCommand() + " " + command + " should fail with error " + contains)
                 .contains(contains);
     }
 
     protected void checkCommandOutputsPattern(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command  " + getMainCommand() + " " + command + "should output " + contains)
+                .as("command  " + getMainCommand() + " " + command + " should output " + contains)
                 .containsPattern(contains);
     }
 
@@ -200,7 +217,7 @@ public abstract class JBangTestSupport {
 
     protected void checkCommandDoesNotOutput(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command  " + getMainCommand() + " " + command + "should not output " + contains)
+                .as("command  " + getMainCommand() + " " + command + " should not output " + contains)
                 .doesNotContain(contains);
     }
 

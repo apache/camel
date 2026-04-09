@@ -33,10 +33,10 @@ public abstract class InlineQueryResult {
     @JsonProperty("reply_markup")
     private InlineKeyboardMarkup replyMarkup;
 
-    public InlineQueryResult() {
+    protected InlineQueryResult() {
     }
 
-    public InlineQueryResult(String type) {
+    protected InlineQueryResult(String type) {
         this.type = type;
     }
 

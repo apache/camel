@@ -28,7 +28,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = PostgresInfraService.class,
-              description = "Postgres SQL Database",
+              description = "PostgreSQL is an open source object-relational database",
               serviceAlias = { "postgres" })
 public class PostgresLocalContainerInfraService implements PostgresInfraService, ContainerService<PostgreSQLContainer> {
 

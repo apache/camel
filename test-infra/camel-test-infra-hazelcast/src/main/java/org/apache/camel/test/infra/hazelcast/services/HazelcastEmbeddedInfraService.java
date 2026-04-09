@@ -21,7 +21,7 @@ import com.hazelcast.config.Config;
 import org.apache.camel.spi.annotations.InfraService;
 
 @InfraService(service = HazelcastInfraService.class,
-              description = "In Memory Database Hazelcast",
+              description = "Hazelcast is a distributed in-memory computing platform",
               serviceAlias = { "hazelcast" })
 public class HazelcastEmbeddedInfraService implements HazelcastInfraService {
 

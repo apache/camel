@@ -28,20 +28,18 @@ jobs:
     name: PR comment
     if: ${{ github.repository == 'apache/camel' && github.event.issue.pull_request && (github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'CONTRIBUTOR') && startsWith(github.event.comment.body, '/component-test') }}
     permissions:
-      pull-requests: write # to comment on a pull request
-      actions: read # to download artifact
+      pull-requests: write
+      actions: write # to dispatch workflows
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ '21' ]
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-          submodules: recursive
+          sparse-checkout: components
+          sparse-checkout-cone-mode: true
       - name: Check Permission
-        uses: actions-cool/check-user-permission@7b90a27f92f3961b368376107661682c441f6103
-      - name: Retrieve sha
+        uses: actions-cool/check-user-permission@c21884f3dda18dafc2f8b402fe807ccc9ec1aa5e
+      - name: Retrieve PR sha and ref
         id: pr
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
@@ -51,9 +49,8 @@ jobs:
         run: |
           pr="$(gh api /repos/${GH_REPO}/pulls/${PR_NUMBER})"
           head_sha="$(echo "$pr" | jq -r .head.sha)"
+          head_ref="$(echo "$pr" | jq -r .head.ref)"
           # Check that the PR branch was not pushed to after the comment was created.
-          # Use the head commit date (not head.repo.pushed_at which is repo-level
-          # and changes whenever any branch is pushed, causing false negatives).
           commit="$(gh api /repos/${GH_REPO}/commits/${head_sha})"
           committed_at="$(echo "$commit" | jq -r .commit.committer.date)"
           if [[ $(date -d "$committed_at" +%s) -gt $(date -d "$COMMENT_AT" +%s) ]]; then
@@ -61,39 +58,56 @@ jobs:
               exit 1
           fi
           echo "pr_sha=$head_sha" >> $GITHUB_OUTPUT
+          echo "pr_ref=$head_ref" >> $GITHUB_OUTPUT
       - name: React to comment
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
           gh api /repos/${GH_REPO}/issues/comments/${{ github.event.comment.id }}/reactions -f content="+1"
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          ref: ${{ steps.pr.outputs.pr_sha }}
-          submodules: recursive
-      - id: install-packages
-        uses: ./.github/actions/install-packages
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
-        with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.java }}
-          cache: 'maven'
-      - id: test
+      - name: Resolve component paths and dispatch
         env:
-          comment_body: ${{ github.event.comment.body }}
-        name: Component test execution
-        uses: ./.github/actions/component-test
-        with:
-          run-id: ${{ github.run_id }}
-          pr-id: ${{ github.event.issue.number }}
-          comment-id: ${{ github.event.comment.id }}
-          comment-body: ${{ env.comment_body }}
-          artifact-upload-suffix: java-${{ matrix.java }}
-      - name: Post failure comment
-        if: failure() && steps.test.outcome != 'failure'
-        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          body: |
-            :x: The `/component-test` run failed. Please [check the logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          PR_REF: ${{ steps.pr.outputs.pr_ref }}
+        run: |
+          componentList="${COMMENT_BODY:16}"
+          if [[ -z "$componentList" ]]; then
+            echo "No components specified. Expected format: /component-test component1 component2..."
+            exit 1
+          fi
+
+          # Resolve component names to module paths
+          pl=""
+          for component in ${componentList}; do
+            if [[ ${component} = camel-* ]]; then
+              componentPath="components/${component}"
+            else
+              componentPath="components/camel-${component}"
+            fi
+            if [[ -d "${componentPath}" ]]; then
+              # Find all sub-modules (pom.xml dirs) under the component
+              modules=$(find "${componentPath}" -name pom.xml -not -path "*/src/it/*" -not -path "*/target/*" -exec dirname {} \; | sort | tr -s "\n" ",")
+              pl="${pl}${modules}"
+            else
+              echo "WARNING: Component path '${componentPath}' not found, skipping"
+            fi
+          done
+
+          # Strip trailing comma
+          pl="${pl%,}"
+
+          if [[ -z "$pl" ]]; then
+            echo "No valid component paths found"
+            exit 1
+          fi
+
+          echo "Dispatching main workflow with extra modules: $pl"
+          gh workflow run "Build and test" \
+            --repo "${GH_REPO}" \
+            -f pr_number="${PR_NUMBER}" \
+            -f pr_ref="${PR_REF}" \
+            -f extra_modules="${pl}" \
+            -f skip_full_build=true

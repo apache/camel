@@ -114,6 +114,7 @@ import org.apache.camel.model.app.BeanConstructorsDefinition;
 import org.apache.camel.model.app.BeanPropertiesDefinition;
 import org.apache.camel.model.app.BeanPropertyDefinition;
 import org.apache.camel.model.app.ComponentScanDefinition;
+import org.apache.camel.model.app.SSLContextParametersDefinition;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
@@ -3094,8 +3095,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "mimeMultipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "name", type = "string", description = "Set the transformer name under which the transformer gets referenced when specifying the input/output data type on routes. If you specify a transformer name that matches a data type scheme like 'csv' the transformer will be picked up for all of 'csv:' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists.", displayName = "Name"),
+                    @YamlProperty(name = "ocsf", type = "object:org.apache.camel.model.dataformat.OcsfDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "parquetAvro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "pqc", type = "object:org.apache.camel.model.dataformat.PQCDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "scheme", type = "string", description = "Set a scheme name supported by the transformer. If you specify 'csv', the transformer will be picked up for all of 'csv' from/to Java transformation. Note that the scheme matching is performed only when no exactly matched transformer exists.", displayName = "Scheme"),
@@ -3276,8 +3279,23 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "ocsf": {
+                    org.apache.camel.model.dataformat.OcsfDataFormat val = asType(node, org.apache.camel.model.dataformat.OcsfDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "parquetAvro": {
                     org.apache.camel.model.dataformat.ParquetAvroDataFormat val = asType(node, org.apache.camel.model.dataformat.ParquetAvroDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "pgp": {
+                    org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "pqc": {
+                    org.apache.camel.model.dataformat.PQCDataFormat val = asType(node, org.apache.camel.model.dataformat.PQCDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3343,11 +3361,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xmlSecurity": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "pgp": {
-                    org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3430,8 +3443,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "jsonApi", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
                     @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat"),
                     @YamlProperty(name = "mimeMultipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat"),
+                    @YamlProperty(name = "ocsf", type = "object:org.apache.camel.model.dataformat.OcsfDataFormat"),
                     @YamlProperty(name = "parquetAvro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat"),
+                    @YamlProperty(name = "pqc", type = "object:org.apache.camel.model.dataformat.PQCDataFormat"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat"),
                     @YamlProperty(name = "smooks", type = "object:org.apache.camel.model.dataformat.SmooksDataFormat"),
@@ -3750,6 +3765,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormats(existing);
                     break;
                 }
+                case "ocsf": {
+                    org.apache.camel.model.dataformat.OcsfDataFormat val = asType(node, org.apache.camel.model.dataformat.OcsfDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
                 case "parquetAvro": {
                     org.apache.camel.model.dataformat.ParquetAvroDataFormat val = asType(node, org.apache.camel.model.dataformat.ParquetAvroDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
@@ -3762,6 +3787,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "pgp": {
                     org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
+                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
+                    if (existing == null) {
+                        existing = new java.util.ArrayList<>();
+                    }
+                    existing.add(val);
+                    target.setDataFormats(existing);
+                    break;
+                }
+                case "pqc": {
+                    org.apache.camel.model.dataformat.PQCDataFormat val = asType(node, org.apache.camel.model.dataformat.PQCDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -9436,6 +9471,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "pgp": {
+                    org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "pqc": {
+                    org.apache.camel.model.dataformat.PQCDataFormat val = asType(node, org.apache.camel.model.dataformat.PQCDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "protobuf": {
                     org.apache.camel.model.dataformat.ProtobufDataFormat val = asType(node, org.apache.camel.model.dataformat.ProtobufDataFormat.class);
                     target.setDataFormatType(val);
@@ -9498,16 +9543,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xmlSecurity": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "pgp": {
-                    org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "pqc": {
-                    org.apache.camel.model.dataformat.PQCDataFormat val = asType(node, org.apache.camel.model.dataformat.PQCDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -15455,6 +15490,193 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         }
     }
 
+    @YamlIn
+    @YamlType(
+            nodes = "sslContextParameters",
+            types = org.apache.camel.model.app.SSLContextParametersDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = {
+                    @YamlProperty(name = "certAlias", type = "string"),
+                    @YamlProperty(name = "cipherSuites", type = "string"),
+                    @YamlProperty(name = "cipherSuitesExclude", type = "string"),
+                    @YamlProperty(name = "cipherSuitesInclude", type = "string"),
+                    @YamlProperty(name = "clientAuthentication", type = "enum:NONE,WANT,REQUIRE"),
+                    @YamlProperty(name = "id", type = "string"),
+                    @YamlProperty(name = "keyManagerAlgorithm", type = "string"),
+                    @YamlProperty(name = "keyManagerProvider", type = "string"),
+                    @YamlProperty(name = "keyStore", type = "string"),
+                    @YamlProperty(name = "keyStoreProvider", type = "string"),
+                    @YamlProperty(name = "keyStoreType", type = "string"),
+                    @YamlProperty(name = "keystorePassword", type = "string"),
+                    @YamlProperty(name = "namedGroups", type = "string"),
+                    @YamlProperty(name = "namedGroupsExclude", type = "string"),
+                    @YamlProperty(name = "namedGroupsInclude", type = "string"),
+                    @YamlProperty(name = "provider", type = "string"),
+                    @YamlProperty(name = "secureRandomAlgorithm", type = "string"),
+                    @YamlProperty(name = "secureRandomProvider", type = "string"),
+                    @YamlProperty(name = "secureSocketProtocol", type = "string"),
+                    @YamlProperty(name = "sessionTimeout", type = "string"),
+                    @YamlProperty(name = "signatureSchemes", type = "string"),
+                    @YamlProperty(name = "signatureSchemesExclude", type = "string"),
+                    @YamlProperty(name = "signatureSchemesInclude", type = "string"),
+                    @YamlProperty(name = "trustAllCertificates", type = "string"),
+                    @YamlProperty(name = "trustStore", type = "string"),
+                    @YamlProperty(name = "trustStorePassword", type = "string")
+            }
+    )
+    public static class SSLContextParametersDefinitionDeserializer extends YamlDeserializerBase<SSLContextParametersDefinition> {
+        public SSLContextParametersDefinitionDeserializer() {
+            super(SSLContextParametersDefinition.class);
+        }
+
+        @Override
+        protected SSLContextParametersDefinition newInstance() {
+            return new SSLContextParametersDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(SSLContextParametersDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "certAlias": {
+                    String val = asText(node);
+                    target.setCertAlias(val);
+                    break;
+                }
+                case "cipherSuites": {
+                    String val = asText(node);
+                    target.setCipherSuites(val);
+                    break;
+                }
+                case "cipherSuitesExclude": {
+                    String val = asText(node);
+                    target.setCipherSuitesExclude(val);
+                    break;
+                }
+                case "cipherSuitesInclude": {
+                    String val = asText(node);
+                    target.setCipherSuitesInclude(val);
+                    break;
+                }
+                case "clientAuthentication": {
+                    String val = asText(node);
+                    target.setClientAuthentication(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "keyManagerAlgorithm": {
+                    String val = asText(node);
+                    target.setKeyManagerAlgorithm(val);
+                    break;
+                }
+                case "keyManagerProvider": {
+                    String val = asText(node);
+                    target.setKeyManagerProvider(val);
+                    break;
+                }
+                case "keyStore": {
+                    String val = asText(node);
+                    target.setKeyStore(val);
+                    break;
+                }
+                case "keyStoreProvider": {
+                    String val = asText(node);
+                    target.setKeyStoreProvider(val);
+                    break;
+                }
+                case "keyStoreType": {
+                    String val = asText(node);
+                    target.setKeyStoreType(val);
+                    break;
+                }
+                case "keystorePassword": {
+                    String val = asText(node);
+                    target.setKeystorePassword(val);
+                    break;
+                }
+                case "namedGroups": {
+                    String val = asText(node);
+                    target.setNamedGroups(val);
+                    break;
+                }
+                case "namedGroupsExclude": {
+                    String val = asText(node);
+                    target.setNamedGroupsExclude(val);
+                    break;
+                }
+                case "namedGroupsInclude": {
+                    String val = asText(node);
+                    target.setNamedGroupsInclude(val);
+                    break;
+                }
+                case "provider": {
+                    String val = asText(node);
+                    target.setProvider(val);
+                    break;
+                }
+                case "secureRandomAlgorithm": {
+                    String val = asText(node);
+                    target.setSecureRandomAlgorithm(val);
+                    break;
+                }
+                case "secureRandomProvider": {
+                    String val = asText(node);
+                    target.setSecureRandomProvider(val);
+                    break;
+                }
+                case "secureSocketProtocol": {
+                    String val = asText(node);
+                    target.setSecureSocketProtocol(val);
+                    break;
+                }
+                case "sessionTimeout": {
+                    String val = asText(node);
+                    target.setSessionTimeout(val);
+                    break;
+                }
+                case "signatureSchemes": {
+                    String val = asText(node);
+                    target.setSignatureSchemes(val);
+                    break;
+                }
+                case "signatureSchemesExclude": {
+                    String val = asText(node);
+                    target.setSignatureSchemesExclude(val);
+                    break;
+                }
+                case "signatureSchemesInclude": {
+                    String val = asText(node);
+                    target.setSignatureSchemesInclude(val);
+                    break;
+                }
+                case "trustAllCertificates": {
+                    String val = asText(node);
+                    target.setTrustAllCertificates(val);
+                    break;
+                }
+                case "trustStore": {
+                    String val = asText(node);
+                    target.setTrustStore(val);
+                    break;
+                }
+                case "trustStorePassword": {
+                    String val = asText(node);
+                    target.setTrustStorePassword(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
     @YamlType(
             nodes = "saga",
             types = org.apache.camel.model.SagaDefinition.class,
@@ -19439,6 +19661,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "pgp": {
+                    org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "pqc": {
+                    org.apache.camel.model.dataformat.PQCDataFormat val = asType(node, org.apache.camel.model.dataformat.PQCDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "protobuf": {
                     org.apache.camel.model.dataformat.ProtobufDataFormat val = asType(node, org.apache.camel.model.dataformat.ProtobufDataFormat.class);
                     target.setDataFormatType(val);
@@ -19501,16 +19733,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xmlSecurity": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "pgp": {
-                    org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "pqc": {
-                    org.apache.camel.model.dataformat.PQCDataFormat val = asType(node, org.apache.camel.model.dataformat.PQCDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

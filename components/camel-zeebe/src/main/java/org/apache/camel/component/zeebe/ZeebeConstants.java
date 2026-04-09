@@ -19,6 +19,7 @@ package org.apache.camel.component.zeebe;
 
 import org.apache.camel.spi.Metadata;
 
+@Deprecated(since = "4.19.0")
 public final class ZeebeConstants {
 
     public static final String HEADER_PREFIX = "CamelZeebe";

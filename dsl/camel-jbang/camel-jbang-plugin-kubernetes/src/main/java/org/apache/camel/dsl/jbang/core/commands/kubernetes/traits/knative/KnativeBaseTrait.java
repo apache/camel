@@ -21,7 +21,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 
 abstract class KnativeBaseTrait extends BaseTrait {
 
-    public KnativeBaseTrait(String id, int order) {
+    protected KnativeBaseTrait(String id, int order) {
         super(id, order);
     }
 

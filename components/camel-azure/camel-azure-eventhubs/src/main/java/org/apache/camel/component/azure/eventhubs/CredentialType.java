@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.azure.eventhubs;
 
+/**
+ * @deprecated Use {@link org.apache.camel.component.azure.common.CredentialType} instead.
+ */
+@Deprecated(since = "4.19.0")
 public enum CredentialType {
     /**
      * Eventhubs Connection String

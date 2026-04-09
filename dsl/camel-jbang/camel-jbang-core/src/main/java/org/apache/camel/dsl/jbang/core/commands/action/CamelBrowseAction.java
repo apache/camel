@@ -30,6 +30,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
@@ -255,6 +256,11 @@ public class CamelBrowseAction extends ActionBaseCommand {
     }
 
     protected void tableStatus(List<Row> rows) {
+        int tw = terminalWidth();
+        int fixedWidth = 10 + 40 + 10 + 8 + 15; // PID + NAME + AGE + SIZE + SINCE (approx)
+        int borderOverhead = TerminalWidthHelper.noBorderOverhead(6);
+        int endpointWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth, borderOverhead, 20, wideUri ? 140 : 90);
+
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
@@ -265,10 +271,10 @@ public class CamelBrowseAction extends ActionBaseCommand {
                 new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.LEFT)
                         .with(this::getMessageAgo),
                 new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .maxWidth(endpointWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getEndpointUri),
                 new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(140, OverflowBehaviour.NEWLINE)
+                        .maxWidth(endpointWidth, OverflowBehaviour.NEWLINE)
                         .with(r -> r.uri))));
     }
 

@@ -38,6 +38,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "bigintUnsignedHandlingMode": getOrCreateConfiguration(target).setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binlogbuffersize":
         case "binlogBufferSize": getOrCreateConfiguration(target).setBinlogBufferSize(property(camelContext, int.class, value)); return true;
+        case "binlognetreadtimeout":
+        case "binlogNetReadTimeout": getOrCreateConfiguration(target).setBinlogNetReadTimeout(property(camelContext, long.class, value)); return true;
+        case "binlognetwritetimeout":
+        case "binlogNetWriteTimeout": getOrCreateConfiguration(target).setBinlogNetWriteTimeout(property(camelContext, long.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnexcludelist":
@@ -230,6 +234,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "snapshotLockingMode": getOrCreateConfiguration(target).setSnapshotLockingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": getOrCreateConfiguration(target).setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": getOrCreateConfiguration(target).setSnapshotMaxThreadsMultiplier(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -289,6 +295,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "bigintUnsignedHandlingMode": return java.lang.String.class;
         case "binlogbuffersize":
         case "binlogBufferSize": return int.class;
+        case "binlognetreadtimeout":
+        case "binlogNetReadTimeout": return long.class;
+        case "binlognetwritetimeout":
+        case "binlogNetWriteTimeout": return long.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "columnexcludelist":
@@ -481,6 +491,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "snapshotLockingMode": return java.lang.String.class;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return int.class;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -541,6 +553,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "bigintUnsignedHandlingMode": return getOrCreateConfiguration(target).getBigintUnsignedHandlingMode();
         case "binlogbuffersize":
         case "binlogBufferSize": return getOrCreateConfiguration(target).getBinlogBufferSize();
+        case "binlognetreadtimeout":
+        case "binlogNetReadTimeout": return getOrCreateConfiguration(target).getBinlogNetReadTimeout();
+        case "binlognetwritetimeout":
+        case "binlogNetWriteTimeout": return getOrCreateConfiguration(target).getBinlogNetWriteTimeout();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnexcludelist":
@@ -733,6 +749,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "snapshotLockingMode": return getOrCreateConfiguration(target).getSnapshotLockingMode();
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return getOrCreateConfiguration(target).getSnapshotMaxThreads();
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return getOrCreateConfiguration(target).getSnapshotMaxThreadsMultiplier();
         case "snapshotmode":
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
         case "snapshotmodeconfigurationbasedsnapshotdata":

@@ -42,7 +42,7 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<>();
     private CamelContext camelContext;
 
-    public BasePackageScanResolver() {
+    protected BasePackageScanResolver() {
         initialize();
     }
 

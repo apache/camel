@@ -339,6 +339,25 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Maximum time to wait for the Infinispan server to be ready when
+         * registering the embedding store schema. This handles the case where
+         * Camel and the Infinispan server start concurrently.
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 60s
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreSchemaRegistrationTimeout the value to set
+         * @return the dsl builder
+         */
+        default InfinispanComponentBuilder embeddingStoreSchemaRegistrationTimeout(java.time.Duration embeddingStoreSchemaRegistrationTimeout) {
+            doSetProperty("embeddingStoreSchemaRegistrationTimeout", embeddingStoreSchemaRegistrationTimeout);
+            return this;
+        }
+    
         /**
          * The name of the type used to store embeddings. The default is
          * 'InfinispanRemoteEmbedding' suffixed with the value of the
@@ -645,6 +664,7 @@ public interface InfinispanComponentBuilderFactory {
             case "embeddingStoreDistance": getOrCreateConfiguration((InfinispanRemoteComponent) component).setEmbeddingStoreDistance((int) value); return true;
             case "embeddingStoreEnabled": getOrCreateConfiguration((InfinispanRemoteComponent) component).setEmbeddingStoreEnabled((boolean) value); return true;
             case "embeddingStoreRegisterSchema": getOrCreateConfiguration((InfinispanRemoteComponent) component).setEmbeddingStoreRegisterSchema((boolean) value); return true;
+            case "embeddingStoreSchemaRegistrationTimeout": getOrCreateConfiguration((InfinispanRemoteComponent) component).setEmbeddingStoreSchemaRegistrationTimeout((java.time.Duration) value); return true;
             case "embeddingStoreTypeName": getOrCreateConfiguration((InfinispanRemoteComponent) component).setEmbeddingStoreTypeName((java.lang.String) value); return true;
             case "embeddingStoreVectorSimilarity": getOrCreateConfiguration((InfinispanRemoteComponent) component).setEmbeddingStoreVectorSimilarity((org.infinispan.api.annotations.indexing.option.VectorSimilarity) value); return true;
             case "autowiredEnabled": ((InfinispanRemoteComponent) component).setAutowiredEnabled((boolean) value); return true;

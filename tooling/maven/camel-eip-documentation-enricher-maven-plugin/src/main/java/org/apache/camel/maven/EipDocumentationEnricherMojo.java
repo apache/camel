@@ -120,6 +120,12 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     public String deleteFilesAfterRun;
 
     /**
+     * Optional comma-separated list of model JSON file names to exclude from enrichment.
+     */
+    @Parameter
+    public String excludeModels;
+
+    /**
      * The maven project.
      */
     @Parameter(property = "project", required = true, readonly = true)
@@ -163,7 +169,18 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         Set<File> files = new HashSet<>();
 
         // Do not include the model/app/bean.json file for enhancement (there are two bean.json)
-        Predicate<File> beanFilter = f -> !(f.getName().equals("bean.json") && f.getParentFile().getName().equals("app"));
+        Set<String> excluded = new HashSet<>();
+        excluded.add("bean.json");
+        if (excludeModels != null) {
+            for (String m : excludeModels.split(",")) {
+                String name = m.trim();
+                if (!name.endsWith(".json")) {
+                    name += ".json";
+                }
+                excluded.add(name);
+            }
+        }
+        Predicate<File> beanFilter = f -> !(f.getParentFile().getName().equals("app") && excluded.contains(f.getName()));
         PackageHelper.findJsonFiles(new File(camelCoreModelDir, pathToModelDir), files, beanFilter);
         PackageHelper.findJsonFiles(new File(camelCoreXmlDir, pathToCoreXmlModelDir), files, beanFilter);
 

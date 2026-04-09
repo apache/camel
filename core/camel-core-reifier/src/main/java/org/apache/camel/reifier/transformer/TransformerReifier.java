@@ -38,7 +38,7 @@ public abstract class TransformerReifier<T> extends AbstractReifier {
 
     protected final T definition;
 
-    public TransformerReifier(CamelContext camelContext, T definition) {
+    protected TransformerReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
     }

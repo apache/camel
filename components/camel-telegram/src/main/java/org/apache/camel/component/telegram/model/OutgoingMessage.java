@@ -39,7 +39,7 @@ public abstract class OutgoingMessage implements TelegramMessage {
     @JsonProperty("reply_to_message_id")
     protected Long replyToMessageId;
 
-    public OutgoingMessage() {
+    protected OutgoingMessage() {
     }
 
     public String getChatId() {

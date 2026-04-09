@@ -22,7 +22,7 @@ public abstract class AbstractServiceNowProducer extends HeaderSelectorProducer 
     private final ServiceNowRelease release;
     private final ServiceNowEndpoint endpoint;
 
-    public AbstractServiceNowProducer(ServiceNowEndpoint endpoint, ServiceNowRelease release) {
+    protected AbstractServiceNowProducer(ServiceNowEndpoint endpoint, ServiceNowRelease release) {
         super(endpoint, ServiceNowConstants.RESOURCE, endpoint.getConfiguration().getResource());
 
         this.release = release;

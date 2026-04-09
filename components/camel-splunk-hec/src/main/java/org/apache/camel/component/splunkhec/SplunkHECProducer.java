@@ -24,6 +24,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -36,13 +37,17 @@ import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.io.entity.EntityTemplate;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Splunk HEC producer.
  */
 public class SplunkHECProducer extends DefaultProducer {
+    private static final Logger LOG = LoggerFactory.getLogger(SplunkHECProducer.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final SplunkHECEndpoint endpoint;
     private CloseableHttpClient httpClient;
@@ -59,6 +64,9 @@ public class SplunkHECProducer extends DefaultProducer {
                 .setUserAgent("Camel Splunk HEC/" + getEndpoint().getCamelContext().getVersion());
         PoolingHttpClientConnectionManager connManager;
         if (endpoint.getConfiguration().isSkipTlsVerify()) {
+            LOG.warn("Splunk HEC endpoint is configured with skipTlsVerify=true."
+                     + " TLS certificate and hostname verification are disabled."
+                     + " This should not be used in production environments.");
             SSLContextBuilder sslbuilder = new SSLContextBuilder();
             sslbuilder.loadTrustMaterial(null, (chain, authType) -> true);
             SSLConnectionSocketFactory sslsf
@@ -100,9 +108,12 @@ public class SplunkHECProducer extends DefaultProducer {
                     if (response.getCode() != 200) {
                         ByteArrayOutputStream output = new ByteArrayOutputStream();
                         response.getEntity().writeTo(output);
-
-                        throw new RuntimeException(new StatusLine(response) + "\n" + output.toString(StandardCharsets.UTF_8));
+                        String responseBody = output.toString(StandardCharsets.UTF_8);
+                        LOG.debug("Splunk HEC error response (HTTP {}): {}", response.getCode(), responseBody);
+                        throw new RuntimeCamelException(
+                                "Splunk HEC request failed: " + new StatusLine(response) + "\n" + responseBody);
                     }
+                    EntityUtils.consume(response.getEntity());
                     return null;
                 });
     }

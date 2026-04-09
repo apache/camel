@@ -19,6 +19,7 @@ camel get service [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--json` | Output in JSON Format |  | boolean
 | `--metadata` | Show service metadata (only available for some services) |  | boolean
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
 | `--sort` | Sort by pid, name or age | pid | String

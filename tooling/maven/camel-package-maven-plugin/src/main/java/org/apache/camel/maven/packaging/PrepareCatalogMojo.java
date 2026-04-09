@@ -932,6 +932,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-aws":
                 case "camel-aws-common":
                 case "camel-azure":
+                case "camel-azure-common":
                 case "camel-box":
                 case "camel-cxf":
                 case "camel-debezium":

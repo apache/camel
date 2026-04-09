@@ -51,7 +51,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
      * @param      collection    The collection of API methods
      */
     @Deprecated(since = "4.1.0")
-    public AbstractApiComponent(Class<? extends Endpoint> endpointClass, Class<E> apiNameClass, S collection) {
+    protected AbstractApiComponent(Class<? extends Endpoint> endpointClass, Class<E> apiNameClass, S collection) {
         this(apiNameClass, collection);
     }
 
@@ -67,8 +67,8 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
      * @param      collection    The collection of API methods
      */
     @Deprecated(since = "4.2.0")
-    public AbstractApiComponent(CamelContext context, Class<? extends Endpoint> endpointClass, Class<E> apiNameClass,
-                                S collection) {
+    protected AbstractApiComponent(CamelContext context, Class<? extends Endpoint> endpointClass, Class<E> apiNameClass,
+                                   S collection) {
         this(context, apiNameClass, collection);
     }
 

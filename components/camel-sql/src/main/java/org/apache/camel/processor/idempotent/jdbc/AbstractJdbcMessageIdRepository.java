@@ -63,23 +63,23 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
     protected TransactionTemplate transactionTemplate;
     protected DataSource dataSource; // not in use
 
-    public AbstractJdbcMessageIdRepository() {
+    protected AbstractJdbcMessageIdRepository() {
     }
 
-    public AbstractJdbcMessageIdRepository(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
+    protected AbstractJdbcMessageIdRepository(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.transactionTemplate = transactionTemplate;
     }
 
-    public AbstractJdbcMessageIdRepository(DataSource dataSource, TransactionTemplate transactionTemplate,
-                                           String processorName) {
+    protected AbstractJdbcMessageIdRepository(DataSource dataSource, TransactionTemplate transactionTemplate,
+                                              String processorName) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.jdbcTemplate.afterPropertiesSet();
         this.processorName = processorName;
         this.transactionTemplate = transactionTemplate;
     }
 
-    public AbstractJdbcMessageIdRepository(DataSource dataSource, String processorName) {
+    protected AbstractJdbcMessageIdRepository(DataSource dataSource, String processorName) {
         this(dataSource, createTransactionTemplate(dataSource), processorName);
     }
 

@@ -29,6 +29,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -100,11 +101,16 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
+            int tw = terminalWidth();
+            int fixedWidth = 10 + 15; // DURATION + TYPE (approx)
+            int borderOverhead = TerminalWidthHelper.noBorderOverhead(3);
+            int stepWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth, borderOverhead, 20, 80);
+
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("DURATION").dataAlign(HorizontalAlign.RIGHT).with(this::getDuration),
                     new Column().header("TYPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.type),
                     new Column().header("STEP (END)").dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(80, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .maxWidth(stepWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getStep))));
         }
 

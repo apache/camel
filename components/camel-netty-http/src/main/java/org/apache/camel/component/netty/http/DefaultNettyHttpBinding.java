@@ -250,11 +250,12 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         if (request.method().name().equals("POST") && request.headers().get(NettyHttpConstants.CONTENT_TYPE) != null
                 && request.headers().get(NettyHttpConstants.CONTENT_TYPE)
                         .startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
-                && !configuration.isBridgeEndpoint() && !configuration.isHttpProxy() && request instanceof FullHttpRequest) {
+                && !configuration.isBridgeEndpoint() && !configuration.isHttpProxy()
+                && request instanceof FullHttpRequest fullHttpRequest) {
 
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
             String body;
-            ByteBuf buffer = ((FullHttpRequest) request).content().retain();
+            ByteBuf buffer = fullHttpRequest.content().retain();
             try {
                 body = buffer.toString(StandardCharsets.UTF_8);
             } finally {
@@ -423,8 +424,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     public HttpResponse toNettyResponse(Message message, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toNettyResponse: {}", message);
 
-        if (message instanceof NettyHttpMessage) {
-            final NettyHttpMessage nettyHttpMessage = (NettyHttpMessage) message;
+        if (message instanceof NettyHttpMessage nettyHttpMessage) {
             final FullHttpResponse response = nettyHttpMessage.getHttpResponse();
 
             if (response != null && nettyHttpMessage.getBody() == null) {
@@ -433,8 +433,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
 
         // the message body may already be a Netty HTTP response
-        if (message.getBody() instanceof HttpResponse) {
-            return (HttpResponse) message.getBody();
+        if (message.getBody() instanceof HttpResponse httpResponse) {
+            return httpResponse;
         }
 
         Object body = message.getBody();
@@ -483,15 +483,15 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         HttpResponse response = null;
 
-        if (body instanceof InputStream && configuration.isDisableStreamCache()) {
+        if (body instanceof InputStream inputStream && configuration.isDisableStreamCache()) {
             response = new OutboundStreamHttpResponse(
-                    (InputStream) body, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code), true));
+                    inputStream, new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(code), true));
             response.headers().set(TRANSFER_ENCODING, CHUNKED);
         }
 
         if (response == null) {
-            if (body instanceof ByteBuf) {
-                buffer = (ByteBuf) body;
+            if (body instanceof ByteBuf byteBuf) {
+                buffer = byteBuf;
             } else {
                 // try to convert to buffer first
                 buffer = message.getBody(ByteBuf.class);
@@ -622,10 +622,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
 
         HttpRequest request = null;
-        if (message instanceof NettyHttpMessage) {
+        if (message instanceof NettyHttpMessage nettyHttpMessage) {
             // if the request is already given we should set the values
             // from message headers and pass on the same request
-            final FullHttpRequest givenRequest = ((NettyHttpMessage) message).getHttpRequest();
+            final FullHttpRequest givenRequest = nettyHttpMessage.getHttpRequest();
             // we need to make sure that the givenRequest is the original
             // request received by the proxy, only when the body wasn't
             // modified by a processor on route
@@ -637,9 +637,9 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
         }
 
-        if (request == null && body instanceof InputStream && configuration.isDisableStreamCache()) {
+        if (request == null && body instanceof InputStream inputStream && configuration.isDisableStreamCache()) {
             request = new OutboundStreamHttpRequest(
-                    (InputStream) body, new DefaultHttpRequest(protocol, httpMethod, uriForRequest));
+                    inputStream, new DefaultHttpRequest(protocol, httpMethod, uriForRequest));
             request.headers().set(TRANSFER_ENCODING, CHUNKED);
         }
 
@@ -649,8 +649,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             if (body != null) {
                 // support bodies as native Netty
                 ByteBuf buffer;
-                if (body instanceof ByteBuf) {
-                    buffer = (ByteBuf) body;
+                if (body instanceof ByteBuf byteBuf) {
+                    buffer = byteBuf;
                 } else {
                     // try to convert to buffer first
                     buffer = message.getBody(ByteBuf.class);

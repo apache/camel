@@ -39,11 +39,11 @@ public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsume
     protected volatile int pendingExchanges;
     protected int maxMessagesPerPoll;
 
-    public ScheduledBatchPollingConsumer(Endpoint endpoint, Processor processor) {
+    protected ScheduledBatchPollingConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
-    public ScheduledBatchPollingConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService executor) {
+    protected ScheduledBatchPollingConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService executor) {
         super(endpoint, processor, executor);
     }
 

@@ -68,6 +68,22 @@ public interface ContextServicePlugin {
     void load(CamelContext camelContext);
 
     /**
+     * Called before route reloading in development mode to allow the plugin to refresh its state.
+     * <p>
+     * This method is invoked by the route watcher reload strategy before routes are reloaded, giving plugins the
+     * opportunity to refresh bean references, re-read configuration, or perform other updates that should happen before
+     * the new routes are started.
+     * <p>
+     * The default implementation does nothing. Plugins that register beans or other resources that may become stale
+     * when properties change should override this method to refresh those resources.
+     *
+     * @param camelContext the CamelContext being reloaded, never {@code null}
+     */
+    default void onReload(CamelContext camelContext) {
+        // NO-OP
+    }
+
+    /**
      * Called during CamelContext stop. Use it to free allocated resources.
      *
      * @param camelContext the CamelContext being uninitialized, never {@code null}

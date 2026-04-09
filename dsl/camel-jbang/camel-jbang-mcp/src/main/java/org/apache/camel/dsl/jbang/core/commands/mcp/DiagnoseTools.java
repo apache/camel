@@ -30,8 +30,6 @@ import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
 
 /**
  * MCP Tool for diagnosing Camel errors from stack traces or error messages.
@@ -72,12 +70,13 @@ public class DiagnoseTools {
     /**
      * Tool to diagnose Camel errors from stack traces or error messages.
      */
-    @Tool(description = "Diagnose a Camel error from a stack trace or error message. "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Diagnose a Camel error from a stack trace or error message. "
                         + "Returns the identified component/EIP involved, common causes for the error, "
                         + "links to relevant Camel documentation, and suggested fixes. "
                         + "Covers the most common Camel exceptions including NoSuchEndpointException, "
                         + "ResolveEndpointFailedException, FailedToCreateRouteException, and more.")
-    public String camel_error_diagnose(
+    public DiagnoseResult camel_error_diagnose(
             @ToolArg(description = "The Camel stack trace or error message to diagnose") String error,
             @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
             @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
@@ -91,68 +90,54 @@ public class DiagnoseTools {
         try {
             CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
 
-            JsonObject result = new JsonObject();
-
             // Identify matching exceptions
             List<String> matchedExceptions = identifyExceptions(error);
-            JsonArray exceptionsJson = new JsonArray();
+            List<IdentifiedException> exceptions = new ArrayList<>();
             for (String exceptionName : matchedExceptions) {
                 DiagnoseData.ExceptionInfo info = diagnoseData.getException(exceptionName);
                 if (info != null) {
-                    JsonObject exJson = info.toJson();
-                    exJson.put("exception", exceptionName);
-                    exceptionsJson.add(exJson);
+                    exceptions.add(new IdentifiedException(
+                            exceptionName, info.description(), info.commonCauses(),
+                            info.suggestedFixes(), info.documentationLinks()));
                 }
             }
-            result.put("identifiedExceptions", exceptionsJson);
 
             // Identify components from the error
             List<String> componentNames = extractComponentNames(error, catalog);
-            JsonArray componentsJson = new JsonArray();
+            List<IdentifiedComponent> components = new ArrayList<>();
             for (String comp : componentNames) {
                 ComponentModel model = catalog.componentModel(comp);
                 if (model != null) {
-                    JsonObject compJson = new JsonObject();
-                    compJson.put("name", comp);
-                    compJson.put("title", model.getTitle());
-                    compJson.put("description", model.getDescription());
-                    compJson.put("documentationUrl", CAMEL_COMPONENT_DOC + comp + "-component.html");
-                    componentsJson.add(compJson);
+                    components.add(new IdentifiedComponent(
+                            comp, model.getTitle(), model.getDescription(),
+                            CAMEL_COMPONENT_DOC + comp + "-component.html"));
                 }
             }
-            result.put("identifiedComponents", componentsJson);
 
             // Identify EIPs from the error
             List<String> eipNames = extractEipNames(error, catalog);
-            JsonArray eipsJson = new JsonArray();
+            List<IdentifiedEip> eips = new ArrayList<>();
             for (String eip : eipNames) {
                 EipModel model = catalog.eipModel(eip);
                 if (model != null) {
-                    JsonObject eipJson = new JsonObject();
-                    eipJson.put("name", eip);
-                    eipJson.put("title", model.getTitle());
-                    eipJson.put("description", model.getDescription());
-                    eipJson.put("documentationUrl", CAMEL_EIP_DOC + eip + "-eip.html");
-                    eipsJson.add(eipJson);
+                    eips.add(new IdentifiedEip(
+                            eip, model.getTitle(), model.getDescription(),
+                            CAMEL_EIP_DOC + eip + "-eip.html"));
                 }
             }
-            result.put("identifiedEips", eipsJson);
 
             // Extract route ID if present
+            String routeId = null;
             Matcher routeMatcher = ROUTE_ID_PATTERN.matcher(error);
             if (routeMatcher.find()) {
-                result.put("routeId", routeMatcher.group(1));
+                routeId = routeMatcher.group(1);
             }
 
             // Summary
-            JsonObject summary = new JsonObject();
-            summary.put("exceptionCount", exceptionsJson.size());
-            summary.put("componentCount", componentsJson.size());
-            summary.put("eipCount", eipsJson.size());
-            summary.put("diagnosed", !exceptionsJson.isEmpty());
-            result.put("summary", summary);
+            DiagnoseSummary summary = new DiagnoseSummary(
+                    exceptions.size(), components.size(), eips.size(), !exceptions.isEmpty());
 
-            return result.toJson();
+            return new DiagnoseResult(exceptions, components, eips, routeId, summary);
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -233,5 +218,26 @@ public class DiagnoseTools {
         return content.contains(comp + ":")
                 || content.contains("\"" + comp + "\"")
                 || content.contains("'" + comp + "'");
+    }
+
+    // Result records
+
+    public record DiagnoseResult(
+            List<IdentifiedException> identifiedExceptions, List<IdentifiedComponent> identifiedComponents,
+            List<IdentifiedEip> identifiedEips, String routeId, DiagnoseSummary summary) {
+    }
+
+    public record IdentifiedException(
+            String exception, String description, List<String> commonCauses,
+            List<String> suggestedFixes, List<String> documentationLinks) {
+    }
+
+    public record IdentifiedComponent(String name, String title, String description, String documentationUrl) {
+    }
+
+    public record IdentifiedEip(String name, String title, String description, String documentationUrl) {
+    }
+
+    public record DiagnoseSummary(int exceptionCount, int componentCount, int eipCount, boolean diagnosed) {
     }
 }

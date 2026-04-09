@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -33,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.dsl.jbang.core.model.CatalogBaseDTO;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -94,7 +96,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
     CamelCatalog catalog;
 
-    public CatalogBaseCommand(CamelJBangMain main) {
+    protected CatalogBaseCommand(CamelJBangMain main) {
         super(main);
     }
 
@@ -156,6 +158,15 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                                         .map(CatalogBaseDTO::toMap)
                                         .collect(Collectors.toList())));
             } else {
+                // Compute description width: terminal minus fixed columns and border overhead
+                int fixedWidth = nameWidth() + 12 + 8; // LEVEL ~12 chars, SINCE ~8 chars
+                if (RuntimeType.quarkus == runtime) {
+                    fixedWidth += 8; // NATIVE column
+                }
+                int descWidth = TerminalWidthHelper.flexWidth(
+                        terminalWidth(), fixedWidth, TerminalWidthHelper.noBorderOverhead(
+                                RuntimeType.quarkus == runtime ? 5 : 4),
+                        20, 80);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("NAME").visible(!displayGav).dataAlign(HorizontalAlign.LEFT).maxWidth(nameWidth())
                                 .with(r -> r.name),
@@ -165,7 +176,9 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         new Column().header("NATIVE").dataAlign(HorizontalAlign.CENTER)
                                 .visible(RuntimeType.quarkus == runtime).with(this::nativeSupported),
                         new Column().header("SINCE").dataAlign(HorizontalAlign.RIGHT).with(r -> r.since),
-                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
+                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT)
+                                .maxWidth(descWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(this::shortDescription))));
             }
         }
 

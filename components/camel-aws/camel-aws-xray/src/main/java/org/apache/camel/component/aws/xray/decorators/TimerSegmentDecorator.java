@@ -29,6 +29,6 @@ public class TimerSegmentDecorator extends AbstractSegmentDecorator {
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         Object name = exchange.getProperty(Exchange.TIMER_NAME);
-        return name instanceof String ? (String) name : super.getOperationName(exchange, endpoint);
+        return name instanceof String stringName ? stringName : super.getOperationName(exchange, endpoint);
     }
 }

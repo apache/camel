@@ -30,7 +30,7 @@ public abstract class AbstractExchangeEvent extends EventObject implements Excha
     private final Exchange exchange;
     private long timestamp;
 
-    public AbstractExchangeEvent(Exchange source) {
+    protected AbstractExchangeEvent(Exchange source) {
         super(source);
         this.exchange = source;
     }

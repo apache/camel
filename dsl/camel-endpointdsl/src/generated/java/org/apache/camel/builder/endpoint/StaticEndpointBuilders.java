@@ -2751,6 +2751,54 @@ public class StaticEndpointBuilders {
         return CaffeineLoadCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Camunda (camel-camunda)
+     * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
+     * Client.
+     * 
+     * Category: workflow,saas
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-camunda
+     * 
+     * Syntax: <code>camunda:operationName</code>
+     * 
+     * Path parameter: operationName (required)
+     * The operation to use
+     * There are 9 enums and the value can be one of: startProcess,
+     * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
+     * worker, throwError, deployResource
+     * 
+     * @param path operationName
+     * @return the dsl builder
+     */
+    public static CamundaEndpointBuilderFactory.CamundaEndpointBuilder camunda(String path) {
+        return camunda("camunda", path);
+    }
+    /**
+     * Camunda (camel-camunda)
+     * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
+     * Client.
+     * 
+     * Category: workflow,saas
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-camunda
+     * 
+     * Syntax: <code>camunda:operationName</code>
+     * 
+     * Path parameter: operationName (required)
+     * The operation to use
+     * There are 9 enums and the value can be one of: startProcess,
+     * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
+     * worker, throwError, deployResource
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operationName
+     * @return the dsl builder
+     */
+    public static CamundaEndpointBuilderFactory.CamundaEndpointBuilder camunda(String componentName, String path) {
+        return CamundaEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
      * 
@@ -7857,6 +7905,48 @@ public class StaticEndpointBuilders {
      */
     public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String componentName, String path) {
         return WatsonxAiEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * IBM watsonx.data (camel-ibm-watsonx-data)
+     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
+     * engine management.
+     * 
+     * Category: cloud,database
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-data
+     * 
+     * Syntax: <code>ibm-watsonx-data:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxDataEndpointBuilderFactory.WatsonxDataEndpointBuilder ibmWatsonxData(String path) {
+        return ibmWatsonxData("ibm-watsonx-data", path);
+    }
+    /**
+     * IBM watsonx.data (camel-ibm-watsonx-data)
+     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
+     * engine management.
+     * 
+     * Category: cloud,database
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-data
+     * 
+     * Syntax: <code>ibm-watsonx-data:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxDataEndpointBuilderFactory.WatsonxDataEndpointBuilder ibmWatsonxData(String componentName, String path) {
+        return WatsonxDataEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * IEC 60870 Client (camel-iec60870)
@@ -13281,6 +13371,46 @@ public class StaticEndpointBuilders {
         return PgEventEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * Syntax: <code>pgvector:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection (table) name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PgVectorEndpointBuilderFactory.PgVectorEndpointBuilder pgvector(String path) {
+        return pgvector("pgvector", path);
+    }
+    /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * Syntax: <code>pgvector:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection (table) name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PgVectorEndpointBuilderFactory.PgVectorEndpointBuilder pgvector(String componentName, String path) {
+        return PgVectorEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
      * 
@@ -13924,7 +14054,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * To call REST services using OpenAPI specification as contract.
+     * To call and expose REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
@@ -13961,7 +14091,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * To call REST services using OpenAPI specification as contract.
+     * To call and expose REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1
@@ -15107,6 +15237,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String path) {
         return splunk("splunk", path);
     }
@@ -15128,6 +15259,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String componentName, String path) {
         return SplunkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -17765,6 +17897,7 @@ public class StaticEndpointBuilders {
      * @param path operationName
      * @return the dsl builder
      */
+    @Deprecated
     public static ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(String path) {
         return zeebe("zeebe", path);
     }
@@ -17790,6 +17923,7 @@ public class StaticEndpointBuilders {
      * @param path operationName
      * @return the dsl builder
      */
+    @Deprecated
     public static ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(String componentName, String path) {
         return ZeebeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

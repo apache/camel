@@ -122,10 +122,10 @@ public class BedrockProducer extends DefaultProducer {
     private void invokeTextModel(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof InvokeModelRequest) {
+            if (payload instanceof InvokeModelRequest invokeModelRequest) {
                 InvokeModelResponse result;
                 try {
-                    result = bedrockRuntimeClient.invokeModel((InvokeModelRequest) payload);
+                    result = bedrockRuntimeClient.invokeModel(invokeModelRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Invoke Model command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -166,10 +166,10 @@ public class BedrockProducer extends DefaultProducer {
     private void invokeImageModel(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof InvokeModelRequest) {
+            if (payload instanceof InvokeModelRequest invokeModelRequest) {
                 InvokeModelResponse result;
                 try {
-                    result = bedrockRuntimeClient.invokeModel((InvokeModelRequest) payload);
+                    result = bedrockRuntimeClient.invokeModel(invokeModelRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Invoke Image Model command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -215,10 +215,10 @@ public class BedrockProducer extends DefaultProducer {
             throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof InvokeModelRequest) {
+            if (payload instanceof InvokeModelRequest invokeModelRequest) {
                 InvokeModelResponse result;
                 try {
-                    result = bedrockRuntimeClient.invokeModel((InvokeModelRequest) payload);
+                    result = bedrockRuntimeClient.invokeModel(invokeModelRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Invoke Image Model command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

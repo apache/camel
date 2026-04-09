@@ -273,8 +273,8 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
             String cid = message.getMessageProperties().getCorrelationId();
             Object body = out.getBody();
             Message msg;
-            if (body instanceof Message) {
-                msg = (Message) body;
+            if (body instanceof Message bodyMessage) {
+                msg = bodyMessage;
             } else {
                 MessageProperties mp = endpoint.getMessagePropertiesConverter().toMessageProperties(exchange);
                 mp.setCorrelationId(cid);

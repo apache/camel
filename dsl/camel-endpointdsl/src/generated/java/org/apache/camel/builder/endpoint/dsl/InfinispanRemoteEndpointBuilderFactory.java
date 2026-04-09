@@ -986,6 +986,41 @@ public interface InfinispanRemoteEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum time to wait for the Infinispan server to be ready when
+         * registering the embedding store schema. This handles the case where
+         * Camel and the Infinispan server start concurrently.
+         * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Default: 60s
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreSchemaRegistrationTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreSchemaRegistrationTimeout(java.time.Duration embeddingStoreSchemaRegistrationTimeout) {
+            doSetProperty("embeddingStoreSchemaRegistrationTimeout", embeddingStoreSchemaRegistrationTimeout);
+            return this;
+        }
+        /**
+         * Maximum time to wait for the Infinispan server to be ready when
+         * registering the embedding store schema. This handles the case where
+         * Camel and the Infinispan server start concurrently.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Default: 60s
+         * Group: producer (advanced)
+         * 
+         * @param embeddingStoreSchemaRegistrationTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedInfinispanRemoteEndpointProducerBuilder embeddingStoreSchemaRegistrationTimeout(String embeddingStoreSchemaRegistrationTimeout) {
+            doSetProperty("embeddingStoreSchemaRegistrationTimeout", embeddingStoreSchemaRegistrationTimeout);
+            return this;
+        }
+        /**
          * The name of the type used to store embeddings. The default is
          * 'InfinispanRemoteEmbedding' suffixed with the value of the
          * embeddingStoreDimension option. E.g.

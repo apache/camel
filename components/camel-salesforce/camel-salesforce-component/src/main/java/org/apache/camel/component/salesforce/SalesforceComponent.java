@@ -963,7 +963,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             int workerPoolMaxSize) {
         SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
-        final SalesforceHttpClient httpClient = new SalesforceHttpClient(
+        // ExecutorService lifecycle is managed by SalesforceHttpClient
+        final SalesforceHttpClient httpClient = new SalesforceHttpClient( // NOSONAR
                 context, context.getExecutorServiceManager().newThreadPool(source, "SalesforceHttpClient", workerPoolSize,
                         workerPoolMaxSize),
                 sslContextFactory);

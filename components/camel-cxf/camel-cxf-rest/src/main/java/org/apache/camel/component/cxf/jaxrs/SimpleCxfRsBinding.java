@@ -174,8 +174,8 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
         ResponseBuilder response;
 
         // if the body is different to Response, it's an entity; therefore, check
-        if (base instanceof Response) {
-            response = Response.fromResponse((Response) base);
+        if (base instanceof Response resp) {
+            response = Response.fromResponse(resp);
         } else {
             int status = m.getHeader(CxfConstants.HTTP_RESPONSE_CODE, Status.OK.getStatusCode(), Integer.class);
             response = Response.status(status);
@@ -291,16 +291,16 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
     private void transferBinaryMultipartParameter(Object toMap, String parameterName, String multipartType, Message in) {
         org.apache.camel.attachment.Attachment dh = null;
-        if (toMap instanceof Attachment) {
-            dh = createCamelAttachment((Attachment) toMap);
-        } else if (toMap instanceof DataSource) {
-            dh = new DefaultAttachment((DataSource) toMap);
-        } else if (toMap instanceof DataHandler) {
-            dh = new DefaultAttachment((DataHandler) toMap);
-        } else if (toMap instanceof InputStream) {
+        if (toMap instanceof Attachment attachment) {
+            dh = createCamelAttachment(attachment);
+        } else if (toMap instanceof DataSource dataSource) {
+            dh = new DefaultAttachment(dataSource);
+        } else if (toMap instanceof DataHandler dataHandler) {
+            dh = new DefaultAttachment(dataHandler);
+        } else if (toMap instanceof InputStream inputStream) {
             dh = new DefaultAttachment(
                     new InputStreamDataSource(
-                            (InputStream) toMap, multipartType == null ? "application/octet-stream" : multipartType));
+                            inputStream, multipartType == null ? "application/octet-stream" : multipartType));
         }
         if (dh != null) {
             in.getExchange().getMessage(AttachmentMessage.class).addAttachmentObject(parameterName, dh);

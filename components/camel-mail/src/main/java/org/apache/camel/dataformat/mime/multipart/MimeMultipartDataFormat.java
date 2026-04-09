@@ -397,8 +397,8 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
         // use the filename as key for the map
         String key = bp.getFileName();
         // if there is no file name we use the Content-ID header
-        if (key == null && bp instanceof MimeBodyPart) {
-            key = ((MimeBodyPart) bp).getContentID();
+        if (key == null && bp instanceof MimeBodyPart mimeBodyPart) {
+            key = mimeBodyPart.getContentID();
             if (key != null && key.startsWith("<") && key.length() > 2) {
                 // strip <>
                 key = key.substring(1, key.length() - 1);

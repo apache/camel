@@ -37,7 +37,7 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
 
     private final Logger logger = LoggerFactory.getLogger(SmppSmCommand.class);
 
-    public SmppSmCommand(SMPPSession session, SmppConfiguration config) {
+    protected SmppSmCommand(SMPPSession session, SmppConfiguration config) {
         super(session, config);
         defaultCharset = Charset.forName(config.getEncoding());
     }

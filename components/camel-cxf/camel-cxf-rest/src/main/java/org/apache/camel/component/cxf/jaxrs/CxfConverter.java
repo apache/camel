@@ -110,9 +110,9 @@ public final class CxfConverter {
             return null;
         }
 
-        if (obj instanceof InputStream) {
+        if (obj instanceof InputStream inputStream) {
             // short circuit the lookup
-            return (InputStream) obj;
+            return inputStream;
         }
 
         TypeConverterRegistry registry = exchange.getContext().getTypeConverterRegistry();

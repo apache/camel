@@ -2609,16 +2609,16 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
         if (runtimeEndpointRegistry != null) {
-            if (runtimeEndpointRegistry instanceof EventNotifier && getManagementStrategy() != null) {
-                getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
+            if (runtimeEndpointRegistry instanceof EventNotifier en && getManagementStrategy() != null) {
+                getManagementStrategy().addEventNotifier(en);
             }
             addService(runtimeEndpointRegistry, true, true);
         }
 
         // register error registry as event notifier so it captures exchange failure events
         ErrorRegistry errorRegistry = getErrorRegistry();
-        if (errorRegistry instanceof EventNotifier && getManagementStrategy() != null) {
-            getManagementStrategy().addEventNotifier((EventNotifier) errorRegistry);
+        if (errorRegistry instanceof EventNotifier en && getManagementStrategy() != null) {
+            getManagementStrategy().addEventNotifier(en);
         }
 
         bindDataFormats();

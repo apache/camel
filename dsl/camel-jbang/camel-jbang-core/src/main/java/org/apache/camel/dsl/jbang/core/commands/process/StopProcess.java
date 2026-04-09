@@ -26,7 +26,13 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "stop", description = "Shuts down running Camel integrations", sortOptions = false, showDefaultValues = true)
+@Command(name = "stop", description = "Shuts down running Camel integrations", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel stop hello",
+                 "  camel stop *",
+                 "  camel stop 12345",
+                 "  camel stop hello --kill" })
 public class StopProcess extends ProcessBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration(s)", arity = "0..1")

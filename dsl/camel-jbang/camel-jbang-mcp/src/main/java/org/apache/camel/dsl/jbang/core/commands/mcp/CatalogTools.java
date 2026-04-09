@@ -44,7 +44,8 @@ public class CatalogTools {
     /**
      * Tool to list available Camel components.
      */
-    @Tool(description = "List available Camel components from the catalog. " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "List available Camel components from the catalog. " +
                         "Returns component name, description, and labels. " +
                         "Use filter to search by name, label to filter by category.")
     public ComponentListResult camel_catalog_components(
@@ -92,7 +93,8 @@ public class CatalogTools {
     /**
      * Tool to get detailed documentation for a specific component.
      */
-    @Tool(description = "Get detailed documentation for a Camel component including all options, " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get detailed documentation for a Camel component including all options, " +
                         "endpoint parameters, and usage examples.")
     public ComponentDetailResult camel_catalog_component_doc(
             @ToolArg(description = "Component name (e.g., kafka, http, file, timer)") String component,
@@ -154,7 +156,8 @@ public class CatalogTools {
     /**
      * Tool to list data formats.
      */
-    @Tool(description = "List available Camel data formats for marshalling/unmarshalling " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "List available Camel data formats for marshalling/unmarshalling " +
                         "(e.g., json, xml, csv, avro, protobuf).")
     public DataFormatListResult camel_catalog_dataformats(
             @ToolArg(description = "Filter by name") String filter,
@@ -187,7 +190,8 @@ public class CatalogTools {
     /**
      * Tool to list expression languages.
      */
-    @Tool(description = "List available Camel expression languages " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "List available Camel expression languages " +
                         "(e.g., simple, jsonpath, xpath, groovy, jq).")
     public LanguageListResult camel_catalog_languages(
             @ToolArg(description = "Filter by name") String filter,
@@ -216,7 +220,8 @@ public class CatalogTools {
     /**
      * Tool to get detailed documentation for a specific data format.
      */
-    @Tool(description = "Get detailed documentation for a Camel data format including all options, "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get detailed documentation for a Camel data format including all options, "
                         + "Maven coordinates, and configuration parameters.")
     public DataFormatDetailResult camel_catalog_dataformat_doc(
             @ToolArg(description = "Data format name (e.g., json-jackson, avro, csv, protobuf, jaxb)") String dataformat,
@@ -250,7 +255,8 @@ public class CatalogTools {
     /**
      * Tool to get detailed documentation for a specific expression language.
      */
-    @Tool(description = "Get detailed documentation for a Camel expression language including all options, "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get detailed documentation for a Camel expression language including all options, "
                         + "Maven coordinates, and configuration parameters.")
     public LanguageDetailResult camel_catalog_language_doc(
             @ToolArg(description = "Language name (e.g., simple, jsonpath, xpath, jq, groovy)") String language,
@@ -283,7 +289,8 @@ public class CatalogTools {
     /**
      * Tool to list EIPs (Enterprise Integration Patterns).
      */
-    @Tool(description = "List Camel Enterprise Integration Patterns (EIPs) like split, aggregate, " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "List Camel Enterprise Integration Patterns (EIPs) like split, aggregate, " +
                         "filter, choice, multicast, circuit-breaker, etc.")
     public EipListResult camel_catalog_eips(
             @ToolArg(description = "Filter by name") String filter,
@@ -314,7 +321,8 @@ public class CatalogTools {
     /**
      * Tool to get detailed documentation for a specific EIP.
      */
-    @Tool(description = "Get detailed documentation for a Camel EIP (Enterprise Integration Pattern).")
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get detailed documentation for a Camel EIP (Enterprise Integration Pattern).")
     public EipDetailResult camel_catalog_eip_doc(
             @ToolArg(description = "EIP name (e.g., split, aggregate, choice, filter)") String eip,
             @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,

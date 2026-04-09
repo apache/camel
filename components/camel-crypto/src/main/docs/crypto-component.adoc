@@ -480,7 +480,7 @@ Other hybrid combinations include:
 * `RSA_3072` + `MLDSA` — RSA 3072-bit + ML-DSA
 * `ECDSA_P384` + `SLHDSA` — ECDSA P-384 + SLH-DSA
 
-See the xref:components::pqc-component.adoc#_hybrid_cryptography[PQC Hybrid Cryptography] section for the full list of supported classical algorithms and details on the hybrid wire format.
+See the xref:components::pqc-component.adoc[PQC component] for the full list of supported classical algorithms and details on the hybrid wire format.
 
 ==== Chaining crypto: endpoints (manual approach)
 

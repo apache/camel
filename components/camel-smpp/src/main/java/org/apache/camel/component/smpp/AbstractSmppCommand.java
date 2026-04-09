@@ -38,7 +38,7 @@ public abstract class AbstractSmppCommand implements SmppCommand {
     protected SMPPSession session;
     protected SmppConfiguration config;
 
-    public AbstractSmppCommand(SMPPSession session, SmppConfiguration config) {
+    protected AbstractSmppCommand(SMPPSession session, SmppConfiguration config) {
         this.session = session;
         this.config = config;
     }
@@ -54,16 +54,16 @@ public abstract class AbstractSmppCommand implements SmppCommand {
             try {
                 if (value == null) {
                     optParam = new OptionalParameter.Null(key);
-                } else if (value instanceof byte[]) {
-                    optParam = new OptionalParameter.OctetString(key, (byte[]) value);
-                } else if (value instanceof String) {
-                    optParam = new OptionalParameter.COctetString(key, (String) value);
-                } else if (value instanceof Byte) {
-                    optParam = new OptionalParameter.Byte(key, (Byte) value);
-                } else if (value instanceof Integer) {
-                    optParam = new OptionalParameter.Int(key, (Integer) value);
-                } else if (value instanceof Short) {
-                    optParam = new OptionalParameter.Short(key, (Short) value);
+                } else if (value instanceof byte[] byteArray) {
+                    optParam = new OptionalParameter.OctetString(key, byteArray);
+                } else if (value instanceof String stringValue) {
+                    optParam = new OptionalParameter.COctetString(key, stringValue);
+                } else if (value instanceof Byte byteValue) {
+                    optParam = new OptionalParameter.Byte(key, byteValue);
+                } else if (value instanceof Integer intValue) {
+                    optParam = new OptionalParameter.Int(key, intValue);
+                } else if (value instanceof Short shortValue) {
+                    optParam = new OptionalParameter.Short(key, shortValue);
                 } else {
                     log.info("Couldn't determine optional parameter for value {} (type: {}). Skip this one.", value,
                             value.getClass());

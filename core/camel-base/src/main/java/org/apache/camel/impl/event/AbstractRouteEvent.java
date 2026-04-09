@@ -31,7 +31,7 @@ public abstract class AbstractRouteEvent extends EventObject implements RouteEve
     private final Route route;
     private long timestamp;
 
-    public AbstractRouteEvent(Route source) {
+    protected AbstractRouteEvent(Route source) {
         super(source);
         this.route = source;
     }

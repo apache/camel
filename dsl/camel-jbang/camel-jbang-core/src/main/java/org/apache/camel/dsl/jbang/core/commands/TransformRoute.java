@@ -36,7 +36,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route", description = "Transform Camel routes to XML or YAML format", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel transform route hello.java --format=yaml",
+                 "  camel transform route hello.xml --format=yaml" })
 public class TransformRoute extends CamelCommand {
 
     public static class FormatCompletionCandidates implements Iterable<String> {

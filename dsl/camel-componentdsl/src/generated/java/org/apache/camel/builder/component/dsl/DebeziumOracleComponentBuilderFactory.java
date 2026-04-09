@@ -491,8 +491,11 @@ public interface DebeziumOracleComponentBuilderFactory {
         
         /**
          * The adapter to use when capturing changes from the database. Options
-         * include: 'logminer': (the default) to capture changes using native
-         * Oracle LogMiner; 'xstream' to capture changes using Oracle XStreams.
+         * include: 'LogMiner': (the default) to capture changes using native
+         * Oracle LogMiner with buffered transactions; 'LogMiner_Unbuffered': to
+         * capture changes using native Oracle LogMiner without buffering;
+         * 'XStream': to capture changes using Oracle XStreams; 'OLR': to
+         * capture changes using OpenLogReplicator.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -539,7 +542,7 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
     
         /**
-         * Name of the XStream Out server to connect to.
+         * Name of the XStream Outbound server to connect to.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1165,6 +1168,23 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
     
         /**
+         * Specifies the inner body the Ehcache tag for the rollbacks cache, but
+         * should not include the nor the attributes as these are managed by
+         * Debezium.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferEhcacheRollbacksConfig the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningBufferEhcacheRollbacksConfig(java.lang.String logMiningBufferEhcacheRollbacksConfig) {
+            doSetProperty("logMiningBufferEhcacheRollbacksConfig", logMiningBufferEhcacheRollbacksConfig);
+            return this;
+        }
+    
+        /**
          * Specifies the inner body the Ehcache tag for the schema changes
          * cache, but should not include the nor the attributes as these are
          * managed by Debezium.
@@ -1247,6 +1267,21 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
     
         /**
+         * Specifies the XML configuration for the Infinispan 'rollbacks' cache.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferInfinispanCacheRollbacks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningBufferInfinispanCacheRollbacks(java.lang.String logMiningBufferInfinispanCacheRollbacks) {
+            doSetProperty("logMiningBufferInfinispanCacheRollbacks", logMiningBufferInfinispanCacheRollbacks);
+            return this;
+        }
+    
+        /**
          * Specifies the XML configuration for the Infinispan 'schema-changes'
          * cache.
          * 
@@ -1275,6 +1310,26 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder logMiningBufferInfinispanCacheTransactions(java.lang.String logMiningBufferInfinispanCacheTransactions) {
             doSetProperty("logMiningBufferInfinispanCacheTransactions", logMiningBufferInfinispanCacheTransactions);
+            return this;
+        }
+    
+        
+        /**
+         * This controls whether the 'RS_ID' column values are tracked. When set
+         * to true (the default), the 'RS_ID' values are buffered and provided
+         * in events when available. When set to false, the 'RS_ID' values are
+         * not buffered and can reduce the memory footprint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackRsId the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningBufferTrackRsId(boolean logMiningBufferTrackRsId) {
+            doSetProperty("logMiningBufferTrackRsId", logMiningBufferTrackRsId);
             return this;
         }
     
@@ -1664,6 +1719,26 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder logMiningUsernameIncludeList(java.lang.String logMiningUsernameIncludeList) {
             doSetProperty("logMiningUsernameIncludeList", logMiningUsernameIncludeList);
+            return this;
+        }
+    
+        
+        /**
+         * The maximum number of milliseconds that the mining window can span.
+         * If a transaction remains open for longer than this duration, the
+         * mining window start SCN will be advanced to minimize the window size,
+         * preventing it from growing indefinitely. Defaults to 0 (disabled).
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0ms
+         * Group: oracle
+         * 
+         * @param logMiningWindowMaxMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningWindowMaxMs(long logMiningWindowMaxMs) {
+            doSetProperty("logMiningWindowMaxMs", logMiningWindowMaxMs);
             return this;
         }
     
@@ -2365,6 +2440,28 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         
         /**
+         * The factor used to scale the number of snapshot chunks per table. The
+         * default behavior is to take 'row_count/snapshot.max.threads' to
+         * compute the number of rows per chunks. This may not be ideal for
+         * larger tables, and using the multiplier, the formula is adjusted to
+         * increase the number of chunks by using
+         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: oracle
+         * 
+         * @param snapshotMaxThreadsMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder snapshotMaxThreadsMultiplier(int snapshotMaxThreadsMultiplier) {
+            doSetProperty("snapshotMaxThreadsMultiplier", snapshotMaxThreadsMultiplier);
+            return this;
+        }
+    
+        
+        /**
          * The criteria for running a snapshot upon startup of the connector.
          * Select one of the following snapshot options: 'always': The connector
          * runs a snapshot every time that it starts. After the snapshot
@@ -2747,6 +2844,21 @@ public interface DebeziumOracleComponentBuilderFactory {
             doSetProperty("unavailableValuePlaceholder", unavailableValuePlaceholder);
             return this;
         }
+    
+        /**
+         * Name of the XStream Outbound server to connect to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param xstreamOutServerName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder xstreamOutServerName(java.lang.String xstreamOutServerName) {
+            doSetProperty("xstreamOutServerName", xstreamOutServerName);
+            return this;
+        }
     }
 
     class DebeziumOracleComponentBuilderImpl
@@ -2829,13 +2941,16 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningBufferEhcacheEventsConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheEventsConfig((java.lang.String) value); return true;
             case "logMiningBufferEhcacheGlobalConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheGlobalConfig((java.lang.String) value); return true;
             case "logMiningBufferEhcacheProcessedtransactionsConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheProcessedtransactionsConfig((java.lang.String) value); return true;
+            case "logMiningBufferEhcacheRollbacksConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheRollbacksConfig((java.lang.String) value); return true;
             case "logMiningBufferEhcacheSchemachangesConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheSchemachangesConfig((java.lang.String) value); return true;
             case "logMiningBufferEhcacheTransactionsConfig": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferEhcacheTransactionsConfig((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheEvents": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheEvents((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheGlobal": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheGlobal((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheProcessedTransactions": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheProcessedTransactions((java.lang.String) value); return true;
+            case "logMiningBufferInfinispanCacheRollbacks": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheRollbacks((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheSchemaChanges": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheSchemaChanges((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheTransactions": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheTransactions((java.lang.String) value); return true;
+            case "logMiningBufferTrackRsId": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferTrackRsId((boolean) value); return true;
             case "logMiningBufferTransactionEventsThreshold": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferTransactionEventsThreshold((long) value); return true;
             case "logMiningBufferType": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferType((java.lang.String) value); return true;
             case "logMiningClientidExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningClientidExcludeList((java.lang.String) value); return true;
@@ -2857,6 +2972,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningTransactionRetentionMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningTransactionRetentionMs((long) value); return true;
             case "logMiningUsernameExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningUsernameExcludeList((java.lang.String) value); return true;
             case "logMiningUsernameIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningUsernameIncludeList((java.lang.String) value); return true;
+            case "logMiningWindowMaxMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningWindowMaxMs((long) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumOracleComponent) component).setMaxQueueSizeInBytes((long) value); return true;
@@ -2896,6 +3012,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "snapshotLockingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotLockingMode((java.lang.String) value); return true;
             case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotLockTimeoutMs((long) value); return true;
             case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotMaxThreads((int) value); return true;
+            case "snapshotMaxThreadsMultiplier": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotMaxThreadsMultiplier((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotModeConfigurationBasedSnapshotData((boolean) value); return true;
             case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotModeConfigurationBasedSnapshotOnDataError((boolean) value); return true;
@@ -2915,6 +3032,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "topicPrefix": getOrCreateConfiguration((DebeziumOracleComponent) component).setTopicPrefix((java.lang.String) value); return true;
             case "transactionMetadataFactory": getOrCreateConfiguration((DebeziumOracleComponent) component).setTransactionMetadataFactory((java.lang.String) value); return true;
             case "unavailableValuePlaceholder": getOrCreateConfiguration((DebeziumOracleComponent) component).setUnavailableValuePlaceholder((java.lang.String) value); return true;
+            case "xstreamOutServerName": getOrCreateConfiguration((DebeziumOracleComponent) component).setXstreamOutServerName((java.lang.String) value); return true;
             default: return false;
             }
         }

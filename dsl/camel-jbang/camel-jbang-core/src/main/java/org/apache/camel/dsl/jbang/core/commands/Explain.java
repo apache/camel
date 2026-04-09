@@ -52,7 +52,12 @@ import picocli.CommandLine.Parameters;
  */
 @Command(name = "explain",
          description = "Explain what a Camel route does using AI/LLM",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel explain hello.java",
+                 "  camel explain hello.yaml --format=markdown",
+                 "  camel explain hello.java --model=gpt-4" })
 public class Explain extends CamelCommand {
 
     public static class FormatCompletionCandidates implements Iterable<String> {

@@ -373,7 +373,7 @@ from("event:Exchange*?async=true&batchSize=100&batchTimeout=5000")
 
 == JBang Quick Start
 
-You can quickly try the Event component using https://camel.apache.org/manual/camel-jbang.html[Camel JBang].
+You can quickly try the Event component using xref:manual::camel-jbang.adoc[Camel JBang].
 
 Create a file called `event-monitor.yaml`:
 

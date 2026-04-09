@@ -18,7 +18,9 @@ package org.apache.camel.component.google.common;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -28,6 +30,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ImpersonatedCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
@@ -38,8 +41,10 @@ import org.apache.camel.util.ObjectHelper;
  * <p>
  * This class handles the common patterns for obtaining Google credentials:
  * <ul>
+ * <li>Workload Identity Federation (WIF) via external credential config file</li>
  * <li>Service Account JSON key file (for GCP native clients)</li>
  * <li>OAuth 2.0 credentials with client ID/secret (for legacy Google API clients)</li>
+ * <li>Service account impersonation via WIF</li>
  * <li>Application Default Credentials (ADC) as fallback</li>
  * </ul>
  */
@@ -59,9 +64,11 @@ public final class GoogleCredentialsHelper {
      * <p>
      * Resolution order:
      * <ol>
+     * <li>Workload Identity Federation config file if WIF is enabled and config provided</li>
      * <li>Service Account key file if provided</li>
-     * <li>Application Default Credentials (ADC) as fallback</li>
+     * <li>Application Default Credentials (ADC) as fallback (also supports WIF on GKE automatically)</li>
      * </ol>
+     * If impersonatedServiceAccount is set, the resolved credentials are wrapped with {@link ImpersonatedCredentials}.
      *
      * @param  context     the Camel context for resource resolution
      * @param  config      the component configuration
@@ -77,6 +84,22 @@ public final class GoogleCredentialsHelper {
 
         if (!config.isAuthenticate()) {
             return null;
+        }
+
+        // Check for Workload Identity Federation with explicit config file
+        if (config.isUseWorkloadIdentityFederation()) {
+            String wifConfig = config.getWorkloadIdentityConfig();
+            GoogleCredentials credentials;
+            if (ObjectHelper.isNotEmpty(wifConfig)) {
+                credentials = loadExternalAccountCredentials(context, wifConfig, scopes);
+            } else {
+                // No explicit config — use ADC which auto-detects WIF on GKE
+                credentials = GoogleCredentials.getApplicationDefault();
+                if (scopes != null && !scopes.isEmpty()) {
+                    credentials = credentials.createScoped(scopes);
+                }
+            }
+            return wrapWithImpersonationIfNeeded(credentials, config, scopes);
         }
 
         String serviceAccountKey = config.getServiceAccountKey();
@@ -235,6 +258,48 @@ public final class GoogleCredentialsHelper {
 
             return credentials;
         }
+    }
+
+    /**
+     * Loads credentials from a Workload Identity Federation JSON configuration file. Uses
+     * {@link GoogleCredentials#fromStream(InputStream)} which auto-detects the credential type (external_account,
+     * authorized_user, etc.).
+     */
+    private static GoogleCredentials loadExternalAccountCredentials(
+            CamelContext context,
+            String wifConfigPath,
+            Collection<String> scopes)
+            throws IOException {
+
+        try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, wifConfigPath)) {
+            GoogleCredentials credentials = GoogleCredentials.fromStream(is);
+            if (scopes != null && !scopes.isEmpty()) {
+                credentials = credentials.createScoped(scopes);
+            }
+            return credentials;
+        }
+    }
+
+    /**
+     * Wraps the given credentials with {@link ImpersonatedCredentials} if impersonatedServiceAccount is configured.
+     */
+    private static GoogleCredentials wrapWithImpersonationIfNeeded(
+            GoogleCredentials sourceCredentials,
+            GoogleCommonConfiguration config,
+            Collection<String> scopes) {
+
+        String targetServiceAccount = config.getImpersonatedServiceAccount();
+        if (ObjectHelper.isEmpty(targetServiceAccount)) {
+            return sourceCredentials;
+        }
+
+        List<String> scopeList = scopes != null ? new ArrayList<>(scopes) : new ArrayList<>();
+        return ImpersonatedCredentials.create(
+                sourceCredentials,
+                targetServiceAccount,
+                null, // delegates
+                scopeList,
+                3600); // lifetime in seconds (1 hour)
     }
 
     /**

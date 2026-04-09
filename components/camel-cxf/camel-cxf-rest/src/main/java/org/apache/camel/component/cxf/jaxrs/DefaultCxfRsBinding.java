@@ -175,10 +175,10 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
 
         // propagate the security subject from CXF security context
         SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
-        if (securityContext instanceof LoginSecurityContext
-                && ((LoginSecurityContext) securityContext).getSubject() != null) {
+        if (securityContext instanceof LoginSecurityContext loginSecurityContext
+                && loginSecurityContext.getSubject() != null) {
             camelExchange.getIn().getHeaders().put(CxfConstants.AUTHENTICATION,
-                    ((LoginSecurityContext) securityContext).getSubject());
+                    loginSecurityContext.getSubject());
         } else if (securityContext != null && securityContext.getUserPrincipal() != null) {
             Subject subject = new Subject();
             subject.getPrincipals().add(securityContext.getUserPrincipal());
@@ -243,8 +243,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             throws Exception {
 
         Map<String, Object> answer = new HashMap<>();
-        if (response instanceof Response) {
-            Map<String, List<Object>> responseHeaders = ((Response) response).getMetadata();
+        if (response instanceof Response resp) {
+            Map<String, List<Object>> responseHeaders = resp.getMetadata();
             CxfHeaderHelper.propagateCxfHeadersToCamelHeaders(headerFilterStrategy, responseHeaders, answer, camelExchange);
         }
 

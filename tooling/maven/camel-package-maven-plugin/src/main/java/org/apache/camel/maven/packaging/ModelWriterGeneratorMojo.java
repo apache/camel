@@ -113,13 +113,17 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
     abstract String getWriterPackage();
 
     protected String generateWriter() throws MojoExecutionException {
-        ClassLoader classLoader;
-        try {
-            classLoader = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements());
+        try (DynamicClassLoader classLoader
+                = DynamicClassLoader.createDynamicClassLoader(project.getCompileClasspathElements())) {
+            return doGenerateWriter(classLoader);
         } catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("DependencyResolutionRequiredException: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new MojoExecutionException("IOException: " + e.getMessage(), e);
         }
+    }
 
+    private String doGenerateWriter(ClassLoader classLoader) throws MojoExecutionException {
         List<Path> jsonFiles;
         try (Stream<Path> stream = PackageHelper.findJsonFiles(modelDir.toPath())) {
             jsonFiles = stream.toList();

@@ -34,7 +34,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
     private transient String producerToString;
     private final Endpoint endpoint;
 
-    public DefaultProducer(Endpoint endpoint) {
+    protected DefaultProducer(Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 

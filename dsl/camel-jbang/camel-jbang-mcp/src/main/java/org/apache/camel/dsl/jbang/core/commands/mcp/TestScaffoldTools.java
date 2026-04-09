@@ -72,7 +72,8 @@ public class TestScaffoldTools {
     /**
      * Tool to generate a JUnit 5 test skeleton for a Camel route.
      */
-    @Tool(description = "Generate a JUnit 5 test skeleton for a Camel route. "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Generate a JUnit 5 test skeleton for a Camel route. "
                         + "Given a YAML or XML route definition, produces a test class with "
                         + "CamelTestSupport or @CamelSpringBootTest boilerplate, "
                         + "mock endpoints for producer endpoints, MockEndpoint assertions, "

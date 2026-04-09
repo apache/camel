@@ -85,8 +85,8 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
         final Message outMessage = new DefaultMessage(camelContext);
         outMessage.setHeader(HEADER_NAME, attachmentName);
         Object obj = attachment.getDataHandler().getContent();
-        if (obj instanceof InputStream) {
-            outMessage.setBody(readMimePart((InputStream) obj));
+        if (obj instanceof InputStream inputStream) {
+            outMessage.setBody(readMimePart(inputStream));
             return outMessage;
         } else if (obj instanceof String || obj instanceof byte[]) {
             outMessage.setBody(obj);

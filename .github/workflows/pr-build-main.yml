@@ -21,6 +21,8 @@ on:
   pull_request:
     branches:
       - main
+    # CI-only changes don't need a full build. Use workflow_dispatch to
+    # test CI changes: gh workflow run "Build and test" -f pr_number=XXXX -f pr_ref=branch-name
     paths-ignore:
       - .github/**
       - README.md
@@ -38,9 +40,19 @@ on:
         description: 'Git ref of the pull request branch'
         required: true
         type: string
+      extra_modules:
+        description: 'Additional modules to test (comma-separated paths, e.g. from /component-test)'
+        required: false
+        type: string
+        default: ''
+      skip_full_build:
+        description: 'Skip full regen build — use quick targeted build instead (for /component-test)'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}${{ inputs.extra_modules && '-component-test' || '' }}
   cancel-in-progress: true
 
 permissions:
@@ -51,7 +63,6 @@ jobs:
     if: github.repository == 'apache/camel'
     permissions:
       contents: read
-      pull-requests: write
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
@@ -78,7 +89,14 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
+        if: ${{ !inputs.skip_full_build }}
         run: ./etc/scripts/regen.sh
+      - name: Quick dependency build
+        if: ${{ inputs.skip_full_build }}
+        shell: bash
+        env:
+          EXTRA_MODULES: ${{ inputs.extra_modules }}
+        run: ./mvnw -l build.log install -B -DskipTests -Dquickly -pl "$EXTRA_MODULES" -am
       - name: archive logs
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()
@@ -86,66 +104,46 @@ jobs:
           name: build-${{ matrix.java }}.log
           path: build.log
       - name: Fail if there are uncommitted changes
+        if: ${{ !inputs.skip_full_build }}
         shell: bash
         run: |
           [[ -z $(git status --porcelain) ]] || { echo 'There are uncommitted changes'; git status; echo; echo; git diff; exit 1; }
       - name: mvn test
         uses: ./.github/actions/incremental-build
         with:
-          mode: test
           pr-id: ${{ github.event.number || inputs.pr_number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
-          artifact-upload-suffix: java-${{ matrix.java }}
-      - name: Post CI test summary comment
-        if: always() && !matrix.experimental
-        uses: actions/github-script@v8
+          extra-modules: ${{ inputs.extra_modules || '' }}
+      - name: archive incremental test logs
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        if: always()
         with:
-          script: |
-            const fs = require('fs');
-            const commentFile = 'incremental-test-comment.md';
-            if (!fs.existsSync(commentFile)) return;
-            const body = fs.readFileSync(commentFile, 'utf8').trim();
-            if (!body) return;
-
-            const prNumber = ${{ github.event.number || inputs.pr_number || 0 }};
-            if (!prNumber) {
-              core.warning('Could not determine PR number, skipping test summary comment');
-              return;
-            }
-
-            const marker = '<!-- ci-tested-modules -->';
-
-            try {
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-              });
-              const existing = comments.find(c => c.body && c.body.includes(marker));
-
-              if (existing) {
-                await github.rest.issues.updateComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: existing.id,
-                  body: body,
-                });
-              } else {
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: prNumber,
-                  body: body,
-                });
-              }
-            } catch (error) {
-              core.warning(`Failed to post CI test summary comment: ${error.message}`);
-            }
-      - name: mvn test parent pom dependencies changed
+          name: incremental-test-java-${{ matrix.java }}.log
+          path: incremental-test.log
+      # All non-experimental JDK matrix entries upload with overwrite: true.
+      # This ensures a comment is posted even if one JDK build fails — the
+      # content is identical across JDKs (same modules tested), so last writer wins.
+      - name: Save PR number and test comment for commenter workflow
         if: always() && !matrix.experimental
-        uses: ./.github/actions/detect-dependencies
+        shell: bash
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          mkdir -p ci-comment-artifact
+          prNumber="${{ github.event.number || inputs.pr_number }}"
+          echo "$prNumber" > ci-comment-artifact/pr-number
+          if [ -f incremental-test-comment.md ]; then
+            cp incremental-test-comment.md ci-comment-artifact/
+            # Append link to the workflow run for detailed results
+            echo "" >> ci-comment-artifact/incremental-test-comment.md
+            echo "---" >> ci-comment-artifact/incremental-test-comment.md
+            echo ":gear: [View full build and test results](${RUN_URL})" >> ci-comment-artifact/incremental-test-comment.md
+          fi
+      - name: Upload CI comment artifact
+        if: always() && !matrix.experimental
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          base-ref: ${{ github.base_ref || 'main' }}
-          skip-mvnd-install: 'true'
+          name: ci-comment
+          path: ci-comment-artifact/
+          overwrite: true

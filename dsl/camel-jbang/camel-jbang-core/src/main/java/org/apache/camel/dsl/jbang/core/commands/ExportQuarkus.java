@@ -129,7 +129,12 @@ class ExportQuarkus extends Export {
         });
         // copy docker files
         copyDockerFiles(BUILD_DIR);
-        String appJar = "target" + File.separator + "quarkus-app" + File.separator + "quarkus-run.jar";
+        String appJar;
+        if ("fast-jar".equals(quarkusPackageType)) {
+            appJar = "target" + File.separator + "quarkus-app" + File.separator + "quarkus-run.jar";
+        } else {
+            appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
+        }
         copyReadme(BUILD_DIR, appJar);
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
@@ -282,12 +287,27 @@ class ExportQuarkus extends Export {
 
     @Override
     protected void copyDockerFiles(String buildDir) throws Exception {
-        super.copyDockerFiles(buildDir);
+        if ("uber-jar".equals(quarkusPackageType)) {
+            // For uber-jar, the generic Dockerfile works as-is
+            super.copyDockerFiles(buildDir);
+        } else {
+            // For fast-jar, use a Quarkus-specific JVM Dockerfile
+            Path docker = Path.of(buildDir).resolve("src/main/docker");
+            Files.createDirectories(docker);
+            InputStream is
+                    = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
+            if (is != null) {
+                PathUtils.copyFromStream(is, docker.resolve("Dockerfile"), true);
+            }
+        }
+        // Quarkus-specific Dockerfiles for native builds
         Path docker = Path.of(buildDir).resolve("src/main/docker");
-        Files.createDirectories(docker);
-        // copy files
-        InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.native");
-        PathUtils.copyFromStream(is, docker.resolve("Dockerfile.native"), true);
+        for (String dockerfile : List.of("Dockerfile.native", "Dockerfile.native-micro")) {
+            InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/" + dockerfile);
+            if (is != null) {
+                PathUtils.copyFromStream(is, docker.resolve(dockerfile), true);
+            }
+        }
     }
 
     @Override
@@ -331,6 +351,7 @@ class ExportQuarkus extends Export {
         context = context.replaceAll("\\{\\{ \\.QuarkusGroupId }}", quarkusGroupId);
         context = context.replaceAll("\\{\\{ \\.QuarkusArtifactId }}", quarkusArtifactId);
         context = context.replaceAll("\\{\\{ \\.QuarkusVersion }}", quarkusVersion);
+        context = context.replaceAll("\\{\\{ \\.QuarkusPackageType }}", quarkusPackageType);
         context = context.replaceAll("\\{\\{ \\.QuarkusManagementPort }}", mp);
         context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);

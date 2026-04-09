@@ -50,6 +50,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.TemplatedRouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.app.SSLContextParametersDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
@@ -64,6 +65,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -254,6 +256,16 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     ((RestConfigurationDefinition) item).asRestConfiguration(
                             getCamelContext(),
                             getCamelContext().getRestConfiguration());
+                    return true;
+                } else if (item instanceof SSLContextParametersDefinition def) {
+                    SSLContextParameters scp = def.createSSLContextParameters(getCamelContext());
+                    if (def.getId() != null) {
+                        getCamelContext().getRegistry().bind(def.getId(), scp);
+                    }
+                    // set the first one as the global default
+                    if (getCamelContext().getSSLContextParameters() == null) {
+                        getCamelContext().setSSLContextParameters(scp);
+                    }
                     return true;
                 } else if (item instanceof TransformersDefinition definition) {
                     if (definition.getTransformers() != null) {
@@ -591,6 +603,8 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         if (params != null && !params.isEmpty()) {
             String query = URISupport.createQueryString(params);
+            // CAMEL-23284: restore property placeholders that were URL-encoded
+            query = query.replace("%7B%7B", "{{").replace("%7D%7D", "}}");
             uri = uri + "?" + query;
         }
 

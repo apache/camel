@@ -1,0 +1,14 @@
+{
+  "transformer": {
+    "kind": "transformer",
+    "name": "google-mail:draft",
+    "title": "Google Mail (Draft)",
+    "description": "Creates a Gmail Draft from String body and threading metadata from headers",
+    "deprecated": false,
+    "javaType": "org.apache.camel.component.google.mail.transform.GoogleMailDraftDataTypeTransformer",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-mail",
+    "version": "4.19.0-SNAPSHOT"
+  }
+}
+

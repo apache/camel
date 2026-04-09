@@ -19,7 +19,7 @@ camel transform route [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
-| `--format` | Output format (xml or yaml), if only yaml files are provided, the format defaults to xml and vice versa |  | String
+| `--format` | Output format (xml, yaml), if only yaml files are provided, the format defaults to xml and vice versa |  | String
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) |  | boolean
 | `--output` | File or directory to store transformed files. If none provide then output is printed to console. Use clipboard as name to copy content into clipboard. |  | String
 | `--resolve-placeholders` | Whether to resolve property placeholders in the dumped output | false | boolean

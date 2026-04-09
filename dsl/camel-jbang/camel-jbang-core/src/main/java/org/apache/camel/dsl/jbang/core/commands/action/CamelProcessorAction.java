@@ -33,7 +33,7 @@ public abstract class CamelProcessorAction extends ActionBaseCommand {
                         description = "Processor ids (multiple ids can be separated by comma)", defaultValue = "*")
     String id = "*";
 
-    public CamelProcessorAction(CamelJBangMain main) {
+    protected CamelProcessorAction(CamelJBangMain main) {
         super(main);
     }
 

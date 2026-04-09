@@ -22,6 +22,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Deprecated(since = "4.19.0")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProcessDeploymentResponse extends DeploymentResponse {
     @JsonProperty("bpmn_process_id")

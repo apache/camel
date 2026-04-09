@@ -120,11 +120,15 @@
         <!-- reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2026-02-17T16:11:10Z</project.build.outputTimestamp>
 
+        <sonar.java.source>${jdk.version}</sonar.java.source>
         <!-- NOTE: this is required to correctly map each module coverage in Sonarqube. The ${maven.multiModuleProjectDirectory} may require some change
             when upgrading to Maven 4.x, according to any of the new variables that will replace this one. -->
         <sonar.coverage.jacoco.xmlReportPaths>
             ${maven.multiModuleProjectDirectory}/coverage/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.cpd.exclusions>
+            components/camel-jackson3/**,components/camel-jackson3xml/**,components/camel-test/camel-test-junit6/**
+        </sonar.cpd.exclusions>
 
         <cyclonedx-maven-plugin-version>2.9.1</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.7.3</flatten-maven-plugin-version>
@@ -325,6 +329,10 @@
                                     <exclude>**/openssl-server.cnf</exclude>
                                     <exclude>**/keystore</exclude>
                                     <exclude>**/cacerts</exclude>
+                                    <exclude>**/cert_user_ca</exclude>
+                                    <exclude>**/cert_host_ca</exclude>
+                                    <exclude>**/cert_user_key</exclude>
+                                    <exclude>**/cert_host_key</exclude>
                                     <exclude>**/cxf.extension</exclude>
                                     <exclude>**/dhis.conf</exclude>
                                     <exclude>**/driver.conf</exclude>
@@ -362,6 +370,8 @@
                                     <exclude>**/zkserver*.conf</exclude>
                                     <exclude>**/*.wasm</exclude>
                                     <exclude>**/*.lock</exclude>
+                                    <exclude>.claude/**</exclude>
+                                    <exclude>.omc/**</exclude>
                                     <exclude>.mvn/**</exclude>
                                     <exclude>.sdkmanrc</exclude>
                                     <exclude>KEYS</exclude>
@@ -573,6 +583,10 @@
                             <exclude>**/.camel-jbang/**/*</exclude>
                             <exclude>**/commands/edit/edit-help.txt</exclude>
                             <exclude>**/examples/*</exclude>
+                            <exclude>**/src/main/resources/testdata/**/*</exclude>
+                            <!-- Claude Code / OMC worktrees -->
+                            <exclude>.claude/**/*</exclude>
+                            <exclude>.omc/**/*</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>

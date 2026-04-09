@@ -49,6 +49,7 @@ import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -455,6 +456,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
         rows.sort(this::sortStatusRow);
 
         if (!rows.isEmpty()) {
+            int tw = terminalWidth();
+            int fixedWidth = 10 + 30 + 10 + 10 + 8 + 10; // PID + NAME + AGE + STATUS + TOTAL + SINCE (approx)
+            int borderOverhead = TerminalWidthHelper.noBorderOverhead(7);
+            int endpointWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth, borderOverhead, 20, wideUri ? 140 : 90);
+
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -465,10 +471,10 @@ public class CamelReceiveAction extends ActionBaseCommand {
                     new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
                             .with(this::getMessageAgo),
                     new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .maxWidth(endpointWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getEndpointUri),
                     new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(140, OverflowBehaviour.NEWLINE)
+                            .maxWidth(endpointWidth, OverflowBehaviour.NEWLINE)
                             .with(r -> r.uri))));
         }
 

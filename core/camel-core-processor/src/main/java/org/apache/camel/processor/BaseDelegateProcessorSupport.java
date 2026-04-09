@@ -24,7 +24,7 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
  */
 public abstract class BaseDelegateProcessorSupport extends DelegateAsyncProcessor {
 
-    public BaseDelegateProcessorSupport(Processor processor) {
+    protected BaseDelegateProcessorSupport(Processor processor) {
         super(processor);
     }
 

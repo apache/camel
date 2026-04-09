@@ -31,20 +31,20 @@ public final class Sqs2MessageHelper {
     }
 
     public static MessageAttributeValue toMessageAttributeValue(Object value) {
-        if (value instanceof String && !((String) value).isEmpty()) {
+        if (value instanceof String stringValue && !stringValue.isEmpty()) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
             mav.dataType(TYPE_STRING);
-            mav.stringValue((String) value);
+            mav.stringValue(stringValue);
             return mav.build();
-        } else if (value instanceof ByteBuffer) {
+        } else if (value instanceof ByteBuffer byteBuffer) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
             mav.dataType(TYPE_BINARY);
-            mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer) value));
+            mav.binaryValue(SdkBytes.fromByteBuffer(byteBuffer));
             return mav.build();
-        } else if (value instanceof byte[]) {
+        } else if (value instanceof byte[] byteArray) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
             mav.dataType(TYPE_BINARY);
-            mav.binaryValue(SdkBytes.fromByteArray((byte[]) value));
+            mav.binaryValue(SdkBytes.fromByteArray(byteArray));
             return mav.build();
         } else if (value instanceof Boolean) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();

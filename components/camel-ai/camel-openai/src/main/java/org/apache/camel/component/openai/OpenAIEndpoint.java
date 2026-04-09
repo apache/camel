@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.openai;
 
+import java.io.FileInputStream;
 import java.net.http.HttpRequest;
+import java.security.KeyStore;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
@@ -369,7 +378,103 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
         builder.baseUrl(ObjectHelper.notNullOrEmpty(configuration.getBaseUrl(), "baseUrl"));
 
+        configureSsl(builder);
+
         return builder.build();
+    }
+
+    private void configureSsl(OpenAIOkHttpClient.Builder builder) throws Exception {
+        // SSLContextParameters takes precedence over individual SSL properties
+        if (configuration.getSslContextParameters() != null) {
+            configureSslFromContextParameters(builder, configuration.getSslContextParameters());
+            return;
+        }
+
+        configureSslFromProperties(builder);
+    }
+
+    private void configureSslFromContextParameters(
+            OpenAIOkHttpClient.Builder builder,
+            org.apache.camel.support.jsse.SSLContextParameters sslContextParameters)
+            throws Exception {
+        SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
+
+        // OpenAIOkHttpClient requires both sslSocketFactory and trustManager to be set together
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tmf.init((KeyStore) null);
+        X509TrustManager x509TrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
+
+        // If SSLContextParameters has trust managers configured, try to extract them
+        if (sslContextParameters.getTrustManagers() != null) {
+            TrustManager[] trustManagers = sslContextParameters.getTrustManagers().createTrustManagers();
+            if (trustManagers != null && trustManagers.length > 0 && trustManagers[0] instanceof X509TrustManager) {
+                x509TrustManager = (X509TrustManager) trustManagers[0];
+            }
+        }
+
+        builder.sslSocketFactory(sslContext.getSocketFactory());
+        builder.trustManager(x509TrustManager);
+    }
+
+    private void configureSslFromProperties(OpenAIOkHttpClient.Builder builder) throws Exception {
+        boolean hasTrustStore = ObjectHelper.isNotEmpty(configuration.getSslTruststoreLocation());
+        boolean hasKeyStore = ObjectHelper.isNotEmpty(configuration.getSslKeystoreLocation());
+
+        if (!hasTrustStore && !hasKeyStore) {
+            return;
+        }
+
+        TrustManager[] trustManagers = null;
+        if (hasTrustStore) {
+            KeyStore trustStore = KeyStore.getInstance(configuration.getSslTruststoreType());
+            char[] trustStorePassword = configuration.getSslTruststorePassword() != null
+                    ? configuration.getSslTruststorePassword().toCharArray() : null;
+            try (FileInputStream fis = new FileInputStream(configuration.getSslTruststoreLocation())) {
+                trustStore.load(fis, trustStorePassword);
+            }
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(configuration.getSslTrustmanagerAlgorithm());
+            tmf.init(trustStore);
+            trustManagers = tmf.getTrustManagers();
+        }
+
+        KeyManager[] keyManagers = null;
+        if (hasKeyStore) {
+            KeyStore keyStore = KeyStore.getInstance(configuration.getSslKeystoreType());
+            char[] keyStorePassword = configuration.getSslKeystorePassword() != null
+                    ? configuration.getSslKeystorePassword().toCharArray() : null;
+            try (FileInputStream fis = new FileInputStream(configuration.getSslKeystoreLocation())) {
+                keyStore.load(fis, keyStorePassword);
+            }
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(configuration.getSslKeymanagerAlgorithm());
+            char[] keyPassword = configuration.getSslKeyPassword() != null
+                    ? configuration.getSslKeyPassword().toCharArray() : keyStorePassword;
+            kmf.init(keyStore, keyPassword);
+            keyManagers = kmf.getKeyManagers();
+        }
+
+        SSLContext sslContext = SSLContext.getInstance(configuration.getSslProtocol());
+        sslContext.init(keyManagers, trustManagers, null);
+
+        // OpenAIOkHttpClient requires both sslSocketFactory and trustManager to be set together
+        X509TrustManager x509TrustManager;
+        if (trustManagers != null) {
+            x509TrustManager = (X509TrustManager) trustManagers[0];
+        } else {
+            // When only keystore is configured, use the default trust manager
+            TrustManagerFactory defaultTmf = TrustManagerFactory.getInstance(
+                    TrustManagerFactory.getDefaultAlgorithm());
+            defaultTmf.init((KeyStore) null);
+            x509TrustManager = (X509TrustManager) defaultTmf.getTrustManagers()[0];
+        }
+
+        builder.sslSocketFactory(sslContext.getSocketFactory());
+        builder.trustManager(x509TrustManager);
+
+        // Configure hostname verification
+        String endpointAlgorithm = configuration.getSslEndpointAlgorithm();
+        if (ObjectHelper.isEmpty(endpointAlgorithm) || "none".equalsIgnoreCase(endpointAlgorithm)) {
+            builder.hostnameVerifier((hostname, session) -> true);
+        }
     }
 
     protected String resolveApiKey() throws Exception {

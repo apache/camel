@@ -49,7 +49,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private URIDereferencer uriDereferencer;
 
-    public XmlSignatureConfiguration() {
+    protected XmlSignatureConfiguration() {
     }
 
     public URIDereferencer getUriDereferencer() {

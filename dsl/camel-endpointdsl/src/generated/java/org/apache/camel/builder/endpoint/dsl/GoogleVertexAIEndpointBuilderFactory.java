@@ -771,16 +771,122 @@ public interface GoogleVertexAIEndpointBuilderFactory {
             return "CamelGoogleVertexAIContentBlocked";
         }
         /**
-         * The number of chunks received in streaming response.
+         * The number of streaming chunks received.
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: producer
+         * Group: producer generateChatStreaming streamRawPredict
          * 
          * @return the name of the header {@code GoogleVertexAIChunkCount}.
          */
         public String googleVertexAIChunkCount() {
             return "CamelGoogleVertexAIChunkCount";
+        }
+        /**
+         * The number of images to generate.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer generateImage
+         * 
+         * @return the name of the header {@code
+         * GoogleVertexAIImageNumberOfImages}.
+         */
+        public String googleVertexAIImageNumberOfImages() {
+            return "CamelGoogleVertexAIImageNumberOfImages";
+        }
+        /**
+         * The aspect ratio for generated images (e.g., 1:1, 16:9, 9:16, 3:4,
+         * 4:3).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer generateImage
+         * 
+         * @return the name of the header {@code
+         * GoogleVertexAIImageAspectRatio}.
+         */
+        public String googleVertexAIImageAspectRatio() {
+            return "CamelGoogleVertexAIImageAspectRatio";
+        }
+        /**
+         * The generated images from an image generation operation.
+         * 
+         * The option is a: {@code java.util.List<com.google.genai.types.Image>}
+         * type.
+         * 
+         * Group: producer generateImage
+         * 
+         * @return the name of the header {@code GoogleVertexAIGeneratedImages}.
+         */
+        public String googleVertexAIGeneratedImages() {
+            return "CamelGoogleVertexAIGeneratedImages";
+        }
+        /**
+         * The task type for embeddings (e.g., RETRIEVAL_QUERY,
+         * RETRIEVAL_DOCUMENT, SEMANTIC_SIMILARITY, CLASSIFICATION, CLUSTERING,
+         * QUESTION_ANSWERING, FACT_VERIFICATION).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer generateEmbeddings
+         * 
+         * @return the name of the header {@code
+         * GoogleVertexAIEmbeddingTaskType}.
+         */
+        public String googleVertexAIEmbeddingTaskType() {
+            return "CamelGoogleVertexAIEmbeddingTaskType";
+        }
+        /**
+         * The desired output dimensionality for embeddings.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer generateEmbeddings
+         * 
+         * @return the name of the header {@code
+         * GoogleVertexAIEmbeddingOutputDimensionality}.
+         */
+        public String googleVertexAIEmbeddingOutputDimensionality() {
+            return "CamelGoogleVertexAIEmbeddingOutputDimensionality";
+        }
+        /**
+         * The media data bytes for multimodal input.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: producer generateMultimodal
+         * 
+         * @return the name of the header {@code GoogleVertexAIMediaData}.
+         */
+        public String googleVertexAIMediaData() {
+            return "CamelGoogleVertexAIMediaData";
+        }
+        /**
+         * The MIME type of the media data (e.g., image/png, image/jpeg,
+         * video/mp4, audio/mp3).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer generateMultimodal
+         * 
+         * @return the name of the header {@code GoogleVertexAIMediaMimeType}.
+         */
+        public String googleVertexAIMediaMimeType() {
+            return "CamelGoogleVertexAIMediaMimeType";
+        }
+        /**
+         * The GCS URI of the media file for multimodal input (e.g.,
+         * gs://bucket/image.png).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer generateMultimodal
+         * 
+         * @return the name of the header {@code GoogleVertexAIMediaGcsUri}.
+         */
+        public String googleVertexAIMediaGcsUri() {
+            return "CamelGoogleVertexAIMediaGcsUri";
         }
         /**
          * Publisher name for partner models (e.g., anthropic, meta, mistralai).

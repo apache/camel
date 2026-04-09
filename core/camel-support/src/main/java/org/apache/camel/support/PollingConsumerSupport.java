@@ -31,7 +31,7 @@ public abstract class PollingConsumerSupport extends ServiceSupport implements P
     private final Endpoint endpoint;
     private ExceptionHandler exceptionHandler;
 
-    public PollingConsumerSupport(Endpoint endpoint) {
+    protected PollingConsumerSupport(Endpoint endpoint) {
         this.endpoint = endpoint;
         this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
     }

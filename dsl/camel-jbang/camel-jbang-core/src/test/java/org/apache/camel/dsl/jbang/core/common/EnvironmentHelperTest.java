@@ -18,8 +18,8 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EnvironmentHelperTest {
@@ -28,20 +28,17 @@ class EnvironmentHelperTest {
     void testIsColorEnabledReturnsBoolean() {
         // Should not throw and should return a boolean value
         // The actual result depends on the environment, but the method should work
-        boolean result = EnvironmentHelper.isColorEnabled();
-        assertNotNull(result);
+        assertDoesNotThrow(() -> EnvironmentHelper.isColorEnabled());
     }
 
     @Test
     void testIsCIEnvironmentReturnsBoolean() {
-        boolean result = EnvironmentHelper.isCIEnvironment();
-        assertNotNull(result);
+        assertDoesNotThrow(() -> EnvironmentHelper.isCIEnvironment());
     }
 
     @Test
     void testIsInteractiveTerminalReturnsBoolean() {
-        boolean result = EnvironmentHelper.isInteractiveTerminal();
-        assertNotNull(result);
+        assertDoesNotThrow(() -> EnvironmentHelper.isInteractiveTerminal());
     }
 
     @Test

@@ -38,4 +38,10 @@ import org.apache.camel.StatefulService;
  * @see StatefulService
  */
 public interface ContextServiceLoaderPluginResolver extends CamelContextAware, StatefulService {
+
+    /**
+     * Invokes {@link ContextServicePlugin#onReload(org.apache.camel.CamelContext)} on all discovered plugins, giving
+     * them an opportunity to refresh their state before routes are reloaded.
+     */
+    void onReload();
 }
