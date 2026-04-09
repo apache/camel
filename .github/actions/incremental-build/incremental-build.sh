@@ -422,17 +422,19 @@ main() {
   fi
 
   # ── Step 3: Merge and deduplicate ──
-  # Separate file-path modules into testable (has src/test) and pom-only.
-  # Pom-only modules (e.g. "parent") are kept in the build list but must NOT
-  # be expanded with -amd, since that would pull in every dependent module.
+  # Separate file-path modules into testable (has source code) and pom-only.
+  # Pom-only modules (e.g. "parent", aggregator poms) are kept in the build
+  # list but must NOT be expanded with -amd, since that would pull in every
+  # dependent module. Modules with src/main (including test-infra modules)
+  # are treated as testable so their dependents get tested.
   local testable_pl=""
   local pom_only_pl=""
   for w in $(echo "$pl" | tr ',' '\n'); do
-    if [ -d "$w/src/test" ]; then
+    if [ -d "$w/src/main" ]; then
       testable_pl="${testable_pl:+${testable_pl},}${w}"
     else
       pom_only_pl="${pom_only_pl:+${pom_only_pl},}${w}"
-      echo "  Pom-only module (no src/test, won't expand dependents): $w"
+      echo "  Pom-only module (no src/main, won't expand dependents): $w"
     fi
   done
 
