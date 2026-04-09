@@ -370,6 +370,8 @@
                                     <exclude>**/zkserver*.conf</exclude>
                                     <exclude>**/*.wasm</exclude>
                                     <exclude>**/*.lock</exclude>
+                                    <exclude>.claude/**</exclude>
+                                    <exclude>.omc/**</exclude>
                                     <exclude>.mvn/**</exclude>
                                     <exclude>.sdkmanrc</exclude>
                                     <exclude>KEYS</exclude>
@@ -582,6 +584,9 @@
                             <exclude>**/commands/edit/edit-help.txt</exclude>
                             <exclude>**/examples/*</exclude>
                             <exclude>**/src/main/resources/testdata/**/*</exclude>
+                            <!-- Claude Code / OMC worktrees -->
+                            <exclude>.claude/**/*</exclude>
+                            <exclude>.omc/**/*</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>
