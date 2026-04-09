@@ -252,7 +252,10 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
                 .host(service.host())
                 .port(service.port());
 
-        clientBuilder.security()
+        clientBuilder
+                .socketTimeout(15000)
+                .connectionTimeout(15000)
+                .security()
                 .authentication()
                 .username(service.username())
                 .password(service.password())
