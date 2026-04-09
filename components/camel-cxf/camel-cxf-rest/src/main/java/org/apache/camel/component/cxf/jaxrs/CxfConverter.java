@@ -20,7 +20,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
 import jakarta.ws.rs.core.Response;
 import jakarta.xml.soap.SOAPException;
@@ -137,6 +140,32 @@ public final class CxfConverter {
         int status = response.getStatus();
         if (status > 0) {
             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, status);
+        }
+
+        // Preserve response metadata headers (e.g. Content-Type) before the Response object
+        // is consumed by the conversion. Without this, headers set via Response.type() or
+        // Response.header() are lost when the body becomes a StreamCache (CAMEL-23249).
+        jakarta.ws.rs.core.MediaType mediaType = response.getMediaType();
+        if (mediaType != null) {
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
+        }
+        // Save other response headers (e.g. custom headers) into the PROTOCOL_HEADERS map
+        // so they are propagated to the CXF outMessage by populateViaResponse.
+        jakarta.ws.rs.core.MultivaluedMap<String, Object> metadata = response.getMetadata();
+        if (metadata != null && !metadata.isEmpty()) {
+            Map<String, Object> protocolHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            for (String headerName : metadata.keySet()) {
+                if ("Content-Type".equalsIgnoreCase(headerName)) {
+                    continue;
+                }
+                String headerValue = response.getHeaderString(headerName);
+                if (headerValue != null) {
+                    protocolHeaders.put(headerName, Arrays.asList(headerValue));
+                }
+            }
+            if (!protocolHeaders.isEmpty()) {
+                exchange.getMessage().setHeader(org.apache.cxf.message.Message.PROTOCOL_HEADERS, protocolHeaders);
+            }
         }
 
         // Convert the body (entity) to an InputStream
