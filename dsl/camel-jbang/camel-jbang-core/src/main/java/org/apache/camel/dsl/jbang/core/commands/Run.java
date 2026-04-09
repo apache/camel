@@ -194,12 +194,12 @@ public class Run extends CamelCommand {
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
+    @Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
+            defaultValue = "io.quarkus.platform")
     String quarkusGroupId = "io.quarkus.platform";
 
-    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
-                        defaultValue = "quarkus-bom")
+    @Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
+            defaultValue = "quarkus-bom")
     String quarkusArtifactId = "quarkus-bom";
 
     @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
@@ -219,8 +219,8 @@ public class Run extends CamelCommand {
             split = ",")
     List<String> dependencies = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    @Option(names = { "--repo", "--repos" },
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 
     @Option(names = { "--gav" }, description = "The Maven group:artifact:version (used during exporting)")
@@ -250,8 +250,8 @@ public class Run extends CamelCommand {
             description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    @Option(names = { "--package-scan-jars" }, defaultValue = "false",
+            description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
     boolean packageScanJars;
 
     @CommandLine.ArgGroup(validate = false, heading = "%nLogging Options:%n")
@@ -274,7 +274,7 @@ public class Run extends CamelCommand {
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
-    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    @Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
     // Logging, execution limit, debug, and server options are defined in their respective @ArgGroup inner classes below
@@ -1131,6 +1131,7 @@ public class Run extends CamelCommand {
         eq.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
         eq.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
         eq.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
+        eq.javaVersion = javaVersion;
         eq.camelVersion = this.camelVersion;
         eq.javaVersion = this.javaVersion;
         eq.kameletsVersion = this.kameletsVersion;
@@ -1237,6 +1238,7 @@ public class Run extends CamelCommand {
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
         eq.springBootVersion = this.springBootVersion;
+        eq.javaVersion = this.javaVersion;
         eq.camelVersion = this.camelVersion;
         eq.camelSpringBootVersion = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION,
                 () -> this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion);
