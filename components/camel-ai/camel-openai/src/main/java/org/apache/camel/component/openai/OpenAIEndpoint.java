@@ -42,9 +42,8 @@ import org.apache.camel.util.ObjectHelper;
 public class OpenAIEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = true, description = "The operation to perform: 'chat-completion' or 'embeddings'",
-              enums = "chat-completion,embeddings")
-    private String operation;
+    @Metadata(required = true, description = "The operation to perform: 'chat-completion' or 'embeddings'")
+    private OpenAIOperations operation;
 
     @UriParam
     private OpenAIConfiguration configuration;
@@ -59,10 +58,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return switch (operation) {
-            case "chat-completion" -> new OpenAIProducer(this);
-            case "embeddings" -> new OpenAIEmbeddingsProducer(this);
-            default -> throw new IllegalArgumentException(
-                    "Unknown operation: " + operation + ". Supported: chat-completion, embeddings");
+            case chatCompletion -> new OpenAIProducer(this);
+            case embeddings -> new OpenAIEmbeddingsProducer(this);
         };
     }
 
@@ -113,11 +110,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         return System.getProperty("openai.api.key");
     }
 
-    public String getOperation() {
+    public OpenAIOperations getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    public void setOperation(OpenAIOperations operation) {
         this.operation = operation;
     }
 

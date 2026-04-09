@@ -546,6 +546,8 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion' or 'embeddings'
+         * There are 2 enums and the value can be one of: chat-completion,
+         * embeddings
          * 
          * @param path operation
          * @return the dsl builder
@@ -565,6 +567,8 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The operation to perform: 'chat-completion' or 'embeddings'
+         * There are 2 enums and the value can be one of: chat-completion,
+         * embeddings
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
