@@ -82,12 +82,12 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
         }
     }
 
-    public DelayProcessorSupport(CamelContext camelContext, Processor processor) {
+    protected DelayProcessorSupport(CamelContext camelContext, Processor processor) {
         this(camelContext, processor, null, false);
     }
 
-    public DelayProcessorSupport(CamelContext camelContext, Processor processor, ScheduledExecutorService executorService,
-                                 boolean shutdownExecutorService) {
+    protected DelayProcessorSupport(CamelContext camelContext, Processor processor, ScheduledExecutorService executorService,
+                                    boolean shutdownExecutorService) {
         super(processor);
         this.camelContext = camelContext;
         this.executorService = executorService;

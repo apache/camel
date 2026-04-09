@@ -34,7 +34,7 @@ public abstract class EventNotifierSupport extends SimpleEventNotifierSupport im
 
     private CamelContext camelContext;
 
-    public EventNotifierSupport() {
+    protected EventNotifierSupport() {
         setupIgnore(false);
     }
 

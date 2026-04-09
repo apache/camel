@@ -25,6 +25,7 @@ import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.component.zeebe.model.MessageRequest;
 import org.apache.camel.component.zeebe.model.MessageResponse;
 
+@Deprecated(since = "4.19.0")
 public class MessageProcessor extends AbstractBaseProcessor {
 
     public MessageProcessor(ZeebeEndpoint endpoint) {

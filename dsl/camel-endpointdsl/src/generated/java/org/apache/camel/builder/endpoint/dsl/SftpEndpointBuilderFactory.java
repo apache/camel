@@ -2126,6 +2126,85 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a comma separated list of CA signature algorithms accepted for
+         * host certificate verification. If not specified the default list from
+         * JSch will be used (matches OpenSSH 8.2 defaults).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param caSignatureAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder caSignatureAlgorithms(String caSignatureAlgorithms) {
+            doSetProperty("caSignatureAlgorithms", caSignatureAlgorithms);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certBytes the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder certBytes(byte[] certBytes) {
+            doSetProperty("certBytes", certBytes);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
+         * 
+         * The option will be converted to a <code>byte[]</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certBytes the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder certBytes(String certBytes) {
+            doSetProperty("certBytes", certBytes);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate file path for certificate-based
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certFile the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder certFile(String certFile) {
+            doSetProperty("certFile", certFile);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate (loaded from classpath by default) for
+         * certificate-based authentication.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certUri the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointConsumerBuilder certUri(String certUri) {
+            doSetProperty("certUri", certUri);
+            return this;
+        }
+        /**
          * Set a comma separated list of ciphers that will be used in order of
          * preference. Possible cipher names are defined by JCraft JSCH. Some
          * examples include:
@@ -4093,6 +4172,85 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a comma separated list of CA signature algorithms accepted for
+         * host certificate verification. If not specified the default list from
+         * JSch will be used (matches OpenSSH 8.2 defaults).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param caSignatureAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder caSignatureAlgorithms(String caSignatureAlgorithms) {
+            doSetProperty("caSignatureAlgorithms", caSignatureAlgorithms);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certBytes the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder certBytes(byte[] certBytes) {
+            doSetProperty("certBytes", certBytes);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
+         * 
+         * The option will be converted to a <code>byte[]</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certBytes the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder certBytes(String certBytes) {
+            doSetProperty("certBytes", certBytes);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate file path for certificate-based
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certFile the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder certFile(String certFile) {
+            doSetProperty("certFile", certFile);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate (loaded from classpath by default) for
+         * certificate-based authentication.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certUri the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointProducerBuilder certUri(String certUri) {
+            doSetProperty("certUri", certUri);
+            return this;
+        }
+        /**
          * Set a comma separated list of ciphers that will be used in order of
          * preference. Possible cipher names are defined by JCraft JSCH. Some
          * examples include:
@@ -5610,6 +5768,85 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder autoCreateKnownHostsFile(String autoCreateKnownHostsFile) {
             doSetProperty("autoCreateKnownHostsFile", autoCreateKnownHostsFile);
+            return this;
+        }
+        /**
+         * Set a comma separated list of CA signature algorithms accepted for
+         * host certificate verification. If not specified the default list from
+         * JSch will be used (matches OpenSSH 8.2 defaults).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param caSignatureAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder caSignatureAlgorithms(String caSignatureAlgorithms) {
+            doSetProperty("caSignatureAlgorithms", caSignatureAlgorithms);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certBytes the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder certBytes(byte[] certBytes) {
+            doSetProperty("certBytes", certBytes);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
+         * 
+         * The option will be converted to a <code>byte[]</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certBytes the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder certBytes(String certBytes) {
+            doSetProperty("certBytes", certBytes);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate file path for certificate-based
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certFile the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder certFile(String certFile) {
+            doSetProperty("certFile", certFile);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate (loaded from classpath by default) for
+         * certificate-based authentication.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certUri the value to set
+         * @return the dsl builder
+         */
+        default SftpEndpointBuilder certUri(String certUri) {
+            doSetProperty("certUri", certUri);
             return this;
         }
         /**

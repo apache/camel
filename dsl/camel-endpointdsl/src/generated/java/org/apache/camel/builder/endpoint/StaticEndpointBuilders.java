@@ -2751,6 +2751,54 @@ public class StaticEndpointBuilders {
         return CaffeineLoadCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Camunda (camel-camunda)
+     * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
+     * Client.
+     * 
+     * Category: workflow,saas
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-camunda
+     * 
+     * Syntax: <code>camunda:operationName</code>
+     * 
+     * Path parameter: operationName (required)
+     * The operation to use
+     * There are 9 enums and the value can be one of: startProcess,
+     * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
+     * worker, throwError, deployResource
+     * 
+     * @param path operationName
+     * @return the dsl builder
+     */
+    public static CamundaEndpointBuilderFactory.CamundaEndpointBuilder camunda(String path) {
+        return camunda("camunda", path);
+    }
+    /**
+     * Camunda (camel-camunda)
+     * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
+     * Client.
+     * 
+     * Category: workflow,saas
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-camunda
+     * 
+     * Syntax: <code>camunda:operationName</code>
+     * 
+     * Path parameter: operationName (required)
+     * The operation to use
+     * There are 9 enums and the value can be one of: startProcess,
+     * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
+     * worker, throwError, deployResource
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operationName
+     * @return the dsl builder
+     */
+    public static CamundaEndpointBuilderFactory.CamundaEndpointBuilder camunda(String componentName, String path) {
+        return CamundaEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
      * 
@@ -13323,6 +13371,46 @@ public class StaticEndpointBuilders {
         return PgEventEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * Syntax: <code>pgvector:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection (table) name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PgVectorEndpointBuilderFactory.PgVectorEndpointBuilder pgvector(String path) {
+        return pgvector("pgvector", path);
+    }
+    /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * Syntax: <code>pgvector:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection (table) name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PgVectorEndpointBuilderFactory.PgVectorEndpointBuilder pgvector(String componentName, String path) {
+        return PgVectorEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
      * 
@@ -15149,6 +15237,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String path) {
         return splunk("splunk", path);
     }
@@ -15170,6 +15259,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String componentName, String path) {
         return SplunkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -17807,6 +17897,7 @@ public class StaticEndpointBuilders {
      * @param path operationName
      * @return the dsl builder
      */
+    @Deprecated
     public static ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(String path) {
         return zeebe("zeebe", path);
     }
@@ -17832,6 +17923,7 @@ public class StaticEndpointBuilders {
      * @param path operationName
      * @return the dsl builder
      */
+    @Deprecated
     public static ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(String componentName, String path) {
         return ZeebeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

@@ -48,7 +48,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = HashicorpVaultInfraService.class,
-              description = "Vault is a tool for securely accessing secrets",
+              description = "HashiCorp Vault is a tool for securely accessing secrets",
               serviceAlias = "hashicorp",
               serviceImplementationAlias = "vault")
 public class HashicorpVaultLocalContainerInfraService

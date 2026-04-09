@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Deprecated(since = "4.19.0")
 public abstract class AbstractZeebeResponse implements ZeebeMessage {
     private boolean success; // false
     @JsonProperty("error_message")

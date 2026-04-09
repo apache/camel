@@ -60,7 +60,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected final long replyToTimeout = 10000;
     protected CorrelationTimeoutMap correlation;
 
-    public ReplyManagerSupport(CamelContext camelContext) {
+    protected ReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 

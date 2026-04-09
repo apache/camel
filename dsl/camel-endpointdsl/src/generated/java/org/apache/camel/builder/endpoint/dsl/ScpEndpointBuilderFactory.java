@@ -45,22 +45,6 @@ public interface ScpEndpointBuilderFactory {
         }
 
         /**
-         * If provided, then Camel will calculate a checksum from the file that
-         * has been written, and store the result in the CamelFileChecksum
-         * header.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param checksumFileAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default ScpEndpointBuilder checksumFileAlgorithm(String checksumFileAlgorithm) {
-            doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
-            return this;
-        }
-        /**
          * Allows you to set chmod on the stored file. For example chmod=664.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -109,6 +93,22 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * If provided, then Camel will calculate a checksum from the file that
+         * has been written, and store the result in the CamelFileChecksum
+         * header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param checksumFileAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder checksumFileAlgorithm(String checksumFileAlgorithm) {
+            doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
             return this;
         }
         /**
@@ -270,6 +270,85 @@ public interface ScpEndpointBuilderFactory {
          */
         default ScpEndpointBuilder strictHostKeyChecking(String strictHostKeyChecking) {
             doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
+            return this;
+        }
+        /**
+         * Set a comma separated list of CA signature algorithms accepted for
+         * host certificate verification. If not specified the default list from
+         * JSch will be used (matches OpenSSH 8.2 defaults).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param caSignatureAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder caSignatureAlgorithms(String caSignatureAlgorithms) {
+            doSetProperty("caSignatureAlgorithms", caSignatureAlgorithms);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certBytes the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder certBytes(byte[] certBytes) {
+            doSetProperty("certBytes", certBytes);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
+         * 
+         * The option will be converted to a <code>byte[]</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certBytes the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder certBytes(String certBytes) {
+            doSetProperty("certBytes", certBytes);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate file path for certificate-based
+         * authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certFile the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder certFile(String certFile) {
+            doSetProperty("certFile", certFile);
+            return this;
+        }
+        /**
+         * Set the OpenSSH certificate (loaded from classpath by default) for
+         * certificate-based authentication.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certUri the value to set
+         * @return the dsl builder
+         */
+        default ScpEndpointBuilder certUri(String certUri) {
+            doSetProperty("certUri", certUri);
             return this;
         }
         /**

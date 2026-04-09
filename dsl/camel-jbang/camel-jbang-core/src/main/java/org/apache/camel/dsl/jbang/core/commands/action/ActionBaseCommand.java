@@ -34,7 +34,7 @@ import org.apache.camel.util.json.Jsoner;
 
 abstract class ActionBaseCommand extends CamelCommand {
 
-    public ActionBaseCommand(CamelJBangMain main) {
+    protected ActionBaseCommand(CamelJBangMain main) {
         super(main);
     }
 

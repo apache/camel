@@ -438,6 +438,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-camunda</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-cassandraql</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
@@ -1900,6 +1905,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pgevent</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-pgvector</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
       <dependency>

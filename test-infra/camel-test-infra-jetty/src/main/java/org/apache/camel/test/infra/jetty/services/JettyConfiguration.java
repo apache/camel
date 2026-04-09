@@ -58,7 +58,7 @@ public class JettyConfiguration {
         protected final String contextPath;
         protected Consumer<T> customizer;
 
-        public AbstractContextHandlerConfiguration(String contextPath) {
+        protected AbstractContextHandlerConfiguration(String contextPath) {
             this.contextPath = contextPath;
         }
 

@@ -44,18 +44,18 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     @XmlElementRef
     private ExpressionDefinition expression;
 
-    public ExpressionNode() {
+    protected ExpressionNode() {
     }
 
-    public ExpressionNode(ExpressionDefinition expression) {
+    protected ExpressionNode(ExpressionDefinition expression) {
         setExpression(expression);
     }
 
-    public ExpressionNode(Expression expression) {
+    protected ExpressionNode(Expression expression) {
         setExpression(expression);
     }
 
-    public ExpressionNode(Predicate predicate) {
+    protected ExpressionNode(Predicate predicate) {
         setPredicate(predicate);
     }
 

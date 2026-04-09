@@ -42,23 +42,23 @@ public abstract class BasicOutputExpressionNode extends BasicExpressionNode<Basi
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
-    public BasicOutputExpressionNode() {
+    protected BasicOutputExpressionNode() {
     }
 
-    public BasicOutputExpressionNode(BasicOutputExpressionNode source) {
+    protected BasicOutputExpressionNode(BasicOutputExpressionNode source) {
         super(source);
         this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
     }
 
-    public BasicOutputExpressionNode(ExpressionDefinition expression) {
+    protected BasicOutputExpressionNode(ExpressionDefinition expression) {
         super(expression);
     }
 
-    public BasicOutputExpressionNode(Expression expression) {
+    protected BasicOutputExpressionNode(Expression expression) {
         super(expression);
     }
 
-    public BasicOutputExpressionNode(Predicate predicate) {
+    protected BasicOutputExpressionNode(Predicate predicate) {
         super(predicate);
     }
 

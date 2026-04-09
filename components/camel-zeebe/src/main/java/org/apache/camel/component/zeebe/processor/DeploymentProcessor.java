@@ -29,6 +29,7 @@ import org.apache.camel.component.zeebe.model.DeploymentRequest;
 import org.apache.camel.component.zeebe.model.DeploymentResponse;
 import org.apache.camel.component.zeebe.model.ProcessDeploymentResponse;
 
+@Deprecated(since = "4.19.0")
 public class DeploymentProcessor extends AbstractBaseProcessor {
     public DeploymentProcessor(ZeebeEndpoint endpoint) {
         super(endpoint);

@@ -29,11 +29,11 @@ public abstract class BaseTrait implements Trait {
     private final String id;
     private final int order;
 
-    public BaseTrait(String id) {
+    protected BaseTrait(String id) {
         this(id, 1000);
     }
 
-    public BaseTrait(String id, int order) {
+    protected BaseTrait(String id, int order) {
         this.id = id;
         this.order = order;
     }

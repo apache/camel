@@ -25,11 +25,12 @@ import org.apache.camel.component.zeebe.ZeebeEndpoint;
 import org.apache.camel.component.zeebe.model.ZeebeMessage;
 import org.apache.camel.support.service.BaseService;
 
+@Deprecated(since = "4.19.0")
 public abstract class AbstractBaseProcessor extends BaseService implements ZeebeProcessor {
     protected final ZeebeEndpoint endpoint;
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public AbstractBaseProcessor(ZeebeEndpoint endpoint) {
+    protected AbstractBaseProcessor(ZeebeEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 

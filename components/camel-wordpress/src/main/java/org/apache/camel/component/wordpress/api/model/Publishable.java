@@ -48,7 +48,7 @@ public abstract class Publishable implements Serializable {
 
     private String slug;
 
-    public Publishable() {
+    protected Publishable() {
 
     }
 

@@ -858,7 +858,7 @@ public class AggregateProcessor extends BaseProcessorSupport
         executorService.execute(() -> {
             ExchangeHelper.prepareOutToIn(exchange);
 
-            Runnable task = () -> processor.process(exchange, done -> {
+            AsyncCallback completionCallback = done -> {
                 // log exception if there was a problem
                 if (exchange.getException() != null) {
                     // if there was an exception then let the exception handler handle it
@@ -867,14 +867,19 @@ public class AggregateProcessor extends BaseProcessorSupport
                 } else {
                     LOG.trace("Processing aggregated exchange: {} complete.", exchange);
                 }
-            });
-            // execute the task using this thread sync (similar to multicast eip in parallel mode)
-            if (exchange.isTransacted()) {
-                reactiveExecutor.scheduleQueue(task);
-            } else if (executorService instanceof SynchronousExecutorService) {
-                reactiveExecutor.schedule(task);
+            };
+
+            if (executorService instanceof SynchronousExecutorService) {
+                // CAMEL-23281: process inline to avoid deadlock with transacted exchanges
+                processor.process(exchange, completionCallback);
             } else {
-                reactiveExecutor.scheduleSync(task);
+                Runnable task = () -> processor.process(exchange, completionCallback);
+                // execute the task using this thread sync (similar to multicast eip in parallel mode)
+                if (exchange.isTransacted()) {
+                    reactiveExecutor.scheduleQueue(task);
+                } else {
+                    reactiveExecutor.scheduleSync(task);
+                }
             }
         });
     }

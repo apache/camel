@@ -1,0 +1,505 @@
+= Camunda Component
+:doctitle: Camunda
+:shortname: camunda
+:artifactid: camel-camunda
+:description: Interact with Camunda 8 Orchestration Clusters using the Camunda Java Client.
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: camunda
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The *Camunda* component provides the ability to interact with https://camunda.com/[Camunda 8] process orchestration clusters
+using the https://docs.camunda.io/docs/apis-tools/java-client/[Camunda Java Client].
+
+This component replaces the deprecated xref:zeebe-component.adoc[camel-zeebe] component, which used the older Zeebe Java Client.
+
+[NOTE]
+====
+*Prerequisites*
+
+You must have access to a Camunda 8 cluster. This can be:
+
+* A Camunda SaaS cluster at https://camunda.io/[Camunda SaaS]
+* A self-managed Camunda 8 instance (e.g. via Docker Compose or Kubernetes)
+====
+
+To use the Camunda component, Maven users will need to add the
+following dependency to their `pom.xml`:
+
+[source,xml]
+-----------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-camunda</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+-----------------------------------------------
+
+== URI format
+
+-------------------------------
+camunda://[endpoint]?[options]
+-------------------------------
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Connection Modes
+
+=== Camunda SaaS (Cloud)
+
+Set the `clusterId`, `clientId`, `clientSecret`, and `region` component options.
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------
+CamundaComponent camunda = context.getComponent("camunda", CamundaComponent.class);
+camunda.setClusterId("your-cluster-id");
+camunda.setClientId("your-client-id");
+camunda.setClientSecret("your-client-secret");
+camunda.setRegion("bru-2");
+----------------------------------------------------------------------------------------------------------------------
+
+=== Self-Managed
+
+Set the `grpcAddress` and `restAddress` component options. For authenticated self-managed clusters,
+also set `clientId`, `clientSecret`, and `oAuthAPI`.
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------
+CamundaComponent camunda = context.getComponent("camunda", CamundaComponent.class);
+camunda.setGrpcAddress("http://localhost:26500");
+camunda.setRestAddress("http://localhost:8080");
+----------------------------------------------------------------------------------------------------------------------
+
+== Usage
+
+=== Producer Endpoints
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Endpoint |Description
+
+|`startProcess` |Creates and starts an instance of the specified process.
+
+|`cancelProcess` |Cancels a running process instance.
+
+|`publishMessage` |Publishes a message.
+
+|`completeJob` |Completes a job for a service task.
+
+|`failJob` |Fails a job.
+
+|`updateJobRetries` |Updates the number of retries for a job.
+
+|`throwError` |Throws an error to indicate that a business error has occurred.
+
+|`deployResource` |Deploys a process resource. Currently supports process definitions.
+
+|=======================================================================
+
+The endpoints accept either Java request objects as shown in the examples below or JSON. In JSON, camel case for property names is replaced with all lower case separated by underscores, e.g., processId becomes process_id.
+
+*Examples*
+
+* startProcess
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        ProcessRequest request = new ProcessRequest();
+        request.setProcessId("processId");
+        request.setVariables(new HashMap<String,Object> ());
+        exchange.getIn().setBody(request);
+    })
+    .to("camunda://startProcess")
+    .process(exchange -> {
+        ProcessResponse body = exchange.getIn().getBody(ProcessResponse.class);
+        if (body != null) {
+            boolean success = body.isSuccess();
+            long processInstanceKey = body.getProcessInstanceKey();
+        }
+    });
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start-process
+      steps:
+        - marshal:
+            json: {}
+        - setBody:
+            simple: '{"process_id":"processId","variables":${body}}'
+        - to:
+            uri: "camunda://startProcess"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start-process"/>
+  <marshal>
+    <json/>
+  </marshal>
+  <setBody>
+    <simple>{"process_id":"processId","variables":${body}}</simple>
+  </setBody>
+  <to uri="camunda://startProcess"/>
+</route>
+----
+====
+
+*JSON Request Example*
+
+[source,json]
+----
+{
+    "process_id" : "Process_0e3ldfm",
+    "variables" : { "v1": "a", "v2": 10 }
+}
+----
+
+*JSON Response Example*
+
+[source,json]
+----
+{
+    "success": true,
+    "process_id": "Process_0e3ldfm",
+    "process_instance_key": 2251799813688297,
+    "process_version": 4,
+    "process_key": 2251799813685906
+}
+----
+
+* cancelProcess
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:cancel")
+    .process(exchange -> {
+        ProcessRequest request = new ProcessRequest();
+        request.setProcessInstanceKey(123);
+        exchange.getIn().setBody(request);
+    })
+    .to("camunda://cancelProcess");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:cancel
+      steps:
+        - setBody:
+            simple: '{"process_instance_key": 123}'
+        - to:
+            uri: "camunda://cancelProcess"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:cancel"/>
+  <setBody>
+    <simple>{"process_instance_key": 123}</simple>
+  </setBody>
+  <to uri="camunda://cancelProcess"/>
+</route>
+----
+====
+
+* publishMessage
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:message")
+    .process(exchange -> {
+        MessageRequest request = new MessageRequest();
+        request.setCorrelationKey("messageKey");
+        request.setTimeToLive(100);
+        request.setVariables(new HashMap<String,Object>());
+        request.setName("MessageName");
+        exchange.getIn().setBody(request);
+    })
+    .to("camunda://publishMessage");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:message
+      steps:
+        - setBody:
+            simple: '{"name":"MessageName","correlation_key":"messageKey","time_to_live":100,"variables":{}}'
+        - to:
+            uri: "camunda://publishMessage"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:message"/>
+  <setBody>
+    <simple>{"name":"MessageName","correlation_key":"messageKey","time_to_live":100,"variables":{}}</simple>
+  </setBody>
+  <to uri="camunda://publishMessage"/>
+</route>
+----
+====
+
+* deployResource
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:deploy")
+    .process(exchange -> {
+        exchange.getIn().setHeader(CamundaConstants.RESOURCE_NAME, "process.bpmn");
+        exchange.getIn().setBody(content.getBytes());
+    })
+    .to("camunda://deployResource");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:deploy
+      steps:
+        - setHeader:
+            name: CamelCamundaResourceName
+            simple: "process.bpmn"
+        - to:
+            uri: "camunda://deployResource"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:deploy"/>
+  <setHeader name="CamelCamundaResourceName">
+    <simple>process.bpmn</simple>
+  </setHeader>
+  <to uri="camunda://deployResource"/>
+</route>
+----
+====
+
+=== Consumer Endpoints
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Endpoint |Description
+
+|worker |Registers a job worker for a job type and provides messages for available jobs.
+
+|=======================================================================
+
+camel-camunda creates a route exchange per job type with a job in the body. The `CamelCamundaJobKey` header is set automatically for each job.
+
+==== Auto-Complete / Auto-Fail
+
+The worker consumer follows the standard job worker pattern:
+
+* If the route completes successfully, the job is **automatically completed**. If the exchange body is a `Map`, those entries are passed as output variables.
+* If the route throws an exception, the job is **automatically failed** with the exception message. The retry count is decremented by one.
+* If the route explicitly calls `completeJob`, `failJob`, or `throwError`, the auto-complete is **skipped** (the consumer detects this via the `CamundaJobHandled` exchange property).
+
+*Basic Example* — process a job (auto-completed on success):
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("camunda://worker?jobType=myJobType&timeout=20")
+    .process(exchange -> {
+        JobWorkerMessage body = exchange.getIn().getBody(JobWorkerMessage.class);
+        if (body != null) {
+            long key = body.getKey();
+            String type = body.getType();
+            Map<String,String> customHeaders = body.getCustomHeaders();
+            long processInstanceKey = body.getProcessInstanceKey();
+            String bpmnProcessId = body.getBpmnProcessId();
+            Map<String,Object> variables = body.getVariables();
+        }
+    });
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "camunda://worker?jobType=myJobType&timeout=20"
+      steps:
+        - log:
+            message: "Received job ${header.CamelCamundaJobKey}"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
+  <log message="Received job ${header.CamelCamundaJobKey}"/>
+</route>
+----
+====
+
+*Returning output variables* — set the body to a `Map` to pass variables back:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("camunda://worker?jobType=myJobType&timeout=20")
+    .process(exchange -> {
+        Map<String, Object> result = new HashMap<>();
+        result.put("approved", true);
+        exchange.getIn().setBody(result);
+    });
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "camunda://worker?jobType=myJobType&timeout=20"
+      steps:
+        - setBody:
+            constant:
+              resultType: "java.util.Map"
+              expression: ""
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
+  <process ref="myJobProcessor"/>
+</route>
+----
+====
+
+[[Worker_Flow_Examples]]
+==== Advanced Worker Flow Examples
+
+For advanced scenarios, you can explicitly call `completeJob`, `failJob`, or `throwError` in the route.
+When you do, the consumer skips auto-complete/auto-fail.
+
+* *Throw a business error* — signals a BPMN error with an error code and message:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("camunda://worker?jobType=myJobType&timeout=20")
+    .process(exchange -> {
+        exchange.getIn().setHeader(CamundaConstants.ERROR_CODE, "INVALID_DATA");
+        exchange.getIn().setHeader(CamundaConstants.ERROR_MESSAGE, "Data validation failed");
+    })
+    .to("camunda://throwError");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "camunda://worker?jobType=myJobType&timeout=20"
+      steps:
+        - setHeader:
+            name: CamelCamundaErrorCode
+            simple: "INVALID_DATA"
+        - setHeader:
+            name: CamelCamundaErrorMessage
+            simple: "Data validation failed"
+        - to:
+            uri: "camunda://throwError"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="camunda://worker?jobType=myJobType&amp;timeout=20"/>
+  <setHeader name="CamelCamundaErrorCode">
+    <simple>INVALID_DATA</simple>
+  </setHeader>
+  <setHeader name="CamelCamundaErrorMessage">
+    <simple>Data validation failed</simple>
+  </setHeader>
+  <to uri="camunda://throwError"/>
+</route>
+----
+====
+
+== Migrating from camel-zeebe
+
+The `camel-camunda` component is the successor of `camel-zeebe`. Key differences:
+
+* Uses the new `io.camunda:camunda-client-java` library instead of `io.camunda:zeebe-client-java`
+* URI scheme changes from `zeebe:` to `camunda:`
+* Component options use `grpcAddress`/`restAddress` instead of `gatewayHost`/`gatewayPort`
+* Supports Camunda SaaS via `clusterId`, `region`, `clientId`, `clientSecret`
+* Consumer `jobKey` parameter is renamed to `jobType` (for clarity)
+* Request/response model classes are in `org.apache.camel.component.camunda.model` instead of `org.apache.camel.component.zeebe.model`

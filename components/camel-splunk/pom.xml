@@ -26,7 +26,7 @@
         <version>4.19.0-SNAPSHOT</version>
     </parent>
 
-    <name>Camel :: Splunk</name>
+    <name>Camel :: Splunk (deprecated)</name>
     <artifactId>camel-splunk</artifactId>
     <description>Camel :: Splunk component</description>
     <packaging>jar</packaging>

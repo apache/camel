@@ -86,10 +86,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                             + " then creating and starting the producer may take a little time and prolong the total processing time of the processing.")
     private boolean lazyStartProducer;
 
-    public DefaultComponent() {
+    protected DefaultComponent() {
     }
 
-    public DefaultComponent(CamelContext context) {
+    protected DefaultComponent(CamelContext context) {
         this.camelContext = context;
     }
 

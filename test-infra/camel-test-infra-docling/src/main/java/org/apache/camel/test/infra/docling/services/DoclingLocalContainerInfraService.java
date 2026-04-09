@@ -30,7 +30,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = DoclingInfraService.class,
-              description = "Document processing and conversion service",
+              description = "Docling is a document processing and conversion toolkit",
               serviceAlias = { "docling" })
 public class DoclingLocalContainerInfraService implements DoclingInfraService, ContainerService<GenericContainer<?>> {
 

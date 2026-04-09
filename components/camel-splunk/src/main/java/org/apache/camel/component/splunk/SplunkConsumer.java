@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Splunk consumer.
  */
+@Deprecated(since = "4.19")
 public class SplunkConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplunkConsumer.class);

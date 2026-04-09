@@ -29,7 +29,7 @@ public abstract class AbstractNlpZooPredictor<T> extends AbstractPredictor {
 
     protected ZooModel<String, T> model;
 
-    public AbstractNlpZooPredictor(DJLEndpoint endpoint) {
+    protected AbstractNlpZooPredictor(DJLEndpoint endpoint) {
         super(endpoint);
     }
 

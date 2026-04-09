@@ -36,26 +36,21 @@ import org.testcontainers.couchbase.CouchbaseContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = CouchbaseInfraService.class,
-              description = "NoSQL database Couchbase",
+              description = "Couchbase is a distributed NoSQL cloud database",
               serviceAlias = { "couchbase" })
 public class CouchbaseLocalContainerInfraService implements CouchbaseInfraService, ContainerService<CouchbaseContainer> {
 
-    /*
-     * Couchbase container uses a dynamic port for the KV service. The configuration
-     * used in the Camel component tries to use that port by default, and it seems
-     * we cannot configure it. Therefore, we override the default container and
-     * force the default KV port to be used.
-     */
     private class CustomCouchbaseContainer extends CouchbaseContainer {
         public CustomCouchbaseContainer(String imageName) {
             super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("couchbase/server"));
 
+            boolean fixedPort = ContainerEnvironmentUtil.isFixedPort(CouchbaseLocalContainerInfraService.class);
             final int kvPort = 11210;
             final int managementPort = 8091;
             final int viewPort = 8092;
             final int queryPort = 8093;
             final int searchPort = 8094;
-            ContainerEnvironmentUtil.configurePorts(this, true,
+            ContainerEnvironmentUtil.configurePorts(this, fixedPort,
                     ContainerEnvironmentUtil.PortConfig.primary(kvPort),
                     ContainerEnvironmentUtil.PortConfig.secondary(managementPort),
                     ContainerEnvironmentUtil.PortConfig.secondary(viewPort),

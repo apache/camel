@@ -25,7 +25,7 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
 
     transient int lastIndex = -1;
 
-    public WeightedLoadBalancer(List<Integer> distributionRatios) {
+    protected WeightedLoadBalancer(List<Integer> distributionRatios) {
         this.ratios = distributionRatios.stream()
                 .map(DistributionRatio::new)
                 .toList();

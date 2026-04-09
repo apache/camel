@@ -72,7 +72,7 @@ public abstract class BaseSimpleParser {
         this(camelContext, expression, allowEscape, new SimpleTokenizer());
     }
 
-    public BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape, SimpleTokenizer tokenizer) {
+    protected BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape, SimpleTokenizer tokenizer) {
         this.camelContext = camelContext;
         this.expression = expression;
         this.allowEscape = allowEscape;

@@ -28,7 +28,7 @@ import org.apache.camel.util.json.JsonObject;
  */
 abstract class PluginBaseCommand extends CamelCommand {
 
-    public PluginBaseCommand(CamelJBangMain main) {
+    protected PluginBaseCommand(CamelJBangMain main) {
         super(main);
     }
 

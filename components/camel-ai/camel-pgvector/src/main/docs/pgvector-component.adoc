@@ -1,0 +1,206 @@
+= PGVector Component
+:doctitle: PGVector
+:shortname: pgvector
+:artifactid: camel-pgvector
+:description: Perform operations on the PostgreSQL pgvector Vector Database.
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The PGVector Component provides support for interacting with https://github.com/pgvector/pgvector[pgvector],
+the open-source vector similarity search extension for PostgreSQL.
+
+== URI format
+
+----
+pgvector:collection[?options]
+----
+
+Where *collection* represents the table name used to store vectors in the PostgreSQL database.
+
+== Configuring the DataSource
+
+A `javax.sql.DataSource` must be provided. It is recommended to use a connection pooling DataSource
+(such as HikariCP) for production deployments. The DataSource can be set on the component or endpoint
+configuration, or autowired from the registry.
+
+== Actions
+
+The following actions are supported via the `CamelPgVectorAction` header:
+
+- `CREATE_TABLE` - Creates the pgvector extension and a table with columns: id, text_content, metadata, embedding
+- `CREATE_INDEX` - Creates an HNSW index on the embedding column for faster approximate nearest neighbor search. The index uses the distance type configured on the endpoint (default: COSINE)
+- `DROP_TABLE` - Drops the table
+- `UPSERT` - Inserts or updates a vector record. The body must be a `List<Float>`. Set `CamelPgVectorRecordId` for the ID (auto-generated UUID if not set), `CamelPgVectorTextContent` for text, and `CamelPgVectorMetadata` for metadata
+- `DELETE` - Deletes a record by `CamelPgVectorRecordId`
+- `SIMILARITY_SEARCH` - Searches for similar vectors. The body must be a `List<Float>` query vector. Set `CamelPgVectorQueryTopK` for max results (default 3). Optionally set `CamelPgVectorFilter` with a SQL WHERE clause to filter results (e.g., `text_content LIKE '%hello%'`). Returns a `List<Map<String, Object>>` with keys: id, text_content, metadata, distance
+
+== Defaults
+
+- *dimension*: `384` (matches common embedding models like `all-MiniLM-L6-v2`)
+- *distanceType*: `COSINE` (other options: `EUCLIDEAN`, `INNER_PRODUCT`)
+
+== Parameterized Filters
+
+When using the `SIMILARITY_SEARCH` action, you can filter results using a SQL WHERE clause via the
+`CamelPgVectorFilter` header. For safe handling of dynamic values, use parameterized queries with `?`
+placeholders and provide values via the `CamelPgVectorFilterParams` header:
+
+[source,java]
+----
+from("direct:search")
+    .setHeader(PgVectorHeaders.ACTION).constant(PgVectorAction.SIMILARITY_SEARCH)
+    .setHeader(PgVectorHeaders.FILTER).constant("text_content LIKE ? AND metadata::jsonb->>'category' = ?")
+    .setHeader(PgVectorHeaders.FILTER_PARAMS).constant(List.of("%hello%", "science"))
+    .to("pgvector:documents");
+----
+
+== Security
+
+The `CamelPgVectorFilter` header value is appended directly as a SQL WHERE clause. When using
+static, developer-controlled filter expressions this is safe. However, *never pass untrusted user
+input directly as the filter value* without using parameterized queries (`?` placeholders with
+`CamelPgVectorFilterParams`), as this could lead to SQL injection.
+
+== OpenAI Integration
+
+The component works directly with the xref:openai-component.adoc[OpenAI] component for embedding generation.
+The OpenAI embeddings endpoint returns a `List<Float>`, which is exactly the body format expected by the pgvector UPSERT and SIMILARITY_SEARCH actions.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Index a document
+from("direct:index")
+    .setVariable("text", body())
+    .to("openai:embeddings?embeddingModel=nomic-embed-text")
+    .setHeader(PgVectorHeaders.ACTION).constant(PgVectorAction.UPSERT)
+    .setHeader(PgVectorHeaders.TEXT_CONTENT).variable("text")
+    .to("pgvector:documents");
+
+// Similarity search
+from("direct:search")
+    .to("openai:embeddings?embeddingModel=nomic-embed-text")
+    .setHeader(PgVectorHeaders.ACTION).constant(PgVectorAction.SIMILARITY_SEARCH)
+    .setHeader(PgVectorHeaders.QUERY_TOP_K).constant(5)
+    .to("pgvector:documents");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:index
+    steps:
+      - setVariable:
+          name: text
+          simple: "${body}"
+      - to:
+          uri: openai:embeddings
+          parameters:
+            embeddingModel: nomic-embed-text
+      - setHeader:
+          name: CamelPgVectorAction
+          constant: UPSERT
+      - setHeader:
+          name: CamelPgVectorTextContent
+          simple: "${variable.text}"
+      - to: pgvector:documents
+
+- route:
+    from:
+      uri: direct:search
+    steps:
+      - to:
+          uri: openai:embeddings
+          parameters:
+            embeddingModel: nomic-embed-text
+      - setHeader:
+          name: CamelPgVectorAction
+          constant: SIMILARITY_SEARCH
+      - setHeader:
+          name: CamelPgVectorQueryTopK
+          constant: 5
+      - to: pgvector:documents
+----
+====
+
+== LangChain4j Integration
+
+This component provides data type transformers for xref:langchain4j-embeddings-component.adoc[LangChain4j Embeddings] integration:
+
+- `pgvector:embeddings` - Transforms LangChain4j embedding output into a format suitable for the PGVector UPSERT action
+- `pgvector:rag` - Transforms similarity search results into a `List<String>` for RAG pipelines
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Store embeddings
+from("direct:store")
+    .to("langchain4j-embeddings:embed")
+    .setHeader(PgVectorHeaders.ACTION).constant(PgVectorAction.UPSERT)
+    .transformDataType(new DataType("pgvector:embeddings"))
+    .to("pgvector:myCollection");
+
+// Similarity search for RAG
+from("direct:search")
+    .to("langchain4j-embeddings:embed")
+    .transformDataType(new DataType("pgvector:embeddings"))
+    .setHeader(PgVectorHeaders.ACTION, constant(PgVectorAction.SIMILARITY_SEARCH))
+    .to("pgvector:myCollection")
+    .transformDataType(new DataType("pgvector:rag"));
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:store"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - setHeader:
+          name: CamelPgVectorAction
+          constant: UPSERT
+      - transform:
+          dataType: "pgvector:embeddings"
+      - to: "pgvector:myCollection"
+
+- route:
+    from:
+      uri: "direct:search"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - transform:
+          dataType: "pgvector:embeddings"
+      - setHeader:
+          name: CamelPgVectorAction
+          constant: SIMILARITY_SEARCH
+      - to: "pgvector:myCollection"
+      - transform:
+          dataType: "pgvector:rag"
+----
+====
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END

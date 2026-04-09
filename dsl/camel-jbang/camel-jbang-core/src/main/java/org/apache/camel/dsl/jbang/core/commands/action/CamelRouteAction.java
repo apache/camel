@@ -33,7 +33,7 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
                         description = "Route ids (multiple ids can be separated by comma)", defaultValue = "*")
     String id = "*";
 
-    public CamelRouteAction(CamelJBangMain main) {
+    protected CamelRouteAction(CamelJBangMain main) {
         super(main);
     }
 

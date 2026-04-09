@@ -48,11 +48,11 @@ public abstract class ZooKeeperOperation<ResultType> {
 
     private boolean cancelled;
 
-    public ZooKeeperOperation(ZooKeeper connection, String node) {
+    protected ZooKeeperOperation(ZooKeeper connection, String node) {
         this(connection, node, true);
     }
 
-    public ZooKeeperOperation(ZooKeeper connection, String node, boolean producesExchange) {
+    protected ZooKeeperOperation(ZooKeeper connection, String node, boolean producesExchange) {
         this.connection = connection;
         this.node = node;
         this.producesExchange = producesExchange;

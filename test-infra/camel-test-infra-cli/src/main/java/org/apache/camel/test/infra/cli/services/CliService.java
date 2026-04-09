@@ -47,9 +47,13 @@ public interface CliService extends BeforeEachCallback, AfterEachCallback, TestS
      */
     String execute(String command);
 
+    String execute(String command, Boolean getError, Boolean expectFail);
+
     String executeBackground(String command);
 
     String executeGenericCommand(String command);
+
+    String executeGenericCommand(String command, Boolean getError, Boolean expectFail);
 
     /**
      * Copy a file inside the container

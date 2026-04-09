@@ -34,10 +34,10 @@ public abstract class HealthCheckComponent extends DefaultComponent {
                             + " You can turn on producer checks globally by setting camel.health.producersEnabled=true.")
     private boolean healthCheckProducerEnabled = true;
 
-    public HealthCheckComponent() {
+    protected HealthCheckComponent() {
     }
 
-    public HealthCheckComponent(CamelContext context) {
+    protected HealthCheckComponent(CamelContext context) {
         super(context);
     }
 

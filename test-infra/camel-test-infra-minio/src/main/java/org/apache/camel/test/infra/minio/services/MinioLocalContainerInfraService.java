@@ -29,7 +29,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
 @InfraService(service = MinioInfraService.class,
-              description = "MinIO Object Storage, S3 compatible",
+              description = "MinIO is a high-performance S3 compatible object storage",
               serviceAlias = { "minio" })
 public class MinioLocalContainerInfraService implements MinioInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "minio";

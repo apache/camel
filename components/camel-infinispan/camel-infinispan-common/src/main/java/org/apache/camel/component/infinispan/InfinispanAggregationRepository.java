@@ -57,7 +57,7 @@ public abstract class InfinispanAggregationRepository
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
-    public InfinispanAggregationRepository() {
+    protected InfinispanAggregationRepository() {
     }
 
     /**

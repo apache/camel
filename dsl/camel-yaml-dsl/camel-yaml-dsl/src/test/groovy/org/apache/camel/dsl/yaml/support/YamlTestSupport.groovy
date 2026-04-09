@@ -18,9 +18,10 @@ package org.apache.camel.dsl.yaml.support
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.networknt.schema.JsonSchemaFactory
-import com.networknt.schema.SchemaValidatorsConfig
-import com.networknt.schema.SpecVersionDetector
+import com.networknt.schema.SchemaLocation
+import com.networknt.schema.SchemaRegistry
+import com.networknt.schema.SchemaRegistryConfig
+import com.networknt.schema.SpecificationVersion
 import groovy.util.logging.Slf4j
 import org.apache.camel.CamelContext
 import org.apache.camel.FluentProducerTemplate
@@ -42,13 +43,9 @@ import java.nio.charset.StandardCharsets
 class YamlTestSupport extends Specification implements HasCamelContext {
     static def MAPPER = new ObjectMapper(new YAMLFactory())
     static def SCHEMA_NODE = MAPPER.readTree(ResourceHelper.getResourceAsStream('/schema/camelYamlDsl.json'))
-    static def FACTORY = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(SCHEMA_NODE))
-    static def SCHEMA_VALIDATORS_CONFIG = {
-        SchemaValidatorsConfig config = new SchemaValidatorsConfig()
-        config.setLocale(Locale.ENGLISH)
-        return config
-    }()
-    static def SCHEMA = FACTORY.getSchema(SCHEMA_NODE, SCHEMA_VALIDATORS_CONFIG)
+    static def SCHEMA_REGISTRY_CONFIG = SchemaRegistryConfig.builder().locale(Locale.ENGLISH).build()
+    static def SCHEMA_REGISTRY = SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_4, builder -> builder.schemaRegistryConfig(SCHEMA_REGISTRY_CONFIG))
+    static def SCHEMA = SCHEMA_REGISTRY.getSchema(SchemaLocation.of('/schema/camelYamlDsl.json'), SCHEMA_NODE)
 
     @AutoCleanup
     def context = new DefaultCamelContext()

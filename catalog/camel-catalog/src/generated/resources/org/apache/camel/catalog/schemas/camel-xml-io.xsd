@@ -6119,6 +6119,8 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:ocsf"/>
             <xs:element ref="tns:parquetAvro"/>
+            <xs:element ref="tns:pgp"/>
+            <xs:element ref="tns:pqc"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
             <xs:element ref="tns:smooks"/>
@@ -6132,8 +6134,6 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
-            <xs:element ref="tns:pgp"/>
-            <xs:element ref="tns:pqc"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>
@@ -8458,6 +8458,230 @@ Whether the unmarshalling should produce an iterator of records or read all the 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="pgpDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="keyUserid" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID. For example, if
+the user ID is Test User then you can use the part Test User or to address the user ID.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="signatureKeyUserid" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during
+decryption). During the signature verification process the specified User ID restricts the public keys from the public
+keyring which can be used for the verification. If no User ID is specified for the signature verficiation then any
+public key in the public keyring can be used for the verification. Can also be only a part of a user ID. For example, if
+the user ID is Test User then you can use the part Test User or to address the User ID.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="password" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Password used when opening the private key (not used for encryption).
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="signaturePassword" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Password used when opening the private key used for signing (during encryption).
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyFileName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Filename of the keyring; must be accessible as a classpath resource (but you can specify a location in the file system
+by using the file: prefix).
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="signatureKeyFileName" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Filename of the keyring to use for signing (during encryption) or for signature verification (during decryption); must
+be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="signatureKeyRing" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Keyring used for signing/verifying as byte array. You can not set the signatureKeyFileName and signatureKeyRing at the
+same time.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="armored" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+This option will cause PGP to base64 encode the encrypted text, making it available for copy/paste, etc. Default value:
+false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="integrity" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Adds an integrity check/sign into the encryption file. The default value is true. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the
+IAIK JCE provider; in this case the provider must be registered beforehand and the Bouncy Castle provider must not be
+registered beforehand. The Sun JCE provider does not work.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="algorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for
+example 2 (= TRIPLE DES), 3 (= CAST5), 4 (= BLOWFISH), 6 (= DES), 7 (= AES_128). Only relevant for encrypting.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="compressionAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags; for example 0 (=
+UNCOMPRESSED), 1 (= ZIP), 2 (= ZLIB), 3 (= BZIP2). Only relevant for encrypting.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="hashAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 2 (=
+SHA1), 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for signing.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="signatureVerificationOption" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Controls the behavior for verifying the signature during unmarshaling. There are 4 values possible: optional: The PGP
+message may or may not contain signatures; if it does contain signatures, then a signature verification is executed.
+required: The PGP message must contain at least one signature; if this is not the case an exception (PGPException) is
+thrown. A signature verification is executed. ignore: Contained signatures in the PGP message are ignored; no signature
+verification is executed. no_signature_allowed: The PGP message must not contain a signature; otherwise an exception
+(PGPException) is thrown.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="pqcDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="keyEncapsulationAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO,
+NTRU, NTRULPRime, SNTRUPrime, KYBER. Default value: MLKEM
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="symmetricKeyAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA,
+CAST5, CAST6, CHACHA7539, etc. Default value: AES
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="symmetricKeyLength" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The length (in bits) of the symmetric key. Default value: 128
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyPair" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to the KeyPair to lookup from the register to use for KEM operations.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="bufferSize" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The size of the buffer used for streaming encryption/decryption. Default value: 4096
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The JCE security provider to use.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyGenerator" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a custom KeyGenerator to lookup from the register for KEM operations.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="protobufDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
@@ -9301,230 +9525,6 @@ Default value: true
             <xs:documentation xml:lang="en">
 <![CDATA[
 Refers to a Map XML Namespaces of prefix - uri mappings.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="pgpDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="keyUserid" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The user ID of the key in the PGP keyring used during encryption. Can also be only a part of a user ID. For example, if
-the user ID is Test User then you can use the part Test User or to address the user ID.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="signatureKeyUserid" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-User ID of the key in the PGP keyring used for signing (during encryption) or signature verification (during
-decryption). During the signature verification process the specified User ID restricts the public keys from the public
-keyring which can be used for the verification. If no User ID is specified for the signature verficiation then any
-public key in the public keyring can be used for the verification. Can also be only a part of a user ID. For example, if
-the user ID is Test User then you can use the part Test User or to address the User ID.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="password" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Password used when opening the private key (not used for encryption).
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="signaturePassword" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Password used when opening the private key used for signing (during encryption).
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyFileName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Filename of the keyring; must be accessible as a classpath resource (but you can specify a location in the file system
-by using the file: prefix).
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="signatureKeyFileName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Filename of the keyring to use for signing (during encryption) or for signature verification (during decryption); must
-be accessible as a classpath resource (but you can specify a location in the file system by using the file: prefix).
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="signatureKeyRing" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Keyring used for signing/verifying as byte array. You can not set the signatureKeyFileName and signatureKeyRing at the
-same time.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="armored" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-This option will cause PGP to base64 encode the encrypted text, making it available for copy/paste, etc. Default value:
-false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="integrity" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Adds an integrity check/sign into the encryption file. The default value is true. Default value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="provider" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Java Cryptography Extension (JCE) provider, default is Bouncy Castle (BC). Alternatively you can use, for example, the
-IAIK JCE provider; in this case the provider must be registered beforehand and the Bouncy Castle provider must not be
-registered beforehand. The Sun JCE provider does not work.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="algorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for
-example 2 (= TRIPLE DES), 3 (= CAST5), 4 (= BLOWFISH), 6 (= DES), 7 (= AES_128). Only relevant for encrypting.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="compressionAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags; for example 0 (=
-UNCOMPRESSED), 1 (= ZIP), 2 (= ZLIB), 3 (= BZIP2). Only relevant for encrypting.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="hashAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 2 (=
-SHA1), 8 (= SHA256), 9 (= SHA384), 10 (= SHA512), 11 (=SHA224). Only relevant for signing.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="signatureVerificationOption" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Controls the behavior for verifying the signature during unmarshaling. There are 4 values possible: optional: The PGP
-message may or may not contain signatures; if it does contain signatures, then a signature verification is executed.
-required: The PGP message must contain at least one signature; if this is not the case an exception (PGPException) is
-thrown. A signature verification is executed. ignore: Contained signatures in the PGP message are ignored; no signature
-verification is executed. no_signature_allowed: The PGP message must not contain a signature; otherwise an exception
-(PGPException) is thrown.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="pqcDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="keyEncapsulationAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO,
-NTRU, NTRULPRime, SNTRUPrime, KYBER. Default value: MLKEM
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="symmetricKeyAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA,
-CAST5, CAST6, CHACHA7539, etc. Default value: AES
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="symmetricKeyLength" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The length (in bits) of the symmetric key. Default value: 128
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyPair" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to the KeyPair to lookup from the register to use for KEM operations.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="bufferSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The size of the buffer used for streaming encryption/decryption. Default value: 4096
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="provider" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The JCE security provider to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyGenerator" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to a custom KeyGenerator to lookup from the register for KEM operations.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13632,6 +13632,8 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:mimeMultipart"/>
             <xs:element ref="tns:ocsf"/>
             <xs:element ref="tns:parquetAvro"/>
+            <xs:element ref="tns:pgp"/>
+            <xs:element ref="tns:pqc"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
             <xs:element ref="tns:smooks"/>
@@ -13645,8 +13647,6 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
-            <xs:element ref="tns:pgp"/>
-            <xs:element ref="tns:pqc"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>
@@ -15100,8 +15100,10 @@ Sets the example.
         <xs:element ref="tns:jsonApi"/>
         <xs:element ref="tns:lzf"/>
         <xs:element ref="tns:mimeMultipart"/>
+        <xs:element ref="tns:ocsf"/>
         <xs:element ref="tns:parquetAvro"/>
         <xs:element ref="tns:pgp"/>
+        <xs:element ref="tns:pqc"/>
         <xs:element ref="tns:protobuf"/>
         <xs:element ref="tns:rss"/>
         <xs:element ref="tns:smooks"/>
@@ -16004,7 +16006,10 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
             <xs:element ref="tns:mimeMultipart"/>
+            <xs:element ref="tns:ocsf"/>
             <xs:element ref="tns:parquetAvro"/>
+            <xs:element ref="tns:pgp"/>
+            <xs:element ref="tns:pqc"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
             <xs:element ref="tns:smooks"/>
@@ -16018,7 +16023,6 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:univocityFixed"/>
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
-            <xs:element ref="tns:pgp"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>

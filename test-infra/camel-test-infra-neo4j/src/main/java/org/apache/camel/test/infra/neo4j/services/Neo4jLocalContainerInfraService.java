@@ -29,7 +29,7 @@ import org.testcontainers.neo4j.Neo4jContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = Neo4jInfraService.class,
-              description = "Neo4j Database",
+              description = "Neo4j is a graph database management system",
               serviceAlias = { "neo4j" })
 public class Neo4jLocalContainerInfraService implements Neo4jInfraService, ContainerService<Neo4jContainer> {
 

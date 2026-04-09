@@ -38,7 +38,7 @@ public abstract class AbstractSmppCommand implements SmppCommand {
     protected SMPPSession session;
     protected SmppConfiguration config;
 
-    public AbstractSmppCommand(SMPPSession session, SmppConfiguration config) {
+    protected AbstractSmppCommand(SMPPSession session, SmppConfiguration config) {
         this.session = session;
         this.config = config;
     }

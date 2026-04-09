@@ -46,7 +46,7 @@ public final class MojoHelper {
                         dir.resolve("camel-langchain4j-web-search"),
                         dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"), dir.resolve("camel-neo4j"),
                         dir.resolve("camel-openai"),
-                        dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"),
+                        dir.resolve("camel-pgvector"), dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"),
                         dir.resolve("camel-tensorflow-serving"),
                         dir.resolve("camel-weaviate"), dir.resolve("camel-docling"));
             case "camel-as2":

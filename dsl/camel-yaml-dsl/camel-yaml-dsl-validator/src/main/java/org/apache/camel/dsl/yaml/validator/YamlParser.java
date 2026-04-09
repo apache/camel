@@ -17,12 +17,13 @@
 package org.apache.camel.dsl.yaml.validator;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 
 /**
  * YAML DSL parser that tooling can use to parse Camel source files to check if they can be YAML parsed.
@@ -34,14 +35,16 @@ public class YamlParser {
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
-    public List<ValidationMessage> parse(File file) throws Exception {
+    public List<Error> parse(File file) throws Exception {
         try {
             mapper.readTree(file);
             return Collections.emptyList();
         } catch (Exception e) {
-            ValidationMessage vm = ValidationMessage.builder().type("parser")
-                    .messageSupplier(() -> e.getClass().getName() + ": " + e.getMessage()).build();
-            return List.of(vm);
+            Error error = Error.builder()
+                    .messageKey("parser")
+                    .format(new MessageFormat(e.getClass().getName() + ": " + e.getMessage()))
+                    .build();
+            return List.of(error);
         }
     }
 

@@ -58,7 +58,7 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
 
     List<Supplier<String>> projectNameSuppliers = new ArrayList<>();
 
-    public KubernetesBaseCommand(CamelJBangMain main) {
+    protected KubernetesBaseCommand(CamelJBangMain main) {
         super(main);
         projectNameSuppliers.add(() -> name);
     }

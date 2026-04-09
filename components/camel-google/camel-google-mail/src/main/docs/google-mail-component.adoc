@@ -140,6 +140,165 @@ XML::
 </route>
 ----
 ====
+== Data Type Transformer: draft
+
+The `google-mail:draft` transformer converts a String body into a Gmail `Draft` using mail headers from the exchange.
+
+It works with `google-mail-stream`, which sets headers like `threadId`, `messageId`, `from`, `to`, `cc`, `bcc`, and `subject` automatically when consuming messages.
+You can also set these headers manually to create drafts from scratch.
+
+=== Headers
+
+The transformer reads the following headers:
+
+[cols="1,1,3"]
+|===
+| Header | Type | Description
+
+| `CamelGoogleMailStreamThreadId`
+| `String`
+| Thread ID for the conversation (optional, used for replies)
+
+| `CamelGoogleMailStreamMessageId`
+| `String`
+| Message ID to reply to (optional, sets In-Reply-To and References headers)
+
+| `CamelGoogleMailStreamFrom`
+| `String`
+| From address (optional)
+
+| `CamelGoogleMailStreamTo`
+| `String`
+| To address (optional)
+
+| `CamelGoogleMailStreamCc`
+| `String`
+| CC address (optional)
+
+| `CamelGoogleMailStreamBcc`
+| `String`
+| BCC address (optional)
+
+| `CamelGoogleMailStreamSubject`
+| `String`
+| Email subject (optional)
+|===
+
+All headers are optional.
+
+=== Message Body
+
+The message body is a `String` with the email content (plain text or HTML).
+
+Content type defaults to `text/plain; charset=UTF-8`. For HTML, set `Exchange.CONTENT_TYPE` to `text/html; charset=UTF-8`.
+
+The transformer:
+
+* Builds an RFC 2822 MIME message and encodes it as Base64 URL-safe (required by Gmail API)
+* Sets `In-Reply-To` and `References` headers when `messageId` is present
+* Associates the draft with the correct thread when `threadId` is present
+
+=== Examples
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create a draft reply from a received message
+from("google-mail-stream:0")
+    .setBody(constant("Thank you for your message. I will respond soon."))
+    .transformDataType(new DataType("google-mail:draft"))
+    .to("google-mail:drafts/create?inBody=content");
+
+// Create a new draft (no threading)
+from("direct:newDraft")
+    .setBody(constant("This is a new draft message"))
+    .setHeader("CamelGoogleMailStreamFrom", constant("sender@example.com"))
+    .setHeader("CamelGoogleMailStreamTo", constant("recipient@example.com"))
+    .setHeader("CamelGoogleMailStreamSubject", constant("New Draft"))
+    .transformDataType(new DataType("google-mail:draft"))
+    .to("google-mail:drafts/create?inBody=content");
+----
+
+YAML::
++
+[source,yaml]
+----
+# Create a draft reply from a received message
+- route:
+    from:
+      uri: "google-mail-stream:0"
+    steps:
+      - setBody:
+          constant: "Thank you for your message. I will respond soon."
+      - transformDataType:
+          toType: "google-mail:draft"
+      - to:
+          uri: "google-mail:drafts/create"
+          parameters:
+            inBody: content
+
+# Create a new draft (no threading)
+- route:
+    from:
+      uri: "direct:newDraft"
+    steps:
+      - setBody:
+          constant: "This is a new draft message"
+      - setHeader:
+          name: CamelGoogleMailStreamFrom
+          constant: "sender@example.com"
+      - setHeader:
+          name: CamelGoogleMailStreamTo
+          constant: "recipient@example.com"
+      - setHeader:
+          name: CamelGoogleMailStreamSubject
+          constant: "New Draft"
+      - transformDataType:
+          toType: "google-mail:draft"
+      - to:
+          uri: "google-mail:drafts/create"
+          parameters:
+            inBody: content
+----
+
+XML::
++
+[source,xml]
+----
+<!-- Create a draft reply from a received message -->
+<route>
+    <from uri="google-mail-stream:0"/>
+    <setBody>
+        <constant>Thank you for your message. I will respond soon.</constant>
+    </setBody>
+    <transformDataType toType="google-mail:draft"/>
+    <to uri="google-mail:drafts/create?inBody=content"/>
+</route>
+
+<!-- Create a new draft (no threading) -->
+<route>
+    <from uri="direct:newDraft"/>
+    <setBody>
+        <constant>This is a new draft message</constant>
+    </setBody>
+    <setHeader name="CamelGoogleMailStreamFrom">
+        <constant>sender@example.com</constant>
+    </setHeader>
+    <setHeader name="CamelGoogleMailStreamTo">
+        <constant>recipient@example.com</constant>
+    </setHeader>
+    <setHeader name="CamelGoogleMailStreamSubject">
+        <constant>New Draft</constant>
+    </setHeader>
+    <transformDataType toType="google-mail:draft"/>
+    <to uri="google-mail:drafts/create?inBody=content"/>
+</route>
+----
+====
+
 
 == More Information
 

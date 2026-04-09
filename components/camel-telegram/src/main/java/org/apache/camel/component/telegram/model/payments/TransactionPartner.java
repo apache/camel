@@ -50,10 +50,10 @@ public abstract class TransactionPartner implements Serializable {
      */
     private String type;
 
-    public TransactionPartner() {
+    protected TransactionPartner() {
     }
 
-    public TransactionPartner(String type) {
+    protected TransactionPartner(String type) {
         this.type = type;
     }
 

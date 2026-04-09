@@ -190,6 +190,35 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldExportWithJpaAndHibernate(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportWithJpaAndHibernate {}", rt);
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--dep=camel:jpa", "target/test-classes/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-jpa", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.hibernate.orm", "hibernate-core", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-jpa-starter", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.hibernate.orm", "hibernate-core", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-jpa", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "io.quarkus", "quarkus-hibernate-orm", null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldExportLazyBean(RuntimeType rt) throws Exception {
         LOG.info("shouldExportLazyBean {}", rt);
         Export command = createCommand(rt, new String[] { "classpath:route.yaml", "file:src/test/resources/LazyFoo.java" },

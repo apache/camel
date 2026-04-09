@@ -96,7 +96,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
 
     CamelCatalog catalog;
 
-    public CatalogBaseCommand(CamelJBangMain main) {
+    protected CatalogBaseCommand(CamelJBangMain main) {
         super(main);
     }
 

@@ -170,6 +170,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "snapshotIncludeCollectionList": target.getConfiguration().setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": target.getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": target.getConfiguration().setSnapshotMaxThreadsMultiplier(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -362,6 +364,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "snapshotIncludeCollectionList": return java.lang.String.class;
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return long.class;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -555,6 +559,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "snapshotIncludeCollectionList": return target.getConfiguration().getSnapshotIncludeCollectionList();
         case "snapshotlocktimeoutms":
         case "snapshotLockTimeoutMs": return target.getConfiguration().getSnapshotLockTimeoutMs();
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return target.getConfiguration().getSnapshotMaxThreadsMultiplier();
         case "snapshotmode":
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "snapshotmodeconfigurationbasedsnapshotdata":

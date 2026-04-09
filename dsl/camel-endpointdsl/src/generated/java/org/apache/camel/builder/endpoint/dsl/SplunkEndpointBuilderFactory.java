@@ -1860,6 +1860,7 @@ public interface SplunkEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default SplunkEndpointBuilder splunk(String path) {
             return SplunkEndpointBuilderFactory.endpointBuilder("splunk", path);
         }
@@ -1881,6 +1882,7 @@ public interface SplunkEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default SplunkEndpointBuilder splunk(String componentName, String path) {
             return SplunkEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

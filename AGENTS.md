@@ -7,7 +7,7 @@ Guidelines for AI agents working on this codebase.
 Apache Camel is an integration framework supporting routing rules in Java, XML and YAML DSLs.
 
 - Version: 4.19.0-SNAPSHOT
-- Java: 21+
+- Java: 17+
 - Build: Maven 3.9.12+
 
 ## AI Agent Rules of Engagement
@@ -56,7 +56,7 @@ When creating a PR, **always identify and request reviews** from the most releva
 - Run `git log --format='%an' --since='1 year' -- <affected-files> | sort | uniq -c | sort -rn | head -10`
   to find who has been most active on the affected files.
 - Use `git blame` on key modified files to identify who wrote the code being changed.
-- Cross-reference with the [committer list](https://camel.apache.org/community/team/#committers)
+- Cross-reference with the [committer list](https://home.apache.org/committers-by-project.html#camel)
   to ensure you request reviews from active committers (not just contributors).
 - For component-specific changes, prefer reviewers who have recently worked on that component.
 - For cross-cutting changes (core, API), include committers with broader project knowledge.
@@ -75,6 +75,29 @@ When creating a PR, **always identify and request reviews** from the most releva
 - Every PR must include documentation updates where applicable.
 - All code must pass formatting checks (`mvn formatter:format impsort:sort`) before pushing.
 - All generated files must be regenerated and committed (CI checks for uncommitted changes).
+
+### Asynchronous Testing: Use Awaitility Instead of Thread.sleep
+
+Do **NOT** use `Thread.sleep()` in test code. It leads to flaky, slow, and non-deterministic tests.
+Use the [Awaitility](https://github.com/awaitility/awaitility) library instead, which is already
+available as a test dependency in the project.
+
+**Example — waiting for a route to be registered:**
+
+```java
+import static org.awaitility.Awaitility.await;
+
+await().atMost(20, TimeUnit.SECONDS)
+       .untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
+```
+
+**Rules:**
+
+- New test code MUST NOT introduce `Thread.sleep()` calls.
+- When modifying existing test code that contains `Thread.sleep()`, migrate it to Awaitility.
+- Always set an explicit `atMost` timeout to avoid hanging builds.
+- Use `untilAsserted` or `until` with a clear predicate — do not replace a sleep with a
+  busy-wait loop.
 
 ### Issue Investigation (Before Implementation)
 
