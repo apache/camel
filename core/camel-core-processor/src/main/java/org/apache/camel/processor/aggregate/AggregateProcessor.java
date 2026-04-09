@@ -397,6 +397,16 @@ public class AggregateProcessor extends BaseProcessorSupport
         // copy exchange, and do not share the unit of work
         // the aggregated output runs in another unit of work
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
+        // when using a synchronous executor the completion task runs on the caller thread,
+        // so it can preserve the transacted flag; this ensures downstream Pipeline.process()
+        // uses scheduleQueue instead of scheduleMain, avoiding queue-swap deadlocks in the
+        // reactive executor's executeFromQueue loop
+        if (executorService instanceof SynchronousExecutorService && exchange.isTransacted()) {
+            copy.getExchangeExtension().setTransacted(true);
+            if (copy.getProperty(Exchange.TRANSACTION_CONTEXT_DATA) == null) {
+                copy.setProperty(Exchange.TRANSACTION_CONTEXT_DATA, exchange.getProperty(Exchange.TRANSACTION_CONTEXT_DATA));
+            }
+        }
 
         // remove the complete all groups flags as it should not be on the copy
         removeFlagCompleteCurrentGroup(copy);
