@@ -95,7 +95,7 @@ jobs:
   
               * First-time contributors **require MANUAL approval** for the GitHub Actions to run
               * You can use the command \`/component-test (camel-)component-name1 (camel-)component-name2..\` to request a test from the test bot although they are normally detected and executed by CI.
-              * You can label PRs using \`build-all\`, \`build-dependents\`, \`skip-tests\` and \`test-dependents\` to fine-tune the checks executed by this PR.
+              * You can label PRs using \`skip-tests\` and \`test-dependents\` to fine-tune the checks executed by this PR.
               * Build and test logs are available in the summary page. **Only** [Apache Camel committers](https://camel.apache.org/community/team/#committers) have access to the summary.
               
               :warning: Be careful when sharing logs. Review their contents before sharing them publicly.`

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 
 @InfraService(service = ChatScriptInfraService.class,
-              description = "ChatBot Engine",
+              description = "ChatScript is an open source chatbot engine",
               serviceAlias = "chat-script")
 public class ChatScriptLocalContainerInfraService implements ChatScriptInfraService, ContainerService<GenericContainer<?>> {
     private static final Logger LOG = LoggerFactory.getLogger(ChatScriptLocalContainerInfraService.class);

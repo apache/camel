@@ -30,7 +30,7 @@ public abstract class Timestream2AbstractEndpoint extends DefaultEndpoint {
     @UriParam
     private Timestream2Configuration configuration;
 
-    public Timestream2AbstractEndpoint(String uri, Component component, Timestream2Configuration configuration) {
+    protected Timestream2AbstractEndpoint(String uri, Component component, Timestream2Configuration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

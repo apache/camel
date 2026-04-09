@@ -30,7 +30,7 @@ public abstract class AbstractContextEvent extends EventObject implements CamelC
     private final CamelContext context;
     private long timestamp;
 
-    public AbstractContextEvent(CamelContext source) {
+    protected AbstractContextEvent(CamelContext source) {
         super(source);
         this.context = source;
     }

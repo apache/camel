@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.openai.core.ClientOptions;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -28,7 +29,7 @@ import org.apache.camel.support.DefaultComponent;
  * OpenAI component for chat completion and embeddings.
  */
 @Component("openai")
-public class OpenAIComponent extends DefaultComponent {
+public class OpenAIComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(description = "Default API key for all endpoints")
     private String apiKey;
@@ -41,6 +42,10 @@ public class OpenAIComponent extends DefaultComponent {
 
     @Metadata(description = "Default model for embeddings endpoints")
     private String embeddingModel;
+
+    @Metadata(label = "security", defaultValue = "false",
+              description = "Enable usage of global SSL context parameters")
+    private boolean useGlobalSslContextParameters;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -63,6 +68,10 @@ public class OpenAIComponent extends DefaultComponent {
         // set the operation from the URI path (e.g., chat-completion)
         endpoint.setOperation(remaining);
         setProperties(endpoint, parameters);
+
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
 
         return endpoint;
     }
@@ -97,5 +106,15 @@ public class OpenAIComponent extends DefaultComponent {
 
     public void setEmbeddingModel(String embeddingModel) {
         this.embeddingModel = embeddingModel;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

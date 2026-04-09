@@ -25,6 +25,7 @@ import com.splunk.Service;
 import com.splunk.TcpInput;
 import org.apache.camel.component.splunk.SplunkEndpoint;
 
+@Deprecated(since = "4.19")
 public class TcpDataWriter extends SplunkDataWriter {
     private int port;
     private Optional<Integer> localPort;

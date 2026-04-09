@@ -355,8 +355,8 @@ public class CxfProducer extends DefaultAsyncProducer {
             if (body == null) {
                 return new Object[0];
             }
-            if (body instanceof Object[]) {
-                params = (Object[]) body;
+            if (body instanceof Object[] objectArray) {
+                params = objectArray;
             } else if (body instanceof List) {
                 // Now we just check if the request is List
                 params = ((List<?>) body).toArray();

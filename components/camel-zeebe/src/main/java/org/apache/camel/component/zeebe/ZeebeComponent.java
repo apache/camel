@@ -25,6 +25,7 @@ import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 
+@Deprecated(since = "4.19.0")
 @org.apache.camel.spi.annotations.Component("zeebe")
 public class ZeebeComponent extends DefaultComponent {
 

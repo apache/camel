@@ -142,10 +142,10 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
               description = "Factory for creating RowMapper")
     private RowMapperFactory rowMapperFactory;
 
-    public DefaultSqlEndpoint() {
+    protected DefaultSqlEndpoint() {
     }
 
-    public DefaultSqlEndpoint(String endpointUri, Component component) {
+    protected DefaultSqlEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 

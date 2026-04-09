@@ -45,8 +45,6 @@ import picocli.CommandLine;
  */
 public abstract class KubernetesBaseCommand extends CamelCommand {
 
-    static final String RUN_PLATFORM_DIR = ".camel-jbang-run";
-
     @CommandLine.Option(names = { "--kube-config" },
                         description = "Path to the kube config file to initialize Kubernetes client")
     String kubeConfig;
@@ -60,7 +58,7 @@ public abstract class KubernetesBaseCommand extends CamelCommand {
 
     List<Supplier<String>> projectNameSuppliers = new ArrayList<>();
 
-    public KubernetesBaseCommand(CamelJBangMain main) {
+    protected KubernetesBaseCommand(CamelJBangMain main) {
         super(main);
         projectNameSuppliers.add(() -> name);
     }

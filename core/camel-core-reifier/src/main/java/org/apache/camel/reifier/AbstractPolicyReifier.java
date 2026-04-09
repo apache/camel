@@ -33,11 +33,11 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPolicyReifier.class);
 
-    public AbstractPolicyReifier(Route route, T definition) {
+    protected AbstractPolicyReifier(Route route, T definition) {
         super(route, definition);
     }
 
-    public AbstractPolicyReifier(CamelContext camelContext, T definition) {
+    protected AbstractPolicyReifier(CamelContext camelContext, T definition) {
         super(camelContext, definition);
     }
 

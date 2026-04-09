@@ -54,9 +54,12 @@ public class DrillProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        try {
-            connection.close();
-        } catch (Exception e) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (Exception e) {
+                LOG.debug("Error closing JDBC connection: {}", e.getMessage(), e);
+            }
         }
     }
 
@@ -64,25 +67,11 @@ public class DrillProducer extends DefaultProducer {
     public void process(final Exchange exchange) throws Exception {
         final String query = exchange.getIn().getHeader(DrillConstants.DRILL_QUERY, String.class);
 
-        // check query
-        Statement st = null;
-        ResultSet rs = null;
-        try {
-            st = connection.createStatement();
-            rs = st.executeQuery(query);
-
+        try (Statement st = connection.createStatement();
+             ResultSet rs = st.executeQuery(query)) {
             exchange.getIn().setBody(endpoint.queryForList(rs));
-        } finally {
-            try {
-                rs.close();
-            } catch (Exception e) {
-            }
-            try {
-                st.close();
-            } catch (Exception e) {
-            }
         }
-    } // end process
+    }
 
     private void createJDBCConnection() throws ClassNotFoundException, SQLException {
         Class.forName(DrillConstants.DRILL_DRIVER);

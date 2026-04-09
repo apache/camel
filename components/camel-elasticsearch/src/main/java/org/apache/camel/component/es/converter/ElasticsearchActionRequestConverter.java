@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.List;
 import java.util.Map;
 
 import co.elastic.clients.elasticsearch._types.WaitForActiveShards;
@@ -61,18 +60,18 @@ public final class ElasticsearchActionRequestConverter {
     // Index requests
     private static IndexOperation.Builder<?> createIndexOperationBuilder(Object document, Exchange exchange)
             throws IOException {
-        if (document instanceof IndexOperation.Builder) {
-            return (IndexOperation.Builder<?>) document;
+        if (document instanceof IndexOperation.Builder<?> indexOpBuilder) {
+            return indexOpBuilder;
         }
         IndexOperation.Builder<Object> builder = new IndexOperation.Builder<>();
-        if (document instanceof byte[]) {
-            builder.document(JsonData.from(new ByteArrayInputStream((byte[]) document)));
-        } else if (document instanceof InputStream) {
-            builder.document(JsonData.from((InputStream) document));
-        } else if (document instanceof String) {
-            builder.document(JsonData.from(new StringReader((String) document)));
-        } else if (document instanceof Reader) {
-            builder.document(JsonData.from((Reader) document));
+        if (document instanceof byte[] byteArray) {
+            builder.document(JsonData.from(new ByteArrayInputStream(byteArray)));
+        } else if (document instanceof InputStream inputStream) {
+            builder.document(JsonData.from(inputStream));
+        } else if (document instanceof String string) {
+            builder.document(JsonData.from(new StringReader(string)));
+        } else if (document instanceof Reader reader) {
+            builder.document(JsonData.from(reader));
         } else if (document instanceof Map) {
             ObjectMapper objectMapper = new ObjectMapper();
             builder.document(JsonData.from(new StringReader(objectMapper.writeValueAsString(document))));
@@ -85,19 +84,18 @@ public final class ElasticsearchActionRequestConverter {
 
     @Converter
     public static IndexRequest.Builder<?> toIndexRequestBuilder(Object document, Exchange exchange) throws IOException {
-        if (document instanceof IndexRequest.Builder) {
-            IndexRequest.Builder<?> builder = (IndexRequest.Builder<?>) document;
-            return builder.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+        if (document instanceof IndexRequest.Builder<?> indexReqBuilder) {
+            return indexReqBuilder.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
         }
         IndexRequest.Builder<Object> builder = new IndexRequest.Builder<>();
-        if (document instanceof byte[]) {
-            builder.withJson(new ByteArrayInputStream((byte[]) document));
-        } else if (document instanceof InputStream) {
-            builder.withJson((InputStream) document);
-        } else if (document instanceof String) {
-            builder.withJson(new StringReader((String) document));
-        } else if (document instanceof Reader) {
-            builder.withJson((Reader) document);
+        if (document instanceof byte[] byteArray) {
+            builder.withJson(new ByteArrayInputStream(byteArray));
+        } else if (document instanceof InputStream inputStream) {
+            builder.withJson(inputStream);
+        } else if (document instanceof String string) {
+            builder.withJson(new StringReader(string));
+        } else if (document instanceof Reader reader) {
+            builder.withJson(reader);
         } else if (document instanceof Map) {
             ObjectMapper objectMapper = new ObjectMapper();
             builder.withJson(new StringReader(objectMapper.writeValueAsString(document)));
@@ -116,22 +114,21 @@ public final class ElasticsearchActionRequestConverter {
 
     @Converter
     public static UpdateRequest.Builder<?, ?> toUpdateRequestBuilder(Object document, Exchange exchange) throws IOException {
-        if (document instanceof UpdateRequest.Builder) {
-            UpdateRequest.Builder<?, ?> builder = (UpdateRequest.Builder<?, ?>) document;
-            return builder.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+        if (document instanceof UpdateRequest.Builder<?, ?> updateReqBuilder) {
+            return updateReqBuilder.id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
         }
         UpdateRequest.Builder<?, Object> builder = new UpdateRequest.Builder<>();
         Boolean enableDocumentOnlyMode
                 = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_DOCUMENT_MODE, Boolean.FALSE, Boolean.class);
         Mode mode = enableDocumentOnlyMode == Boolean.TRUE ? Mode.DOCUMENT_ONLY : Mode.DEFAULT;
-        if (document instanceof byte[]) {
-            mode.addDocToUpdateRequestBuilder(builder, new ByteArrayInputStream((byte[]) document));
-        } else if (document instanceof InputStream) {
-            mode.addDocToUpdateRequestBuilder(builder, (InputStream) document);
-        } else if (document instanceof String) {
-            mode.addDocToUpdateRequestBuilder(builder, new StringReader((String) document));
-        } else if (document instanceof Reader) {
-            mode.addDocToUpdateRequestBuilder(builder, (Reader) document);
+        if (document instanceof byte[] byteArray) {
+            mode.addDocToUpdateRequestBuilder(builder, new ByteArrayInputStream(byteArray));
+        } else if (document instanceof InputStream inputStream) {
+            mode.addDocToUpdateRequestBuilder(builder, inputStream);
+        } else if (document instanceof String string) {
+            mode.addDocToUpdateRequestBuilder(builder, new StringReader(string));
+        } else if (document instanceof Reader reader) {
+            mode.addDocToUpdateRequestBuilder(builder, reader);
         } else if (document instanceof Map) {
             ObjectMapper objectMapper = new ObjectMapper();
             mode.addDocToUpdateRequestBuilder(builder, new StringReader(objectMapper.writeValueAsString(document)));
@@ -151,34 +148,34 @@ public final class ElasticsearchActionRequestConverter {
 
     @Converter
     public static GetRequest.Builder toGetRequestBuilder(Object document, Exchange exchange) {
-        if (document instanceof GetRequest.Builder) {
-            return (GetRequest.Builder) document;
+        if (document instanceof GetRequest.Builder getReqBuilder) {
+            return getReqBuilder;
         }
-        if (document instanceof String) {
+        if (document instanceof String string) {
             return new GetRequest.Builder()
                     .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-                    .id((String) document);
+                    .id(string);
         }
         return null;
     }
 
     @Converter
     public static DeleteRequest.Builder toDeleteRequestBuilder(Object document, Exchange exchange) {
-        if (document instanceof DeleteRequest.Builder) {
-            return (DeleteRequest.Builder) document;
+        if (document instanceof DeleteRequest.Builder deleteReqBuilder) {
+            return deleteReqBuilder;
         }
-        if (document instanceof String) {
+        if (document instanceof String string) {
             return new DeleteRequest.Builder()
                     .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-                    .id((String) document);
+                    .id(string);
         }
         return null;
     }
 
     @Converter
     public static DeleteIndexRequest.Builder toDeleteIndexRequestBuilder(Object document, Exchange exchange) {
-        if (document instanceof DeleteIndexRequest.Builder) {
-            return (DeleteIndexRequest.Builder) document;
+        if (document instanceof DeleteIndexRequest.Builder deleteIdxReqBuilder) {
+            return deleteIdxReqBuilder;
         }
         if (document instanceof String) {
             return new DeleteIndexRequest.Builder()
@@ -189,15 +186,15 @@ public final class ElasticsearchActionRequestConverter {
 
     @Converter
     public static MgetRequest.Builder toMgetRequestBuilder(Object documents, Exchange exchange) {
-        if (documents instanceof MgetRequest.Builder) {
-            return (MgetRequest.Builder) documents;
+        if (documents instanceof MgetRequest.Builder mgetReqBuilder) {
+            return mgetReqBuilder;
         }
-        if (documents instanceof Iterable) {
+        if (documents instanceof Iterable<?> documentIterable) {
             MgetRequest.Builder builder = new MgetRequest.Builder();
             builder.index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
-            for (Object document : (List<?>) documents) {
-                if (document instanceof String) {
-                    builder.ids((String) document);
+            for (Object document : documentIterable) {
+                if (document instanceof String string) {
+                    builder.ids(string);
                 } else {
                     LOG.warn(
                             "Cannot convert document id of type {} into a String",
@@ -214,12 +211,11 @@ public final class ElasticsearchActionRequestConverter {
     public static SearchRequest.Builder toSearchRequestBuilder(Object queryObject, Exchange exchange) throws IOException {
         String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
 
-        if (queryObject instanceof SearchRequest.Builder) {
-            SearchRequest.Builder builder = (SearchRequest.Builder) queryObject;
-            if (builder.build().index().isEmpty()) {
-                builder.index(indexName);
+        if (queryObject instanceof SearchRequest.Builder searchReqBuilder) {
+            if (searchReqBuilder.build().index().isEmpty()) {
+                searchReqBuilder.index(indexName);
             }
-            return builder;
+            return searchReqBuilder;
         }
         SearchRequest.Builder builder = new SearchRequest.Builder();
 
@@ -234,8 +230,7 @@ public final class ElasticsearchActionRequestConverter {
 
         String queryText;
 
-        if (queryObject instanceof Map<?, ?>) {
-            Map<?, ?> mapQuery = (Map<?, ?>) queryObject;
+        if (queryObject instanceof Map<?, ?> mapQuery) {
             // Remove 'query' prefix from the query object for backward
             // compatibility
             if (mapQuery.containsKey(ES_QUERY_DSL_PREFIX)) {
@@ -243,8 +238,8 @@ public final class ElasticsearchActionRequestConverter {
             }
             ObjectMapper objectMapper = new ObjectMapper();
             queryText = objectMapper.writeValueAsString(mapQuery);
-        } else if (queryObject instanceof String) {
-            queryText = (String) queryObject;
+        } else if (queryObject instanceof String queryString) {
+            queryText = queryString;
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonTextObject = mapper.readValue(queryText, JsonNode.class);
             JsonNode parentJsonNode = jsonTextObject.get(ES_QUERY_DSL_PREFIX);
@@ -271,22 +266,22 @@ public final class ElasticsearchActionRequestConverter {
 
     @Converter
     public static BulkRequest.Builder toBulkRequestBuilder(Object documents, Exchange exchange) throws IOException {
-        if (documents instanceof BulkRequest.Builder) {
-            return (BulkRequest.Builder) documents;
+        if (documents instanceof BulkRequest.Builder bulkReqBuilder) {
+            return bulkReqBuilder;
         }
-        if (documents instanceof Iterable) {
+        if (documents instanceof Iterable<?> documentIterable) {
             BulkRequest.Builder builder = new BulkRequest.Builder();
             builder.index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
-            for (Object document : (List<?>) documents) {
-                if (document instanceof DeleteOperation.Builder) {
+            for (Object document : documentIterable) {
+                if (document instanceof DeleteOperation.Builder deleteOpBuilder) {
                     builder.operations(
-                            new BulkOperation.Builder().delete(((DeleteOperation.Builder) document).build()).build());
-                } else if (document instanceof UpdateOperation.Builder) {
+                            new BulkOperation.Builder().delete(deleteOpBuilder.build()).build());
+                } else if (document instanceof UpdateOperation.Builder<?, ?> updateOpBuilder) {
                     builder.operations(
-                            new BulkOperation.Builder().update(((UpdateOperation.Builder<?, ?>) document).build()).build());
-                } else if (document instanceof CreateOperation.Builder) {
+                            new BulkOperation.Builder().update(updateOpBuilder.build()).build());
+                } else if (document instanceof CreateOperation.Builder<?> createOpBuilder) {
                     builder.operations(
-                            new BulkOperation.Builder().create(((CreateOperation.Builder<?>) document).build()).build());
+                            new BulkOperation.Builder().create(createOpBuilder.build()).build());
                 } else {
                     builder.operations(
                             new BulkOperation.Builder().index(createIndexOperationBuilder(document, exchange).build()).build());

@@ -45,10 +45,10 @@ public abstract class PaidMedia implements Serializable {
      */
     private String type;
 
-    public PaidMedia() {
+    protected PaidMedia() {
     }
 
-    public PaidMedia(String type) {
+    protected PaidMedia(String type) {
         this.type = type;
     }
 

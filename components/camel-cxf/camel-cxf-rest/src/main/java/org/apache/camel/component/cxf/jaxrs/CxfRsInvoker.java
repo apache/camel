@@ -197,12 +197,12 @@ public class CxfRsInvoker extends JAXRSInvoker {
                     exception = exception.getCause();
                 }
             }
-            if (exception instanceof WebApplicationException) {
-                result = ((WebApplicationException) exception).getResponse();
+            if (exception instanceof WebApplicationException webApplicationException) {
+                result = webApplicationException.getResponse();
                 if (result != null) {
                     return result;
                 } else {
-                    throw (WebApplicationException) exception;
+                    throw webApplicationException;
                 }
             }
             //CAMEL-7357 throw out other exception to make sure the ExceptionMapper work

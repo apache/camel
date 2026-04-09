@@ -27,7 +27,7 @@ abstract class AbstractTask implements Task {
     long nextAttemptTime;
     Throwable cause;
 
-    public AbstractTask(String name) {
+    protected AbstractTask(String name) {
         this.name = name;
         this.status = Status.Active;
         this.firstAttemptTime = NEVER;

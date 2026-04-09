@@ -27,6 +27,7 @@ import org.apache.camel.component.zeebe.model.JobRequest;
 import org.apache.camel.component.zeebe.model.JobResponse;
 import org.apache.camel.component.zeebe.model.JobWorkerMessage;
 
+@Deprecated(since = "4.19.0")
 public class JobProcessor extends AbstractBaseProcessor {
     public JobProcessor(ZeebeEndpoint endpoint) {
         super(endpoint);

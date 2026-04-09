@@ -22,6 +22,7 @@ import com.openai.core.ClientOptions;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
  * Configuration for OpenAI component.
@@ -151,6 +152,60 @@ public class OpenAIConfiguration implements Cloneable {
     @UriParam(enums = "float,base64", defaultValue = "base64")
     @Metadata(description = "The format for embedding output: 'float' for list of floats, 'base64' for compressed format")
     private String encodingFormat = "base64";
+
+    // ========== SSL CONFIGURATION ==========
+
+    @UriParam(label = "security")
+    @Metadata(description = "SSLContextParameters to use for configuring SSL/TLS. "
+                            + "When set, takes precedence over the individual sslTruststore*, sslKeystore*, and sslProtocol options.")
+    private SSLContextParameters sslContextParameters;
+
+    @UriParam(label = "security")
+    @Metadata(description = "The location of the trust store file, used to validate the server's certificate")
+    private String sslTruststoreLocation;
+
+    @UriParam(label = "security", secret = true)
+    @Metadata(description = "The password for the trust store file. If a password is not set, the configured trust store can still "
+                            + "be used, but integrity checking is disabled")
+    private String sslTruststorePassword;
+
+    @UriParam(label = "security", defaultValue = "JKS")
+    @Metadata(description = "The file format of the trust store file")
+    private String sslTruststoreType = "JKS";
+
+    @UriParam(label = "security")
+    @Metadata(description = "The location of the key store file. This is optional and can be used for two-way authentication "
+                            + "for the OpenAI API")
+    private String sslKeystoreLocation;
+
+    @UriParam(label = "security", secret = true)
+    @Metadata(description = "The store password for the key store file")
+    private String sslKeystorePassword;
+
+    @UriParam(label = "security", defaultValue = "JKS")
+    @Metadata(description = "The file format of the key store file")
+    private String sslKeystoreType = "JKS";
+
+    @UriParam(label = "security", secret = true)
+    @Metadata(description = "The password of the private key in the key store file")
+    private String sslKeyPassword;
+
+    @UriParam(label = "security", defaultValue = "TLSv1.3")
+    @Metadata(description = "The SSL protocol used to generate the SSLContext")
+    private String sslProtocol = "TLSv1.3";
+
+    @UriParam(label = "security", defaultValue = "SunX509")
+    @Metadata(description = "The algorithm used by the key manager factory for SSL connections")
+    private String sslKeymanagerAlgorithm = "SunX509";
+
+    @UriParam(label = "security", defaultValue = "PKIX")
+    @Metadata(description = "The algorithm used by the trust manager factory for SSL connections")
+    private String sslTrustmanagerAlgorithm = "PKIX";
+
+    @UriParam(label = "security", defaultValue = "https")
+    @Metadata(description = "The endpoint identification algorithm to validate the server hostname using the server certificate. "
+                            + "Set to an empty string or 'none' to disable hostname verification")
+    private String sslEndpointAlgorithm = "https";
 
     public String getApiKey() {
         return apiKey;
@@ -358,6 +413,102 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setMcpReconnect(boolean mcpReconnect) {
         this.mcpReconnect = mcpReconnect;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public String getSslTruststoreLocation() {
+        return sslTruststoreLocation;
+    }
+
+    public void setSslTruststoreLocation(String sslTruststoreLocation) {
+        this.sslTruststoreLocation = sslTruststoreLocation;
+    }
+
+    public String getSslTruststorePassword() {
+        return sslTruststorePassword;
+    }
+
+    public void setSslTruststorePassword(String sslTruststorePassword) {
+        this.sslTruststorePassword = sslTruststorePassword;
+    }
+
+    public String getSslTruststoreType() {
+        return sslTruststoreType;
+    }
+
+    public void setSslTruststoreType(String sslTruststoreType) {
+        this.sslTruststoreType = sslTruststoreType;
+    }
+
+    public String getSslKeystoreLocation() {
+        return sslKeystoreLocation;
+    }
+
+    public void setSslKeystoreLocation(String sslKeystoreLocation) {
+        this.sslKeystoreLocation = sslKeystoreLocation;
+    }
+
+    public String getSslKeystorePassword() {
+        return sslKeystorePassword;
+    }
+
+    public void setSslKeystorePassword(String sslKeystorePassword) {
+        this.sslKeystorePassword = sslKeystorePassword;
+    }
+
+    public String getSslKeystoreType() {
+        return sslKeystoreType;
+    }
+
+    public void setSslKeystoreType(String sslKeystoreType) {
+        this.sslKeystoreType = sslKeystoreType;
+    }
+
+    public String getSslKeyPassword() {
+        return sslKeyPassword;
+    }
+
+    public void setSslKeyPassword(String sslKeyPassword) {
+        this.sslKeyPassword = sslKeyPassword;
+    }
+
+    public String getSslProtocol() {
+        return sslProtocol;
+    }
+
+    public void setSslProtocol(String sslProtocol) {
+        this.sslProtocol = sslProtocol;
+    }
+
+    public String getSslKeymanagerAlgorithm() {
+        return sslKeymanagerAlgorithm;
+    }
+
+    public void setSslKeymanagerAlgorithm(String sslKeymanagerAlgorithm) {
+        this.sslKeymanagerAlgorithm = sslKeymanagerAlgorithm;
+    }
+
+    public String getSslTrustmanagerAlgorithm() {
+        return sslTrustmanagerAlgorithm;
+    }
+
+    public void setSslTrustmanagerAlgorithm(String sslTrustmanagerAlgorithm) {
+        this.sslTrustmanagerAlgorithm = sslTrustmanagerAlgorithm;
+    }
+
+    public String getSslEndpointAlgorithm() {
+        return sslEndpointAlgorithm;
+    }
+
+    public void setSslEndpointAlgorithm(String sslEndpointAlgorithm) {
+        this.sslEndpointAlgorithm = sslEndpointAlgorithm;
     }
 
     public OpenAIConfiguration copy() {

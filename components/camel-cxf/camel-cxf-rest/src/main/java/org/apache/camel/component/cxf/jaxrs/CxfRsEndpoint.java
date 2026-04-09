@@ -792,8 +792,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             binding = new DefaultCxfRsBinding();
         }
 
-        if (binding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware) binding).setHeaderFilterStrategy(getHeaderFilterStrategy());
+        if (binding instanceof HeaderFilterStrategyAware headerFilterStrategyAware) {
+            headerFilterStrategyAware.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
 
         if (providersRef != null) {

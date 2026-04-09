@@ -36,8 +36,8 @@ abstract class TelegramMessageHandler<T extends TelegramMessage> {
     private final String uri;
     private final Class<? extends MessageResult> resultClass;
 
-    public TelegramMessageHandler(TelegramApiClient apiClient, String uri,
-                                  String contentType, Class<? extends MessageResult> resultClass) {
+    protected TelegramMessageHandler(TelegramApiClient apiClient, String uri,
+                                     String contentType, Class<? extends MessageResult> resultClass) {
         this.apiClient = apiClient;
         this.mapper = apiClient.mapper();
         this.uri = uri;

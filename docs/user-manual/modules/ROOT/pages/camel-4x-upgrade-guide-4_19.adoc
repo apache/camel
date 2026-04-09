@@ -160,6 +160,21 @@ After:
             uri: mock:end
 ----
 
+=== camel-platform-http-main
+
+When `authenticationEnabled` is set to `true` and no explicit `authenticationPath` is configured,
+the default authentication path is now `/*`. This means all subpaths under the configured context path
+are protected by authentication.
+
+Previously, the authentication path defaulted to the value of `path` (e.g. `/api`), which only covered
+that exact path. If you relied on this behavior and need selective path protection, set
+`authenticationPath` explicitly:
+
+[source,properties]
+----
+camel.server.authenticationPath=/secure/*
+----
+
 === camel-csimple (Deprecation)
 
 The `csimple` (compiled simple) language has been deprecated. Use the `simple` language instead.
@@ -325,7 +340,7 @@ After:
 </dependency>
 ----
 
-Finally, for camel-test-spring-junit5 any imports would change from `org.apache.camel.test.spring.junit5.*` to `import org.apache.camel.test.spring.junit6.*` and the dependency change would be : 
+Finally, for camel-test-spring-junit5 any imports would change from `org.apache.camel.test.spring.junit5.*` to `import org.apache.camel.test.spring.junit6.*` and the dependency change would be :
 
 Before:
 [source,xml]
@@ -465,7 +480,7 @@ org.apache.camel.component.as2.api.AS2ClientManager.HTTP_RESPONSE
 org.apache.camel.component.as2.api.AS2Constants.HTTP_CLIENT_CONNECTION
 ----
 
-They can be replaced by the the getter/setter method of the HttpContext implementation, for example:
+They can be replaced by the getter/setter method of the HttpContext implementation, for example:
 
 [source,java]
 ----
@@ -490,6 +505,10 @@ endpoint option allows providing explicit SQL++ queries. When no `statement` is 
 To continue using the deprecated MapReduce Views, set `useView=true` explicitly. See the component
 documentation for migration guidance.
 
+=== camel-debezium
+
+Debezium has been upgraded from 3.4.x to 3.5.0.
+
 === camel-ftp
 
 The `camel-ftp` component has been refactored to extract shared FTP/SFTP code into a new `camel-ftp-common` module.
@@ -506,6 +525,28 @@ you will need to add the `camel-ftp-common` dependency to your project:
     <version>${camel.version}</version>
 </dependency>
 ----
+
+==== JSch upgrade
+
+The JSch library used by the SFTP component has been upgraded from 2.27.9 to 2.28.0.
+This version adds support for OpenSSH certificate authentication.
+
+==== OpenSSH certificate authentication
+
+The SFTP and SCP components now support OpenSSH certificate-based authentication via three new
+endpoint parameters: `certFile`, `certUri`, and `certBytes`. These allow providing an OpenSSH
+user certificate (generated with `ssh-keygen -s`) alongside the private key.
+
+A new `caSignatureAlgorithms` parameter (SFTP and SCP only) allows configuring which CA signature
+algorithms JSch will accept.
+
+When a certificate is loaded, Camel automatically adds its key type to JSch's
+`PubkeyAcceptedAlgorithms` if it is not already present. This ensures that RSA certificates
+(key type `ssh-rsa-cert-v01@openssh.com`) work out of the box, even though JSch's defaults
+exclude SHA-1 based algorithms since OpenSSH 8.2+.
+
+See the xref:components::sftp-component.adoc[SFTP] and xref:components::scp-component.adoc[SCP]
+component documentation for usage examples.
 
 === camel-azure (CredentialType standardization)
 
@@ -550,15 +591,144 @@ Five new configuration properties have been added to the SSH endpoint to expose 
 
 All properties default to `0`, which means the Apache MINA SSHD defaults are used. This is an additive change with no impact on existing configurations.
 
+=== camel-json-validator
+
+The JSON validation library `com.networknt:json-schema-validator` used by `camel-json-validator` has been upgraded from 1.x to 2.x.
+
+The `json-schema-validator` https://github.com/networknt/json-schema-validator/blob/master/doc/migration-2.0.0.md[migration guide] can help to migrate your applications if you refer to types that have been updated or removed in 2.x.
+
 === MDC older logic (Deprecation)
 
 The older logic used for MDC (enabled via `camel.main.useMdcLogging = true`) is deprecated in favor of `camel-mdc` component.
+
+=== camel-splunk (Deprecation)
+
+The `camel-splunk` component is deprecated. The Splunk Java SDK it depends on is no longer actively maintained.
+
+Users who only need to **send events to Splunk** can migrate to `camel-splunk-hec`, which uses the
+Splunk HTTP Event Collector (HEC) over standard HTTPS with no dependency on the Splunk Java SDK.
+
+However, `camel-splunk-hec` is a **producer-only** component. The following `camel-splunk` capabilities
+have no equivalent in `camel-splunk-hec`:
+
+* **Consumer (search)**: normal searches, real-time searches, and saved-search execution are not supported.
+* **TCP streaming**: the `tcp` producer publish type (raw socket streaming to a Splunk TCP input) is not available.
+* **SUBMIT and STREAM publish types**: only HEC-based ingestion is supported.
+
+If your routes only produce events to Splunk (using the `submit` or `stream` publish types), switching
+to `camel-splunk-hec` is straightforward — configure the HEC token, index, sourceType, and source on
+the endpoint. If your routes consume (search) data from Splunk, there is currently no direct replacement
+within Apache Camel, and you will need to use the Splunk REST API directly or keep using `camel-splunk`
+until it is removed.
+
+NOTE: `camel-splunk-hec` is NOT deprecated and remains actively maintained.
 
 === camel-tracing (Deprecation)
 
 The `camel-tracing` and related components (`camel-opentelemetry` and `camel-observation`) are now deprecated. You should move your implementation to the newer `camel-telemetry` components (`camel-opentelemetry2` and `camel-micrometer-observability`). We have implemented these new components in order to fix certain design flaws (mainly, span duplications) identified in the older components.
 
 Some minor difference may be expected when moving to the new components, make sure to read the documentation carefully.
+
+=== camel-zeebe (Deprecation)
+
+The `camel-zeebe` component has been deprecated and will be removed in a future release.
+A new camel-camunda component has been added as its replacement.
+
+The `camel-camunda` component uses the new Camunda Java Client (`io.camunda:camunda-client-java`)
+instead of the legacy Zeebe client, aligning with the Camunda 8 platform rebranding.
+
+==== Dependency Change
+
+Change your dependency from:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-zeebe</artifactId>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-camunda</artifactId>
+</dependency>
+----
+
+==== Endpoint URI Changes
+
+Update your endpoint URIs from `zeebe:` to `camunda:`. The consumer parameter `jobKey` has been
+renamed to `jobType` for clarity.
+
+Before:
+
+[source]
+----
+zeebe://startProcess
+zeebe://worker?jobKey=myJobType
+----
+
+After:
+
+[source]
+----
+camunda://startProcess
+camunda://worker?jobType=myJobType
+----
+
+==== Component Property Changes
+
+The connection properties have changed from host/port pairs to full URIs, and new SaaS properties have been added:
+
+[cols="1,1",options="header"]
+|===
+|camel-zeebe |camel-camunda
+
+|`gatewayHost` + `gatewayPort`
+|`grpcAddress` (e.g. `http://localhost:26500`)
+
+|_(not available)_
+|`restAddress` (e.g. `http://localhost:8080`)
+
+|_(not available)_
+|`clusterId`, `region`, `clientId`, `clientSecret` (SaaS connection)
+
+|_(not available)_
+|`oAuthAPI` (self-managed OAuth)
+|===
+
+==== Package and Class Changes
+
+[cols="1,1",options="header"]
+|===
+|camel-zeebe |camel-camunda
+
+|`org.apache.camel.component.zeebe`
+|`org.apache.camel.component.camunda`
+
+|`ZeebeConstants`
+|`CamundaConstants`
+
+|`org.apache.camel.component.zeebe.model.*`
+|`org.apache.camel.component.camunda.model.*`
+
+|Header prefix: `CamelZeebe`
+|Header prefix: `CamelCamunda`
+|===
+
+==== Worker Behavior Changes
+
+The `camel-camunda` worker consumer automatically completes jobs on success and fails them on exception
+(standard job worker pattern). You no longer need to call `completeJob` or `failJob` manually for
+simple job processing. If the route sets the exchange body to a `Map`, those entries are passed as
+output variables to the completed job. If you explicitly call `completeJob`, `failJob`, or `throwError`
+in the route, the auto-complete is skipped.
+
+See the camel-camunda component documentation for full details.
 
 == Removed deprecated components
 
@@ -567,4 +737,3 @@ The following deprecated components has been removed:
 - `camel-nitrite`
 - `camel-torchserve`
 - `camel-test-infra-torchserve`
-

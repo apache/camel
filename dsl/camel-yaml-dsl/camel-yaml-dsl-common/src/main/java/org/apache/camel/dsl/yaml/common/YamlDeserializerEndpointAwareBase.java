@@ -26,7 +26,7 @@ import org.snakeyaml.engine.v2.nodes.ScalarNode;
 
 public abstract class YamlDeserializerEndpointAwareBase<T> extends YamlDeserializerBase<T> {
 
-    public YamlDeserializerEndpointAwareBase(Class<T> type) {
+    protected YamlDeserializerEndpointAwareBase(Class<T> type) {
         super(type);
     }
 

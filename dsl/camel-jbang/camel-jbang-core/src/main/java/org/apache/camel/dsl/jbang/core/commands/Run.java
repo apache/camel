@@ -178,7 +178,9 @@ public class Run extends CamelCommand {
     @Option(names = { "--empty" }, defaultValue = "false", description = "Run an empty Camel without loading source files")
     public boolean empty;
 
-    @CommandLine.Option(names = { "--java-version" }, completionCandidates = JavaVersionCompletionCandidates.class,
+    @CommandLine.Option(names = {
+            "--java-version",
+            "--java" }, completionCandidates = JavaVersionCompletionCandidates.class,
                         description = "Java version (${COMPLETION-CANDIDATES})", defaultValue = "21")
     protected String javaVersion = "21";
 
@@ -192,12 +194,12 @@ public class Run extends CamelCommand {
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
+    @Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
+            defaultValue = "io.quarkus.platform")
     String quarkusGroupId = "io.quarkus.platform";
 
-    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
-                        defaultValue = "quarkus-bom")
+    @Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
+            defaultValue = "quarkus-bom")
     String quarkusArtifactId = "quarkus-bom";
 
     @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
@@ -217,8 +219,8 @@ public class Run extends CamelCommand {
             split = ",")
     List<String> dependencies = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    @Option(names = { "--repo", "--repos" },
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 
     @Option(names = { "--gav" }, description = "The Maven group:artifact:version (used during exporting)")
@@ -248,8 +250,8 @@ public class Run extends CamelCommand {
             description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    @Option(names = { "--package-scan-jars" }, defaultValue = "false",
+            description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
     boolean packageScanJars;
 
     @CommandLine.ArgGroup(validate = false, heading = "%nLogging Options:%n")
@@ -272,7 +274,7 @@ public class Run extends CamelCommand {
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
-    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    @Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
     // Logging, execution limit, debug, and server options are defined in their respective @ArgGroup inner classes below
@@ -697,8 +699,12 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.main.durationMaxIdleSeconds",
                 () -> executionLimitOptions.maxIdleSeconds > 0
                         ? String.valueOf(executionLimitOptions.maxIdleSeconds) : null);
-        if (serverOptions.port != -1 && serverOptions.port != 8080) {
-            writeSetting(main, profileProperties, "camel.server.port", () -> String.valueOf(serverOptions.port));
+        if (serverOptions.port != -1) {
+            // enable the main HTTP server when --port is explicitly specified
+            writeSetting(main, profileProperties, "camel.server.enabled", "true");
+            if (serverOptions.port != 8080) {
+                writeSetting(main, profileProperties, "camel.server.port", () -> String.valueOf(serverOptions.port));
+            }
         }
         if (serverOptions.port == 0 && serverOptions.managementPort == -1) {
             // use same port for management
@@ -961,8 +967,18 @@ public class Run extends CamelCommand {
         addRuntimeSpecificDependenciesFromProperties(profileProperties);
 
         // Add plugin dependencies
+        Map<String, Plugin> activePlugins = Collections.emptyMap();
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
+            activePlugins = PluginHelper.getActivePlugins(getMain(), repositories);
+
+            // Let plugins customize the run environment (e.g., set config directories)
+            // before plugin exporter dependencies are added, so exporters can scan the right locations
+            for (Plugin plugin : activePlugins.values()) {
+                plugin.getRunCustomizer()
+                        .ifPresent(customizer -> customizer.beforeRun(main, Collections.unmodifiableList(files)));
+            }
+
+            Set<PluginExporter> exporters = activePlugins.values()
                     .stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
@@ -970,11 +986,9 @@ public class Run extends CamelCommand {
                     .collect(Collectors.toSet());
 
             for (PluginExporter exporter : exporters) {
-                addDependencies(exporter.getDependencies(runtime)
-                        .stream()
-                        .filter(dependency -> !dependency.startsWith("mvn@test")) // filter test scoped dependencies
-                        .collect(Collectors.toSet())
-                        .toArray(String[]::new));
+                if (exporter.contributeRuntimeDependencies()) {
+                    addDependencies(exporter.getDependencies(runtime).toArray(String[]::new));
+                }
             }
         }
 
@@ -1117,6 +1131,7 @@ public class Run extends CamelCommand {
         eq.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
         eq.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
         eq.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
+        eq.javaVersion = javaVersion;
         eq.camelVersion = this.camelVersion;
         eq.javaVersion = this.javaVersion;
         eq.kameletsVersion = this.kameletsVersion;
@@ -1223,6 +1238,7 @@ public class Run extends CamelCommand {
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
         eq.springBootVersion = this.springBootVersion;
+        eq.javaVersion = this.javaVersion;
         eq.camelVersion = this.camelVersion;
         eq.camelSpringBootVersion = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION,
                 () -> this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion);
@@ -1492,7 +1508,10 @@ public class Run extends CamelCommand {
         }
 
         if (javaVersion != null) {
-            jbangArgs.add("--java-version=" + javaVersion);
+            jbangArgs.add("--java=" + javaVersion);
+            // remove from cmds so it is not passed to the older Camel version
+            // which may not recognize the --java alias
+            cmds.removeIf(arg -> arg.startsWith("--java-version") || arg.startsWith("--java="));
         }
         if (repositories != null) {
             jbangArgs.add("--repos=" + repositories);

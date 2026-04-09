@@ -43,10 +43,10 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     private final List<AdviceWithTask> adviceWithTasks = new ArrayList<>();
     private boolean logRouteAsXml = true;
 
-    public AdviceWithRouteBuilder() {
+    protected AdviceWithRouteBuilder() {
     }
 
-    public AdviceWithRouteBuilder(CamelContext context) {
+    protected AdviceWithRouteBuilder(CamelContext context) {
         super(context);
     }
 

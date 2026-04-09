@@ -25,6 +25,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 @UriParams
+@Deprecated(since = "4.19")
 public class SplunkConfiguration {
 
     private SplunkConnectionFactory connectionFactory;

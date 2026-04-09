@@ -299,8 +299,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     private Bus createBus(CamelContext context) {
         BusFactory busFactory = BusFactory.newInstance();
 
-        if (context instanceof SpringCamelContext) {
-            SpringCamelContext springCamelContext = (SpringCamelContext) context;
+        if (context instanceof SpringCamelContext springCamelContext) {
             busFactory = new SpringBusFactory(springCamelContext.getApplicationContext());
         }
         return busFactory.createBus();
@@ -308,11 +307,8 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
     @SuppressWarnings("rawtypes")
     private void enableSpringBusShutdownGracefully(Bus bus) {
-        if (bus instanceof SpringBus
-                && applicationContext instanceof AbstractApplicationContext) {
-            SpringBus springBus = (SpringBus) bus;
-            AbstractApplicationContext abstractApplicationContext
-                    = (AbstractApplicationContext) applicationContext;
+        if (bus instanceof SpringBus springBus
+                && applicationContext instanceof AbstractApplicationContext abstractApplicationContext) {
             ApplicationListener cxfSpringBusListener = null;
             for (ApplicationListener listener : abstractApplicationContext.getApplicationListeners()) {
 

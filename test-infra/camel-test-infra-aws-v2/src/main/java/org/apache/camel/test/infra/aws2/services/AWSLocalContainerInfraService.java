@@ -35,15 +35,15 @@ public abstract class AWSLocalContainerInfraService implements AWSInfraService, 
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerInfraService.class);
     private final AWSContainer container;
 
-    public AWSLocalContainerInfraService(Service... services) {
+    protected AWSLocalContainerInfraService(Service... services) {
         this(LocalPropertyResolver.getProperty(AWSContainer.class, AWSProperties.AWS_CONTAINER), services);
     }
 
-    public AWSLocalContainerInfraService(AWSContainer container) {
+    protected AWSLocalContainerInfraService(AWSContainer container) {
         this.container = container;
     }
 
-    public AWSLocalContainerInfraService(String imageName, Service... services) {
+    protected AWSLocalContainerInfraService(String imageName, Service... services) {
         container = initContainer(imageName);
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
         if (name != null) {

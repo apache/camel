@@ -875,6 +875,20 @@ public interface ComponentsBuilderFactory {
         return CaffeineLoadcacheComponentBuilderFactory.caffeineLoadcache();
     }
     /**
+     * Camunda (camel-camunda)
+     * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
+     * Client.
+     * 
+     * Category: workflow,saas
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-camunda
+     * 
+     * @return the dsl builder
+     */
+    static CamundaComponentBuilderFactory.CamundaComponentBuilder camunda() {
+        return CamundaComponentBuilderFactory.camunda();
+    }
+    /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
      * 
@@ -3993,6 +4007,19 @@ public interface ComponentsBuilderFactory {
      */
     static PgeventComponentBuilderFactory.PgeventComponentBuilder pgevent() {
         return PgeventComponentBuilderFactory.pgevent();
+    }
+    /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * @return the dsl builder
+     */
+    static PgvectorComponentBuilderFactory.PgvectorComponentBuilder pgvector() {
+        return PgvectorComponentBuilderFactory.pgvector();
     }
     /**
      * Pinecone (camel-pinecone)

@@ -354,8 +354,8 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         Object value = parameters.remove(key);
         if (value == null) {
             value = defaultValue;
-        } else if (value instanceof String && EndpointHelper.isReferenceParameter((String) value)) {
-            String name = ((String) value).replace("#", "");
+        } else if (value instanceof String str && EndpointHelper.isReferenceParameter(str)) {
+            String name = str.replace("#", "");
             value = CamelContextHelper.mandatoryLookup(component.getCamelContext(), name);
         }
         if (value instanceof File) {

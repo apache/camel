@@ -90,10 +90,10 @@ public class BedrockAgentProducer extends DefaultProducer {
             throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof StartIngestionJobRequest) {
+            if (payload instanceof StartIngestionJobRequest startIngestionJobRequest) {
                 StartIngestionJobResponse result;
                 try {
-                    result = bedrockAgentClient.startIngestionJob((StartIngestionJobRequest) payload);
+                    result = bedrockAgentClient.startIngestionJob(startIngestionJobRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Start Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -135,10 +135,10 @@ public class BedrockAgentProducer extends DefaultProducer {
             throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof ListIngestionJobsRequest) {
+            if (payload instanceof ListIngestionJobsRequest listIngestionJobsRequest) {
                 ListIngestionJobsResponse result;
                 try {
-                    result = bedrockAgentClient.listIngestionJobs((ListIngestionJobsRequest) payload);
+                    result = bedrockAgentClient.listIngestionJobs(listIngestionJobsRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Start Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -180,10 +180,10 @@ public class BedrockAgentProducer extends DefaultProducer {
             throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof GetIngestionJobRequest) {
+            if (payload instanceof GetIngestionJobRequest getIngestionJobRequest) {
                 GetIngestionJobResponse result;
                 try {
-                    result = bedrockAgentClient.getIngestionJob((GetIngestionJobRequest) payload);
+                    result = bedrockAgentClient.getIngestionJob(getIngestionJobRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Ingestion Job command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

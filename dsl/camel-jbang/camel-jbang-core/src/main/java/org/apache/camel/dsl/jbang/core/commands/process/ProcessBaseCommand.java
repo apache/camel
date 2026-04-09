@@ -32,7 +32,7 @@ import org.apache.camel.util.json.Jsoner;
 
 abstract class ProcessBaseCommand extends CamelCommand {
 
-    public ProcessBaseCommand(CamelJBangMain main) {
+    protected ProcessBaseCommand(CamelJBangMain main) {
         super(main);
     }
 

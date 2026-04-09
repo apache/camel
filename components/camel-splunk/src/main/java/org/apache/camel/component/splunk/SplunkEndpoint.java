@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name",
              category = { Category.IOT, Category.MONITORING })
+@Deprecated(since = "4.19")
 public class SplunkEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);

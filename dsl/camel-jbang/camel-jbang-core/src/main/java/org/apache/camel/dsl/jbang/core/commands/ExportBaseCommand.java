@@ -164,7 +164,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         defaultValue = "CamelApplication")
     protected String mainClassname = "CamelApplication";
 
-    @CommandLine.Option(names = { "--java-version" }, completionCandidates = JavaVersionCompletionCandidates.class,
+    @CommandLine.Option(names = {
+            "--java-version",
+            "--java" }, completionCandidates = JavaVersionCompletionCandidates.class,
                         description = "Java version (${COMPLETION-CANDIDATES})", defaultValue = "21")
     protected String javaVersion = "21";
 
@@ -308,7 +310,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected boolean javaLiveReload; // reload java codes in dev
     public String pomTemplateName;   // support for specialised pom templates
 
-    public ExportBaseCommand(CamelJBangMain main) {
+    protected ExportBaseCommand(CamelJBangMain main) {
         super(main);
     }
 
@@ -709,6 +711,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
             for (PluginExporter exporter : exporters) {
                 answer.addAll(exporter.getDependencies(runtime));
             }
+        }
+
+        // automatic add hibernate as JPA provider when using camel-jpa
+        if (answer.stream().anyMatch(s -> s.contains("camel-jpa") || s.equals("camel:jpa"))) {
+            answer.add("mvn:org.hibernate.orm:hibernate-core");
         }
 
         // remove duplicate versions (keep first)

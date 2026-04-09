@@ -125,6 +125,9 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
         signatureFactories.add(BuiltinSignatures.ed25519);
         // include both certificate and non-certificate variants so that OpenSSH certificate
         // authentication works (the server needs cert-specific verifiers for cert key types)
+        // rsa_cert handles ssh-rsa-cert-v01@openssh.com (JSch sends this as the key type)
+        signatureFactories.add(BuiltinSignatures.rsa_cert);
+        signatureFactories.add(BuiltinSignatures.rsaSHA256_cert);
         signatureFactories.add(BuiltinSignatures.rsaSHA512_cert);
         signatureFactories.add(BuiltinSignatures.nistp256_cert);
         signatureFactories.add(BuiltinSignatures.nistp521_cert);

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.component.file.remote.BaseSftpConfiguration;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.ObjectHelper;
@@ -42,18 +41,6 @@ public class MinaSftpConfiguration extends BaseSftpConfiguration {
               description = "Custom ServerKeyVerifier for host key verification. When provided, this verifier is used "
                             + "exclusively, ignoring strictHostKeyChecking, knownHostsFile, and other host key options.")
     private ServerKeyVerifier serverKeyVerifier;
-
-    // MINA-specific: OpenSSH certificate authentication
-    @UriParam(label = "security", secret = true,
-              description = "Set the OpenSSH certificate file path for certificate-based authentication")
-    private String certFile;
-    @UriParam(label = "security", secret = true,
-              description = "Set the OpenSSH certificate as a classpath: or file: URI")
-    @Metadata(supportFileReference = true)
-    private String certUri;
-    @UriParam(label = "security", secret = true,
-              description = "Set the OpenSSH certificate as byte array")
-    private byte[] certBytes;
 
     // MINA-specific: ciphers, key exchange, server host keys as List<String>
     @UriParam(label = "security", javaType = "java.lang.String")
@@ -89,39 +76,6 @@ public class MinaSftpConfiguration extends BaseSftpConfiguration {
      */
     public void setServerKeyVerifier(ServerKeyVerifier serverKeyVerifier) {
         this.serverKeyVerifier = serverKeyVerifier;
-    }
-
-    public String getCertFile() {
-        return certFile;
-    }
-
-    /**
-     * Set the OpenSSH certificate file path for certificate-based authentication.
-     */
-    public void setCertFile(String certFile) {
-        this.certFile = certFile;
-    }
-
-    public String getCertUri() {
-        return certUri;
-    }
-
-    /**
-     * Set the OpenSSH certificate as a classpath: or file: URI.
-     */
-    public void setCertUri(String certUri) {
-        this.certUri = certUri;
-    }
-
-    public byte[] getCertBytes() {
-        return certBytes;
-    }
-
-    /**
-     * Set the OpenSSH certificate as byte array.
-     */
-    public void setCertBytes(byte[] certBytes) {
-        this.certBytes = certBytes;
     }
 
     public List<String> getCiphers() {

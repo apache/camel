@@ -84,10 +84,10 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
             throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof RetrieveAndGenerateRequest) {
+            if (payload instanceof RetrieveAndGenerateRequest retrieveAndGenerateRequest) {
                 RetrieveAndGenerateResponse result;
                 try {
-                    result = bedrockAgentRuntimeClient.retrieveAndGenerate((RetrieveAndGenerateRequest) payload);
+                    result = bedrockAgentRuntimeClient.retrieveAndGenerate(retrieveAndGenerateRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Retrieve and Generate command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

@@ -347,8 +347,8 @@ public class MailBinding {
         LOG.trace("Extracting attachments +++ start +++");
 
         Object content = message.getContent();
-        if (content instanceof Multipart) {
-            extractAttachmentsFromMultipart((Multipart) content, map);
+        if (content instanceof Multipart multipart) {
+            extractAttachmentsFromMultipart(multipart, map);
         } else if (content != null) {
             LOG.trace("No attachments to extract as content is not Multipart: {}", content.getClass().getName());
         }

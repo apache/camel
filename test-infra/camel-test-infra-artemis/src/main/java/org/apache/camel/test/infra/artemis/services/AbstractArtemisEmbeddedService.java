@@ -51,7 +51,7 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
 
     private static final int DEFAULT_PORT = 61616;
 
-    public AbstractArtemisEmbeddedService() {
+    protected AbstractArtemisEmbeddedService() {
         this(getPort());
     }
 

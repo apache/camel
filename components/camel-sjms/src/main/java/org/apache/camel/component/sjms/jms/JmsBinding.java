@@ -98,27 +98,24 @@ public class JmsBinding {
                 return message;
             }
 
-            if (message instanceof ObjectMessage) {
+            if (message instanceof ObjectMessage objectMessage) {
                 LOG.trace("Extracting body as a ObjectMessage from JMS message: {}", message);
-                ObjectMessage objectMessage = (ObjectMessage) message;
                 Object payload = objectMessage.getObject();
-                if (payload instanceof DefaultExchangeHolder) {
-                    DefaultExchangeHolder holder = (DefaultExchangeHolder) payload;
+                if (payload instanceof DefaultExchangeHolder holder) {
                     DefaultExchangeHolder.unmarshal(exchange, holder); // NOSONAR
                     return exchange.getIn().getBody();
                 } else {
                     return objectMessage.getObject();
                 }
-            } else if (message instanceof TextMessage) {
+            } else if (message instanceof TextMessage textMessage) {
                 LOG.trace("Extracting body as a TextMessage from JMS message: {}", message);
-                TextMessage textMessage = (TextMessage) message;
                 return textMessage.getText();
-            } else if (message instanceof MapMessage) {
+            } else if (message instanceof MapMessage mapMessage) {
                 LOG.trace("Extracting body as a MapMessage from JMS message: {}", message);
-                return createMapFromMapMessage((MapMessage) message);
-            } else if (message instanceof BytesMessage) {
+                return createMapFromMapMessage(mapMessage);
+            } else if (message instanceof BytesMessage bytesMessage) {
                 LOG.trace("Extracting body as a BytesMessage from JMS message: {}", message);
-                return createByteArrayFromBytesMessage((BytesMessage) message);
+                return createByteArrayFromBytesMessage(bytesMessage);
             } else if (message instanceof StreamMessage) {
                 LOG.trace("Extracting body as a StreamMessage from JMS message: {}", message);
                 return message;
@@ -256,10 +253,10 @@ public class JmsBinding {
             if (headerName.equals(JmsConstants.JMS_CORRELATION_ID)) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals(JmsConstants.JMS_REPLY_TO) && headerValue != null) {
-                if (headerValue instanceof String) {
+                if (headerValue instanceof String s) {
                     // if the value is a String we must normalize it first, and must include the prefix
                     // as ActiveMQ requires that when converting the String to a jakarta.jms.Destination type
-                    headerValue = normalizeDestinationName((String) headerValue, true);
+                    headerValue = normalizeDestinationName(s, true);
                 }
                 Destination replyTo = ExchangeHelper.convertToType(exchange, Destination.class, headerValue);
                 JmsMessageHelper.setJMSReplyTo(jmsMessage, replyTo);

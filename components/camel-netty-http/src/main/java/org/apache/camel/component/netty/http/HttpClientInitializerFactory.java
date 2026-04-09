@@ -119,9 +119,9 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
     private void addToPipeline(List<ChannelHandler> handlers, ChannelPipeline pipeline, String prefix) {
         for (int x = 0; x < handlers.size(); x++) {
             ChannelHandler handler = handlers.get(x);
-            if (handler instanceof ChannelHandlerFactory) {
+            if (handler instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                handler = ((ChannelHandlerFactory) handler).newChannelHandler();
+                handler = channelHandlerFactory.newChannelHandler();
             }
             pipeline.addLast(prefix + x, handler);
         }
@@ -184,6 +184,8 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
+                // apply PQC named groups for the fallback path
+                SSLEngineFactory.applyPqcNamedGroups(engine);
             }
             return new SslHandler(engine);
         }

@@ -191,12 +191,12 @@ public class ServiceBusProducer extends DefaultProducer {
 
     private Object convertBodyToBinary(Exchange exchange) {
         Object body = exchange.getMessage().getBody();
-        if (body instanceof InputStream) {
-            return BinaryData.fromStream((InputStream) body);
-        } else if (body instanceof Path) {
-            return BinaryData.fromFile((Path) body);
-        } else if (body instanceof File) {
-            return BinaryData.fromFile(((File) body).toPath());
+        if (body instanceof InputStream inputStream) {
+            return BinaryData.fromStream(inputStream);
+        } else if (body instanceof Path path) {
+            return BinaryData.fromFile(path);
+        } else if (body instanceof File file) {
+            return BinaryData.fromFile(file.toPath());
         } else {
             return BinaryData.fromBytes(exchange.getMessage().getBody(byte[].class));
         }
@@ -207,12 +207,12 @@ public class ServiceBusProducer extends DefaultProducer {
         if (inputBody instanceof BinaryData) {
             return inputBody;
         } else if (getConfiguration().isBinary()) {
-            if (inputBody instanceof InputStream) {
-                return BinaryData.fromStream((InputStream) inputBody);
-            } else if (inputBody instanceof Path) {
-                return BinaryData.fromFile((Path) inputBody);
-            } else if (inputBody instanceof File) {
-                return BinaryData.fromFile(((File) inputBody).toPath());
+            if (inputBody instanceof InputStream inputStream) {
+                return BinaryData.fromStream(inputStream);
+            } else if (inputBody instanceof Path path) {
+                return BinaryData.fromFile(path);
+            } else if (inputBody instanceof File file) {
+                return BinaryData.fromFile(file.toPath());
             } else {
                 return typeConverter.convertTo(byte[].class, inputBody);
             }

@@ -27,7 +27,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 @InfraService(service = NatsInfraService.class,
-              description = "Messaging Platform NATS",
+              description = "NATS is a high-performance messaging system for cloud native applications",
               serviceAlias = { "nats" })
 public class NatsLocalContainerInfraService implements NatsInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "nats";

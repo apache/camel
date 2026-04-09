@@ -370,9 +370,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     private static void propagateSecuritySubject(Exchange camelExchange, Message cxfMessage) {
         SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
-        if (securityContext instanceof LoginSecurityContext
-                && ((LoginSecurityContext) securityContext).getSubject() != null) {
-            Subject subject = ((LoginSecurityContext) securityContext).getSubject();
+        if (securityContext instanceof LoginSecurityContext loginSecurityContext
+                && loginSecurityContext.getSubject() != null) {
+            Subject subject = loginSecurityContext.getSubject();
             // attach certs to the subject instance
             addInboundX509CertificatesToSubject(cxfMessage, subject);
             camelExchange.getIn().getHeaders().put(CxfConstants.AUTHENTICATION,
@@ -556,8 +556,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // create out message
         Endpoint ep = cxfExchange.get(Endpoint.class);
         Message outMessage = ep.getBinding().createMessage();
-        if (cxfExchange.getInMessage() instanceof SoapMessage) {
-            SoapVersion soapVersion = ((SoapMessage) cxfExchange.getInMessage()).getVersion();
+        if (cxfExchange.getInMessage() instanceof SoapMessage soapMessage) {
+            SoapVersion soapVersion = soapMessage.getVersion();
             ((SoapMessage) outMessage).setVersion(soapVersion);
         }
 
@@ -745,8 +745,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Propagate {} from header context = {}",
-                        contextKey, (context instanceof WrappedMessageContext)
-                                ? ((WrappedMessageContext) context).getWrappedMap()
+                        contextKey, (context instanceof WrappedMessageContext wrappedMessageContext)
+                                ? wrappedMessageContext.getWrappedMap()
                                 : context);
             }
         }
@@ -760,8 +760,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Propagate {} from exchange property context = {}",
-                        contextKey, (context instanceof WrappedMessageContext)
-                                ? ((WrappedMessageContext) context).getWrappedMap()
+                        contextKey, (context instanceof WrappedMessageContext wrappedMessageContext)
+                                ? wrappedMessageContext.getWrappedMap()
                                 : context);
             }
         }
@@ -1178,26 +1178,26 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 part = ((Holder<?>) part).value;
             }
 
-            if (part instanceof Source) {
+            if (part instanceof Source source) {
                 Element element = null;
-                if (part instanceof DOMSource) {
-                    element = getFirstElement(((DOMSource) part).getNode());
+                if (part instanceof DOMSource domSource) {
+                    element = getFirstElement(domSource.getNode());
                 }
 
                 if (element != null) {
                     addNamespace(element, nsMap);
                     answer.add(new DOMSource(element));
                 } else {
-                    answer.add((Source) part);
+                    answer.add(source);
                 }
 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Extract body element {}",
                             element == null ? "null" : getXMLString(element));
                 }
-            } else if (part instanceof Element) {
-                addNamespace((Element) part, nsMap);
-                answer.add(new DOMSource((Element) part));
+            } else if (part instanceof Element elem) {
+                addNamespace(elem, nsMap);
+                answer.add(new DOMSource(elem));
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Unhandled part type '{}'", part.getClass());

@@ -27,8 +27,6 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
-import org.apache.camel.util.json.JsonArray;
-import org.apache.camel.util.json.JsonObject;
 
 /**
  * MCP Tool for providing security hardening context and analysis for Camel routes.
@@ -48,11 +46,12 @@ public class HardenTools {
     /**
      * Tool to get security hardening context for a Camel route.
      */
-    @Tool(description = "Get security hardening analysis context for a Camel route. " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get security hardening analysis context for a Camel route. " +
                         "Returns security-sensitive components, potential vulnerabilities, " +
                         "and security best practices. Use this context to provide security " +
                         "hardening recommendations for the route.")
-    public String camel_route_harden_context(
+    public HardenContextResult camel_route_harden_context(
             @ToolArg(description = "The Camel route content (YAML, XML, or Java DSL)") String route,
             @ToolArg(description = "Route format: yaml, xml, or java (default: yaml)") String format,
             @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
@@ -69,53 +68,35 @@ public class HardenTools {
 
             String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
 
-            JsonObject result = new JsonObject();
-            result.put("format", resolvedFormat);
-            result.put("route", route);
-
             // Analyze security-sensitive components
-            List<String> securityComponents = extractSecurityComponents(route);
-            JsonArray securityComponentsJson = new JsonArray();
-            for (String comp : securityComponents) {
+            List<String> securityComponentNames = extractSecurityComponents(route);
+            List<SecurityComponent> securityComponents = new ArrayList<>();
+            for (String comp : securityComponentNames) {
                 ComponentModel model = catalog.componentModel(comp);
                 if (model != null) {
-                    JsonObject compJson = new JsonObject();
-                    compJson.put("name", comp);
-                    compJson.put("title", model.getTitle());
-                    compJson.put("description", model.getDescription());
-                    compJson.put("label", model.getLabel());
-                    compJson.put("securityConsiderations", securityData.getSecurityConsiderations(comp));
-                    compJson.put("riskLevel", securityData.getRiskLevel(comp));
-                    securityComponentsJson.add(compJson);
+                    securityComponents.add(new SecurityComponent(
+                            comp, model.getTitle(), model.getDescription(), model.getLabel(),
+                            securityData.getSecurityConsiderations(comp), securityData.getRiskLevel(comp)));
                 }
             }
-            result.put("securitySensitiveComponents", securityComponentsJson);
 
             // Security analysis
-            JsonObject securityAnalysis = analyzeSecurityConcerns(route);
-            result.put("securityAnalysis", securityAnalysis);
+            SecurityAnalysis securityAnalysis = analyzeSecurityConcerns(route);
 
             // Best practices
-            JsonArray bestPractices = new JsonArray();
-            for (String practice : securityData.getBestPractices()) {
-                bestPractices.add(practice);
-            }
-            result.put("securityBestPractices", bestPractices);
+            List<String> bestPractices = List.copyOf(securityData.getBestPractices());
 
             // Summary
-            JsonObject summary = new JsonObject();
-            summary.put("securityComponentCount", securityComponentsJson.size());
-            summary.put("criticalRiskComponents", countComponentsByRisk(securityComponents, "critical"));
-            summary.put("highRiskComponents", countComponentsByRisk(securityComponents, "high"));
-            summary.put("concernCount", securityAnalysis.getInteger("concernCount"));
-            summary.put("positiveCount", securityAnalysis.getInteger("positiveCount"));
-            summary.put("hasExternalConnections", hasExternalConnections(route));
-            summary.put("hasSecretsManagement", hasSecretsManagement(route));
-            summary.put("usesTLS", usesTLS(route));
-            summary.put("hasAuthentication", hasAuthentication(route));
-            result.put("summary", summary);
+            HardenSummary summary = new HardenSummary(
+                    securityComponents.size(),
+                    countComponentsByRisk(securityComponentNames, "critical"),
+                    countComponentsByRisk(securityComponentNames, "high"),
+                    securityAnalysis.concernCount(), securityAnalysis.positiveCount(),
+                    hasExternalConnections(route), hasSecretsManagement(route),
+                    usesTLS(route), hasAuthentication(route));
 
-            return result.toJson();
+            return new HardenContextResult(
+                    resolvedFormat, route, securityComponents, securityAnalysis, bestPractices, summary);
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {
@@ -143,149 +124,108 @@ public class HardenTools {
     /**
      * Analyze security concerns in the route.
      */
-    private JsonObject analyzeSecurityConcerns(String route) {
-        JsonObject analysis = new JsonObject();
-        JsonArray concerns = new JsonArray();
-        JsonArray positives = new JsonArray();
+    private SecurityAnalysis analyzeSecurityConcerns(String route) {
+        List<SecurityConcern> concerns = new ArrayList<>();
+        List<SecurityPositive> positives = new ArrayList<>();
         String lowerRoute = route.toLowerCase();
 
         // Check for hardcoded credentials
         if (containsHardcodedCredentials(lowerRoute)) {
-            JsonObject concern = new JsonObject();
-            concern.put("severity", "critical");
-            concern.put("category", "Secrets Management");
-            concern.put("issue", "Potential hardcoded credentials detected");
-            concern.put("recommendation", "Use property placeholders {{secret}} or vault services for credentials");
-            concerns.add(concern);
+            concerns.add(new SecurityConcern(
+                    "critical", "Secrets Management",
+                    "Potential hardcoded credentials detected",
+                    "Use property placeholders {{secret}} or vault services for credentials"));
         }
 
         // Check for HTTP instead of HTTPS
         if (lowerRoute.contains("http:") && !lowerRoute.contains("https:")) {
-            JsonObject concern = new JsonObject();
-            concern.put("severity", "high");
-            concern.put("category", "Encryption");
-            concern.put("issue", "Using HTTP instead of HTTPS");
-            concern.put("recommendation", "Use HTTPS for secure communication. Configure TLS version 1.2 or higher");
-            concerns.add(concern);
+            concerns.add(new SecurityConcern(
+                    "high", "Encryption",
+                    "Using HTTP instead of HTTPS",
+                    "Use HTTPS for secure communication. Configure TLS version 1.2 or higher"));
         }
 
         // Check for plain FTP
         if (lowerRoute.contains("ftp:") && !lowerRoute.contains("sftp:") && !lowerRoute.contains("ftps:")) {
-            JsonObject concern = new JsonObject();
-            concern.put("severity", "high");
-            concern.put("category", "Encryption");
-            concern.put("issue", "Using plain FTP instead of SFTP/FTPS");
-            concern.put("recommendation", "Use SFTP or FTPS for encrypted file transfers");
-            concerns.add(concern);
+            concerns.add(new SecurityConcern(
+                    "high", "Encryption",
+                    "Using plain FTP instead of SFTP/FTPS",
+                    "Use SFTP or FTPS for encrypted file transfers"));
         }
 
         // Check for SSL/TLS disabled
         if (lowerRoute.contains("sslcontextparameters") && lowerRoute.contains("false")) {
-            JsonObject concern = new JsonObject();
-            concern.put("severity", "critical");
-            concern.put("category", "Encryption");
-            concern.put("issue", "SSL/TLS may be disabled or misconfigured");
-            concern.put("recommendation", "Ensure SSL/TLS is properly enabled and configured");
-            concerns.add(concern);
+            concerns.add(new SecurityConcern(
+                    "critical", "Encryption",
+                    "SSL/TLS may be disabled or misconfigured",
+                    "Ensure SSL/TLS is properly enabled and configured"));
         }
 
         // Check for exec component (high risk)
         if (lowerRoute.contains("exec:")) {
-            JsonObject concern = new JsonObject();
-            concern.put("severity", "critical");
-            concern.put("category", "Command Injection");
-            concern.put("issue", "Using exec component - high risk for command injection");
-            concern.put("recommendation",
-                    "Validate all inputs strictly. Consider if exec is really necessary or if safer alternatives exist");
-            concerns.add(concern);
+            concerns.add(new SecurityConcern(
+                    "critical", "Command Injection",
+                    "Using exec component - high risk for command injection",
+                    "Validate all inputs strictly. Consider if exec is really necessary or if safer alternatives exist"));
         }
 
         // Check for SQL without parameterized queries indicator
         if (lowerRoute.contains("sql:") && !lowerRoute.contains(":#") && !lowerRoute.contains(":?")) {
-            JsonObject concern = new JsonObject();
-            concern.put("severity", "high");
-            concern.put("category", "SQL Injection");
-            concern.put("issue", "SQL query may not use parameterized queries");
-            concern.put("recommendation", "Use parameterized queries with named parameters (:#param) or positional (:?)");
-            concerns.add(concern);
+            concerns.add(new SecurityConcern(
+                    "high", "SQL Injection",
+                    "SQL query may not use parameterized queries",
+                    "Use parameterized queries with named parameters (:#param) or positional (:?)"));
         }
 
         // Check for LDAP injection risk
         if (lowerRoute.contains("ldap:") && !lowerRoute.contains("ldaps:")) {
-            JsonObject concern = new JsonObject();
-            concern.put("severity", "medium");
-            concern.put("category", "Encryption");
-            concern.put("issue", "Using LDAP instead of LDAPS");
-            concern.put("recommendation", "Use LDAPS for encrypted LDAP communication");
-            concerns.add(concern);
+            concerns.add(new SecurityConcern(
+                    "medium", "Encryption",
+                    "Using LDAP instead of LDAPS",
+                    "Use LDAPS for encrypted LDAP communication"));
         }
 
         // Check for file component path validation
         if (lowerRoute.contains("file:") && lowerRoute.contains("${")) {
-            JsonObject concern = new JsonObject();
-            concern.put("severity", "medium");
-            concern.put("category", "Path Traversal");
-            concern.put("issue", "File path contains dynamic expression - potential path traversal risk");
-            concern.put("recommendation", "Validate file paths and restrict to allowed directories");
-            concerns.add(concern);
+            concerns.add(new SecurityConcern(
+                    "medium", "Path Traversal",
+                    "File path contains dynamic expression - potential path traversal risk",
+                    "Validate file paths and restrict to allowed directories"));
         }
 
         // POSITIVE CHECKS
 
         // Check for TLS/SSL usage
         if (usesTLS(lowerRoute)) {
-            JsonObject positive = new JsonObject();
-            positive.put("category", "Encryption");
-            positive.put("finding", "TLS/SSL encryption is configured");
-            positives.add(positive);
+            positives.add(new SecurityPositive("Encryption", "TLS/SSL encryption is configured"));
         }
 
         // Check for property placeholders (good practice)
         if (lowerRoute.contains("{{") && lowerRoute.contains("}}")) {
-            JsonObject positive = new JsonObject();
-            positive.put("category", "Secrets Management");
-            positive.put("finding", "Using property placeholders for configuration");
-            positives.add(positive);
+            positives.add(new SecurityPositive("Secrets Management", "Using property placeholders for configuration"));
         }
 
         // Check for vault integration
         if (hasSecretsManagement(lowerRoute)) {
-            JsonObject positive = new JsonObject();
-            positive.put("category", "Secrets Management");
-            positive.put("finding", "Integrated with secrets management service");
-            positives.add(positive);
+            positives.add(new SecurityPositive("Secrets Management", "Integrated with secrets management service"));
         }
 
         // Check for authentication configuration
         if (hasAuthentication(lowerRoute)) {
-            JsonObject positive = new JsonObject();
-            positive.put("category", "Authentication");
-            positive.put("finding", "Authentication appears to be configured");
-            positives.add(positive);
+            positives.add(new SecurityPositive("Authentication", "Authentication appears to be configured"));
         }
 
         // Check for HTTPS usage
         if (lowerRoute.contains("https:")) {
-            JsonObject positive = new JsonObject();
-            positive.put("category", "Encryption");
-            positive.put("finding", "Using HTTPS for secure HTTP communication");
-            positives.add(positive);
+            positives.add(new SecurityPositive("Encryption", "Using HTTPS for secure HTTP communication"));
         }
 
         // Check for SFTP/FTPS usage
         if (lowerRoute.contains("sftp:") || lowerRoute.contains("ftps:")) {
-            JsonObject positive = new JsonObject();
-            positive.put("category", "Encryption");
-            positive.put("finding", "Using secure file transfer protocol (SFTP/FTPS)");
-            positives.add(positive);
+            positives.add(new SecurityPositive("Encryption", "Using secure file transfer protocol (SFTP/FTPS)"));
         }
 
-        analysis.put("concerns", concerns);
-        analysis.put("positives", positives);
-        analysis.put("concernCount", concerns.size());
-        analysis.put("positiveCount", positives.size());
-
-        return analysis;
+        return new SecurityAnalysis(concerns, positives, concerns.size(), positives.size());
     }
 
     private int countComponentsByRisk(List<String> components, String riskLevel) {
@@ -336,5 +276,35 @@ public class HardenTools {
                 || lowerRoute.contains("saslmechanism=") || lowerRoute.contains("oauth")
                 || lowerRoute.contains("bearer") || lowerRoute.contains("apikey")
                 || lowerRoute.contains("securityprovider");
+    }
+
+    // Result records
+
+    public record HardenContextResult(
+            String format, String route, List<SecurityComponent> securitySensitiveComponents,
+            SecurityAnalysis securityAnalysis, List<String> securityBestPractices,
+            HardenSummary summary) {
+    }
+
+    public record SecurityComponent(
+            String name, String title, String description, String label,
+            String securityConsiderations, String riskLevel) {
+    }
+
+    public record SecurityAnalysis(
+            List<SecurityConcern> concerns, List<SecurityPositive> positives,
+            int concernCount, int positiveCount) {
+    }
+
+    public record SecurityConcern(String severity, String category, String issue, String recommendation) {
+    }
+
+    public record SecurityPositive(String category, String finding) {
+    }
+
+    public record HardenSummary(
+            int securityComponentCount, int criticalRiskComponents, int highRiskComponents,
+            int concernCount, int positiveCount, boolean hasExternalConnections,
+            boolean hasSecretsManagement, boolean usesTLS, boolean hasAuthentication) {
     }
 }

@@ -258,8 +258,8 @@ public final class CSimpleHelper {
         if (body == null) {
             return null;
         }
-        if (body instanceof String) {
-            return (String) body;
+        if (body instanceof String str) {
+            return str;
         }
         final java.io.StringWriter writer = new java.io.StringWriter();
         try {

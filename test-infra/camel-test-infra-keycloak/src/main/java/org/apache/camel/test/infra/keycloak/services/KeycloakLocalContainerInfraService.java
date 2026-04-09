@@ -32,7 +32,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = KeycloakInfraService.class,
-              description = "Identity and access management solution",
+              description = "Keycloak is an open source identity and access management solution",
               serviceAlias = { "keycloak" })
 public class KeycloakLocalContainerInfraService implements KeycloakInfraService, ContainerService<GenericContainer<?>> {
 

@@ -23,7 +23,7 @@ public abstract class AbstractPredictor {
 
     private final DJLEndpoint endpoint;
 
-    public AbstractPredictor(DJLEndpoint endpoint) {
+    protected AbstractPredictor(DJLEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 

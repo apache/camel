@@ -64,7 +64,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
                         description = "Output in JSON Format")
     boolean jsonOutput;
 
-    public InfraBaseCommand(CamelJBangMain main) {
+    protected InfraBaseCommand(CamelJBangMain main) {
         super(main);
 
         jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

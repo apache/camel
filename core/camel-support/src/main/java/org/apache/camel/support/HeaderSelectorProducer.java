@@ -51,41 +51,41 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
     private InvokeOnHeaderStrategy strategy;
     private InvokeOnHeaderStrategy parentStrategy;
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier) {
+    protected HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier) {
         this(endpoint, headerSupplier, () -> null, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header) {
+    protected HeaderSelectorProducer(Endpoint endpoint, String header) {
         this(endpoint, () -> header, () -> null, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, Object target) {
+    protected HeaderSelectorProducer(Endpoint endpoint, String header, Object target) {
         this(endpoint, () -> header, () -> null, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Object target) {
+    protected HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier, Object target) {
         this(endpoint, headerSupplier, () -> null, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue) {
+    protected HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue) {
         this(endpoint, () -> header, () -> defaultHeaderValue, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier) {
+    protected HeaderSelectorProducer(Endpoint endpoint, String header, Supplier<String> defaultHeaderValueSupplier) {
         this(endpoint, () -> header, defaultHeaderValueSupplier, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
-                                  Supplier<String> defaultHeaderValueSupplier) {
+    protected HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
+                                     Supplier<String> defaultHeaderValueSupplier) {
         this(endpoint, headerSupplier, defaultHeaderValueSupplier, null);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target) {
+    protected HeaderSelectorProducer(Endpoint endpoint, String header, String defaultHeaderValue, Object target) {
         this(endpoint, () -> header, () -> defaultHeaderValue, target);
     }
 
-    public HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
-                                  Supplier<String> defaultHeaderValueSupplier, Object target) {
+    protected HeaderSelectorProducer(Endpoint endpoint, Supplier<String> headerSupplier,
+                                     Supplier<String> defaultHeaderValueSupplier, Object target) {
         super(endpoint);
 
         this.headerSupplier = ObjectHelper.notNull(headerSupplier, "headerSupplier");

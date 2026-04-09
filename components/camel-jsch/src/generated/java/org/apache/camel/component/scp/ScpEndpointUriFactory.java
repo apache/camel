@@ -23,9 +23,13 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(28);
+        Set<String> props = new HashSet<>(32);
         props.add("allowNullBody");
         props.add("browseLimit");
+        props.add("caSignatureAlgorithms");
+        props.add("certBytes");
+        props.add("certFile");
+        props.add("certUri");
         props.add("checksumFileAlgorithm");
         props.add("checksumWriteFile");
         props.add("chmod");
@@ -53,7 +57,10 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("useUserKnownHostsFile");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(7);
+        Set<String> secretProps = new HashSet<>(10);
+        secretProps.add("certBytes");
+        secretProps.add("certFile");
+        secretProps.add("certUri");
         secretProps.add("knownHostsFile");
         secretProps.add("password");
         secretProps.add("preferredAuthentications");

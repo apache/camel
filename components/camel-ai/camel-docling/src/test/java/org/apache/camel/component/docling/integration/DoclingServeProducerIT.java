@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicReference;
 
 import ai.docling.core.DoclingDocument;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +31,7 @@ import org.apache.camel.component.docling.ConversionStatus;
 import org.apache.camel.component.docling.ConversionStatus.Status;
 import org.apache.camel.component.docling.DoclingHeaders;
 import org.apache.camel.component.docling.DoclingOperations;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.io.TempDir;
@@ -36,7 +39,6 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Integration test for Docling-Serve producer operations using test-infra for container management.
@@ -245,17 +247,20 @@ class DoclingServeProducerIT extends DoclingITestSupport {
 
         assertNotNull(taskId, "Task ID should not be null");
 
-        // Wait a bit for processing
-        Thread.sleep(1000);
+        // Poll until the async future completes
+        AtomicReference<ConversionStatus> statusRef = new AtomicReference<>();
+        Awaitility.await()
+                .atMost(Duration.ofSeconds(120))
+                .pollInterval(Duration.ofSeconds(1))
+                .untilAsserted(() -> {
+                    ConversionStatus s = template.requestBody("direct:check-status", taskId, ConversionStatus.class);
+                    assertNotNull(s, "Status should not be null");
+                    assertNotNull(s.getTaskId(), "Status task ID should not be null");
+                    statusRef.set(s);
+                    assertThat(s.getStatus()).isEqualTo(Status.COMPLETED);
+                });
 
-        // Check status
-        ConversionStatus status = template.requestBody("direct:check-status", taskId, ConversionStatus.class);
-
-        assertNotNull(status, "Status should not be null");
-        assertNotNull(status.getTaskId(), "Status task ID should not be null");
-        assertThat(status.getStatus()).isEqualTo(Status.COMPLETED);
-
-        LOG.info("Successfully checked status for task {}: {}", taskId, status.getStatus());
+        LOG.info("Successfully checked status for task {}: {}", taskId, statusRef.get().getStatus());
     }
 
     @Test
@@ -270,34 +275,21 @@ class DoclingServeProducerIT extends DoclingITestSupport {
         assertNotNull(taskId, "Task ID should not be null");
         LOG.info("Submitted conversion with task ID: {}", taskId);
 
-        // Poll for completion
-        ConversionStatus status = null;
-        int maxAttempts = 120; // 120 seconds max (increased from 60)
-        int attempts = 0;
+        // Poll for completion using Awaitility
+        AtomicReference<ConversionStatus> statusRef = new AtomicReference<>();
+        Awaitility.await()
+                .atMost(Duration.ofSeconds(120))
+                .pollInterval(Duration.ofSeconds(1))
+                .untilAsserted(() -> {
+                    ConversionStatus s = template.requestBody("direct:check-status", taskId, ConversionStatus.class);
+                    LOG.info("Task {} status is {}", taskId, s.getStatus());
+                    assertThat(s.isFailed()).as("Task should not fail: " + s.getErrorMessage()).isFalse();
+                    statusRef.set(s);
+                    assertThat(s.isCompleted()).as("Task should complete").isTrue();
+                });
 
-        while (attempts < maxAttempts) {
-            status = template.requestBody("direct:check-status", taskId, ConversionStatus.class);
-            LOG.info("Attempt {}: Task {} status is {}", attempts + 1, taskId, status.getStatus());
-
-            if (status.isCompleted()) {
-                LOG.info("Task completed successfully after {} attempts", attempts + 1);
-                break;
-            } else if (status.isFailed()) {
-                throw new RuntimeException("Task failed: " + status.getErrorMessage());
-            }
-
-            Thread.sleep(1000);
-            attempts++;
-        }
-
-        assertNotNull(status, "Final status should not be null");
-        if (!status.isCompleted()) {
-            fail(String.format("Task did not complete within %d seconds. Last status: %s",
-                    maxAttempts, status.getStatus()));
-        }
-
+        ConversionStatus status = statusRef.get();
         if (status.getResult() != null) {
-            // TODO: this check can never happen as there is an if condition before. The status.getResult() is actually null, is it expected or a bug?
             assertTrue(status.getResult().length() > 0, "Result should not be empty");
             LOG.info("Successfully retrieved result: {} characters", status.getResult().length());
         }

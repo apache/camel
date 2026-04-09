@@ -28,6 +28,7 @@ import org.apache.camel.component.splunk.SplunkEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.19")
 public class StreamDataWriter extends SplunkDataWriter {
     private static final Logger LOG = LoggerFactory.getLogger(StreamDataWriter.class);
 

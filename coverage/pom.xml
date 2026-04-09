@@ -2650,6 +2650,7 @@
                                     <!-- Workaround to multi-release jar https://github.com/jacoco/jacoco/issues/407 -->
                                     <excludes>
                                         <exclude>**/CamelThreadFactory*</exclude>
+                                        <exclude>**/ContextValueFactory*</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>

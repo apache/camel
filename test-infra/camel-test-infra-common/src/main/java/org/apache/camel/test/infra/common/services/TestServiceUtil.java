@@ -17,33 +17,63 @@
 
 package org.apache.camel.test.infra.common.services;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.ContainerFetchException;
+import org.testcontainers.containers.ContainerLaunchException;
 
 /**
  * Utility class for the test services
  */
 public final class TestServiceUtil {
     private static final Logger LOG = LoggerFactory.getLogger(TestServiceUtil.class);
+    private static final int MAX_RETRIES = Integer.getInteger("camel.test.infra.container.retries", 3);
+    private static final long BASE_DELAY_MS = Long.getLong("camel.test.infra.container.retry.delay.ms", 5000);
 
     private TestServiceUtil() {
 
     }
 
     /**
-     * Try to initialize the service, logging failures if they happen
+     * Try to initialize the service with retry for transient container errors. Retries on
+     * {@link ContainerFetchException} (image pull failures) and {@link ContainerLaunchException} (container start
+     * failures) with exponential backoff and jitter. Non-container exceptions fail immediately. Retry count and delay
+     * are configurable via system properties {@code camel.test.infra.container.retries} (default 3) and
+     * {@code camel.test.infra.container.retry.delay.ms} (default 5000).
      *
      * @param  service          the service to initialize
      * @param  extensionContext JUnit's extension context
      * @throws Exception        exception thrown while initializing (if any)
      */
     public static void tryInitialize(TestService service, ExtensionContext extensionContext) throws Exception {
-        try {
-            service.initialize();
-        } catch (Exception e) {
-            logAndRethrow(service, extensionContext, e);
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                service.initialize();
+                return;
+            } catch (Exception e) {
+                if (attempt < MAX_RETRIES && isRetryableContainerException(e)) {
+                    long jitter = ThreadLocalRandom.current().nextLong(0, BASE_DELAY_MS / 2);
+                    long delay = BASE_DELAY_MS * attempt + jitter;
+                    LOG.warn("Service {} initialization failed (attempt {}/{}), retrying in {}ms: {}",
+                            service.getClass().getSimpleName(), attempt, MAX_RETRIES, delay, e.getMessage());
+                    Thread.sleep(delay);
+                } else {
+                    logAndRethrow(service, extensionContext, e);
+                }
+            }
         }
+    }
+
+    private static boolean isRetryableContainerException(Throwable e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t instanceof ContainerFetchException || t instanceof ContainerLaunchException) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

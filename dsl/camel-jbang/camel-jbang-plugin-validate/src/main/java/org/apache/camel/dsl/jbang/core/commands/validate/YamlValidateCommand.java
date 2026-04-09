@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
@@ -53,7 +53,7 @@ public class YamlValidateCommand extends CamelCommand {
         YamlValidator validator = new YamlValidator();
         validator.init();
 
-        Map<String, List<ValidationMessage>> reports = new LinkedHashMap<>();
+        Map<String, List<Error>> reports = new LinkedHashMap<>();
         for (String n : files) {
             if (matchFile(n)) {
                 var report = validator.validate(new File(n));
@@ -100,9 +100,9 @@ public class YamlValidateCommand extends CamelCommand {
         return "yml".equals(ext) || "yaml".equals(ext);
     }
 
-    private static int errorCounts(Map<String, List<ValidationMessage>> reports) {
+    private static int errorCounts(Map<String, List<Error>> reports) {
         int count = 0;
-        for (List<ValidationMessage> list : reports.values()) {
+        for (List<Error> list : reports.values()) {
             if (!list.isEmpty()) {
                 count++;
             }

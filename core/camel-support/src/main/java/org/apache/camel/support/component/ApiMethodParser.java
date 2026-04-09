@@ -64,7 +64,7 @@ public abstract class ApiMethodParser<T> {
     private final Map<String, String> descriptions = new HashMap<>();
     private ClassLoader classLoader = ApiMethodParser.class.getClassLoader();
 
-    public ApiMethodParser(Class<T> proxyType) {
+    protected ApiMethodParser(Class<T> proxyType) {
         this.proxyType = proxyType;
     }
 

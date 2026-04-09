@@ -90,11 +90,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private RouteTemplatesDefinition routeTemplateCollection = new RouteTemplatesDefinition();
     private TemplatedRoutesDefinition templatedRouteCollection = new TemplatedRoutesDefinition();
 
-    public RouteBuilder() {
+    protected RouteBuilder() {
         this(null);
     }
 
-    public RouteBuilder(CamelContext context) {
+    protected RouteBuilder(CamelContext context) {
         super(context);
     }
 

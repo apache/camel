@@ -163,8 +163,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         // auto-detect secrets in-use
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         PropertiesFunction pf = pc.getPropertiesFunction("aws");
-        if (pf instanceof SecretsManagerPropertiesFunction) {
-            propertiesFunction = (SecretsManagerPropertiesFunction) pf;
+        if (pf instanceof SecretsManagerPropertiesFunction secretsManagerPropertiesFunction) {
+            propertiesFunction = secretsManagerPropertiesFunction;
             LOG.debug("Auto-detecting secrets from properties-function: {}", pf.getName());
         }
         // specific secrets

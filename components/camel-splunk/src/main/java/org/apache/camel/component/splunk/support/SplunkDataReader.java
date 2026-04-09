@@ -50,6 +50,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.19")
 public class SplunkDataReader {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkDataReader.class);
     private static final String DATE_FORMAT = "MM/dd/yy HH:mm:ss:SSS";

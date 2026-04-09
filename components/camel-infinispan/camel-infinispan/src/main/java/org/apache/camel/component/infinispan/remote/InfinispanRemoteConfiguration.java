@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,6 +72,10 @@ public class InfinispanRemoteConfiguration extends InfinispanConfiguration imple
     private int embeddingStoreDistance = 3;
     @UriParam(label = "producer,advanced")
     private String embeddingStoreTypeName;
+    @UriParam(label = "producer,advanced", defaultValue = "60s", javaType = "java.time.Duration",
+              description = "Maximum time to wait for the Infinispan server to be ready when registering the embedding store schema."
+                            + " This handles the case where Camel and the Infinispan server start concurrently.")
+    private Duration embeddingStoreSchemaRegistrationTimeout = Duration.ofSeconds(60);
 
     public Configuration getCacheContainerConfiguration() {
         return cacheContainerConfiguration;
@@ -314,6 +319,19 @@ public class InfinispanRemoteConfiguration extends InfinispanConfiguration imple
 
     public String getEmbeddingStoreTypeName() {
         return embeddingStoreTypeName;
+    }
+
+    public Duration getEmbeddingStoreSchemaRegistrationTimeout() {
+        return embeddingStoreSchemaRegistrationTimeout;
+    }
+
+    /**
+     * Maximum time to wait for the Infinispan server to be ready when registering the embedding store schema. This
+     * handles the case where Camel and the Infinispan server start concurrently (e.g., in Kubernetes). The server's
+     * internal protobuf metadata cache may not be available immediately.
+     */
+    public void setEmbeddingStoreSchemaRegistrationTimeout(Duration embeddingStoreSchemaRegistrationTimeout) {
+        this.embeddingStoreSchemaRegistrationTimeout = embeddingStoreSchemaRegistrationTimeout;
     }
 
     @Override

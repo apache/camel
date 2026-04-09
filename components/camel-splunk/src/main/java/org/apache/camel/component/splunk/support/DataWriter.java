@@ -18,6 +18,7 @@ package org.apache.camel.component.splunk.support;
 
 import org.apache.camel.component.splunk.event.SplunkEvent;
 
+@Deprecated(since = "4.19")
 public interface DataWriter {
     void write(SplunkEvent data) throws Exception;
 

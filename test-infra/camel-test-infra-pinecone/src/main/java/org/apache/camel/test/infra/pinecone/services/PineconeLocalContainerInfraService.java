@@ -32,7 +32,7 @@ import org.testcontainers.pinecone.PineconeLocalContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = PineconeInfraService.class,
-              description = "Pinecone Vector Database",
+              description = "Pinecone is a vector database for machine learning applications",
               serviceAlias = { "pinecone" })
 public class PineconeLocalContainerInfraService implements PineconeInfraService, ContainerService<PineconeLocalContainer> {
 

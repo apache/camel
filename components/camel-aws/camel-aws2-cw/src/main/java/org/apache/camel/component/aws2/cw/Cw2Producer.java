@@ -216,8 +216,8 @@ public class Cw2Producer extends DefaultProducer {
             return CastUtils.cast((List<?>) body);
         }
 
-        if (body instanceof MetricDatum) {
-            return Arrays.asList((MetricDatum) body);
+        if (body instanceof MetricDatum metricDatum) {
+            return Arrays.asList(metricDatum);
         }
 
         MetricDatum.Builder metricDatum = MetricDatum.builder().metricName(determineName(exchange))

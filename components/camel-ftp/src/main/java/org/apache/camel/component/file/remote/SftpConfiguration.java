@@ -42,6 +42,10 @@ public class SftpConfiguration extends BaseSftpConfiguration {
     private String serverHostKeys;
     @UriParam(label = "advanced", defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF")
     private LoggingLevel serverMessageLoggingLevel = LoggingLevel.DEBUG;
+    @UriParam(label = "security",
+              description = "Set a comma separated list of CA signature algorithms accepted for host certificate verification."
+                            + " If not specified the default list from JSch will be used (matches OpenSSH 8.2+ defaults).")
+    private String caSignatureAlgorithms;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -140,5 +144,17 @@ public class SftpConfiguration extends BaseSftpConfiguration {
      */
     public void setServerMessageLoggingLevel(LoggingLevel serverMessageLoggingLevel) {
         this.serverMessageLoggingLevel = serverMessageLoggingLevel;
+    }
+
+    public String getCaSignatureAlgorithms() {
+        return caSignatureAlgorithms;
+    }
+
+    /**
+     * Set a comma separated list of CA signature algorithms accepted for host certificate verification. If not
+     * specified the default list from JSch will be used (matches OpenSSH 8.2+ defaults).
+     */
+    public void setCaSignatureAlgorithms(String caSignatureAlgorithms) {
+        this.caSignatureAlgorithms = caSignatureAlgorithms;
     }
 }

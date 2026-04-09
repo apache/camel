@@ -1,10 +1,11 @@
-= Splunk Component
+= Splunk Component (deprecated)
 :doctitle: Splunk
 :shortname: splunk
 :artifactid: camel-splunk
 :description: Publish or search for events in Splunk.
 :since: 2.13
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
@@ -13,6 +14,14 @@
 *Since Camel {since}*
 
 *{component-header}*
+
+[NOTE]
+====
+This component is deprecated since Camel 4.19 and will be removed in a future release.
+For event ingestion (producer) use cases, consider migrating to xref:splunk-hec-component.adoc[Splunk HEC],
+which uses the standard HTTP Event Collector and has no dependency on the unmaintained Splunk Java SDK.
+Note that Splunk HEC is producer-only and does not support consumer (search) operations.
+====
 
 The Splunk component provides access to
 http://docs.splunk.com/Documentation/Splunk/latest[Splunk] using the

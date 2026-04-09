@@ -28,7 +28,7 @@ import org.testcontainers.qdrant.QdrantContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = QdrantInfraService.class,
-              description = "Vector Database and Vector Search Engine",
+              description = "Qdrant is a vector similarity search engine and database",
               serviceAlias = { "qdrant" })
 public class QdrantLocalContainerInfraService implements QdrantInfraService, ContainerService<QdrantContainer> {
     public static final int HTTP_PORT = 6333;

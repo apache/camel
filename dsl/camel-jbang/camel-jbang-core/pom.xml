@@ -89,13 +89,13 @@
             <version>${picocli-version}</version>
         </dependency>
         <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli-shell-jline3</artifactId>
-            <version>${picocli-version}</version>
+            <groupId>org.jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>${jline-version}</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>
-            <artifactId>jline</artifactId>
+            <artifactId>jline-picocli</artifactId>
             <version>${jline-version}</version>
         </dependency>
         <dependency>

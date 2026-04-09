@@ -42,4 +42,15 @@ public interface Plugin {
     default Optional<PluginExporter> getExporter() {
         return Optional.empty();
     }
+
+    /**
+     * The plugin may provide an optional run customizer that is called after the Run command has resolved file
+     * arguments and basic dependencies, but before plugin exporter dependencies are added and KameletMain.run() builds
+     * the CamelContext.
+     *
+     * @return the plugin specific run customizer implementation, otherwise empty
+     */
+    default Optional<PluginRunCustomizer> getRunCustomizer() {
+        return Optional.empty();
+    }
 }

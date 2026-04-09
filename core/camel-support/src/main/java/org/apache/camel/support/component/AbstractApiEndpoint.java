@@ -82,9 +82,9 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     private Set<String> configurationPropertyNames;
     private Map<String, Object> configurationProperties;
 
-    public AbstractApiEndpoint(String endpointUri, Component component,
-                               E apiName, String methodName, ApiMethodHelper<? extends ApiMethod> methodHelper,
-                               T endpointConfiguration) {
+    protected AbstractApiEndpoint(String endpointUri, Component component,
+                                  E apiName, String methodName, ApiMethodHelper<? extends ApiMethod> methodHelper,
+                                  T endpointConfiguration) {
         super(endpointUri, component);
 
         this.apiName = apiName;

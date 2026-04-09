@@ -32,7 +32,7 @@ public abstract class YamlDeserializerBase<T> extends YamlDeserializerSupport im
 
     private final Class<T> type;
 
-    public YamlDeserializerBase(Class<T> type) {
+    protected YamlDeserializerBase(Class<T> type) {
         this.type = type;
     }
 

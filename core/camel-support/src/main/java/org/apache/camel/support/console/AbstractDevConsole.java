@@ -37,7 +37,7 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
     private final String displayName;
     private final String description;
 
-    public AbstractDevConsole(String group, String id, String displayName, String description) {
+    protected AbstractDevConsole(String group, String id, String displayName, String description) {
         this.lock = new ReentrantLock();
         this.group = group;
         this.id = id;

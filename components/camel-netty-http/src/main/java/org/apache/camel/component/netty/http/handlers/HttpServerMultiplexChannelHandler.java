@@ -118,8 +118,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         // store request, as this channel handler is created per pipeline
         HttpRequest request;
-        if (msg instanceof HttpRequest) {
-            request = (HttpRequest) msg;
+        if (msg instanceof HttpRequest httpReq) {
+            request = httpReq;
         } else {
             request = ((InboundStreamHttpRequest) msg).getHttpRequest();
         }
@@ -157,9 +157,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
                 Attribute<HttpServerChannelHandler> attr = ctx.channel().attr(SERVER_HANDLER_KEY);
                 // store handler as attachment
                 attr.set(handler);
-                if (msg instanceof HttpContent) {
+                if (msg instanceof HttpContent httpContent) {
                     // need to hold the reference of content
-                    HttpContent httpContent = (HttpContent) msg;
                     httpContent.content().retain();
                 }
                 handler.channelRead(ctx, msg);

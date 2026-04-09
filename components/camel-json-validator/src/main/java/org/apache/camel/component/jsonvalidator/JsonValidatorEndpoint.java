@@ -17,13 +17,14 @@
 package org.apache.camel.component.jsonvalidator;
 
 import java.io.InputStream;
-import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.Schema;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
@@ -44,7 +45,7 @@ import org.apache.camel.spi.UriParam;
              remote = false, producerOnly = true, category = { Category.VALIDATION })
 public class JsonValidatorEndpoint extends ResourceEndpoint {
 
-    private volatile JsonSchema schema;
+    private volatile Schema schema;
 
     @UriParam(defaultValue = "true")
     private boolean failOnNullBody = true;
@@ -123,7 +124,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
         }
 
         // Get a local copy of the current schema to improve concurrency.
-        JsonSchema localSchema = this.schema;
+        Schema localSchema = this.schema;
         if (localSchema == null) {
             localSchema = getOrCreateSchema();
         }
@@ -148,11 +149,11 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                     if (node == null) {
                         throw new NoJsonBodyValidationException(exchange);
                     }
-                    Set<ValidationMessage> errors = localSchema.validate(node);
+                    List<Error> errors = localSchema.validate(node);
 
                     if (!errors.isEmpty()) {
                         this.log.debug("Validated JSON has {} errors", errors.size());
-                        this.errorHandler.handleErrors(exchange, schema, errors);
+                        this.errorHandler.handleErrors(exchange, schema, new HashSet<>(errors));
                     } else {
                         this.log.debug("Validated JSON success");
                     }
@@ -187,7 +188,7 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
      *
      * @return The currently loaded schema
      */
-    private JsonSchema getOrCreateSchema() throws Exception {
+    private Schema getOrCreateSchema() throws Exception {
         getInternalLock().lock();
         try {
             if (this.schema == null) {

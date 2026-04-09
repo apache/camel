@@ -41,10 +41,10 @@
         <camel-prepare-component>false</camel-prepare-component>
 
         <!-- Dependency versions -->
-        <camel-kamelets-version>4.18.0</camel-kamelets-version>
+        <camel-kamelets-version>4.18.1</camel-kamelets-version>
         <maven-version>3.9.14</maven-version>
         <plexus-interpolation-version>1.29</plexus-interpolation-version>
-        <plexus-utils-version>4.0.2</plexus-utils-version>
+        <plexus-utils-version>4.0.3</plexus-utils-version>
         <plexus-xml-version>3.0.1</plexus-xml-version>
         <plexus-sec-dispatcher-version>2.0</plexus-sec-dispatcher-version>
         <plexus-cipher-version>2.1.0</plexus-cipher-version>

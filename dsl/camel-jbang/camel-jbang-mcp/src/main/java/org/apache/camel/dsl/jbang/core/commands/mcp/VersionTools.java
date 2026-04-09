@@ -41,7 +41,8 @@ public class VersionTools {
     /**
      * Tool to list available Camel versions for a specific runtime.
      */
-    @Tool(description = "List available Camel versions for a specific runtime (main, spring-boot, quarkus). " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "List available Camel versions for a specific runtime (main, spring-boot, quarkus). " +
                         "Returns version information including release date, JDK requirements, and LTS status.")
     public VersionListResult camel_version_list(
             @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,

@@ -1,0 +1,15 @@
+# Manual integration test mapping
+#
+# Maps source modules (excluded from CI -amd expansion) to their
+# associated integration test suites that must be run manually.
+#
+# Format: source-artifact-id : it-module-path : command
+#
+# JBang integration tests
+camel-jbang-core:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-jbang-main:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-jbang-plugin-generate:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-jbang-plugin-edit:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-jbang-plugin-kubernetes:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-jbang-plugin-test:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test
+camel-launcher:dsl/camel-jbang/camel-jbang-it:mvn verify -f dsl/camel-jbang/camel-jbang-it -Djbang-it-test

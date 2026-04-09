@@ -92,8 +92,8 @@ public abstract class AbstractClientBase extends ServiceSupport
     private final long terminationTimeout;
     private final ObjectMapper objectMapper;
 
-    public AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient,
-                              SalesforceLoginConfig loginConfig) {
+    protected AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient,
+                                 SalesforceLoginConfig loginConfig) {
         this(version, session, httpClient, loginConfig, DEFAULT_TERMINATION_TIMEOUT);
     }
 

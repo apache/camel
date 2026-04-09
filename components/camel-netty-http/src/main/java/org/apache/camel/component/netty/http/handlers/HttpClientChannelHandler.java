@@ -51,8 +51,7 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
         HttpResponse response;
         Message answer;
 
-        if (message instanceof FullHttpResponse) {
-            FullHttpResponse fullHttpResponse = (FullHttpResponse) message;
+        if (message instanceof FullHttpResponse fullHttpResponse) {
             response = fullHttpResponse;
             // use the binding
             answer = producer.getEndpoint().getNettyHttpBinding().toCamelMessage(fullHttpResponse, exchange,

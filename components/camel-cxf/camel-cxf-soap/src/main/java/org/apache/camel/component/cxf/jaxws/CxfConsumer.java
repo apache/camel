@@ -342,8 +342,8 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
             if (t != null) {
                 cxfExchange.getInMessage().put(FaultMode.class, FaultMode.UNCHECKED_APPLICATION_FAULT);
-                if (t instanceof Fault) {
-                    handleFault(cxfExchange, (Fault) t);
+                if (t instanceof Fault fault) {
+                    handleFault(cxfExchange, fault);
                 } else {
                     // This is not a CXF Fault. Build the CXF Fault manually.
                     buildFaultFromThrowable(t);
@@ -400,8 +400,8 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
 
         private static Throwable extractFromBody(org.apache.camel.Exchange camelExchange, Throwable t) {
             Object body = camelExchange.getMessage().getBody();
-            if (body instanceof Throwable) {
-                t = (Throwable) body;
+            if (body instanceof Throwable throwable) {
+                t = throwable;
             }
             return t;
         }

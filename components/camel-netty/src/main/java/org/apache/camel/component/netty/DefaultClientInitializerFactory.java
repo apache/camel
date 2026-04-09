@@ -65,9 +65,9 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
         List<ChannelHandler> decoders = producer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
-            if (decoder instanceof ChannelHandlerFactory) {
+            if (decoder instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
+                decoder = channelHandlerFactory.newChannelHandler();
             }
             addToPipeline("decoder-" + x, channelPipeline, decoder);
         }
@@ -75,9 +75,9 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
         List<ChannelHandler> encoders = producer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
-            if (encoder instanceof ChannelHandlerFactory) {
+            if (encoder instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
+                encoder = channelHandlerFactory.newChannelHandler();
             }
             addToPipeline("encoder-" + x, channelPipeline, encoder);
         }
@@ -145,6 +145,8 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
             if (producer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(producer.getConfiguration().getEnabledProtocols().split(","));
+                // apply PQC named groups for the fallback path
+                SSLEngineFactory.applyPqcNamedGroups(engine);
             }
             return new SslHandler(engine);
         }

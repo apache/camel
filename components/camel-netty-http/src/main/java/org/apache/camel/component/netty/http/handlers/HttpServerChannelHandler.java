@@ -82,8 +82,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         HttpRequest request;
-        if (msg instanceof HttpRequest) {
-            request = (HttpRequest) msg;
+        if (msg instanceof HttpRequest httpReq) {
+            request = httpReq;
         } else {
             request = ((InboundStreamHttpRequest) msg).getHttpRequest();
         }
@@ -307,8 +307,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         HttpRequest request;
-        if (message instanceof HttpRequest) {
-            request = (HttpRequest) message;
+        if (message instanceof HttpRequest httpReq) {
+            request = httpReq;
         } else {
             request = ((InboundStreamHttpRequest) message).getHttpRequest();
         }
@@ -350,8 +350,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
         // create a new IN message as we cannot reuse with netty
         Message in;
-        if (message instanceof FullHttpRequest) {
-            FullHttpRequest request = (FullHttpRequest) message;
+        if (message instanceof FullHttpRequest request) {
             in = consumer.getEndpoint().getNettyHttpBinding().toCamelMessage(request, exchange, consumer.getConfiguration());
         } else {
             InboundStreamHttpRequest request = (InboundStreamHttpRequest) message;

@@ -58,7 +58,7 @@ public abstract class TextPublishable extends Publishable {
     @JsonProperty("featured_media")
     private Integer featuredMedia;
 
-    public TextPublishable() {
+    protected TextPublishable() {
 
     }
 
