@@ -20,6 +20,7 @@ camel get properties [options]
 |===
 | Option | Description | Default | Type
 | `--internal` | Whether to include internal configuration |  | boolean
+| `--json` | Output in JSON Format |  | boolean
 | `--mask` | Whether to mask configuration values to avoid printing sensitive information such as password or access keys | true | boolean
 | `--sort` | Sort by pid, name or key | pid | String
 | `--startup` | List only startup configuration |  | boolean

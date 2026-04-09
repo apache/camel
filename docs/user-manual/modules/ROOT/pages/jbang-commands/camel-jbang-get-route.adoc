@@ -24,6 +24,7 @@ camel get route [options]
 | `--filter` | Filter routes by id, or url |  | String
 | `--filter-mean` | Filter routes that must be slower than the given time (ms) |  | long
 | `--group` | Filter routes by group |  | String
+| `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter routes by limiting to the given number of rows |  | int
 | `--note` | Include note in the ID column (if available) |  | boolean
 | `--running` | Only include running routes |  | boolean

@@ -28,7 +28,7 @@ camel doc [options]
 | `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
 | `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
-| `--runtime` | Runtime () |  | RuntimeType
+| `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--url` | Prints the link to the online documentation on the Camel website | false | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

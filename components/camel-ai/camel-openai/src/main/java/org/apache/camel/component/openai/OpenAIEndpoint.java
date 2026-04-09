@@ -76,9 +76,8 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIEndpoint.class);
 
     @UriPath
-    @Metadata(required = true, description = "The operation to perform: 'chat-completion', 'embeddings', or 'tool-execution'",
-              enums = "chat-completion,embeddings,tool-execution")
-    private String operation;
+    @Metadata(required = true, description = "The operation to perform: 'chat-completion', 'embeddings', or 'tool-execution'")
+    private OpenAIOperations operation;
 
     @UriParam
     private OpenAIConfiguration configuration;
@@ -99,11 +98,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return switch (operation) {
-            case "chat-completion" -> new OpenAIProducer(this);
-            case "embeddings" -> new OpenAIEmbeddingsProducer(this);
-            case "tool-execution" -> new OpenAIToolExecutionProducer(this);
-            default -> throw new IllegalArgumentException(
-                    "Unknown operation: " + operation + ". Supported: chat-completion, embeddings, tool-execution");
+            case chatCompletion -> new OpenAIProducer(this);
+            case embeddings -> new OpenAIEmbeddingsProducer(this);
+            case toolExecution -> new OpenAIToolExecutionProducer(this);
         };
     }
 
@@ -500,11 +497,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         return OAuthHelper.resolveOAuthToken(getCamelContext(), configuration.getOauthProfile());
     }
 
-    public String getOperation() {
+    public OpenAIOperations getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    public void setOperation(OpenAIOperations operation) {
         this.operation = operation;
     }
 
