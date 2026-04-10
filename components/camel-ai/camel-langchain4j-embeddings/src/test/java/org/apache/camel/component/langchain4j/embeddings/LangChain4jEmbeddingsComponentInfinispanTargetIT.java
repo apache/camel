@@ -227,7 +227,7 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
         try {
             getOrCreateCache();
             // Verify protobuf metadata cache is accessible to avoid
-            // IllegalLifecycleStateException during route startup
+            // IllegalLifecycleStateException during route startup (CAMEL-23307)
             cacheContainer.getCache("___protobuf_metadata");
             return true;
         } catch (Exception e) {
