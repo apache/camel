@@ -206,7 +206,7 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
         if (cacheContainer == null) {
             cacheContainer = getCacheContainer();
             final IterationBoundedBudget budget
-                    = Budgets.iterationBudget().withInterval(Duration.ofSeconds(1)).withMaxIterations(10).build();
+                    = Budgets.iterationBudget().withInterval(Duration.ofSeconds(1)).withMaxIterations(30).build();
             final ForegroundTask task = Tasks.foregroundTask()
                     .withBudget(budget).build();
 
@@ -226,6 +226,9 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
     private boolean createCache() {
         try {
             getOrCreateCache();
+            // Verify protobuf metadata cache is accessible to avoid
+            // IllegalLifecycleStateException during route startup
+            cacheContainer.getCache("___protobuf_metadata");
             return true;
         } catch (Exception e) {
             return false;
