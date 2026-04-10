@@ -66,14 +66,10 @@
         <!-- Pre-installed plugins -->
         <!-- the edit plugin is not pre-installed -->
         <!-- the route-parser plugin is not pre-installed -->
+        <!-- the citrus test plugin cannot be embedded -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-generate</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jbang-plugin-test</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

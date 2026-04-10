@@ -49,7 +49,7 @@
 
         <dependency>
             <groupId>org.citrusframework</groupId>
-            <artifactId>citrus-base</artifactId>
+            <artifactId>citrus-jbang-connector</artifactId>
             <version>${citrus-version}</version>
         </dependency>
 
