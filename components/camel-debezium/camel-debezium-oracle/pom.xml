@@ -48,6 +48,15 @@
                     <groupId>org.lz4</groupId>
                     <artifactId>lz4-java</artifactId>
                 </exclusion>
+                <!-- ehcache:3.11.1 declares version range [2.2,3) for jaxb-runtime,
+                     resolved to pre-release 2.3.0-b170127.1453 which pulls jaxb-api
+                     from defunct HTTP-only repos (maven.java.net), blocked since
+                     Maven 3.8.1+. Not needed at runtime on Java 11+.
+                     See: https://github.com/ehcache/ehcache3/issues/3215 -->
+                <exclusion>
+                    <groupId>org.glassfish.jaxb</groupId>
+                    <artifactId>jaxb-runtime</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
