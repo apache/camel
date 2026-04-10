@@ -80,8 +80,14 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          persist-credentials: false
           ref: ${{ inputs.pr_ref || '' }}
+      - name: Fetch base branch for Scalpel change detection
+        if: ${{ !inputs.skip_full_build }}
+        run: |
+          # Scalpel needs the merge base between HEAD and the base branch.
+          # The checkout is depth=1, so deepen both sides for merge-base reachability.
+          git fetch --deepen=200 2>/dev/null || true
+          git fetch --no-tags --depth=200 origin "${GITHUB_BASE_REF:-main}:refs/remotes/origin/${GITHUB_BASE_REF:-main}"
       - id: install-packages
         uses: ./.github/actions/install-packages
       - id: install-mvnd
