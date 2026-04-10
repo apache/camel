@@ -509,6 +509,11 @@ documentation for migration guidance.
 
 Debezium has been upgraded from 3.4.x to 3.5.0.
 
+=== camel-mail
+
+When using a custom `MailSender` implementation then Camel will now configure this instances as well, with the various
+settings for hostname, protocol, port, etc.
+
 === camel-ftp
 
 The `camel-ftp` component has been refactored to extract shared FTP/SFTP code into a new `camel-ftp-common` module.
