@@ -27,6 +27,11 @@ The cloud integration from the following components has been removed: `camel-con
 
 === camel-core
 
+==== MemoryIdempotentRepository
+
+The `MemoryIdempotentRepository` is no longer based on `LRUCache` but uses a `LinkedHashMap` as the repository
+has no need for LRU semantics and the `LinkedHashMap` is more light-weight.
+
 ==== PQC TLS Auto-Configuration
 
 When running on a JDK that supports `X25519MLKEM768` (typically JDK 25+), Camel now automatically

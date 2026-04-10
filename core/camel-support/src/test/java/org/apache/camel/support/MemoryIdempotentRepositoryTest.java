@@ -31,7 +31,7 @@ class MemoryIdempotentRepositoryTest {
     void repositoryEvictsOldestEntryWhenRepositoryIsFull() throws IOException {
         final int cacheSize = 5;
         final int entriesNotFittingInRepository = 4;
-        try (IdempotentRepository repository = MemoryIdempotentRepository.memoryIdempotentRepositoryInsertionOrder(
+        try (IdempotentRepository repository = MemoryIdempotentRepository.memoryIdempotentRepository(
                 cacheSize)) {
 
             for (int i = 0; i < cacheSize + entriesNotFittingInRepository; i++) {
