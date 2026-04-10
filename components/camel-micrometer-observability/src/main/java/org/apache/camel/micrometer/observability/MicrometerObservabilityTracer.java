@@ -32,10 +32,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.telemetry.Span;
-import org.apache.camel.telemetry.SpanContextPropagationExtractor;
-import org.apache.camel.telemetry.SpanContextPropagationInjector;
-import org.apache.camel.telemetry.SpanLifecycleManager;
+import org.apache.camel.telemetry.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +123,9 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
         }
 
         @Override
-        public Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor) {
+        public Span create(
+                String spanName, SpanKind kind, Span parent,
+                SpanContextPropagationExtractor extractor) {
             io.micrometer.tracing.Span span;
             if (parent != null) {
                 MicrometerObservabilitySpanAdapter microObsParentSpan = (MicrometerObservabilitySpanAdapter) parent;
@@ -139,6 +138,9 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
                 span = builder.start();
             }
             span.name(spanName);
+            // Note: Micrometer determines span kind through Observation context types,
+            // not through direct span.kind() calls. The kind parameter is accepted
+            // for API compatibility but not used in this implementation.
 
             return new MicrometerObservabilitySpanAdapter(span);
         }

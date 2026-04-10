@@ -17,18 +17,23 @@
 package org.apache.camel.telemetry;
 
 /**
- * This interface is used to manage the lifecycle of a Span.
+ * Span kind constants for telemetry tracing.
+ * <p>
+ * These values describe the relationship between the span and its parent:
+ * <ul>
+ * <li>CLIENT - The span covers a client-side call to a remote service</li>
+ * <li>SERVER - The span covers server-side handling of a remote request</li>
+ * <li>PRODUCER - The span covers the production of a message to a remote system (e.g., message broker, queue, HTTP
+ * endpoint)</li>
+ * <li>CONSUMER - The span covers the consumption of a message from a remote system (e.g., message broker, queue, HTTP
+ * endpoint)</li>
+ * <li>INTERNAL - The span represents internal operations with no remote interaction</li>
+ * </ul>
  */
-public interface SpanLifecycleManager {
-
-    Span create(String spanName, SpanKind kind, Span parent, SpanContextPropagationExtractor extractor);
-
-    void activate(Span span);
-
-    void deactivate(Span span);
-
-    void close(Span span);
-
-    void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing);
-
+public enum SpanKind {
+    CLIENT,
+    SERVER,
+    PRODUCER,
+    CONSUMER,
+    INTERNAL
 }

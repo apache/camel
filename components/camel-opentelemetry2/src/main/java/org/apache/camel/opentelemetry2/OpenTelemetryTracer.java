@@ -28,10 +28,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.telemetry.Span;
-import org.apache.camel.telemetry.SpanContextPropagationExtractor;
-import org.apache.camel.telemetry.SpanContextPropagationInjector;
-import org.apache.camel.telemetry.SpanLifecycleManager;
+import org.apache.camel.telemetry.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,8 +93,11 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
         }
 
         @Override
-        public Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor) {
+        public Span create(
+                String spanName, SpanKind kind, Span parent,
+                SpanContextPropagationExtractor extractor) {
             SpanBuilder builder = tracer.spanBuilder(spanName);
+            builder = builder.setSpanKind(mapToSpanKind(kind));
             Baggage baggage = null;
 
             if (parent != null) {
@@ -169,6 +169,16 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
                 injector.put(org.apache.camel.telemetry.Tracer.TRACE_HEADER, otelSpan.getSpan().getSpanContext().getTraceId());
                 injector.put(org.apache.camel.telemetry.Tracer.SPAN_HEADER, otelSpan.getSpan().getSpanContext().getSpanId());
             }
+        }
+
+        private io.opentelemetry.api.trace.SpanKind mapToSpanKind(org.apache.camel.telemetry.SpanKind kind) {
+            return switch (kind) {
+                case CLIENT -> io.opentelemetry.api.trace.SpanKind.CLIENT;
+                case SERVER -> io.opentelemetry.api.trace.SpanKind.SERVER;
+                case PRODUCER -> io.opentelemetry.api.trace.SpanKind.PRODUCER;
+                case CONSUMER -> io.opentelemetry.api.trace.SpanKind.CONSUMER;
+                case INTERNAL -> io.opentelemetry.api.trace.SpanKind.INTERNAL;
+            };
         }
 
     }

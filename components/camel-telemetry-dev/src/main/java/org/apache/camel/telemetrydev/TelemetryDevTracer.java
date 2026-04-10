@@ -25,6 +25,7 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.telemetry.Span;
 import org.apache.camel.telemetry.SpanContextPropagationExtractor;
 import org.apache.camel.telemetry.SpanContextPropagationInjector;
+import org.apache.camel.telemetry.SpanKind;
 import org.apache.camel.telemetry.SpanLifecycleManager;
 import org.apache.camel.telemetry.Tracer;
 import org.slf4j.Logger;
@@ -87,7 +88,9 @@ public class TelemetryDevTracer extends Tracer {
         }
 
         @Override
-        public Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor) {
+        public Span create(
+                String spanName, SpanKind kind, Span parent,
+                SpanContextPropagationExtractor extractor) {
             Span span = DevSpanAdapter.buildSpan(spanName);
             String traceId = UUID.randomUUID().toString().replaceAll("-", "");
             if (parent != null) {
@@ -101,6 +104,7 @@ public class TelemetryDevTracer extends Tracer {
                         LOG.error("TRACE ERROR: wrong format, could not split traceparent {}", upstreamTraceParent);
                         span.setTag("traceid", traceId);
                         span.setTag("spanid", UUID.randomUUID().toString().replaceAll("-", ""));
+                        span.setTag("kind", kind.toString());
                         return span;
                     }
                     traceId = split[0];
@@ -110,6 +114,7 @@ public class TelemetryDevTracer extends Tracer {
             }
             span.setTag("traceid", traceId);
             span.setTag("spanid", UUID.randomUUID().toString().replaceAll("-", ""));
+            span.setTag("kind", kind.toString());
             return span;
         }
 

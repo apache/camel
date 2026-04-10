@@ -16,7 +16,6 @@
  */
 package org.apache.camel.telemetrydev;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +45,9 @@ public class EnableProcessorsTest extends TelemetryDevTracerTestSupport {
     }
 
     @Test
-    void testProcessorsTraceRequest() throws IOException {
+    void testProcessorsTraceRequest() {
         template.sendBody("direct:start", "my-body");
-        Map<String, DevTrace> traces = tracesFromLog();
+        Map<String, DevTrace> traces = awaitTracesFromLog(1);
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
     }

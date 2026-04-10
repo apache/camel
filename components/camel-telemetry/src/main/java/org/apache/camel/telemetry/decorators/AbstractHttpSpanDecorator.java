@@ -19,7 +19,9 @@ package org.apache.camel.telemetry.decorators;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.telemetry.Op;
 import org.apache.camel.telemetry.Span;
+import org.apache.camel.telemetry.SpanKind;
 import org.apache.camel.telemetry.TagConstants;
 
 public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
@@ -104,5 +106,14 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
                 span.setTag(TagConstants.HTTP_STATUS, responseCode.toString());
             }
         }
+    }
+
+    @Override
+    public SpanKind getSpanKind(Op op) {
+        return switch (op) {
+            case EVENT_SENT -> SpanKind.CLIENT;
+            case EVENT_RECEIVED -> SpanKind.SERVER;
+            case EVENT_PROCESS -> SpanKind.INTERNAL;
+        };
     }
 }

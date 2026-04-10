@@ -24,11 +24,7 @@ import java.util.UUID;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.JdkService;
-import org.apache.camel.telemetry.Span;
-import org.apache.camel.telemetry.SpanContextPropagationExtractor;
-import org.apache.camel.telemetry.SpanContextPropagationInjector;
-import org.apache.camel.telemetry.SpanLifecycleManager;
-import org.apache.camel.telemetry.Tracer;
+import org.apache.camel.telemetry.*;
 
 @JdkService("mock-tracer")
 @Configurer
@@ -53,7 +49,9 @@ public class MockTracer extends Tracer {
         Map<String, Span> inMemoryStorageMap = new HashMap<>();
 
         @Override
-        public Span create(String spanName, Span parentSpan, SpanContextPropagationExtractor extractor) {
+        public Span create(
+                String spanName, SpanKind kind, Span parentSpan,
+                SpanContextPropagationExtractor extractor) {
             Span span = MockSpanAdapter.buildSpan(spanName);
             String traceId = UUID.randomUUID().toString().replaceAll("-", "");
             if (parentSpan != null) {
@@ -69,6 +67,7 @@ public class MockTracer extends Tracer {
             }
             span.setTag("traceid", traceId);
             span.setTag("spanid", UUID.randomUUID().toString().replaceAll("-", ""));
+            span.setTag("kind", kind.toString());
             return span;
         }
 

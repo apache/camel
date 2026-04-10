@@ -18,7 +18,9 @@ package org.apache.camel.telemetry.decorators;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.telemetry.Op;
 import org.apache.camel.telemetry.Span;
+import org.apache.camel.telemetry.SpanKind;
 import org.apache.camel.telemetry.TagConstants;
 
 public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorator {
@@ -58,6 +60,15 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
      */
     protected String getMessageId(Exchange exchange) {
         return null;
+    }
+
+    @Override
+    public SpanKind getSpanKind(Op op) {
+        return switch (op) {
+            case EVENT_SENT -> SpanKind.PRODUCER;
+            case EVENT_RECEIVED -> SpanKind.CONSUMER;
+            case EVENT_PROCESS -> SpanKind.INTERNAL;
+        };
     }
 
 }

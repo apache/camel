@@ -16,7 +16,6 @@
  */
 package org.apache.camel.telemetrydev;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -41,10 +40,10 @@ public class SpanPropagationUpstreamTest extends TelemetryDevTracerTestSupport {
     }
 
     @Test
-    void testPropagateUpstreamTraceRequest() throws IOException {
+    void testPropagateUpstreamTraceRequest() {
         template.requestBodyAndHeader("direct:start", "sample body",
                 "traceparent", "123456789-123456");
-        Map<String, DevTrace> traces = tracesFromLog();
+        Map<String, DevTrace> traces = awaitTracesFromLog(1);
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
     }

@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.telemetry.Op;
@@ -32,14 +33,32 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.awaitility.Awaitility.await;
 
 public class TelemetryDevTracerTestSupport extends ExchangeTestSupport {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /*
+     * Clear the log traces before each test to prevent flaky tests from leftover data
+     */
+    @BeforeEach
+    public synchronized void clearLogTracesBeforeTest() throws IOException {
+        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        RollingFileAppender appender = (RollingFileAppender) ctx.getConfiguration().getAppenders().get("file2");
+        if (appender != null) {
+            appender.getManager().rollover();
+        }
+    }
+
     protected Map<String, DevTrace> tracesFromLog() throws IOException {
         Map<String, DevTrace> answer = new HashMap<>();
         Path path = Paths.get("target/telemetry-traces.log");
+        if (!Files.exists(path)) {
+            return answer;
+        }
         List<String> allTraces = Files.readAllLines(path);
         for (String trace : allTraces) {
             DevTrace st = mapper.readValue(trace, DevTrace.class);
@@ -55,6 +74,28 @@ public class TelemetryDevTracerTestSupport extends ExchangeTestSupport {
         }
 
         return answer;
+    }
+
+    /**
+     * Wait for the expected number of traces to be written to the log file. Uses Awaitility to avoid flaky tests from
+     * timing issues.
+     */
+    protected Map<String, DevTrace> awaitTracesFromLog(int expectedCount) {
+        await().atMost(10, TimeUnit.SECONDS)
+                .pollInterval(100, TimeUnit.MILLISECONDS)
+                .until(() -> {
+                    try {
+                        Map<String, DevTrace> traces = tracesFromLog();
+                        return traces.size() >= expectedCount;
+                    } catch (IOException e) {
+                        return false;
+                    }
+                });
+        try {
+            return tracesFromLog();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read traces from log", e);
+        }
     }
 
     /*

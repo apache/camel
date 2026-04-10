@@ -16,7 +16,6 @@
  */
 package org.apache.camel.telemetrydev;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -44,11 +43,11 @@ public class MDCHeadersTraceTest extends TelemetryDevTracerTestSupport {
     }
 
     @Test
-    void testProcessorsTraceRequest() throws InterruptedException, IOException {
+    void testProcessorsTraceRequest() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         template.sendBody("direct:start", "my-body");
-        Map<String, DevTrace> traces = tracesFromLog();
+        Map<String, DevTrace> traces = awaitTracesFromLog(1);
         assertEquals(1, traces.size());
         mock.assertIsSatisfied();
         Map<String, Object> headers = mock.getExchanges().get(0).getIn().getHeaders();

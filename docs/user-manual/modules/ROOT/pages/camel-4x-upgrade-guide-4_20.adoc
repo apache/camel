@@ -25,3 +25,85 @@ segments is no longer accepted and will result in an `InvalidTopicNameException`
 If your Camel routes use topic URIs with extra `/` characters in the topic name portion
 (e.g., `pulsar:persistent://public/default/my-topic/sub-path`), you must replace the extra `/` with
 another separator such as `-` (e.g., `pulsar:persistent://public/default/my-topic-sub-path`).
+
+=== camel-telemetry
+
+The telemetry API has been enhanced to support proper span type classification through the introduction
+of the `SpanKind` enum. This affects custom implementations of telemetry tracers and span decorators.
+
+==== SpanKind API Changes
+
+The `SpanLifecycleManager.create()` method signature has been updated to accept a `SpanKind` parameter:
+
+Before:
+[source,java]
+----
+Span create(Exchange exchange, String spanName);
+----
+
+After:
+[source,java]
+----
+Span create(Exchange exchange, String spanName, SpanKind kind);
+----
+
+==== Impact on Custom Implementations
+
+If you have implemented custom tracer or span decorator classes, you need to update them:
+
+**Custom Tracer Implementations**
+
+If you implemented the `org.apache.camel.telemetry.Tracer` interface, update your `createSpan()` method:
+
+Before:
+[source,java]
+----
+@Override
+public Span createSpan(Exchange exchange, String spanName) {
+    return spanLifecycleManager.create(exchange, spanName);
+}
+----
+
+After:
+[source,java]
+----
+@Override
+public Span createSpan(Exchange exchange, String spanName, SpanKind kind) {
+    return spanLifecycleManager.create(exchange, spanName, kind);
+}
+----
+
+**Custom SpanDecorator Implementations**
+
+If you implemented custom `SpanDecorator` classes, you must now provide span kind information by implementing
+the new `getSpanKind()` method:
+
+[source,java]
+----
+@Override
+public SpanKind getSpanKind() {
+    // Return appropriate span kind based on your component's behavior:
+    // - CLIENT: for outbound calls to remote services
+    // - SERVER: for handling incoming requests
+    // - PRODUCER: for sending messages/data to remote systems
+    // - CONSUMER: for receiving messages/data from remote systems
+    // - INTERNAL: for internal operations with no remote interaction
+    return SpanKind.PRODUCER;
+}
+----
+
+==== MockTracer Test Utilities
+
+If you use `MockTracer` in tests, update calls to `createSpan()`:
+
+Before:
+[source,java]
+----
+mockTracer.createSpan(exchange, "test-span");
+----
+
+After:
+[source,java]
+----
+mockTracer.createSpan(exchange, "test-span", SpanKind.INTERNAL);
+----

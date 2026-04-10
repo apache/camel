@@ -16,7 +16,6 @@
  */
 package org.apache.camel.telemetrydev;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -45,21 +44,21 @@ public class TelemetryDevTracerTest extends TelemetryDevTracerTestSupport {
     }
 
     @Test
-    void testRouteSingleRequest() throws IOException {
+    void testRouteSingleRequest() {
         Exchange result = template.request("direct:start", null);
         // Make sure the trace is propagated downstream
         assertNotNull(result.getIn().getHeader("traceparent"));
-        Map<String, DevTrace> traces = tracesFromLog();
+        Map<String, DevTrace> traces = awaitTracesFromLog(1);
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next(), null);
     }
 
     @Test
-    void testRouteMultipleRequests() throws IOException {
+    void testRouteMultipleRequests() {
         for (int i = 1; i <= 10; i++) {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
-        Map<String, DevTrace> traces = tracesFromLog();
+        Map<String, DevTrace> traces = awaitTracesFromLog(10);
         // Each trace should have a unique trace id. It is enough to assert that
         // the number of elements in the map is the same of the requests to prove
         // all traces have been generated uniquely.

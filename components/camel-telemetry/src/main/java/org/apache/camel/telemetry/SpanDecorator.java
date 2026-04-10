@@ -38,4 +38,12 @@ public interface SpanDecorator {
 
     SpanContextPropagationInjector getInjector(Exchange exchange);
 
+    /**
+     * This method returns the SpanKind for a given operation.
+     *
+     * @param  op The operation type
+     * @return    The span kind to use for this operation
+     */
+    SpanKind getSpanKind(Op op);
+
 }
