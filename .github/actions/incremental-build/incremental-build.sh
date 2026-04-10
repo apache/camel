@@ -54,6 +54,38 @@ findProjectRoot() {
   echo "$path"
 }
 
+# Remove exclusion entries that conflict with explicitly included modules.
+# When -amd pulls in dependents, the EXCLUSION_LIST prevents testing generated/meta
+# modules.  But when those modules are the *primary* changed modules, excluding them
+# cancels them out of the reactor and breaks the build.
+filterExclusions() {
+  local build_pl="$1"
+  local exclusions="$2"
+
+  # Collect artifact IDs from build_pl (path → basename, :id → id)
+  local included_ids=","
+  for mod in $(echo "$build_pl" | tr ',' '\n'); do
+    if [[ "$mod" == :* ]]; then
+      included_ids="${included_ids}${mod#:},"
+    else
+      included_ids="${included_ids}$(basename "$mod"),"
+    fi
+  done
+
+  # Keep only exclusions whose artifact ID is not in the included set
+  local result=""
+  for excl in $(echo "$exclusions" | tr ',' '\n'); do
+    local excl_id="${excl#!:}"
+    if [[ "$included_ids" == *",${excl_id},"* ]]; then
+      echo "  Removing exclusion ${excl} (conflicts with explicitly included module)" >&2
+    else
+      result="${result:+${result},}${excl}"
+    fi
+  done
+
+  echo "$result"
+}
+
 # Check whether a PR label exists
 hasLabel() {
   local issueNumber=${1}
@@ -215,7 +247,7 @@ runScalpelDetection() {
   # - fullBuildTriggers="": override .mvn/** default (Scalpel lives in .mvn/extensions.xml)
   # - alsoMake/alsoMakeDependents=false: we only want directly affected modules
   #   (our script handles -amd expansion separately)
-  local scalpel_args="-Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.alsoMake=false -Dscalpel.alsoMakeDependents=false"
+  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.alsoMake=false -Dscalpel.alsoMakeDependents=false"
   # For workflow_dispatch, GITHUB_BASE_REF may not be set
   if [ -z "${GITHUB_BASE_REF:-}" ]; then
     scalpel_args="$scalpel_args -Dscalpel.baseBranch=origin/main"
@@ -665,7 +697,13 @@ main() {
   # Exclusion list is only needed with -amd (to prevent testing generated/meta modules);
   # without -amd, only the explicitly listed modules are built.
   if [[ "$use_amd" = true ]]; then
-    $mavenBinary -l "$log" $MVND_OPTS install -pl "${build_pl},${EXCLUSION_LIST}" -amd || ret=$?
+    local filtered_exclusions
+    filtered_exclusions=$(filterExclusions "$build_pl" "$EXCLUSION_LIST")
+    local build_pl_with_exclusions="$build_pl"
+    if [ -n "$filtered_exclusions" ]; then
+      build_pl_with_exclusions="${build_pl},${filtered_exclusions}"
+    fi
+    $mavenBinary -l "$log" $MVND_OPTS install -pl "$build_pl_with_exclusions" -amd || ret=$?
   else
     $mavenBinary -l "$log" $MVND_OPTS install -pl "$build_pl" || ret=$?
   fi
