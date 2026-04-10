@@ -27,12 +27,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.catalog.VersionHelper;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ExportHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.util.IOHelper;
+import org.citrusframework.CitrusSettings;
 import org.citrusframework.CitrusVersion;
 import org.citrusframework.jbang.JBangSettings;
 import org.citrusframework.jbang.JBangSupport;
@@ -83,7 +85,8 @@ public class TestPlugin implements Plugin {
             }
 
             JBangSupport citrus = JBangSupport.jbang().app(JBangSettings.getApp())
-                    .withSystemProperty("citrus.jbang.version", CitrusVersion.version());
+                    .withSystemProperty("citrus.jbang.version", CitrusVersion.version())
+                    .withSystemProperty("citrus.camel.jbang.version", new VersionHelper().getVersion());
 
             // Prepare commands
             if ("init".equals(command)) {
@@ -118,18 +121,22 @@ public class TestPlugin implements Plugin {
                 throw new RuntimeCamelException("Cannot create test working directory in: " + currentDir);
             }
 
-            // Create jbang properties with default dependencies if not present
-            if (!workingDir.resolve("jbang.properties").toFile().exists()) {
-                Path jbangProperties = workingDir.resolve("jbang.properties");
+            // Create Citrus application properties if not present
+            if (!workingDir.resolve(CitrusSettings.getApplicationPropertiesFile()).toFile().exists()) {
+                Path citrusApplicationProperties = workingDir.resolve(CitrusSettings.getApplicationPropertiesFile());
                 try (InputStream is
-                        = TestPlugin.class.getClassLoader().getResourceAsStream("templates/jbang-properties.tmpl")) {
+                        = TestPlugin.class.getClassLoader()
+                                .getResourceAsStream("templates/citrus-application-properties.tmpl")) {
                     String context = IOHelper.loadText(is);
 
                     context = context.replaceAll("\\{\\{ \\.CitrusVersion }}", CitrusVersion.version());
+                    context = context.replaceAll("\\{\\{ \\.CamelVersion }}", new VersionHelper().getVersion());
 
-                    ExportHelper.safeCopy(new ByteArrayInputStream(context.getBytes(StandardCharsets.UTF_8)), jbangProperties);
+                    ExportHelper.safeCopy(new ByteArrayInputStream(context.getBytes(StandardCharsets.UTF_8)),
+                            citrusApplicationProperties);
                 } catch (Exception e) {
-                    main.getOut().println("Failed to create jbang.properties for tests in:" + jbangProperties);
+                    main.getOut().println("Failed to create %s for tests in: %s"
+                            .formatted(CitrusSettings.getApplicationPropertiesFile(), citrusApplicationProperties));
                 }
             }
 
