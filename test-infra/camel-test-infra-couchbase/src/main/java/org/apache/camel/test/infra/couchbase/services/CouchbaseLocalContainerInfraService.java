@@ -44,6 +44,10 @@ public class CouchbaseLocalContainerInfraService implements CouchbaseInfraServic
         public CustomCouchbaseContainer(String imageName) {
             super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("couchbase/server"));
 
+            // Couchbase 8.0+ validates CPU microarchitecture (requires x86-64-v3 / AVX2).
+            // CI agents may run on older hardware, causing the container to exit immediately.
+            withEnv("COUCHBASE_DO_NOT_VALIDATE_CPU_MICROARCHITECTURE", "1");
+
             boolean fixedPort = ContainerEnvironmentUtil.isFixedPort(CouchbaseLocalContainerInfraService.class);
             final int kvPort = 11210;
             final int managementPort = 8091;
