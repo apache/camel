@@ -61,6 +61,11 @@ public class PulsarLocalContainerInfraService implements PulsarInfraService, Con
 
                 withStartupTimeout(Duration.ofMinutes(3L));
 
+                // Pulsar 4.2.0 standalone no longer defaults advertisedAddress to localhost,
+                // causing the broker to advertise the container hostname which is unreachable
+                // from the test host. Explicitly set it to localhost for testcontainer usage.
+                withEnv("PULSAR_PREFIX_advertisedAddress", "localhost");
+
                 ContainerEnvironmentUtil.configurePorts(this, fixedPort,
                         ContainerEnvironmentUtil.PortConfig.primary(6650),
                         ContainerEnvironmentUtil.PortConfig.secondary(8080));
