@@ -383,6 +383,15 @@ public class JmsConfiguration implements Cloneable {
                             + " Applies only when {@code transferExchange} is {@code true}."
                             + " This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.")
     private boolean allowSerializedHeaders;
+    @UriParam(label = "advanced,security",
+              description = "Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied as a defense-in-depth"
+                            + " check on the class of the body returned by jakarta.jms.ObjectMessage.getObject()."
+                            + " The pattern is evaluated after the JMS provider has deserialized the payload, so this option"
+                            + " alone does not prevent gadget-chain execution that happens inside the provider's ObjectInputStream;"
+                            + " to block such attacks, also configure the JMS provider's own deserialization filter and/or"
+                            + " the JVM-wide -Djdk.serialFilter. When this option is not set and no JVM-wide filter is configured,"
+                            + " a conservative default filter allowing java.**, javax.** and org.apache.camel.** is applied.")
+    private String deserializationFilter;
     @UriParam(label = "advanced",
               description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
                             + " then the caused Exception will be send back in response as a jakarta.jms.ObjectMessage."
@@ -2051,6 +2060,23 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
         this.allowSerializedHeaders = allowSerializedHeaders;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an {@link java.io.ObjectInputFilter} pattern (same syntax as {@code jdk.serialFilter}) applied as a
+     * defense-in-depth check on the class of the body returned by {@link jakarta.jms.ObjectMessage#getObject()}. The
+     * pattern is evaluated after the JMS provider has deserialized the payload, so this option alone does not prevent
+     * gadget-chain execution that happens inside the provider's {@code ObjectInputStream}; to block such attacks, also
+     * configure the JMS provider's own deserialization filter and/or the JVM-wide {@code -Djdk.serialFilter}. When this
+     * option is not set and no JVM-wide filter is configured, a conservative default filter allowing {@code java.**},
+     * {@code javax.**} and {@code org.apache.camel.**} is applied.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
     public boolean isTransferException() {
