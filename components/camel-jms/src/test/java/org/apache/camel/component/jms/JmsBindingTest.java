@@ -20,12 +20,15 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 
 import jakarta.jms.JMSException;
 
+import com.example.external.NotAllowedPayload;
 import org.apache.activemq.artemis.jms.client.ActiveMQTextMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchangeHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -105,5 +109,36 @@ public class JmsBindingTest {
         when(mockJmsConfiguration.isFormatDateHeadersToIso8601()).thenReturn(true);
         Object value = jmsBindingUnderTest.getValidJMSHeaderValue("foo", Date.from(instant));
         assertEquals("2018-02-26T19:12:18Z", value);
+    }
+
+    @Test
+    public void testDefaultFilterAllowsStandardJavaType() {
+        assertDoesNotThrow(() -> jmsBindingUnderTest.checkDeserializedClass(new HashMap<>()));
+    }
+
+    @Test
+    public void testDefaultFilterAllowsCamelExchangeHolder() {
+        assertDoesNotThrow(() -> jmsBindingUnderTest.checkDeserializedClass(new DefaultExchangeHolder()));
+    }
+
+    @Test
+    public void testDefaultFilterAllowsNullPayload() {
+        assertDoesNotThrow(() -> jmsBindingUnderTest.checkDeserializedClass(null));
+    }
+
+    @Test
+    public void testDefaultFilterRejectsClassOutsideAllowList() {
+        SecurityException ex = assertThrows(SecurityException.class,
+                () -> jmsBindingUnderTest.checkDeserializedClass(new NotAllowedPayload()));
+        assertNotNull(ex.getMessage());
+        assertEquals(true, ex.getMessage().contains(NotAllowedPayload.class.getName()));
+    }
+
+    @Test
+    public void testConfiguredFilterAllowsCustomClass() {
+        when(mockJmsConfiguration.getDeserializationFilter())
+                .thenReturn("com.example.external.*;java.**;javax.**;org.apache.camel.**;!*");
+        JmsBinding bindingWithCustomFilter = new JmsBinding(mockJmsEndpoint);
+        assertDoesNotThrow(() -> bindingWithCustomFilter.checkDeserializedClass(new NotAllowedPayload()));
     }
 }
