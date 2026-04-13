@@ -281,6 +281,11 @@ Parent folders needing registration:
 
 Without this, the build won't pick up your component for catalog/docs generation.
 
+## Adding Integration tests with new container image
+
+- Avoid using Docker Hub images, prefer to use Google `mirror.gcr.io` or Red Hat `quay.io` ones.
+- Verify that the container image is available for the tested architectures (currently `amd64`, `ppc64le` and `s390x`). Sometimes the image is provided in different registries such as `icr.io`. If not available, use `skipITs.ppc64le` and `skipITs.s390x` Maven properties to disable it.
+
 ## Commits
 
 ```
