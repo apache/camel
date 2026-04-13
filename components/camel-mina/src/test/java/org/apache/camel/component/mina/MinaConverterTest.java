@@ -16,10 +16,15 @@
  */
 package org.apache.camel.component.mina;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
+import com.example.external.NotAllowedSerializable;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
@@ -27,7 +32,9 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MinaConverterTest {
 
@@ -96,5 +103,31 @@ public class MinaConverterTest {
         for (int i = 0; i < out.length; i++) {
             assertEquals(in[i], out[i]);
         }
+    }
+
+    @Test
+    public void testToObjectInputAcceptsAllowlistedTypes() throws Exception {
+        IoBuffer bb = serialize("hello");
+        try (ObjectInput in = MinaConverter.toObjectInput(bb)) {
+            Object value = in.readObject();
+            assertInstanceOf(String.class, value);
+            assertEquals("hello", value);
+        }
+    }
+
+    @Test
+    public void testToObjectInputRejectsUnlistedTypes() throws Exception {
+        IoBuffer bb = serialize(new NotAllowedSerializable("blocked"));
+        try (ObjectInput in = MinaConverter.toObjectInput(bb)) {
+            assertThrows(InvalidClassException.class, in::readObject);
+        }
+    }
+
+    private static IoBuffer serialize(Object value) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(value);
+        }
+        return IoBuffer.wrap(baos.toByteArray());
     }
 }
