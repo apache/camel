@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.19 to 4.20
 
+=== camel-exec
+
+The `camel-exec` component is made more restrict by default, as the command line arguments, and other parameters
+cannot be dynamic provided from Camel message headers. To allow this you now have to enable this by setting
+`allowControlHeaders=true` on either the component (globally) or per endpoint when needed.
+
+
 === camel-pulsar
 
 The Apache Pulsar client library has been upgraded from 4.1.3 to 4.2.0.

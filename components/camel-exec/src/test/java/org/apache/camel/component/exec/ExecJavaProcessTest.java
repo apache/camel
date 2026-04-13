@@ -480,7 +480,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:input").to("exec:java").to("mock:output");
+                from("direct:input").to("exec:java?allowControlHeaders=true").to("mock:output");
             }
         };
     }
