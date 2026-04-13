@@ -471,6 +471,30 @@ Previously the context-path would always be used:
 
 The intention is to allow to configure the `base.path` _as is_ in the return API specification.
 
+=== camel-arangodb
+
+The ArangoDB Java driver (upgraded to 7.24+) no longer defaults to `localhost:8529` when no host is configured.
+You must now explicitly set the host and port:
+
+[source,properties]
+----
+camel.component.arangodb.host=localhost
+camel.component.arangodb.port=8529
+----
+
+Or when using the Java API directly:
+
+[source,java]
+----
+ArangoDbConfiguration config = new ArangoDbConfiguration();
+config.setHost("localhost");
+config.setPort(8529);
+----
+
+Additionally, the `RESULT_CLASS_TYPE` header for `FIND_DOCUMENT_BY_KEY` no longer accepts `String.class`
+to retrieve documents. Use the appropriate document type (e.g., `BaseDocument.class`) instead, as Jackson 2.21
+no longer coerces JSON objects into plain Strings.
+
 === camel-as2
 
 Some public constants were deprecated:
