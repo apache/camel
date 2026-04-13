@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms.jms;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.ObjectInputFilter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -64,6 +65,14 @@ import static org.apache.camel.component.sjms.jms.JmsMessageHelper.normalizeDest
  */
 public class JmsBinding {
 
+    /**
+     * Default {@link ObjectInputFilter} pattern applied as a defense-in-depth check on the class returned by
+     * {@link jakarta.jms.ObjectMessage#getObject()}. Allows standard Java types and Apache Camel types and rejects
+     * everything else. Can be overridden per-endpoint via {@code SjmsEndpoint#setDeserializationFilter(String)} or
+     * globally via the JVM system property {@code jdk.serialFilter}.
+     */
+    static final String DEFAULT_DESERIALIZATION_FILTER = "java.**;javax.**;org.apache.camel.**;!*";
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
     private final boolean mapJmsMessage;
     private final boolean allowNullBody;
@@ -71,16 +80,95 @@ public class JmsBinding {
     private final JmsKeyFormatStrategy jmsJmsKeyFormatStrategy;
     private final MessageCreatedStrategy messageCreatedStrategy;
     private final JmsMessageType jmsMessageType;
+    private final ObjectInputFilter deserializationFilter;
 
     public JmsBinding(boolean mapJmsMessage, boolean allowNullBody,
                       HeaderFilterStrategy headerFilterStrategy, JmsKeyFormatStrategy jmsJmsKeyFormatStrategy,
                       MessageCreatedStrategy messageCreatedStrategy, JmsMessageType jmsMessageType) {
+        this(mapJmsMessage, allowNullBody, headerFilterStrategy, jmsJmsKeyFormatStrategy,
+             messageCreatedStrategy, jmsMessageType, null);
+    }
+
+    public JmsBinding(boolean mapJmsMessage, boolean allowNullBody,
+                      HeaderFilterStrategy headerFilterStrategy, JmsKeyFormatStrategy jmsJmsKeyFormatStrategy,
+                      MessageCreatedStrategy messageCreatedStrategy, JmsMessageType jmsMessageType,
+                      String deserializationFilterPattern) {
         this.mapJmsMessage = mapJmsMessage;
         this.allowNullBody = allowNullBody;
         this.headerFilterStrategy = headerFilterStrategy;
         this.jmsJmsKeyFormatStrategy = jmsJmsKeyFormatStrategy;
         this.messageCreatedStrategy = messageCreatedStrategy;
         this.jmsMessageType = jmsMessageType;
+        this.deserializationFilter = resolveDeserializationFilter(deserializationFilterPattern);
+    }
+
+    private static ObjectInputFilter resolveDeserializationFilter(String configuredPattern) {
+        if (configuredPattern != null && !configuredPattern.isBlank()) {
+            return ObjectInputFilter.Config.createFilter(configuredPattern);
+        }
+        ObjectInputFilter jvmFilter = ObjectInputFilter.Config.getSerialFilter();
+        if (jvmFilter != null) {
+            return jvmFilter;
+        }
+        LOG.debug("No JVM-wide deserialization filter set, applying default Camel filter: {}",
+                DEFAULT_DESERIALIZATION_FILTER);
+        return ObjectInputFilter.Config.createFilter(DEFAULT_DESERIALIZATION_FILTER);
+    }
+
+    /**
+     * Applies the configured (or default) deserialization filter to the class of an object returned by
+     * {@link jakarta.jms.ObjectMessage#getObject()}. Throws {@link SecurityException} if the class is rejected.
+     *
+     * <p>
+     * Note: this check runs <em>after</em> the JMS provider has already deserialized the payload. It prevents
+     * unexpected classes from being propagated to the route, but it cannot, on its own, stop gadget chains whose
+     * {@code readObject()} fires inside the provider's {@code ObjectInputStream}. Complete protection requires
+     * configuring the JMS provider's own deserialization filter and/or the JVM-wide {@code -Djdk.serialFilter}.
+     */
+    protected void checkDeserializedClass(Object payload) {
+        if (payload == null) {
+            return;
+        }
+        Class<?> clazz = payload.getClass();
+        ObjectInputFilter.Status status = deserializationFilter.checkInput(new PostDeserializationFilterInfo(clazz));
+        if (status == ObjectInputFilter.Status.REJECTED) {
+            throw new SecurityException(
+                    "JMS ObjectMessage deserialization blocked for class: " + clazz.getName()
+                                        + ". Configure the 'deserializationFilter' endpoint option or -Djdk.serialFilter to allow it.");
+        }
+    }
+
+    private static final class PostDeserializationFilterInfo implements ObjectInputFilter.FilterInfo {
+        private final Class<?> clazz;
+
+        private PostDeserializationFilterInfo(Class<?> clazz) {
+            this.clazz = clazz;
+        }
+
+        @Override
+        public Class<?> serialClass() {
+            return clazz;
+        }
+
+        @Override
+        public long arrayLength() {
+            return -1;
+        }
+
+        @Override
+        public long depth() {
+            return 0;
+        }
+
+        @Override
+        public long references() {
+            return 0;
+        }
+
+        @Override
+        public long streamBytes() {
+            return 0;
+        }
     }
 
     /**
@@ -102,12 +190,13 @@ public class JmsBinding {
                 LOG.trace("Extracting body as a ObjectMessage from JMS message: {}", message);
                 ObjectMessage objectMessage = (ObjectMessage) message;
                 Object payload = objectMessage.getObject();
+                checkDeserializedClass(payload);
                 if (payload instanceof DefaultExchangeHolder) {
                     DefaultExchangeHolder holder = (DefaultExchangeHolder) payload;
-                    DefaultExchangeHolder.unmarshal(exchange, holder);
+                    DefaultExchangeHolder.unmarshal(exchange, holder); // NOSONAR
                     return exchange.getIn().getBody();
                 } else {
-                    return objectMessage.getObject();
+                    return payload;
                 }
             } else if (message instanceof TextMessage) {
                 LOG.trace("Extracting body as a TextMessage from JMS message: {}", message);

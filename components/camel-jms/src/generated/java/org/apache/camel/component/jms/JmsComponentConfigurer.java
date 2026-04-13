@@ -87,6 +87,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "deliveryMode": getOrCreateConfiguration(target).setDeliveryMode(property(camelContext, java.lang.Integer.class, value)); return true;
         case "deliverypersistent":
         case "deliveryPersistent": getOrCreateConfiguration(target).setDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": getOrCreateConfiguration(target).setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationresolver":
         case "destinationResolver": getOrCreateConfiguration(target).setDestinationResolver(property(camelContext, org.springframework.jms.support.destination.DestinationResolver.class, value)); return true;
         case "disablereplyto":
@@ -299,6 +301,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "deliveryMode": return java.lang.Integer.class;
         case "deliverypersistent":
         case "deliveryPersistent": return boolean.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "destinationresolver":
         case "destinationResolver": return org.springframework.jms.support.destination.DestinationResolver.class;
         case "disablereplyto":
@@ -512,6 +516,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "deliveryMode": return getOrCreateConfiguration(target).getDeliveryMode();
         case "deliverypersistent":
         case "deliveryPersistent": return getOrCreateConfiguration(target).isDeliveryPersistent();
+        case "deserializationfilter":
+        case "deserializationFilter": return getOrCreateConfiguration(target).getDeserializationFilter();
         case "destinationresolver":
         case "destinationResolver": return getOrCreateConfiguration(target).getDestinationResolver();
         case "disablereplyto":
