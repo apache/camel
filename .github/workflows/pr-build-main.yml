@@ -98,7 +98,7 @@ jobs:
           EXTRA_MODULES: ${{ inputs.extra_modules }}
         run: ./mvnw -l build.log install -B -DskipTests -Dquickly -pl "$EXTRA_MODULES" -am
       - name: archive logs
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: build-${{ matrix.java }}.log
@@ -116,7 +116,7 @@ jobs:
           skip-mvnd-install: 'true'
           extra-modules: ${{ inputs.extra_modules || '' }}
       - name: archive incremental test logs
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: incremental-test-java-${{ matrix.java }}.log
@@ -142,7 +142,7 @@ jobs:
           fi
       - name: Upload CI comment artifact
         if: always() && !matrix.experimental
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ci-comment
           path: ci-comment-artifact/
