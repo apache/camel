@@ -29,6 +29,7 @@ public class ClassicJmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy 
     }
 
     public ClassicJmsHeaderFilterStrategy(boolean includeAllJMSXProperties) {
+        setLowerCase(true);
         if (!includeAllJMSXProperties) {
             initialize();
         }
