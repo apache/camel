@@ -1136,6 +1136,29 @@ public interface SjmsEndpointBuilderFactory {
             doSetProperty("transferException", transferException);
             return this;
         }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter allowing java.,
+         * javax. and org.apache.camel. is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointConsumerBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     /**
@@ -2302,6 +2325,29 @@ public interface SjmsEndpointBuilderFactory {
             doSetProperty("transferException", transferException);
             return this;
         }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter allowing java.,
+         * javax. and org.apache.camel. is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointProducerBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     /**
@@ -3001,6 +3047,29 @@ public interface SjmsEndpointBuilderFactory {
          */
         default AdvancedSjmsEndpointBuilder transferException(String transferException) {
             doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter allowing java.,
+         * javax. and org.apache.camel. is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
             return this;
         }
     }
