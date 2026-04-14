@@ -23,7 +23,7 @@ public class Sjms2EndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(50);
+        Set<String> props = new HashSet<>(51);
         props.add("acknowledgementMode");
         props.add("allowNullBody");
         props.add("asyncConsumer");
@@ -36,6 +36,7 @@ public class Sjms2EndpointUriFactory extends org.apache.camel.support.component.
         props.add("connectionFactory");
         props.add("deliveryMode");
         props.add("deliveryPersistent");
+        props.add("deserializationFilter");
         props.add("destinationCreationStrategy");
         props.add("destinationName");
         props.add("destinationType");
