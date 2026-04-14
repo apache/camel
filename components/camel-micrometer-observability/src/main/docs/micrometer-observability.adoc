@@ -77,6 +77,7 @@ Here it follows an example to configure the component to work with Opentelemetry
 
 ```java
 import org.apache.camel.micrometer.observability.MicrometerObservabilityTracer;
+import io.micrometer.tracing.otel.bridge.OtelBaggageManager;
 import io.micrometer.tracing.otel.bridge.OtelCurrentTraceContext;
 import io.micrometer.tracing.otel.bridge.OtelPropagator;
 import io.micrometer.tracing.otel.bridge.OtelTracer;
@@ -102,8 +103,10 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
             // which requires a Zipkin server listening to that port
             // )
             .build();
-        ContextPropagators propagators =  ContextPropagators.create(
-                    W3CTraceContextPropagator.getInstance());
+        ContextPropagators propagators = ContextPropagators.create(
+                TextMapPropagator.composite(
+                        W3CTraceContextPropagator.getInstance(),
+                        W3CBaggagePropagator.getInstance()));
         OpenTelemetrySdk openTelemetry = OpenTelemetrySdk.builder()
             .setTracerProvider(sdkTracerProvider)
             .setPropagators(propagators)
@@ -112,8 +115,11 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
             openTelemetry.getTracer("camel-app");
         io.micrometer.tracing.Tracer micrometerTracer = new OtelTracer(
                 otelTracer,
-                new OtelCurrentTraceContext(),
-                null);
+                currentTraceContext,
+                event -> {
+                },
+                new OtelBaggageManager(
+                        currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
         OtelPropagator otelPropagator = new OtelPropagator(propagators, otelTracer);
         getContext().getRegistry().bind("MicrometerObservabilityTracer", micrometerTracer);
         getContext().getRegistry().bind("OpentelemetryPropagators", otelPropagator);
@@ -126,6 +132,8 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 NOTE: this is an example that can be used as a reference. It may not work exactly as it is, since, the related dependency can change from version to version. You will need to check in details looking at the concrete implementation documentation.
 
 You can see that the configuration of this component may get a bit difficult, unless you are already familiar with the tracing technology you're going to implement.
+
+NOTE: an important thing to do is to include a `BaggageManager` specifying the baggage properties to include during context propagation. The field provided in the example, `MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG`, is necessary to handle consistency across asynchronous threads.
 
 === How to trace
 
