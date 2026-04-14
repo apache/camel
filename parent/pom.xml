@@ -4467,8 +4467,16 @@
                                     junit.jupiter.execution.parallel.mode.classes.default = concurrent
                                     junit.jupiter.execution.parallel.config.strategy = ${camel.surefire.parallel.strategy}
                                     junit.jupiter.execution.parallel.config.dynamic.factor = ${camel.surefire.parallel.factor}
+                                    junit.jupiter.execution.timeout.default = 10 m
                                 </configurationParameters>
                             </properties>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>@{camel.failsafe.fork.vmargs} @{argLine} -Djunit.jupiter.execution.timeout.default=10m</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
