@@ -19,18 +19,27 @@ package org.apache.camel.opentelemetry2;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.context.propagation.TextMapGetter;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.opentelemetry2.decorators.OpenTelemetryHttpSpanDecorator;
+import org.apache.camel.opentelemetry2.decorators.OpenTelemetryMessagingSpanDecorator;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.telemetry.Op;
 import org.apache.camel.telemetry.Span;
 import org.apache.camel.telemetry.SpanContextPropagationExtractor;
 import org.apache.camel.telemetry.SpanContextPropagationInjector;
+import org.apache.camel.telemetry.SpanDecorator;
+import org.apache.camel.telemetry.SpanDecoratorManager;
+import org.apache.camel.telemetry.SpanDecoratorManagerImpl;
 import org.apache.camel.telemetry.SpanLifecycleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +53,20 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
 
     private Tracer tracer;
     private ContextPropagators contextPropagators;
+    private final SpanDecoratorManager spanDecoratorManager = new SpanDecoratorManagerImpl();
+
+    // ThreadLocal storage for passing decorator and operation context to SpanLifecycleManager
+    private static final ThreadLocal<SpanCreationContext> spanCreationContext = new ThreadLocal<>();
+
+    private static class SpanCreationContext {
+        final SpanDecorator decorator;
+        final Op operation;
+
+        SpanCreationContext(SpanDecorator decorator, Op operation) {
+            this.decorator = decorator;
+            this.operation = operation;
+        }
+    }
 
     @Override
     protected void initTracer() {
@@ -77,6 +100,32 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
 
     void setContextPropagators(ContextPropagators cp) {
         this.contextPropagators = cp;
+    }
+
+    @Override
+    protected void beginEventSpan(Exchange exchange, Endpoint endpoint, Op op) throws Exception {
+        // Store decorator and operation in ThreadLocal so SpanLifecycleManager can access it
+        SpanDecorator decorator = spanDecoratorManager.get(endpoint);
+        spanCreationContext.set(new SpanCreationContext(decorator, op));
+        try {
+            super.beginEventSpan(exchange, endpoint, op);
+        } finally {
+            // Clean up ThreadLocal to avoid memory leaks
+            spanCreationContext.remove();
+        }
+    }
+
+    @Override
+    protected void beginProcessorSpan(Exchange exchange, String processorName) throws Exception {
+        // Store decorator and operation in ThreadLocal so SpanLifecycleManager can access it
+        SpanDecorator decorator = spanDecoratorManager.get(processorName);
+        spanCreationContext.set(new SpanCreationContext(decorator, Op.EVENT_PROCESS));
+        try {
+            super.beginProcessorSpan(exchange, processorName);
+        } finally {
+            // Clean up ThreadLocal to avoid memory leaks
+            spanCreationContext.remove();
+        }
     }
 
     @Override
@@ -135,7 +184,37 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
                 baggage = Baggage.fromContext(ctx);
             }
 
+            // Set SpanKind based on decorator and operation type
+            SpanKind spanKind = determineSpanKind();
+            if (spanKind != null) {
+                builder.setSpanKind(spanKind);
+            }
+
             return new OpenTelemetrySpanAdapter(builder.startSpan(), baggage);
+        }
+
+        private SpanKind determineSpanKind() {
+            SpanCreationContext context = spanCreationContext.get();
+            if (context == null) {
+                return SpanKind.INTERNAL;
+            } else if (context.decorator instanceof OpenTelemetryHttpSpanDecorator http) {
+                return getSpanKindForOp(context.operation, http::getInitiatorSpanKind, http::getReceiverSpanKind);
+            } else if (context.decorator instanceof OpenTelemetryMessagingSpanDecorator msg) {
+                return getSpanKindForOp(context.operation, msg::getInitiatorSpanKind, msg::getReceiverSpanKind);
+            }
+
+            return SpanKind.INTERNAL;
+        }
+
+        private SpanKind getSpanKindForOp(
+                Op operation,
+                java.util.function.Supplier<SpanKind> initiator,
+                java.util.function.Supplier<SpanKind> receiver) {
+            return switch (operation) {
+                case EVENT_SENT -> initiator.get();
+                case EVENT_RECEIVED -> receiver.get();
+                default -> SpanKind.INTERNAL;
+            };
         }
 
         @Override
