@@ -35,6 +35,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "cookiestore":
         case "cookieStore": target.getConfiguration().setCookieStore(property(camelContext, io.vertx.ext.web.client.spi.CookieStore.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.getConfiguration().setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "httpmethod":
@@ -93,6 +95,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectTimeout": return int.class;
         case "cookiestore":
         case "cookieStore": return io.vertx.ext.web.client.spi.CookieStore.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "httpmethod":
@@ -152,6 +156,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "cookiestore":
         case "cookieStore": return target.getConfiguration().getCookieStore();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getConfiguration().getDeserializationFilter();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getConfiguration().getHeaderFilterStrategy();
         case "httpmethod":

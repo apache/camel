@@ -181,7 +181,8 @@ public class NettyHttpProducer extends NettyProducer {
                             } else if (getConfiguration().isThrowExceptionOnFailure()) {
                                 // operation failed so populate exception to throw
                                 Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl,
-                                        response, code, getConfiguration().isTransferException());
+                                        response, code, getConfiguration().isTransferException(),
+                                        getConfiguration().getDeserializationFilter());
                                 exchange.setException(cause);
                             }
                         }
