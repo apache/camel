@@ -114,7 +114,7 @@
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
-        <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
+        <minimalJavaBuildVersion>21</minimalJavaBuildVersion>
 
         <!-- reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2026-03-23T15:25:22Z</project.build.outputTimestamp>
@@ -190,6 +190,14 @@
                     <execution>
                         <id>enforce-java-version</id>
                         <phase>${enforcer.phase}</phase>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[21,)</version>
+                                    <message>JDK 21+ is required to build Apache Camel. The multi-release JAR in camel-util requires JDK 21+ to compile virtual thread support. Building with JDK 17 produces JARs without virtual thread support.</message>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
