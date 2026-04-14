@@ -21,6 +21,7 @@ import io.micrometer.core.instrument.observation.DefaultMeterObservationHandler;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.tracing.BaggageInScope;
 import io.micrometer.tracing.Span.Builder;
 import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
@@ -136,11 +137,35 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
                     return extractor.get(key) == null ? null : (String) extractor.get(key);
                 });
 
+                /*
+                * This part is a bit tricky. We need to verify if the extractor
+                * (ie, the Camel Exchange) holds a propagated parent.
+                * As the micrometer-observability is technology agnostic, we need to check against
+                * the available implementations (Opentelemetry and Zipkin at the moment of writing this comment).
+                * We also need to verify that the span generating this is coming from a Camel "dirty" context.
+                */
+                boolean hasUpstreamTrace = extractor.get("traceparent") != null || extractor.get("X-B3-TraceId") != null;
+                boolean dirtyContext = tracer.getBaggage(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG).get() != null;
+                if (!hasUpstreamTrace && dirtyContext) {
+                    builder.setNoParent();
+                }
+
+                // Dirty context
+
                 span = builder.start();
             }
+
             span.name(spanName);
 
-            return new MicrometerObservabilitySpanAdapter(span);
+            // We need to enable scope now, in order to store it correctly in the thread context.
+            // NOTE: the scope will be eventually closed by the framework.
+            Tracer.SpanInScope scope = tracer.withSpan(span);
+            // We need to enable baggage as it holds important context propagation properties required to recognize
+            // what we call "dirty" context, i.e., a thread
+            // NOTE: the baggage will be eventually closed by the framework.
+            BaggageInScope baggageInScope
+                    = tracer.createBaggageInScope(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG, "true");
+            return new MicrometerObservabilitySpanAdapter(span, scope, baggageInScope);
         }
 
         @Override
