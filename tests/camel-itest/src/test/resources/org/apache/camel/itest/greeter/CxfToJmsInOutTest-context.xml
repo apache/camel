@@ -42,9 +42,14 @@
     <bean id="prepareResponse" class="org.apache.camel.itest.greeter.PrepareResponse"/>
 
     <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
-      <property name="connectionFactory">
-        <bean class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
-            <property name="brokerURL" value="vm://itest-jms"/>
+      <property name="configuration">
+        <bean class="org.apache.camel.component.jms.JmsConfiguration">
+            <property name="connectionFactory">
+                <bean class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+                    <property name="brokerURL" value="vm://itest-jms"/>
+                </bean>
+            </property>
+            <property name="deserializationFilter" value="java.**;javax.**;org.apache.camel.**;org.apache.cxf.**;!*"/>
         </bean>
       </property>
     </bean>
