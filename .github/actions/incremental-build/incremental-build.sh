@@ -696,6 +696,10 @@ main() {
   # This needs to install, not just test, otherwise test-infra will fail due to jandex maven plugin
   # Exclusion list is only needed with -amd (to prevent testing generated/meta modules);
   # without -amd, only the explicitly listed modules are built.
+  echo ""
+  echo "============================================================"
+  echo "Starting Maven build (logging to $log)..."
+  echo "============================================================"
   if [[ "$use_amd" = true ]]; then
     local filtered_exclusions
     filtered_exclusions=$(filterExclusions "$build_pl" "$EXCLUSION_LIST")
@@ -703,10 +707,18 @@ main() {
     if [ -n "$filtered_exclusions" ]; then
       build_pl_with_exclusions="${build_pl},${filtered_exclusions}"
     fi
+    echo "Command: $mavenBinary $MVND_OPTS install -pl \"$build_pl_with_exclusions\" -amd"
+    echo ""
     $mavenBinary -l "$log" $MVND_OPTS install -pl "$build_pl_with_exclusions" -amd || ret=$?
   else
+    echo "Command: $mavenBinary $MVND_OPTS install -pl \"$build_pl\""
+    echo ""
     $mavenBinary -l "$log" $MVND_OPTS install -pl "$build_pl" || ret=$?
   fi
+  echo ""
+  echo "Maven build completed with exit code: $ret"
+  echo "============================================================"
+  echo ""
 
   # ── Step 5: Write comment and summary ──
   local comment_file="incremental-test-comment.md"
@@ -776,11 +788,49 @@ main() {
   fi
 
   if [[ ${ret} -ne 0 ]]; then
-    echo "Processing surefire and failsafe reports to create the summary"
-    if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-      echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |" >> "$GITHUB_STEP_SUMMARY"
+    echo ""
+    echo "============================================================"
+    echo "BUILD FAILED with exit code $ret"
+    echo "============================================================"
+
+    # Show end of build log
+    if [[ -f "$log" ]]; then
+      echo ""
+      echo "Last 50 lines of build log:"
+      echo "------------------------------------------------------------"
+      tail -50 "$log"
+      echo "------------------------------------------------------------"
+      echo ""
+    else
+      echo "WARNING: Build log not found at $log"
+      echo ""
     fi
-    find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+
+    echo "Processing surefire and failsafe reports to create the summary"
+
+    # Find test reports
+    local report_files
+    report_files=$(find . -path '*target/*-reports*' -iname '*.txt' 2>/dev/null || true)
+
+    if [[ -z "$report_files" ]]; then
+      echo ""
+      echo "WARNING: No test report files found!"
+      echo "This means tests never ran - build failed before test execution"
+      echo ""
+    else
+      local report_count
+      report_count=$(echo "$report_files" | wc -l)
+      echo "Found $report_count test report files"
+      echo ""
+
+      if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+        echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |" >> "$GITHUB_STEP_SUMMARY"
+      fi
+
+      echo "Invoking parse_errors.sh on each report file..."
+      find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+      echo "Done processing test reports"
+    fi
   fi
 
   exit $ret
