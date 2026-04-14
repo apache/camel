@@ -148,3 +148,28 @@ Your application may require a Java agent in order to get the traces generated b
 You can leverage the `traceHeadersInclusion` to include the generated `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` into the Camel Exchange and together with `camel-mdc` you can make those headers available in the MDC context (via `camel.mdc.customHeaders=CAMEL_TRACE_ID,CAMEL_SPAN_ID` configuration). This is the idiomatic way in Camel.
 
 As an alternative, you can add Mapped Diagnostic Context tracing information (ie, `trace_id` and `span_id`) adding the specific https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[Opentelemetry Logger MDC auto instrumentation]. This would be available if you configure the Opentelemetry. The logging configuration depends on the logging framework you're using.
+
+=== Span customization
+
+When you're working at a very low level, you may need to tweak your metrics and add some in-process custom `span` in order to trace some specific measure of your application. If you need this advanced use case, you can create it during your process by configuring a Micrometer Tracer object and share it to your route. For example, in Java DSL:
+
+[source,java]
+----
+protected io.micrometer.tracing.Tracer tracer = new OtelTracer(
+    otelTracer,
+    currentTraceContext,
+    event -> {
+    },
+    new OtelBaggageManager(
+            currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
+...
+public void process(Exchange exchange) throws Exception {
+    exchange.getIn().setHeader("operation", "fake");
+    // We add a span during the processing. We need to verify this span is correctly
+    // created and belong to the proper hierarchy. Important: the user has to know which is the
+    // tracer, likely, setting it on the camel-telemetry Tracer component explicitly.
+    Span mySpan = tracer.nextSpan().name("mySpan").start();
+    // Do the work here
+    mySpan.end();
+}
+----
