@@ -23,6 +23,8 @@ import java.util.Map;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.CamelContext;
@@ -38,12 +40,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpanInjection extends OpenTelemetryTracerTestSupport {
+public class SpanInjectionTest extends OpenTelemetryTracerTestSupport {
+
+    Tracer tracer = otelExtension.getOpenTelemetry().getTracer("spanInjection");
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         OpenTelemetryTracer tst = new OpenTelemetryTracer();
-        tst.setTracer(otelExtension.getOpenTelemetry().getTracer("traceTest"));
+        tst.setTracer(tracer);
         tst.setContextPropagators(otelExtension.getOpenTelemetry().getPropagators());
         tst.setTraceProcessors(true);
         CamelContext context = super.createCamelContext();
@@ -55,14 +59,16 @@ public class SpanInjection extends OpenTelemetryTracerTestSupport {
     @Test
     void testRouteSingleRequest() throws IOException {
         // NOTE: we simulate that any external third party is the root parent, as we want Camel traces to depend on it.
-        Span span = otelExtension.getOpenTelemetry().getTracer("traceTest").spanBuilder("mySpan").startSpan();
-        String expectedTrace = span.getSpanContext().getTraceId();
-        String expectedSpan = span.getSpanContext().getSpanId();
-        try (Scope scope = span.makeCurrent()) {
-            template.sendBody("direct:start", "my-body");
-            Map<String, OtelTrace> traces = otelExtension.getTraces();
-            assertEquals(1, traces.size());
-            checkTrace(traces.values().iterator().next(), expectedTrace, expectedSpan);
+        try (Scope rootScope = Context.root().makeCurrent()) {
+            Span span = tracer.spanBuilder("mySpan").startSpan();
+            String expectedTrace = span.getSpanContext().getTraceId();
+            String expectedSpan = span.getSpanContext().getSpanId();
+            try (Scope scope = span.makeCurrent()) {
+                template.sendBody("direct:start", "my-body");
+                Map<String, OtelTrace> traces = otelExtension.getTraces();
+                assertEquals(1, traces.size());
+                checkTrace(traces.values().iterator().next(), expectedTrace, expectedSpan);
+            }
         }
     }
 
@@ -71,12 +77,14 @@ public class SpanInjection extends OpenTelemetryTracerTestSupport {
         int i = 10;
         Map<String, String> tracesRef = new HashMap<>();
         for (int j = 0; j < i; j++) {
-            // NOTE: we simulate that any external third party is the root parent, as we want Camel traces to depend on it.
-            Span span = otelExtension.getOpenTelemetry().getTracer("traceTest").spanBuilder("mySpan").startSpan();
-            // We hold the reference of each parent span for each trace
-            tracesRef.put(span.getSpanContext().getTraceId(), span.getSpanContext().getSpanId());
-            try (Scope scope = span.makeCurrent()) {
-                context.createProducerTemplate().sendBody("direct:start", "Hello!");
+            try (Scope rootScope = Context.root().makeCurrent()) {
+                // NOTE: we simulate that any external third party is the root parent, as we want Camel traces to depend on it.
+                Span span = tracer.spanBuilder("mySpan").startSpan();
+                // We hold the reference of each parent span for each trace
+                tracesRef.put(span.getSpanContext().getTraceId(), span.getSpanContext().getSpanId());
+                try (Scope scope = span.makeCurrent()) {
+                    context.createProducerTemplate().sendBody("direct:start", "Hello!");
+                }
             }
         }
         Map<String, OtelTrace> traces = otelExtension.getTraces();
