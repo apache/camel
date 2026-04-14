@@ -70,6 +70,10 @@ jobs:
         java: ['17', '21']
         experimental: [ false ]
         include:
+          - java: '17'
+            # JDK 17 is kept for runtime compatibility testing.
+            # Skip the enforcer which requires JDK 21+ (needed to compile JDK 21-specific classes).
+            maven_extra_args: '-Denforcer.phase=none'
           - java: '25'
             experimental: true
 
@@ -90,6 +94,8 @@ jobs:
           cache: 'maven'
       - name: maven build
         if: ${{ !inputs.skip_full_build }}
+        env:
+          MAVEN_EXTRA_ARGS: ${{ matrix.maven_extra_args || '' }}
         run: ./etc/scripts/regen.sh
       - name: Quick dependency build
         if: ${{ inputs.skip_full_build }}

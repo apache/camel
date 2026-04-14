@@ -195,6 +195,14 @@
                     <execution>
                         <id>enforce-java-version</id>
                         <phase>${enforcer.phase}</phase>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[21,)</version>
+                                    <message>JDK 21+ is required to build Apache Camel. JDK 21-specific classes (e.g., virtual thread support in camel-util) are only compiled with JDK 21+. Building with JDK 17 silently omits these classes from the resulting JARs.</message>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
