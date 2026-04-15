@@ -1971,6 +1971,10 @@ public class Run extends CamelCommand {
                     }
                     return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
                 } else {
+                    // for yaml we only accept xxx.camel.yaml or xxx.yaml
+                    if (!"camel.yaml".equals(ext) && !"yaml".equals(ext)) {
+                        return false;
+                    }
                     return ACCEPTED_YAML_ROOT_ELEMENTS.stream().anyMatch(tag -> source.content().contains(tag));
                 }
             }

@@ -13,12 +13,16 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.19 to 4.20
 
+=== camel-jbang
+
+Using `camel run` and `camel export` will only accept YAML DSL files that has naming convention `xxx.yaml` or `xxx.camel.yaml`.
+This allows to include resource files such as `prompt.ai.yaml` that will not be loaded as YAML DSL by Camel.
+
 === camel-exec
 
 The `camel-exec` component is made more restrict by default, as the command line arguments, and other parameters
 cannot be dynamic provided from Camel message headers. To allow this you now have to enable this by setting
 `allowControlHeaders=true` on either the component (globally) or per endpoint when needed.
-
 
 === camel-pulsar
 
