@@ -135,7 +135,7 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
                 baggage = Baggage.fromContext(ctx);
             }
 
-            return new OpenTelemetrySpanAdapter(builder.startSpan(), baggage);
+            return new OpenTelemetrySpanAdapter(builder, baggage);
         }
 
         @Override
