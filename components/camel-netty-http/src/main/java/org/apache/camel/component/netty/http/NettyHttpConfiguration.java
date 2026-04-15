@@ -53,7 +53,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean throwExceptionOnFailure = true;
     @UriParam(label = "advanced")
     private boolean transferException;
-    @UriParam(label = "producer,security")
+    @UriParam(label = "advanced,security")
     private String deserializationFilter;
     @UriParam(label = "consumer")
     private boolean muteException;
