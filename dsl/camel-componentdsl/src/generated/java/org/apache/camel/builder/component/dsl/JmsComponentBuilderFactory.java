@@ -2360,7 +2360,7 @@ public interface JmsComponentBuilderFactory {
             case "headerFilterStrategy": ((JmsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "errorHandlerLoggingLevel": getOrCreateConfiguration((JmsComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
             case "errorHandlerLogStackTrace": getOrCreateConfiguration((JmsComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
-            case "deserializationFilter": ((JmsComponent) component).setDeserializationFilter((java.lang.String) value); return true;
+            case "deserializationFilter": getOrCreateConfiguration((JmsComponent) component).setDeserializationFilter((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((JmsComponent) component).setPassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((JmsComponent) component).setUsername((java.lang.String) value); return true;
             case "transacted": getOrCreateConfiguration((JmsComponent) component).setTransacted((boolean) value); return true;

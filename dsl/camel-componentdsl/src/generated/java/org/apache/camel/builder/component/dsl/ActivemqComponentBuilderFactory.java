@@ -2468,7 +2468,7 @@ public interface ActivemqComponentBuilderFactory {
             case "headerFilterStrategy": ((ActiveMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "errorHandlerLoggingLevel": getOrCreateConfiguration((ActiveMQComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
             case "errorHandlerLogStackTrace": getOrCreateConfiguration((ActiveMQComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
-            case "deserializationFilter": ((ActiveMQComponent) component).setDeserializationFilter((java.lang.String) value); return true;
+            case "deserializationFilter": getOrCreateConfiguration((ActiveMQComponent) component).setDeserializationFilter((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((ActiveMQComponent) component).setPassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((ActiveMQComponent) component).setUsername((java.lang.String) value); return true;
             case "transacted": getOrCreateConfiguration((ActiveMQComponent) component).setTransacted((boolean) value); return true;
