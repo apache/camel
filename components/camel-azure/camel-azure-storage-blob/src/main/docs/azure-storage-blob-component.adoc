@@ -725,6 +725,21 @@ from("direct:createBlobSnapshot")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+=== Reading a specific blob snapshot
+
+The `getBlob`, `downloadBlobToFile` and `downloadLink` operations can target a specific snapshot by setting the
+`snapshotId` URI parameter or the `CamelAzureStorageBlobSnapshotId` exchange header. When set, the read is scoped
+to the snapshot version of the blob instead of the live one. The header takes precedence over the URI parameter.
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:readSnapshot")
+  .process(exchange -> exchange.getIn().setHeader(BlobConstants.BLOB_SNAPSHOT_ID, "2026-04-15T10:00:00.0000000Z"))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
 === SAS Token generation example
 
 SAS Blob Container tokens can be generated programmatically or via Azure UI. To generate the token with java code, the following can be done:

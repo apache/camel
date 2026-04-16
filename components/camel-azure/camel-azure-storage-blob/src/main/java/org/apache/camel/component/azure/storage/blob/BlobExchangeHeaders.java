@@ -241,6 +241,10 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_NAME, String.class);
     }
 
+    public static String getSnapshotIdFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_SNAPSHOT_ID, String.class);
+    }
+
     public static String getBlobContainerNameFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_CONTAINER_NAME, String.class);
     }

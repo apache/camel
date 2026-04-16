@@ -187,6 +187,10 @@ public class BlobConfigurationOptionsProxy {
         return getOption(BlobExchangeHeaders::getBlobNameFromHeaders, configuration::getBlobName, exchange);
     }
 
+    public String getSnapshotId(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getSnapshotIdFromHeaders, configuration::getSnapshotId, exchange);
+    }
+
     public String getContainerName(final Exchange exchange) {
         return getOption(BlobExchangeHeaders::getBlobContainerNameFromHeaders, configuration::getContainerName, exchange);
     }

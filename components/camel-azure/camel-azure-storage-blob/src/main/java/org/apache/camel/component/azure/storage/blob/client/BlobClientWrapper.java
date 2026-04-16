@@ -336,6 +336,17 @@ public class BlobClientWrapper {
         return client.createSnapshotWithResponse(metadata, requestConditions, timeout, Context.NONE);
     }
 
+    /**
+     * Returns a wrapper scoped to the given blob snapshot, or {@code this} when the snapshot id is empty. Subsequent
+     * read operations on the returned wrapper target the snapshot version of the blob instead of the live one.
+     */
+    public BlobClientWrapper withSnapshot(final String snapshotId) {
+        if (ObjectHelper.isEmpty(snapshotId)) {
+            return this;
+        }
+        return new BlobClientWrapper(client.getSnapshotClient(snapshotId));
+    }
+
     public BlobLeaseClient getLeaseClient() {
         return new BlobLeaseClientBuilder().blobClient(client).buildClient();
     }

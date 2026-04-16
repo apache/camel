@@ -97,11 +97,12 @@ public class BlobOperations {
         final OutputStream outputStream = ObjectHelper.isEmpty(message) ? null : message.getBody(OutputStream.class);
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final BlobCommonRequestOptions blobCommonRequestOptions = getCommonRequestOptions(exchange);
+        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange));
 
         if (outputStream == null) {
             // Then we create an input stream
             final Map<String, Object> blobInputStream
-                    = client.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
+                    = readClient.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
             final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders
                     .createBlobExchangeHeadersFromBlobProperties((BlobProperties) blobInputStream.get("properties"));
             InputStream is = (InputStream) blobInputStream.get("inputStream");
@@ -123,7 +124,7 @@ public class BlobOperations {
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
 
         try {
-            final ResponseBase<BlobDownloadHeaders, Void> response = client.downloadWithResponse(outputStream, blobRange,
+            final ResponseBase<BlobDownloadHeaders, Void> response = readClient.downloadWithResponse(outputStream, blobRange,
                     downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
                     blobCommonRequestOptions.getContentMD5() != null, blobCommonRequestOptions.getTimeout());
 
@@ -151,8 +152,9 @@ public class BlobOperations {
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
+        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange));
 
-        final Response<BlobProperties> response = client.downloadToFileWithResponse(fileToDownload.toString(), blobRange,
+        final Response<BlobProperties> response = readClient.downloadToFileWithResponse(fileToDownload.toString(), blobRange,
                 parallelTransferOptions, downloadRetryOptions,
                 commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getContentMD5() != null,
                 commonRequestOptions.getTimeout());
@@ -189,7 +191,10 @@ public class BlobOperations {
 
         final BlobServiceSasSignatureValues serviceSasSignatureValues
                 = new BlobServiceSasSignatureValues(offsetDateTimeToSet, sasPermission);
-        final String url = client.getBlobUrl() + "?" + client.generateSas(serviceSasSignatureValues);
+        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange));
+        final String blobUrl = readClient.getBlobUrl();
+        final String sasToken = readClient.generateSas(serviceSasSignatureValues);
+        final String url = blobUrl + (blobUrl.contains("?") ? "&" : "?") + sasToken;
 
         final BlobExchangeHeaders headers = BlobExchangeHeaders.create().downloadLink(url);
 

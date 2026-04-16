@@ -541,6 +541,24 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * The snapshot identifier used to target a specific blob snapshot on
+         * read operations (getBlob, downloadBlobToFile, downloadLink). When
+         * set, the read targets the snapshot scoped client instead of the live
+         * blob. Can also be provided per-exchange via the
+         * CamelAzureStorageBlobSnapshotId header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param snapshotId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder snapshotId(String snapshotId) {
+            doSetProperty("snapshotId", snapshotId);
+            return this;
+        }
+        /**
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
@@ -1974,6 +1992,24 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * The snapshot identifier used to target a specific blob snapshot on
+         * read operations (getBlob, downloadBlobToFile, downloadLink). When
+         * set, the read targets the snapshot scoped client instead of the live
+         * blob. Can also be provided per-exchange via the
+         * CamelAzureStorageBlobSnapshotId header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param snapshotId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder snapshotId(String snapshotId) {
+            doSetProperty("snapshotId", snapshotId);
+            return this;
+        }
+        /**
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
@@ -3136,6 +3172,24 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * The snapshot identifier used to target a specific blob snapshot on
+         * read operations (getBlob, downloadBlobToFile, downloadLink). When
+         * set, the read targets the snapshot scoped client instead of the live
+         * blob. Can also be provided per-exchange via the
+         * CamelAzureStorageBlobSnapshotId header.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param snapshotId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder snapshotId(String snapshotId) {
+            doSetProperty("snapshotId", snapshotId);
+            return this;
+        }
+        /**
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
@@ -4271,11 +4325,14 @@ public interface BlobEndpointBuilderFactory {
             return "CamelAzureStorageBlobContext";
         }
         /**
-         * The snapshot identifier returned after creating a blob snapshot.
+         * The snapshot identifier. On createBlobSnapshot it is set on the
+         * exchange as the id of the newly created snapshot. On read operations
+         * (getBlob, downloadBlobToFile, downloadLink) it can be provided as
+         * input to target a specific blob snapshot.
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code AzureStorageBlobSnapshotId}.
          */

@@ -56,6 +56,8 @@ public class BlobConfiguration implements Cloneable {
     private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
     @UriParam(label = "common")
     private String blobName;
+    @UriParam(label = "common")
+    private String snapshotId;
     @UriParam(label = "common", enums = "blockblob,appendblob,pageblob", defaultValue = "blockblob")
     private BlobType blobType = BlobType.blockblob;
     @UriParam(label = "common")
@@ -215,6 +217,19 @@ public class BlobConfiguration implements Cloneable {
 
     public void setBlobName(String blobName) {
         this.blobName = blobName;
+    }
+
+    /**
+     * The snapshot identifier used to target a specific blob snapshot on read operations (getBlob, downloadBlobToFile,
+     * downloadLink). When set, the read targets the snapshot scoped client instead of the live blob. Can also be
+     * provided per-exchange via the {@code CamelAzureStorageBlobSnapshotId} header.
+     */
+    public String getSnapshotId() {
+        return snapshotId;
+    }
+
+    public void setSnapshotId(String snapshotId) {
+        this.snapshotId = snapshotId;
     }
 
     /**

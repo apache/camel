@@ -86,6 +86,7 @@ class BlobOperationsTest extends CamelTestSupport {
         mockedResults.put("inputStream", new ByteArrayInputStream("testInput".getBytes(Charset.defaultCharset())));
         mockedResults.put("properties", createBlobProperties());
 
+        when(client.withSnapshot(any())).thenReturn(client);
         when(client.openInputStream(any(), any())).thenReturn(mockedResults);
 
         final Exchange exchange = new DefaultExchange(context);
@@ -204,6 +205,54 @@ class BlobOperationsTest extends CamelTestSupport {
 
         assertNotNull(response);
         assertTrue((boolean) response.getBody());
+    }
+
+    @Test
+    void testGetBlobWithSnapshotIdReadsFromScopedClient() throws IOException {
+        final String snapshotId = "2026-04-15T10:00:00.0000000Z";
+        final BlobClientWrapper snapshotScopedClient = mock(BlobClientWrapper.class);
+
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("fromSnapshot".getBytes(Charset.defaultCharset())));
+        mockedResults.put("properties", createBlobProperties());
+
+        when(client.withSnapshot(snapshotId)).thenReturn(snapshotScopedClient);
+        when(snapshotScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
+
+        configuration.setSnapshotId(snapshotId);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.getBlob(null);
+
+        assertNotNull(response);
+        assertEquals("fromSnapshot",
+                new BufferedReader(new InputStreamReader((InputStream) response.getBody())).readLine());
+
+        verify(client, times(1)).withSnapshot(snapshotId);
+        verify(snapshotScopedClient, times(1)).openInputStream(any(), any());
+    }
+
+    @Test
+    void testGetBlobWithSnapshotIdHeaderOverridesConfig() throws IOException {
+        final String configuredSnapshotId = "2026-04-15T10:00:00.0000000Z";
+        final String headerSnapshotId = "2026-04-16T12:00:00.0000000Z";
+        final BlobClientWrapper snapshotScopedClient = mock(BlobClientWrapper.class);
+
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("fromHeader".getBytes(Charset.defaultCharset())));
+        mockedResults.put("properties", createBlobProperties());
+
+        when(client.withSnapshot(headerSnapshotId)).thenReturn(snapshotScopedClient);
+        when(snapshotScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
+
+        configuration.setSnapshotId(configuredSnapshotId);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.BLOB_SNAPSHOT_ID, headerSnapshotId);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        operations.getBlob(exchange);
+
+        verify(client, times(1)).withSnapshot(headerSnapshotId);
     }
 
     @Test
