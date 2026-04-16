@@ -92,3 +92,37 @@ Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any ac
 === camel-aws-xray removal
 
 Camel AWS X-Ray was deprecated with Camel 4.17. Amazon Web Services X-Ray service is in maintenance mode since February 2026. The component is now removed.
+
+=== camel-telemetry
+
+If you have custom telemetry implementations, the following interfaces have changed:
+
+==== `org.apache.camel.telemetry.SpanLifecycleManager`
+
+The `create` method signature has changed:
+
+[source,java]
+----
+// Old signature
+Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor)
+
+// New signature
+Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor
+extractor)
+----
+
+==== `org.apache.camel.telemetry.SpanDecorator`
+
+A new method must be implemented:
+
+[source,java]
+----
+String getSpanKind(String operation)
+----
+
+This method should return the appropriate SpanKind based on the operation. Most implementations can
+extend from:
+
+- `AbstractSpanDecorator` (returns `INTERNAL` for all operations)
+- `AbstractHttpSpanDecorator` (returns `CLIENT` for `EVENT_SENT`, `SERVER` for `EVENT_RECEIVED`)
+- `AbstractMessagingSpanDecorator` (returns `PRODUCER` for `EVENT_SENT`, `CONSUMER` for `EVENT_RECEIVED`)

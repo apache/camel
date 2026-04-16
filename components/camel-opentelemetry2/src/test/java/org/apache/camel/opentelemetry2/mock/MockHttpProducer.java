@@ -14,21 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.telemetry;
+package org.apache.camel.opentelemetry2.mock;
 
 /**
- * This interface is used to manage the lifecycle of a Span.
+ * Mock HTTP producer that just echoes the input.
  */
-public interface SpanLifecycleManager {
+class MockHttpProducer extends org.apache.camel.support.DefaultProducer {
 
-    Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor);
+    public MockHttpProducer(org.apache.camel.Endpoint endpoint) {
+        super(endpoint);
+    }
 
-    void activate(Span span);
-
-    void deactivate(Span span);
-
-    void close(Span span);
-
-    void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing);
-
+    @Override
+    public void process(org.apache.camel.Exchange exchange) throws Exception {
+        // Simple echo - set response body to request body
+        exchange.getMessage().setBody("HTTP Response: " + exchange.getIn().getBody());
+    }
 }

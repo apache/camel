@@ -22,6 +22,7 @@ import java.util.Map;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
@@ -101,7 +102,7 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
         }
 
         @Override
-        public Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor) {
+        public Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor) {
             SpanBuilder builder = tracer.spanBuilder(spanName);
             Baggage baggage = Baggage.current();
 
@@ -142,6 +143,10 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
                 baggage = Baggage.fromContext(ctx);
             }
             baggage = getBaggageFromHeaders(baggage, extractor);
+
+            if (spanKind != null) {
+                builder.setSpanKind(SpanKind.valueOf(spanKind));
+            }
 
             return new OpenTelemetrySpanAdapter(builder.startSpan(), baggage);
         }

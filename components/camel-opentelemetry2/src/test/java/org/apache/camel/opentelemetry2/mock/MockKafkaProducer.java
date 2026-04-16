@@ -14,21 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.telemetry;
+package org.apache.camel.opentelemetry2.mock;
 
 /**
- * This interface is used to manage the lifecycle of a Span.
+ * Mock Kafka producer that simulates Kafka headers.
  */
-public interface SpanLifecycleManager {
+class MockKafkaProducer extends org.apache.camel.support.DefaultProducer {
 
-    Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor);
+    public MockKafkaProducer(org.apache.camel.Endpoint endpoint) {
+        super(endpoint);
+    }
 
-    void activate(Span span);
-
-    void deactivate(Span span);
-
-    void close(Span span);
-
-    void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing);
-
+    @Override
+    public void process(org.apache.camel.Exchange exchange) throws Exception {
+        // Simulate Kafka response with partition, offset, and key
+        // These headers would normally be set by the real Kafka producer
+        exchange.getMessage().setHeader("kafka.PARTITION", 0);
+        exchange.getMessage().setHeader("kafka.OFFSET", "12345");
+        exchange.getMessage().setHeader("kafka.KEY", "test-key");
+        exchange.getMessage().setBody("Kafka Response: " + exchange.getIn().getBody());
+    }
 }
