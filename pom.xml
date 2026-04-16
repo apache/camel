@@ -869,6 +869,23 @@
                             <outputName>${project.artifactId}-${project.version}-sbom</outputName>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-java-version</id>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <version>[25,)</version>
+                                            <message>JDK 25+ is required for releases to ensure all multi-release JAR layers (java-21, java-25) are compiled.</message>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 
                 </plugins>
             </build>
