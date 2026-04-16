@@ -2565,7 +2565,7 @@ public interface AmqpComponentBuilderFactory {
             case "headerFilterStrategy": ((AMQPComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "errorHandlerLoggingLevel": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
             case "errorHandlerLogStackTrace": getOrCreateConfiguration((AMQPComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
-            case "deserializationFilter": getOrCreateConfiguration((AMQPComponent) component).setDeserializationFilter((java.lang.String) value); return true;
+            case "deserializationFilter": ((AMQPComponent) component).setDeserializationFilter((java.lang.String) value); return true;
             case "keyStorePassword": ((AMQPComponent) component).setKeyStorePassword((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((AMQPComponent) component).setPassword((java.lang.String) value); return true;
             case "trustStorePassword": ((AMQPComponent) component).setTrustStorePassword((java.lang.String) value); return true;

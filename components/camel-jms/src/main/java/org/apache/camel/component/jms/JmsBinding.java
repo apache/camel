@@ -123,6 +123,9 @@ public class JmsBinding {
         }
         String configured = endpoint.getConfiguration() != null
                 ? endpoint.getConfiguration().getDeserializationFilter() : null;
+        if (configured == null) {
+            configured = endpoint.getComponent().getDeserializationFilter();
+        }
         this.deserializationFilter = resolveDeserializationFilter(configured);
     }
 
