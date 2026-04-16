@@ -36,7 +36,7 @@
 
     <properties>
         <camel-prepare-component>false</camel-prepare-component>
-        <camel-launcher.version>4.19.0-SNAPSHOT</camel-launcher.version>
+        <camel-launcher.version>4.20.0-SNAPSHOT</camel-launcher.version>
         <container.base-image>eclipse-temurin:21-jre</container.base-image>
         <container.user>ubuntu</container.user>
         <docker.context>${project.build.directory}/docker</docker.context>

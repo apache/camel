@@ -179,7 +179,7 @@ class DependencyCheckToolsTest {
         DependencyCheckTools.DependencyCheckResult result
                 = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null, null);
 
-        // 4.10.0 is older than the catalog version (4.19.0-SNAPSHOT)
+        // 4.10.0 is older than the catalog version (4.20.0-SNAPSHOT)
         assertThat(result.versionStatus().status()).isEqualTo("outdated");
         assertThat(result.versionStatus().outdated()).isTrue();
         assertThat(result.versionStatus().catalogVersion()).isNotEmpty();
@@ -366,7 +366,7 @@ class DependencyCheckToolsTest {
         assertThat(DependencyCheckTools.compareVersions("4.19.0", "4.19.0")).isZero();
         assertThat(DependencyCheckTools.compareVersions("4.19.0", "4.10.0")).isPositive();
         assertThat(DependencyCheckTools.compareVersions("3.20.0", "4.0.0")).isNegative();
-        assertThat(DependencyCheckTools.compareVersions("4.19.0-SNAPSHOT", "4.19.0")).isZero();
+        assertThat(DependencyCheckTools.compareVersions("4.20.0-SNAPSHOT", "4.19.0")).isZero();
     }
 
     // ---- POM sanitization ----
