@@ -102,7 +102,8 @@ jobs:
         shell: bash
         env:
           EXTRA_MODULES: ${{ inputs.extra_modules }}
-        run: ./mvnw -l build.log install -B -DskipTests -Dquickly -pl "$EXTRA_MODULES" -am
+          MAVEN_EXTRA_ARGS: ${{ matrix.maven_extra_args || '' }}
+        run: ./mvnw -l build.log install -B -DskipTests -Dquickly $MAVEN_EXTRA_ARGS -pl "$EXTRA_MODULES" -am
       - name: archive logs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
@@ -121,6 +122,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
           extra-modules: ${{ inputs.extra_modules || '' }}
+          maven-extra-args: ${{ matrix.maven_extra_args || '' }}
       - name: archive incremental test logs
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()

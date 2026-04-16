@@ -31,6 +31,7 @@
 set -euo pipefail
 
 echo "Using MVND_OPTS=$MVND_OPTS"
+echo "Using MAVEN_EXTRA_ARGS=${MAVEN_EXTRA_ARGS:-}"
 
 maxNumberOfTestableProjects=50
 
@@ -261,7 +262,7 @@ runScalpelDetection() {
   fi
 
   echo "  Scalpel: running mvn validate (report mode)..."
-  ./mvnw -B -q validate $scalpel_args -l /tmp/scalpel-validate.log 2>/dev/null || {
+  ./mvnw -B -q validate $scalpel_args ${MAVEN_EXTRA_ARGS:-} -l /tmp/scalpel-validate.log 2>/dev/null || {
     echo "  WARNING: Scalpel detection failed (exit $?), skipping"
     grep -i "scalpel" /tmp/scalpel-validate.log 2>/dev/null | head -5 || true
     return
@@ -742,13 +743,13 @@ main() {
     if [ -n "$filtered_exclusions" ]; then
       build_pl_with_exclusions="${build_pl},${filtered_exclusions}"
     fi
-    echo "Command: $mavenBinary $MVND_OPTS install -pl \"$build_pl_with_exclusions\" -amd"
+    echo "Command: $mavenBinary $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -pl \"$build_pl_with_exclusions\" -amd"
     echo ""
-    $mavenBinary -l "$log" $MVND_OPTS install -pl "$build_pl_with_exclusions" -amd || ret=$?
+    $mavenBinary -l "$log" $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -pl "$build_pl_with_exclusions" -amd || ret=$?
   else
-    echo "Command: $mavenBinary $MVND_OPTS install -pl \"$build_pl\""
+    echo "Command: $mavenBinary $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -pl \"$build_pl\""
     echo ""
-    $mavenBinary -l "$log" $MVND_OPTS install -pl "$build_pl" || ret=$?
+    $mavenBinary -l "$log" $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -pl "$build_pl" || ret=$?
   fi
   echo ""
   echo "Maven build completed with exit code: $ret"
