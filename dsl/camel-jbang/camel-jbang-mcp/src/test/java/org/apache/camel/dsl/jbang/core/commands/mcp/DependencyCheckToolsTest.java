@@ -362,11 +362,12 @@ class DependencyCheckToolsTest {
 
     @Test
     void compareVersionsCorrectly() {
-        assertThat(DependencyCheckTools.compareVersions("4.10.0", "4.19.0")).isNegative();
-        assertThat(DependencyCheckTools.compareVersions("4.19.0", "4.19.0")).isZero();
-        assertThat(DependencyCheckTools.compareVersions("4.19.0", "4.10.0")).isPositive();
-        assertThat(DependencyCheckTools.compareVersions("3.20.0", "4.0.0")).isNegative();
-        assertThat(DependencyCheckTools.compareVersions("4.20.0-SNAPSHOT", "4.19.0")).isZero();
+        // Use synthetic versions to avoid being mangled by automated version-bump scripts
+        assertThat(DependencyCheckTools.compareVersions("1.2.0", "1.10.0")).isNegative();
+        assertThat(DependencyCheckTools.compareVersions("1.10.0", "1.10.0")).isZero();
+        assertThat(DependencyCheckTools.compareVersions("1.10.0", "1.2.0")).isPositive();
+        assertThat(DependencyCheckTools.compareVersions("2.20.0", "3.0.0")).isNegative();
+        assertThat(DependencyCheckTools.compareVersions("1.5.0-SNAPSHOT", "1.5.0")).isZero();
     }
 
     // ---- POM sanitization ----
