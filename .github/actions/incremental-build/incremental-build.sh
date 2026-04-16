@@ -644,6 +644,9 @@ main() {
   #   (Maven builds them implicitly as dependencies of child modules)
   local use_amd=false
   local testDependents="0"
+  # Reactor artifact IDs resolved by the threshold check below.
+  # Reused later to validate -pl exclusions against the -amd reactor.
+  local reactor_ids=""
 
   if [ -n "$testable_pl" ]; then
     # File-path modules with tests — use -amd to catch dependents
@@ -661,10 +664,12 @@ main() {
       if [ -n "$extraModules" ]; then
         threshold_pl="${threshold_pl},${extraModules}"
       fi
+      # Resolve the -amd reactor: captures artifact IDs for both the threshold
+      # count and later exclusion filtering (avoids a second Maven invocation).
       local totalTestableProjects
-      totalTestableProjects=$(./mvnw -B -q -amd exec:exec -Dexec.executable="pwd" -pl "$threshold_pl" 2>/dev/null | wc -l) || true
-      totalTestableProjects=$(echo "$totalTestableProjects" | tail -1 | tr -d '[:space:]')
-      totalTestableProjects=${totalTestableProjects:-0}
+      reactor_ids=$(./mvnw -B -q -amd exec:exec -Dexec.executable="echo" \
+        -Dexec.args='${project.artifactId}' -pl "$threshold_pl" 2>/dev/null || true)
+      totalTestableProjects=$(echo "$reactor_ids" | grep -c . || true)
 
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]]; then
         echo "Too many dependent modules (${totalTestableProjects} > ${maxNumberOfTestableProjects}), testing only the affected modules"
@@ -712,6 +717,27 @@ main() {
   if [[ "$use_amd" = true ]]; then
     local filtered_exclusions
     filtered_exclusions=$(filterExclusions "$build_pl" "$EXCLUSION_LIST")
+    # Drop exclusions for modules not reachable as dependents of build_pl.
+    # Maven errors if !:module references an artifact outside the -amd reactor.
+    if [ -n "$filtered_exclusions" ]; then
+      # Resolve reactor if not already captured by the threshold check
+      if [ -z "$reactor_ids" ]; then
+        reactor_ids=$(./mvnw -B -q -pl "$build_pl" -amd exec:exec \
+          -Dexec.executable="echo" -Dexec.args='${project.artifactId}' 2>/dev/null || true)
+      fi
+      if [ -n "$reactor_ids" ]; then
+        local valid_exclusions=""
+        for excl in $(echo "$filtered_exclusions" | tr ',' '\n'); do
+          local excl_id="${excl#!:}"
+          if echo "$reactor_ids" | grep -qx "$excl_id"; then
+            valid_exclusions="${valid_exclusions:+${valid_exclusions},}${excl}"
+          else
+            echo "  Dropping exclusion ${excl} (not in -amd reactor)"
+          fi
+        done
+        filtered_exclusions="$valid_exclusions"
+      fi
+    fi
     local build_pl_with_exclusions="$build_pl"
     if [ -n "$filtered_exclusions" ]; then
       build_pl_with_exclusions="${build_pl},${filtered_exclusions}"
