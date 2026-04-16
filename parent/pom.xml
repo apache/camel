@@ -218,7 +218,7 @@
         <google-cloud-firestore-version>3.41.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.79.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.1.0</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.150.0</google-cloud-pubsub-version>
+        <google-cloud-pubsub-version>1.150.1</google-cloud-pubsub-version>
         <google-cloud-secretmanager-version>2.91.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.67.0</google-cloud-storage-version>
         <google-cloud-aiplatform-version>3.92.0</google-cloud-aiplatform-version>
