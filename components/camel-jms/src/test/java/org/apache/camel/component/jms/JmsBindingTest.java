@@ -53,6 +53,8 @@ public class JmsBindingTest {
     private JmsConfiguration mockJmsConfiguration;
     @Mock
     private JmsEndpoint mockJmsEndpoint;
+    @Mock
+    private JmsComponent mockJmsComponent;
 
     private JmsBinding jmsBindingUnderTest;
 
@@ -61,6 +63,8 @@ public class JmsBindingTest {
         lenient().when(mockJmsConfiguration.isFormatDateHeadersToIso8601()).thenReturn(false);
         lenient().when(mockJmsConfiguration.isMapJmsMessage()).thenReturn(true);
         lenient().when(mockJmsEndpoint.getConfiguration()).thenReturn(mockJmsConfiguration);
+        lenient().when(mockJmsEndpoint.getComponent()).thenReturn(mockJmsComponent);
+        lenient().when(mockJmsComponent.getConfiguration()).thenReturn(mockJmsConfiguration);
         jmsBindingUnderTest = new JmsBinding(mockJmsEndpoint);
     }
 
