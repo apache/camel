@@ -110,6 +110,78 @@ As an alternative, you can use the agent's built-in MDC integration.
 . Enable the https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[Logger MDC auto-instrumentation]. This automatically adds `trace_id` and `span_id` to the MDC.
 . Configure your logging framework to include these MDC keys in your log format. The exact configuration depends on the logging library you use.
 
+[[OpenTelemetry-SpringBoot-starter]]
+=== Using the OpenTelemetry Spring Boot starter
+
+An alternative to the OpenTelemetry agent is to use https://opentelemetry.io/docs/zero-code/java/spring-boot-starter/[OpenTelemetry Spring Boot starter].
+
+To ensure version alignment across all OpenTelemetry dependencies, you should
+import the opentelemetry-instrumentation-bom BOM:
+
+[source,xml]
+----
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-instrumentation-bom</artifactId>
+            <version>2.26.1</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+----
+
+Then add the following dependency for the OpenTelemetry Spring Boot starter:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.opentelemetry.instrumentation</groupId>
+    <artifactId>opentelemetry-spring-boot-starter</artifactId>
+</dependency>
+----
+
+The starter auto-configures most aspects of the OpenTelemetry instrumentation, with two exceptions:
+No `Tracer` or `ContextPropagators` beans are autoconfigured, they need to be configured manually:
+
+[source,java]
+----
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.propagation.ContextPropagators;
+
+@Configuration
+public class OpenTelemetryConfiguration {
+
+  @Bean
+  public Tracer tracer(@Value("${spring.application.name}") String serviceName, OpenTelemetry openTelemetry) {
+    return openTelemetry.getTracer(serviceName);
+  }
+
+  @Bean
+  public ContextPropagators contextPropagators(OpenTelemetry openTelemetry) {
+    return openTelemetry.getPropagators();
+  }
+
+}
+----
+
+The instrumentation can be configured using the standard Spring Boot configuration mechanisms (e.g. using application.yml).
+For a complete list of options, see the official https://opentelemetry.io/docs/zero-code/java/agent/configuration/[agent configuration documentation].
+
+For example, to set the service name and exporter type:
+
+[source,yaml]
+----
+otel:
+  service:
+    name: your-service-name
+  traces:
+    exporter: otlp
+----
+
 === Span customization
 
 When you're working at a very low level, you may need to tweak your metrics and add some in-process custom `span` in order to trace some specific measure of your application. If you need this advanced use case, you can create it during your process by configuring an Opentelemetry Tracer object and share it to your route. For example, in Java DSL:
