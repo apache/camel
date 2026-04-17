@@ -850,7 +850,6 @@ It could be easily specified using XML DSL configuration:
     <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets&amp;streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }"/>
     <to uri="mock:test"/>
 </route>
--------------
 
 Java configuration:
 [source,java]
@@ -861,6 +860,15 @@ from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=ticket
 
 TIP: You can externalize the streamFilter value into a property placeholder which allows the endpoint
 URI parameters to be _cleaner_ and easier to read.
+
+You can also provide an optional JSON property `resumeToken` to resume the change stream
+from a previously stored resume token:
+
+[source,java]
+-------------
+from("mongodb:myDb?consumerType=changeStreams&database=flights&collection=tickets&resumeToken={'_data':'8269DE5... }")
+    .to("mock:test");
+-------------
 
 === Type conversions
 

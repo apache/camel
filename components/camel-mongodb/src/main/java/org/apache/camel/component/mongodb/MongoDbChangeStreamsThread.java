@@ -36,9 +36,10 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
     private BsonDocument resumeToken;
 
     MongoDbChangeStreamsThread(MongoDbEndpoint endpoint, MongoDbChangeStreamsConsumer consumer,
-                               List<BsonDocument> bsonFilter) {
+                               List<BsonDocument> bsonFilter, BsonDocument resumeToken) {
         super(endpoint, consumer);
         this.bsonFilter = bsonFilter;
+        this.resumeToken = resumeToken;
     }
 
     @Override
@@ -76,9 +77,11 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                 Exchange exchange = createMongoDbExchange(dbObj.getFullDocument());
 
                 ObjectId documentId = dbObj.getDocumentKey().getObjectId(MONGO_ID).getValue();
+                BsonDocument resumeToken = dbObj.getResumeToken();
                 OperationType operationType = dbObj.getOperationType();
                 exchange.getIn().setHeader(MongoDbConstants.STREAM_OPERATION_TYPE, operationType.getValue());
                 exchange.getIn().setHeader(MongoDbConstants.MONGO_ID, documentId);
+                exchange.getIn().setHeader(MongoDbConstants.RESUME_TOKEN, resumeToken);
                 if (operationType == OperationType.DELETE) {
                     exchange.getIn().setBody(new Document(MONGO_ID, documentId));
                 }
@@ -91,7 +94,7 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
                 } catch (Exception ignored) {
                 }
 
-                this.resumeToken = dbObj.getResumeToken();
+                this.resumeToken = resumeToken;
             }
         } catch (MongoException e) {
             // cursor.hasNext() opens socket and waiting for data

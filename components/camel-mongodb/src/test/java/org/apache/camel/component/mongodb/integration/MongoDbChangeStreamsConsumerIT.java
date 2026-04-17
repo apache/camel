@@ -37,6 +37,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -167,6 +168,12 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
         context.getRouteController().stopRoute(consumerRouteId);
     }
 
+    @Order(5)
+    @Test
+    public void invalidResumeTokenShouldFailToStartRoute() {
+        assertThrows(Exception.class, () -> context.getRouteController().startRoute("invalidResumeTokenConsumer"));
+    }
+
     private void insertAndDelete(ObjectId objectId) {
         mongoCollection.insertOne(new Document("_id", objectId).append("string", "value"));
         mongoCollection.deleteOne(new Document("_id", objectId));
@@ -191,6 +198,11 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
 
                 from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&streamFilter={{filter.update}}&fullDocument=updateLookup")
                         .id("updateWithFullDocumentConsumer")
+                        .autoStartup(false)
+                        .to("mock:test");
+
+                from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&resumeToken=invalidResumeToken")
+                        .id("invalidResumeTokenConsumer")
                         .autoStartup(false)
                         .to("mock:test");
             }
