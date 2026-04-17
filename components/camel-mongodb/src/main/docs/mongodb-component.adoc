@@ -850,6 +850,7 @@ It could be easily specified using XML DSL configuration:
     <from uri="mongodb:myDb?consumerType=changeStreams&amp;database=flights&amp;collection=tickets&amp;streamFilter={ '$match':{'$or':[{'fullDocument.stringValue': 'specificValue'}]} }"/>
     <to uri="mock:test"/>
 </route>
+-------------
 
 Java configuration:
 [source,java]
