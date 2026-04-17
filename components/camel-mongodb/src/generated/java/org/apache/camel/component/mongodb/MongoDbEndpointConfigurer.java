@@ -90,6 +90,8 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "readPreferenceTags": target.setReadPreferenceTags(property(camelContext, java.lang.String.class, value)); return true;
         case "replicaset":
         case "replicaSet": target.setReplicaSet(property(camelContext, java.lang.String.class, value)); return true;
+        case "resumetoken":
+        case "resumeToken": target.setResumeToken(property(camelContext, java.lang.String.class, value)); return true;
         case "retryreads":
         case "retryReads": target.setRetryReads(property(camelContext, boolean.class, value)); return true;
         case "retrywrites":
@@ -200,6 +202,8 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "readPreferenceTags": return java.lang.String.class;
         case "replicaset":
         case "replicaSet": return java.lang.String.class;
+        case "resumetoken":
+        case "resumeToken": return java.lang.String.class;
         case "retryreads":
         case "retryReads": return boolean.class;
         case "retrywrites":
@@ -311,6 +315,8 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "readPreferenceTags": return target.getReadPreferenceTags();
         case "replicaset":
         case "replicaSet": return target.getReplicaSet();
+        case "resumetoken":
+        case "resumeToken": return target.getResumeToken();
         case "retryreads":
         case "retryReads": return target.isRetryReads();
         case "retrywrites":
