@@ -128,3 +128,18 @@ public void process(Exchange exchange) throws Exception {
      mySpan.end();
 }
 ----
+
+=== Setting and getting Baggage
+
+Baggage entries are propagated to downstream spans and services.
+They can be managed via `OpenTelemetrySpanAdapter`:
+
+[source,java]
+----
+public void process(Exchange exchange) throws Exception {
+    OpenTelemetrySpanAdapter span = OpenTelemetrySpanAdapter.fromExchange(exchange);
+    span.setBaggageEntry("tenant.id", "acme");
+    // ...
+    String value = span.getBaggageEntry("tenant.id");
+}
+----
