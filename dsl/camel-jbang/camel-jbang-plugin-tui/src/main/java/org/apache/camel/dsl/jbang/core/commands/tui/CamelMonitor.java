@@ -154,13 +154,18 @@ public class CamelMonitor extends CamelCommand {
 
     private volatile long lastRefresh;
 
-    public CamelMonitor(CamelJBangMain main) {
+    private ClassLoader classLoader;
+
+    public CamelMonitor(CamelJBangMain main, ClassLoader classLoader) {
         super(main);
+        this.classLoader = classLoader;
     }
 
     @Override
     public Integer doCall() throws Exception {
-        TuiHelper.preloadClasses();
+        // to make ServiceLoader work with tamboui for downloaded JARs
+        Thread.currentThread().setContextClassLoader(classLoader);
+        TuiHelper.preloadClasses(classLoader);
 
         // Initial data load
         refreshData();

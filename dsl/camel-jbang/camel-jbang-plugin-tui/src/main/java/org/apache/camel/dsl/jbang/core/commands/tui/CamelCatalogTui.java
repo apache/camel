@@ -51,7 +51,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine.Command;
 
-@Command(name = "catalog-tui",
+@Command(name = "catalog",
          description = "Interactive TUI catalog browser",
          sortOptions = false)
 public class CamelCatalogTui extends CamelCommand {
@@ -78,13 +78,18 @@ public class CamelCatalogTui extends CamelCommand {
     // Filtered options displayed in table
     private List<OptionInfo> filteredOptions = Collections.emptyList();
 
-    public CamelCatalogTui(CamelJBangMain main) {
+    private ClassLoader classLoader;
+
+    public CamelCatalogTui(CamelJBangMain main, ClassLoader classLoader) {
         super(main);
+        this.classLoader = classLoader;
     }
 
     @Override
     public Integer doCall() throws Exception {
-        TuiHelper.preloadClasses();
+        // to make ServiceLoader work with tamboui for downloaded JARs
+        Thread.currentThread().setContextClassLoader(classLoader);
+        TuiHelper.preloadClasses(classLoader);
 
         loadCatalog();
 

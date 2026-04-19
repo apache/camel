@@ -16,27 +16,20 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
-import org.apache.camel.dsl.jbang.core.common.Plugin;
 import picocli.CommandLine;
 
-@CamelJBangPlugin(name = "camel-jbang-plugin-tui", firstVersion = "4.19.0")
-public class TuiPlugin implements Plugin {
+@CommandLine.Command(name = "tui", description = "Generate source code (use --help to see sub commands)")
+public class TuiCommand extends CamelCommand {
 
-    private ClassLoader classLoader;
-
-    @Override
-    public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
+    public TuiCommand(CamelJBangMain main) {
+        super(main);
     }
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
-        var cmd = new picocli.CommandLine(new TuiCommand(main))
-                .addSubcommand("monitor", new CommandLine(new CamelMonitor(main, classLoader)))
-                .addSubcommand("catalog", new CommandLine(new CamelCatalogTui(main, classLoader)));
-
-        commandLine.addSubcommand("tui", cmd);
+    public Integer doCall() throws Exception {
+        new CommandLine(this).execute("--help");
+        return 0;
     }
 }

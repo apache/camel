@@ -25,6 +25,7 @@ import java.util.function.Function;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -41,15 +42,11 @@ final class TuiHelper {
      * JVM shutdown the classloader may already be closing while the input reader thread is still trying to load these
      * classes lazily — causing ClassNotFoundException stack traces on exit.
      */
-    static void preloadClasses() {
-        try {
-            Class.forName("dev.tamboui.tui.event.KeyModifiers");
-            Class.forName("dev.tamboui.tui.event.KeyEvent");
-            Class.forName("dev.tamboui.tui.event.KeyCode");
-            Class.forName("picocli.CommandLine$IExitCodeGenerator");
-        } catch (ClassNotFoundException e) {
-            // ignore
-        }
+    static void preloadClasses(ClassLoader cl) {
+        ObjectHelper.loadClass("dev.tamboui.tui.event.KeyModifiers", cl);
+        ObjectHelper.loadClass("dev.tamboui.tui.event.KeyEvent", cl);
+        ObjectHelper.loadClass("dev.tamboui.tui.event.KeyCode", cl);
+        ObjectHelper.loadClass("picocli.CommandLine$IExitCodeGenerator", cl);
     }
 
     /**

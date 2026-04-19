@@ -33,6 +33,13 @@ public interface Plugin {
     void customize(CommandLine commandLine, CamelJBangMain main);
 
     /**
+     * Custom classloader that was used when downloading additional dependencies.
+     */
+    default void setClassLoader(ClassLoader classLoader) {
+        // noop
+    }
+
+    /**
      * The plugin may provide an optional project exporter implementation that is able to participate in an export
      * performed by Camel JBang. Project exporter implementations may add properties and dependencies to the generated
      * export.
