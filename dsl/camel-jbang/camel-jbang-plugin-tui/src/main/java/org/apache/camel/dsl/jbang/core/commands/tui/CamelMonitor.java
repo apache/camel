@@ -794,19 +794,19 @@ public class CamelMonitor extends CamelCommand {
                 icon = "\u26A0 ";
             }
 
-            String rate = "";
+            String kind = "";
             if (hc.readiness) {
-                rate += "R";
+                kind += "R";
             }
             if (hc.liveness) {
-                rate += rate.isEmpty() ? "L" : "/L";
+                kind += kind.isEmpty() ? "L" : "/L";
             }
 
             rows.add(Row.from(
                     Cell.from(Span.styled(hc.group != null ? hc.group : "", Style.create().dim())),
                     Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.create().fg(Color.CYAN))),
                     Cell.from(Span.styled(icon + hc.state, stateStyle)),
-                    Cell.from(rate),
+                    Cell.from(kind),
                     Cell.from(hc.message != null ? hc.message : "")));
         }
 
@@ -830,7 +830,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled("GROUP", Style.create().bold())),
                         Cell.from(Span.styled("NAME", Style.create().bold())),
                         Cell.from(Span.styled("STATUS", Style.create().bold())),
-                        Cell.from(Span.styled("RATE", Style.create().bold())),
+                        Cell.from(Span.styled("KIND", Style.create().bold())),
                         Cell.from(Span.styled("MESSAGE", Style.create().bold()))))
                 .widths(
                         Constraint.length(12),

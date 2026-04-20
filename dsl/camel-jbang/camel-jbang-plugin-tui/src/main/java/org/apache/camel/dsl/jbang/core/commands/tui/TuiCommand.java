@@ -30,7 +30,6 @@ public class TuiCommand extends CamelCommand {
         this.classLoader = classLoader;
     }
 
-
     @Override
     public Integer doCall() throws Exception {
         // default to dashboard
