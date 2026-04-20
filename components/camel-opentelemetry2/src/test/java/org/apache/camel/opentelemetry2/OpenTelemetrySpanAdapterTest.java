@@ -31,6 +31,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
+import org.apache.camel.telemetry.SpanStorageManagerExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -96,10 +97,12 @@ public class OpenTelemetrySpanAdapterTest extends OpenTelemetryTracerTestSupport
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                OpenTelemetrySpanAdapter span = OpenTelemetrySpanAdapter.fromExchange(exchange);
-                                span.setBaggageEntry("tenant.id", "acme");
-                                span.setBaggageEntry("tenant.id", "globex"); // overwrite
-                                span.setBaggageEntry("request.priority", "high");
+                                org.apache.camel.telemetry.Span span = new SpanStorageManagerExchange().peek(exchange);
+                                if (span instanceof OpenTelemetrySpanAdapter spanAdapter) {
+                                    spanAdapter.setBaggageEntry("tenant.id", "acme");
+                                    spanAdapter.setBaggageEntry("tenant.id", "globex"); // overwrite
+                                    spanAdapter.setBaggageEntry("request.priority", "high");
+                                }
                             }
                         })
                         .to("mock:baggage");
@@ -108,14 +111,18 @@ public class OpenTelemetrySpanAdapterTest extends OpenTelemetryTracerTestSupport
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) {
-                                OpenTelemetrySpanAdapter span = OpenTelemetrySpanAdapter.fromExchange(exchange);
-                                span.setBaggageEntry("tenant.id", "acme");
+                                org.apache.camel.telemetry.Span span = new SpanStorageManagerExchange().peek(exchange);
+                                if (span instanceof OpenTelemetrySpanAdapter spanAdapter) {
+                                    spanAdapter.setBaggageEntry("tenant.id", "acme");
+                                }
                                 Tracer tracer = otelExtension.getOpenTelemetry().getTracer("adapterTest");
                                 Span child = tracer.spanBuilder("child").startSpan();
                                 try {
-                                    String inherited = OpenTelemetrySpanAdapter.fromExchange(exchange)
-                                            .getBaggageEntry("tenant.id");
-                                    child.setAttribute("inherited.baggage.tenant.id", inherited);
+                                    if (span instanceof OpenTelemetrySpanAdapter spanAdapter) {
+                                        String inherited = spanAdapter.getBaggageEntry("tenant.id");
+                                        child.setAttribute("inherited.baggage.tenant.id",
+                                            inherited);
+                                    }
                                 } finally {
                                     child.end();
                                 }
@@ -126,3 +133,4 @@ public class OpenTelemetrySpanAdapterTest extends OpenTelemetryTracerTestSupport
     }
 
 }
+

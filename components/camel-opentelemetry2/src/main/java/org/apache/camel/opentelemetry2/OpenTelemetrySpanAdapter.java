@@ -24,8 +24,6 @@ import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.context.Scope;
-import org.apache.camel.Exchange;
-import org.apache.camel.telemetry.SpanStorageManagerExchange;
 import org.apache.camel.telemetry.TagConstants;
 
 public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span {
@@ -33,31 +31,10 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     private static final String DEFAULT_EVENT_NAME = "log";
     static final String BAGGAGE_CAMEL_FLAG = "camelScope";
 
-    private static final SpanStorageManagerExchange SPAN_STORAGE = new SpanStorageManagerExchange();
-
     private final Span otelSpan;
     private Baggage baggage;
     private Scope scope;
     private Scope baggageScope;
-
-    /**
-     * Retrieves the OpenTelemetry span associated with the given {@link Exchange}.
-     *
-     * <p>
-     * This method returns the span only if the current span implementation is backed by OpenTelemetry. If no span is
-     * present or a different tracing implementation is in use, {@code null} is returned.
-     * </p>
-     *
-     * @param  exchange the current Camel exchange
-     * @return          the OpenTelemetry span adapter, or {@code null} if unavailable
-     */
-    public static OpenTelemetrySpanAdapter fromExchange(Exchange exchange) {
-        org.apache.camel.telemetry.Span span = SPAN_STORAGE.peek(exchange);
-        if (span instanceof OpenTelemetrySpanAdapter adapter) {
-            return adapter;
-        }
-        return null;
-    }
 
     protected OpenTelemetrySpanAdapter(Span otelSpan, Baggage baggage) {
         this.otelSpan = otelSpan;
