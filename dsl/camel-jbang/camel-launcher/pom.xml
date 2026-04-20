@@ -42,7 +42,7 @@
 
         <!-- Dependency versions -->
         <camel-kamelets-version>4.18.1</camel-kamelets-version>
-        <maven-version>3.9.14</maven-version>
+        <maven-version>3.9.15</maven-version>
         <plexus-interpolation-version>1.29</plexus-interpolation-version>
         <plexus-utils-version>4.0.3</plexus-utils-version>
         <plexus-xml-version>3.0.1</plexus-xml-version>
