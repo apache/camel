@@ -238,6 +238,7 @@ public final class PluginHelper {
                 DefaultClassResolver resolver = new DefaultClassResolver();
                 Class<?> pluginClass = resolver.resolveClass(pluginClassName, ddlcl);
                 instance = Optional.of(Plugin.class.cast(ObjectHelper.newInstance(pluginClass)));
+                instance.ifPresent(plugin -> plugin.setClassLoader(ddlcl));
             } else {
                 String gav = String.join(":", group, "camel-jbang-plugin-" + command, version);
                 printer.printf(String.format("ERROR: Failed to read file %s in dependency %s%n", path, gav));

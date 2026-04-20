@@ -39,19 +39,7 @@
         <!-- Core Camel dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-ftp</artifactId>
-            <exclusions>
-                <!-- Exclude JSch - we use Apache MINA SSHD instead -->
-                <exclusion>
-                    <groupId>com.github.mwiede</groupId>
-                    <artifactId>jsch</artifactId>
-                </exclusion>
-                <!-- Exclude commons-net - we only support SFTP, not FTP/FTPS -->
-                <exclusion>
-                    <groupId>commons-net</groupId>
-                    <artifactId>commons-net</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>camel-ftp-common</artifactId>
         </dependency>
         <!-- Apache MINA SSHD for SFTP operations -->
         <dependency>

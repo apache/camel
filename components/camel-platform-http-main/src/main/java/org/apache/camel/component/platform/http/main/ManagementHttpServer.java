@@ -1285,6 +1285,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 camelContext,
                 platformHttpComponent.getHttpManagementEndpoints(),
                 (server != null ? server.getPort() : getPort()),
+                configuration.isUseGlobalSslContextParameters(),
                 "HTTP Management endpoints summary");
     }
 

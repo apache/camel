@@ -213,6 +213,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
     private volatile long pid;
 
     String findAnsi;
+    Pattern[] grepPatterns;
+    Pattern[] findPatterns;
     private int nameMaxWidth;
     private boolean prefixShown;
     private MessageTableHelper tableHelper;
@@ -521,19 +523,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
             // read existing received files (skip by tail/since)
             if (find != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                for (int i = 0; i < find.length; i++) {
-                    String f = find[i];
-                    f = Pattern.quote(f);
-                    find[i] = f;
-                }
+                findPatterns = quoteAndCompilePatterns(find);
             }
             if (grep != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                for (int i = 0; i < grep.length; i++) {
-                    String f = grep[i];
-                    f = Pattern.quote(f);
-                    grep[i] = f;
-                }
+                grepPatterns = quoteAndCompilePatterns(grep);
             }
             Date limit = null;
             if (since != null) {
@@ -840,9 +834,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
         if (grep == null) {
             return true;
         }
-        for (String g : grep) {
-            boolean m = Pattern.compile("(?i)" + g).matcher(line).find();
-            if (m) {
+        for (Pattern p : grepPatterns) {
+            if (p.matcher(line).find()) {
                 return true;
             }
         }
@@ -911,14 +904,14 @@ public class CamelReceiveAction extends ActionBaseCommand {
         String[] lines = data.split(System.lineSeparator());
         if (lines.length > 0) {
             for (String line : lines) {
-                if (find != null) {
-                    for (String f : find) {
-                        line = line.replaceAll("(?i)" + f, findAnsi);
+                if (findPatterns != null) {
+                    for (Pattern p : findPatterns) {
+                        line = p.matcher(line).replaceAll(findAnsi);
                     }
                 }
-                if (grep != null) {
-                    for (String g : grep) {
-                        line = line.replaceAll("(?i)" + g, findAnsi);
+                if (grepPatterns != null) {
+                    for (Pattern p : grepPatterns) {
+                        line = p.matcher(line).replaceAll(findAnsi);
                     }
                 }
                 if (nameWithPrefix != null) {
