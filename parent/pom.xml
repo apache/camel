@@ -386,7 +386,7 @@
         <lz4-java-version>1.11.0</lz4-java-version>
         <mapstruct-version>1.6.3</mapstruct-version>
         <!-- needed from tooling/archetypes -->
-        <maven-version>3.9.14</maven-version>
+        <maven-version>3.9.15</maven-version>
         <mima-version>2.4.43</mima-version>
         <maven-antrun-plugin-version>3.2.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.4.1</maven-archetype-plugin-version>
