@@ -86,7 +86,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
         if (messageFrequency != null) {
             return "1 Exchange per " + getMessageFrequency() + " messages received";
         } else {
-            return "1 Exchange per " + TimeUtils.printDuration(TimeUtils.toDuration(samplePeriod));
+            return "1 Exchange per " + getSamplePeriod() + " millis";
         }
     }
 

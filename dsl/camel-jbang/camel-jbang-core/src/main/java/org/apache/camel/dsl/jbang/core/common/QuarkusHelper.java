@@ -39,7 +39,10 @@ import org.apache.camel.util.json.Jsoner;
 public final class QuarkusHelper {
 
     public static final String QUARKUS_PLATFORM_URL_PROPERTY = "camel.jbang.quarkus.platform.url";
-    public static final String DEFAULT_QUARKUS_PLATFORM_URL = "https://registry.quarkus.io/client/platforms";
+    public static final String DEFAULT_QUARKUS_PLATFORM_URL = RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL
+                                                              + (RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL.endsWith("/")
+                                                                      ? "" : "/")
+                                                              + "client/platforms";
 
     private QuarkusHelper() {
     }

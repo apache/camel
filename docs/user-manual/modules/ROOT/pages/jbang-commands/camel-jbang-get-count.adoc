@@ -20,6 +20,7 @@ camel get count [options]
 |===
 | Option | Description | Default | Type
 | `--fail` | Get the failed exchanges from a running integration |  | boolean
+| `--json` | Output in JSON Format |  | boolean
 | `--sort` | Sort by pid, name or age | pid | String
 | `--total` | Get the total exchanges from a running integration |  | boolean
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean

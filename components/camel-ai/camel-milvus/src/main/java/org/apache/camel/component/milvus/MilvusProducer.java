@@ -178,6 +178,8 @@ public class MilvusProducer extends DefaultProducer {
         final Message in = exchange.getMessage();
         final DeleteParam body = in.getMandatoryBody(DeleteParam.class);
 
+        this.client.loadCollection(
+                LoadCollectionParam.newBuilder().withCollectionName(getEndpoint().getCollection()).withSyncLoad(true).build());
         R<MutationResult> result = this.client.delete(body);
 
         handleResponseStatus(result);

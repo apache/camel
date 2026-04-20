@@ -21,7 +21,7 @@ import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.postgres.common.PostgresProperties;
 
 @InfraService(service = PostgresInfraService.class,
-              description = "Postgres SQL Database with pgvector extension",
+              description = "PostgreSQL with pgvector extension for vector similarity search",
               serviceAlias = { "postgres-vector", "pgvector" })
 public class PostgresVectorLocalContainerInfraService extends PostgresLocalContainerInfraService {
 

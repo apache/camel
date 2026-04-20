@@ -23,6 +23,8 @@ import io.milvus.param.collection.CreateCollectionParam;
 import io.milvus.param.collection.FieldType;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.component.milvus.helpers.MilvusHelperCreateCollection;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -69,6 +71,30 @@ public class MilvusCreateCollectionTest extends MilvusTestSupport {
         Exchange result = fluentTemplate.to("milvus:createCollection")
                 .withBody(
                         createCollectionReq)
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isInstanceOf(NoSuchHeaderException.class);
+    }
+
+    @DisplayName("Tests that trying to create a collection via helper without passing the action name triggers a failure")
+    @Test
+    public void createCollectionWithHelperWithoutRequiredParameters() throws Exception {
+        MilvusHelperCreateCollection helper = new MilvusHelperCreateCollection();
+        helper.setCollectionName("test");
+        helper.setCollectionDescription("customer info");
+        helper.setIdFieldName("userID");
+        helper.setVectorFieldName("userFace");
+        helper.setTextFieldName("userAge");
+        helper.setTextFieldDataType("Int8");
+        helper.setDimension("64");
+
+        Exchange tempExchange = new DefaultExchange(context);
+        helper.process(tempExchange);
+
+        // Send body without the action header to trigger failure
+        Exchange result = fluentTemplate.to("milvus:createCollection")
+                .withBody(tempExchange.getIn().getBody())
                 .request(Exchange.class);
 
         assertThat(result).isNotNull();

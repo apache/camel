@@ -58,6 +58,17 @@ public interface PluginExporter {
     }
 
     /**
+     * Whether this plugin exporter should contribute its dependencies when running Camel integrations via the run
+     * command. By default, plugin exporters do not contribute dependencies at runtime. Override this method to return
+     * true if the plugin needs its dependencies available at runtime.
+     *
+     * @return true if dependencies should be added during run, false otherwise.
+     */
+    default boolean contributeRuntimeDependencies() {
+        return false;
+    }
+
+    /**
      * Add plugin specific source files to the exported project.
      */
     void addSourceFiles(Path buildDir, String packageName, Printer printer) throws Exception;

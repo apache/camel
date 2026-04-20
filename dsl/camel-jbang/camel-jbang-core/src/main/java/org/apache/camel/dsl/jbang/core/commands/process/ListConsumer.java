@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -186,6 +187,11 @@ public class ListConsumer extends ProcessWatchCommand {
             }).collect(Collectors.toList())));
             return;
         }
+        // Flexible column: URI (90/140)
+        // Fixed columns: PID(8)+NAME(30)+AGE(8)+ID(20)+STATUS(8)+TYPE(20)+INFLIGHT(8)+POLL(4)+PERIOD(6)+SINCE-LAST(10) ~= 122
+        int tw = terminalWidth();
+        int uriW = TerminalWidthHelper.flexWidth(tw, 122, TerminalWidthHelper.noBorderOverhead(12), 20, 90);
+        int uriWideW = TerminalWidthHelper.flexWidth(tw, 122, TerminalWidthHelper.noBorderOverhead(12), 20, 140);
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -201,10 +207,10 @@ public class ListConsumer extends ProcessWatchCommand {
                 new Column().header("PERIOD").visible(scheduled).with(this::getPeriod),
                 new Column().header("SINCE-LAST").with(this::getSinceLast),
                 new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .maxWidth(uriW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getUri),
                 new Column().header("URI").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(140, OverflowBehaviour.NEWLINE)
+                        .maxWidth(uriWideW, OverflowBehaviour.NEWLINE)
                         .with(this::getUri))));
     }
 

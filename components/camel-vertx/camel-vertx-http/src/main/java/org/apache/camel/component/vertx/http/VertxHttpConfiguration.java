@@ -52,6 +52,8 @@ public class VertxHttpConfiguration {
     private boolean throwExceptionOnFailure = true;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean transferException;
+    @UriParam(label = "advanced,security")
+    private String deserializationFilter;
     @UriParam(label = "producer", defaultValue = "200-299")
     private String okStatusCodeRange = "200-299";
     @UriParam(label = "producer", defaultValue = "false")
@@ -198,6 +200,21 @@ public class VertxHttpConfiguration {
 
     public boolean isTransferException() {
         return transferException;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    /**
+     * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied when deserializing Java objects from HTTP
+     * responses with Content-Type application/x-java-serialized-object. This is used when transferException is enabled
+     * (or when allowJavaSerializedObject is enabled on the component) and the remote side returns a serialized payload.
+     * When not set, the filter configured via the JVM system property jdk.serialFilter is used when present; otherwise
+     * a conservative default filter allowing java., javax. and org.apache.camel. packages is applied.
+     */
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
     /**

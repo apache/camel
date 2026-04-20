@@ -373,10 +373,10 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                 node.addOutput(asNode(other));
             } else if ("choice".equals(node.getName()) && "when".equals(key)) {
                 Object v = entry.getValue();
-                if (v instanceof List) {
+                if (v instanceof List<?> list) {
                     // can be a list in choice
-                    List<EipModel> list = (List) v;
-                    for (EipModel m : list) {
+                    for (Object item : list) {
+                        EipModel m = (EipModel) item;
                         node.addOutput(asNode(m));
                     }
                 } else {
@@ -470,8 +470,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
             }
             Object value = entry.getValue();
             if (value != null) {
-                if (value instanceof Collection<?>) {
-                    Collection<?> col = (Collection<?>) value;
+                if (value instanceof Collection<?> col) {
                     List<Object> list = new ArrayList<>();
                     for (Object v : col) {
                         Object r = v;

@@ -167,7 +167,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     @XmlTransient
     private final AtomicBoolean routesSetupDone = new AtomicBoolean();
 
-    public AbstractCamelContextFactoryBean() {
+    protected AbstractCamelContextFactoryBean() {
         // Keep track of the class loader for when we actually do start things up
         contextClassLoaderOnStart = Thread.currentThread().getContextClassLoader();
     }

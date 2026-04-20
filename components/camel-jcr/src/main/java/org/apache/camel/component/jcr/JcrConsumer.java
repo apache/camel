@@ -18,7 +18,6 @@ package org.apache.camel.component.jcr;
 
 import java.util.Arrays;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.jcr.RepositoryException;
@@ -40,7 +39,7 @@ public class JcrConsumer extends DefaultConsumer {
 
     private Session session;
     private EventListener eventListener;
-    private ScheduledFuture<?> sessionListenerCheckerScheduledFuture;
+    private ScheduledExecutorService sessionListenerCheckerExecutor;
 
     public JcrConsumer(JcrEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -157,20 +156,23 @@ public class JcrConsumer extends DefaultConsumer {
     }
 
     private void cancelSessionListenerChecker() {
-        if (sessionListenerCheckerScheduledFuture != null) {
-            sessionListenerCheckerScheduledFuture.cancel(true);
+        if (sessionListenerCheckerExecutor != null) {
+            getJcrEndpoint().getCamelContext().getExecutorServiceManager()
+                    .shutdownNow(sessionListenerCheckerExecutor);
+            sessionListenerCheckerExecutor = null;
         }
     }
 
     private void scheduleSessionListenerChecker() {
         String name = "JcrConsumerSessionChecker[" + getJcrEndpoint().getEndpointConfiguredDestinationName() + "]";
-        ScheduledExecutorService executor = getJcrEndpoint().getCamelContext().getExecutorServiceManager()
+        sessionListenerCheckerExecutor = getJcrEndpoint().getCamelContext().getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, name);
         JcrConsumerSessionListenerChecker sessionListenerChecker = new JcrConsumerSessionListenerChecker();
         long sessionLiveCheckIntervalOnStart = JcrConsumer.this.getJcrEndpoint().getSessionLiveCheckIntervalOnStart();
         long sessionLiveCheckInterval = JcrConsumer.this.getJcrEndpoint().getSessionLiveCheckInterval();
-        sessionListenerCheckerScheduledFuture = executor.scheduleWithFixedDelay(sessionListenerChecker,
-                sessionLiveCheckIntervalOnStart, sessionLiveCheckInterval, TimeUnit.MILLISECONDS);
+        sessionListenerCheckerExecutor.scheduleWithFixedDelay(
+                sessionListenerChecker, sessionLiveCheckIntervalOnStart, sessionLiveCheckInterval,
+                TimeUnit.MILLISECONDS);
     }
 
     private class JcrConsumerSessionListenerChecker implements Runnable {

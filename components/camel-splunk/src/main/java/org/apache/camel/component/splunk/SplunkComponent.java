@@ -27,6 +27,7 @@ import org.apache.camel.support.HealthCheckComponent;
  * Represents the component that manages {@link SplunkEndpoint}.
  */
 @Component("splunk")
+@Deprecated(since = "4.19")
 public class SplunkComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced")

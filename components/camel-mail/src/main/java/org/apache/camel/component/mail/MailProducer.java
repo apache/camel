@@ -57,9 +57,9 @@ public class MailProducer extends DefaultAsyncProducer {
             MimeMessage mimeMessage;
 
             final Object body = exchange.getIn().getBody();
-            if (body instanceof MimeMessage) {
+            if (body instanceof MimeMessage mimeMsg) {
                 // Body is directly a MimeMessage
-                mimeMessage = (MimeMessage) body;
+                mimeMessage = mimeMsg;
             } else {
                 // Create a message with exchange data
                 mimeMessage = new MimeMessage(mailSender.getSession());
@@ -103,6 +103,7 @@ public class MailProducer extends DefaultAsyncProducer {
             LOG.debug("Creating new JavaMailSender to include additional {} java mail properties", additional.size());
             JavaMailSender customSender
                     = getEndpoint().getConfiguration().createJavaMailSender(getEndpoint().getCamelContext());
+            getEndpoint().getConfiguration().configureJavaMailSender(getEndpoint().getCamelContext(), customSender);
             final String scheme = prefix;
             additional.forEach((k, v) -> {
                 if (v != null) {

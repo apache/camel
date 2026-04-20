@@ -63,8 +63,8 @@ public class HttpInboundStreamHandler extends MessageToMessageDecoder<HttpObject
             return false;
         }
 
-        if (msg instanceof HttpMessage) {
-            HttpHeaders headers = ((HttpMessage) msg).headers();
+        if (msg instanceof HttpMessage httpMessage) {
+            HttpHeaders headers = httpMessage.headers();
             return isChunked = headers.contains(TRANSFER_ENCODING, CHUNKED, true);
         } else {
             return msg instanceof HttpContent && isChunked;
@@ -73,18 +73,18 @@ public class HttpInboundStreamHandler extends MessageToMessageDecoder<HttpObject
 
     @Override
     protected void decode(ChannelHandlerContext ctx, HttpObject msg, List<Object> out) throws Exception {
-        if (msg instanceof HttpRequest) {
-            InboundStreamHttpRequest request = new InboundStreamHttpRequest((HttpRequest) msg, is);
+        if (msg instanceof HttpRequest httpRequest) {
+            InboundStreamHttpRequest request = new InboundStreamHttpRequest(httpRequest, is);
             out.add(request);
         }
 
-        if (msg instanceof HttpResponse) {
-            InboundStreamHttpResponse response = new InboundStreamHttpResponse((HttpResponse) msg, is);
+        if (msg instanceof HttpResponse httpResponse) {
+            InboundStreamHttpResponse response = new InboundStreamHttpResponse(httpResponse, is);
             out.add(response);
         }
 
-        if (msg instanceof HttpContent) {
-            ByteBuf body = ((HttpContent) msg).content();
+        if (msg instanceof HttpContent httpContent) {
+            ByteBuf body = httpContent.content();
             if (body.readableBytes() > 0) {
                 body.readBytes(os, body.readableBytes());
             }

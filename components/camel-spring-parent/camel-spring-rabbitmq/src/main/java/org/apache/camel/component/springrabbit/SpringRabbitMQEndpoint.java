@@ -686,8 +686,8 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     }
 
     public void declareElements(AbstractMessageListenerContainer container) {
-        if (container instanceof MessageListenerContainer) {
-            AmqpAdmin admin = ((MessageListenerContainer) container).getAmqpAdmin();
+        if (container instanceof MessageListenerContainer messageListenerContainer) {
+            AmqpAdmin admin = messageListenerContainer.getAmqpAdmin();
             declareElements(container, admin);
         }
     }
@@ -819,32 +819,32 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     private void prepareArgs(Map<String, Object> args) {
         // some arguments must be in numeric values so we need to fix this
         Object arg = args.get(SpringRabbitMQConstants.MAX_LENGTH);
-        if (arg instanceof String) {
-            args.put(SpringRabbitMQConstants.MAX_LENGTH, Long.parseLong((String) arg));
+        if (arg instanceof String str) {
+            args.put(SpringRabbitMQConstants.MAX_LENGTH, Long.parseLong(str));
         }
         arg = args.get(SpringRabbitMQConstants.MAX_LENGTH_BYTES);
-        if (arg instanceof String) {
-            args.put(SpringRabbitMQConstants.MAX_LENGTH_BYTES, Long.parseLong((String) arg));
+        if (arg instanceof String str) {
+            args.put(SpringRabbitMQConstants.MAX_LENGTH_BYTES, Long.parseLong(str));
         }
         arg = args.get(SpringRabbitMQConstants.MAX_PRIORITY);
-        if (arg instanceof String) {
-            args.put(SpringRabbitMQConstants.MAX_PRIORITY, Integer.parseInt((String) arg));
+        if (arg instanceof String str) {
+            args.put(SpringRabbitMQConstants.MAX_PRIORITY, Integer.parseInt(str));
         }
         arg = args.get(SpringRabbitMQConstants.DELIVERY_LIMIT);
-        if (arg instanceof String) {
-            args.put(SpringRabbitMQConstants.DELIVERY_LIMIT, Integer.parseInt((String) arg));
+        if (arg instanceof String str) {
+            args.put(SpringRabbitMQConstants.DELIVERY_LIMIT, Integer.parseInt(str));
         }
         arg = args.get(SpringRabbitMQConstants.MESSAGE_TTL);
-        if (arg instanceof String) {
-            args.put(SpringRabbitMQConstants.MESSAGE_TTL, Long.parseLong((String) arg));
+        if (arg instanceof String str) {
+            args.put(SpringRabbitMQConstants.MESSAGE_TTL, Long.parseLong(str));
         }
         arg = args.get(SpringRabbitMQConstants.EXPIRES);
-        if (arg instanceof String) {
-            args.put(SpringRabbitMQConstants.EXPIRES, Long.parseLong((String) arg));
+        if (arg instanceof String str) {
+            args.put(SpringRabbitMQConstants.EXPIRES, Long.parseLong(str));
         }
         arg = args.get(SpringRabbitMQConstants.SINGLE_ACTIVE_CONSUMER);
-        if (arg instanceof String) {
-            args.put(SpringRabbitMQConstants.SINGLE_ACTIVE_CONSUMER, Boolean.parseBoolean((String) arg));
+        if (arg instanceof String str) {
+            args.put(SpringRabbitMQConstants.SINGLE_ACTIVE_CONSUMER, Boolean.parseBoolean(str));
         }
     }
 

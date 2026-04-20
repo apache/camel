@@ -23,7 +23,7 @@ public class InfinispanRemoteEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(33);
+        Set<String> props = new HashSet<>(34);
         props.add("bridgeErrorHandler");
         props.add("cacheContainer");
         props.add("cacheContainerConfiguration");
@@ -36,6 +36,7 @@ public class InfinispanRemoteEndpointUriFactory extends org.apache.camel.support
         props.add("embeddingStoreDistance");
         props.add("embeddingStoreEnabled");
         props.add("embeddingStoreRegisterSchema");
+        props.add("embeddingStoreSchemaRegistrationTimeout");
         props.add("embeddingStoreTypeName");
         props.add("embeddingStoreVectorSimilarity");
         props.add("eventTypes");

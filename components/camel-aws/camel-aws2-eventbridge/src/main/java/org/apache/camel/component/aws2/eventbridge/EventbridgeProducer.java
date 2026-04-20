@@ -144,10 +144,10 @@ public class EventbridgeProducer extends DefaultProducer {
     private void putRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException, IOException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PutRuleRequest) {
+            if (payload instanceof PutRuleRequest putRuleRequest) {
                 PutRuleResponse result;
                 try {
-                    result = eventbridgeClient.putRule((PutRuleRequest) payload);
+                    result = eventbridgeClient.putRule(putRuleRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("PutRule command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

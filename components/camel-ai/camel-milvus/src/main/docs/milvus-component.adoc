@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The Milvus Component provides support for interacting with the https://https://milvus.io/[Milvus Vector Database].
+The Milvus Component provides support for interacting with the https://milvus.io/[Milvus Vector Database].
 
 == URI format
 
@@ -85,7 +85,7 @@ from("direct:in")
 
 === Points Examples
 
-==== Upsert
+==== Insert
 
 In the route below we use the milvus component to perform insert on points in the collection named _test_:
 

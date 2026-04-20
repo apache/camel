@@ -23,12 +23,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.20.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-zeebe</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Zeebe</name>
+    <name>Camel :: Zeebe (deprecated)</name>
     <description>Camel Zeebe support</description>
 
     <properties>

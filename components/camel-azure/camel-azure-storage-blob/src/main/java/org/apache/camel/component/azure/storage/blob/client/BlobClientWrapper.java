@@ -60,6 +60,7 @@ import com.azure.storage.blob.options.ListPageRangesOptions;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.AppendBlobClient;
+import com.azure.storage.blob.specialized.BlobClientBase;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.blob.specialized.BlobLeaseClient;
 import com.azure.storage.blob.specialized.BlobLeaseClientBuilder;
@@ -326,6 +327,24 @@ public class BlobClientWrapper {
 
     private PageBlobClient getPageBlobClient() {
         return client.getPageBlobClient();
+    }
+
+    public Response<BlobClientBase> createSnapshot(
+            final Map<String, String> metadata,
+            final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+        return client.createSnapshotWithResponse(metadata, requestConditions, timeout, Context.NONE);
+    }
+
+    /**
+     * Returns a wrapper scoped to the given blob snapshot, or {@code this} when the snapshot id is empty. Subsequent
+     * read operations on the returned wrapper target the snapshot version of the blob instead of the live one.
+     */
+    public BlobClientWrapper withSnapshot(final String snapshotId) {
+        if (ObjectHelper.isEmpty(snapshotId)) {
+            return this;
+        }
+        return new BlobClientWrapper(client.getSnapshotClient(snapshotId));
     }
 
     public BlobLeaseClient getLeaseClient() {

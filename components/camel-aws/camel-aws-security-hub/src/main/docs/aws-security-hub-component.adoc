@@ -4,7 +4,7 @@
 :artifactid: camel-aws-security-hub
 :description: Manage and interact with AWS Security Hub for security findings.
 :since: 4.18
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

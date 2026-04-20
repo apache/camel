@@ -34,6 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.19.0")
 public class ZeebeConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(ZeebeConsumer.class);
 

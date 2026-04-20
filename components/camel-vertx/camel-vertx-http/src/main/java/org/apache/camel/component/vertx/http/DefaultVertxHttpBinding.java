@@ -224,7 +224,8 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                             = exchange.getContext().getTypeConverter().convertTo(InputStream.class, responseBody.getBytes());
                     if (inputStream != null) {
                         try {
-                            return VertxHttpHelper.deserializeJavaObjectFromStream(inputStream);
+                            return VertxHttpHelper.deserializeJavaObjectFromStream(inputStream,
+                                    endpoint.getConfiguration().getDeserializationFilter());
                         } finally {
                             IOHelper.close(inputStream);
                         }

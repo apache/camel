@@ -253,8 +253,7 @@ public class EndpointMessageListener implements SessionMessageListener {
         Exchange exchange = consumer.createExchange(false);
         // reuse existing jms message if pooled
         org.apache.camel.Message msg = exchange.getIn();
-        if (msg instanceof SjmsMessage) {
-            SjmsMessage jm = (SjmsMessage) msg;
+        if (msg instanceof SjmsMessage jm) {
             jm.init(exchange, message, session, endpoint.getBinding());
         } else {
             exchange.setIn(new SjmsMessage(exchange, message, session, endpoint.getBinding()));
@@ -442,8 +441,8 @@ public class EndpointMessageListener implements SessionMessageListener {
             // send back reply if there was no error and we are supposed to send back a reply
             if (rce == null && sendReply && (body != null || cause != null)) {
                 LOG.trace("onMessage.sendReply START");
-                if (replyDestination instanceof Destination) {
-                    sendReply(session, (Destination) replyDestination, message, exchange, body, cause);
+                if (replyDestination instanceof Destination destination) {
+                    sendReply(session, destination, message, exchange, body, cause);
                 } else {
                     sendReply(session, (String) replyDestination, message, exchange, body, cause);
                 }

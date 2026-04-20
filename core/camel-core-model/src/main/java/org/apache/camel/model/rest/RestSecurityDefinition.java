@@ -38,10 +38,10 @@ public abstract class RestSecurityDefinition {
     @XmlAttribute
     private String description;
 
-    public RestSecurityDefinition() {
+    protected RestSecurityDefinition() {
     }
 
-    public RestSecurityDefinition(RestDefinition rest) {
+    protected RestSecurityDefinition(RestDefinition rest) {
         this.rest = rest;
     }
 

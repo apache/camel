@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @InfraService(service = IggyInfraService.class,
-              description = "Iggy distributed message streaming platform",
+              description = "Iggy is a persistent message streaming platform",
               serviceAlias = { "iggy" })
 public class IggyLocalContainerInfraService implements IggyInfraService, ContainerService<IggyContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(IggyLocalContainerInfraService.class);

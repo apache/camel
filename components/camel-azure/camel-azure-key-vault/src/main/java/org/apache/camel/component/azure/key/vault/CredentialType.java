@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.azure.key.vault;
 
+/**
+ * @deprecated Use {@link org.apache.camel.component.azure.common.CredentialType} instead.
+ */
+@Deprecated(since = "4.19.0")
 public enum CredentialType {
     /**
      * Client Secret Credential

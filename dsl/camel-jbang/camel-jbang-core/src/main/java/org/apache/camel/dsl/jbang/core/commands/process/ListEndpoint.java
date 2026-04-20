@@ -28,6 +28,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -178,6 +179,11 @@ public class ListEndpoint extends ProcessWatchCommand {
             }).collect(Collectors.toList())));
             return;
         }
+        // Flexible column: URI (90/140)
+        // Fixed columns: PID(8)+NAME(30)+AGE(8)+DIR(3)+TOTAL(5)+STUB(4)+REMOTE(6) ~= 64
+        int tw = terminalWidth();
+        int uriW = TerminalWidthHelper.flexWidth(tw, 64, TerminalWidthHelper.noBorderOverhead(9), 20, 90);
+        int uriWideW = TerminalWidthHelper.flexWidth(tw, 64, TerminalWidthHelper.noBorderOverhead(9), 20, 140);
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -188,10 +194,10 @@ public class ListEndpoint extends ProcessWatchCommand {
                 new Column().header("STUB").dataAlign(HorizontalAlign.CENTER).with(r -> r.stub ? "x" : ""),
                 new Column().header("REMOTE").dataAlign(HorizontalAlign.CENTER).with(r -> r.remote ? "x" : ""),
                 new Column().header("URI").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .maxWidth(uriW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getUri),
                 new Column().header("URI").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(140, OverflowBehaviour.NEWLINE)
+                        .maxWidth(uriWideW, OverflowBehaviour.NEWLINE)
                         .with(this::getUri))));
     }
 

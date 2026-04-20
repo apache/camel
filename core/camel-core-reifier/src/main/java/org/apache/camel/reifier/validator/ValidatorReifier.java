@@ -37,7 +37,7 @@ public abstract class ValidatorReifier<T> extends AbstractReifier {
 
     protected final T definition;
 
-    public ValidatorReifier(CamelContext camelContext, T definition) {
+    protected ValidatorReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
     }

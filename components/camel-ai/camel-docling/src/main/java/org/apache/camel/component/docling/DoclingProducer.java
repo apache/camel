@@ -39,7 +39,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -70,6 +69,7 @@ import ai.docling.serve.api.convert.request.source.FileSource;
 import ai.docling.serve.api.convert.request.source.HttpSource;
 import ai.docling.serve.api.convert.response.ConvertDocumentResponse;
 import ai.docling.serve.api.convert.response.DocumentResponse;
+import ai.docling.serve.api.convert.response.InBodyConvertDocumentResponse;
 import ai.docling.serve.api.task.request.TaskStatusPollRequest;
 import ai.docling.serve.api.task.response.TaskStatus;
 import ai.docling.serve.api.task.response.TaskStatusPollResponse;
@@ -158,13 +158,16 @@ public class DoclingProducer extends DefaultProducer {
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
     private ObjectMapper objectMapper;
-    private final Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks = new ConcurrentHashMap<>();
-    private final AtomicLong taskIdCounter = new AtomicLong();
+    private Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks;
+    private AtomicLong taskIdCounter;
 
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
         this.objectMapper = new ObjectMapper();
+        DoclingComponent component = (DoclingComponent) endpoint.getComponent();
+        this.pendingAsyncTasks = component.getPendingAsyncTasks();
+        this.taskIdCounter = component.getTaskIdCounter();
     }
 
     @Override
@@ -203,9 +206,6 @@ public class DoclingProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        // Cancel any pending async tasks
-        pendingAsyncTasks.forEach((id, future) -> future.cancel(true));
-        pendingAsyncTasks.clear();
         if (doclingServeApi != null) {
             doclingServeApi = null;
             LOG.info("DoclingServeApi reference cleared");
@@ -1124,15 +1124,19 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     private DoclingDocument extractDoclingDocument(ConvertDocumentResponse response) throws IOException {
-        DocumentResponse document = response.getDocument();
-        if (document == null) {
-            throw new IOException("No document in response");
+        if (response instanceof InBodyConvertDocumentResponse inBodyResponse) {
+            DocumentResponse document = inBodyResponse.getDocument();
+            if (document == null) {
+                throw new IOException("No document in response");
+            }
+            DoclingDocument result = document.getJsonContent();
+            if (result == null) {
+                throw new IOException("No JSON content in document response");
+            }
+            return result;
+        } else {
+            throw new IOException("Unsupported response type: cannot extract DoclingDocument");
         }
-        DoclingDocument result = document.getJsonContent();
-        if (result == null) {
-            throw new IOException("No JSON content in document response");
-        }
-        return result;
     }
 
     private void processBatchStructuredData(Exchange exchange) throws Exception {
@@ -1555,35 +1559,39 @@ public class DoclingProducer extends DefaultProducer {
 
     private String extractConvertedContent(ConvertDocumentResponse response, String outputFormat) throws IOException {
         try {
-            DocumentResponse document = response.getDocument();
+            if (response instanceof InBodyConvertDocumentResponse inBodyResponse) {
+                DocumentResponse document = inBodyResponse.getDocument();
 
-            if (document == null) {
-                throw new IOException("No document in response");
-            }
+                if (document == null) {
+                    throw new IOException("No document in response");
+                }
 
-            String format = mapOutputFormat(outputFormat);
+                String format = mapOutputFormat(outputFormat);
 
-            switch (format) {
-                case "md":
-                    String markdown = document.getMarkdownContent();
-                    return markdown != null ? markdown : "";
-                case "html":
-                    String html = document.getHtmlContent();
-                    return html != null ? html : "";
-                case "text":
-                    String text = document.getTextContent();
-                    return text != null ? text : "";
-                case "json":
-                    // Return the document JSON content
-                    var jsonDoc = document.getJsonContent();
-                    if (jsonDoc != null) {
-                        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonDoc);
-                    }
-                    return "{}";
-                default:
-                    // Default to markdown
-                    String defaultMarkdown = document.getMarkdownContent();
-                    return defaultMarkdown != null ? defaultMarkdown : "";
+                switch (format) {
+                    case "md":
+                        String markdown = document.getMarkdownContent();
+                        return markdown != null ? markdown : "";
+                    case "html":
+                        String html = document.getHtmlContent();
+                        return html != null ? html : "";
+                    case "text":
+                        String text = document.getTextContent();
+                        return text != null ? text : "";
+                    case "json":
+                        // Return the document JSON content
+                        var jsonDoc = document.getJsonContent();
+                        if (jsonDoc != null) {
+                            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonDoc);
+                        }
+                        return "{}";
+                    default:
+                        // Default to markdown
+                        String defaultMarkdown = document.getMarkdownContent();
+                        return defaultMarkdown != null ? defaultMarkdown : "";
+                }
+            } else {
+                throw new IOException("Unsupported response type: cannot extract converted content");
             }
         } catch (Exception e) {
             LOG.warn("Failed to extract content from response: {}", e.getMessage());

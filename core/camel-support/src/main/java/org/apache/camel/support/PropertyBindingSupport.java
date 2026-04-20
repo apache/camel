@@ -571,17 +571,17 @@ public final class PropertyBindingSupport {
                 }
                 // if the target value is a map type, then we can skip reflection
                 // and set the entry
-                if (!bound && target instanceof Map) {
-                    ((Map) target).put(key, value);
+                if (!bound && target instanceof Map map) {
+                    map.put(key, value);
                     bound = true;
                 }
                 // if the target value is a list type (and key is digit),
                 // then we can skip reflection and set the entry
-                if (!bound && target instanceof List && StringHelper.isDigit(key)) {
+                if (!bound && target instanceof List list && StringHelper.isDigit(key)) {
                     try {
                         // key must be digit
                         int idx = Integer.parseInt(key);
-                        org.apache.camel.util.ObjectHelper.addListByIndex((List) target, idx, value);
+                        org.apache.camel.util.ObjectHelper.addListByIndex(list, idx, value);
                         bound = true;
                     } catch (NumberFormatException e) {
                         // ignore
@@ -659,13 +659,11 @@ public final class PropertyBindingSupport {
             }
         }
 
-        if (obj instanceof Map) {
+        if (obj instanceof Map map) {
             // this supports both Map and Properties
-            Map<Object, Object> map = (Map) obj;
             map.put(lookupKey, value);
             return true;
-        } else if (obj instanceof List) {
-            List<Object> list = (List) obj;
+        } else if (obj instanceof List list) {
             if (isNotEmpty(lookupKey)) {
                 int idx = Integer.parseInt(lookupKey);
                 org.apache.camel.util.ObjectHelper.addListByIndex(list, idx, value);
@@ -745,13 +743,11 @@ public final class PropertyBindingSupport {
             return false;
         }
 
-        if (obj instanceof Map) {
+        if (obj instanceof Map map) {
             // this supports both Map and Properties
-            Map<Object, Object> map = (Map) obj;
             map.put(lookupKey, value);
             return true;
-        } else if (obj instanceof List) {
-            List<Object> list = (List) obj;
+        } else if (obj instanceof List list) {
             if (isNotEmpty(lookupKey)) {
                 int idx = Integer.parseInt(lookupKey);
                 if (idx < list.size()) {
@@ -972,8 +968,7 @@ public final class PropertyBindingSupport {
             }
         }
 
-        if (answer instanceof Map && lookupKey != null) {
-            Map<Object, Object> map = (Map) answer;
+        if (answer instanceof Map map && lookupKey != null) {
             answer = map.get(lookupKey);
             if (answer == null) {
                 // okay there was no element in the list, so create a new empty instance if we can know its parameter type
@@ -987,8 +982,7 @@ public final class PropertyBindingSupport {
                     answer = instance;
                 }
             }
-        } else if (answer instanceof List) {
-            List<Object> list = (List) answer;
+        } else if (answer instanceof List list) {
             if (isNotEmpty(lookupKey)) {
                 int idx = Integer.parseInt(lookupKey);
                 answer = list.size() > idx ? list.get(idx) : null;
@@ -1092,8 +1086,7 @@ public final class PropertyBindingSupport {
             }
         }
 
-        if (answer instanceof Map && lookupKey != null) {
-            Map<Object, Object> map = (Map) answer;
+        if (answer instanceof Map map && lookupKey != null) {
             answer = map.get(lookupKey);
             if (answer == null) {
                 Class<?> parameterType = null;
@@ -1120,8 +1113,7 @@ public final class PropertyBindingSupport {
                     answer = instance;
                 }
             }
-        } else if (answer instanceof List) {
-            List<Object> list = (List) answer;
+        } else if (answer instanceof List list) {
             if (isNotEmpty(lookupKey)) {
                 int idx = Integer.parseInt(lookupKey);
                 answer = list.size() > idx ? list.get(idx) : null;
@@ -2106,8 +2098,8 @@ public final class PropertyBindingSupport {
                 Object obj = map.get(part);
                 if (i == parts.length - 1) {
                     map.remove(part);
-                } else if (obj instanceof Map) {
-                    map = (Map) obj;
+                } else if (obj instanceof Map m) {
+                    map = m;
                 }
             }
 
@@ -2145,8 +2137,8 @@ public final class PropertyBindingSupport {
             // 2) sort by reference (as it may refer to other beans in the OGNL graph)
             Object v1 = map.get(o1);
             Object v2 = map.get(o2);
-            boolean ref1 = v1 instanceof String && ((String) v1).startsWith("#");
-            boolean ref2 = v2 instanceof String && ((String) v2).startsWith("#");
+            boolean ref1 = v1 instanceof String s1 && s1.startsWith("#");
+            boolean ref2 = v2 instanceof String s2 && s2.startsWith("#");
             if (ref1 != ref2) {
                 return Boolean.compare(ref1, ref2);
             }

@@ -93,10 +93,9 @@ public class STS2Producer extends DefaultProducer {
     private void assumeRole(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof AssumeRoleRequest) {
+            if (payload instanceof AssumeRoleRequest request) {
                 AssumeRoleResponse result;
                 try {
-                    AssumeRoleRequest request = (AssumeRoleRequest) payload;
                     result = stsClient.assumeRole(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Assume Role command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -148,10 +147,9 @@ public class STS2Producer extends DefaultProducer {
     private void getSessionToken(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetSessionTokenRequest) {
+            if (payload instanceof GetSessionTokenRequest request) {
                 GetSessionTokenResponse result;
                 try {
-                    GetSessionTokenRequest request = (GetSessionTokenRequest) payload;
                     result = stsClient.getSessionToken(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Session Token command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -183,10 +181,9 @@ public class STS2Producer extends DefaultProducer {
     private void getFederationToken(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetFederationTokenRequest) {
+            if (payload instanceof GetFederationTokenRequest request) {
                 GetFederationTokenResponse result;
                 try {
-                    GetFederationTokenRequest request = (GetFederationTokenRequest) payload;
                     result = stsClient.getFederationToken(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Federation Token command returned the error code {}", ase.awsErrorDetails().errorCode());

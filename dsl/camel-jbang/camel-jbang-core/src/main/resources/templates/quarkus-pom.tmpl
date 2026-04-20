@@ -18,6 +18,7 @@
         <quarkus.platform.artifact-id>{{ .QuarkusArtifactId }}</quarkus.platform.artifact-id>
         <quarkus.platform.version>{{ .QuarkusVersion }}</quarkus.platform.version>
 {{ .BuildProperties }}
+        <quarkus.package.jar.type>{{ .QuarkusPackageType }}</quarkus.package.jar.type>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.5</surefire-plugin.version>
     </properties>

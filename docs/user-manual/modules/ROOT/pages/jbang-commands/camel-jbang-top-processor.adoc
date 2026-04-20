@@ -23,6 +23,7 @@ camel top processor [options]
 | `--filter` | Filter processors by id |  | String
 | `--filter-mean` | Filter processors that must be slower than the given time (ms) |  | long
 | `--group` | Filter processors by group |  | String
+| `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter routes by limiting to the given number of rows |  | int
 | `--note` | Include note in the ID column (if available) |  | boolean
 | `--remote` | Break down counters into remote/total pairs |  | boolean

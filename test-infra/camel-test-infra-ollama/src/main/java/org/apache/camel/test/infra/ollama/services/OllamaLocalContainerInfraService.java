@@ -35,7 +35,7 @@ import org.testcontainers.ollama.OllamaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = OllamaInfraService.class,
-              description = "Build and run LLMs with Ollama",
+              description = "Ollama is a tool for running large language models locally",
               serviceAlias = { "ollama" })
 public class OllamaLocalContainerInfraService implements OllamaInfraService, ContainerService<OllamaContainer> {
     private static class DefaultServiceConfiguration implements OllamaServiceConfiguration {

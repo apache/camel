@@ -28,7 +28,7 @@ import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = MongoDBInfraService.class,
-              description = "MongoDB NoSql Database",
+              description = "MongoDB is a document-oriented NoSQL database",
               serviceAlias = { "mongodb" })
 public class MongoDBLocalContainerInfraService implements MongoDBInfraService, ContainerService<MongoDBContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBLocalContainerInfraService.class);

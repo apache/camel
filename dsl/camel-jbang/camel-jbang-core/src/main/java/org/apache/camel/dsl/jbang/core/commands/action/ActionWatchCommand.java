@@ -33,7 +33,7 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
 
     private CommandHelper.ReadConsoleTask waitUserTask;
 
-    public ActionWatchCommand(CamelJBangMain main) {
+    protected ActionWatchCommand(CamelJBangMain main) {
         super(main);
     }
 

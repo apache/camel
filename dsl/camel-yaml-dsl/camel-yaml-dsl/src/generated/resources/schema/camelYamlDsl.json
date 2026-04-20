@@ -9346,6 +9346,91 @@
           }
         }
       },
+      "org.apache.camel.model.app.SSLContextParametersDefinition" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "certAlias" : {
+            "type" : "string"
+          },
+          "cipherSuites" : {
+            "type" : "string"
+          },
+          "cipherSuitesExclude" : {
+            "type" : "string"
+          },
+          "cipherSuitesInclude" : {
+            "type" : "string"
+          },
+          "clientAuthentication" : {
+            "type" : "string",
+            "enum" : [ "NONE", "WANT", "REQUIRE" ]
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "keyManagerAlgorithm" : {
+            "type" : "string"
+          },
+          "keyManagerProvider" : {
+            "type" : "string"
+          },
+          "keyStore" : {
+            "type" : "string"
+          },
+          "keyStoreProvider" : {
+            "type" : "string"
+          },
+          "keyStoreType" : {
+            "type" : "string"
+          },
+          "keystorePassword" : {
+            "type" : "string"
+          },
+          "namedGroups" : {
+            "type" : "string"
+          },
+          "namedGroupsExclude" : {
+            "type" : "string"
+          },
+          "namedGroupsInclude" : {
+            "type" : "string"
+          },
+          "provider" : {
+            "type" : "string"
+          },
+          "secureRandomAlgorithm" : {
+            "type" : "string"
+          },
+          "secureRandomProvider" : {
+            "type" : "string"
+          },
+          "secureSocketProtocol" : {
+            "type" : "string"
+          },
+          "sessionTimeout" : {
+            "type" : "string"
+          },
+          "signatureSchemes" : {
+            "type" : "string"
+          },
+          "signatureSchemesExclude" : {
+            "type" : "string"
+          },
+          "signatureSchemesInclude" : {
+            "type" : "string"
+          },
+          "trustAllCertificates" : {
+            "type" : "string"
+          },
+          "trustStore" : {
+            "type" : "string"
+          },
+          "trustStorePassword" : {
+            "type" : "string"
+          }
+        }
+      },
       "org.apache.camel.model.config.BatchResequencerConfig" : {
         "title" : "Batch Config",
         "description" : "Configures batch-processing resequence eip.",
@@ -10174,11 +10259,17 @@
           "mimeMultipart" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.MimeMultipartDataFormat"
           },
+          "ocsf" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
+          },
           "parquetAvro" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ParquetAvroDataFormat"
           },
           "pgp" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
+          },
+          "pqc" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PQCDataFormat"
           },
           "protobuf" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ProtobufDataFormat"
@@ -16401,9 +16492,13 @@
               }, {
                 "required" : [ "mimeMultipart" ]
               }, {
+                "required" : [ "ocsf" ]
+              }, {
                 "required" : [ "parquetAvro" ]
               }, {
                 "required" : [ "pgp" ]
+              }, {
+                "required" : [ "pqc" ]
               }, {
                 "required" : [ "protobuf" ]
               }, {
@@ -16656,6 +16751,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "ocsf" ],
+            "properties" : {
+              "ocsf" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "parquetAvro" ],
             "properties" : {
               "parquetAvro" : {
@@ -16668,6 +16771,14 @@
             "properties" : {
               "pgp" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "pqc" ],
+            "properties" : {
+              "pqc" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PQCDataFormat"
               }
             }
           }, {
@@ -16849,8 +16960,10 @@
           "jsonApi" : { },
           "lzf" : { },
           "mimeMultipart" : { },
+          "ocsf" : { },
           "parquetAvro" : { },
           "pgp" : { },
+          "pqc" : { },
           "protobuf" : { },
           "rss" : { },
           "smooks" : { },
@@ -17102,6 +17215,9 @@
       },
       "templatedRoute" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.TemplatedRouteDefinition"
+      },
+      "sslContextParameters" : {
+        "$ref" : "#/items/definitions/org.apache.camel.model.app.SSLContextParametersDefinition"
       },
       "restConfiguration" : {
         "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestConfigurationDefinition"

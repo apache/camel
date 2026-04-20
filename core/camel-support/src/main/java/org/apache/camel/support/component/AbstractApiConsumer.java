@@ -41,7 +41,7 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
     // split Array or Collection API method results into multiple Exchanges
     private boolean splitResult = true;
 
-    public AbstractApiConsumer(AbstractApiEndpoint<E, T> endpoint, Processor processor) {
+    protected AbstractApiConsumer(AbstractApiEndpoint<E, T> endpoint, Processor processor) {
         super(endpoint, processor);
 
         this.endpoint = endpoint;

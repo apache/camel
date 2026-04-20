@@ -64,8 +64,8 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
     protected PackageScanClassResolver resolver;
     protected Injector injector;
 
-    public BaseTypeConverterRegistry(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector,
-                                     boolean statisticsEnabled) {
+    protected BaseTypeConverterRegistry(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector,
+                                        boolean statisticsEnabled) {
         super(statisticsEnabled);
 
         this.camelContext = camelContext;

@@ -111,12 +111,10 @@ public abstract class SecurityAuthenticatorSupport implements SecurityAuthentica
         public void handle(Callback[] callbacks) {
             for (Callback callback : callbacks) {
                 LOG.trace("Callback {}", callback);
-                if (callback instanceof PasswordCallback) {
-                    PasswordCallback pc = (PasswordCallback) callback;
+                if (callback instanceof PasswordCallback pc) {
                     LOG.trace("Setting password on callback {}", pc);
                     pc.setPassword(principal.getPassword().toCharArray());
-                } else if (callback instanceof NameCallback) {
-                    NameCallback nc = (NameCallback) callback;
+                } else if (callback instanceof NameCallback nc) {
                     LOG.trace("Setting username on callback {}", nc);
                     nc.setName(principal.getName());
                 }

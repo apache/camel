@@ -293,6 +293,9 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // turn on dynamic headers on exec component
+                context.getComponent("exec", ExecComponent.class).setAllowControlHeaders(true);
+
                 from("direct:input")
                         .recipientList(header("whereTo")).to("mock:output");
 

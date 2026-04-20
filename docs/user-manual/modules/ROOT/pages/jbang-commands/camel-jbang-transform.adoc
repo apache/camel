@@ -18,6 +18,7 @@ camel transform [options]
 [cols="2,5",options="header"]
 |===
 | Subcommand | Description
+| xref:jbang-commands/camel-jbang-transform-dataweave.adoc[dataweave] | Convert DataWeave scripts to DataSonnet format
 | xref:jbang-commands/camel-jbang-transform-message.adoc[message] | Transform message from one format to another via an existing running Camel integration
 | xref:jbang-commands/camel-jbang-transform-route.adoc[route] | Transform Camel routes to XML or YAML format
 |===

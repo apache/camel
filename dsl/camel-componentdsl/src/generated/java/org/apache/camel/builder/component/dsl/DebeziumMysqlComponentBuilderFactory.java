@@ -353,6 +353,42 @@ public interface DebeziumMysqlComponentBuilderFactory {
         }
     
         /**
+         * The number of seconds to wait for a read from the binlog connection
+         * to complete before the server times out. A value of 0 means use the
+         * MySQL server default. May need to be increased in high-latency
+         * network environments to prevent EOFException during streaming.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param binlogNetReadTimeout the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder binlogNetReadTimeout(long binlogNetReadTimeout) {
+            doSetProperty("binlogNetReadTimeout", binlogNetReadTimeout);
+            return this;
+        }
+    
+        /**
+         * The number of seconds to wait for a write to the binlog connection to
+         * complete before the server times out. A value of 0 means use the
+         * MySQL server default. May need to be increased when large data
+         * volumes cause EOFException during streaming.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: mysql
+         * 
+         * @param binlogNetWriteTimeout the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder binlogNetWriteTimeout(long binlogNetWriteTimeout) {
+            doSetProperty("binlogNetWriteTimeout", binlogNetWriteTimeout);
+            return this;
+        }
+    
+        /**
          * Regular expressions matching columns to exclude from change events.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1926,6 +1962,28 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         
         /**
+         * The factor used to scale the number of snapshot chunks per table. The
+         * default behavior is to take 'row_count/snapshot.max.threads' to
+         * compute the number of rows per chunks. This may not be ideal for
+         * larger tables, and using the multiplier, the formula is adjusted to
+         * increase the number of chunks by using
+         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: mysql
+         * 
+         * @param snapshotMaxThreadsMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder snapshotMaxThreadsMultiplier(int snapshotMaxThreadsMultiplier) {
+            doSetProperty("snapshotMaxThreadsMultiplier", snapshotMaxThreadsMultiplier);
+            return this;
+        }
+    
+        
+        /**
          * The criteria for running a snapshot upon startup of the connector.
          * Select one of the following snapshot options: 'when_needed': On
          * startup, the connector runs a snapshot if one is needed.;
@@ -2399,6 +2457,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "autowiredEnabled": ((DebeziumMySqlComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "bigintUnsignedHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBigintUnsignedHandlingMode((java.lang.String) value); return true;
             case "binlogBufferSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogBufferSize((int) value); return true;
+            case "binlogNetReadTimeout": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogNetReadTimeout((long) value); return true;
+            case "binlogNetWriteTimeout": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogNetWriteTimeout((long) value); return true;
             case "columnExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
@@ -2484,6 +2544,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "snapshotLockingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotLockingMode((java.lang.String) value); return true;
             case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotLockTimeoutMs((long) value); return true;
             case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotMaxThreads((int) value); return true;
+            case "snapshotMaxThreadsMultiplier": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotMaxThreadsMultiplier((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotModeConfigurationBasedSnapshotData((boolean) value); return true;
             case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotModeConfigurationBasedSnapshotOnDataError((boolean) value); return true;

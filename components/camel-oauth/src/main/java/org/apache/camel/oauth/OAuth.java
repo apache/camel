@@ -46,7 +46,7 @@ public abstract class OAuth {
     protected OAuthConfig config;
     protected OAuthSessionStore sessionStore;
 
-    public OAuth() {
+    protected OAuth() {
         this.sessionStore = new InMemorySessionStore();
     }
 

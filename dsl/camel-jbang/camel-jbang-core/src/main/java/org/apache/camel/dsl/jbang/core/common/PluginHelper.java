@@ -219,6 +219,8 @@ public final class PluginHelper {
         if (repos != null && !repos.isBlank()) {
             downloader.setRepositories(repos);
         }
+        // prefer resolving from local Maven repository to avoid expensive remote SNAPSHOT metadata checks
+        downloader.setPreferLocal(true);
         downloader.start();
         // downloads and adds to the classpath
         downloader.downloadDependencyWithParent("org.apache.camel:camel-jbang-parent:pom:" + camelVersion, group,

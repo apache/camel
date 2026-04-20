@@ -88,7 +88,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         notFoundBehaviour = configuration.getNotFoundBehaviour();
     }
 
-    public AbstractRestProcessor(SalesforceEndpoint endpoint) {
+    protected AbstractRestProcessor(SalesforceEndpoint endpoint) {
         super(endpoint);
     }
 

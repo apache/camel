@@ -57,7 +57,7 @@ public abstract class XmlSignatureProcessor implements Processor {
 
     protected final CamelContext context;
 
-    public XmlSignatureProcessor(CamelContext context) {
+    protected XmlSignatureProcessor(CamelContext context) {
         this.context = context;
     }
 

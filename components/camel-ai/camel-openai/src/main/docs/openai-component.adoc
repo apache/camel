@@ -327,6 +327,129 @@ from("direct:with-history")
     .log("${body}");
 ----
 
+== SSL Configuration
+
+The component supports custom SSL/TLS configuration for connecting to OpenAI or OpenAI-compatible endpoints that use self-signed certificates, private CAs, or require mutual TLS (mTLS) authentication.
+
+When no SSL parameters are set, the default JVM trust store is used.
+
+=== Using SSLContextParameters
+
+The component implements `SSLContextParametersAware` and supports Camel's standard `SSLContextParameters` for SSL configuration. When set, `SSLContextParameters` takes precedence over the individual `ssl*` properties (same pattern as `camel-kafka`).
+
+[source,java]
+----
+KeyStoreParameters trustStoreParams = new KeyStoreParameters();
+trustStoreParams.setResource("/path/to/truststore.jks");
+trustStoreParams.setPassword("changeit");
+
+TrustManagersParameters trustManagers = new TrustManagersParameters();
+trustManagers.setKeyStore(trustStoreParams);
+
+SSLContextParameters sslContextParameters = new SSLContextParameters();
+sslContextParameters.setTrustManagers(trustManagers);
+
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&baseUrl=https://my-llm-server:8443/v1"
+        + "&sslContextParameters=#sslContextParameters");
+----
+
+To use global SSL context parameters for all OpenAI endpoints:
+
+[source,java]
+----
+OpenAIComponent openai = context.getComponent("openai", OpenAIComponent.class);
+openai.setUseGlobalSslContextParameters(true);
+----
+
+=== Custom Trust Store
+
+To trust a server using a self-signed or private CA certificate:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&baseUrl=https://my-llm-server:8443/v1"
+        + "&sslTruststoreLocation=/path/to/truststore.jks"
+        + "&sslTruststorePassword=changeit");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              model: gpt-4
+              baseUrl: https://my-llm-server:8443/v1
+              sslTruststoreLocation: /path/to/truststore.jks
+              sslTruststorePassword: changeit
+----
+====
+
+=== Mutual TLS (mTLS)
+
+For two-way authentication, configure both trust store and key store:
+
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&baseUrl=https://my-llm-server:8443/v1"
+        + "&sslTruststoreLocation=/path/to/truststore.jks"
+        + "&sslTruststorePassword=changeit"
+        + "&sslKeystoreLocation=/path/to/keystore.jks"
+        + "&sslKeystorePassword=changeit"
+        + "&sslKeyPassword=keypass");
+----
+
+=== Disabling Hostname Verification
+
+In development or test environments, hostname verification can be disabled by setting `sslEndpointAlgorithm` to an empty string or `none`:
+
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&baseUrl=https://localhost:8443/v1"
+        + "&sslTruststoreLocation=/path/to/truststore.jks"
+        + "&sslTruststorePassword=changeit"
+        + "&sslEndpointAlgorithm=none");
+----
+
+WARNING: Disabling hostname verification is insecure and should only be used in non-production environments.
+
+=== SSL Parameters
+
+[cols="1,1,1,3"]
+|===
+| Parameter | Type | Default | Description
+
+| `sslContextParameters` | SSLContextParameters | | Camel SSL context parameters. When set, takes precedence over the individual `ssl*` options below
+| `sslTruststoreLocation` | String | | Location of the trust store file
+| `sslTruststorePassword` | String | | Trust store password
+| `sslTruststoreType` | String | `JKS` | Trust store format (e.g., `JKS`, `PKCS12`)
+| `sslKeystoreLocation` | String | | Location of the key store file (for mTLS)
+| `sslKeystorePassword` | String | | Key store password
+| `sslKeystoreType` | String | `JKS` | Key store format (e.g., `JKS`, `PKCS12`)
+| `sslKeyPassword` | String | | Private key password in the key store
+| `sslProtocol` | String | `TLSv1.3` | SSL protocol for generating the SSLContext
+| `sslKeymanagerAlgorithm` | String | `SunX509` | Algorithm for the key manager factory
+| `sslTrustmanagerAlgorithm` | String | `PKIX` | Algorithm for the trust manager factory
+| `sslEndpointAlgorithm` | String | `https` | Hostname verification algorithm; set to empty or `none` to disable
+|===
+
 == Compatibility
 
 This component works with any OpenAI API-compatible endpoint by setting the `baseUrl` parameter. This includes:
@@ -420,6 +543,8 @@ For single-input requests, the component returns a raw `List<Float>` embedding v
 
 ==== PostgreSQL + pgvector (Recommended)
 
+Using the xref:pgvector-component.adoc[PGVector] component:
+
 [source,yaml]
 ----
 # Index documents in PostgreSQL with pgvector
@@ -434,11 +559,42 @@ For single-input requests, the component returns a raw `List<Float>` embedding v
             uri: openai:embeddings
             parameters:
               embeddingModel: nomic-embed-text
-        - setVariable:
-            name: embedding
-            simple: "${body.toString()}"
+        - setHeader:
+            name: CamelPgVectorAction
+            constant: UPSERT
+        - setHeader:
+            name: CamelPgVectorTextContent
+            simple: "${variable.text}"
         - to:
-            uri: sql:INSERT INTO documents (content, embedding) VALUES (:#text, :#embedding::vector)
+            uri: pgvector:documents
+
+# Similarity search
+- route:
+    from:
+      uri: direct:search
+      steps:
+        - to:
+            uri: openai:embeddings
+            parameters:
+              embeddingModel: nomic-embed-text
+        - setHeader:
+            name: CamelPgVectorAction
+            constant: SIMILARITY_SEARCH
+        - setHeader:
+            name: CamelPgVectorQueryTopK
+            constant: 5
+        - to:
+            uri: pgvector:documents
+----
+
+The pgvector component handles table creation, HNSW indexing, upsert with conflict resolution, and similarity search with configurable distance types (cosine, euclidean, inner product). See the xref:pgvector-component.adoc[PGVector component documentation] for details.
+
+For custom table schemas, complex queries (joins, CTEs), or integration with existing PostgreSQL tables, you can use `camel-sql` directly with the pgvector extension:
+
+[source,yaml]
+----
+- to:
+    uri: sql:INSERT INTO documents (content, embedding) VALUES (:#text, :#embedding::vector)
 ----
 
 ==== Alternative: Dedicated Vector Databases

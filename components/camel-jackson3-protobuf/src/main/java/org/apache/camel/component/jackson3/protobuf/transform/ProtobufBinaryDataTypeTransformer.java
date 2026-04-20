@@ -76,8 +76,8 @@ public class ProtobufBinaryDataTypeTransformer extends Transformer {
 
     private JsonNode getBodyAsJsonNode(Message message, ProtobufSchema schema)
             throws InvalidPayloadException, IOException, ClassNotFoundException {
-        if (message.getBody() instanceof JsonNode) {
-            return (JsonNode) message.getBody();
+        if (message.getBody() instanceof JsonNode jsonNode) {
+            return jsonNode;
         }
 
         if (message.getBody() instanceof String jsonString && Json.isJson(jsonString)) {

@@ -23,7 +23,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(28);
+        Set<String> props = new HashSet<>(40);
         props.add("additionalBodyProperty");
         props.add("apiKey");
         props.add("autoToolExecution");
@@ -46,6 +46,18 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("oauthProfile");
         props.add("operation");
         props.add("outputClass");
+        props.add("sslContextParameters");
+        props.add("sslEndpointAlgorithm");
+        props.add("sslKeyPassword");
+        props.add("sslKeymanagerAlgorithm");
+        props.add("sslKeystoreLocation");
+        props.add("sslKeystorePassword");
+        props.add("sslKeystoreType");
+        props.add("sslProtocol");
+        props.add("sslTrustmanagerAlgorithm");
+        props.add("sslTruststoreLocation");
+        props.add("sslTruststorePassword");
+        props.add("sslTruststoreType");
         props.add("storeFullResponse");
         props.add("streaming");
         props.add("systemMessage");
@@ -53,8 +65,11 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("topP");
         props.add("userMessage");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
+        Set<String> secretProps = new HashSet<>(4);
         secretProps.add("apiKey");
+        secretProps.add("sslKeyPassword");
+        secretProps.add("sslKeystorePassword");
+        secretProps.add("sslTruststorePassword");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Map<String, String> prefixes = new HashMap<>(2);
         prefixes.put("additionalBodyProperty", "additionalBodyProperty.");

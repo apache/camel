@@ -158,6 +158,23 @@ public interface OpenaiComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpenaiComponentBuilder useGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
     }
 
     class OpenaiComponentBuilderImpl
@@ -179,6 +196,7 @@ public interface OpenaiComponentBuilderFactory {
             case "lazyStartProducer": ((OpenAIComponent) component).setLazyStartProducer((boolean) value); return true;
             case "model": ((OpenAIComponent) component).setModel((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpenAIComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "useGlobalSslContextParameters": ((OpenAIComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

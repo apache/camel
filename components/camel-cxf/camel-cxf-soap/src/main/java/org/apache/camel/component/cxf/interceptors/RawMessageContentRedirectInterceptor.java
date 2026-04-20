@@ -63,8 +63,8 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
             if (os == null && writer != null) {
                 IOUtils.copyAndCloseInput(new InputStreamReader(is), writer);
             } else {
-                if (is instanceof StreamCache) {
-                    ((StreamCache) is).writeTo(os);
+                if (is instanceof StreamCache streamCache) {
+                    streamCache.writeTo(os);
                 } else {
                     IOUtils.copy(is, os);
                 }
@@ -78,8 +78,8 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
     }
 
     private static void throwFault(Throwable ex) {
-        if (ex instanceof Fault) {
-            throw (Fault) ex;
+        if (ex instanceof Fault fault) {
+            throw fault;
         } else {
             throw new Fault(ex);
         }

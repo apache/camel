@@ -875,6 +875,20 @@ public interface ComponentsBuilderFactory {
         return CaffeineLoadcacheComponentBuilderFactory.caffeineLoadcache();
     }
     /**
+     * Camunda (camel-camunda)
+     * Interact with Camunda 8 Orchestration Clusters using the Camunda Java
+     * Client.
+     * 
+     * Category: workflow,saas
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-camunda
+     * 
+     * @return the dsl builder
+     */
+    static CamundaComponentBuilderFactory.CamundaComponentBuilder camunda() {
+        return CamundaComponentBuilderFactory.camunda();
+    }
+    /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
      * 
@@ -2425,6 +2439,20 @@ public interface ComponentsBuilderFactory {
      */
     static IbmWatsonxAiComponentBuilderFactory.IbmWatsonxAiComponentBuilder ibmWatsonxAi() {
         return IbmWatsonxAiComponentBuilderFactory.ibmWatsonxAi();
+    }
+    /**
+     * IBM watsonx.data (camel-ibm-watsonx-data)
+     * Interact with IBM watsonx.data lakehouse for catalog, schema, table, and
+     * engine management.
+     * 
+     * Category: cloud,database
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-data
+     * 
+     * @return the dsl builder
+     */
+    static IbmWatsonxDataComponentBuilderFactory.IbmWatsonxDataComponentBuilder ibmWatsonxData() {
+        return IbmWatsonxDataComponentBuilderFactory.ibmWatsonxData();
     }
     /**
      * IEC 60870 Client (camel-iec60870)
@@ -3981,6 +4009,19 @@ public interface ComponentsBuilderFactory {
         return PgeventComponentBuilderFactory.pgevent();
     }
     /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * @return the dsl builder
+     */
+    static PgvectorComponentBuilderFactory.PgvectorComponentBuilder pgvector() {
+        return PgvectorComponentBuilderFactory.pgvector();
+    }
+    /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
      * 
@@ -4183,7 +4224,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * REST OpenApi (camel-rest-openapi)
-     * To call REST services using OpenAPI specification as contract.
+     * To call and expose REST services using OpenAPI specification as contract.
      * 
      * Category: rest,api
      * Since: 3.1

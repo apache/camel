@@ -49,6 +49,7 @@ import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -212,6 +213,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
     private volatile long pid;
 
     String findAnsi;
+    Pattern[] grepPatterns;
+    Pattern[] findPatterns;
     private int nameMaxWidth;
     private boolean prefixShown;
     private MessageTableHelper tableHelper;
@@ -455,6 +458,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
         rows.sort(this::sortStatusRow);
 
         if (!rows.isEmpty()) {
+            int tw = terminalWidth();
+            int fixedWidth = 10 + 30 + 10 + 10 + 8 + 10; // PID + NAME + AGE + STATUS + TOTAL + SINCE (approx)
+            int borderOverhead = TerminalWidthHelper.noBorderOverhead(7);
+            int endpointWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth, borderOverhead, 20, wideUri ? 140 : 90);
+
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -465,10 +473,10 @@ public class CamelReceiveAction extends ActionBaseCommand {
                     new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER)
                             .with(this::getMessageAgo),
                     new Column().header("ENDPOINT").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(90, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .maxWidth(endpointWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getEndpointUri),
                     new Column().header("ENDPOINT").visible(wideUri).dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(140, OverflowBehaviour.NEWLINE)
+                            .maxWidth(endpointWidth, OverflowBehaviour.NEWLINE)
                             .with(r -> r.uri))));
         }
 
@@ -515,19 +523,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
             // read existing received files (skip by tail/since)
             if (find != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                for (int i = 0; i < find.length; i++) {
-                    String f = find[i];
-                    f = Pattern.quote(f);
-                    find[i] = f;
-                }
+                findPatterns = quoteAndCompilePatterns(find);
             }
             if (grep != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                for (int i = 0; i < grep.length; i++) {
-                    String f = grep[i];
-                    f = Pattern.quote(f);
-                    grep[i] = f;
-                }
+                grepPatterns = quoteAndCompilePatterns(grep);
             }
             Date limit = null;
             if (since != null) {
@@ -834,9 +834,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
         if (grep == null) {
             return true;
         }
-        for (String g : grep) {
-            boolean m = Pattern.compile("(?i)" + g).matcher(line).find();
-            if (m) {
+        for (Pattern p : grepPatterns) {
+            if (p.matcher(line).find()) {
                 return true;
             }
         }
@@ -905,14 +904,14 @@ public class CamelReceiveAction extends ActionBaseCommand {
         String[] lines = data.split(System.lineSeparator());
         if (lines.length > 0) {
             for (String line : lines) {
-                if (find != null) {
-                    for (String f : find) {
-                        line = line.replaceAll("(?i)" + f, findAnsi);
+                if (findPatterns != null) {
+                    for (Pattern p : findPatterns) {
+                        line = p.matcher(line).replaceAll(findAnsi);
                     }
                 }
-                if (grep != null) {
-                    for (String g : grep) {
-                        line = line.replaceAll("(?i)" + g, findAnsi);
+                if (grepPatterns != null) {
+                    for (Pattern p : grepPatterns) {
+                        line = p.matcher(line).replaceAll(findAnsi);
                     }
                 }
                 if (nameWithPrefix != null) {

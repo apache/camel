@@ -30,7 +30,7 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
 
     private WordpressConfiguration configuration;
 
-    public AbstractWordpressProducer(WordpressEndpoint endpoint) {
+    protected AbstractWordpressProducer(WordpressEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
         if (!WordpressServiceProvider.getInstance().hasAuthentication()) {

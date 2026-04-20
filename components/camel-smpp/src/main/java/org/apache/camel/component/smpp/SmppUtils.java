@@ -144,8 +144,8 @@ public final class SmppUtils {
         byte[] body = deliverSm.getShortMessage();
         if (body == null || body.length == 0) {
             OptionalParameter param = deliverSm.getOptionalParameter(Tag.MESSAGE_PAYLOAD);
-            if (param instanceof OctetString) {
-                body = ((OctetString) param).getValue();
+            if (param instanceof OctetString octetString) {
+                body = octetString.getValue();
             }
         }
         return body;

@@ -39,6 +39,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.milvus.MilvusAction;
 import org.apache.camel.component.milvus.MilvusHeaders;
 import org.apache.camel.component.milvus.MilvusTestSupport;
+import org.apache.camel.component.milvus.helpers.MilvusHelperCreateCollection;
+import org.apache.camel.component.milvus.helpers.MilvusHelperCreateIndex;
+import org.apache.camel.component.milvus.helpers.MilvusHelperDelete;
+import org.apache.camel.component.milvus.helpers.MilvusHelperInsert;
+import org.apache.camel.component.milvus.helpers.MilvusHelperSearch;
+import org.apache.camel.component.milvus.helpers.MilvusHelperUpsert;
+import org.apache.camel.support.DefaultExchange;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.*;
 
@@ -266,6 +273,190 @@ public class MilvusComponentIT extends MilvusTestSupport {
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getBody(SearchResponse.class).getRowRecords().size() == 0);
+    }
+
+    // --- Helper-based tests (same operations via MilvusHelper beans) ---
+
+    @Test
+    @Order(10)
+    public void createCollectionWithHelper() throws Exception {
+        MilvusHelperCreateCollection helper = new MilvusHelperCreateCollection();
+        helper.setCollectionName("test_helper");
+        helper.setCollectionDescription("helper test collection");
+        helper.setIdFieldName("userID");
+        helper.setVectorFieldName("userFace");
+        helper.setTextFieldName("userAge");
+        helper.setTextFieldDataType("Int8");
+        helper.setDimension("64");
+
+        Exchange tempExchange = new DefaultExchange(context);
+        helper.process(tempExchange);
+
+        Exchange result = fluentTemplate.to("milvus:test_helper")
+                .withHeader(MilvusHeaders.ACTION, tempExchange.getIn().getHeader(MilvusHeaders.ACTION))
+                .withBody(tempExchange.getIn().getBody())
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+    }
+
+    @Test
+    @Order(11)
+    public void createIndexWithHelper() throws Exception {
+        MilvusHelperCreateIndex helper = new MilvusHelperCreateIndex();
+        helper.setCollectionName("test_helper");
+        helper.setVectorFieldName("userFace");
+        helper.setIndexName("userFaceIndex");
+        helper.setIndexType("IVF_FLAT");
+        helper.setMetricType("L2");
+        helper.setExtraParam("{\"nlist\":128}");
+
+        Exchange tempExchange = new DefaultExchange(context);
+        helper.process(tempExchange);
+
+        Exchange result = fluentTemplate.to("milvus:test_helper")
+                .withHeader(MilvusHeaders.ACTION, tempExchange.getIn().getHeader(MilvusHeaders.ACTION))
+                .withBody(tempExchange.getIn().getBody())
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+    }
+
+    @Test
+    @Order(12)
+    public void createRagCollectionWithHelper() throws Exception {
+        MilvusHelperCreateCollection helper = new MilvusHelperCreateCollection();
+        helper.setCollectionName("test_helper_rag");
+        helper.setCollectionDescription("helper RAG test collection");
+        helper.setIdFieldName("docID");
+        helper.setVectorFieldName("embedding");
+        helper.setTextFieldName("content");
+        helper.setTextFieldDataType("VarChar");
+        helper.setTextFieldMaxLength("2048");
+        helper.setDimension("64");
+
+        Exchange tempExchange = new DefaultExchange(context);
+        helper.process(tempExchange);
+
+        Exchange result = fluentTemplate.to("milvus:test_helper_rag")
+                .withHeader(MilvusHeaders.ACTION, tempExchange.getIn().getHeader(MilvusHeaders.ACTION))
+                .withBody(tempExchange.getIn().getBody())
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+    }
+
+    @Test
+    @Order(13)
+    public void createRagIndexWithHelper() throws Exception {
+        MilvusHelperCreateIndex helper = new MilvusHelperCreateIndex();
+        helper.setCollectionName("test_helper_rag");
+        helper.setVectorFieldName("embedding");
+        helper.setIndexName("embeddingIndex");
+        helper.setIndexType("IVF_FLAT");
+        helper.setMetricType("L2");
+        helper.setExtraParam("{\"nlist\":128}");
+
+        Exchange tempExchange = new DefaultExchange(context);
+        helper.process(tempExchange);
+
+        Exchange result = fluentTemplate.to("milvus:test_helper_rag")
+                .withHeader(MilvusHeaders.ACTION, tempExchange.getIn().getHeader(MilvusHeaders.ACTION))
+                .withBody(tempExchange.getIn().getBody())
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+    }
+
+    @Test
+    @Order(14)
+    public void insertWithHelper() throws Exception {
+        MilvusHelperInsert helper = new MilvusHelperInsert();
+        helper.setCollectionName("test_helper_rag");
+        helper.setVectorFieldName("embedding");
+        helper.setTextFieldMappings("content=contentVar");
+
+        Exchange tempExchange = new DefaultExchange(context);
+        tempExchange.setVariable("contentVar", "This is a test document for RAG");
+        tempExchange.getIn().setBody(generateFloatVector());
+        helper.process(tempExchange);
+
+        Exchange result = fluentTemplate.to("milvus:test_helper_rag")
+                .withHeader(MilvusHeaders.ACTION, tempExchange.getIn().getHeader(MilvusHeaders.ACTION))
+                .withBody(tempExchange.getIn().getBody())
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+    }
+
+    @Test
+    @Order(15)
+    public void upsertWithHelper() throws Exception {
+        MilvusHelperUpsert helper = new MilvusHelperUpsert();
+        helper.setCollectionName("test_helper_rag");
+        helper.setVectorFieldName("embedding");
+        helper.setTextFieldMappings("content=contentVar");
+
+        Exchange tempExchange = new DefaultExchange(context);
+        tempExchange.setVariable("contentVar", "Updated document content");
+        tempExchange.getIn().setBody(generateFloatVector());
+        helper.process(tempExchange);
+
+        Exchange result = fluentTemplate.to("milvus:test_helper_rag")
+                .withHeader(MilvusHeaders.ACTION, tempExchange.getIn().getHeader(MilvusHeaders.ACTION))
+                .withBody(tempExchange.getIn().getBody())
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        // upsert without docID field will fail (autoID collection)
+        Assertions.assertTrue(result.isFailed());
+    }
+
+    @Test
+    @Order(16)
+    public void searchWithHelper() throws Exception {
+        MilvusHelperSearch helper = new MilvusHelperSearch();
+        helper.setCollectionName("test_helper");
+        helper.setOutputFields("userAge");
+        helper.setFilter("userAge>0");
+        helper.setLimit("100");
+        helper.setOffset("0");
+
+        Exchange tempExchange = new DefaultExchange(context);
+        tempExchange.getIn().setBody(generateFloatVector());
+        helper.process(tempExchange);
+
+        Exchange result = fluentTemplate.to("milvus:test_helper")
+                .withHeader(MilvusHeaders.ACTION, tempExchange.getIn().getHeader(MilvusHeaders.ACTION))
+                .withBody(tempExchange.getIn().getBody())
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
+    }
+
+    @Test
+    @Order(17)
+    public void deleteWithHelper() throws Exception {
+        MilvusHelperDelete helper = new MilvusHelperDelete();
+        helper.setCollectionName("test_helper");
+        helper.setFilter("userAge>0");
+
+        Exchange tempExchange = new DefaultExchange(context);
+        helper.process(tempExchange);
+
+        Exchange result = fluentTemplate.to("milvus:test_helper")
+                .withHeader(MilvusHeaders.ACTION, tempExchange.getIn().getHeader(MilvusHeaders.ACTION))
+                .withBody(tempExchange.getIn().getBody())
+                .request(Exchange.class);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getException()).isNull();
     }
 
     private List<List<Float>> generateFloatVectors(int count) {

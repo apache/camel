@@ -47,10 +47,10 @@ public abstract class RevenueWithdrawalState implements Serializable {
      */
     private String type;
 
-    public RevenueWithdrawalState() {
+    protected RevenueWithdrawalState() {
     }
 
-    public RevenueWithdrawalState(String type) {
+    protected RevenueWithdrawalState(String type) {
         this.type = type;
     }
 

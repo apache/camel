@@ -44,10 +44,10 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     @Metadata(required = true)
     protected String uri;
 
-    public SendDefinition() {
+    protected SendDefinition() {
     }
 
-    public SendDefinition(String uri) {
+    protected SendDefinition(String uri) {
         this.uri = uri;
     }
 

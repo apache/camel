@@ -285,6 +285,74 @@ class MavenDownloaderImplTest {
 
     @Test
     @EnabledIfSystemProperty(named = "enableMavenDownloaderTests", matches = "true")
+    void testPreferLocalResolvesFromCache() throws Exception {
+        File customLocalRepo = new File(tempDir, "prefer-local-repo");
+        Files.createDirectories(customLocalRepo.toPath());
+
+        // First, download the artifact into the custom local repo (online)
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.build();
+
+            MavenDownloader customDownloader = downloader.customize(
+                    customLocalRepo.getAbsolutePath(), 5000, 10000);
+
+            customDownloader.resolveArtifacts(
+                    List.of("org.apache.commons:commons-lang3:3.12.0"),
+                    null, false, false);
+        }
+
+        // Verify artifact is in custom local repo
+        File cachedJar = new File(
+                customLocalRepo,
+                "org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar");
+        assertTrue(cachedJar.exists(), "Artifact should have been downloaded to custom local repo");
+
+        // Now create a new downloader with preferLocal=true, Maven Central disabled,
+        // and a non-existent fake repo. Without preferLocal, this would fail because
+        // there are no reachable remote repos. With preferLocal, it should succeed
+        // by resolving from the local cache via offline-first resolution.
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setPreferLocal(true);
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false"); // disable settings.xml repos
+            downloader.setRepos("http://localhost:1/non-existent-repo"); // unreachable repo
+            downloader.build();
+
+            MavenDownloader customDownloader = downloader.customize(
+                    customLocalRepo.getAbsolutePath(), 1000, 1000);
+
+            List<MavenArtifact> artifacts = customDownloader.resolveArtifacts(
+                    List.of("org.apache.commons:commons-lang3:3.12.0"),
+                    null, false, false);
+
+            assertEquals(1, artifacts.size());
+            assertTrue(artifacts.get(0).getFile().exists());
+            LOG.info("preferLocal resolved artifact from local cache without contacting remote repos");
+        }
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "enableMavenDownloaderTests", matches = "true")
+    void testPreferLocalFallsBackToOnline() throws Exception {
+        // With preferLocal=true, if the artifact is NOT in the local repo,
+        // it should fall back to online resolution and succeed
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setPreferLocal(true);
+            downloader.build();
+
+            List<MavenArtifact> artifacts = downloader.resolveArtifacts(
+                    List.of("org.apache.commons:commons-lang3:3.12.0"),
+                    null, false, false);
+
+            assertEquals(1, artifacts.size());
+            assertTrue(artifacts.get(0).getFile().exists());
+            LOG.info("preferLocal fell back to online resolution for non-cached artifact");
+        }
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "enableMavenDownloaderTests", matches = "true")
     void testDisableMavenCentral() throws Exception {
         try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
             downloader.setMavenCentralEnabled(false);

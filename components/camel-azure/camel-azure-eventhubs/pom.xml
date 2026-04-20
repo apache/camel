@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-parent</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.20.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-azure-eventhubs</artifactId>
@@ -36,6 +36,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-azure-common</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>

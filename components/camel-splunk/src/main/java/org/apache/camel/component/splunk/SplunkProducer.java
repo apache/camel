@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Splunk producer.
  */
+@Deprecated(since = "4.19")
 public class SplunkProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkProducer.class);
     private SplunkEndpoint endpoint;

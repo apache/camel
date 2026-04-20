@@ -164,6 +164,7 @@ and existing blocks together. Any blocks not specified in the block list and per
 |`clearPageBlob`|`PageBlob`| Free the specified pages from the page blob. The size of the range must be a multiple of 512.
 |`getPageBlobRanges`|`PageBlob`|Returns the list of valid page ranges for a page blob or snapshot of a page blob.
 |`copyBlob`|`Common`|Copy a blob from one container to another one, even from different accounts.
+|`createBlobSnapshot`|`Common`|Creates a read-only snapshot of a blob. The snapshot ID is returned in the `CamelAzureStorageBlobSnapshotId` header.
 |===
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
@@ -712,6 +713,32 @@ from("direct:copyBlob")
 --------------------------------------------------------------------------------
 
 In this way the `file.txt` in the container `containerblob1` of the account `account`, will be copied to the container `containerblob2` of the same account.
+
+- `createBlobSnapshot`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:createBlobSnapshot")
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=createBlobSnapshot&serviceClient=#client")
+  .log("Snapshot ID: ${header.CamelAzureStorageBlobSnapshotId}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Reading a specific blob snapshot
+
+The `getBlob`, `downloadBlobToFile` and `downloadLink` operations can target a specific snapshot by setting the
+`snapshotId` URI parameter or the `CamelAzureStorageBlobSnapshotId` exchange header. When set, the read is scoped
+to the snapshot version of the blob instead of the live one. The header takes precedence over the URI parameter.
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:readSnapshot")
+  .process(exchange -> exchange.getIn().setHeader(BlobConstants.BLOB_SNAPSHOT_ID, "2026-04-15T10:00:00.0000000Z"))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
 
 === SAS Token generation example
 

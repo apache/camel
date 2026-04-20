@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.19")
 public class SplunkConnectionFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkConnectionFactory.class);
 

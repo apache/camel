@@ -78,13 +78,25 @@ Use these operations with Gemini, Imagen, and other Google models:
 |`generateChat`
 |Generate chat responses
 
+|`generateChatStreaming`
+|Generate streaming chat responses (accumulated text returned with chunk count)
+
 |`generateCode`
 |Generate code from a description
+
+|`generateImage`
+|Generate images using Imagen models
+
+|`generateEmbeddings`
+|Generate text embeddings using embedding models (single text or batch)
+
+|`generateMultimodal`
+|Generate content from multimodal inputs (text + images/video/audio)
 |===
 
 === Partner Models
 
-Use `rawPredict` for Claude, Llama, and Mistral models:
+Use `rawPredict` and `streamRawPredict` for Claude, Llama, and Mistral models:
 
 [cols="1,3"]
 |===
@@ -92,6 +104,9 @@ Use `rawPredict` for Claude, Llama, and Mistral models:
 
 |`rawPredict`
 |Send requests to partner models via the Prediction Service API
+
+|`streamRawPredict`
+|Send streaming requests to partner models (accumulated response with chunk count)
 |===
 
 Partner models require the `publisher` parameter: `anthropic`, `meta`, or `mistralai`.
@@ -131,6 +146,73 @@ from("direct:claude")
 
 The component automatically wraps simple text prompts in the required Anthropic format.
 
+=== Streaming Chat with Gemini
+
+[source,java]
+----
+from("direct:streaming")
+    .setBody(constant("Tell me a story"))
+    .to("google-vertexai:my-project:us-central1:gemini-2.0-flash"
+        + "?operation=generateChatStreaming&maxOutputTokens=512")
+    .log("Response: ${body}, Chunks: ${header.CamelGoogleVertexAIChunkCount}");
+----
+
+=== Image Generation with Imagen
+
+[source,java]
+----
+from("direct:image")
+    .setBody(constant("A sunset over mountains"))
+    .setHeader(GoogleVertexAIConstants.IMAGE_NUMBER_OF_IMAGES, constant(1))
+    .to("google-vertexai:my-project:us-central1:imagen-3.0-generate-002"
+        + "?operation=generateImage")
+    .log("Generated ${body.size()} image(s)");
+----
+
+The body will contain a `List<Image>` with the generated images. Each `Image` has `imageBytes()` and `mimeType()` methods.
+
+=== Text Embeddings
+
+[source,java]
+----
+from("direct:embed")
+    .setBody(constant("Apache Camel is an integration framework"))
+    .to("google-vertexai:my-project:us-central1:text-embedding-005"
+        + "?operation=generateEmbeddings")
+    .log("Embedding dimensions: ${body[0].size()}");
+----
+
+The body will contain a `List<List<Float>>` — one embedding vector per input text. For batch embeddings, pass a `List<String>` as the body.
+
+=== Multimodal Input (Image + Text)
+
+[source,java]
+----
+from("direct:multimodal")
+    .process(exchange -> {
+        exchange.getMessage().setHeader(GoogleVertexAIConstants.PROMPT, "Describe this image");
+        exchange.getMessage().setHeader(GoogleVertexAIConstants.MEDIA_GCS_URI,
+            "gs://my-bucket/photo.jpg");
+        exchange.getMessage().setHeader(GoogleVertexAIConstants.MEDIA_MIME_TYPE, "image/jpeg");
+    })
+    .to("google-vertexai:my-project:us-central1:gemini-2.0-flash"
+        + "?operation=generateMultimodal")
+    .log("${body}");
+----
+
+You can also pass inline image bytes via the `CamelGoogleVertexAIMediaData` header instead of a GCS URI.
+
+=== Streaming Claude with streamRawPredict
+
+[source,java]
+----
+from("direct:stream-claude")
+    .setBody(constant("What is Apache Camel?"))
+    .to("google-vertexai:my-project:us-east5:claude-sonnet-4@20250514"
+        + "?operation=streamRawPredict&publisher=anthropic")
+    .log("${body}");
+----
+
 === Claude with Custom Request
 
 For more control, pass a JSON or Map body:
@@ -157,7 +239,7 @@ from("direct:claude")
 
 === Google Models
 
-Use with `generateText`, `generateChat`, or `generateCode`:
+Use with `generateText`, `generateChat`, `generateChatStreaming`, `generateCode`, `generateImage`, `generateEmbeddings`, or `generateMultimodal`:
 
 * *Gemini*: `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-1.5-pro`, `gemini-1.5-flash`
 * *Imagen*: `imagen-4.0-generate-preview-05-20`, `imagen-3.0-generate-002`
@@ -166,7 +248,7 @@ Use with `generateText`, `generateChat`, or `generateCode`:
 
 === Partner Models
 
-Use with `rawPredict` and the appropriate `publisher`:
+Use with `rawPredict` or `streamRawPredict` and the appropriate `publisher`:
 
 [cols="1,2,2"]
 |===

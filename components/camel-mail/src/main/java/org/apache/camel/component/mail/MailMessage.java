@@ -117,18 +117,17 @@ public class MailMessage extends DefaultMessage {
     @Override
     public void copyFrom(org.apache.camel.Message that) {
         // only do a deep copy if we need to (yes when that is not a mail message, or if the mapMailMessage is true)
-        boolean needCopy = !(that instanceof MailMessage) || (((MailMessage) that).mapMailMessage);
+        boolean needCopy = !(that instanceof MailMessage thatMail) || thatMail.mapMailMessage;
         if (needCopy) {
             super.copyFrom(that);
         } else {
             // no deep copy needed, but copy message id
             setMessageId(that.getMessageId());
         }
-        if (that instanceof MailMessage) {
-            MailMessage tmpMailMessage = (MailMessage) that;
-            this.originalMailMessage = tmpMailMessage.originalMailMessage;
-            this.mailMessage = tmpMailMessage.mailMessage;
-            this.mapMailMessage = tmpMailMessage.mapMailMessage;
+        if (that instanceof MailMessage thatMailMessage) {
+            this.originalMailMessage = thatMailMessage.originalMailMessage;
+            this.mailMessage = thatMailMessage.mailMessage;
+            this.mapMailMessage = thatMailMessage.mapMailMessage;
         }
         // cover over exchange if none has been assigned
         if (getExchange() == null) {

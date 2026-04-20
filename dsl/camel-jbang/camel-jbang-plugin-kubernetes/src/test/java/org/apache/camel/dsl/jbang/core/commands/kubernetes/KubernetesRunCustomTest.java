@@ -44,8 +44,11 @@ import io.fabric8.kubernetes.client.server.mock.KubernetesMockServer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.ContainerTrait;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,12 +67,20 @@ import picocli.CommandLine;
 @EnableKubernetesMockClient
 class KubernetesRunCustomTest {
 
+    final String runPlatformDir = "target/tests/" + getClass().getSimpleName();
+
     protected KubernetesMockServer server;
     protected KubernetesClient client;
     protected StringPrinter printer;
 
+    @AfterEach
+    void cleanupWorkDirs() {
+        FileUtil.removeDir(new File(runPlatformDir));
+    }
+
     @BeforeEach
     public void setup() {
+        CommandLineHelper.useHomeDir("target");
         // Set Camel version with system property value, usually set via Maven surefire plugin
         // In case you run this test via local Java IDE you need to provide the system property or a default value here
         VersionHelper.setCamelVersion(System.getProperty("camel.version", ""));
@@ -125,7 +136,7 @@ class KubernetesRunCustomTest {
         Assertions.assertEquals(0, exit, printer.getOutput());
 
         Properties materializedProps = new Properties();
-        String propsFilepath = ".camel-jbang-run/my-route-props/src/main/resources/application.properties";
+        String propsFilepath = runPlatformDir + "/my-route-props/src/main/resources/application.properties";
         Assertions.assertTrue(new File(propsFilepath).exists());
         try (FileInputStream input = new FileInputStream(new File(propsFilepath))) {
             materializedProps.load(input);
@@ -291,7 +302,12 @@ class KubernetesRunCustomTest {
         var argsArr = Optional.ofNullable(args).orElse(new String[0]);
         var argsLst = new ArrayList<>(Arrays.asList(argsArr));
         var jbangMain = new CamelJBangMain().withPrinter(printer);
-        KubernetesRun command = new KubernetesRun(jbangMain, files);
+        KubernetesRun command = new KubernetesRun(jbangMain, files) {
+            @Override
+            String getRunPlatformDir() {
+                return runPlatformDir;
+            }
+        };
         CommandLine.populateCommand(command, argsLst.toArray(new String[0]));
         command.imageBuild = false;
         command.imagePush = false;

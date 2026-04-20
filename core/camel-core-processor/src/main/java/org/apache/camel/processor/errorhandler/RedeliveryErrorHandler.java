@@ -108,12 +108,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     protected final Processor onPrepareProcessor;
     protected final Processor onExceptionProcessor;
 
-    public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
-                                  Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
-                                  String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy,
-                                  boolean useOriginalBodyPolicy,
-                                  Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor,
-                                  Processor onExceptionProcessor) {
+    protected RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
+                                     Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
+                                     String deadLetterUri, boolean deadLetterHandleNewException,
+                                     boolean useOriginalMessagePolicy,
+                                     boolean useOriginalBodyPolicy,
+                                     Predicate retryWhile, ScheduledExecutorService executorService,
+                                     Processor onPrepareProcessor,
+                                     Processor onExceptionProcessor) {
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
@@ -2007,6 +2009,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         LOG.trace("Using TaskFactory: {}", taskFactory);
 
         ServiceHelper.startService(taskFactory, output, outputAsync, deadLetter);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        super.doResume();
+        // reset flag when resuming
+        preparingShutdown = false;
     }
 
     @Override

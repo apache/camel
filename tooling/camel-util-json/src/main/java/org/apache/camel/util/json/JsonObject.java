@@ -103,9 +103,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).intValue();
     }
@@ -126,8 +126,8 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      */
     public Boolean pathBoolean(String path) {
         Object returnable = path(path);
-        if (returnable instanceof String) {
-            returnable = Boolean.valueOf((String) returnable);
+        if (returnable instanceof String str) {
+            returnable = Boolean.valueOf(str);
         }
         return (Boolean) returnable;
     }
@@ -165,8 +165,8 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             java.util.Optional<Object> o = doPath(path.substring(0, pos));
             if (o.isPresent()) {
                 answer = o.get();
-                if (answer instanceof Map) {
-                    jo = (Map) answer;
+                if (answer instanceof Map map) {
+                    jo = map;
                 }
             } else {
                 optional = true;
@@ -177,8 +177,8 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             java.util.Optional<Object> o = doPath(path);
             if (o.isPresent()) {
                 answer = o.get();
-                if (answer instanceof Map) {
-                    jo = (Map) answer;
+                if (answer instanceof Map map) {
+                    jo = map;
                 }
             } else {
                 optional = true;
@@ -336,9 +336,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         } else if (returnable instanceof Number) {
             /* A number can be used to construct a BigDecimal */
             returnable = new BigDecimal(returnable.toString());
-        } else if (returnable instanceof String) {
+        } else if (returnable instanceof String str) {
             /* A number can be used to construct a BigDecimal */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return (BigDecimal) returnable;
     }
@@ -369,9 +369,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         } else if (returnable instanceof Number) {
             /* A number can be used to construct a BigDecimal */
             returnable = new BigDecimal(returnable.toString());
-        } else if (returnable instanceof String) {
+        } else if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return (BigDecimal) returnable;
     }
@@ -385,8 +385,8 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
      */
     public Boolean getBoolean(final String key) {
         Object returnable = this.get(key);
-        if (returnable instanceof String) {
-            returnable = Boolean.valueOf((String) returnable);
+        if (returnable instanceof String str) {
+            returnable = Boolean.valueOf(str);
         }
         return (Boolean) returnable;
     }
@@ -406,8 +406,8 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         } else {
             return defaultValue;
         }
-        if (returnable instanceof String) {
-            returnable = Boolean.valueOf((String) returnable);
+        if (returnable instanceof String str) {
+            returnable = Boolean.valueOf(str);
         }
         return (Boolean) returnable;
     }
@@ -427,9 +427,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).byteValue();
     }
@@ -456,9 +456,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).byteValue();
     }
@@ -521,9 +521,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).doubleValue();
     }
@@ -550,9 +550,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).doubleValue();
     }
@@ -725,9 +725,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).floatValue();
     }
@@ -754,9 +754,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).floatValue();
     }
@@ -776,9 +776,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).intValue();
     }
@@ -805,9 +805,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).intValue();
     }
@@ -827,9 +827,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).longValue();
     }
@@ -856,9 +856,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).longValue();
     }
@@ -921,9 +921,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).shortValue();
     }
@@ -950,9 +950,9 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
         if (returnable == null) {
             return null;
         }
-        if (returnable instanceof String) {
+        if (returnable instanceof String str) {
             /* A String can be used to construct a BigDecimal. */
-            returnable = new BigDecimal((String) returnable);
+            returnable = new BigDecimal(str);
         }
         return ((Number) returnable).shortValue();
     }

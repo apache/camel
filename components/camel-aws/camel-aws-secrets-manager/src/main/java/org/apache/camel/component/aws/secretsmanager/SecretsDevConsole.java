@@ -49,8 +49,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
 
         if (getCamelContext().getPropertiesComponent().hasPropertiesFunction("aws")) {
             PropertiesFunction pf = getCamelContext().getPropertiesComponent().getPropertiesFunction("aws");
-            if (pf instanceof SecretsManagerPropertiesFunction) {
-                propertiesFunction = (SecretsManagerPropertiesFunction) pf;
+            if (pf instanceof SecretsManagerPropertiesFunction secretsManagerPropertiesFunction) {
+                propertiesFunction = secretsManagerPropertiesFunction;
             }
         }
         AwsVaultConfiguration aws = getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();

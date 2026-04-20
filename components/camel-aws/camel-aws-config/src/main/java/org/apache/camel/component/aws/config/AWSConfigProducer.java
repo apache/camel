@@ -99,10 +99,9 @@ public class AWSConfigProducer extends DefaultProducer {
     private void putConfigRule(ConfigClient configClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PutConfigRuleRequest) {
+            if (payload instanceof PutConfigRuleRequest request) {
                 PutConfigRuleResponse result;
                 try {
-                    PutConfigRuleRequest request = (PutConfigRuleRequest) payload;
                     result = configClient.putConfigRule(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Put Config rule command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -146,10 +145,9 @@ public class AWSConfigProducer extends DefaultProducer {
     private void removeConfigRule(ConfigClient configClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteConfigRuleRequest) {
+            if (payload instanceof DeleteConfigRuleRequest request) {
                 DeleteConfigRuleResponse result;
                 try {
-                    DeleteConfigRuleRequest request = (DeleteConfigRuleRequest) payload;
                     result = configClient.deleteConfigRule(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Config rule command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -182,10 +180,9 @@ public class AWSConfigProducer extends DefaultProducer {
     private void describeRuleCompliance(ConfigClient configClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DescribeComplianceByConfigRuleRequest) {
+            if (payload instanceof DescribeComplianceByConfigRuleRequest request) {
                 DescribeComplianceByConfigRuleResponse result;
                 try {
-                    DescribeComplianceByConfigRuleRequest request = (DescribeComplianceByConfigRuleRequest) payload;
                     result = configClient.describeComplianceByConfigRule(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Compliance by Config rule command returned the error code {}",
@@ -218,10 +215,9 @@ public class AWSConfigProducer extends DefaultProducer {
     private void putConformancePack(ConfigClient configClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PutConformancePackRequest) {
+            if (payload instanceof PutConformancePackRequest request) {
                 PutConformancePackResponse result;
                 try {
-                    PutConformancePackRequest request = (PutConformancePackRequest) payload;
                     result = configClient.putConformancePack(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Put Conformance Pack command returned the error code {}", ase.awsErrorDetails().errorCode());
@@ -269,10 +265,9 @@ public class AWSConfigProducer extends DefaultProducer {
     private void removeConformancePack(ConfigClient configClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteConformancePackRequest) {
+            if (payload instanceof DeleteConformancePackRequest request) {
                 DeleteConformancePackResponse result;
                 try {
-                    DeleteConformancePackRequest request = (DeleteConformancePackRequest) payload;
                     result = configClient.deleteConformancePack(request);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Remove Conformance Pack rule command returned the error code {}",

@@ -16,40 +16,38 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.function.Supplier;
 
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.HomeHelper;
-import org.jline.builtins.ClasspathResourceUtil;
-import org.jline.builtins.ConfigurationPath;
-import org.jline.console.SystemRegistry;
-import org.jline.console.impl.Builtins;
-import org.jline.console.impl.SystemRegistryImpl;
-import org.jline.keymap.KeyMap;
-import org.jline.reader.Binding;
-import org.jline.reader.EndOfFileException;
+import org.jline.builtins.InteractiveCommandGroup;
+import org.jline.builtins.PosixCommandGroup;
+import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.MaskingCallback;
-import org.jline.reader.Parser;
-import org.jline.reader.Reference;
-import org.jline.reader.UserInterruptException;
-import org.jline.reader.impl.DefaultHighlighter;
-import org.jline.reader.impl.DefaultParser;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
+import org.jline.shell.ShellBuilder;
+import org.jline.shell.impl.DefaultAliasManager;
+import org.jline.shell.widget.CommandTailTipWidgets;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
-import org.jline.utils.InfoCmp;
-import org.jline.widget.TailTipWidgets;
 import picocli.CommandLine;
-import picocli.shell.jline3.PicocliCommands;
 
 @CommandLine.Command(name = "shell",
                      description = "Interactive Camel JBang shell.",
-                     footer = "Press Ctrl-C to exit.")
+                     footer = {
+                             "%nExamples:",
+                             "  camel shell",
+                             "",
+                             "Press Ctrl-C to exit." })
 public class Shell extends CamelCommand {
+
+    // Camel orange color (packed RGB)
+    private static final int CAMEL_ORANGE = 0xF69123;
+
+    // Help colors: title=bold blue, command=38, args=italic, options=yellow, description=dark gray
+    private static final String HELP_COLORS = "ti=1;34:co=38:ar=3:op=33:de=90";
 
     public Shell(CamelJBangMain main) {
         super(main);
@@ -57,86 +55,104 @@ public class Shell extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        Supplier<Path> workDir = () -> Paths.get(System.getProperty("user.dir"));
-        // set up JLine built-in commands
-        Path appConfig = ClasspathResourceUtil.getResourcePath("/nano/jnanorc", getClass()).getParent();
-        Builtins builtins = new Builtins(workDir, new ConfigurationPath(appConfig, workDir.get()), null) {
-            @Override
-            public String name() {
-                return "built-in";
-            }
-        };
+        PicocliCommandRegistry registry = new PicocliCommandRegistry(CamelJBangMain.getCommandLine());
 
-        PicocliCommands.PicocliCommandsFactory factory = new PicocliCommands.PicocliCommandsFactory();
-        PicocliCommands commands = new PicocliCommands(CamelJBangMain.getCommandLine());
-        commands.name("Camel");
+        String homeDir = HomeHelper.resolveHomeDir();
+        Path history = Paths.get(homeDir, ".camel-jbang-history");
 
-        try (Terminal terminal = TerminalBuilder.builder().build()) {
-            Parser parser = new DefaultParser();
-            SystemRegistry systemRegistry = new SystemRegistryImpl(parser, terminal, workDir, null);
-            systemRegistry.setCommandRegistries(builtins, commands);
-            systemRegistry.register("help", commands);
+        // Alias persistence: aliases are stored in ~/.camel-jbang-aliases
+        Path aliasFile = Paths.get(homeDir, ".camel-jbang-aliases");
+        DefaultAliasManager aliasManager = new DefaultAliasManager(aliasFile);
 
-            String history = Paths.get(HomeHelper.resolveHomeDir(), ".camel-jbang-history").toString();
-            LineReader reader = LineReaderBuilder.builder()
-                    .terminal(terminal)
-                    .completer(systemRegistry.completer())
-                    .parser(parser)
-                    .highlighter(new ReplHighlighter())
-                    .variable(LineReader.LIST_MAX, 50)   // max tab completion candidates
-                    .variable(LineReader.HISTORY_FILE, history)
-                    .variable(LineReader.OTHERS_GROUP_NAME, "Others")
-                    .variable(LineReader.COMPLETION_STYLE_GROUP, "fg:blue,bold")
-                    .variable("HELP_COLORS", "ti=1;34:co=38:ar=3:op=33:de=90")
-                    .option(LineReader.Option.GROUP_PERSIST, true)
-                    .build();
-            builtins.setLineReader(reader);
-            factory.setTerminal(terminal);
-            TailTipWidgets widgets
-                    = new TailTipWidgets(reader, systemRegistry::commandDescription, 5, TailTipWidgets.TipType.COMPLETER);
-            widgets.enable();
-            KeyMap<Binding> keyMap = reader.getKeyMaps().get("main");
-            keyMap.bind(new Reference("tailtip-toggle"), KeyMap.alt("s"));
-            String prompt = "camel> ";
-            String rightPrompt = null;
+        // Init script: if ~/.camel-jbang-init exists, it will be executed on shell startup
+        Path initScript = Paths.get(homeDir, ".camel-jbang-init");
 
-            // start the shell and process input until the user quits with Ctrl-C or Ctrl-D
-            String line;
-            boolean run = true;
-            TerminalBuilder.setTerminalOverride(terminal);
-            while (run) {
-                try {
-                    systemRegistry.cleanUp();
-                    line = reader.readLine(prompt, rightPrompt, (MaskingCallback) null, null);
-                    systemRegistry.execute(line);
-                } catch (UserInterruptException e) {
-                    // ctrl + c is pressed so exit
-                    run = false;
-                } catch (EndOfFileException e) {
-                    // ctrl + d is pressed so exit
-                    run = false;
-                } catch (Exception e) {
-                    systemRegistry.trace(e);
-                }
-            }
-        } finally {
-            TerminalBuilder.setTerminalOverride(null);
+        String camelVersion = VersionHelper.extractCamelVersion();
+        boolean colorEnabled = EnvironmentHelper.isColorEnabled();
+
+        // org.jline.shell.Shell is used via FQCN to avoid clash with this class name
+        ShellBuilder builder = org.jline.shell.Shell.builder()
+                .prompt(() -> buildPrompt(camelVersion, colorEnabled))
+                .rightPrompt(() -> buildRightPrompt(colorEnabled))
+                .groups(registry, new PosixCommandGroup(), new InteractiveCommandGroup())
+                .historyFile(history)
+                .historyCommands(true)
+                .helpCommands(true)
+                .variableCommands(true)
+                .commandHighlighter(true)
+                .aliasManager(aliasManager)
+                .onReaderReady((reader, dispatcher) -> {
+                    // CommandTailTipWidgets provides both fish-style autosuggestion
+                    // and command description tooltips below the cursor line
+                    new CommandTailTipWidgets(reader, dispatcher, 5).enable();
+                })
+                .variable(LineReader.LIST_MAX, 50)
+                .variable(LineReader.OTHERS_GROUP_NAME, "Others")
+                .variable(LineReader.COMPLETION_STYLE_GROUP, "fg:blue,bold")
+                .variable("HELP_COLORS", HELP_COLORS)
+                .option(LineReader.Option.GROUP_PERSIST, true);
+
+        if (Files.exists(initScript)) {
+            builder.initScript(initScript.toFile());
+        }
+
+        try (org.jline.shell.Shell shell = builder.build()) {
+            printBanner(shell, camelVersion, colorEnabled);
+            shell.run();
         }
         return 0;
     }
 
-    private static class ReplHighlighter extends DefaultHighlighter {
-        @Override
-        protected void commandStyle(LineReader reader, AttributedStringBuilder sb, boolean enable) {
-            if (enable) {
-                if (reader.getTerminal().getNumericCapability(InfoCmp.Capability.max_colors) >= 256) {
-                    sb.style(AttributedStyle.DEFAULT.bold().foreground(69));
-                } else {
-                    sb.style(AttributedStyle.DEFAULT.foreground(AttributedStyle.CYAN));
-                }
-            } else {
-                sb.style(AttributedStyle.DEFAULT.boldOff().foregroundOff());
-            }
+    private static String buildPrompt(String camelVersion, boolean colorEnabled) {
+        if (!colorEnabled) {
+            return camelVersion != null ? "camel " + camelVersion + "> " : "camel> ";
         }
+        AttributedStringBuilder sb = new AttributedStringBuilder();
+        sb.append("camel", AttributedStyle.DEFAULT.bold().foregroundRgb(CAMEL_ORANGE));
+        if (camelVersion != null) {
+            sb.append(" ");
+            sb.append(camelVersion, AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
+        }
+        sb.append("> ", AttributedStyle.DEFAULT);
+        return sb.toAnsi();
+    }
+
+    private static String buildRightPrompt(boolean colorEnabled) {
+        String cwd = System.getProperty("user.dir");
+        String home = System.getProperty("user.home");
+        if (cwd != null && home != null && cwd.startsWith(home)) {
+            cwd = "~" + cwd.substring(home.length());
+        }
+        if (cwd == null) {
+            return null;
+        }
+        if (!colorEnabled) {
+            return cwd;
+        }
+        return new AttributedStringBuilder()
+                .append(cwd, AttributedStyle.DEFAULT.faint())
+                .toAnsi();
+    }
+
+    private static void printBanner(org.jline.shell.Shell shell, String camelVersion, boolean colorEnabled) {
+        var writer = shell.terminal().writer();
+        if (colorEnabled) {
+            AttributedStringBuilder sb = new AttributedStringBuilder();
+            sb.append("Apache Camel", AttributedStyle.DEFAULT.bold().foregroundRgb(CAMEL_ORANGE));
+            sb.append(" JBang Shell", AttributedStyle.DEFAULT.bold());
+            if (camelVersion != null) {
+                sb.append(" v" + camelVersion, AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
+            }
+            writer.println(sb.toAnsi(shell.terminal()));
+        } else {
+            String banner = "Apache Camel JBang Shell";
+            if (camelVersion != null) {
+                banner += " v" + camelVersion;
+            }
+            writer.println(banner);
+        }
+        writer.println("Type 'help' for available commands, 'exit' to quit.");
+        writer.println();
+        writer.flush();
     }
 }

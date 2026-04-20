@@ -28,11 +28,11 @@ public class HttpOutboundStreamHandler extends ChunkedWriteHandler {
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         boolean needNewPromise = false;
 
-        if (msg instanceof OutboundStreamHttpRequest) {
-            super.write(ctx, ((OutboundStreamHttpRequest) msg).getRequest(), promise);
+        if (msg instanceof OutboundStreamHttpRequest outboundStreamHttpRequest) {
+            super.write(ctx, outboundStreamHttpRequest.getRequest(), promise);
             needNewPromise = true;
-        } else if (msg instanceof OutboundStreamHttpResponse) {
-            super.write(ctx, ((OutboundStreamHttpResponse) msg).getResponse(), promise);
+        } else if (msg instanceof OutboundStreamHttpResponse outboundStreamHttpResponse) {
+            super.write(ctx, outboundStreamHttpResponse.getResponse(), promise);
             needNewPromise = true;
         }
 

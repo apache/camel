@@ -59,74 +59,6 @@ public interface ExecEndpointBuilderFactory {
             return this;
         }
         /**
-         * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.exec.ExecBinding</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param binding the value to set
-         * @return the dsl builder
-         */
-        default ExecEndpointBuilder binding(org.apache.camel.component.exec.ExecBinding binding) {
-            doSetProperty("binding", binding);
-            return this;
-        }
-        /**
-         * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.exec.ExecBinding</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param binding the value to set
-         * @return the dsl builder
-         */
-        default ExecEndpointBuilder binding(String binding) {
-            doSetProperty("binding", binding);
-            return this;
-        }
-        /**
-         * A reference to a org.apache.commons.exec.ExecCommandExecutor in the
-         * Registry that customizes the command execution. The default command
-         * executor utilizes the commons-exec library, which adds a shutdown
-         * hook for every executed command.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param commandExecutor the value to set
-         * @return the dsl builder
-         */
-        default ExecEndpointBuilder commandExecutor(org.apache.camel.component.exec.ExecCommandExecutor commandExecutor) {
-            doSetProperty("commandExecutor", commandExecutor);
-            return this;
-        }
-        /**
-         * A reference to a org.apache.commons.exec.ExecCommandExecutor in the
-         * Registry that customizes the command execution. The default command
-         * executor utilizes the commons-exec library, which adds a shutdown
-         * hook for every executed command.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
-         * type.
-         * 
-         * Group: producer
-         * 
-         * @param commandExecutor the value to set
-         * @return the dsl builder
-         */
-        default ExecEndpointBuilder commandExecutor(String commandExecutor) {
-            doSetProperty("commandExecutor", commandExecutor);
-            return this;
-        }
-        /**
          * Logging level to be used for commands during execution. The default
          * value is DEBUG. Possible values are TRACE, DEBUG, INFO, WARN, ERROR
          * or OFF. (Values of ExecCommandLogLevelType enum).
@@ -331,6 +263,114 @@ public interface ExecEndpointBuilderFactory {
          */
         default AdvancedExecEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether to allow to use Camel headers or not (default false).
+         * Enabling this allows to specify dynamic command line arguments via
+         * message header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param allowControlHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedExecEndpointBuilder allowControlHeaders(boolean allowControlHeaders) {
+            doSetProperty("allowControlHeaders", allowControlHeaders);
+            return this;
+        }
+        /**
+         * Whether to allow to use Camel headers or not (default false).
+         * Enabling this allows to specify dynamic command line arguments via
+         * message header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param allowControlHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedExecEndpointBuilder allowControlHeaders(String allowControlHeaders) {
+            doSetProperty("allowControlHeaders", allowControlHeaders);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.commons.exec.ExecBinding for advanced
+         * use-cases.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.exec.ExecBinding</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
+         */
+        default AdvancedExecEndpointBuilder binding(org.apache.camel.component.exec.ExecBinding binding) {
+            doSetProperty("binding", binding);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.commons.exec.ExecBinding for advanced
+         * use-cases.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.exec.ExecBinding</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
+         */
+        default AdvancedExecEndpointBuilder binding(String binding) {
+            doSetProperty("binding", binding);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.commons.exec.ExecCommandExecutor that
+         * customizes the command execution. The default command executor
+         * utilizes the commons-exec library, which adds a shutdown hook for
+         * every executed command.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param commandExecutor the value to set
+         * @return the dsl builder
+         */
+        default AdvancedExecEndpointBuilder commandExecutor(org.apache.camel.component.exec.ExecCommandExecutor commandExecutor) {
+            doSetProperty("commandExecutor", commandExecutor);
+            return this;
+        }
+        /**
+         * To use a custom org.apache.commons.exec.ExecCommandExecutor that
+         * customizes the command execution. The default command executor
+         * utilizes the commons-exec library, which adds a shutdown hook for
+         * every executed command.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param commandExecutor the value to set
+         * @return the dsl builder
+         */
+        default AdvancedExecEndpointBuilder commandExecutor(String commandExecutor) {
+            doSetProperty("commandExecutor", commandExecutor);
             return this;
         }
     }

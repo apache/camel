@@ -28,7 +28,7 @@ public abstract class OAuthFactory {
 
     protected final CamelContext context;
 
-    public OAuthFactory(CamelContext context) {
+    protected OAuthFactory(CamelContext context) {
         this.context = context;
     }
 

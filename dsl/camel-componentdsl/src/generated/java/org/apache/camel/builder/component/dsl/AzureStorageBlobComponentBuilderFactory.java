@@ -348,6 +348,25 @@ public interface AzureStorageBlobComponentBuilderFactory {
         }
     
         /**
+         * The snapshot identifier used to target a specific blob snapshot on
+         * read operations (getBlob, downloadBlobToFile, downloadLink). When
+         * set, the read targets the snapshot scoped client instead of the live
+         * blob. Can also be provided per-exchange via the
+         * CamelAzureStorageBlobSnapshotId header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param snapshotId the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder snapshotId(java.lang.String snapshotId) {
+            doSetProperty("snapshotId", snapshotId);
+            return this;
+        }
+    
+        /**
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
@@ -975,6 +994,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "regex": getOrCreateConfiguration((BlobComponent) component).setRegex((java.lang.String) value); return true;
             case "sasToken": getOrCreateConfiguration((BlobComponent) component).setSasToken((java.lang.String) value); return true;
             case "serviceClient": getOrCreateConfiguration((BlobComponent) component).setServiceClient((com.azure.storage.blob.BlobServiceClient) value); return true;
+            case "snapshotId": getOrCreateConfiguration((BlobComponent) component).setSnapshotId((java.lang.String) value); return true;
             case "timeout": getOrCreateConfiguration((BlobComponent) component).setTimeout((java.time.Duration) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((BlobComponent) component).setDeleteAfterRead((boolean) value); return true;

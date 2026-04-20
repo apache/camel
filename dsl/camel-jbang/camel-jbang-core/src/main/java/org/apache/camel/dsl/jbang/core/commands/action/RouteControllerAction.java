@@ -30,6 +30,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -197,10 +198,18 @@ public class RouteControllerAction extends ActionWatchCommand {
     }
 
     protected void dumpTable(List<Row> rows, boolean supervised) {
+        int tw = terminalWidth();
+        int fixedWidth = 25 + 12 + (supervised ? 10 + 10 + 10 : 0); // ID + STATE + ATTEMPT + ELAPSED + LAST-AGO
+        int colCount = supervised ? 7 : 3;
+        int borderOverhead = TerminalWidthHelper.noBorderOverhead(colCount);
+        int uriWidth = TerminalWidthHelper.flexWidth(tw, fixedWidth + (supervised ? 80 : 0), borderOverhead, 20, 60);
+        int errorWidth = supervised
+                ? TerminalWidthHelper.flexWidth(tw, fixedWidth + uriWidth, borderOverhead, 20, 80) : 80;
+
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.routeId),
-                new Column().header("URI").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
+                new Column().header("URI").dataAlign(HorizontalAlign.LEFT).maxWidth(uriWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.uri),
                 new Column().header("STATE").headerAlign(HorizontalAlign.RIGHT).with(this::getSupervising),
                 new Column().visible(supervised).header("ATTEMPT").headerAlign(HorizontalAlign.CENTER)
@@ -209,7 +218,7 @@ public class RouteControllerAction extends ActionWatchCommand {
                 new Column().visible(supervised).header("LAST-AGO").headerAlign(HorizontalAlign.CENTER).with(this::getLast),
                 new Column().visible(supervised).header("ERROR-MESSAGE").headerAlign(HorizontalAlign.LEFT)
                         .dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(80, OverflowBehaviour.ELLIPSIS_RIGHT).with(r -> r.error))));
+                        .maxWidth(errorWidth, OverflowBehaviour.ELLIPSIS_RIGHT).with(r -> r.error))));
 
         if (supervised && trace) {
             rows = rows.stream().filter(r -> r.error != null && !r.error.isEmpty()).collect(Collectors.toList());

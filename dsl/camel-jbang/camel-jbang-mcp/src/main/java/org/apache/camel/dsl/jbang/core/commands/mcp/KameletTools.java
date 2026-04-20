@@ -40,7 +40,8 @@ public class KameletTools {
     /**
      * Tool to list available Kamelets.
      */
-    @Tool(description = "List available Camel Kamelets from the Kamelet Catalog. " +
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "List available Camel Kamelets from the Kamelet Catalog. " +
                         "Returns kamelet name, type (source, sink, action), support level, and description. " +
                         "Use filter to search by name or description, type to filter by category.")
     public KameletListResult camel_catalog_kamelets(
@@ -97,7 +98,8 @@ public class KameletTools {
     /**
      * Tool to get detailed documentation for a specific Kamelet.
      */
-    @Tool(description = "Get detailed documentation for a specific Camel Kamelet including all properties/options, "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get detailed documentation for a specific Camel Kamelet including all properties/options, "
                         + "dependencies, and usage information.")
     public KameletDetailResult camel_catalog_kamelet_doc(
             @ToolArg(description = "Kamelet name (e.g., aws-s3-source, kafka-sink, log-action)") String kamelet,

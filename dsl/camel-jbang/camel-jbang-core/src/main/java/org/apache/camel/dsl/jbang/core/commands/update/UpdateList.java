@@ -38,6 +38,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.dsl.jbang.core.model.UpdateListDTO;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -179,6 +180,12 @@ public class UpdateList extends CamelCommand {
                                     .map(UpdateListDTO::toMap)
                                     .collect(Collectors.toList())));
         } else {
+            int tw = terminalWidth();
+            // Fixed columns: VERSION (10), RUNTIME (~18), RUNTIME VERSION (~17)
+            int fixedWidth = 10 + 18 + 17;
+            int descWidth = TerminalWidthHelper.flexWidth(
+                    tw, fixedWidth, TerminalWidthHelper.noBorderOverhead(4),
+                    20, 80);
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("VERSION").minWidth(10).dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.version().toString()),
@@ -186,7 +193,7 @@ public class UpdateList extends CamelCommand {
                             .dataAlign(HorizontalAlign.LEFT).with(r -> r.runtime()),
                     new Column().header("RUNTIME VERSION")
                             .dataAlign(HorizontalAlign.LEFT).with(r -> r.runtimeVersion()),
-                    new Column().header("DESCRIPTION")
+                    new Column().header("DESCRIPTION").maxWidth(descWidth)
                             .dataAlign(HorizontalAlign.LEFT).with(r -> r.description()))));
         }
 

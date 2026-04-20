@@ -86,7 +86,7 @@ import static org.apache.camel.util.StringHelper.after;
 import static org.apache.camel.util.StringHelper.before;
 
 /**
- * To call REST services using OpenAPI specification as contract.
+ * To call and expose REST services using OpenAPI specification as contract.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
              syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API })

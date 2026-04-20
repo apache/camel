@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 import ai.docling.serve.api.convert.response.ConvertDocumentResponse;
 import ai.docling.serve.api.convert.response.DocumentResponse;
+import ai.docling.serve.api.convert.response.InBodyConvertDocumentResponse;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -94,7 +95,7 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
         Map<String, CompletableFuture<ConvertDocumentResponse>> pendingTasks = getPendingAsyncTasks(producer);
 
         // Create a completed future with a mock response
-        ConvertDocumentResponse mockResponse = ConvertDocumentResponse.builder()
+        ConvertDocumentResponse mockResponse = InBodyConvertDocumentResponse.builder()
                 .document(DocumentResponse.builder()
                         .markdownContent("# Converted Document")
                         .build())

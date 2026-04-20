@@ -29,12 +29,14 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlLoadAppTest {
@@ -402,6 +404,64 @@ public class XmlLoadAppTest {
             bar.expectedBodiesReceived(encoded);
             context.createProducerTemplate().sendBody("direct:start", "Hi World");
             bar.assertIsSatisfied();
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithSSLContextParameters() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app-ssl.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            assertNotNull(context.getRoute("sslRoute"), "Loaded sslRoute should be there");
+            assertEquals(1, context.getRoutes().size());
+
+            // verify SSL context parameters were registered in registry
+            SSLContextParameters sslParams = context.getRegistry().lookupByNameAndType("mySSL", SSLContextParameters.class);
+            assertNotNull(sslParams, "SSL context parameters should be registered with id mySSL");
+
+            // verify it was also set as the global default
+            assertNotNull(context.getSSLContextParameters(), "Global SSL context parameters should be set");
+
+            // verify key store configuration
+            assertNotNull(sslParams.getKeyManagers(), "Key managers should be configured");
+            assertNotNull(sslParams.getKeyManagers().getKeyStore(), "Key store should be configured");
+            assertEquals("server.p12", sslParams.getKeyManagers().getKeyStore().getResource());
+            assertEquals("changeit", sslParams.getKeyManagers().getKeyPassword());
+
+            // verify trust store configuration
+            assertNotNull(sslParams.getTrustManagers(), "Trust managers should be configured");
+            assertNotNull(sslParams.getTrustManagers().getKeyStore(), "Trust store should be configured");
+            assertEquals("truststore.p12", sslParams.getTrustManagers().getKeyStore().getResource());
+            assertEquals("changeit", sslParams.getTrustManagers().getKeyStore().getPassword());
+        }
+    }
+
+    @Test
+    public void testLoadCamelAppWithSSLTrustAllCertificates() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
+                    "/org/apache/camel/dsl/xml/io/camel-app-ssl-trust-all.xml");
+
+            RoutesLoader routesLoader = PluginHelper.getRoutesLoader(context);
+            routesLoader.preParseRoute(resource, false);
+            routesLoader.loadRoutes(resource);
+
+            // verify SSL context parameters with trustAllCertificates
+            SSLContextParameters sslParams
+                    = context.getRegistry().lookupByNameAndType("myTrustAllSSL", SSLContextParameters.class);
+            assertNotNull(sslParams, "SSL context parameters should be registered");
+            assertNotNull(sslParams.getTrustManagers(), "Trust managers should be configured for trust-all");
+            // key managers should be null since no keyStore was provided
+            assertNull(sslParams.getKeyManagers());
         }
     }
 

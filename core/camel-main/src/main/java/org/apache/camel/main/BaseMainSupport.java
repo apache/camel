@@ -1526,6 +1526,13 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
             camelContext.setRestConfiguration(rest);
         }
+        // SSL must be configured before HTTP servers, so global SSL context is available
+        if (!sslProperties.isEmpty() || mainConfigurationProperties.hasSslConfiguration()) {
+            LOG.debug("Auto-configuring SSL from loaded properties: {}", sslProperties.size());
+            setSslProperties(camelContext, sslProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
         if (!httpServerProperties.isEmpty() || mainConfigurationProperties.hasHttpServerConfiguration()) {
             LOG.debug("Auto-configuring HTTP Server from loaded properties: {}", httpServerProperties.size());
             setHttpServerProperties(camelContext, httpServerProperties,
@@ -1591,12 +1598,6 @@ public abstract class BaseMainSupport extends BaseService {
         if (!devConsoleProperties.isEmpty()) {
             LOG.debug("Auto-configuring Dev Console from loaded properties: {}", devConsoleProperties.size());
             setDevConsoleProperties(camelContext, devConsoleProperties,
-                    mainConfigurationProperties.isAutoConfigurationFailFast(),
-                    autoConfiguredProperties);
-        }
-        if (!sslProperties.isEmpty() || mainConfigurationProperties.hasSslConfiguration()) {
-            LOG.debug("Auto-configuring SSL from loaded properties: {}", sslProperties.size());
-            setSslProperties(camelContext, sslProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
@@ -2023,6 +2024,14 @@ public abstract class BaseMainSupport extends BaseService {
             return;
         }
 
+        // when global SSL is enabled, automatically use it for the HTTP server
+        // (unless the user has explicitly configured useGlobalSslContextParameters)
+        if (!server.isUseGlobalSslContextParameters()
+                && camelContext.getSSLContextParameters() != null
+                && !properties.containsKey("useGlobalSslContextParameters")) {
+            server.setUseGlobalSslContextParameters(true);
+        }
+
         // auto-detect camel-platform-http-main on classpath
         MainHttpServerFactory sf = resolveMainHttpServerFactory(camelContext);
         // create http server as a service managed by camel context
@@ -2045,6 +2054,14 @@ public abstract class BaseMainSupport extends BaseService {
         if (!server.isEnabled()) {
             // http management server is disabled
             return;
+        }
+
+        // when global SSL is enabled, automatically use it for the HTTP management server
+        // (unless the user has explicitly configured useGlobalSslContextParameters)
+        if (!server.isUseGlobalSslContextParameters()
+                && camelContext.getSSLContextParameters() != null
+                && !properties.containsKey("useGlobalSslContextParameters")) {
+            server.setUseGlobalSslContextParameters(true);
         }
 
         // auto-detect camel-platform-http-main on classpath
@@ -2106,7 +2123,8 @@ public abstract class BaseMainSupport extends BaseService {
 
     private void setSslProperties(
             CamelContext camelContext, OrderedLocationProperties properties,
-            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties) {
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
 
         SSLConfigurationProperties sslConfig = mainConfigurationProperties.sslConfig();
         setPropertiesOnTarget(camelContext, sslConfig, properties, "camel.ssl.",
@@ -2116,19 +2134,44 @@ public abstract class BaseMainSupport extends BaseService {
             return;
         }
 
-        KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setCamelContext(camelContext);
-        ksp.setResource(sslConfig.getKeyStore());
-        ksp.setType(sslConfig.getKeyStoreType());
-        ksp.setPassword(sslConfig.getKeystorePassword());
-        ksp.setProvider(sslConfig.getKeyStoreProvider());
+        KeyManagersParameters kmp;
+        if (sslConfig.getKeyStore() != null) {
+            // use the configured keystore
+            KeyStoreParameters ksp = new KeyStoreParameters();
+            ksp.setCamelContext(camelContext);
+            ksp.setResource(sslConfig.getKeyStore());
+            ksp.setType(sslConfig.getKeyStoreType());
+            ksp.setPassword(sslConfig.getKeystorePassword());
+            ksp.setProvider(sslConfig.getKeyStoreProvider());
 
-        KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setCamelContext(camelContext);
-        kmp.setKeyPassword(sslConfig.getKeystorePassword());
-        kmp.setKeyStore(ksp);
-        kmp.setAlgorithm(sslConfig.getKeyManagerAlgorithm());
-        kmp.setProvider(sslConfig.getKeyManagerProvider());
+            kmp = new KeyManagersParameters();
+            kmp.setCamelContext(camelContext);
+            kmp.setKeyPassword(sslConfig.getKeystorePassword());
+            kmp.setKeyStore(ksp);
+            kmp.setAlgorithm(sslConfig.getKeyManagerAlgorithm());
+            kmp.setProvider(sslConfig.getKeyManagerProvider());
+        } else if (sslConfig.isSelfSigned()) {
+            // generate a self-signed certificate for development use
+            LOG.warn("Generating self-signed SSL certificate for development use."
+                     + " Do NOT use this in production.");
+            String password = "camel-self-signed";
+            KeyStore ks = SelfSignedCertificateGenerator.generateKeyStore(password);
+
+            KeyStoreParameters ksp = new KeyStoreParameters();
+            ksp.setCamelContext(camelContext);
+            ksp.setKeyStore(ks);
+            ksp.setType("PKCS12");
+            ksp.setPassword(password);
+
+            kmp = new KeyManagersParameters();
+            kmp.setCamelContext(camelContext);
+            kmp.setKeyPassword(password);
+            kmp.setKeyStore(ksp);
+        } else {
+            LOG.warn("SSL is enabled but no keystore is configured."
+                     + " Set camel.ssl.keyStore or camel.ssl.selfSigned=true for development.");
+            return;
+        }
 
         final SSLContextParameters sslContextParameters = createSSLContextParameters(camelContext, sslConfig, kmp);
         camelContext.setSSLContextParameters(sslContextParameters);

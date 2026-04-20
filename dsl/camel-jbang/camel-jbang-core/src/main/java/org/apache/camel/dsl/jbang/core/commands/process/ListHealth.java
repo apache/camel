@@ -32,6 +32,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -42,7 +43,11 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "health", description = "Get health check status of running Camel integrations", sortOptions = false,
-         showDefaultValues = true)
+         showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel get health",
+                 "  camel get health --watch" })
 public class ListHealth extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
@@ -205,14 +210,20 @@ public class ListHealth extends ProcessWatchCommand {
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
+                // Flexible columns: NAME (40), ID (40), MESSAGE (80)
+                // Fixed columns: PID(8)+AGE(8)+RL(4)+STATUS(6)+RATE(10)+SINCE(10) ~= 46
+                int tw = terminalWidth();
+                int nameW = TerminalWidthHelper.flexWidth(tw, 46 + 40 + 80, TerminalWidthHelper.noBorderOverhead(9), 15, 40);
+                int idW = TerminalWidthHelper.flexWidth(tw, 46 + 40 + 80, TerminalWidthHelper.noBorderOverhead(9), 15, 40);
+                int msgW = TerminalWidthHelper.flexWidth(tw, 46 + nameW + idW, TerminalWidthHelper.noBorderOverhead(9), 20, 80);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .maxWidth(nameW, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> r.name),
                         new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(r -> r.ago),
                         new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .maxWidth(idW, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(this::getId),
                         new Column().header("RL").minWidth(4).maxWidth(4).with(this::getLR),
                         new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER)
@@ -225,7 +236,7 @@ public class ListHealth extends ProcessWatchCommand {
                                 .dataAlign(HorizontalAlign.RIGHT)
                                 .with(this::getSince),
                         new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(80, OverflowBehaviour.NEWLINE)
+                                .maxWidth(msgW, OverflowBehaviour.NEWLINE)
                                 .with(r -> r.message))));
             }
         }

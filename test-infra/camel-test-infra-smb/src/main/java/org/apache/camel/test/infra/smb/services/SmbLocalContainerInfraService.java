@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @InfraService(service = SmbLocalContainerInfraService.class,
-              description = "SAMBA File Server",
+              description = "Samba provides file sharing services using the SMB protocol",
               serviceAlias = "smb")
 public class SmbLocalContainerInfraService implements SmbInfraService, ContainerService<SmbContainer> {
 

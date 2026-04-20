@@ -4192,7 +4192,7 @@ The camel.jbang supports 45 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.jbang.camel-version* | The version of Apache Camel to use |  | String
-| *camel.jbang.camelSpringBoot{zwsp}Version* | To use a custom Camel version when running or export to Spring Boot |  | String
+| *camel.jbang.camelSpringBootVersion* | To use a custom Camel version when running or export to Spring Boot |  | String
 | *camel.jbang.classpathFiles* | Additional files to add to classpath (Use commas to separate multiple files). |  | String
 | *camel.jbang.compileWorkDir* | Work directory for compiler. Can be used to write compiled classes or other resources. | .camel-jbang/compile | String
 | *camel.jbang.console* | Developer console at /q/dev on local HTTP server (port 8080 by default) | false | boolean

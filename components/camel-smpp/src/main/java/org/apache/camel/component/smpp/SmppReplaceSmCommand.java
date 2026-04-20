@@ -108,10 +108,10 @@ public class SmppReplaceSmCommand extends SmppSmCommand {
 
         if (in.getHeaders().containsKey(SmppConstants.VALIDITY_PERIOD)) {
             Object validityPeriod = in.getHeader(SmppConstants.VALIDITY_PERIOD);
-            if (validityPeriod instanceof String) {
-                replaceSm.setValidityPeriod((String) validityPeriod);
-            } else if (validityPeriod instanceof Date) {
-                replaceSm.setValidityPeriod(SmppUtils.formatTime((Date) validityPeriod));
+            if (validityPeriod instanceof String validityPeriodString) {
+                replaceSm.setValidityPeriod(validityPeriodString);
+            } else if (validityPeriod instanceof Date validityPeriodDate) {
+                replaceSm.setValidityPeriod(SmppUtils.formatTime(validityPeriodDate));
             }
         }
 

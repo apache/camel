@@ -22,7 +22,12 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "top",
                      description = "Top status of Camel integrations (use top --help to see sub commands)",
-                     sortOptions = false, showDefaultValues = true)
+                     sortOptions = false, showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel top",
+                             "  camel top route",
+                             "  camel top processor" })
 public class CamelTop extends CamelCommand {
 
     @CommandLine.Option(names = { "--watch" },

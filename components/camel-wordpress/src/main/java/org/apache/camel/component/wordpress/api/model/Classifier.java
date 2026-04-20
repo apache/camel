@@ -33,7 +33,7 @@ public abstract class Classifier {
     private String taxonomy;
     private List<String> meta;
 
-    public Classifier() {
+    protected Classifier() {
         this.meta = new ArrayList<>();
     }
 

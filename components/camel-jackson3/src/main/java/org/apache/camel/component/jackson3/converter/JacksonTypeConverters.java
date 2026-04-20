@@ -110,8 +110,7 @@ public final class JacksonTypeConverters {
 
     @Converter
     public String toString(JsonNode node, Exchange exchange) throws Exception {
-        if (node instanceof StringNode) {
-            StringNode tn = (StringNode) node;
+        if (node instanceof StringNode tn) {
             return tn.textValue();
         }
         ObjectMapper mapper = resolveObjectMapper(exchange.getContext());
@@ -121,8 +120,7 @@ public final class JacksonTypeConverters {
 
     @Converter
     public byte[] toByteArray(JsonNode node, Exchange exchange) throws Exception {
-        if (node instanceof StringNode) {
-            StringNode tn = (StringNode) node;
+        if (node instanceof StringNode tn) {
             return tn.textValue().getBytes(StandardCharsets.UTF_8);
         }
 
@@ -151,8 +149,7 @@ public final class JacksonTypeConverters {
 
     @Converter
     public Integer toInteger(JsonNode node, Exchange exchange) throws Exception {
-        if (node instanceof NumericNode) {
-            NumericNode nn = (NumericNode) node;
+        if (node instanceof NumericNode nn) {
             if (nn.canConvertToInt()) {
                 return nn.asInt();
             }
@@ -163,8 +160,7 @@ public final class JacksonTypeConverters {
 
     @Converter
     public Long toLong(JsonNode node, Exchange exchange) throws Exception {
-        if (node instanceof NumericNode) {
-            NumericNode nn = (NumericNode) node;
+        if (node instanceof NumericNode nn) {
             if (nn.canConvertToLong()) {
                 return nn.asLong();
             }
@@ -180,8 +176,7 @@ public final class JacksonTypeConverters {
 
     @Converter
     public Boolean toBoolean(JsonNode node, Exchange exchange) throws Exception {
-        if (node instanceof BooleanNode) {
-            BooleanNode bn = (BooleanNode) node;
+        if (node instanceof BooleanNode bn) {
             return bn.asBoolean();
         }
         String text = node.asText();
@@ -190,8 +185,7 @@ public final class JacksonTypeConverters {
 
     @Converter
     public Double toDouble(JsonNode node, Exchange exchange) throws Exception {
-        if (node instanceof NumericNode) {
-            NumericNode nn = (NumericNode) node;
+        if (node instanceof NumericNode nn) {
             if (nn.isFloatingPointNumber()) {
                 return nn.asDouble();
             }
@@ -202,8 +196,7 @@ public final class JacksonTypeConverters {
 
     @Converter
     public Float toFloat(JsonNode node, Exchange exchange) throws Exception {
-        if (node instanceof NumericNode) {
-            NumericNode nn = (NumericNode) node;
+        if (node instanceof NumericNode nn) {
             if (nn.isFloat()) {
                 return nn.floatValue();
             }

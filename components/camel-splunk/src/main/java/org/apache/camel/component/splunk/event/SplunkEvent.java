@@ -24,6 +24,7 @@ import java.util.Map;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+@Deprecated(since = "4.19")
 public class SplunkEvent implements Serializable {
 
     // ----------------------------------

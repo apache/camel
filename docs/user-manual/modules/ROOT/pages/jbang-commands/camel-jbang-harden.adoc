@@ -22,7 +22,7 @@ camel harden [options]
 | `--api-key` | API key for authentication. Also reads OPENAI_API_KEY or LLM_API_KEY env vars |  | String
 | `--api-type` | API type: 'ollama' or 'openai' (OpenAI-compatible) | ollama | ApiType
 | `--catalog-context` | Include Camel Catalog descriptions in the prompt |  | boolean
-| `--format` | Output format: text, markdown | text | String
+| `--format` | Output format (text, markdown) | text | String
 | `--model` | Model to use | DEFAULT_MODEL | String
 | `--show-prompt` | Show the prompt sent to the LLM |  | boolean
 | `--stream` | Stream the response as it's generated (shows progress) | true | boolean

@@ -18,11 +18,15 @@ package org.apache.camel.micrometer.observability;
 
 import java.util.List;
 
+import io.micrometer.tracing.otel.bridge.OtelBaggageManager;
 import io.micrometer.tracing.otel.bridge.OtelCurrentTraceContext;
 import io.micrometer.tracing.otel.bridge.OtelPropagator;
 import io.micrometer.tracing.otel.bridge.OtelTracer;
+import io.opentelemetry.api.baggage.propagation.W3CBaggagePropagator;
 import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -37,23 +41,31 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
 
     protected CamelOpenTelemetryExtension otelExtension = CamelOpenTelemetryExtension.create();
     protected MicrometerObservabilityTracer tst = new MicrometerObservabilityTracer();
+    protected io.micrometer.tracing.Tracer tracer;
+    io.opentelemetry.api.trace.Tracer otelTracer;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        ContextPropagators propagators = otelExtension.getPropagators();
-        io.opentelemetry.api.trace.Tracer otelTracer = otelExtension.getOpenTelemetry().getTracer("traceTest");
+        ContextPropagators propagators = ContextPropagators.create(
+                TextMapPropagator.composite(
+                        W3CTraceContextPropagator.getInstance(),
+                        W3CBaggagePropagator.getInstance()));
+        otelTracer = otelExtension.getOpenTelemetry().getTracer("traceTest");
 
         OtelPropagator otelPropagator = new OtelPropagator(propagators, otelTracer);
         OtelCurrentTraceContext currentTraceContext = new OtelCurrentTraceContext();
         // We must convert the Otel Tracer into a micrometer Tracer
-        io.micrometer.tracing.Tracer micrometerTracer = new OtelTracer(
+        tracer = new OtelTracer(
                 otelTracer,
                 currentTraceContext,
-                null);
+                event -> {
+                },
+                new OtelBaggageManager(
+                        currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
 
-        context.getRegistry().bind("MicrometerObservabilityTracer", micrometerTracer);
+        context.getRegistry().bind("MicrometerObservabilityTracer", tracer);
         context.getRegistry().bind("OpentelemetryPropagators", otelPropagator);
 
         CamelContextAware.trySetCamelContext(tst, context);

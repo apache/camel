@@ -32,6 +32,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupSummaryLevel;
+import org.apache.camel.spi.ContextServiceLoaderPluginResolver;
 import org.apache.camel.spi.GroovyScriptCompiler;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesReload;
@@ -247,6 +248,13 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     @SuppressWarnings("unchecked")
     protected void onRouteReload(Collection<Resource> resources, boolean removeEverything) {
+        // notify context service plugins before reloading routes
+        ContextServiceLoaderPluginResolver pluginResolver
+                = getCamelContext().getCamelContextExtension().getContextPlugin(ContextServiceLoaderPluginResolver.class);
+        if (pluginResolver != null) {
+            pluginResolver.onReload();
+        }
+
         // remember all existing resources
         List<Resource> sources = new ArrayList<>();
 
