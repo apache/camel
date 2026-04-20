@@ -34,9 +34,9 @@
     <description>Camel JBang TUI Plugin - Terminal UI dashboards for monitoring Camel integrations</description>
 
     <properties>
-        <firstVersion>4.19.0</firstVersion>
+        <firstVersion>4.20.0</firstVersion>
         <label>jbang</label>
-        <supportLevel>Preview</supportLevel>
+        <supportLevel>Experimental</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
     </properties>
 

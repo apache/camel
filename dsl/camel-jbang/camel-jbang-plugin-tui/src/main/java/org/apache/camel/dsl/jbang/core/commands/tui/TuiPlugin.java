@@ -21,7 +21,7 @@ import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import picocli.CommandLine;
 
-@CamelJBangPlugin(name = "camel-jbang-plugin-tui", firstVersion = "4.19.0")
+@CamelJBangPlugin(name = "camel-jbang-plugin-tui", firstVersion = "4.20.0")
 public class TuiPlugin implements Plugin {
 
     private ClassLoader classLoader;
@@ -33,7 +33,7 @@ public class TuiPlugin implements Plugin {
 
     @Override
     public void customize(CommandLine commandLine, CamelJBangMain main) {
-        var cmd = new picocli.CommandLine(new TuiCommand(main))
+        var cmd = new picocli.CommandLine(new TuiCommand(main, classLoader))
                 .addSubcommand("monitor", new CommandLine(new CamelMonitor(main, classLoader)))
                 .addSubcommand("catalog", new CommandLine(new CamelCatalogTui(main, classLoader)));
 

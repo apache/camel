@@ -20,16 +20,21 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "tui", description = "Generate source code (use --help to see sub commands)")
+@CommandLine.Command(name = "tui", description = "Camel TUI (use --help to see sub commands)")
 public class TuiCommand extends CamelCommand {
 
-    public TuiCommand(CamelJBangMain main) {
+    private ClassLoader classLoader;
+
+    public TuiCommand(CamelJBangMain main, ClassLoader classLoader) {
         super(main);
+        this.classLoader = classLoader;
     }
+
 
     @Override
     public Integer doCall() throws Exception {
-        new CommandLine(this).execute("--help");
-        return 0;
+        // default to dashboard
+        CamelMonitor cmd = new CamelMonitor(getMain(), classLoader);
+        return new CommandLine(cmd).execute();
     }
 }

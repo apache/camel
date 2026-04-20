@@ -77,7 +77,7 @@ import picocli.CommandLine.Command;
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
 @Command(name = "monitor",
-         description = "Live TUI dashboard for monitoring Camel integrations",
+         description = "Live dashboard for monitoring Camel integrations",
          sortOptions = false)
 public class CamelMonitor extends CamelCommand {
 
