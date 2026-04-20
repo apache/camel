@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -81,6 +82,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     public static final String MAVEN_CENTRAL_REPO = "https://repo1.maven.org/maven2";
     public static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
+
+    private static final String EXTRA_DEFAULT_REPOS_DEFAULT_VALUE = "camel.default.extra.repos.default.value";
+    private static final String EXTRA_DEFAULT_REPOS_PROPERTY = "camel.extra.repos";
 
     private static final RepositoryPolicy POLICY_DEFAULT = new RepositoryPolicy(
             true, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_WARN);
@@ -191,6 +195,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     .setSnapshotPolicy(defaultPolicy)
                     .build();
         }
+
+        // Load extra default repositories (classpath properties file + system property)
+        loadExtraDefaultRepositories(originalRepositories);
 
         // Add custom repositories from repos parameter
         if (repos != null) {
@@ -349,6 +356,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     .build();
         }
 
+        // Load extra default repositories (classpath properties file + system property)
+        loadExtraDefaultRepositories(originalRepositories);
+
         // Add repositories from settings.xml active profiles (provided by MIMA)
         Set<String> repositoryURLs = originalRepositories.stream()
                 .map(RemoteRepository::getUrl)
@@ -488,6 +498,34 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                 LOG.warn("Cannot use {} URL: {}. Skipping.", repo, e.getMessage(), e);
             }
         });
+    }
+
+    /**
+     * Loads extra default Maven repositories from classpath properties files and system property.
+     * <p>
+     * Two complementary mechanisms:
+     * <ul>
+     * <li>System property: {@value #EXTRA_DEFAULT_REPOS_PROPERTY or EXTRA_DEFAULT_REPOS_DEFAULT_VALUE} (comma-separated
+     * id=url pairs)</li>
+     * </ul>
+     * Both are additive and merged. Upstream ships no properties file (no-op). Product builds can add the file or use
+     * the system property.
+     */
+    private void loadExtraDefaultRepositories(List<RemoteRepository> repositories) {
+        // Load from system property (comma-separated id=url pairs)
+        String sysProp
+                = System.getProperty(EXTRA_DEFAULT_REPOS_PROPERTY, System.getProperty(EXTRA_DEFAULT_REPOS_DEFAULT_VALUE));
+        if (sysProp != null && !sysProp.isBlank()) {
+            Set<String> repoSpecs = Arrays.stream(sysProp.split("\\s*,\\s*"))
+                    .filter(s -> !s.isBlank())
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+
+            if (!repoSpecs.isEmpty()) {
+                LOG.debug("Loaded extra default repositories from system property: {}", sysProp);
+                configureRepositories(repositories, repoSpecs);
+                LOG.debug("Configured {} extra default Maven repositories", repoSpecs.size());
+            }
+        }
     }
 
     @Override
