@@ -35,6 +35,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -144,6 +145,11 @@ class ExportQuarkus extends Export {
             appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
         }
         copyReadme(BUILD_DIR, appJar);
+        // resolve Quarkus platform version from registry (if available)
+        String resolved = QuarkusHelper.resolveQuarkusPlatformVersion(quarkusVersion);
+        if (resolved != null) {
+            quarkusVersion = resolved;
+        }
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
         // copy local lib JARs
