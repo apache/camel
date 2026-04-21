@@ -128,3 +128,26 @@ public void process(Exchange exchange) throws Exception {
      mySpan.end();
 }
 ----
+
+=== Baggage customization
+
+`Baggage` is a way to attach key-value metadata to a request and carry it across service boundaries. In the context of OpenTelemetry, baggage travels along with the context (like trace/span), but it's meant for custom data you define, not telemetry internals. Camel allows you to programmatically provide any `Baggage` information via header settings. Whenever the component finds an header defined as `OTEL_BAGGAGE_xyz` it will consider it as a baggage variable named `xyz`. For example, in Java DSL:
+
+[source,java]
+----
+                from("direct:start")
+                        .setHeader("OTEL_BAGGAGE_myValue", constant("1234"))
+                        .routeId("start")
+                        .log("A message")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getIn().setHeader("operation", "fake");
+                            }
+                        })
+                        .to("log:info");
+----
+
+Any span executed after the `setHeader` will include a baggage variable named `myValue` with value `1234` which will be reflected in your telemetry result.
+
+NOTE: any baggage setting defined externally (i.e., calling the Camel process with a context propagation) is normally going to be propagated in Camel logic.
