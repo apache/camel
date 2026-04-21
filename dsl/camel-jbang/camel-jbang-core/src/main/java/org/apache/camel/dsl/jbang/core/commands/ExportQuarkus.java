@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -287,25 +288,31 @@ class ExportQuarkus extends Export {
 
     @Override
     protected void copyDockerFiles(String buildDir) throws Exception {
+        Path dockerSrc = Path.of(buildDir).resolve("src/main/docker");
         if ("uber-jar".equals(quarkusPackageType)) {
             // For uber-jar, the generic Dockerfile works as-is
             super.copyDockerFiles(buildDir);
         } else {
             // For fast-jar, use a Quarkus-specific JVM Dockerfile
-            Path docker = Path.of(buildDir).resolve("src/main/docker");
-            Files.createDirectories(docker);
+            Files.createDirectories(dockerSrc);
             InputStream is
                     = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/Dockerfile.jvm");
             if (is != null) {
-                PathUtils.copyFromStream(is, docker.resolve("Dockerfile"), true);
+                PathUtils.copyFromStream(is, dockerSrc.resolve("Dockerfile"), true);
             }
         }
+
+        // Create Dockerfile.jvm to satisfy Quarkus container build tooling defaults if users choose to use it
+        if (Files.exists(dockerSrc.resolve("Dockerfile"))) {
+            Files.copy(dockerSrc.resolve("Dockerfile"), dockerSrc.resolve("Dockerfile.jvm"),
+                    StandardCopyOption.REPLACE_EXISTING);
+        }
+
         // Quarkus-specific Dockerfiles for native builds
-        Path docker = Path.of(buildDir).resolve("src/main/docker");
         for (String dockerfile : List.of("Dockerfile.native", "Dockerfile.native-micro")) {
             InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("quarkus-docker/" + dockerfile);
             if (is != null) {
-                PathUtils.copyFromStream(is, docker.resolve(dockerfile), true);
+                PathUtils.copyFromStream(is, dockerSrc.resolve(dockerfile), true);
             }
         }
     }
