@@ -209,8 +209,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--quarkus-package-type" },
                         description = "Quarkus package type (uber-jar or fast-jar)",
-                        defaultValue = "uber-jar")
-    protected String quarkusPackageType = "uber-jar";
+                        defaultValue = "fast-jar")
+    protected String quarkusPackageType = "fast-jar";
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")
