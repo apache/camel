@@ -94,7 +94,7 @@ public final class MongoDbConstants {
               javaType = "String")
     public static final String STREAM_OPERATION_TYPE = "CamelMongoDbStreamOperationType";
     @Metadata(label = "consumer changeStreams", description = """
-            The resume token for the change stream event. This token can be used to resume 
+            The resume token for the change stream event. This token can be used to resume
             a change stream from the point of the event that was just processed.""",
               javaType = "org.bson.BsonDocument")
     public static final String RESUME_TOKEN = "CamelMongoDbResumeToken";
