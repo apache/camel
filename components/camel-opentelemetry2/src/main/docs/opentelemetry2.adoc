@@ -116,8 +116,7 @@ As an alternative, you can use the agent's built-in MDC integration.
 An alternative to the OpenTelemetry agent is to use https://opentelemetry.io/docs/zero-code/java/spring-boot-starter/[OpenTelemetry Spring Boot starter].
 
 To ensure version alignment across all OpenTelemetry dependencies, you should
-import the opentelemetry-instrumentation-bom BOM (choose a version that aligns with
-the Opentelemetry dependencies that are used within the given Camel version used).
+import the opentelemetry-instrumentation-bom BOM.
 
 [source,xml]
 ----
