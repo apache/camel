@@ -135,7 +135,7 @@ the Opentelemetry dependencies that are used within the given Camel version used
 ----
 
 Note: Import the OpenTelemetry BOMs before any other BOMs in your project. For example, if you
-import the spring-boot-dependencies BOM, you have to declare it after the OpenTelemetry BOMs.
+import the spring-boot-dependencies BOM, you have to declare it after the OpenTelemetry BOMs. Also make sure that the version you choose is compatible with the Opentelemetry version used by the Camel version you're using.
 
 Then add the following dependency for the OpenTelemetry Spring Boot starter:
 
