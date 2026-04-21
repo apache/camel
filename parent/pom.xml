@@ -546,7 +546,7 @@
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <tahu-version>1.0.19</tahu-version>
-        <tamboui-version>0.1.0</tamboui-version>
+        <tamboui-version>0.2.0</tamboui-version>
         <testcontainers-version>2.0.3</testcontainers-version>
         <thymeleaf-version>3.1.4.RELEASE</thymeleaf-version>
         <tika-version>3.3.0</tika-version>
