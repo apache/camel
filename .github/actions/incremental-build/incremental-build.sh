@@ -16,6 +16,7 @@
 #
 
 echo "Using MVND_OPTS=$MVND_OPTS"
+echo "Using MAVEN_EXTRA_ARGS=${MAVEN_EXTRA_ARGS:-}"
 
 maxNumberOfBuildableProjects=100
 maxNumberOfTestableProjects=50
@@ -96,7 +97,7 @@ function main() {
     fi
     if [[ ${buildAll} = "true" ]] ; then
       echo "Building all projects"
-      $mavenBinary -l $log $MVND_OPTS -DskipTests install
+      $mavenBinary -l $log $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} -DskipTests install
       ret=$?
     else
       local buildDependents
@@ -109,21 +110,21 @@ function main() {
         for w in $pl; do
           echo "$w"
         done
-        totalTestableProjects=$(./mvnw -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
+        totalTestableProjects=$(./mvnw -q -amd ${MAVEN_EXTRA_ARGS:-} exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "Launching fast build command against the projects ${pl}, their dependencies and the projects that depend on them"
         for w in $pl; do
           echo "$w"
         done
-        $mavenBinary -l $log $MVND_OPTS -DskipTests install -pl "$pl" -amd -am
+        $mavenBinary -l $log $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} -DskipTests install -pl "$pl" -amd -am
         ret=$?
       else
         echo "Launching fast build command against the projects ${pl} and their dependencies"
         for w in $pl; do
           echo "$w"
         done
-        $mavenBinary -l $log $MVND_OPTS -DskipTests install -pl "$pl" -am
+        $mavenBinary -l $log $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} -DskipTests install -pl "$pl" -am
         ret=$?
       fi
     fi
@@ -144,7 +145,7 @@ function main() {
         echo "The test-dependents label has been detected thus the projects that depend on affected projects will be tested"
         totalTestableProjects=0
       else
-        totalTestableProjects=$(./mvnw -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
+        totalTestableProjects=$(./mvnw -q -amd ${MAVEN_EXTRA_ARGS:-} exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "There are too many projects to test so only the affected projects are tested:"
@@ -152,7 +153,7 @@ function main() {
           echo "$w"
         done
         # This need to install, other commands like test are not enough, otherwise test-infra will fail due to jandex maven plugin
-        $mavenBinary -l $log $MVND_OPTS install -DskipITs -pl "$pl"
+        $mavenBinary -l $log $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -DskipITs -pl "$pl"
         ret=$?
       else
         echo "Testing the affected projects and the projects that depend on them:"
@@ -160,7 +161,7 @@ function main() {
           echo "$w"
         done
         # This need to install, other commands like test are not enough, otherwise test-infra will fail due to jandex maven plugin
-        $mavenBinary -l $log $MVND_OPTS install -DskipITs -pl "$pl" -amd
+        $mavenBinary -l $log $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -DskipITs -pl "$pl" -amd
         ret=$?
       fi
     fi

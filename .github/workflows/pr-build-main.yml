@@ -85,6 +85,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
           artifact-upload-suffix: java-${{ matrix.java }}
+          maven-extra-args: ${{ matrix.maven_extra_args || '' }}
       - name: mvn test parent pom dependencies changed
         uses: ./.github/actions/detect-dependencies
         with:
