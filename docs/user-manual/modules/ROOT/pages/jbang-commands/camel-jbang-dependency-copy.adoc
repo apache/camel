@@ -60,6 +60,7 @@ camel dependency copy [options]
 | `--prop,--property` | Camel application properties, ex. --property=prop1=foo |  | String
 | `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
 | `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
+| `--quarkus-package-type` | Quarkus package type (uber-jar or fast-jar) | fast-jar | String
 | `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
 | `--quiet` | Will be quiet, only print when error occurs | false | boolean
 | `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
