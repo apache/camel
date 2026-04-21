@@ -175,6 +175,42 @@ public interface AtomEndpointBuilderFactory {
             return this;
         }
         /**
+         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
+         * already processed entries. Will by default use a memory based
+         * LRUCache that holds 1000 entries. Only works when splitEntries =
+         * true.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: filter
+         * 
+         * @param idempotent the value to set
+         * @return the dsl builder
+         */
+        default AtomEndpointBuilder idempotent(boolean idempotent) {
+            doSetProperty("idempotent", idempotent);
+            return this;
+        }
+        /**
+         * Option to use the Idempotent Consumer EIP pattern to let Camel skip
+         * already processed entries. Will by default use a memory based
+         * LRUCache that holds 1000 entries. Only works when splitEntries =
+         * true.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: filter
+         * 
+         * @param idempotent the value to set
+         * @return the dsl builder
+         */
+        default AtomEndpointBuilder idempotent(String idempotent) {
+            doSetProperty("idempotent", idempotent);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
@@ -824,6 +860,56 @@ public interface AtomEndpointBuilderFactory {
          */
         default AdvancedAtomEndpointBuilder feedHeader(String feedHeader) {
             doSetProperty("feedHeader", feedHeader);
+            return this;
+        }
+        /**
+         * A pluggable strategy
+         * org.apache.camel.component.FeedIdempotentStrategy to use when
+         * checking idempotency. Camel provides two implementations out of the
+         * box: default and repository. The updated strategy is used as default
+         * if idempotent = true. The default strategy checks the Atom entrys
+         * updated or published date is newer than the previously read entry.
+         * You can provide your own implementation of the
+         * org.apache.camel.component.FeedIdempotentStrategy and refer to it
+         * using the # notation.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.atom.AtomIdempotentStrategy</code>
+         * type.
+         * 
+         * Default: default
+         * Group: filter (advanced)
+         * 
+         * @param idempotentStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtomEndpointBuilder idempotentStrategy(org.apache.camel.component.atom.AtomIdempotentStrategy idempotentStrategy) {
+            doSetProperty("idempotentStrategy", idempotentStrategy);
+            return this;
+        }
+        /**
+         * A pluggable strategy
+         * org.apache.camel.component.FeedIdempotentStrategy to use when
+         * checking idempotency. Camel provides two implementations out of the
+         * box: default and repository. The updated strategy is used as default
+         * if idempotent = true. The default strategy checks the Atom entrys
+         * updated or published date is newer than the previously read entry.
+         * You can provide your own implementation of the
+         * org.apache.camel.component.FeedIdempotentStrategy and refer to it
+         * using the # notation.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.atom.AtomIdempotentStrategy</code>
+         * type.
+         * 
+         * Default: default
+         * Group: filter (advanced)
+         * 
+         * @param idempotentStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtomEndpointBuilder idempotentStrategy(String idempotentStrategy) {
+            doSetProperty("idempotentStrategy", idempotentStrategy);
             return this;
         }
     }
