@@ -484,7 +484,7 @@
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.10.0</qpid-jms-client-version>
         <quarkus-extension-registry-base-url>https://registry.quarkus.io</quarkus-extension-registry-base-url>
-        <quarkus-mcp-server-version>1.11.1</quarkus-mcp-server-version>
+        <quarkus-mcp-server-version>1.12.0</quarkus-mcp-server-version>
         <quarkus-version>3.34.5</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>3.0.0</quickfixj-version>
