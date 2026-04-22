@@ -231,6 +231,7 @@ public class AggregateProcessor extends BaseProcessorSupport
     private Integer closeCorrelationKeyOnCompletion;
     private boolean parallelProcessing;
     private boolean optimisticLocking;
+    private boolean syncOptimisticRetry;
 
     // different ways to have completion triggered
     private boolean eagerCheckCompletion;
@@ -374,6 +375,20 @@ public class AggregateProcessor extends BaseProcessorSupport
                         "On attempt {} OptimisticLockingAggregationRepository: {} threw OptimisticLockingException while trying to aggregate exchange: {}",
                         attempt, aggregationRepository, exchange, e);
                 if (optimisticLockRetryPolicy.shouldRetry(attempt)) {
+                    if (syncOptimisticRetry) {
+                        // Synchronous retry: delay in the same thread instead of
+                        // scheduling on a background thread. This ensures aggregation
+                        // stays within a single thread (e.g. for transactional processing).
+                        try {
+                            optimisticLockRetryPolicy.doDelay(attempt);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            exchange.setException(ie);
+                            callback.done(sync);
+                            return sync;
+                        }
+                        continue;
+                    }
                     long delay = optimisticLockRetryPolicy.getDelay(attempt);
                     if (delay > 0) {
                         int nextAttempt = attempt;
@@ -1124,6 +1139,14 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     public void setOptimisticLocking(boolean optimisticLocking) {
         this.optimisticLocking = optimisticLocking;
+    }
+
+    public boolean isSyncOptimisticRetry() {
+        return syncOptimisticRetry;
+    }
+
+    public void setSyncOptimisticRetry(boolean syncOptimisticRetry) {
+        this.syncOptimisticRetry = syncOptimisticRetry;
     }
 
     public AggregationRepository getAggregationRepository() {
