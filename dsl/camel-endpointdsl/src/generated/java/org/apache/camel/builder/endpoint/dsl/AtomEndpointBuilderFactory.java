@@ -176,8 +176,10 @@ public interface AtomEndpointBuilderFactory {
         }
         /**
          * Option to use the Idempotent Consumer EIP pattern to let Camel skip
-         * already processed entries. Will by default use a memory based
-         * LRUCache that holds 1000 entries. Only works when splitEntries =
+         * already processed entries. By default it skips Atom entries that is
+         * older that the last read entry, using Atom updatedDate and
+         * publishedDate, but this strategy can be changed with the
+         * idempotentStrategy option. Idempotency only works when splitEntries =
          * true.
          * 
          * The option is a: <code>boolean</code> type.
@@ -194,8 +196,10 @@ public interface AtomEndpointBuilderFactory {
         }
         /**
          * Option to use the Idempotent Consumer EIP pattern to let Camel skip
-         * already processed entries. Will by default use a memory based
-         * LRUCache that holds 1000 entries. Only works when splitEntries =
+         * already processed entries. By default it skips Atom entries that is
+         * older that the last read entry, using Atom updatedDate and
+         * publishedDate, but this strategy can be changed with the
+         * idempotentStrategy option. Idempotency only works when splitEntries =
          * true.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -208,6 +212,40 @@ public interface AtomEndpointBuilderFactory {
          */
         default AtomEndpointBuilder idempotent(String idempotent) {
             doSetProperty("idempotent", idempotent);
+            return this;
+        }
+        /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryIdempotentRepository if none is specified
+         * and idempotent is true.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
+         */
+        default AtomEndpointBuilder idempotentRepository(org.apache.camel.spi.IdempotentRepository idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
+            return this;
+        }
+        /**
+         * A pluggable repository org.apache.camel.spi.IdempotentRepository
+         * which by default use MemoryIdempotentRepository if none is specified
+         * and idempotent is true.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * 
+         * Group: filter
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
+         */
+        default AtomEndpointBuilder idempotentRepository(String idempotentRepository) {
+            doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
         /**

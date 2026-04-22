@@ -25,14 +25,34 @@ import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
  */
 public class RepositoryGuidIdempotentStrategy implements AtomIdempotentStrategy {
 
-    IdempotentRepository repository = MemoryIdempotentRepository.memoryIdempotentRepository();
+    IdempotentRepository idempotentRepository = null;
+
+    public RepositoryGuidIdempotentStrategy() {
+        this(null);
+    }
+
+    public RepositoryGuidIdempotentStrategy(IdempotentRepository idempotentRepository) {
+        this.idempotentRepository = idempotentRepository;
+    }
 
     @Override
     public boolean isValidItem(Item entry) {
         boolean valid = true;
         if (entry != null && entry.getGuid().isPresent()) {
-            valid = repository.add(entry.getGuid().get());
+            valid = getIdempotentRepository().add(entry.getGuid().get());
         }
         return valid;
+    }
+
+    protected IdempotentRepository getIdempotentRepository() {
+        if (this.idempotentRepository == null) {
+            this.idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository();
+        }
+        return this.idempotentRepository;
+    }
+
+    protected RepositoryGuidIdempotentStrategy setIdempotentRepository(IdempotentRepository idempotentRepository) {
+        this.idempotentRepository = idempotentRepository;
+        return this;
     }
 }

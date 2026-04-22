@@ -69,6 +69,44 @@ Depending on the `splitEntries` flag Camel will either return one
 Camel can set the `Feed` object on the In header (see `feedHeader`
 option to disable this):
 
+== Usage
+
+=== Avoid reading the same entry more than once (idempotent consumer)
+
+Camel supports Idempotent Consumer
+directly within the component, so it will skip already processed entries.
+This feature is enabled by default, but can be disabled by setting the `idempotent=false` option.
+
+[source,java]
+----
+from("file://inbox?idempotent=false").to("...");
+----
+
+The default Idempotency strategy uses Atom published and updated timestamps to identify already
+read entries, by filtering all entries older that the _last read_ entry.
+
+The idempotency strategy can be changed by setting the `idempotentStrategy` option. The components support two
+strategies _out-of-the-box_, but custom strategies can be used, by referencing a subclass 
+of `org.apache.camel.component.atom.AtomIdempotentStrategy`, with Apache Camel's # notation.
+
+[source,java]
+----
+from("file://inbox?idempotentStrategy=#myIdempotentStrategy").to("...");
+----
+
+==== Repository idempotent strategy
+As an alternative to the default idempotent strategy, a repository based strategy can be use:
+
+[source,java]
+----
+from("file://inbox?idempotentStrategy=repository").to("...");
+----
+
+This strategy checks for idempotency by storing the Atom Entry GUID in an `IdempotentRepository`. The strategy defaults
+a MemoryIdempotentRepository, but the repository can be changes to any subclass of `IdempotentRepository`, using the
+`idempotentRepository` option.
+
+
 == Examples
 
 === Consumer Example

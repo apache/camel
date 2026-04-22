@@ -23,6 +23,7 @@ import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -34,8 +35,9 @@ import org.apache.camel.spi.UriParam;
 public class AtomEndpoint extends FeedEndpoint implements EndpointServiceLocation {
 
     @UriParam(label = "consumer,filter", defaultValue = "true", description = "Option to use the Idempotent "
-                                                                              + "Consumer EIP pattern to let Camel skip already processed entries. Will by default use a memory based "
-                                                                              + "LRUCache that holds 1000 entries. Only works when splitEntries = true.")
+                                                                              + "Consumer EIP pattern to let Camel skip already processed entries. By default it skips Atom entries "
+                                                                              + "that is older that the last read entry, using Atom updatedDate and publishedDate, but this strategy "
+                                                                              + "can be changed with the idempotentStrategy option. Idempotency only works when splitEntries = true.")
     protected boolean idempotent = true;
     @UriParam(label = "consumer,filter,advanced", defaultValue = "default", enums = "default,repository",
               description = "A pluggable strategy org.apache.camel.component.FeedIdempotentStrategy "
@@ -43,6 +45,10 @@ public class AtomEndpoint extends FeedEndpoint implements EndpointServiceLocatio
                             + "The default strategy checks the Atom entrys updated or published date is newer than the previously read entry. "
                             + "You can provide your own implementation of the org.apache.camel.component.FeedIdempotentStrategy and refer to it using the # notation.")
     protected AtomIdempotentStrategy idempotentStrategy = new ItemUpdatedIdempotentStrategy();
+
+    @UriParam(label = "consumer,filter", description = "A pluggable repository org.apache.camel.spi.IdempotentRepository "
+                                                       + "which by default use MemoryIdempotentRepository if none is specified and idempotent is true.")
+    protected IdempotentRepository idempotentRepository;
 
     public AtomEndpoint() {
     }
@@ -107,5 +113,17 @@ public class AtomEndpoint extends FeedEndpoint implements EndpointServiceLocatio
     public FeedEndpoint setIdempotentStrategy(AtomIdempotentStrategy idempotentStrategy) {
         this.idempotentStrategy = idempotentStrategy;
         return this;
+    }
+
+    public IdempotentRepository getIdempotentRepository() {
+        return idempotentRepository;
+    }
+
+    /**
+     * A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryIdempotentRepository
+     * if none is specified and idempotent is true.
+     */
+    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
+        this.idempotentRepository = idempotentRepository;
     }
 }
