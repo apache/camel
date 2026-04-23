@@ -485,7 +485,7 @@
         <qpid-jms-client-version>2.10.0</qpid-jms-client-version>
         <quarkus-extension-registry-base-url>https://registry.quarkus.io</quarkus-extension-registry-base-url>
         <quarkus-mcp-server-version>1.12.0</quarkus-mcp-server-version>
-        <quarkus-version>3.34.5</quarkus-version>
+        <quarkus-version>3.34.6</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>3.0.0</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
