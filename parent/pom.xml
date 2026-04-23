@@ -226,7 +226,7 @@
         <google-cloud-speech-version>4.86.0</google-cloud-speech-version>
         <google-cloud-texttospeech-version>2.92.0</google-cloud-texttospeech-version>
         <google-genai-version>1.50.0</google-genai-version>
-        <graaljs-version>25.0.2</graaljs-version>
+        <graaljs-version>25.0.3</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
         <greenmail-version>2.1.8</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
