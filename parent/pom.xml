@@ -244,7 +244,7 @@
         <hapi-version>2.6.0</hapi-version>
         <hapi-base-version>2.6.0</hapi-base-version>
         <hapi-fhir-version>8.8.1</hapi-fhir-version>
-        <hapi-fhir-utilities-version>6.9.6</hapi-fhir-utilities-version>
+        <hapi-fhir-utilities-version>6.9.7</hapi-fhir-utilities-version>
         <hawtio-version>4.6.2</hawtio-version>
         <!-- https://issues.apache.org/jira/browse/CAMEL-22041
             hazelcast needs to stay at 5.4.0 for 4.19.0 due to changes where the CP subsystem is only available in
