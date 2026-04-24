@@ -525,7 +525,7 @@
         <spring-boot-version>4.0.6</spring-boot-version>
         <spring-data-redis-version>4.0.5</spring-data-redis-version>
         <spring-ldap-version>4.0.3</spring-ldap-version>
-        <spring-vault-core-version>4.0.1</spring-vault-core-version>
+        <spring-vault-core-version>4.0.2</spring-vault-core-version>
         <spring-version>7.0.7</spring-version>
         <spring-rabbitmq-version>4.0.3</spring-rabbitmq-version>
         <spring-security-version>7.0.5</spring-security-version>
