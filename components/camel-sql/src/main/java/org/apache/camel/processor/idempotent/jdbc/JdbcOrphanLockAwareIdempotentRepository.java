@@ -123,9 +123,18 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
                 processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
                 return result;
             } else {
-                //Update in case of orphan lock where a process dies without releasing exist lock
-                return jdbcTemplate.update(getUpdateTimestampQuery(), currentTimestamp,
-                        processorName, key);
+                // Row exists — try to claim orphan lock with conditional UPDATE.
+                // Only succeeds if createdAt is older than lockMaxAge (lock is truly orphaned).
+                // Returns 0 if the lock is held by an active instance, preventing the race in CAMEL-23294.
+                String orphanLockRecoverQueryString = getUpdateTimestampQuery() + " AND createdAt < ?";
+                Timestamp xMillisAgo = new Timestamp(System.currentTimeMillis() - lockMaxAgeMillis);
+                int result
+                        = jdbcTemplate.update(orphanLockRecoverQueryString, currentTimestamp, processorName, key, xMillisAgo);
+                if (result > 0) {
+                    log.debug("Orphan lock seized for key: {}", key);
+                    processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
+                }
+                return result;
             }
         } finally {
             sl.unlockWrite(stamp);

@@ -431,6 +431,10 @@ The `camel-json-patch` is now deprecated - the library it uses is not active mai
 When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
 the bean which is similar to what `camel-file` do as well.
 
+=== camel-file / camel-aws2-s3 / camel-ibm-cos
+
+The default `inProgressRepository` is now FIFO based instead of LRU as there was no need for LRU behavior, which is lighter in memory overhead.
+
 === camel-openapi-java
 
 When using _code first_ Rest DSL and have configured `base.path` then this will now be exclusively used
@@ -467,6 +471,26 @@ Previously the context-path would always be used:
 
 The intention is to allow to configure the `base.path` _as is_ in the return API specification.
 
+=== camel-arangodb
+
+The ArangoDB Java driver (upgraded to 7.24+) no longer defaults to `localhost:8529` when no host is configured.
+You must now explicitly set the host and port:
+
+[source,properties]
+----
+camel.component.arangodb.host=localhost
+camel.component.arangodb.port=8529
+----
+
+Or when using the Java API directly:
+
+[source,java]
+----
+ArangoDbConfiguration config = new ArangoDbConfiguration();
+config.setHost("localhost");
+config.setPort(8529);
+----
+
 === camel-as2
 
 Some public constants were deprecated:
@@ -480,7 +504,7 @@ org.apache.camel.component.as2.api.AS2ClientManager.HTTP_RESPONSE
 org.apache.camel.component.as2.api.AS2Constants.HTTP_CLIENT_CONNECTION
 ----
 
-They can be replaced by the the getter/setter method of the HttpContext implementation, for example:
+They can be replaced by the getter/setter method of the HttpContext implementation, for example:
 
 [source,java]
 ----
@@ -504,6 +528,15 @@ endpoint option allows providing explicit SQL++ queries. When no `statement` is 
 
 To continue using the deprecated MapReduce Views, set `useView=true` explicitly. See the component
 documentation for migration guidance.
+
+=== camel-debezium
+
+Debezium has been upgraded from 3.4.x to 3.5.0.
+
+=== camel-mail
+
+When using a custom `MailSender` implementation then Camel will now configure this instances as well, with the various
+settings for hostname, protocol, port, etc.
 
 === camel-ftp
 
@@ -586,6 +619,12 @@ Five new configuration properties have been added to the SSH endpoint to expose 
 - `channelOpenTimeout` -- timeout for opening an SSH channel.
 
 All properties default to `0`, which means the Apache MINA SSHD defaults are used. This is an additive change with no impact on existing configurations.
+
+=== camel-json-validator
+
+The JSON validation library `com.networknt:json-schema-validator` used by `camel-json-validator` has been upgraded from 1.x to 2.x.
+
+The `json-schema-validator` https://github.com/networknt/json-schema-validator/blob/master/doc/migration-2.0.0.md[migration guide] can help to migrate your applications if you refer to types that have been updated or removed in 2.x.
 
 === MDC older logic (Deprecation)
 

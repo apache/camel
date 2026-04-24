@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.exec.impl.DefaultExecBinding;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -54,7 +53,8 @@ public class DefaultExecBindingTest extends CamelTestSupport {
     }
 
     private ExecEndpoint createExecEndpoint(String uri) throws Exception {
-        Component component = context.getComponent("exec");
+        ExecComponent component = context.getComponent("exec", ExecComponent.class);
+        component.setAllowControlHeaders(true);
         return (ExecEndpoint) component.createEndpoint(uri);
     }
 

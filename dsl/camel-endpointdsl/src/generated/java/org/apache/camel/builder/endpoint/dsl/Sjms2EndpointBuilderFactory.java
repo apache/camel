@@ -303,10 +303,10 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the default number of concurrent consumers when consuming
-         * from JMS (not for request/reply over JMS). See also the
-         * maxMessagesPerTask option to control dynamic scaling up/down of
-         * threads. When doing request/reply over JMS then the option
+         * Specifies the number of concurrent consumers when consuming from JMS
+         * (not for request/reply over JMS). The concurrent consumer is fixed at
+         * startup and cannot be dynamic scaled like the camel-jms component.
+         * When doing request/reply over JMS then the option
          * replyToConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          * 
@@ -323,10 +323,10 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies the default number of concurrent consumers when consuming
-         * from JMS (not for request/reply over JMS). See also the
-         * maxMessagesPerTask option to control dynamic scaling up/down of
-         * threads. When doing request/reply over JMS then the option
+         * Specifies the number of concurrent consumers when consuming from JMS
+         * (not for request/reply over JMS). The concurrent consumer is fixed at
+         * startup and cannot be dynamic scaled like the camel-jms component.
+         * When doing request/reply over JMS then the option
          * replyToConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          * 
@@ -1211,6 +1211,29 @@ public interface Sjms2EndpointBuilderFactory {
             doSetProperty("transferException", transferException);
             return this;
         }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter allowing java.,
+         * javax. and org.apache.camel. is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     /**
@@ -1486,8 +1509,7 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * Specifies the default number of concurrent consumers when doing
-         * request/reply over JMS. See also the maxMessagesPerTask option to
-         * control dynamic scaling up/down of threads.
+         * request/reply over JMS.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1503,8 +1525,7 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * Specifies the default number of concurrent consumers when doing
-         * request/reply over JMS. See also the maxMessagesPerTask option to
-         * control dynamic scaling up/down of threads.
+         * request/reply over JMS.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2377,6 +2398,29 @@ public interface Sjms2EndpointBuilderFactory {
             doSetProperty("transferException", transferException);
             return this;
         }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter allowing java.,
+         * javax. and org.apache.camel. is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     /**
@@ -3076,6 +3120,29 @@ public interface Sjms2EndpointBuilderFactory {
          */
         default AdvancedSjms2EndpointBuilder transferException(String transferException) {
             doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter allowing java.,
+         * javax. and org.apache.camel. is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
             return this;
         }
     }

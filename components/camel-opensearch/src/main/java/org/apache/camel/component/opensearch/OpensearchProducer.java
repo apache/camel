@@ -492,7 +492,15 @@ class OpensearchProducer extends DefaultAsyncProducer {
             // Configure SSL if enabled
             if (configuration.isEnableSSL()) {
                 SSLContext sslContext = null;
-                if (ObjectHelper.isNotEmpty(configuration.getCertificatePath())) {
+                if (configuration.getSslContextParameters() != null) {
+                    // Use SSLContextParameters (allows configuring named groups, cipher suites, protocols)
+                    try {
+                        sslContext = configuration.getSslContextParameters()
+                                .createSSLContext(getEndpoint().getCamelContext());
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to create SSLContext from SSLContextParameters", e);
+                    }
+                } else if (ObjectHelper.isNotEmpty(configuration.getCertificatePath())) {
                     // Use custom certificate
                     sslContext = createSslContextFromCa();
                 } else {

@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
@@ -1131,6 +1132,7 @@ public abstract class AbstractCamelContext extends BaseService
         return Boolean.TRUE.equals(isStartingRoutes.orElse(false));
     }
 
+    @Deprecated(since = "4.20.0")
     public void setStartingRoutes(boolean starting) {
         if (starting) {
             isStartingRoutes.set(true);
@@ -1139,16 +1141,61 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
+    /**
+     * Executes the given operation within a "starting routes" context.
+     */
+    public void startingRoutes(Runnable operation) {
+        ContextValue.where(isStartingRoutes, true, operation);
+    }
+
+    /**
+     * Executes the given operation within a "starting routes" context.
+     */
+    public <T> T startingRoutes(Callable<T> callable) throws Exception {
+        return ContextValue.where(isStartingRoutes, true, () -> {
+            try {
+                return callable.call();
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public boolean isLockModel() {
         return Boolean.TRUE.equals(isLockModel.orElse(false));
     }
 
+    @Deprecated(since = "4.20.0")
     public void setLockModel(boolean lockModel) {
         if (lockModel) {
             isLockModel.set(true);
         } else {
             isLockModel.remove();
         }
+    }
+
+    /**
+     * Executes the given operation within a "lock model" context.
+     */
+    public void lockModel(Runnable operation) {
+        ContextValue.where(isLockModel, true, operation);
+    }
+
+    /**
+     * Executes the given operation within a "lock model" context.
+     */
+    public <T> T lockModel(Callable<T> callable) throws Exception {
+        return ContextValue.where(isLockModel, true, () -> {
+            try {
+                return callable.call();
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void startAllRoutes() throws Exception {
@@ -3559,14 +3606,7 @@ public abstract class AbstractCamelContext extends BaseService
     public void startRouteService(RouteService routeService, boolean addingRoutes) throws Exception {
         lock.lock();
         try {
-            // we may already be starting routes so remember this, so we can unset
-            // accordingly in finally block
-            boolean alreadyStartingRoutes = isStartingRoutes();
-            if (!alreadyStartingRoutes) {
-                setStartingRoutes(true);
-            }
-
-            try {
+            startingRoutes(() -> {
                 // the route service could have been suspended, and if so then
                 // resume it instead
                 if (routeService.getStatus().isSuspended()) {
@@ -3596,11 +3636,8 @@ public abstract class AbstractCamelContext extends BaseService
                         startupStepRecorder.endStep(step);
                     }
                 }
-            } finally {
-                if (!alreadyStartingRoutes) {
-                    setStartingRoutes(false);
-                }
-            }
+                return null;
+            });
         } finally {
             lock.unlock();
         }

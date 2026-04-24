@@ -205,71 +205,76 @@ public class MailConfiguration implements Cloneable {
     }
 
     protected JavaMailSender createJavaMailSender(CamelContext context) {
-        JavaMailSender answer = new DefaultJavaMailSender();
+        return new DefaultJavaMailSender();
+    }
 
-        if (javaMailProperties != null) {
-            answer.setJavaMailProperties(javaMailProperties);
-        } else {
-            // set default properties if none provided
-            answer.setJavaMailProperties(createJavaMailProperties(context));
-            // add additional properties if provided
-            if (additionalJavaMailProperties != null) {
-                answer.getJavaMailProperties().putAll(additionalJavaMailProperties);
+    protected void configureJavaMailSender(CamelContext context, JavaMailSender answer) {
+        if (answer.getJavaMailProperties() == null || answer.getJavaMailProperties().isEmpty()) {
+            if (javaMailProperties != null) {
+                answer.setJavaMailProperties(javaMailProperties);
+            } else {
+                // set default properties if none provided
+                answer.setJavaMailProperties(createJavaMailProperties(context));
+                // add additional properties if provided
+                if (additionalJavaMailProperties != null) {
+                    answer.getJavaMailProperties().putAll(additionalJavaMailProperties);
+                }
             }
         }
 
-        if (host != null) {
+        if (answer.getHost() == null && host != null) {
             answer.setHost(host);
         }
-        if (port >= 0) {
+        if (answer.getPort() <= 0 && port >= 0) {
             answer.setPort(port);
         }
-        if (username != null) {
+        if (answer.getUsername() == null && username != null) {
             answer.setUsername(username);
         }
-        if (password != null) {
+        if (answer.getPassword() == null && password != null) {
             answer.setPassword(password);
         }
-        if (authenticator != null) {
+        if (answer.getAuthenticator() == null && authenticator != null) {
             answer.setAuthenticator(authenticator);
         }
-        if (protocol != null) {
+        if (answer.getProtocol() == null && protocol != null) {
             answer.setProtocol(protocol);
         }
-        if (session != null) {
-            answer.setSession(session);
-            String hostPropertyValue = session.getProperty("mail.smtp.host");
-            if (hostPropertyValue == null || hostPropertyValue.isEmpty()) {
-                hostPropertyValue = session.getProperty("mail.smtps.host");
-            }
-            if (hostPropertyValue != null && !hostPropertyValue.isEmpty()) {
-                answer.setHost(hostPropertyValue);
-            }
-            String portPropertyValue = session.getProperty("mail.smtp.port");
-            if (portPropertyValue == null || portPropertyValue.isEmpty()) {
-                portPropertyValue = session.getProperty("mail.smtps.port");
-            }
-            if (portPropertyValue != null && !portPropertyValue.isEmpty()) {
-                answer.setPort(Integer.parseInt(portPropertyValue));
-            }
-        } else {
-            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            try {
-                if (applicationClassLoader != null) {
-                    Thread.currentThread().setContextClassLoader(applicationClassLoader);
+        if (answer.getSession() == null) {
+            if (session != null) {
+                answer.setSession(session);
+                String hostPropertyValue = session.getProperty("mail.smtp.host");
+                if (hostPropertyValue == null || hostPropertyValue.isEmpty()) {
+                    hostPropertyValue = session.getProperty("mail.smtps.host");
                 }
-                // use our authenticator that does not live user interaction but returns the already configured username and password
-                Session sessionInstance = Session.getInstance(answer.getJavaMailProperties(),
-                        authenticator == null ? new DefaultAuthenticator(getUsername(), getPassword()) : authenticator);
-                // sets the debug mode of the underlying mail framework
-                sessionInstance.setDebug(debugMode);
-                answer.setSession(sessionInstance);
-            } finally {
-                Thread.currentThread().setContextClassLoader(tccl);
+                if (hostPropertyValue != null && !hostPropertyValue.isEmpty()) {
+                    answer.setHost(hostPropertyValue);
+                }
+                String portPropertyValue = session.getProperty("mail.smtp.port");
+                if (portPropertyValue == null || portPropertyValue.isEmpty()) {
+                    portPropertyValue = session.getProperty("mail.smtps.port");
+                }
+                if (portPropertyValue != null && !portPropertyValue.isEmpty()) {
+                    answer.setPort(Integer.parseInt(portPropertyValue));
+                }
+            } else {
+                ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+                try {
+                    if (applicationClassLoader != null) {
+                        Thread.currentThread().setContextClassLoader(applicationClassLoader);
+                    }
+                    // use our authenticator that does not live user interaction but returns the already configured username and password
+                    Session sessionInstance = Session.getInstance(answer.getJavaMailProperties(),
+                            authenticator == null
+                                    ? new DefaultAuthenticator(answer.getUsername(), answer.getPassword()) : authenticator);
+                    // sets the debug mode of the underlying mail framework
+                    sessionInstance.setDebug(debugMode);
+                    answer.setSession(sessionInstance);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(tccl);
+                }
             }
         }
-
-        return answer;
     }
 
     private Properties createJavaMailProperties(CamelContext context) {

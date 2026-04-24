@@ -847,6 +847,47 @@ public interface OAIPMHEndpointBuilderFactory {
             doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
+        /**
+         * Custom HTTP headers to send with each request to the OAI-PMH
+         * repository, for example for Authorization or Accept-Language. This is
+         * a multi-value option with prefix: httpHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the httpHeaders(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedOAIPMHEndpointConsumerBuilder httpHeaders(String key, Object value) {
+            doSetMultiValueProperty("httpHeaders", "httpHeader." + key, value);
+            return this;
+        }
+        /**
+         * Custom HTTP headers to send with each request to the OAI-PMH
+         * repository, for example for Authorization or Accept-Language. This is
+         * a multi-value option with prefix: httpHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the httpHeaders(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedOAIPMHEndpointConsumerBuilder httpHeaders(Map values) {
+            doSetMultiValueProperties("httpHeaders", "httpHeader.", values);
+            return this;
+        }
     }
 
     /**
@@ -1098,6 +1139,47 @@ public interface OAIPMHEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Custom HTTP headers to send with each request to the OAI-PMH
+         * repository, for example for Authorization or Accept-Language. This is
+         * a multi-value option with prefix: httpHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the httpHeaders(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedOAIPMHEndpointProducerBuilder httpHeaders(String key, Object value) {
+            doSetMultiValueProperty("httpHeaders", "httpHeader." + key, value);
+            return this;
+        }
+        /**
+         * Custom HTTP headers to send with each request to the OAI-PMH
+         * repository, for example for Authorization or Accept-Language. This is
+         * a multi-value option with prefix: httpHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the httpHeaders(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedOAIPMHEndpointProducerBuilder httpHeaders(Map values) {
+            doSetMultiValueProperties("httpHeaders", "httpHeader.", values);
+            return this;
+        }
     }
 
     /**
@@ -1275,6 +1357,47 @@ public interface OAIPMHEndpointBuilderFactory {
             return (OAIPMHEndpointBuilder) this;
         }
 
+        /**
+         * Custom HTTP headers to send with each request to the OAI-PMH
+         * repository, for example for Authorization or Accept-Language. This is
+         * a multi-value option with prefix: httpHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the httpHeaders(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedOAIPMHEndpointBuilder httpHeaders(String key, Object value) {
+            doSetMultiValueProperty("httpHeaders", "httpHeader." + key, value);
+            return this;
+        }
+        /**
+         * Custom HTTP headers to send with each request to the OAI-PMH
+         * repository, for example for Authorization or Accept-Language. This is
+         * a multi-value option with prefix: httpHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the httpHeaders(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedOAIPMHEndpointBuilder httpHeaders(Map values) {
+            doSetMultiValueProperties("httpHeaders", "httpHeader.", values);
+            return this;
+        }
     }
 
     public interface OAIPMHBuilders {
@@ -1357,6 +1480,20 @@ public interface OAIPMHEndpointBuilderFactory {
          */
         public String oaimphResumptionToken() {
             return "CamelOaimphResumptionToken";
+        }
+        /**
+         * Custom HTTP headers to send with the request, overriding any
+         * httpHeader. endpoint parameters.
+         * 
+         * The option is a: {@code java.util.Map<java.lang.String,
+         * java.lang.String>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OaimphHttpHeaders}.
+         */
+        public String oaimphHttpHeaders() {
+            return "CamelOaimphHttpHeaders";
         }
     }
     static OAIPMHEndpointBuilder endpointBuilder(String componentName, String path) {

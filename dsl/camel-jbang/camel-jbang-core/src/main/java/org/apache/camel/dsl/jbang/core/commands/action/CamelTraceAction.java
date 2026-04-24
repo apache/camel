@@ -69,6 +69,7 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
+    private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
     private CommandHelper.ReadConsoleTask waitUserTask;
 
@@ -186,6 +187,8 @@ public class CamelTraceAction extends ActionBaseCommand {
     boolean pretty;
 
     String findAnsi;
+    Pattern[] grepPatterns;
+    Pattern[] findPatterns;
 
     private int nameMaxWidth;
     private boolean prefixShown;
@@ -195,6 +198,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     private final Map<String, Ansi.Color> nameColors = new HashMap<>();
     private final Map<String, Ansi.Color> exchangeIdColors = new HashMap<>();
     private int exchangeIdColorsIndex = 1;
+    private final SimpleDateFormat sdfTimestamp = new SimpleDateFormat(TIMESTAMP_FORMAT);
 
     public CamelTraceAction(CamelJBangMain main) {
         super(main);
@@ -347,19 +351,11 @@ public class CamelTraceAction extends ActionBaseCommand {
             // read existing trace files (skip by tail/since)
             if (find != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                for (int i = 0; i < find.length; i++) {
-                    String f = find[i];
-                    f = Pattern.quote(f);
-                    find[i] = f;
-                }
+                findPatterns = quoteAndCompilePatterns(find);
             }
             if (grep != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                for (int i = 0; i < grep.length; i++) {
-                    String f = grep[i];
-                    f = Pattern.quote(f);
-                    grep[i] = f;
-                }
+                grepPatterns = quoteAndCompilePatterns(grep);
             }
             Date limit = null;
             if (since != null) {
@@ -709,9 +705,8 @@ public class CamelTraceAction extends ActionBaseCommand {
         if (grep == null) {
             return true;
         }
-        for (String g : grep) {
-            boolean m = Pattern.compile("(?i)" + g).matcher(line).find();
-            if (m) {
+        for (Pattern p : grepPatterns) {
+            if (p.matcher(line).find()) {
                 return true;
             }
         }
@@ -769,7 +764,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             if (ago) {
                 ts = String.format("%12s", TimeUtils.printSince(row.timestamp) + " ago");
             } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                SimpleDateFormat sdf = sdfTimestamp;
                 ts = sdf.format(new Date(row.timestamp));
             }
             if (loggingColor) {
@@ -841,14 +836,14 @@ public class CamelTraceAction extends ActionBaseCommand {
         if (lines.length > 0) {
             printer().println();
             for (String line : lines) {
-                if (find != null) {
-                    for (String f : find) {
-                        line = line.replaceAll("(?i)" + f, findAnsi);
+                if (findPatterns != null) {
+                    for (Pattern fp : findPatterns) {
+                        line = fp.matcher(line).replaceAll(findAnsi);
                     }
                 }
-                if (grep != null) {
-                    for (String g : grep) {
-                        line = line.replaceAll("(?i)" + g, findAnsi);
+                if (grepPatterns != null) {
+                    for (Pattern gp : grepPatterns) {
+                        line = gp.matcher(line).replaceAll(findAnsi);
                     }
                 }
                 if (nameWithPrefix != null) {

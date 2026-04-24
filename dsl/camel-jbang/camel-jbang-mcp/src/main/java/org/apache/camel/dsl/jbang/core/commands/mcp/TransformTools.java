@@ -29,7 +29,7 @@ import java.util.Map;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
@@ -282,20 +282,20 @@ public class TransformTools {
             File tempFile = File.createTempFile("camel-validate-", ".yaml");
             try {
                 Files.writeString(tempFile.toPath(), route);
-                List<ValidationMessage> messages = yamlValidator.validate(tempFile);
+                List<Error> errors = yamlValidator.validate(tempFile);
 
-                List<YamlDslError> errors = null;
-                if (!messages.isEmpty()) {
-                    errors = messages.stream()
-                            .map(m -> new YamlDslError(
-                                    m.getMessage(),
-                                    m.getInstanceLocation() != null ? m.getInstanceLocation().toString() : null,
-                                    m.getType(),
-                                    m.getSchemaLocation() != null ? m.getSchemaLocation().toString() : null))
+                List<YamlDslError> errorDetails = null;
+                if (!errors.isEmpty()) {
+                    errorDetails = errors.stream()
+                            .map(e -> new YamlDslError(
+                                    e.getMessage(),
+                                    e.getInstanceLocation() != null ? e.getInstanceLocation().toString() : null,
+                                    e.getMessageKey(),
+                                    e.getSchemaLocation() != null ? e.getSchemaLocation().toString() : null))
                             .toList();
                 }
 
-                return new YamlDslValidationResult(messages.isEmpty(), messages.size(), errors);
+                return new YamlDslValidationResult(errors.isEmpty(), errors.size(), errorDetails);
             } finally {
                 tempFile.delete();
             }

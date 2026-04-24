@@ -63,6 +63,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         map.put("Group_membership_id", java.lang.Long.class);
         map.put("Id", java.lang.Long.class);
         map.put("IdArticle", java.lang.String.class);
+        map.put("IdempotencyKey", java.lang.String.class);
         map.put("Identity", org.zendesk.client.v2.model.Identity.class);
         map.put("IdentityId", java.lang.Long.class);
         map.put("Ids", long[].class);
@@ -220,6 +221,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "id": target.setId(property(camelContext, java.lang.Long.class, value)); return true;
         case "idarticle":
         case "idArticle": target.setIdArticle(property(camelContext, java.lang.String.class, value)); return true;
+        case "idempotencykey":
+        case "idempotencyKey": target.setIdempotencyKey(property(camelContext, java.lang.String.class, value)); return true;
         case "identity": target.setIdentity(property(camelContext, org.zendesk.client.v2.model.Identity.class, value)); return true;
         case "identityid":
         case "identityId": target.setIdentityId(property(camelContext, java.lang.Long.class, value)); return true;
@@ -432,6 +435,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "id": return java.lang.Long.class;
         case "idarticle":
         case "idArticle": return java.lang.String.class;
+        case "idempotencykey":
+        case "idempotencyKey": return java.lang.String.class;
         case "identity": return org.zendesk.client.v2.model.Identity.class;
         case "identityid":
         case "identityId": return java.lang.Long.class;
@@ -640,6 +645,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "id": return target.getId();
         case "idarticle":
         case "idArticle": return target.getIdArticle();
+        case "idempotencykey":
+        case "idempotencyKey": return target.getIdempotencyKey();
         case "identity": return target.getIdentity();
         case "identityid":
         case "identityId": return target.getIdentityId();

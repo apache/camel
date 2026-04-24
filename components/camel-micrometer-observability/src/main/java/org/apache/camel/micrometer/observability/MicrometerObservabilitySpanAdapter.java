@@ -18,16 +18,24 @@ package org.apache.camel.micrometer.observability;
 
 import java.util.Map;
 
+import io.micrometer.tracing.BaggageInScope;
+import io.micrometer.tracing.Tracer;
 import org.apache.camel.telemetry.Span;
 
 public class MicrometerObservabilitySpanAdapter implements Span {
 
     private static final String DEFAULT_EVENT_NAME = "log";
+    static final String BAGGAGE_CAMEL_FLAG = "camelScope";
 
     private final io.micrometer.tracing.Span span;
+    private final Tracer.SpanInScope scope;
+    private final BaggageInScope baggage;
 
-    public MicrometerObservabilitySpanAdapter(io.micrometer.tracing.Span span) {
+    public MicrometerObservabilitySpanAdapter(io.micrometer.tracing.Span span, Tracer.SpanInScope scope,
+                                              BaggageInScope baggage) {
         this.span = span;
+        this.scope = scope;
+        this.baggage = baggage;
     }
 
     @Override
@@ -71,7 +79,12 @@ public class MicrometerObservabilitySpanAdapter implements Span {
     }
 
     protected void deactivate() {
-
+        if (baggage != null) {
+            baggage.close();
+        }
+        if (scope != null) {
+            scope.close();
+        }
     }
 
     @Override

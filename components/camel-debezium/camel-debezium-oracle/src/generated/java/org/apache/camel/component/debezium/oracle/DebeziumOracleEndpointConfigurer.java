@@ -128,6 +128,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferEhcacheGlobalConfig": target.getConfiguration().setLogMiningBufferEhcacheGlobalConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferehcacheprocessedtransactionsconfig":
         case "logMiningBufferEhcacheProcessedtransactionsConfig": target.getConfiguration().setLogMiningBufferEhcacheProcessedtransactionsConfig(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingbufferehcacherollbacksconfig":
+        case "logMiningBufferEhcacheRollbacksConfig": target.getConfiguration().setLogMiningBufferEhcacheRollbacksConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferehcacheschemachangesconfig":
         case "logMiningBufferEhcacheSchemachangesConfig": target.getConfiguration().setLogMiningBufferEhcacheSchemachangesConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferehcachetransactionsconfig":
@@ -138,10 +140,14 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferInfinispanCacheGlobal": target.getConfiguration().setLogMiningBufferInfinispanCacheGlobal(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferinfinispancacheprocessedtransactions":
         case "logMiningBufferInfinispanCacheProcessedTransactions": target.getConfiguration().setLogMiningBufferInfinispanCacheProcessedTransactions(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingbufferinfinispancacherollbacks":
+        case "logMiningBufferInfinispanCacheRollbacks": target.getConfiguration().setLogMiningBufferInfinispanCacheRollbacks(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferinfinispancacheschemachanges":
         case "logMiningBufferInfinispanCacheSchemaChanges": target.getConfiguration().setLogMiningBufferInfinispanCacheSchemaChanges(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingbufferinfinispancachetransactions":
         case "logMiningBufferInfinispanCacheTransactions": target.getConfiguration().setLogMiningBufferInfinispanCacheTransactions(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingbuffertrackrsid":
+        case "logMiningBufferTrackRsId": target.getConfiguration().setLogMiningBufferTrackRsId(property(camelContext, boolean.class, value)); return true;
         case "logminingbuffertransactioneventsthreshold":
         case "logMiningBufferTransactionEventsThreshold": target.getConfiguration().setLogMiningBufferTransactionEventsThreshold(property(camelContext, long.class, value)); return true;
         case "logminingbuffertype":
@@ -184,6 +190,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningUsernameExcludeList": target.getConfiguration().setLogMiningUsernameExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "logminingusernameincludelist":
         case "logMiningUsernameIncludeList": target.getConfiguration().setLogMiningUsernameIncludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "logminingwindowmaxms":
+        case "logMiningWindowMaxMs": target.getConfiguration().setLogMiningWindowMaxMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "maxbatchsize":
         case "maxBatchSize": target.getConfiguration().setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
@@ -278,6 +286,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "snapshotLockingMode": target.getConfiguration().setSnapshotLockingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": target.getConfiguration().setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": target.getConfiguration().setSnapshotMaxThreadsMultiplier(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -316,6 +326,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "transactionMetadataFactory": target.getConfiguration().setTransactionMetadataFactory(property(camelContext, java.lang.String.class, value)); return true;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": target.getConfiguration().setUnavailableValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
+        case "xstreamoutservername":
+        case "xstreamOutServerName": target.getConfiguration().setXstreamOutServerName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -428,6 +440,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferEhcacheGlobalConfig": return java.lang.String.class;
         case "logminingbufferehcacheprocessedtransactionsconfig":
         case "logMiningBufferEhcacheProcessedtransactionsConfig": return java.lang.String.class;
+        case "logminingbufferehcacherollbacksconfig":
+        case "logMiningBufferEhcacheRollbacksConfig": return java.lang.String.class;
         case "logminingbufferehcacheschemachangesconfig":
         case "logMiningBufferEhcacheSchemachangesConfig": return java.lang.String.class;
         case "logminingbufferehcachetransactionsconfig":
@@ -438,10 +452,14 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferInfinispanCacheGlobal": return java.lang.String.class;
         case "logminingbufferinfinispancacheprocessedtransactions":
         case "logMiningBufferInfinispanCacheProcessedTransactions": return java.lang.String.class;
+        case "logminingbufferinfinispancacherollbacks":
+        case "logMiningBufferInfinispanCacheRollbacks": return java.lang.String.class;
         case "logminingbufferinfinispancacheschemachanges":
         case "logMiningBufferInfinispanCacheSchemaChanges": return java.lang.String.class;
         case "logminingbufferinfinispancachetransactions":
         case "logMiningBufferInfinispanCacheTransactions": return java.lang.String.class;
+        case "logminingbuffertrackrsid":
+        case "logMiningBufferTrackRsId": return boolean.class;
         case "logminingbuffertransactioneventsthreshold":
         case "logMiningBufferTransactionEventsThreshold": return long.class;
         case "logminingbuffertype":
@@ -484,6 +502,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningUsernameExcludeList": return java.lang.String.class;
         case "logminingusernameincludelist":
         case "logMiningUsernameIncludeList": return java.lang.String.class;
+        case "logminingwindowmaxms":
+        case "logMiningWindowMaxMs": return long.class;
         case "maxbatchsize":
         case "maxBatchSize": return int.class;
         case "maxqueuesize":
@@ -578,6 +598,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "snapshotLockingMode": return java.lang.String.class;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return int.class;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -616,6 +638,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "transactionMetadataFactory": return java.lang.String.class;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return java.lang.String.class;
+        case "xstreamoutservername":
+        case "xstreamOutServerName": return java.lang.String.class;
         default: return null;
         }
     }
@@ -729,6 +753,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferEhcacheGlobalConfig": return target.getConfiguration().getLogMiningBufferEhcacheGlobalConfig();
         case "logminingbufferehcacheprocessedtransactionsconfig":
         case "logMiningBufferEhcacheProcessedtransactionsConfig": return target.getConfiguration().getLogMiningBufferEhcacheProcessedtransactionsConfig();
+        case "logminingbufferehcacherollbacksconfig":
+        case "logMiningBufferEhcacheRollbacksConfig": return target.getConfiguration().getLogMiningBufferEhcacheRollbacksConfig();
         case "logminingbufferehcacheschemachangesconfig":
         case "logMiningBufferEhcacheSchemachangesConfig": return target.getConfiguration().getLogMiningBufferEhcacheSchemachangesConfig();
         case "logminingbufferehcachetransactionsconfig":
@@ -739,10 +765,14 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningBufferInfinispanCacheGlobal": return target.getConfiguration().getLogMiningBufferInfinispanCacheGlobal();
         case "logminingbufferinfinispancacheprocessedtransactions":
         case "logMiningBufferInfinispanCacheProcessedTransactions": return target.getConfiguration().getLogMiningBufferInfinispanCacheProcessedTransactions();
+        case "logminingbufferinfinispancacherollbacks":
+        case "logMiningBufferInfinispanCacheRollbacks": return target.getConfiguration().getLogMiningBufferInfinispanCacheRollbacks();
         case "logminingbufferinfinispancacheschemachanges":
         case "logMiningBufferInfinispanCacheSchemaChanges": return target.getConfiguration().getLogMiningBufferInfinispanCacheSchemaChanges();
         case "logminingbufferinfinispancachetransactions":
         case "logMiningBufferInfinispanCacheTransactions": return target.getConfiguration().getLogMiningBufferInfinispanCacheTransactions();
+        case "logminingbuffertrackrsid":
+        case "logMiningBufferTrackRsId": return target.getConfiguration().isLogMiningBufferTrackRsId();
         case "logminingbuffertransactioneventsthreshold":
         case "logMiningBufferTransactionEventsThreshold": return target.getConfiguration().getLogMiningBufferTransactionEventsThreshold();
         case "logminingbuffertype":
@@ -785,6 +815,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "logMiningUsernameExcludeList": return target.getConfiguration().getLogMiningUsernameExcludeList();
         case "logminingusernameincludelist":
         case "logMiningUsernameIncludeList": return target.getConfiguration().getLogMiningUsernameIncludeList();
+        case "logminingwindowmaxms":
+        case "logMiningWindowMaxMs": return target.getConfiguration().getLogMiningWindowMaxMs();
         case "maxbatchsize":
         case "maxBatchSize": return target.getConfiguration().getMaxBatchSize();
         case "maxqueuesize":
@@ -879,6 +911,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "snapshotLockingMode": return target.getConfiguration().getSnapshotLockingMode();
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return target.getConfiguration().getSnapshotMaxThreads();
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return target.getConfiguration().getSnapshotMaxThreadsMultiplier();
         case "snapshotmode":
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -917,6 +951,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "transactionMetadataFactory": return target.getConfiguration().getTransactionMetadataFactory();
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return target.getConfiguration().getUnavailableValuePlaceholder();
+        case "xstreamoutservername":
+        case "xstreamOutServerName": return target.getConfiguration().getXstreamOutServerName();
         default: return null;
         }
     }

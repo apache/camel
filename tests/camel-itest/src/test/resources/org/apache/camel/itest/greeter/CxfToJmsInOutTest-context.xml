@@ -47,6 +47,7 @@
             <property name="brokerURL" value="vm://itest-jms"/>
         </bean>
       </property>
+      <property name="deserializationFilter" value="org.apache.cxf.*"/>
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">

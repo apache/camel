@@ -241,6 +241,10 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_NAME, String.class);
     }
 
+    public static String getSnapshotIdFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_SNAPSHOT_ID, String.class);
+    }
+
     public static String getBlobContainerNameFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_CONTAINER_NAME, String.class);
     }
@@ -474,6 +478,21 @@ public class BlobExchangeHeaders {
 
     public BlobExchangeHeaders httpHeaders(final HttpHeaders httpHeaders) {
         headers.put(BlobConstants.RAW_HTTP_HEADERS, httpHeaders);
+        return this;
+    }
+
+    public BlobExchangeHeaders snapshotId(final String snapshotId) {
+        headers.put(BlobConstants.BLOB_SNAPSHOT_ID, snapshotId);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<String, String> getBlobTagsFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_TAGS, Map.class);
+    }
+
+    public BlobExchangeHeaders blobTags(final Map<String, String> tags) {
+        headers.put(BlobConstants.BLOB_TAGS, tags);
         return this;
     }
 }

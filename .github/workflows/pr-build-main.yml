@@ -70,6 +70,10 @@ jobs:
         java: ['17', '21']
         experimental: [ false ]
         include:
+          - java: '17'
+            # JDK 17 is kept for runtime compatibility testing.
+            # Skip the enforcer which requires JDK 21+ (needed to compile JDK 21-specific classes).
+            maven_extra_args: '-Denforcer.phase=none'
           - java: '25'
             experimental: true
 
@@ -90,15 +94,18 @@ jobs:
           cache: 'maven'
       - name: maven build
         if: ${{ !inputs.skip_full_build }}
+        env:
+          MAVEN_EXTRA_ARGS: ${{ matrix.maven_extra_args || '' }}
         run: ./etc/scripts/regen.sh
       - name: Quick dependency build
         if: ${{ inputs.skip_full_build }}
         shell: bash
         env:
           EXTRA_MODULES: ${{ inputs.extra_modules }}
-        run: ./mvnw -l build.log install -B -DskipTests -Dquickly -pl "$EXTRA_MODULES" -am
+          MAVEN_EXTRA_ARGS: ${{ matrix.maven_extra_args || '' }}
+        run: ./mvnw -l build.log install -B -DskipTests -Dquickly $MAVEN_EXTRA_ARGS -pl "$EXTRA_MODULES" -am
       - name: archive logs
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
           name: build-${{ matrix.java }}.log
@@ -114,8 +121,14 @@ jobs:
           pr-id: ${{ github.event.number || inputs.pr_number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
-          artifact-upload-suffix: java-${{ matrix.java }}
           extra-modules: ${{ inputs.extra_modules || '' }}
+          maven-extra-args: ${{ matrix.maven_extra_args || '' }}
+      - name: archive incremental test logs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: incremental-test-java-${{ matrix.java }}.log
+          path: incremental-test.log
       # All non-experimental JDK matrix entries upload with overwrite: true.
       # This ensures a comment is posted even if one JDK build fails — the
       # content is identical across JDKs (same modules tested), so last writer wins.
@@ -137,7 +150,7 @@ jobs:
           fi
       - name: Upload CI comment artifact
         if: always() && !matrix.experimental
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ci-comment
           path: ci-comment-artifact/

@@ -12557,6 +12557,8 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'embeddings', or
      * 'tool-execution'
+     * There are 3 enums and the value can be one of: chat-completion,
+     * embeddings, tool-execution
      * 
      * @param path operation
      * @return the dsl builder
@@ -12577,6 +12579,8 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The operation to perform: 'chat-completion', 'embeddings', or
      * 'tool-execution'
+     * There are 3 enums and the value can be one of: chat-completion,
+     * embeddings, tool-execution
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13369,6 +13373,46 @@ public class StaticEndpointBuilders {
      */
     public static PgEventEndpointBuilderFactory.PgEventEndpointBuilder pgevent(String componentName, String path) {
         return PgEventEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * Syntax: <code>pgvector:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection (table) name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PgVectorEndpointBuilderFactory.PgVectorEndpointBuilder pgvector(String path) {
+        return pgvector("pgvector", path);
+    }
+    /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * Syntax: <code>pgvector:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection (table) name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static PgVectorEndpointBuilderFactory.PgVectorEndpointBuilder pgvector(String componentName, String path) {
+        return PgVectorEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Pinecone (camel-pinecone)
@@ -17899,7 +17943,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 380 enums and the value can be one of:
+     * There are 382 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -17917,9 +17961,10 @@ public class StaticEndpointBuilders {
      * CREATE_PERMISSION_GROUP, CREATE_REQUEST, CREATE_SATISFACTION_RATING,
      * CREATE_SATISFACTION_RATING_1, CREATE_SECTION, CREATE_SECTION_TRANSLATION,
      * CREATE_TARGET, CREATE_TICKET, CREATE_TICKET_ASYNC, CREATE_TICKET_FIELD,
-     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKETS,
-     * CREATE_TICKETS_1, CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER,
-     * CREATE_UPLOAD, CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
+     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKET_IDEMPOTENT,
+     * CREATE_TICKET_IDEMPOTENT_ASYNC, CREATE_TICKETS, CREATE_TICKETS_1,
+     * CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER, CREATE_UPLOAD,
+     * CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
      * CREATE_UPLOAD_ARTICLE_1, CREATE_USER, CREATE_USER_IDENTITY,
      * CREATE_USER_IDENTITY_1, CREATE_USER_SEGMENT, CREATE_USERS,
      * CREATE_USERS_1, CREATE_USERS_ASYNC, DELETE_ARTICLE,
@@ -18054,7 +18099,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 380 enums and the value can be one of:
+     * There are 382 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -18072,9 +18117,10 @@ public class StaticEndpointBuilders {
      * CREATE_PERMISSION_GROUP, CREATE_REQUEST, CREATE_SATISFACTION_RATING,
      * CREATE_SATISFACTION_RATING_1, CREATE_SECTION, CREATE_SECTION_TRANSLATION,
      * CREATE_TARGET, CREATE_TICKET, CREATE_TICKET_ASYNC, CREATE_TICKET_FIELD,
-     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKETS,
-     * CREATE_TICKETS_1, CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER,
-     * CREATE_UPLOAD, CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
+     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKET_IDEMPOTENT,
+     * CREATE_TICKET_IDEMPOTENT_ASYNC, CREATE_TICKETS, CREATE_TICKETS_1,
+     * CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER, CREATE_UPLOAD,
+     * CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
      * CREATE_UPLOAD_ARTICLE_1, CREATE_USER, CREATE_USER_IDENTITY,
      * CREATE_USER_IDENTITY_1, CREATE_USER_SEGMENT, CREATE_USERS,
      * CREATE_USERS_1, CREATE_USERS_ASYNC, DELETE_ARTICLE,

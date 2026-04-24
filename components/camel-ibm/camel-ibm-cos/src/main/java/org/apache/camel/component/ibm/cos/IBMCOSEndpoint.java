@@ -65,7 +65,7 @@ public class IBMCOSEndpoint extends ScheduledPollEndpoint implements EndpointSer
     private int maxMessagesPerPoll = 10;
     @UriParam(label = "consumer,advanced")
     private IdempotentRepository inProgressRepository
-            = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
+            = MemoryIdempotentRepository.memoryIdempotentRepositoryFifo(DEFAULT_IN_PROGRESS_CACHE_SIZE);
 
     public IBMCOSEndpoint(String uri, Component comp, IBMCOSConfiguration configuration) {
         super(uri, comp);

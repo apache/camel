@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.apache.camel.test.infra.common.TestUtils;
 import org.junit.platform.commons.util.StringUtils;
 import org.slf4j.Logger;
@@ -76,7 +77,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
         super(new ImageFromDockerfile(
                 "localhost/camel-cli:" + params.getCamelRef() + "-" + params.getCamelJBangVersion()
                                       + (params.getKeepContainerRunning() ? "-R" : ""),
-                false)
+                Boolean.parseBoolean(System.getProperty(CliProperties.DELETE_IMAGE_ON_EXIT, "false")))
                 .withFileFromPath("Dockerfile", StringUtils.isNotBlank(params.getDockerFile())
                         ? Path.of(params.getDockerFile())
                         : Path.of(MountableFile.forClasspathResource("org/apache/camel/test/infra/cli/services/Dockerfile")
@@ -85,7 +86,8 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
                         "org/apache/camel/test/infra/cli/services/entrypoint.sh")
                 .withFileFromClasspath("99-ssh-jbang.conf",
                         "org/apache/camel/test/infra/cli/services/99-ssh-jbang.conf")
-                .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(FROM_IMAGE_NAME))
+                .withBuildArg(FROM_IMAGE_ARG, TestUtils.prependHubImageNamePrefixIfNeeded(
+                        System.getProperty(CliProperties.FROM_IMAGE, FROM_IMAGE_NAME)))
                 .withBuildArg(CAMEL_REF_ARG, params.getCamelRef())
                 .withBuildArg(KEEP_RUNNING_ARG, String.valueOf(params.getKeepContainerRunning()))
                 .withBuildArg(SSH_PASSWORD_ARG, params.getSshPassword())

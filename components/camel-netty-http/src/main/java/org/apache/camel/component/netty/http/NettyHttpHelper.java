@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,11 +34,24 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helpers.
  */
 public final class NettyHttpHelper {
+
+    /**
+     * Default {@link ObjectInputFilter} pattern applied when deserializing Java objects from HTTP responses with
+     * Content-Type {@code application/x-java-serialized-object}. Allows standard Java types and Apache Camel types and
+     * rejects everything else. Can be overridden per-endpoint via
+     * {@link NettyHttpConfiguration#setDeserializationFilter(String)} or globally via the JVM system property
+     * {@code jdk.serialFilter}.
+     */
+    static final String DEFAULT_DESERIALIZATION_FILTER = "java.**;javax.**;org.apache.camel.**;!*";
+
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpHelper.class);
 
     private NettyHttpHelper() {
     }
@@ -86,6 +100,12 @@ public final class NettyHttpHelper {
 
     public static Exception populateNettyHttpOperationFailedException(
             Exchange exchange, String url, FullHttpResponse response, int responseCode, boolean transferException) {
+        return populateNettyHttpOperationFailedException(exchange, url, response, responseCode, transferException, null);
+    }
+
+    public static Exception populateNettyHttpOperationFailedException(
+            Exchange exchange, String url, FullHttpResponse response, int responseCode, boolean transferException,
+            String deserializationFilter) {
         String statusText = response.status().reasonPhrase();
 
         if (responseCode >= 300 && responseCode < 400) {
@@ -105,7 +125,7 @@ public final class NettyHttpHelper {
                 InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, response);
                 if (is != null) {
                     try {
-                        Object body = deserializeJavaObjectFromStream(is);
+                        Object body = deserializeJavaObjectFromStream(is, deserializationFilter);
                         if (body instanceof Exception exception) {
                             return exception;
                         }
@@ -123,12 +143,18 @@ public final class NettyHttpHelper {
     }
 
     public static Object deserializeJavaObjectFromStream(InputStream is) throws ClassNotFoundException, IOException {
+        return deserializeJavaObjectFromStream(is, null);
+    }
+
+    public static Object deserializeJavaObjectFromStream(InputStream is, String deserializationFilter)
+            throws ClassNotFoundException, IOException {
         if (is == null) {
             return null;
         }
 
         Object answer = null;
         ObjectInputStream ois = new ObjectInputStream(is);
+        ois.setObjectInputFilter(resolveDeserializationFilter(deserializationFilter));
         try {
             answer = ois.readObject();
         } finally {
@@ -136,6 +162,19 @@ public final class NettyHttpHelper {
         }
 
         return answer;
+    }
+
+    private static ObjectInputFilter resolveDeserializationFilter(String configuredPattern) {
+        if (configuredPattern != null && !configuredPattern.isBlank()) {
+            return ObjectInputFilter.Config.createFilter(configuredPattern);
+        }
+        ObjectInputFilter jvmFilter = ObjectInputFilter.Config.getSerialFilter();
+        if (jvmFilter != null) {
+            return jvmFilter;
+        }
+        LOG.debug("No JVM-wide deserialization filter set, applying default Camel filter: {}",
+                DEFAULT_DESERIALIZATION_FILTER);
+        return ObjectInputFilter.Config.createFilter(DEFAULT_DESERIALIZATION_FILTER);
     }
 
     /**

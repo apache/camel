@@ -205,7 +205,7 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
         public int compare(SpanData a, SpanData b) {
             Long nanosA = a.getStartEpochNanos();
             Long nanosB = b.getStartEpochNanos();
-            return (int) (nanosA - nanosB);
+            return Long.compare(nanosA, nanosB);
         }
     }
 }

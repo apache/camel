@@ -348,3 +348,34 @@ for (MessageHistory history : list) {
     System.out.println("Routed at id: " + history.getNode().getId());
 }
 ----
+
+== Configuring MessageHistory format
+
+The  Message History format in Camel is controlled by `Java String.format` patterns stored as global options on the CamelContext.
+
+The defaults are defined in https://github.com/apache/camel/blob/main/core/camel-support/src/main/java/org/apache/camel/support/MessageHelper.java[`MessageHelper.java`]:
+
+[source,java]
+----
+private static final String MESSAGE_HISTORY_HEADER = "%-40s %-30s %-50s %-12s";
+private static final String MESSAGE_HISTORY_OUTPUT = "%-40.40s %-30.30s %-50.50s %12.12s";
+----
+
+You can customize it using `application.properties`:
+
+[source,properties]
+----
+camel.main.global-options[CamelMessageHistoryHeaderFormat] = %-40s %-30s %-120s %-12s
+camel.main.global-options[CamelMessageHistoryOutputFormat] = %-40.40s %-30.30s %-290.290s %12.12s
+----
+
+If you want to configure the message format for a specific exchange, you can do it programmatically:
+
+[source,java]
+----
+camelContext.getGlobalOptions().put(Exchange.MESSAGE_HISTORY_HEADER_FORMAT,
+  "%-40s %-30s %-120s %-12s");
+
+camelContext.getGlobalOptions().put(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT,
+  "%-40.40s %-30.30s %-120.120s %12.12s");
+----

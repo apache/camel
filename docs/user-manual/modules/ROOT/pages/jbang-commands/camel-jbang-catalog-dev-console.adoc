@@ -27,7 +27,7 @@ camel catalog dev-console [options]
 | `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
 | `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
-| `--runtime` | Runtime () |  | RuntimeType
+| `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `--since-after` | Filter by version more recent (inclusive) |  | String
 | `--since-before` | Filter by version older (inclusive) |  | String
 | `--sort` | Sort by name, support-level, or description | name | String

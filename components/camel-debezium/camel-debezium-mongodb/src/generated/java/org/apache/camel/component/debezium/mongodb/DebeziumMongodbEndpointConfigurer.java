@@ -170,6 +170,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotIncludeCollectionList": target.getConfiguration().setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": target.getConfiguration().setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": target.getConfiguration().setSnapshotMaxThreadsMultiplier(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -350,6 +352,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotIncludeCollectionList": return java.lang.String.class;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return int.class;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -531,6 +535,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "snapshotIncludeCollectionList": return target.getConfiguration().getSnapshotIncludeCollectionList();
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return target.getConfiguration().getSnapshotMaxThreads();
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return target.getConfiguration().getSnapshotMaxThreadsMultiplier();
         case "snapshotmode":
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "snapshotmodeconfigurationbasedsnapshotdata":

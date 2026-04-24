@@ -41,6 +41,7 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         map.put("SecureRandomAlgorithm", java.lang.String.class);
         map.put("SecureRandomProvider", java.lang.String.class);
         map.put("SecureSocketProtocol", java.lang.String.class);
+        map.put("SelfSigned", boolean.class);
         map.put("SessionTimeout", int.class);
         map.put("SignatureSchemes", java.lang.String.class);
         map.put("SignatureSchemesExclude", java.lang.String.class);
@@ -91,6 +92,8 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureRandomProvider": target.setSecureRandomProvider(property(camelContext, java.lang.String.class, value)); return true;
         case "securesocketprotocol":
         case "secureSocketProtocol": target.setSecureSocketProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "selfsigned":
+        case "selfSigned": target.setSelfSigned(property(camelContext, boolean.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": target.setSessionTimeout(property(camelContext, int.class, value)); return true;
         case "signatureschemes":
@@ -153,6 +156,8 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureRandomProvider": return java.lang.String.class;
         case "securesocketprotocol":
         case "secureSocketProtocol": return java.lang.String.class;
+        case "selfsigned":
+        case "selfSigned": return boolean.class;
         case "sessiontimeout":
         case "sessionTimeout": return int.class;
         case "signatureschemes":
@@ -211,6 +216,8 @@ public class SSLConfigurationPropertiesConfigurer extends org.apache.camel.suppo
         case "secureRandomProvider": return target.getSecureRandomProvider();
         case "securesocketprotocol":
         case "secureSocketProtocol": return target.getSecureSocketProtocol();
+        case "selfsigned":
+        case "selfSigned": return target.isSelfSigned();
         case "sessiontimeout":
         case "sessionTimeout": return target.getSessionTimeout();
         case "signatureschemes":

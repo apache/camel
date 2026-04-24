@@ -4009,6 +4009,19 @@ public interface ComponentsBuilderFactory {
         return PgeventComponentBuilderFactory.pgevent();
     }
     /**
+     * PGVector (camel-pgvector)
+     * Perform operations on the PostgreSQL pgvector Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-pgvector
+     * 
+     * @return the dsl builder
+     */
+    static PgvectorComponentBuilderFactory.PgvectorComponentBuilder pgvector() {
+        return PgvectorComponentBuilderFactory.pgvector();
+    }
+    /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
      * 

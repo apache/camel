@@ -23,9 +23,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.client.RestClient;
 
@@ -33,7 +35,7 @@ import org.opensearch.client.RestClient;
  * Represents the component that manages {@link OpensearchEndpoint}.
  */
 @Component("opensearch")
-public class OpensearchComponent extends DefaultComponent {
+public class OpensearchComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced", autowired = true)
     private RestClient client;
@@ -51,6 +53,10 @@ public class OpensearchComponent extends DefaultComponent {
     private String password;
     @Metadata(label = "security")
     private boolean enableSSL;
+    @Metadata(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private boolean enableSniffer;
     @Metadata(label = "advanced", defaultValue = "" + OpensearchConstants.DEFAULT_SNIFFER_INTERVAL)
@@ -80,9 +86,13 @@ public class OpensearchComponent extends DefaultComponent {
         config.setSnifferInterval(this.getSnifferInterval());
         config.setSniffAfterFailureDelay(this.getSniffAfterFailureDelay());
         config.setClusterName(remaining);
+        config.setSslContextParameters(this.getSslContextParameters());
 
         Endpoint endpoint = new OpensearchEndpoint(uri, this, config, client);
         setProperties(endpoint, parameters);
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
         config.setHostAddressesList(parseHostAddresses(config.getHostAddresses(), config));
 
         return endpoint;
@@ -231,6 +241,31 @@ public class OpensearchComponent extends DefaultComponent {
 
     public void setSniffAfterFailureDelay(int sniffAfterFailureDelay) {
         this.sniffAfterFailureDelay = sniffAfterFailureDelay;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters. When configured, this takes precedence over the
+     * {@code certificatePath} option.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
 }

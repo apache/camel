@@ -53,6 +53,25 @@ public interface SjmsComponentBuilderFactory {
     interface SjmsComponentBuilder extends ComponentBuilder<SjmsComponent> {
     
         /**
+         * Sets the JMS client ID to use. Note that this value, if specified,
+         * must be unique and can only be used by a single JMS connection
+         * instance. It is typically only required for durable topic
+         * subscriptions. If using Apache ActiveMQ you may prefer to use Virtual
+         * Topics instead.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
+         */
+        default SjmsComponentBuilder clientId(java.lang.String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+    
+        /**
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
@@ -293,6 +312,30 @@ public interface SjmsComponentBuilderFactory {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
+    
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter allowing java.,
+         * javax. and org.apache.camel. is applied.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default SjmsComponentBuilder deserializationFilter(java.lang.String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     class SjmsComponentBuilderImpl
@@ -308,6 +351,7 @@ public interface SjmsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "clientId": ((SjmsComponent) component).setClientId((java.lang.String) value); return true;
             case "connectionFactory": ((SjmsComponent) component).setConnectionFactory((jakarta.jms.ConnectionFactory) value); return true;
             case "bridgeErrorHandler": ((SjmsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SjmsComponent) component).setLazyStartProducer((boolean) value); return true;
@@ -320,6 +364,7 @@ public interface SjmsComponentBuilderFactory {
             case "replyToOnTimeoutMaxConcurrentConsumers": ((SjmsComponent) component).setReplyToOnTimeoutMaxConcurrentConsumers((int) value); return true;
             case "requestTimeoutCheckerInterval": ((SjmsComponent) component).setRequestTimeoutCheckerInterval((long) value); return true;
             case "headerFilterStrategy": ((SjmsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "deserializationFilter": ((SjmsComponent) component).setDeserializationFilter((java.lang.String) value); return true;
             default: return false;
             }
         }

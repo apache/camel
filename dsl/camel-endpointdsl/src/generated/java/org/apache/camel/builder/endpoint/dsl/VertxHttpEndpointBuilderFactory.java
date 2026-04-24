@@ -820,6 +820,28 @@ public interface VertxHttpEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * when deserializing Java objects from HTTP responses with Content-Type
+         * application/x-java-serialized-object. This is used when
+         * transferException is enabled (or when allowJavaSerializedObject is
+         * enabled on the component) and the remote side returns a serialized
+         * payload. When not set, the filter configured via the JVM system
+         * property jdk.serialFilter is used when present; otherwise a
+         * conservative default filter allowing java., javax. and
+         * org.apache.camel. packages is applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedVertxHttpEndpointBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
     }
 
     public interface VertxHttpBuilders {

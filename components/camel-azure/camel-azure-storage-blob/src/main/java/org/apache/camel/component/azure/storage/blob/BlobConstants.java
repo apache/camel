@@ -283,6 +283,15 @@ public final class BlobConstants {
               description = "(getChangeFeed) This gives additional context that is passed through the Http pipeline during the service call.",
               javaType = "Context")
     public static final String CHANGE_FEED_CONTEXT = HEADER_PREFIX + "Context";
+    @Metadata(description = "The snapshot identifier. On createBlobSnapshot it is set on the exchange as the"
+                            + " id of the newly created snapshot. On read operations (getBlob, downloadBlobToFile,"
+                            + " downloadLink) it can be provided as input to target a specific blob snapshot.",
+              javaType = "String")
+    public static final String BLOB_SNAPSHOT_ID = HEADER_PREFIX + "SnapshotId";
+    @Metadata(description = "(producer) (setBlobTags) The tags to set on the blob as key-value pairs.\n"
+                            + "(consumer) The tags retrieved from the blob.",
+              javaType = "Map<String,String>")
+    public static final String BLOB_TAGS = HEADER_PREFIX + "Tags";
 
     private BlobConstants() {
     }

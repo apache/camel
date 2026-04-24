@@ -209,8 +209,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--quarkus-package-type" },
                         description = "Quarkus package type (uber-jar or fast-jar)",
-                        defaultValue = "uber-jar")
-    protected String quarkusPackageType = "uber-jar";
+                        defaultValue = "fast-jar")
+    protected String quarkusPackageType = "fast-jar";
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")
@@ -711,6 +711,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
             for (PluginExporter exporter : exporters) {
                 answer.addAll(exporter.getDependencies(runtime));
             }
+        }
+
+        // automatic add hibernate as JPA provider when using camel-jpa
+        if (answer.stream().anyMatch(s -> s.contains("camel-jpa") || s.equals("camel:jpa"))) {
+            answer.add("mvn:org.hibernate.orm:hibernate-core");
         }
 
         // remove duplicate versions (keep first)

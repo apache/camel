@@ -19,19 +19,31 @@
 #
 # Determines which modules to test by:
 #   1. File-path analysis: maps changed files to their Maven modules
-#   2. POM dependency analysis: for changed pom.xml files, detects property
-#      changes and finds modules that reference the affected properties
+#   2. POM dependency analysis (dual detection):
+#      a. Grep-based: detects property changes in parent/pom.xml and finds
+#         modules that explicitly reference the affected properties
+#      b. Scalpel-based: uses Maveniverse Scalpel extension for effective POM
+#         model comparison — catches managed deps, plugin changes, BOM imports,
+#         and transitive dependency impacts that grep misses
 #
-# Both sets of affected modules are merged and deduplicated before testing.
+# All sets of affected modules are merged and deduplicated before testing.
 
 set -euo pipefail
 
 echo "Using MVND_OPTS=$MVND_OPTS"
+echo "Using MAVEN_EXTRA_ARGS=${MAVEN_EXTRA_ARGS:-}"
 
 maxNumberOfTestableProjects=50
 
 # Modules excluded from targeted testing (generated code, meta-modules, etc.)
 EXCLUSION_LIST="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-lucene,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-csimple-maven-plugin,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel,!:coverage"
+
+# Allow projects to override the exclusion list
+# (e.g., camel-spring-boot has different modules than main Camel)
+if [[ -f ".github/actions/incremental-build/exclusions.sh" ]]; then
+  echo "Loading project-specific exclusions from .github/actions/incremental-build/exclusions.sh"
+  source .github/actions/incremental-build/exclusions.sh
+fi
 
 # ── Utility functions ──────────────────────────────────────────────────
 
@@ -48,6 +60,38 @@ findProjectRoot() {
     fi
   done
   echo "$path"
+}
+
+# Remove exclusion entries that conflict with explicitly included modules.
+# When -amd pulls in dependents, the EXCLUSION_LIST prevents testing generated/meta
+# modules.  But when those modules are the *primary* changed modules, excluding them
+# cancels them out of the reactor and breaks the build.
+filterExclusions() {
+  local build_pl="$1"
+  local exclusions="$2"
+
+  # Collect artifact IDs from build_pl (path → basename, :id → id)
+  local included_ids=","
+  for mod in $(echo "$build_pl" | tr ',' '\n'); do
+    if [[ "$mod" == :* ]]; then
+      included_ids="${included_ids}${mod#:},"
+    else
+      included_ids="${included_ids}$(basename "$mod"),"
+    fi
+  done
+
+  # Keep only exclusions whose artifact ID is not in the included set
+  local result=""
+  for excl in $(echo "$exclusions" | tr ',' '\n'); do
+    local excl_id="${excl#!:}"
+    if [[ "$included_ids" == *",${excl_id},"* ]]; then
+      echo "  Removing exclusion ${excl} (conflicts with explicitly included module)" >&2
+    else
+      result="${result:+${result},}${excl}"
+    fi
+  done
+
+  echo "$result"
 }
 
 # Check whether a PR label exists
@@ -185,6 +229,84 @@ analyzePomDependencies() {
   done <<< "$changed_props"
 }
 
+# ── POM dependency analysis via Scalpel (parallel) ─────────────────────
+#
+# Uses Maveniverse Scalpel (Maven extension) for effective POM model
+# comparison.  Detects changed properties, managed dependencies, managed
+# plugins, and transitive dependency impacts that the grep approach misses.
+# Runs alongside grep — results are merged (union) for testing.
+# See https://github.com/maveniverse/scalpel
+
+# Run Scalpel in report mode to detect modules affected by POM changes.
+# Sets caller-visible variables: scalpel_module_ids, scalpel_module_paths,
+#   scalpel_props, scalpel_managed_deps, scalpel_managed_plugins
+runScalpelDetection() {
+  echo "  Running Scalpel change detection..."
+
+  # Ensure sufficient git history for JGit merge-base detection
+  # (CI uses shallow clones; Scalpel needs to find the merge base)
+  git fetch origin main:refs/remotes/origin/main --depth=200 2>/dev/null || true
+  git fetch --deepen=200 2>/dev/null || true
+
+  # Scalpel is permanently configured in .mvn/extensions.xml.
+  # On developer machines it's a no-op (no GITHUB_BASE_REF → no base branch detected).
+  # Run Maven validate with Scalpel in report mode:
+  # - mode=report: write JSON report without trimming the reactor
+  # - fullBuildTriggers="": override .mvn/** default (Scalpel lives in .mvn/extensions.xml)
+  # - alsoMake/alsoMakeDependents=false: we only want directly affected modules
+  #   (our script handles -amd expansion separately)
+  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.alsoMake=false -Dscalpel.alsoMakeDependents=false"
+  # For workflow_dispatch, GITHUB_BASE_REF may not be set
+  if [ -z "${GITHUB_BASE_REF:-}" ]; then
+    scalpel_args="$scalpel_args -Dscalpel.baseBranch=origin/main"
+  fi
+
+  echo "  Scalpel: running mvn validate (report mode)..."
+  ./mvnw -B -q validate $scalpel_args ${MAVEN_EXTRA_ARGS:-} -l /tmp/scalpel-validate.log 2>/dev/null || {
+    echo "  WARNING: Scalpel detection failed (exit $?), skipping"
+    grep -i "scalpel" /tmp/scalpel-validate.log 2>/dev/null | head -5 || true
+    return
+  }
+
+  # Parse the Scalpel report
+  local report="target/scalpel-report.json"
+  if [ ! -f "$report" ]; then
+    echo "  WARNING: Scalpel report not found at $report"
+    grep -i "scalpel" /tmp/scalpel-validate.log 2>/dev/null | head -5 || true
+    return
+  fi
+
+  # Check if full build was triggered
+  local full_build
+  full_build=$(jq -r '.fullBuildTriggered' "$report")
+  if [ "$full_build" = "true" ]; then
+    local trigger_file
+    trigger_file=$(jq -r '.triggerFile // "unknown"' "$report")
+    echo "  Scalpel: Full build triggered by change to $trigger_file"
+    return
+  fi
+
+  # Extract affected module artifactIds (colon-prefixed for Maven -pl compatibility)
+  scalpel_module_ids=$(jq -r '.affectedModules[].artifactId' "$report" 2>/dev/null | sort -u | sed 's/^/:/' | tr '\n' ',' | sed 's/,$//' || true)
+  scalpel_module_paths=$(jq -r '.affectedModules[].path' "$report" 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//' || true)
+  scalpel_props=$(jq -r '(.changedProperties // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
+  scalpel_managed_deps=$(jq -r '(.changedManagedDependencies // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
+  scalpel_managed_plugins=$(jq -r '(.changedManagedPlugins // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
+
+  local mod_count
+  mod_count=$(jq '.affectedModules | length' "$report" 2>/dev/null || echo "0")
+  echo "  Scalpel detected $mod_count affected modules"
+  if [ -n "$scalpel_props" ]; then
+    echo "    Changed properties: $scalpel_props"
+  fi
+  if [ -n "$scalpel_managed_deps" ]; then
+    echo "    Changed managed deps: $scalpel_managed_deps"
+  fi
+  if [ -n "$scalpel_managed_plugins" ]; then
+    echo "    Changed managed plugins: $scalpel_managed_plugins"
+  fi
+}
+
 # ── Disabled-test detection ─────────────────────────────────────────────
 
 # Scan tested modules for @DisabledIfSystemProperty(named = "ci.env.name")
@@ -269,6 +391,8 @@ writeComment() {
   local changed_props_summary="$4"
   local testedDependents="$5"
   local extra_modules="$6"
+  local managed_deps_summary="${7:-}"
+  local managed_plugins_summary="${8:-}"
 
   echo "<!-- ci-tested-modules -->" > "$comment_file"
 
@@ -289,20 +413,32 @@ writeComment() {
   # Section 2: pom dependency-detected modules
   if [ -n "$dep_ids" ]; then
     echo "" >> "$comment_file"
+    echo ":white_check_mark: **POM dependency changes: targeted tests included**" >> "$comment_file"
+    echo "" >> "$comment_file"
     if [ -n "$changed_props_summary" ]; then
-      echo ":white_check_mark: **POM dependency changes: targeted tests included**" >> "$comment_file"
-      echo "" >> "$comment_file"
       echo "Changed properties: ${changed_props_summary}" >> "$comment_file"
       echo "" >> "$comment_file"
-      local dep_count
-      dep_count=$(echo "$dep_ids" | tr ',' '\n' | wc -l | tr -d ' ')
-      echo "<details><summary>Modules affected by dependency changes (${dep_count})</summary>" >> "$comment_file"
+    fi
+    if [ -n "$managed_deps_summary" ]; then
+      echo "Changed managed dependencies: ${managed_deps_summary}" >> "$comment_file"
       echo "" >> "$comment_file"
-      echo "$dep_ids" | tr ',' '\n' | while read -r m; do
-        echo "- \`$m\`" >> "$comment_file"
-      done
+    fi
+    if [ -n "$managed_plugins_summary" ]; then
+      echo "Changed managed plugins: ${managed_plugins_summary}" >> "$comment_file"
       echo "" >> "$comment_file"
-      echo "</details>" >> "$comment_file"
+    fi
+    local dep_count
+    dep_count=$(echo "$dep_ids" | tr ',' '\n' | wc -l | tr -d ' ')
+    echo "<details><summary>Modules affected by dependency changes (${dep_count})</summary>" >> "$comment_file"
+    echo "" >> "$comment_file"
+    echo "$dep_ids" | tr ',' '\n' | while read -r m; do
+      echo "- \`$m\`" >> "$comment_file"
+    done
+    echo "" >> "$comment_file"
+    echo "</details>" >> "$comment_file"
+    if [ -n "$managed_deps_summary" ] || [ -n "$managed_plugins_summary" ]; then
+      echo "" >> "$comment_file"
+      echo "> :microscope: Detected via [Maveniverse Scalpel](https://github.com/maveniverse/scalpel) effective POM comparison" >> "$comment_file"
     fi
   fi
 
@@ -389,20 +525,27 @@ main() {
   done
   pl="${pl:1}"  # strip leading comma
 
-  # Only analyze parent/pom.xml for dependency detection
-  # (matches original detect-test.sh behavior; detection improvements deferred to follow-up PR)
+  # Only analyze parent/pom.xml for grep-based dependency detection
+  # (matches original detect-test.sh behavior)
   if echo "$diff_body" | grep -q '^diff --git a/parent/pom.xml'; then
     pom_files="parent/pom.xml"
   fi
 
-  # ── Step 2: POM dependency analysis ──
+  # ── Step 2: POM dependency analysis (dual: grep + Scalpel) ──
   # Variables shared with analyzePomDependencies/findAffectedModules
   local dep_module_ids=""
   local all_changed_props=""
+  # Scalpel results (not local — set by runScalpelDetection)
+  scalpel_module_ids=""
+  scalpel_module_paths=""
+  scalpel_props=""
+  scalpel_managed_deps=""
+  scalpel_managed_plugins=""
 
+  # Step 2a: Grep-based detection (existing approach)
   if [ -n "$pom_files" ]; then
     echo ""
-    echo "Analyzing parent POM dependency changes..."
+    echo "Analyzing parent POM dependency changes (grep)..."
     while read -r pom_file; do
       [ -z "$pom_file" ] && continue
 
@@ -421,18 +564,43 @@ main() {
     done <<< "$pom_files"
   fi
 
+  # Step 2b: Scalpel detection (parallel, for any pom.xml change)
+  # Scalpel uses effective POM model comparison — catches managed deps,
+  # plugin changes, and transitive impacts that grep misses.
+  if echo "$diff_body" | grep -q '^diff --git a/.*pom\.xml'; then
+    echo ""
+    echo "Running Scalpel POM analysis..."
+    runScalpelDetection
+  fi
+
+  # Step 2c: Merge grep and Scalpel results (union, deduplicated)
+  if [ -n "$scalpel_module_ids" ]; then
+    dep_module_ids="${dep_module_ids:+${dep_module_ids},}${scalpel_module_ids}"
+    dep_module_ids=$(echo "$dep_module_ids" | tr ',' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
+  fi
+  if [ -n "$scalpel_props" ]; then
+    if [ -z "$all_changed_props" ]; then
+      all_changed_props="$scalpel_props"
+    else
+      # Merge and deduplicate property names
+      all_changed_props=$(printf '%s, %s' "$all_changed_props" "$scalpel_props" | tr ',' '\n' | sed 's/^ *//' | sort -u | tr '\n' ',' | sed 's/,$//' | sed 's/,/, /g')
+    fi
+  fi
+
   # ── Step 3: Merge and deduplicate ──
-  # Separate file-path modules into testable (has src/test) and pom-only.
-  # Pom-only modules (e.g. "parent") are kept in the build list but must NOT
-  # be expanded with -amd, since that would pull in every dependent module.
+  # Separate file-path modules into testable (has source code) and pom-only.
+  # Pom-only modules (e.g. "parent", aggregator poms) are kept in the build
+  # list but must NOT be expanded with -amd, since that would pull in every
+  # dependent module. Modules with src/main (including test-infra modules)
+  # are treated as testable so their dependents get tested.
   local testable_pl=""
   local pom_only_pl=""
   for w in $(echo "$pl" | tr ',' '\n'); do
-    if [ -d "$w/src/test" ]; then
+    if [ -d "$w/src/main" ]; then
       testable_pl="${testable_pl:+${testable_pl},}${w}"
     else
       pom_only_pl="${pom_only_pl:+${pom_only_pl},}${w}"
-      echo "  Pom-only module (no src/test, won't expand dependents): $w"
+      echo "  Pom-only module (no src/main, won't expand dependents): $w"
     fi
   done
 
@@ -458,7 +626,7 @@ main() {
   if [ -z "$final_pl" ]; then
     echo ""
     echo "No modules to test"
-    writeComment "incremental-test-comment.md" "" "" "" "" ""
+    writeComment "incremental-test-comment.md" "" "" "" "" "" "" ""
     exit 0
   fi
 
@@ -477,6 +645,9 @@ main() {
   #   (Maven builds them implicitly as dependencies of child modules)
   local use_amd=false
   local testDependents="0"
+  # Reactor artifact IDs resolved by the threshold check below.
+  # Reused later to validate -pl exclusions against the -amd reactor.
+  local reactor_ids=""
 
   if [ -n "$testable_pl" ]; then
     # File-path modules with tests — use -amd to catch dependents
@@ -494,10 +665,12 @@ main() {
       if [ -n "$extraModules" ]; then
         threshold_pl="${threshold_pl},${extraModules}"
       fi
+      # Resolve the -amd reactor: captures artifact IDs for both the threshold
+      # count and later exclusion filtering (avoids a second Maven invocation).
       local totalTestableProjects
-      totalTestableProjects=$(./mvnw -B -q -amd exec:exec -Dexec.executable="pwd" -pl "$threshold_pl" 2>/dev/null | wc -l) || true
-      totalTestableProjects=$(echo "$totalTestableProjects" | tail -1 | tr -d '[:space:]')
-      totalTestableProjects=${totalTestableProjects:-0}
+      reactor_ids=$(./mvnw -B -q -amd exec:exec -Dexec.executable="echo" \
+        -Dexec.args='${project.artifactId}' -pl "$threshold_pl" 2>/dev/null || true)
+      totalTestableProjects=$(echo "$reactor_ids" | grep -c . || true)
 
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]]; then
         echo "Too many dependent modules (${totalTestableProjects} > ${maxNumberOfTestableProjects}), testing only the affected modules"
@@ -538,15 +711,54 @@ main() {
   # This needs to install, not just test, otherwise test-infra will fail due to jandex maven plugin
   # Exclusion list is only needed with -amd (to prevent testing generated/meta modules);
   # without -amd, only the explicitly listed modules are built.
+  echo ""
+  echo "============================================================"
+  echo "Starting Maven build (logging to $log)..."
+  echo "============================================================"
   if [[ "$use_amd" = true ]]; then
-    $mavenBinary -l "$log" $MVND_OPTS install -pl "${build_pl},${EXCLUSION_LIST}" -amd || ret=$?
+    local filtered_exclusions
+    filtered_exclusions=$(filterExclusions "$build_pl" "$EXCLUSION_LIST")
+    # Drop exclusions for modules not reachable as dependents of build_pl.
+    # Maven errors if !:module references an artifact outside the -amd reactor.
+    if [ -n "$filtered_exclusions" ]; then
+      # Resolve reactor if not already captured by the threshold check
+      if [ -z "$reactor_ids" ]; then
+        reactor_ids=$(./mvnw -B -q -pl "$build_pl" -amd exec:exec \
+          -Dexec.executable="echo" -Dexec.args='${project.artifactId}' 2>/dev/null || true)
+      fi
+      if [ -n "$reactor_ids" ]; then
+        local valid_exclusions=""
+        for excl in $(echo "$filtered_exclusions" | tr ',' '\n'); do
+          local excl_id="${excl#!:}"
+          if echo "$reactor_ids" | grep -qx "$excl_id"; then
+            valid_exclusions="${valid_exclusions:+${valid_exclusions},}${excl}"
+          else
+            echo "  Dropping exclusion ${excl} (not in -amd reactor)"
+          fi
+        done
+        filtered_exclusions="$valid_exclusions"
+      fi
+    fi
+    local build_pl_with_exclusions="$build_pl"
+    if [ -n "$filtered_exclusions" ]; then
+      build_pl_with_exclusions="${build_pl},${filtered_exclusions}"
+    fi
+    echo "Command: $mavenBinary $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -pl \"$build_pl_with_exclusions\" -amd"
+    echo ""
+    $mavenBinary -l "$log" $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -pl "$build_pl_with_exclusions" -amd || ret=$?
   else
-    $mavenBinary -l "$log" $MVND_OPTS install -pl "$build_pl" || ret=$?
+    echo "Command: $mavenBinary $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -pl \"$build_pl\""
+    echo ""
+    $mavenBinary -l "$log" $MVND_OPTS ${MAVEN_EXTRA_ARGS:-} install -pl "$build_pl" || ret=$?
   fi
+  echo ""
+  echo "Maven build completed with exit code: $ret"
+  echo "============================================================"
+  echo ""
 
   # ── Step 5: Write comment and summary ──
   local comment_file="incremental-test-comment.md"
-  writeComment "$comment_file" "$pl" "$dep_module_ids" "$all_changed_props" "$testedDependents" "$extraModules"
+  writeComment "$comment_file" "$pl" "$dep_module_ids" "$all_changed_props" "$testedDependents" "$extraModules" "$scalpel_managed_deps" "$scalpel_managed_plugins"
 
   # Check for tests disabled in CI via @DisabledIfSystemProperty(named = "ci.env.name")
   local disabled_tests
@@ -612,11 +824,49 @@ main() {
   fi
 
   if [[ ${ret} -ne 0 ]]; then
-    echo "Processing surefire and failsafe reports to create the summary"
-    if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-      echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |" >> "$GITHUB_STEP_SUMMARY"
+    echo ""
+    echo "============================================================"
+    echo "BUILD FAILED with exit code $ret"
+    echo "============================================================"
+
+    # Show end of build log
+    if [[ -f "$log" ]]; then
+      echo ""
+      echo "Last 50 lines of build log:"
+      echo "------------------------------------------------------------"
+      tail -50 "$log"
+      echo "------------------------------------------------------------"
+      echo ""
+    else
+      echo "WARNING: Build log not found at $log"
+      echo ""
     fi
-    find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+
+    echo "Processing surefire and failsafe reports to create the summary"
+
+    # Find test reports
+    local report_files
+    report_files=$(find . -path '*target/*-reports*' -iname '*.txt' 2>/dev/null || true)
+
+    if [[ -z "$report_files" ]]; then
+      echo ""
+      echo "WARNING: No test report files found!"
+      echo "This means tests never ran - build failed before test execution"
+      echo ""
+    else
+      local report_count
+      report_count=$(echo "$report_files" | wc -l)
+      echo "Found $report_count test report files"
+      echo ""
+
+      if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+        echo -e "| Failed Test | Duration | Failure Type |\n| --- | --- | --- |" >> "$GITHUB_STEP_SUMMARY"
+      fi
+
+      echo "Invoking parse_errors.sh on each report file..."
+      find . -path '*target/*-reports*' -iname '*.txt' -exec .github/actions/incremental-build/parse_errors.sh {} \;
+      echo "Done processing test reports"
+    fi
   fi
 
   exit $ret

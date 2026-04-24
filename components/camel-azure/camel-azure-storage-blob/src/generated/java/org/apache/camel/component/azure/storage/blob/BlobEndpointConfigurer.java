@@ -134,6 +134,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
+        case "snapshotid":
+        case "snapshotId": target.getConfiguration().setSnapshotId(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": target.getConfiguration().setSourceBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
@@ -266,6 +268,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "snapshotid":
+        case "snapshotId": return java.lang.String.class;
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": return java.lang.String.class;
         case "startscheduler":
@@ -394,6 +398,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
+        case "snapshotid":
+        case "snapshotId": return target.getConfiguration().getSnapshotId();
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": return target.getConfiguration().getSourceBlobAccessKey();
         case "startscheduler":

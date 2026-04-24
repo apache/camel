@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.processor.idempotent;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -32,7 +33,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * A memory based implementation of {@link org.apache.camel.spi.IdempotentRepository}.
+ * A memory based implementation of {@link org.apache.camel.spi.IdempotentRepository} using LRU (default) or FIFO
+ * algorithm.
  * <p/>
  * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a memory leak.
  */
@@ -74,6 +76,23 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         MemoryIdempotentRepository answer = new MemoryIdempotentRepository();
         answer.setCacheSize(cacheSize);
         ServiceHelper.startService(answer);
+        return answer;
+    }
+
+    /**
+     * Creates a new memory based repository using a {@link LinkedHashMap} as its store, with the given maximum
+     * capacity. When a new entry is added and the store has reached its maximum capacity, the oldest entry is removed.
+     *
+     * @param cacheSize the cache size
+     */
+    public static IdempotentRepository memoryIdempotentRepositoryFifo(int cacheSize) {
+        MemoryIdempotentRepository answer = new MemoryIdempotentRepository(new LinkedHashMap<>() {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<String, Object> eldest) {
+                return size() > cacheSize;
+            }
+        });
+        answer.setCacheSize(cacheSize);
         return answer;
     }
 

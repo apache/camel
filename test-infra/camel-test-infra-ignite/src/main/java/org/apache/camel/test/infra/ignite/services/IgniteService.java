@@ -16,11 +16,10 @@
  */
 package org.apache.camel.test.infra.ignite.services;
 
-import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Ignite
  */
-public interface IgniteService extends TestService, IgniteInfraService, ContainerTestService {
+public interface IgniteService extends TestService, IgniteInfraService {
 }

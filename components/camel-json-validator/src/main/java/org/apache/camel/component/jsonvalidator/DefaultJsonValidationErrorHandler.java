@@ -18,20 +18,20 @@ package org.apache.camel.component.jsonvalidator;
 
 import java.util.Set;
 
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.Schema;
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
 public class DefaultJsonValidationErrorHandler implements JsonValidatorErrorHandler {
 
     @Override
-    public void handleErrors(Exchange exchange, JsonSchema schema, Set<ValidationMessage> errors) throws ValidationException {
+    public void handleErrors(Exchange exchange, Schema schema, Set<Error> errors) throws ValidationException {
         throw new JsonValidationException(exchange, schema, errors);
     }
 
     @Override
-    public void handleErrors(Exchange exchange, JsonSchema schema, Exception e) throws ValidationException {
+    public void handleErrors(Exchange exchange, Schema schema, Exception e) throws ValidationException {
         throw new JsonValidationException(exchange, schema, e);
     }
 

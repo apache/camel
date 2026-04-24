@@ -67,9 +67,13 @@ public class PulsarConsumerAcknowledgementIT extends PulsarITSupport {
 
     @AfterEach
     public void tearDownProducer() throws Exception {
-        from.close();
         try {
-            producer.close();
+            if (from != null) {
+                from.close();
+            }
+            if (producer != null) {
+                producer.close();
+            }
         } catch (PulsarClientException e) {
             LOGGER.warn("Failed to close client: {}", e.getMessage(), e);
         }

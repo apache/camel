@@ -528,18 +528,14 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             return null;
         }
 
-        Header header = httpResponse.getFirstHeader(HttpConstants.CONTENT_ENCODING);
-        String contentEncoding = header != null ? header.getValue() : null;
-
-        final boolean gzipEncoding = exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class);
-        if (!gzipEncoding) {
+        final boolean skipGzipEncoding = exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class);
+        if (!skipGzipEncoding) {
+            String contentEncoding = entity.getContentEncoding();
             is = GZIPHelper.uncompressGzip(contentEncoding, is);
         }
         // Honor the character encoding
-        String contentType = null;
-        header = httpResponse.getFirstHeader("content-type");
-        if (header != null) {
-            contentType = header.getValue();
+        String contentType = entity.getContentType();
+        if (contentType != null) {
             // find the charset and set it to the Exchange
             HttpHelper.setCharsetFromContentType(contentType, exchange);
         }
