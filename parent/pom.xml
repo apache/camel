@@ -270,7 +270,7 @@
         <ibm-watsonx-data-sdk-version>0.9.0</ibm-watsonx-data-sdk-version>
         <ical4j-version>4.2.5</ical4j-version>
         <icu4j-version>78.3</icu4j-version>
-        <iggy-version>0.7.0</iggy-version>
+        <iggy-version>0.8.0</iggy-version>
         <ignite-version>2.17.0</ignite-version>
         <impsort-maven-plugin-version>1.13.0</impsort-maven-plugin-version>
         <infinispan-version>16.0.9</infinispan-version>
