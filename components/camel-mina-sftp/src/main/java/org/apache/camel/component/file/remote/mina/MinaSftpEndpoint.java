@@ -27,7 +27,7 @@ import org.apache.camel.component.file.remote.RemoteFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.component.file.remote.SftpDefaultMoveExistingFileStrategy;
 import org.apache.camel.component.file.remote.SftpRemoteFile;
-import org.apache.camel.component.file.remote.strategy.SftpProcessStrategyFactory;
+import org.apache.camel.component.file.remote.mina.strategy.MinaSftpProcessStrategyFactory;
 import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -147,7 +147,7 @@ public class MinaSftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
     @Override
     protected GenericFileProcessStrategy<SftpRemoteFile> createGenericFileStrategy() {
-        return new SftpProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(), getParamsAsMap());
+        return new MinaSftpProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(), getParamsAsMap());
     }
 
     @Override

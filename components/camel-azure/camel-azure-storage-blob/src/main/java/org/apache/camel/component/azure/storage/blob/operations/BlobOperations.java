@@ -50,6 +50,7 @@ import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.models.ParallelTransferOptions;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
+import com.azure.storage.blob.specialized.BlobClientBase;
 import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -96,11 +97,12 @@ public class BlobOperations {
         final OutputStream outputStream = ObjectHelper.isEmpty(message) ? null : message.getBody(OutputStream.class);
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final BlobCommonRequestOptions blobCommonRequestOptions = getCommonRequestOptions(exchange);
+        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange));
 
         if (outputStream == null) {
             // Then we create an input stream
             final Map<String, Object> blobInputStream
-                    = client.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
+                    = readClient.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
             final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders
                     .createBlobExchangeHeadersFromBlobProperties((BlobProperties) blobInputStream.get("properties"));
             InputStream is = (InputStream) blobInputStream.get("inputStream");
@@ -122,7 +124,7 @@ public class BlobOperations {
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
 
         try {
-            final ResponseBase<BlobDownloadHeaders, Void> response = client.downloadWithResponse(outputStream, blobRange,
+            final ResponseBase<BlobDownloadHeaders, Void> response = readClient.downloadWithResponse(outputStream, blobRange,
                     downloadRetryOptions, blobCommonRequestOptions.getBlobRequestConditions(),
                     blobCommonRequestOptions.getContentMD5() != null, blobCommonRequestOptions.getTimeout());
 
@@ -150,8 +152,9 @@ public class BlobOperations {
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
+        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange));
 
-        final Response<BlobProperties> response = client.downloadToFileWithResponse(fileToDownload.toString(), blobRange,
+        final Response<BlobProperties> response = readClient.downloadToFileWithResponse(fileToDownload.toString(), blobRange,
                 parallelTransferOptions, downloadRetryOptions,
                 commonRequestOptions.getBlobRequestConditions(), commonRequestOptions.getContentMD5() != null,
                 commonRequestOptions.getTimeout());
@@ -188,7 +191,10 @@ public class BlobOperations {
 
         final BlobServiceSasSignatureValues serviceSasSignatureValues
                 = new BlobServiceSasSignatureValues(offsetDateTimeToSet, sasPermission);
-        final String url = client.getBlobUrl() + "?" + client.generateSas(serviceSasSignatureValues);
+        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange));
+        final String blobUrl = readClient.getBlobUrl();
+        final String sasToken = readClient.generateSas(serviceSasSignatureValues);
+        final String url = blobUrl + (blobUrl.contains("?") ? "&" : "?") + sasToken;
 
         final BlobExchangeHeaders headers = BlobExchangeHeaders.create().downloadLink(url);
 
@@ -579,6 +585,77 @@ public class BlobOperations {
                         commonRequestOptions.getTimeout());
 
         return BlobOperationResponse.create(response);
+    }
+
+    public BlobOperationResponse createBlobSnapshot(final Exchange exchange) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Creating a snapshot of blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange),
+                    exchange);
+        }
+
+        final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
+
+        final Response<BlobClientBase> response = client.createSnapshot(
+                commonRequestOptions.getMetadata(),
+                commonRequestOptions.getBlobRequestConditions(),
+                commonRequestOptions.getTimeout());
+
+        final BlobClientBase snapshotClient = response.getValue();
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.create()
+                .snapshotId(snapshotClient.getSnapshotId())
+                .httpHeaders(response.getHeaders());
+
+        return BlobOperationResponse.create(snapshotClient.getSnapshotId(), exchangeHeaders.toMap());
+    }
+
+    @SuppressWarnings("unchecked")
+    public BlobOperationResponse setBlobTags(final Exchange exchange) {
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Setting tags on blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+        }
+
+        Map<String, String> tags = configurationProxy.getBlobTags(exchange);
+        if (tags == null) {
+            tags = exchange.getIn().getBody(Map.class);
+        }
+        if (tags == null || tags.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Tags must be specified either as the message body (Map<String,String>) or via the "
+                                               + BlobConstants.BLOB_TAGS + " header.");
+        }
+
+        final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
+
+        final Response<Void> response = client.setTags(
+                tags,
+                commonRequestOptions.getBlobRequestConditions(),
+                commonRequestOptions.getTimeout());
+
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.create()
+                .httpHeaders(response.getHeaders());
+
+        return BlobOperationResponse.createWithEmptyBody(exchangeHeaders.toMap());
+    }
+
+    public BlobOperationResponse getBlobTags(final Exchange exchange) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Getting tags from blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+        }
+
+        final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
+
+        final Response<Map<String, String>> response = client.getTags(
+                commonRequestOptions.getBlobRequestConditions(),
+                commonRequestOptions.getTimeout());
+
+        final Map<String, String> tags = response.getValue();
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.create()
+                .blobTags(tags)
+                .httpHeaders(response.getHeaders());
+
+        return BlobOperationResponse.create(tags, exchangeHeaders.toMap());
     }
 
     private DownloadRetryOptions getDownloadRetryOptions(final BlobConfigurationOptionsProxy configurationProxy) {

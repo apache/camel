@@ -18,6 +18,7 @@ package org.apache.camel.component.vertx.http;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -30,8 +31,21 @@ import org.apache.camel.Message;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class VertxHttpHelper {
+
+    /**
+     * Default {@link ObjectInputFilter} pattern applied when deserializing Java objects from HTTP responses with
+     * Content-Type {@code application/x-java-serialized-object}. Allows standard Java types and Apache Camel types and
+     * rejects everything else. Can be overridden per-endpoint via
+     * {@link VertxHttpConfiguration#setDeserializationFilter(String)} or globally via the JVM system property
+     * {@code jdk.serialFilter}.
+     */
+    static final String DEFAULT_DESERIALIZATION_FILTER = "java.**;javax.**;org.apache.camel.**;!*";
+
+    private static final Logger LOG = LoggerFactory.getLogger(VertxHttpHelper.class);
 
     private VertxHttpHelper() {
         // Utility class
@@ -118,12 +132,23 @@ public final class VertxHttpHelper {
      * Deserializes an object from the given {@link InputStream}
      */
     public static Object deserializeJavaObjectFromStream(InputStream is) throws ClassNotFoundException, IOException {
+        return deserializeJavaObjectFromStream(is, null);
+    }
+
+    /**
+     * Deserializes an object from the given {@link InputStream} applying an {@link ObjectInputFilter} resolved from the
+     * supplied pattern, the JVM-wide {@code jdk.serialFilter} or the Camel default
+     * ({@value #DEFAULT_DESERIALIZATION_FILTER}) in that order.
+     */
+    public static Object deserializeJavaObjectFromStream(InputStream is, String deserializationFilter)
+            throws ClassNotFoundException, IOException {
         if (is == null) {
             return null;
         }
 
         Object answer;
         ObjectInputStream ois = new ObjectInputStream(is);
+        ois.setObjectInputFilter(resolveDeserializationFilter(deserializationFilter));
         try {
             answer = ois.readObject();
         } finally {
@@ -131,6 +156,19 @@ public final class VertxHttpHelper {
         }
 
         return answer;
+    }
+
+    private static ObjectInputFilter resolveDeserializationFilter(String configuredPattern) {
+        if (configuredPattern != null && !configuredPattern.isBlank()) {
+            return ObjectInputFilter.Config.createFilter(configuredPattern);
+        }
+        ObjectInputFilter jvmFilter = ObjectInputFilter.Config.getSerialFilter();
+        if (jvmFilter != null) {
+            return jvmFilter;
+        }
+        LOG.debug("No JVM-wide deserialization filter set, applying default Camel filter: {}",
+                DEFAULT_DESERIALIZATION_FILTER);
+        return ObjectInputFilter.Config.createFilter(DEFAULT_DESERIALIZATION_FILTER);
     }
 
     /**

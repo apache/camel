@@ -75,6 +75,60 @@ public interface ExecComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The timeout, in milliseconds, after which the executable should be
+         * terminated. If execution has not completed within the timeout, the
+         * component will send a termination request.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
+         */
+        default ExecComponentBuilder timeout(long timeout) {
+            doSetProperty("timeout", timeout);
+            return this;
+        }
+    
+        /**
+         * The directory in which the command should be executed. If null, the
+         * working directory of the current process will be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param workingDir the value to set
+         * @return the dsl builder
+         */
+        default ExecComponentBuilder workingDir(java.lang.String workingDir) {
+            doSetProperty("workingDir", workingDir);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to allow to use Camel headers or not (default false).
+         * Enabling this allows to specify dynamic command line arguments via
+         * message header. However this can be seen as a potential security
+         * vulnerability if the header is coming from a malicious user, so use
+         * this with care.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param allowControlHeaders the value to set
+         * @return the dsl builder
+         */
+        default ExecComponentBuilder allowControlHeaders(boolean allowControlHeaders) {
+            doSetProperty("allowControlHeaders", allowControlHeaders);
+            return this;
+        }
+    
         
         /**
          * Whether autowiring is enabled. This is used for automatic autowiring
@@ -96,6 +150,43 @@ public interface ExecComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * To use a custom org.apache.commons.exec.ExecBinding for advanced
+         * use-cases.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.exec.ExecBinding&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
+         */
+        default ExecComponentBuilder binding(org.apache.camel.component.exec.ExecBinding binding) {
+            doSetProperty("binding", binding);
+            return this;
+        }
+    
+        /**
+         * To use a custom org.apache.commons.exec.ExecCommandExecutor that
+         * customizes the command execution. The default command executor
+         * utilizes the commons-exec library, which adds a shutdown hook for
+         * every executed command.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.exec.ExecCommandExecutor&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param commandExecutor the value to set
+         * @return the dsl builder
+         */
+        default ExecComponentBuilder commandExecutor(org.apache.camel.component.exec.ExecCommandExecutor commandExecutor) {
+            doSetProperty("commandExecutor", commandExecutor);
+            return this;
+        }
     }
 
     class ExecComponentBuilderImpl
@@ -112,7 +203,12 @@ public interface ExecComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((ExecComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "timeout": ((ExecComponent) component).setTimeout((long) value); return true;
+            case "workingDir": ((ExecComponent) component).setWorkingDir((java.lang.String) value); return true;
+            case "allowControlHeaders": ((ExecComponent) component).setAllowControlHeaders((boolean) value); return true;
             case "autowiredEnabled": ((ExecComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "binding": ((ExecComponent) component).setBinding((org.apache.camel.component.exec.ExecBinding) value); return true;
+            case "commandExecutor": ((ExecComponent) component).setCommandExecutor((org.apache.camel.component.exec.ExecCommandExecutor) value); return true;
             default: return false;
             }
         }

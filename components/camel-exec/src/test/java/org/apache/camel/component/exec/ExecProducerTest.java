@@ -53,6 +53,8 @@ public class ExecProducerTest {
 
     @Produce("direct:input")
     private ProducerTemplate producerTemplate;
+    @Produce("direct:input2")
+    private ProducerTemplate producerTemplate2;
 
     @Autowired
     private ExecCommandExecutorMock execCommandExecutorMock;
@@ -70,7 +72,7 @@ public class ExecProducerTest {
     public void testOverrideExecutable() {
         final String command = "java";
 
-        producerTemplate.send(new Processor() {
+        producerTemplate2.send(new Processor() {
 
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
@@ -88,7 +90,7 @@ public class ExecProducerTest {
     @DirtiesContext
     public void testOverrideArgs() {
         final String[] args = { "-version", "classpath:c:/program files/test/" };
-        producerTemplate.send(new Processor() {
+        producerTemplate2.send(new Processor() {
 
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
@@ -104,7 +106,7 @@ public class ExecProducerTest {
     @Test
     @DirtiesContext
     public void testOverrideTimeout() {
-        producerTemplate.send(new Processor() {
+        producerTemplate2.send(new Processor() {
 
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
@@ -117,7 +119,7 @@ public class ExecProducerTest {
     @Test
     @DirtiesContext
     public void testExitValues() {
-        producerTemplate.send(new Processor() {
+        producerTemplate2.send(new Processor() {
 
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
@@ -130,7 +132,7 @@ public class ExecProducerTest {
     @Test
     @DirtiesContext
     public void testExitValueNone() {
-        producerTemplate.send(new Processor() {
+        producerTemplate2.send(new Processor() {
 
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("noinput");
@@ -191,7 +193,7 @@ public class ExecProducerTest {
     public void testOverrideWorkingDir() {
         final String workingDir = "c:/program files/test";
 
-        producerTemplate.send(new Processor() {
+        producerTemplate2.send(new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("");
                 exchange.getIn().setHeader(EXEC_COMMAND_WORKING_DIR, workingDir);

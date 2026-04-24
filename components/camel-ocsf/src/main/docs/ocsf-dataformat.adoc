@@ -4,7 +4,7 @@
 :artifactid: camel-ocsf
 :description: Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.
 :since: 4.18
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: ocsf

@@ -62,14 +62,16 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     private String keyStoreType;
     @Metadata(label = "advanced")
     private String keyStoreProvider;
-    @Metadata
+    @Metadata(secret = true)
     private String keystorePassword;
     @Metadata
     private String trustStore;
-    @Metadata
+    @Metadata(secret = true)
     private String trustStorePassword;
     @Metadata
     private boolean trustAllCertificates;
+    @Metadata
+    private boolean selfSigned;
     @Metadata(label = "advanced")
     private String keyManagerAlgorithm;
     @Metadata(label = "advanced")
@@ -385,6 +387,20 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
         this.trustAllCertificates = trustAllCertificates;
     }
 
+    public boolean isSelfSigned() {
+        return selfSigned;
+    }
+
+    /**
+     * Whether to generate a self-signed certificate for development use when no keystore is configured. This can be
+     * used in development environment to easily enable HTTPS without providing a keystore.
+     *
+     * Do NOT use this in production as the certificate is not trusted and is regenerated on each restart.
+     */
+    public void setSelfSigned(boolean selfSigned) {
+        this.selfSigned = selfSigned;
+    }
+
     public String getKeyManagerAlgorithm() {
         return keyManagerAlgorithm;
     }
@@ -675,6 +691,17 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
      */
     public SSLConfigurationProperties withTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
+        return this;
+    }
+
+    /**
+     * Whether to generate a self-signed certificate for development use when no keystore is configured. This can be
+     * used in development environment to easily enable HTTPS without providing a keystore.
+     *
+     * Do NOT use this in production as the certificate is not trusted and is regenerated on each restart.
+     */
+    public SSLConfigurationProperties withSelfSigned(boolean selfSigned) {
+        this.selfSigned = selfSigned;
         return this;
     }
 

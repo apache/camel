@@ -16,6 +16,9 @@
  */
 package org.apache.camel.opentelemetry2;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.trace.SpanBuilder;
@@ -87,6 +90,8 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
 
     private class OpentelemetrySpanLifecycleManager implements SpanLifecycleManager {
 
+        private final static String BAGGAGE_VAR_PREFIX = "OTEL_BAGGAGE_";
+
         private final Tracer tracer;
         private final ContextPropagators contextPropagators;
 
@@ -98,7 +103,7 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
         @Override
         public Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor) {
             SpanBuilder builder = tracer.spanBuilder(spanName);
-            Baggage baggage = null;
+            Baggage baggage = Baggage.current();
 
             if (parent != null) {
                 OpenTelemetrySpanAdapter otelParentSpan = (OpenTelemetrySpanAdapter) parent;
@@ -134,8 +139,32 @@ public class OpenTelemetryTracer extends org.apache.camel.telemetry.Tracer {
                 builder = builder.setParent(ctx);
                 baggage = Baggage.fromContext(ctx);
             }
+            baggage = getBaggageFromHeaders(baggage, extractor);
 
             return new OpenTelemetrySpanAdapter(builder.startSpan(), baggage);
+        }
+
+        // We inspect the exchange in order to find any baggage variable
+        private Baggage getBaggageFromHeaders(Baggage baggage, SpanContextPropagationExtractor extractor) {
+            Iterator<Map.Entry<String, Object>> it = extractor.iterator();
+
+            while (it.hasNext()) {
+                Map.Entry<String, Object> entry = it.next();
+                String key = getBaggageVar(entry.getKey());
+                if (key != null) {
+                    baggage = baggage.toBuilder().put(key, entry.getValue().toString()).build();
+                }
+            }
+
+            return baggage;
+        }
+
+        private String getBaggageVar(String key) {
+            if (key == null || !key.startsWith(BAGGAGE_VAR_PREFIX)) {
+                return null;
+            }
+
+            return key.substring(BAGGAGE_VAR_PREFIX.length());
         }
 
         @Override

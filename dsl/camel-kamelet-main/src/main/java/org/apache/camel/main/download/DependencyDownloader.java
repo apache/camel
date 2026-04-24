@@ -66,6 +66,17 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      */
     boolean isDownload();
 
+    /**
+     * When enabled, prefer resolving from local Maven repository before checking remote repositories. Falls back to
+     * normal resolution if offline resolution fails. Useful for CLI tools where artifacts are typically already cached.
+     */
+    void setPreferLocal(boolean preferLocal);
+
+    /**
+     * Whether prefer-local mode is enabled.
+     */
+    boolean isPreferLocal();
+
     boolean isFresh();
 
     /**

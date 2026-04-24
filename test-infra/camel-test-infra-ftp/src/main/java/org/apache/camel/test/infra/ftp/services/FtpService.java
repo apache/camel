@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.infra.ftp.services;
 
-import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -24,6 +23,6 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 /**
  * Test infra service for Ftp
  */
-public interface FtpService extends ContainerTestService, FtpInfraService, TestService, BeforeEachCallback, AfterEachCallback {
+public interface FtpService extends FtpInfraService, TestService, BeforeEachCallback, AfterEachCallback {
 
 }

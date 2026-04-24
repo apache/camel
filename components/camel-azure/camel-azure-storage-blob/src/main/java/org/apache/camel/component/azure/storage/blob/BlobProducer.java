@@ -129,6 +129,15 @@ public class BlobProducer extends DefaultProducer {
             case copyBlob:
                 setResponse(exchange, getBlobOperations(exchange).copyBlob(exchange));
                 break;
+            case createBlobSnapshot:
+                setResponse(exchange, getBlobOperations(exchange).createBlobSnapshot(exchange));
+                break;
+            case setBlobTags:
+                setResponse(exchange, getBlobOperations(exchange).setBlobTags(exchange));
+                break;
+            case getBlobTags:
+                setResponse(exchange, getBlobOperations(exchange).getBlobTags(exchange));
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }

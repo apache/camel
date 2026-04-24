@@ -37,6 +37,10 @@ inputs:
     description: 'Additional modules to test (comma-separated paths, e.g. from /component-test)'
     required: false
     default: ''
+  maven-extra-args:
+    description: 'Extra Maven arguments to pass to the build (e.g. -Denforcer.phase=none)'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -50,5 +54,6 @@ runs:
         PR_ID: ${{ inputs.pr-id }}
         GITHUB_REPO: ${{ inputs.github-repo }}
         EXTRA_MODULES: ${{ inputs.extra-modules }}
+        MAVEN_EXTRA_ARGS: ${{ inputs.maven-extra-args }}
       shell: bash
       run: ${{ github.action_path }}/incremental-build.sh ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd "$PR_ID" "$GITHUB_REPO" "$EXTRA_MODULES"

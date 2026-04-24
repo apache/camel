@@ -121,6 +121,8 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
 
         // add security info
         clientBuilder
+                .socketTimeout(15000)
+                .connectionTimeout(15000)
                 .security()
                 .authentication()
                 .username(service.username())

@@ -269,6 +269,18 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("tweetId", long.class),
         arg("monitorId", long.class)),
 
+    CREATE_TICKET_IDEMPOTENT(
+        org.zendesk.client.v2.model.IdempotentResult.class,
+        "createTicketIdempotent",
+        arg("ticket", org.zendesk.client.v2.model.Ticket.class),
+        arg("idempotencyKey", String.class)),
+
+    CREATE_TICKET_IDEMPOTENT_ASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "createTicketIdempotentAsync",
+        arg("ticket", org.zendesk.client.v2.model.Ticket.class),
+        arg("idempotencyKey", String.class)),
+
     CREATE_TICKETS(
         org.zendesk.client.v2.model.JobStatus.class,
         "createTickets",

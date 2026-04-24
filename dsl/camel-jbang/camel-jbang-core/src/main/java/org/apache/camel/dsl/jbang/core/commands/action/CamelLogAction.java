@@ -116,9 +116,13 @@ public class CamelLogAction extends ActionBaseCommand {
     String[] grep;
 
     String findAnsi;
+    Pattern[] grepPatterns;
+    Pattern[] findPatterns;
 
     private int nameMaxWidth;
     private boolean prefixShown;
+    private final SimpleDateFormat sdfMain = new SimpleDateFormat(TIMESTAMP_MAIN);
+    private final SimpleDateFormat sdfSB = new SimpleDateFormat(TIMESTAMP_SB);
 
     private final Map<String, Ansi.Color> colors = new HashMap<>();
 
@@ -136,19 +140,11 @@ public class CamelLogAction extends ActionBaseCommand {
             // read existing log files (skip by tail/since)
             if (find != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                for (int i = 0; i < find.length; i++) {
-                    String f = find[i];
-                    f = Pattern.quote(f);
-                    find[i] = f;
-                }
+                findPatterns = quoteAndCompilePatterns(find);
             }
             if (grep != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                for (int i = 0; i < grep.length; i++) {
-                    String f = grep[i];
-                    f = Pattern.quote(f);
-                    grep[i] = f;
-                }
+                grepPatterns = quoteAndCompilePatterns(grep);
             }
             Date limit = null;
             if (since != null) {
@@ -413,14 +409,14 @@ public class CamelLogAction extends ActionBaseCommand {
                 before = StringHelper.before(line, "---");
                 after = StringHelper.after(line, "---", line);
             }
-            if (find != null) {
-                for (String f : find) {
-                    after = after.replaceAll("(?i)" + f, findAnsi);
+            if (findPatterns != null) {
+                for (Pattern p : findPatterns) {
+                    after = p.matcher(after).replaceAll(findAnsi);
                 }
             }
-            if (grep != null) {
-                for (String g : grep) {
-                    after = after.replaceAll("(?i)" + g, findAnsi);
+            if (grepPatterns != null) {
+                for (Pattern p : grepPatterns) {
+                    after = p.matcher(after).replaceAll(findAnsi);
                 }
             }
             line = before != null ? before + "---" + after : after;
@@ -494,7 +490,7 @@ public class CamelLogAction extends ActionBaseCommand {
         // if using spring boot then adjust the timestamp to uniform camel-main style
         String ts = StringHelper.before(line, "  ");
         if (ts != null && ts.contains("T")) {
-            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_SB);
+            SimpleDateFormat sdf = sdfSB;
             try {
                 // the log can be in color or not so we need to unescape always
                 sdf.parse(unescapeAnsi(ts));
@@ -524,7 +520,7 @@ public class CamelLogAction extends ActionBaseCommand {
         line = unescapeAnsi(line);
         String ts = StringHelper.before(line, "  ");
         if (ts != null && !ts.isBlank()) {
-            SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_MAIN);
+            SimpleDateFormat sdf = sdfMain;
             try {
                 Date row = sdf.parse(ts);
                 return row.compareTo(limit) >= 0;
@@ -542,9 +538,8 @@ public class CamelLogAction extends ActionBaseCommand {
         // the log can be in color or not so we need to unescape always
         line = unescapeAnsi(line);
         String after = StringHelper.after(line, "---", line);
-        for (String g : grep) {
-            boolean m = Pattern.compile("(?i)" + g).matcher(after).find();
-            if (m) {
+        for (Pattern p : grepPatterns) {
+            if (p.matcher(after).find()) {
                 return true;
             }
         }

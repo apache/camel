@@ -667,7 +667,8 @@ public class Run extends CamelCommand {
             }
             main.addInitialProperty(EXPORT, "true");
             // enable stub in silent mode so we do not use real components
-            main.setStubPattern("*");
+            //we need i.e. transformers to not be stubbed since https://github.com/apache/camel/pull/21931
+            main.setStubPattern("component:*");
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "-1");
@@ -1971,6 +1972,10 @@ public class Run extends CamelCommand {
                     }
                     return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
                 } else {
+                    // for yaml we only accept xxx.camel.yaml or xxx.yaml
+                    if (!"camel.yaml".equals(ext) && !"yaml".equals(ext)) {
+                        return false;
+                    }
                     return ACCEPTED_YAML_ROOT_ELEMENTS.stream().anyMatch(tag -> source.content().contains(tag));
                 }
             }

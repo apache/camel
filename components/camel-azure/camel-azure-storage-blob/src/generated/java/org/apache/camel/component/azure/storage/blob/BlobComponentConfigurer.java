@@ -119,6 +119,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "sasToken": getOrCreateConfiguration(target).setSasToken(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
         case "serviceClient": getOrCreateConfiguration(target).setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
+        case "snapshotid":
+        case "snapshotId": getOrCreateConfiguration(target).setSnapshotId(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": getOrCreateConfiguration(target).setSourceBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
@@ -223,6 +225,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "sasToken": return java.lang.String.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "snapshotid":
+        case "snapshotId": return java.lang.String.class;
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": return java.lang.String.class;
         case "timeout": return java.time.Duration.class;
@@ -323,6 +327,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "sasToken": return getOrCreateConfiguration(target).getSasToken();
         case "serviceclient":
         case "serviceClient": return getOrCreateConfiguration(target).getServiceClient();
+        case "snapshotid":
+        case "snapshotId": return getOrCreateConfiguration(target).getSnapshotId();
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": return getOrCreateConfiguration(target).getSourceBlobAccessKey();
         case "timeout": return getOrCreateConfiguration(target).getTimeout();

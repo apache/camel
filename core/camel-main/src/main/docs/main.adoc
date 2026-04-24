@@ -303,7 +303,7 @@ The camel.trace supports 14 options, which are listed below.
 
 
 === Camel SSL configurations
-The camel.ssl supports 26 options, which are listed below.
+The camel.ssl supports 27 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -327,6 +327,7 @@ The camel.ssl supports 26 options, which are listed below.
 | *camel.ssl.secureRandomAlgorithm* | Algorithm name used for creating the SecureRandom. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
 | *camel.ssl.secureRandomProvider* | To use a specific provider for creating SecureRandom. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
 | *camel.ssl.secureSocketProtocol* | The protocol for the secure sockets created by the SSLContext. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html | TLSv1.3 | String
+| *camel.ssl.selfSigned* | Whether to generate a self-signed certificate for development use when no keystore is configured. This can be used in development environment to easily enable HTTPS without providing a keystore. Do NOT use this in production as the certificate is not trusted and is regenerated on each restart. | false | boolean
 | *camel.ssl.sessionTimeout* | Timeout in seconds to use for SSLContext. The default is 24 hours. | 86400 | int
 | *camel.ssl.signatureSchemes* | List of TLS/SSL signature schemes. Multiple names can be separated by comma. Signature schemes control which signature algorithms are available during the TLS handshake, including post-quantum signature algorithms such as ML-DSA. |  | String
 | *camel.ssl.signatureSchemesExclude* | Filters TLS/SSL signature schemes. This filter is used for excluding signature schemes that match the naming pattern. Multiple names can be separated by comma. Notice that if the signatureSchemes option has been configured then the include/exclude filters are not in use. |  | String

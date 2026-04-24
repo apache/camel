@@ -728,6 +728,14 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         configuration.setDisableReplyTo(disableReplyTo);
     }
 
+    public String getDeserializationFilter() {
+        return configuration.getDeserializationFilter();
+    }
+
+    public void setDeserializationFilter(String deserializationFilter) {
+        configuration.setDeserializationFilter(deserializationFilter);
+    }
+
     public void setPreserveMessageQos(boolean preserveMessageQos) {
         configuration.setPreserveMessageQos(preserveMessageQos);
     }
