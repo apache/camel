@@ -420,6 +420,21 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Resume token for change streams consumer. The value must be a valid
+         * JSON representation of a BSON document.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: changeStream
+         * 
+         * @param resumeToken the value to set
+         * @return the dsl builder
+         */
+        default MongoDbEndpointConsumerBuilder resumeToken(String resumeToken) {
+            doSetProperty("resumeToken", resumeToken);
+            return this;
+        }
+        /**
          * Filter condition for change streams consumer.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -4446,6 +4461,20 @@ public interface MongoDbEndpointBuilderFactory {
          */
         public String mongoDbStreamOperationType() {
             return "CamelMongoDbStreamOperationType";
+        }
+        /**
+         * The resume token for the change stream event. This token can be used
+         * to resume a change stream from the point of the event that was just
+         * processed.
+         * 
+         * The option is a: {@code org.bson.BsonDocument} type.
+         * 
+         * Group: consumer changeStreams
+         * 
+         * @return the name of the header {@code MongoDbResumeToken}.
+         */
+        public String mongoDbResumeToken() {
+            return "CamelMongoDbResumeToken";
         }
         /**
          * Indicates which document to return, the document before or after an

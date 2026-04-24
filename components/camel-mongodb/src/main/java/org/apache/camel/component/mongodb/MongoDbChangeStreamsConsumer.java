@@ -57,14 +57,19 @@ public class MongoDbChangeStreamsConsumer extends DefaultConsumer {
         super.doStart();
 
         String streamFilter = endpoint.getStreamFilter();
+        String resumeTokenJson = endpoint.getResumeToken();
         List<BsonDocument> bsonFilter = null;
+        BsonDocument resumeToken = null;
         if (ObjectHelper.isNotEmpty(streamFilter)) {
             bsonFilter = singletonList(BsonDocument.parse(streamFilter));
+        }
+        if (ObjectHelper.isNotEmpty(resumeTokenJson)) {
+            resumeToken = BsonDocument.parse(resumeTokenJson);
         }
 
         executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
                 endpoint.getEndpointUri(), 1);
-        changeStreamsThread = new MongoDbChangeStreamsThread(endpoint, this, bsonFilter);
+        changeStreamsThread = new MongoDbChangeStreamsThread(endpoint, this, bsonFilter, resumeToken);
         changeStreamsThread.init();
         executor.execute(changeStreamsThread);
     }

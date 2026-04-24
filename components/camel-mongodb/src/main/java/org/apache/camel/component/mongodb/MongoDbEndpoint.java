@@ -109,6 +109,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private String tailTrackIncreasingField;
     @UriParam(label = "consumer,changeStream")
     private String streamFilter;
+    @UriParam(label = "consumer,changeStream")
+    private String resumeToken;
     @UriParam(label = "consumer", enums = "default,updateLookup,required,whenAvailable", defaultValue = "default")
     private FullDocument fullDocument = FullDocument.DEFAULT;
     // persistent tail tracking
@@ -765,6 +767,17 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
      */
     public void setStreamFilter(String streamFilter) {
         this.streamFilter = streamFilter;
+    }
+
+    public String getResumeToken() {
+        return resumeToken;
+    }
+
+    /**
+     * Resume token for change streams consumer. The value must be a valid JSON representation of a BSON document.
+     */
+    public void setResumeToken(String resumeToken) {
+        this.resumeToken = resumeToken;
     }
 
     public FullDocument getFullDocument() {

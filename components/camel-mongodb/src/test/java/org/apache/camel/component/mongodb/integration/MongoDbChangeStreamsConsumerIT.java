@@ -27,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
+import org.bson.json.JsonParseException;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
@@ -36,7 +37,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -167,6 +170,22 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
         context.getRouteController().stopRoute(consumerRouteId);
     }
 
+    @Order(5)
+    @Test
+    public void invalidResumeTokenTest() {
+        assertThrows(JsonParseException.class, () -> context.getRouteController().startRoute("invalidResumeTokenConsumer"));
+    }
+
+    /*
+     * NOTE: MongoDB does not guarantee the resume token structure to stay identical with future versions.
+     * We can only check whether the resumeToken can be parsed to a valid BSON document.
+     */
+    @Order(6)
+    @Test
+    public void validResumeTokenTest() {
+        assertDoesNotThrow(() -> context.getRouteController().startRoute("validResumeTokenConsumer"));
+    }
+
     private void insertAndDelete(ObjectId objectId) {
         mongoCollection.insertOne(new Document("_id", objectId).append("string", "value"));
         mongoCollection.deleteOne(new Document("_id", objectId));
@@ -191,6 +210,16 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport imp
 
                 from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&streamFilter={{filter.update}}&fullDocument=updateLookup")
                         .id("updateWithFullDocumentConsumer")
+                        .autoStartup(false)
+                        .to("mock:test");
+
+                from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&resumeToken=invalidResumeToken")
+                        .id("invalidResumeTokenConsumer")
+                        .autoStartup(false)
+                        .to("mock:test");
+
+                from("mongodb:myDb?consumerType=changeStreams&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&resumeToken={{validResumeToken}}")
+                        .id("validResumeTokenConsumer")
                         .autoStartup(false)
                         .to("mock:test");
             }

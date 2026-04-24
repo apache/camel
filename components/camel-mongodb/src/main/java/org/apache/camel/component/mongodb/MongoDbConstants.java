@@ -93,6 +93,11 @@ public final class MongoDbConstants {
             be any of the following values: insert, delete, replace, update, drop, rename, dropDatabase, invalidate.""",
               javaType = "String")
     public static final String STREAM_OPERATION_TYPE = "CamelMongoDbStreamOperationType";
+    @Metadata(label = "consumer changeStreams", description = """
+            The resume token for the change stream event. This token can be used to resume
+            a change stream from the point of the event that was just processed.""",
+              javaType = "org.bson.BsonDocument")
+    public static final String RESUME_TOKEN = "CamelMongoDbResumeToken";
 
     @Metadata(label = "producer update one and return", description = """
             Indicates which document to return,
