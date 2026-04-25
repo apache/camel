@@ -249,21 +249,6 @@ After:
 
 This applies to all `camel-test-infra-*` artifacts, including `camel-test-infra-common`.
 
-=== camel-yaml-dsl
-
-A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
-schema (`camelYamlDsl.json`). The canonical schema removes all implicit patterns (string shorthands, inline
-expressions, `oneOf`/`anyOf`/`not` constructs) to provide a simpler, more predictable schema for tooling
-such as IDEs, code generators, and AI assistants. See the xref:components:others:yaml-dsl.adoc[YAML DSL]
-documentation for details.
-
-The `YamlValidator` class now accepts a `boolean canonical` constructor parameter to validate against the
-canonical schema.
-
-A new `camel yaml normalize` command has been added to Camel JBang. It rewrites YAML routes from the
-classic (shorthand) form to the canonical (explicit) form. The `camel validate yaml` command also
-supports a new `--canonical` flag to validate against the canonical schema.
-
 === camel-yaml-io / camel-xml-io
 
 In the YAML DSL we have renamed `routePolicy` to `routePolicyRef` on the `route` node,
