@@ -558,7 +558,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
      */
     @Metadata(description = "The key password, which is used to access the certificate's key entry in the keystore "
                             + "(this is the same password that is supplied to the keystore command's -keypass option).",
-              label = "security", secret = true)
+              label = "security", security = "secret")
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
     }
@@ -572,7 +572,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
      * the keystore command's -storepass option).
      */
     @Metadata(description = "The ssl password, which is required to access the keystore file (this is the same password that is supplied to the keystore command's -storepass option).",
-              label = "security", secret = true)
+              label = "security", security = "secret")
     public void setSslPassword(String sslPassword) {
         this.sslPassword = sslPassword;
     }

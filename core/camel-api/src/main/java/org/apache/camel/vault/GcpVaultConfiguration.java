@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
  */
 public class GcpVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String serviceAccountKey;
     @Metadata
     private String projectId;

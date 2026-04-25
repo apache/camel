@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriParams;
 public class WatsonxDataConfiguration implements Cloneable {
 
     // Authentication
-    @UriParam(label = "security", secret = true, description = "IBM Cloud API key for authentication")
+    @UriParam(label = "security", security = "secret", description = "IBM Cloud API key for authentication")
     @Metadata(required = true)
     private String apiKey;
 

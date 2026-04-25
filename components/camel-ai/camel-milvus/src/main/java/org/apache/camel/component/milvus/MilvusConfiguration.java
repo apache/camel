@@ -35,7 +35,7 @@ public class MilvusConfiguration implements Cloneable {
     @UriParam
     private int port = 19530;
 
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     @UriParam
     private String token;
 

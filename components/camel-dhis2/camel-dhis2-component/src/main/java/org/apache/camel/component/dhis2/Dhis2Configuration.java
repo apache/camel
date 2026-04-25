@@ -30,14 +30,14 @@ public class Dhis2Configuration {
     @UriParam(description = "DHIS2 server base API URL (e.g., https://play.dhis2.org/2.39.1.1/api)")
     private String baseApiUrl;
 
-    @UriParam(description = "Username of the DHIS2 user to operate as", secret = true, label = "security")
+    @UriParam(description = "Username of the DHIS2 user to operate as", security = "secret", label = "security")
     private String username;
 
-    @UriParam(description = "Password of the DHIS2 username", secret = true, label = "security")
+    @UriParam(description = "Password of the DHIS2 username", security = "secret", label = "security")
     private String password;
 
     @UriParam(description = "Personal access token to authenticate with DHIS2. This option is mutually exclusive to username and password",
-              secret = true, label = "security")
+              security = "secret", label = "security")
     private String personalAccessToken;
 
     @UriPath(description = "API operation (e.g., get)")

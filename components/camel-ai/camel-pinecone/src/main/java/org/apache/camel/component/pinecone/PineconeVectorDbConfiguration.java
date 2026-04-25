@@ -31,7 +31,7 @@ public class PineconeVectorDbConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private PineconeVectorDbAction action;
 
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     @UriParam
     private String token;
 

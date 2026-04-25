@@ -36,7 +36,7 @@ public class QueueConfiguration implements Cloneable {
     @UriParam(label = "security")
     @Metadata(autowired = true)
     private StorageSharedKeyCredential credentials;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
     @UriParam(label = "common")
     @Metadata(autowired = true)

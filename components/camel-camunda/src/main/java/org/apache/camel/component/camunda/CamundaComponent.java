@@ -36,11 +36,11 @@ public class CamundaComponent extends DefaultComponent {
     @Metadata(label = "security", description = "Camunda SaaS region (default: bru-2).", defaultValue = "bru-2")
     String region = "bru-2";
 
-    @Metadata(label = "security", secret = true,
+    @Metadata(label = "security", security = "secret",
               description = "Client ID for OAuth / SaaS authentication.")
     String clientId;
 
-    @Metadata(label = "security", secret = true,
+    @Metadata(label = "security", security = "secret",
               description = "Client secret for OAuth / SaaS authentication.")
     String clientSecret;
 

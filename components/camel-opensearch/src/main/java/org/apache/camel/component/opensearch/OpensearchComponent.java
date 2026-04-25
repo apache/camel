@@ -47,9 +47,9 @@ public class OpensearchComponent extends DefaultComponent implements SSLContextP
     private int maxRetryTimeout = OpensearchConstants.MAX_RETRY_TIMEOUT;
     @Metadata(defaultValue = "" + OpensearchConstants.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = OpensearchConstants.DEFAULT_CONNECTION_TIMEOUT;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String user;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String password;
     @Metadata(label = "security")
     private boolean enableSSL;

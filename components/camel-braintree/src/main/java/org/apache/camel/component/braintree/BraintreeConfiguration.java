@@ -52,11 +52,11 @@ public class BraintreeConfiguration {
     private String environment;
     @UriParam
     private String merchantId;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String publicKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String privateKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessToken;
     @UriParam(label = "proxy")
     private String proxyHost;

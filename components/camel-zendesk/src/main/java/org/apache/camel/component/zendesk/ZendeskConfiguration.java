@@ -36,13 +36,13 @@ public class ZendeskConfiguration {
     private ZendeskApiMethod methodName;
     @UriParam
     private String serverUrl;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String oauthToken;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String token;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
 
     /**

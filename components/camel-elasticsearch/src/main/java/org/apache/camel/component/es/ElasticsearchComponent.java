@@ -47,9 +47,9 @@ public class ElasticsearchComponent extends DefaultComponent {
     private int connectionTimeout = ElasticsearchConstants.DEFAULT_CONNECTION_TIMEOUT;
     @Metadata(defaultValue = "false")
     private boolean enableDocumentOnlyMode;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String user;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String password;
     @Metadata(label = "security")
     private boolean enableSSL;

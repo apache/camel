@@ -46,7 +46,7 @@ public class BlobConfiguration implements Cloneable {
     @UriParam
     @Metadata(autowired = true)
     private BlobServiceClient serviceClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
     @UriParam(label = "producer",
               enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
@@ -106,7 +106,7 @@ public class BlobConfiguration implements Cloneable {
     private Long maxSingleUploadSize;
     @UriParam(label = "common")
     private String regex;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sourceBlobAccessKey;
     @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
               defaultValue = "AZURE_IDENTITY")
@@ -115,9 +115,9 @@ public class BlobConfiguration implements Cloneable {
     private boolean leaseBlob;
     @UriParam(label = "common", defaultValue = "60")
     private Integer leaseDurationInSeconds = 60;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String azureClientId;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String azureClientSecret;
     @UriParam(label = "security")
     private String azureTenantId;
