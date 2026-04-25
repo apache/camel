@@ -357,6 +357,11 @@ class ExportCamelMain extends Export {
     protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
         Set<String> answer = super.resolveDependencies(settings, profile);
 
+        // remove out of the box dependencies
+        answer.removeIf(s -> s.contains("camel-core"));
+        answer.removeIf(s -> s.contains("camel-main"));
+        answer.removeIf(s -> s.contains("camel-health"));
+
         if (profile != null && Files.exists(profile)) {
             Properties prop = new CamelCaseOrderedProperties();
             RuntimeUtil.loadProperties(prop, profile);
@@ -366,12 +371,11 @@ class ExportCamelMain extends Export {
                     || prop.getProperty("camel.server.metricsEnabled") != null) {
                 answer.add("mvn:org.apache.camel:camel-micrometer-prometheus");
             }
+            // if health-check is defined then include camel-health for camel-main runtime
+            if (prop.getProperty("camel.management.healthCheckEnabled") != null) {
+                answer.add("mvn:org.apache.camel:camel-health");
+            }
         }
-
-        // remove out of the box dependencies
-        answer.removeIf(s -> s.contains("camel-core"));
-        answer.removeIf(s -> s.contains("camel-main"));
-        answer.removeIf(s -> s.contains("camel-health"));
 
         boolean main = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http-main"));
         if (hasOpenapi(answer) && !main) {
