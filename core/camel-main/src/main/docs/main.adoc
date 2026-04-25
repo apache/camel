@@ -302,6 +302,21 @@ The camel.trace supports 14 options, which are listed below.
 |===
 
 
+=== Camel Security Policy configurations
+The camel.security supports 6 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.security.allowedProperties* | Comma-separated list of property keys to exclude from security policy checks. Use full property paths to allow specific properties regardless of the configured policy. |  | String
+| *camel.security.insecureDevPolicy* | Security policy for development-only features. When set, overrides the global policy for options intended only for development environments. |  | String
+| *camel.security.insecureSerializationPolicy* | Security policy for insecure deserialization configuration. When set, overrides the global policy for options that enable dangerous deserialization of untrusted data. |  | String
+| *camel.security.insecureSslPolicy* | Security policy for insecure SSL/TLS configuration. When set, overrides the global policy for options that disable certificate validation or hostname verification. |  | String
+| *camel.security.policy* | Global security policy applied to all categories unless overridden. Controls how Camel reacts when insecure configuration is detected at startup. | warn | String
+| *camel.security.secretPolicy* | Security policy for plain-text secrets. When set, overrides the global policy for properties that contain sensitive values configured as plain text. |  | String
+|===
+
+
 === Camel SSL configurations
 The camel.ssl supports 27 options, which are listed below.
 

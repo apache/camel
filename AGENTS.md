@@ -115,7 +115,10 @@ jump straight to implementation after reading the issue description and the curr
 3. **Search for related issues**: Search JIRA for related tickets (same component, similar keywords)
    to find prior discussions, rejected approaches, or intentional design decisions.
 4. **Look for design documents**: Check the `proposals/` directory for design docs (`.adoc` files)
-   that may explain architectural decisions in the affected area.
+   that may explain architectural decisions in the affected area. Key proposals by area:
+   - **Security** (secrets, SSL/TLS, serialization, policy enforcement): [`proposals/security.adoc`](proposals/security.adoc)
+   - **Tracing / Telemetry** (OpenTelemetry, spans, context propagation): [`proposals/tracing.adoc`](proposals/tracing.adoc)
+   - **MDC / Logging** (MDC propagation, logging context): [`proposals/mdc.adoc`](proposals/mdc.adoc)
 5. **Understand the broader context**: If the issue involves a module that replaced or deprecated
    another (e.g., `camel-opentelemetry2` replacing `camel-opentelemetry`), understand *why* the
    replacement was made and what was intentionally changed vs. accidentally omitted.
@@ -147,7 +150,8 @@ When reviewing PRs, apply the same investigative rigor:
 - Check `git log` and `git blame` on modified files to see if the change conflicts with prior
   intentional decisions.
 - Verify that "fixes" don't revert deliberate behavior without justification.
-- Check for design proposals (`proposals/*.adoc`) related to the affected area.
+- Check for design proposals (`proposals/*.adoc`) related to the affected area
+  (see the area-to-proposal mapping in "Issue Investigation" above).
 - Search for related JIRA tickets that provide context on why the code was written that way.
 
 ### Documentation Conventions
@@ -242,6 +246,10 @@ Annotations:
 - `@UriPath` for path params
 - `@UriParam` for query params
 - Always add `description` for docs
+- Mark sensitive parameters with `secret = true` on `@UriParam` or `@Metadata` (passwords, tokens, API keys)
+- For insecure configuration flags (e.g., `trustAllCertificates`, `allowJavaSerializedObject`),
+  add `security = "insecure:ssl"` / `"insecure:serialization"` / `"insecure:dev"` on `@UriParam`.
+  See [`proposals/security.adoc`](proposals/security.adoc) for categories and rationale.
 
 ## Adding Components
 

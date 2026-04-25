@@ -50,7 +50,7 @@ public class VertxHttpConfiguration {
     private VertxHttpBinding vertxHttpBinding;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer", defaultValue = "false", security = "insecure:serialization")
     private boolean transferException;
     @UriParam(label = "advanced,security")
     private String deserializationFilter;

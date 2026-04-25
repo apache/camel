@@ -27,13 +27,13 @@ public class CyberArkVaultConfiguration extends VaultConfiguration {
     private String url;
     @Metadata
     private String account;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String username;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String password;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String apiKey;
-    @Metadata
+    @Metadata(security = "secret")
     private String authToken;
     @Metadata
     private boolean verifySsl = true;

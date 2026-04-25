@@ -43,6 +43,9 @@ import org.apache.camel.util.json.Jsoner;
 
 public final class JsonMapper {
 
+    private static final String SECURITY = "security";
+    private static final String INSECURE_VALUE = "insecureValue";
+
     private JsonMapper() {
     }
 
@@ -590,6 +593,8 @@ public final class JsonMapper {
         option.setAutowired(mp.getBooleanOrDefault("autowired", false));
         option.setDeprecationNote(mp.getString("deprecationNote"));
         option.setSecret(mp.getBooleanOrDefault("secret", false));
+        option.setSecurity(mp.getString(SECURITY));
+        option.setInsecureValue(mp.getString(INSECURE_VALUE));
         option.setDefaultValue(mp.get("defaultValue"));
         option.setAsPredicate(mp.getBooleanOrDefault("asPredicate", false));
         option.setConfigurationClass(mp.getString("configurationClass"));
@@ -721,6 +726,12 @@ public final class JsonMapper {
         prop.put("deprecationNote", option.getDeprecationNote());
         prop.put("autowired", option.isAutowired());
         prop.put("secret", option.isSecret());
+        if (!Strings.isNullOrEmpty(option.getSecurity())) {
+            prop.put(SECURITY, option.getSecurity());
+        }
+        if (!Strings.isNullOrEmpty(option.getInsecureValue())) {
+            prop.put(INSECURE_VALUE, option.getInsecureValue());
+        }
         if (option.getDefaultValue() != null) {
             prop.put("defaultValue", option.resolveDefaultValue());
         }
@@ -811,51 +822,56 @@ public final class JsonMapper {
     }
 
     public static JsonObject asJsonObject(MainModel model) {
+        return asGroupedOptionsJson(
+                model.getGroups(), MainGroupModel::getName, MainGroupModel::getDescription, MainGroupModel::getSourceType,
+                model.getOptions(), MainOptionModel::getSourceType);
+    }
+
+    public static JsonObject asJsonObject(JBangModel model) {
+        return asGroupedOptionsJson(
+                model.getGroups(), JBangGroupModel::getName, JBangGroupModel::getDescription, JBangGroupModel::getSourceType,
+                model.getOptions(), JBangOptionModel::getSourceType);
+    }
+
+    private static <G, O extends BaseOptionModel> JsonObject asGroupedOptionsJson(
+            List<G> groups,
+            java.util.function.Function<G, String> groupName,
+            java.util.function.Function<G, String> groupDescription,
+            java.util.function.Function<G, String> groupSourceType,
+            List<O> options,
+            java.util.function.Function<O, String> optionSourceType) {
+
         JsonObject json = new JsonObject();
-        JsonArray groups = new JsonArray();
-        for (MainGroupModel group : model.getGroups()) {
+        JsonArray groupsArr = new JsonArray();
+        for (G group : groups) {
             JsonObject j = new JsonObject();
-            j.put("name", group.getName());
-            if (group.getDescription() != null) {
-                j.put("description", group.getDescription());
-            }
-            if (group.getSourceType() != null) {
-                j.put("sourceType", group.getSourceType());
-            }
-            groups.add(j);
+            j.put("name", groupName.apply(group));
+            putIfNotNull(j, "description", groupDescription.apply(group));
+            putIfNotNull(j, "sourceType", groupSourceType.apply(group));
+            groupsArr.add(j);
         }
-        json.put("groups", groups);
+        json.put("groups", groupsArr);
         JsonArray props = new JsonArray();
-        for (MainOptionModel prop : model.getOptions()) {
+        for (O prop : options) {
             JsonObject j = new JsonObject();
             j.put("name", prop.getName());
             j.put("required", prop.isRequired());
-            if (prop.getDescription() != null) {
-                j.put("description", prop.getDescription());
-            }
-            if (prop.getGroup() != null) {
-                j.put("group", prop.getGroup());
-            }
-            if (prop.getLabel() != null) {
-                j.put("label", prop.getLabel());
-            }
-            if (prop.getSourceType() != null) {
-                j.put("sourceType", prop.getSourceType());
-            }
+            putIfNotNull(j, "description", prop.getDescription());
+            putIfNotNull(j, "group", prop.getGroup());
+            putIfNotNull(j, "label", prop.getLabel());
+            putIfNotNull(j, "sourceType", optionSourceType.apply(prop));
             j.put("type", prop.getType());
             j.put("javaType", prop.getJavaType());
-            if (prop.getDefaultValue() != null) {
-                j.put("defaultValue", prop.resolveDefaultValue());
-            }
+            putIfNotNull(j, "defaultValue", prop.getDefaultValue() != null ? prop.resolveDefaultValue() : null);
             j.put("secret", prop.isSecret());
-            if (prop.getEnums() != null) {
-                j.put("enum", prop.getEnums());
-            }
+            putIfNotEmpty(j, SECURITY, prop.getSecurity());
+            putIfNotEmpty(j, INSECURE_VALUE, prop.getInsecureValue());
+            putIfNotNull(j, "enum", prop.getEnums());
             if (prop.isDeprecated()) {
-                j.put("deprecated", prop.isDeprecated());
+                j.put("deprecated", true);
             }
             if (prop.isAutowired()) {
-                j.put("autowired", prop.isAutowired());
+                j.put("autowired", true);
             }
             props.add(j);
         }
@@ -863,57 +879,16 @@ public final class JsonMapper {
         return json;
     }
 
-    public static JsonObject asJsonObject(JBangModel model) {
-        JsonObject json = new JsonObject();
-        JsonArray groups = new JsonArray();
-        for (JBangGroupModel group : model.getGroups()) {
-            JsonObject j = new JsonObject();
-            j.put("name", group.getName());
-            if (group.getDescription() != null) {
-                j.put("description", group.getDescription());
-            }
-            if (group.getSourceType() != null) {
-                j.put("sourceType", group.getSourceType());
-            }
-            groups.add(j);
+    private static void putIfNotNull(JsonObject obj, String key, Object value) {
+        if (value != null) {
+            obj.put(key, value);
         }
-        json.put("groups", groups);
-        JsonArray props = new JsonArray();
-        for (JBangOptionModel prop : model.getOptions()) {
-            JsonObject j = new JsonObject();
-            j.put("name", prop.getName());
-            j.put("required", prop.isRequired());
-            if (prop.getDescription() != null) {
-                j.put("description", prop.getDescription());
-            }
-            if (prop.getGroup() != null) {
-                j.put("group", prop.getGroup());
-            }
-            if (prop.getLabel() != null) {
-                j.put("label", prop.getLabel());
-            }
-            if (prop.getSourceType() != null) {
-                j.put("sourceType", prop.getSourceType());
-            }
-            j.put("type", prop.getType());
-            j.put("javaType", prop.getJavaType());
-            if (prop.getDefaultValue() != null) {
-                j.put("defaultValue", prop.resolveDefaultValue());
-            }
-            j.put("secret", prop.isSecret());
-            if (prop.getEnums() != null) {
-                j.put("enum", prop.getEnums());
-            }
-            if (prop.isDeprecated()) {
-                j.put("deprecated", prop.isDeprecated());
-            }
-            if (prop.isAutowired()) {
-                j.put("autowired", prop.isAutowired());
-            }
-            props.add(j);
+    }
+
+    private static void putIfNotEmpty(JsonObject obj, String key, String value) {
+        if (!Strings.isNullOrEmpty(value)) {
+            obj.put(key, value);
         }
-        json.put("properties", props);
-        return json;
     }
 
     public static JsonObject asJsonObject(ReleaseModel model) {

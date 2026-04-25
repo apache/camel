@@ -125,7 +125,7 @@ public class ActiveMQComponent extends JmsComponent {
      * practice to send Java serialized objects over network. Setting this to true can expose security risks, so use
      * this with care.
      */
-    @Metadata(defaultValue = "false", label = "advanced")
+    @Metadata(defaultValue = "false", label = "advanced", security = "insecure:serialization")
     public void setTrustAllPackages(boolean trustAllPackages) {
         if (getConfiguration() instanceof ActiveMQConfiguration activeMQConfiguration) {
             activeMQConfiguration.setTrustAllPackages(trustAllPackages);

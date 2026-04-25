@@ -89,8 +89,25 @@ public @interface UriParam {
 
     /**
      * Whether the option is secret/sensitive information such as a password.
+     *
+     * @deprecated use {@code security = "secret"} instead.
      */
+    @Deprecated(since = "4.19.0")
     boolean secret() default false;
+
+    /**
+     * Security category for this option.
+     *
+     * @see Metadata#security()
+     */
+    String security() default "";
+
+    /**
+     * The value that makes this option insecure.
+     *
+     * @see Metadata#insecureValue()
+     */
+    String insecureValue() default "";
 
     /**
      * To re-associate the preferred Java type of this parameter.

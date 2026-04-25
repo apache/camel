@@ -51,7 +51,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean compression;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", security = "insecure:serialization")
     private boolean transferException;
     @UriParam(label = "advanced,security")
     private String deserializationFilter;

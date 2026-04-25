@@ -34,11 +34,11 @@ public class Comprehend2Configuration implements Cloneable, AwsCommonConfigurati
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private ComprehendClient comprehendClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam(defaultValue = "detectDominantLanguage")
     @Metadata(required = true)
@@ -57,7 +57,7 @@ public class Comprehend2Configuration implements Cloneable, AwsCommonConfigurati
     private String endpointArn;
     @UriParam
     private boolean pojoRequest;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
     private boolean overrideEndpoint;

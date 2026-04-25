@@ -32,12 +32,12 @@ public class Ddb2StreamConfiguration implements Cloneable, AwsCommonConfiguratio
     @Metadata(required = true)
     private String tableName;
 
-    @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
+    @UriParam(label = "security", security = "secret", description = "Amazon AWS Access Key")
     private String accessKey;
-    @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
+    @UriParam(label = "security", security = "secret", description = "Amazon AWS Secret Key")
     private String secretKey;
 
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Amazon AWS Session Token used when the user needs to assume a IAM role")
     private String sessionToken;
     @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global",
@@ -65,7 +65,8 @@ public class Ddb2StreamConfiguration implements Cloneable, AwsCommonConfiguratio
     private String proxyHost;
     @UriParam(label = "proxy", description = "To define a proxy port when instantiating the DDBStreams client")
     private Integer proxyPort;
-    @UriParam(label = "security", description = "If we want to trust all certificates in case of overriding the endpoint")
+    @UriParam(security = "insecure:ssl", label = "security",
+              description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false",
               description = "Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option")

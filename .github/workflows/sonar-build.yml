@@ -68,7 +68,7 @@ jobs:
       - name: Run tests with coverage and generate report
         run: >
           ./mvnw verify -B -Dcoverage
-          -pl core/camel-api,core/camel-util,core/camel-support,core/camel-management-api,core/camel-management,core/camel-base,core/camel-base-engine,core/camel-core-engine,core/camel-core-languages,core/camel-core-model,core/camel-core-processor,core/camel-core-reifier,core/camel-core,coverage
+          -pl core/camel-api,core/camel-util,core/camel-support,core/camel-management-api,core/camel-management,core/camel-base,core/camel-base-engine,core/camel-core-engine,core/camel-core-languages,core/camel-core-model,core/camel-core-processor,core/camel-core-reifier,core/camel-core,core/camel-main,core/camel-health,coverage
           -Dmaven.test.failure.ignore=true
 
       - name: Prepare compiled classes artifact

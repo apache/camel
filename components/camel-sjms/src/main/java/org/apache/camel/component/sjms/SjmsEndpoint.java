@@ -244,7 +244,7 @@ public class SjmsEndpoint extends DefaultEndpoint
               description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
                             + " The default is 5000 ms, that is, 5 seconds.")
     private long recoveryInterval = 5000;
-    @UriParam(label = "advanced",
+    @UriParam(label = "advanced", security = "insecure:serialization",
               description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
                             + " then the caused Exception will be send back in response as a jakarta.jms.ObjectMessage."
                             + " If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge"

@@ -66,10 +66,10 @@ public class JmsConfiguration implements Cloneable {
 
     @UriParam(description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.")
     private String username;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.")
     private String password;
 
@@ -370,7 +370,7 @@ public class JmsConfiguration implements Cloneable {
                             + " You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy"
                             + " and refer to it using the # notation.")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
-    @UriParam(label = "advanced",
+    @UriParam(label = "advanced", security = "insecure:serialization",
               description = "You can transfer the exchange over the wire instead of just the body and headers."
                             + " The following fields are transferred: In body, Out body, Fault body, In headers, Out headers, Fault headers,"
                             + " exchange properties, exchange exception."
@@ -379,7 +379,7 @@ public class JmsConfiguration implements Cloneable {
                             + " Use this with caution as the data is using Java Object serialization and requires the receiver to be able to deserialize the data at Class level, "
                             + " which forces a strong coupling between the producers and consumers having to use compatible Camel versions!")
     private boolean transferExchange;
-    @UriParam(label = "advanced",
+    @UriParam(label = "advanced", security = "insecure:serialization",
               description = "Controls whether or not to include serialized headers."
                             + " Applies only when {@code transferExchange} is {@code true}."
                             + " This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.")
@@ -393,7 +393,7 @@ public class JmsConfiguration implements Cloneable {
                             + " the JVM-wide -Djdk.serialFilter. When this option is not set and no JVM-wide filter is configured,"
                             + " a conservative default filter allowing java.**, javax.** and org.apache.camel.** is applied.")
     private String deserializationFilter;
-    @UriParam(label = "advanced",
+    @UriParam(label = "advanced", security = "insecure:serialization",
               description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
                             + " then the caused Exception will be send back in response as a jakarta.jms.ObjectMessage."
                             + " If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge"

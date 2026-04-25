@@ -62,7 +62,7 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private String jwtKeystoreType;
     @Metadata(label = "security")
     private String jwtKeystorePath;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String jwtKeystorePassword;
 
     public HttpServerConfigurationProperties(MainConfigurationProperties parent) {
