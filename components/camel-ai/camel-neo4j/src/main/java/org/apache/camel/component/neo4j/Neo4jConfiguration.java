@@ -39,7 +39,8 @@ public class Neo4jConfiguration implements Cloneable {
     @UriParam(label = "security", description = "Basic authentication database realm", displayName = "Database realm",
               security = "secret")
     private String realm;
-    @UriParam(label = "security", description = "Bearer authentication database realm", displayName = "Realm", security = "secret")
+    @UriParam(label = "security", description = "Bearer authentication database realm", displayName = "Realm",
+              security = "secret")
     private String token;
     @UriParam(label = "security", description = "Kerberos Authentication encoded base64 ticket",
               displayName = "Encoded base64 ticket",

@@ -40,7 +40,8 @@ public class ClickUpConfiguration {
               security = "secret")
     private String authorizationToken;
 
-    @UriParam(description = "The shared secret obtained in the webhook creation response.", label = "security", security = "secret")
+    @UriParam(description = "The shared secret obtained in the webhook creation response.", label = "security",
+              security = "secret")
     private String webhookSecret;
 
     @UriParam(description = "The comma separated list of events to which the webhook must subscribe")
