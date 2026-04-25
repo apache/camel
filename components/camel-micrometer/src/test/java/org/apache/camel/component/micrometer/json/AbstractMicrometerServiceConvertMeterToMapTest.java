@@ -145,9 +145,9 @@ class ConvertMeterToMapTest {
                 "app.info",
                 Tags.of(
                         Tag.of("camel.runtime.provider", "Main"),
-                        Tag.of("camel.runtime.version", "4.20.0-SNAPSHOT"),
+                        Tag.of("camel.runtime.version", "4.21.0-SNAPSHOT"),
                         Tag.of("camel.context", "camel-1"),
-                        Tag.of("camel.version", "4.20.0-SNAPSHOT")),
+                        Tag.of("camel.version", "4.21.0-SNAPSHOT")),
                 null,
                 null,
                 Meter.Type.GAUGE);
@@ -167,9 +167,9 @@ class ConvertMeterToMapTest {
         Map<String, String> tags = (Map<String, String>) result.get("tags");
         assertEquals(4, tags.size());
         assertEquals("Main", tags.get("camel.runtime.provider"));
-        assertEquals("4.20.0-SNAPSHOT", tags.get("camel.runtime.version"));
+        assertEquals("4.21.0-SNAPSHOT", tags.get("camel.runtime.version"));
         assertEquals("camel-1", tags.get("camel.context"));
-        assertEquals("4.20.0-SNAPSHOT", tags.get("camel.version"));
+        assertEquals("4.21.0-SNAPSHOT", tags.get("camel.version"));
     }
 
 }

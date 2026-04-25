@@ -379,7 +379,7 @@ If you have built Camel locally, you can also run the uber-JAR directly:
 
 [source,bash]
 ----
-java -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 -jar dsl/camel-jbang/camel-jbang-mcp/target/camel-jbang-mcp-4.20.0-SNAPSHOT-runner.jar
+java -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 -jar dsl/camel-jbang/camel-jbang-mcp/target/camel-jbang-mcp-4.21.0-SNAPSHOT-runner.jar
 ----
 
 The server exposes two HTTP endpoints, corresponding to the two MCP protocol variants:

@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-azure-functions",
-    "version": "4.20.0-SNAPSHOT",
+    "version": "4.21.0-SNAPSHOT",
     "scheme": "azure-functions",
     "extendsScheme": "",
     "syntax": "azure-functions:functionApp\/functionName",
