@@ -27,3 +27,21 @@ canonical schema.
 A new `camel yaml normalize` command has been added to Camel JBang. It rewrites YAML routes from the
 classic (shorthand) form to the canonical (explicit) form. The `camel validate yaml` command also
 supports a new `--canonical` flag to validate against the canonical schema.
+
+=== camel-kafka / Spring Boot
+
+When using `camel-kafka-starter` with Spring Boot, the standard `spring.kafka.*` properties are now automatically
+bridged to the Camel Kafka component configuration (CAMEL-22760). This means you no longer need to duplicate
+Kafka settings under both `spring.kafka.*` and `camel.component.kafka.*`.
+
+The bridged properties include `bootstrap-servers`, `security.protocol`, SSL/TLS settings (keystore, truststore),
+`consumer.group-id`, `client-id`, and SASL properties (`sasl.mechanism`, `sasl.jaas.config`, `sasl.kerberos.service.name`).
+
+Explicit `camel.component.kafka.*` settings always take precedence over the bridged Spring Boot values.
+
+The bridge is enabled by default. To disable it, set:
+
+[source,properties]
+----
+camel.component.kafka.bridge-spring-kafka-properties=false
+----
