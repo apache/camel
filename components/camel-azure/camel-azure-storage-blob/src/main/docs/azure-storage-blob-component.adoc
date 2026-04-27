@@ -754,7 +754,7 @@ of the live one. The header takes precedence over the URI parameter.
 --------------------------------------------------------------------------------
 
 from("direct:readVersion")
-  .process(exchange -> exchange.getIn().setHeader(BlobConstants.BLOB_VERSION_ID, "2026-04-15T10:00:00.0000000Z"))
+  .setHeader(BlobConstants.BLOB_VERSION_ID, constant("2026-04-15T10:00:00.0000000Z"))
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
