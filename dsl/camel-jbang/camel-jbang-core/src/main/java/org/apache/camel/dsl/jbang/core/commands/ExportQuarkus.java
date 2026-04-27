@@ -138,10 +138,12 @@ class ExportQuarkus extends Export {
             appJar = "target" + File.separator + ids[1] + "-" + ids[2] + ".jar";
         }
         copyReadme(BUILD_DIR, appJar);
-        // resolve Quarkus platform version from registry (if available)
-        String resolved = QuarkusHelper.resolveQuarkusPlatformVersion(quarkusVersion);
-        if (resolved != null) {
-            quarkusVersion = resolved;
+        // resolve Quarkus platform version from registry (when download is true)
+        if (download) {
+            String resolved = QuarkusHelper.resolveQuarkusPlatformVersion(quarkusVersion);
+            if (resolved != null) {
+                quarkusVersion = resolved;
+            }
         }
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
