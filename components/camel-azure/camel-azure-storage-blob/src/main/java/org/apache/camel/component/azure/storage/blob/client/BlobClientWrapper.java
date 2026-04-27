@@ -349,6 +349,18 @@ public class BlobClientWrapper {
         return new BlobClientWrapper(client.getSnapshotClient(snapshotId));
     }
 
+    /**
+     * Returns a wrapper scoped to the given blob version, or {@code this} when the version id is empty. Subsequent read
+     * operations on the returned wrapper target the specified version of the blob instead of the live one. Requires
+     * blob versioning to be enabled on the storage account.
+     */
+    public BlobClientWrapper withVersion(final String versionId) {
+        if (ObjectHelper.isEmpty(versionId)) {
+            return this;
+        }
+        return new BlobClientWrapper(client.getVersionClient(versionId));
+    }
+
     public Response<Void> setTags(
             final Map<String, String> tags,
             final BlobRequestConditions requestConditions,

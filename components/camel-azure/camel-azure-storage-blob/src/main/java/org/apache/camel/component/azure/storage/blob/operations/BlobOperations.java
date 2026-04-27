@@ -97,7 +97,8 @@ public class BlobOperations {
         final OutputStream outputStream = ObjectHelper.isEmpty(message) ? null : message.getBody(OutputStream.class);
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final BlobCommonRequestOptions blobCommonRequestOptions = getCommonRequestOptions(exchange);
-        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange));
+        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange))
+                .withVersion(configurationProxy.getVersionId(exchange));
 
         if (outputStream == null) {
             // Then we create an input stream
@@ -152,7 +153,8 @@ public class BlobOperations {
         final BlobRange blobRange = configurationProxy.getBlobRange(exchange);
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
-        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange));
+        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange))
+                .withVersion(configurationProxy.getVersionId(exchange));
 
         final Response<BlobProperties> response = readClient.downloadToFileWithResponse(fileToDownload.toString(), blobRange,
                 parallelTransferOptions, downloadRetryOptions,
@@ -191,7 +193,8 @@ public class BlobOperations {
 
         final BlobServiceSasSignatureValues serviceSasSignatureValues
                 = new BlobServiceSasSignatureValues(offsetDateTimeToSet, sasPermission);
-        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange));
+        final BlobClientWrapper readClient = client.withSnapshot(configurationProxy.getSnapshotId(exchange))
+                .withVersion(configurationProxy.getVersionId(exchange));
         final String blobUrl = readClient.getBlobUrl();
         final String sasToken = readClient.generateSas(serviceSasSignatureValues);
         final String url = blobUrl + (blobUrl.contains("?") ? "&" : "?") + sasToken;

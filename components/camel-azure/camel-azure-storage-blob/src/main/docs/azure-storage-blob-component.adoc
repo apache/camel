@@ -743,6 +743,22 @@ from("direct:readSnapshot")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+=== Reading a specific blob version
+
+When blob versioning is enabled on the storage account, the `getBlob`, `downloadBlobToFile` and `downloadLink`
+operations can target a specific version by setting the `versionId` URI parameter or the
+`CamelAzureStorageBlobVersionId` exchange header. When set, the read is scoped to the version of the blob instead
+of the live one. The header takes precedence over the URI parameter.
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:readVersion")
+  .process(exchange -> exchange.getIn().setHeader(BlobConstants.BLOB_VERSION_ID, "2026-04-15T10:00:00.0000000Z"))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
 - `setBlobTags`
 
 [source,java]

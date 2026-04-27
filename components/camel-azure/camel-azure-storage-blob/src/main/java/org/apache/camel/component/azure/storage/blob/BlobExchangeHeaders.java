@@ -84,7 +84,9 @@ public class BlobExchangeHeaders {
                 .leaseDuration(properties.getLeaseDuration())
                 .leaseState(properties.getLeaseState())
                 .leaseStatus(properties.getLeaseStatus())
-                .metadata(properties.getMetadata());
+                .metadata(properties.getMetadata())
+                .versionId(properties.getVersionId())
+                .isCurrentVersion(properties.isCurrentVersion());
     }
 
     public static BlobExchangeHeaders createBlobExchangeHeadersFromBlobDownloadHeaders(
@@ -243,6 +245,10 @@ public class BlobExchangeHeaders {
 
     public static String getSnapshotIdFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_SNAPSHOT_ID, String.class);
+    }
+
+    public static String getVersionIdFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_VERSION_ID, String.class);
     }
 
     public static String getBlobContainerNameFromHeaders(final Exchange exchange) {
@@ -483,6 +489,16 @@ public class BlobExchangeHeaders {
 
     public BlobExchangeHeaders snapshotId(final String snapshotId) {
         headers.put(BlobConstants.BLOB_SNAPSHOT_ID, snapshotId);
+        return this;
+    }
+
+    public BlobExchangeHeaders versionId(final String versionId) {
+        headers.put(BlobConstants.BLOB_VERSION_ID, versionId);
+        return this;
+    }
+
+    public BlobExchangeHeaders isCurrentVersion(final Boolean isCurrentVersion) {
+        headers.put(BlobConstants.BLOB_IS_CURRENT_VERSION, isCurrentVersion);
         return this;
     }
 

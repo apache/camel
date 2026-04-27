@@ -87,6 +87,7 @@ class BlobOperationsTest extends CamelTestSupport {
         mockedResults.put("properties", createBlobProperties());
 
         when(client.withSnapshot(any())).thenReturn(client);
+        when(client.withVersion(any())).thenReturn(client);
         when(client.openInputStream(any(), any())).thenReturn(mockedResults);
 
         final Exchange exchange = new DefaultExchange(context);
@@ -217,6 +218,7 @@ class BlobOperationsTest extends CamelTestSupport {
         mockedResults.put("properties", createBlobProperties());
 
         when(client.withSnapshot(snapshotId)).thenReturn(snapshotScopedClient);
+        when(snapshotScopedClient.withVersion(any())).thenReturn(snapshotScopedClient);
         when(snapshotScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
 
         configuration.setSnapshotId(snapshotId);
@@ -243,6 +245,7 @@ class BlobOperationsTest extends CamelTestSupport {
         mockedResults.put("properties", createBlobProperties());
 
         when(client.withSnapshot(headerSnapshotId)).thenReturn(snapshotScopedClient);
+        when(snapshotScopedClient.withVersion(any())).thenReturn(snapshotScopedClient);
         when(snapshotScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
 
         configuration.setSnapshotId(configuredSnapshotId);
@@ -253,6 +256,56 @@ class BlobOperationsTest extends CamelTestSupport {
         operations.getBlob(exchange);
 
         verify(client, times(1)).withSnapshot(headerSnapshotId);
+    }
+
+    @Test
+    void testGetBlobWithVersionIdReadsFromScopedClient() throws IOException {
+        final String versionId = "2026-04-15T10:00:00.0000000Z";
+        final BlobClientWrapper versionScopedClient = mock(BlobClientWrapper.class);
+
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("fromVersion".getBytes(Charset.defaultCharset())));
+        mockedResults.put("properties", createBlobProperties());
+
+        when(client.withSnapshot(any())).thenReturn(client);
+        when(client.withVersion(versionId)).thenReturn(versionScopedClient);
+        when(versionScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
+
+        configuration.setVersionId(versionId);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.getBlob(null);
+
+        assertNotNull(response);
+        assertEquals("fromVersion",
+                new BufferedReader(new InputStreamReader((InputStream) response.getBody())).readLine());
+
+        verify(client, times(1)).withVersion(versionId);
+        verify(versionScopedClient, times(1)).openInputStream(any(), any());
+    }
+
+    @Test
+    void testGetBlobWithVersionIdHeaderOverridesConfig() throws IOException {
+        final String configuredVersionId = "2026-04-15T10:00:00.0000000Z";
+        final String headerVersionId = "2026-04-16T12:00:00.0000000Z";
+        final BlobClientWrapper versionScopedClient = mock(BlobClientWrapper.class);
+
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("fromHeader".getBytes(Charset.defaultCharset())));
+        mockedResults.put("properties", createBlobProperties());
+
+        when(client.withSnapshot(any())).thenReturn(client);
+        when(client.withVersion(headerVersionId)).thenReturn(versionScopedClient);
+        when(versionScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
+
+        configuration.setVersionId(configuredVersionId);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.BLOB_VERSION_ID, headerVersionId);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        operations.getBlob(exchange);
+
+        verify(client, times(1)).withVersion(headerVersionId);
     }
 
     @Test

@@ -145,6 +145,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "versionid":
+        case "versionId": target.getConfiguration().setVersionId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -279,6 +281,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeout": return java.time.Duration.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "versionid":
+        case "versionId": return java.lang.String.class;
         default: return null;
         }
     }
@@ -409,6 +413,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeout": return target.getConfiguration().getTimeout();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "versionid":
+        case "versionId": return target.getConfiguration().getVersionId();
         default: return null;
         }
     }

@@ -58,6 +58,8 @@ public class BlobConfiguration implements Cloneable {
     private String blobName;
     @UriParam(label = "common")
     private String snapshotId;
+    @UriParam(label = "common")
+    private String versionId;
     @UriParam(label = "common", enums = "blockblob,appendblob,pageblob", defaultValue = "blockblob")
     private BlobType blobType = BlobType.blockblob;
     @UriParam(label = "common")
@@ -230,6 +232,20 @@ public class BlobConfiguration implements Cloneable {
 
     public void setSnapshotId(String snapshotId) {
         this.snapshotId = snapshotId;
+    }
+
+    /**
+     * The blob version identifier used to target a specific blob version on read operations (getBlob,
+     * downloadBlobToFile, downloadLink). Requires blob versioning to be enabled on the storage account. When set, the
+     * read targets the version scoped client instead of the live blob. Can also be provided per-exchange via the
+     * {@code CamelAzureStorageBlobVersionId} header.
+     */
+    public String getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(String versionId) {
+        this.versionId = versionId;
     }
 
     /**

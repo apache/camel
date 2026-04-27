@@ -288,6 +288,15 @@ public final class BlobConstants {
                             + " downloadLink) it can be provided as input to target a specific blob snapshot.",
               javaType = "String")
     public static final String BLOB_SNAPSHOT_ID = HEADER_PREFIX + "SnapshotId";
+    @Metadata(description = "The blob version identifier. On read operations (getBlob, downloadBlobToFile,"
+                            + " downloadLink) it can be provided as input to target a specific blob version when"
+                            + " versioning is enabled on the storage account. On the consumer side it is populated"
+                            + " from the blob properties when available.",
+              javaType = "String")
+    public static final String BLOB_VERSION_ID = HEADER_PREFIX + "VersionId";
+    @Metadata(label = "consumer", description = "Flag indicating whether this is the current version of the blob.",
+              javaType = "Boolean")
+    public static final String BLOB_IS_CURRENT_VERSION = HEADER_PREFIX + "IsCurrentVersion";
     @Metadata(description = "(producer) (setBlobTags) The tags to set on the blob as key-value pairs.\n"
                             + "(consumer) The tags retrieved from the blob.",
               javaType = "Map<String,String>")
