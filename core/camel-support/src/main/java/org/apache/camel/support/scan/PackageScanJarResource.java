@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.apache.camel.support.ResourceSupport;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 
 public class PackageScanJarResource extends ResourceSupport {
@@ -33,8 +32,8 @@ public class PackageScanJarResource extends ResourceSupport {
     private final URL url;
     private final URLClassLoader uc;
 
-    public PackageScanJarResource(String scheme, URL url, String location) {
-        super(scheme, url.getFile() + FileUtil.stripPath(location));
+    public PackageScanJarResource(String scheme, URL url, String shortName) {
+        super(scheme, url.getFile() + shortName);
         this.url = url;
         this.uc = new URLClassLoader(new URL[] { url });
     }
