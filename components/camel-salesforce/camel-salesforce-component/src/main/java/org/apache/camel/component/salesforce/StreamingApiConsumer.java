@@ -67,6 +67,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
     private static final ObjectMapper OBJECT_MAPPER = JsonUtils.createObjectMapper();
     private static final String PAYLOAD_PROPERTY = "payload";
     private static final String REPLAY_ID_PROPERTY = "replayId";
+    private static final String EVENT_UUID_PROPERTY = "EventUuid";
     private static final String SCHEMA_PROPERTY = "schema";
     private static final String SOBJECT_PROPERTY = "sobject";
     private static final String TYPE_PROPERTY = "type";
@@ -156,6 +157,11 @@ public class StreamingApiConsumer extends DefaultConsumer {
             in.setHeader(SalesforceConstants.HEADER_SALESFORCE_REPLAY_ID, replayId);
         }
 
+        final Object eventUuid = event.get(EVENT_UUID_PROPERTY);
+        if (eventUuid != null) {
+            in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_UUID, eventUuid);
+        }
+
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CHANGE_EVENT_SCHEMA, data.get(SCHEMA_PROPERTY));
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_TYPE, topicName.substring(topicName.lastIndexOf('/') + 1));
 
@@ -195,6 +201,11 @@ public class StreamingApiConsumer extends DefaultConsumer {
             in.setHeader(SalesforceConstants.HEADER_SALESFORCE_REPLAY_ID, replayId);
         }
 
+        final Object eventUuid = event.get(EVENT_UUID_PROPERTY);
+        if (eventUuid != null) {
+            in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_UUID, eventUuid);
+        }
+
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_PLATFORM_EVENT_SCHEMA, data.get(SCHEMA_PROPERTY));
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_TYPE, topicName.substring(topicName.lastIndexOf('/') + 1));
 
@@ -229,6 +240,11 @@ public class StreamingApiConsumer extends DefaultConsumer {
         in.setHeader(SalesforceConstants.HEADER_SALESFORCE_CREATED_DATE, createdDate);
         if (replayId != null) {
             in.setHeader(SalesforceConstants.HEADER_SALESFORCE_REPLAY_ID, replayId);
+        }
+
+        final Object eventUuid = event.get(EVENT_UUID_PROPERTY);
+        if (eventUuid != null) {
+            in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_UUID, eventUuid);
         }
 
         // get SObject
