@@ -169,7 +169,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
         if (replayId != null) {
             in.setHeader(SalesforceConstants.HEADER_SALESFORCE_REPLAY_ID, replayId);
         }
-        
+
         final Object eventUuid = event.get(EVENT_UUID_PROPERTY);
         if (eventUuid != null) {
             in.setHeader(SalesforceConstants.HEADER_SALESFORCE_EVENT_UUID, eventUuid);
