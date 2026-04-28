@@ -34,9 +34,9 @@ updates:
       - dependency-name: "org.apache.logging.log4j:*"
     groups:
       Micrometer:
-        patterns: ["micrometer*"]
+        patterns: ["io.micrometer:*"]
       Opentelemetry:
-        patterns: ["opentelemetry*"]
+        patterns: ["io:opentelemetry:*"]
       LangChain4j:
         patterns: ["dev.langchain4j:*"]
     open-pull-requests-limit: 20
