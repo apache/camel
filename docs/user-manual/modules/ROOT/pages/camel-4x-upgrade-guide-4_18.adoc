@@ -136,3 +136,38 @@ component documentation for usage examples.
 
 The `camel-olingo2` and `camel-olingo4` component are deprecated.
 This is due the Apache Olingo project is EOL and has been moved to the attic and is no longer maintained.
+
+=== Default deserialization filter tightened
+
+The default `ObjectInputFilter` pattern that ships with the components listed below has been tightened
+to explicitly deny classes under `java.net.**` before allowing the rest of `java.**`, `javax.**` and
+`org.apache.camel.**`. The previous default did not deny `java.net.**`, which meant classes whose
+`hashCode`/`equals` methods perform network I/O (notably `java.net.URL` and `java.net.InetAddress`)
+could be deserialized by the in-code default.
+
+Affected components:
+
+* `camel-jms`, `camel-sjms`, `camel-amqp`, `camel-mina`, `camel-netty`, `camel-netty-http`,
+`camel-vertx-http`, `camel-infinispan`
+* The aggregation repository components: `camel-leveldb`, `camel-cassandraql`, `camel-consul`,
+`camel-sql` (JDBC aggregation repository)
+
+The new default is:
+
+[source,text]
+----
+!java.net.**;java.**;javax.**;org.apache.camel.**;!*
+----
+
+(or `!java.net.**;java.**;org.apache.camel.**;!*` for the aggregation repository components, which
+do not include `javax.**`).
+
+The endpoint-level option `deserializationFilter` and the JVM-wide system property
+`-Djdk.serialFilter` continue to override this default. Applications that have a legitimate need to
+deserialize `java.net.URL` or other `java.net.*` types must configure an explicit filter.
+
+For production deployments handling untrusted serialized payloads, the in-code filter is intended as
+defense-in-depth only. The primary mitigation should be configured at the messaging provider:
+
+* ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
+* ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property

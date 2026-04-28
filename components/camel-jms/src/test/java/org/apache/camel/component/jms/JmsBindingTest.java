@@ -18,6 +18,8 @@ package org.apache.camel.component.jms;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
@@ -136,6 +138,20 @@ public class JmsBindingTest {
                 () -> jmsBindingUnderTest.checkDeserializedClass(new NotAllowedPayload()));
         assertNotNull(ex.getMessage());
         assertEquals(true, ex.getMessage().contains(NotAllowedPayload.class.getName()));
+    }
+
+    @Test
+    public void testDefaultFilterRejectsJavaNetClass() {
+        URI uri = URI.create("http://example.com/");
+        SecurityException ex = assertThrows(SecurityException.class,
+                () -> jmsBindingUnderTest.checkDeserializedClass(uri));
+        assertNotNull(ex.getMessage());
+        assertEquals(true, ex.getMessage().contains("java.net.URI"));
+    }
+
+    @Test
+    public void testDefaultFilterAllowsJavaSqlTimestamp() {
+        assertDoesNotThrow(() -> jmsBindingUnderTest.checkDeserializedClass(new Timestamp(0L)));
     }
 
     @Test

@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan.remote.protostream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
+import java.net.URI;
 
 import com.example.external.NotAllowedSerializable;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -53,6 +54,19 @@ public class DefaultExchangeHolderUtilsTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
             oos.writeObject(new NotAllowedSerializable("blocked"));
+        }
+
+        RuntimeException thrown = assertThrows(RuntimeException.class,
+                () -> DefaultExchangeHolderUtils.deserialize(baos.toByteArray()));
+        Throwable cause = thrown.getCause();
+        assertNotNull(cause);
+    }
+
+    @Test
+    public void testDeserializeRejectsJavaNetClass() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(URI.create("http://example.com/"));
         }
 
         RuntimeException thrown = assertThrows(RuntimeException.class,

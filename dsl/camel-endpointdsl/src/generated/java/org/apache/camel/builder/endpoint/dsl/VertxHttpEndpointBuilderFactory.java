@@ -828,8 +828,8 @@ public interface VertxHttpEndpointBuilderFactory {
          * enabled on the component) and the remote side returns a serialized
          * payload. When not set, the filter configured via the JVM system
          * property jdk.serialFilter is used when present; otherwise a
-         * conservative default filter allowing java., javax. and
-         * org.apache.camel. packages is applied.
+         * conservative default filter denying java.net. and otherwise allowing
+         * java., javax. and org.apache.camel. packages is applied.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
