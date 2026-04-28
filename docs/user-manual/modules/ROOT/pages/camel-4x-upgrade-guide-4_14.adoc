@@ -130,3 +130,38 @@ The addresses, privateFor and Topics parameters for camel-web3j have been define
 
 The `jobLauncher` and `jobRegistry` is now autowired on the component if there is a single instance pre-configured in the application.
 This avoids having to wire this into the Camel component or endpoints.
+
+=== Default deserialization filter tightened
+
+The default `ObjectInputFilter` pattern that ships with the components listed below has been tightened
+to explicitly deny classes under `java.net.**` before allowing the rest of `java.**`, `javax.**` and
+`org.apache.camel.**`. The previous default did not deny `java.net.**`, which meant classes whose
+`hashCode`/`equals` methods perform network I/O (notably `java.net.URL` and `java.net.InetAddress`)
+could be deserialized by the in-code default.
+
+Affected components:
+
+* `camel-jms`, `camel-sjms`, `camel-amqp`, `camel-mina`, `camel-netty-http`, `camel-vertx-http`,
+`camel-infinispan`
+* The aggregation repository components: `camel-leveldb`, `camel-cassandraql`, `camel-consul`,
+`camel-sql` (JDBC aggregation repository)
+
+The new default is:
+
+[source,text]
+----
+!java.net.**;java.**;javax.**;org.apache.camel.**;!*
+----
+
+(or `!java.net.**;java.**;org.apache.camel.**;!*` for the aggregation repository components, which
+do not include `javax.**`).
+
+The endpoint-level option `deserializationFilter` and the JVM-wide system property
+`-Djdk.serialFilter` continue to override this default. Applications that have a legitimate need to
+deserialize `java.net.URL` or other `java.net.*` types must configure an explicit filter.
+
+For production deployments handling untrusted serialized payloads, the in-code filter is intended as
+defense-in-depth only. The primary mitigation should be configured at the messaging provider:
+
+* ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
+* ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property

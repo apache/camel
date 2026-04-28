@@ -84,7 +84,8 @@ public class JmsBinding {
      * everything else. Can be overridden per-endpoint via {@link JmsConfiguration#setDeserializationFilter(String)} or
      * globally via the JVM system property {@code jdk.serialFilter}.
      */
-    static final String DEFAULT_DESERIALIZATION_FILTER = "java.**;javax.**;org.apache.camel.**;!*";
+    static final String DEFAULT_DESERIALIZATION_FILTER
+            = "!java.net.**;java.**;javax.**;org.apache.camel.**;!*";
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
     private final JmsEndpoint endpoint;
