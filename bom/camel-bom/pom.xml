@@ -1454,6 +1454,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jsoup</artifactId>
+        <version>4.21.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jt400</artifactId>
         <version>4.21.0-SNAPSHOT</version>
       </dependency>

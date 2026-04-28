@@ -25,6 +25,7 @@
 ** xref:jandex.adoc[Jandex]
 ** xref:jasypt.adoc[Jasypt]
 ** xref:jfr.adoc[JFR]
+** xref:jsoup.adoc[Jsoup]
 ** xref:jta.adoc[JTA]
 ** xref:langchain4j-tokenizer.adoc[LangChain4j Tokenizer]
 ** xref:leveldb.adoc[LevelDB]

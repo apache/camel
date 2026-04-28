@@ -885,6 +885,33 @@ this by `${base64Decode(Q2FtZWw=)}` which then returns `Camel`.
 If you want to encode the message body then use `${base64Encode()}`, but you can also
 provide a nested function such as `${base64Encode(${header.myKey})}` to encode a header.
 
+=== HTML Functions
+
+From *Camel 4.21* onwards then Camel has built-in HTML functions to make it easy to clean/parse and decode.
+
+This requires having `camel-jsoup` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Function |Response Type |Description
+|`htmlClean()` | `String` |Cleans the HTML to remove unsafe links and JavaScripts from the message body
+|`htmlClean(exp)` | `String` |Cleans the HTML to remove unsafe links and JavaScripts from the expression
+|`htmlDecode()` | `String` |Decodes the HTML as plain text (removing all HTML tags) that is also suitable as input for AI and LLMs
+|`htmlDecode(exp)` | `String` |Decodes the HTML as plain text (removing all HTML tags) that is also suitable as input for AI and LLMs
+|`htmlParse()` | `org.jsoup.nodes.Document` |Parses the HTML as a JSoup object from the message body
+|`htmlParse(exp)` | `org.jsoup.nodes.Document` |Parses the HTML as a JSoup object from the expression
+|====
+
+Camel comes with functions to use `camel-jsoup` JAR for HTML cleaning and decoding.
+
+For example `${htmlDecode(${header.myHtml})}` will from the header with key `myHtml` decode
+the HTML (removing all tags) into a plain text, which can be fed into LLMs etc.
+
+The `${htmlClean()}` function can be used to remove unwanted tags from the HTML to
+https://jsoup.org/cookbook/cleaning-html/safelist-sanitizer[sanitize untrusted HTML].
+
+The `${htmlParse()`} is used to parse the HTML into a Java `org.jsoup.nodes.Document` structure which is similar to `org.w3c.Document`
+but uses the JSoup API instead.
 
 == Built-in Symbols
 
