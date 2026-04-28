@@ -22,6 +22,7 @@ import java.io.InvalidClassException;
 import java.io.ObjectInput;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import com.example.external.NotAllowedSerializable;
@@ -118,6 +119,14 @@ public class MinaConverterTest {
     @Test
     public void testToObjectInputRejectsUnlistedTypes() throws Exception {
         IoBuffer bb = serialize(new NotAllowedSerializable("blocked"));
+        try (ObjectInput in = MinaConverter.toObjectInput(bb)) {
+            assertThrows(InvalidClassException.class, in::readObject);
+        }
+    }
+
+    @Test
+    public void testToObjectInputRejectsJavaNetClass() throws Exception {
+        IoBuffer bb = serialize(URI.create("http://example.com/"));
         try (ObjectInput in = MinaConverter.toObjectInput(bb)) {
             assertThrows(InvalidClassException.class, in::readObject);
         }

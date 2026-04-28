@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.jms;
 
+import java.net.URI;
+import java.sql.Timestamp;
 import java.util.HashMap;
 
 import com.example.external.NotAllowedPayload;
@@ -64,5 +66,21 @@ public class JmsBindingDeserializationFilterTest {
     public void testConfiguredFilterAllowsCustomClass() {
         JmsBinding binding = newBinding("com.example.external.*;java.**;javax.**;org.apache.camel.**;!*");
         assertDoesNotThrow(() -> binding.checkDeserializedClass(new NotAllowedPayload()));
+    }
+
+    @Test
+    public void testDefaultFilterRejectsJavaNetClass() {
+        JmsBinding binding = newBinding(null);
+        URI uri = URI.create("http://example.com/");
+        SecurityException ex = assertThrows(SecurityException.class,
+                () -> binding.checkDeserializedClass(uri));
+        assertNotNull(ex.getMessage());
+        assertTrue(ex.getMessage().contains("java.net.URI"));
+    }
+
+    @Test
+    public void testDefaultFilterAllowsJavaSqlTimestamp() {
+        JmsBinding binding = newBinding(null);
+        assertDoesNotThrow(() -> binding.checkDeserializedClass(new Timestamp(0L)));
     }
 }

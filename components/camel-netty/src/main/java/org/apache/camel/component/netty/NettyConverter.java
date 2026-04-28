@@ -49,7 +49,8 @@ public final class NettyConverter {
      * Default deserialization filter that restricts which classes can be deserialized. Allows standard Java types and
      * Apache Camel types. Can be overridden via the JVM system property {@code jdk.serialFilter}.
      */
-    static final String DEFAULT_DESERIALIZATION_FILTER = "java.**;javax.**;org.apache.camel.**;!*";
+    static final String DEFAULT_DESERIALIZATION_FILTER
+            = "!java.net.**;java.**;javax.**;org.apache.camel.**;!*";
 
     private NettyConverter() {
         //Utility Class
