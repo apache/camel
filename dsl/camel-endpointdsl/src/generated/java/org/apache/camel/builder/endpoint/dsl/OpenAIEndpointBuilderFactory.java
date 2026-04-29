@@ -572,6 +572,40 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Strip ... blocks from model responses (used by reasoning models like
+         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * CamelOpenAIThinkingContent header.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param stripThinking the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder stripThinking(boolean stripThinking) {
+            doSetProperty("stripThinking", stripThinking);
+            return this;
+        }
+        /**
+         * Strip ... blocks from model responses (used by reasoning models like
+         * Qwen3, DeepSeek-R1). The thinking content is stored in the
+         * CamelOpenAIThinkingContent header.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param stripThinking the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder stripThinking(String stripThinking) {
+            doSetProperty("stripThinking", stripThinking);
+            return this;
+        }
+        /**
          * System message to prepend. When set and conversationMemory is
          * enabled, the conversation history is reset.
          * 
@@ -1131,6 +1165,30 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIJsonSchema() {
             return "CamelOpenAIJsonSchema";
+        }
+        /**
+         * Whether to strip ... blocks from the response body.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIStripThinking}.
+         */
+        public String openAIStripThinking() {
+            return "CamelOpenAIStripThinking";
+        }
+        /**
+         * The thinking content extracted from ... blocks in the model response.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIThinkingContent}.
+         */
+        public String openAIThinkingContent() {
+            return "CamelOpenAIThinkingContent";
         }
         /**
          * The model used for the completion response.

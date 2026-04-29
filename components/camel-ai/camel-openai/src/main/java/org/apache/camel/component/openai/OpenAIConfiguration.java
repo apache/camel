@@ -101,6 +101,11 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
     private boolean storeFullResponse = false;
 
+    @UriParam(defaultValue = "false")
+    @Metadata(description = "Strip <think>...</think> blocks from model responses (used by reasoning models like Qwen3, DeepSeek-R1). "
+                            + "The thinking content is stored in the CamelOpenAIThinkingContent header.")
+    private boolean stripThinking = false;
+
     @UriParam(prefix = "additionalBodyProperty.", multiValue = true)
     @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
     private Map<String, Object> additionalBodyProperty;
@@ -333,6 +338,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setStoreFullResponse(boolean storeFullResponse) {
         this.storeFullResponse = storeFullResponse;
+    }
+
+    public boolean isStripThinking() {
+        return stripThinking;
+    }
+
+    public void setStripThinking(boolean stripThinking) {
+        this.stripThinking = stripThinking;
     }
 
     public Map<String, Object> getAdditionalBodyProperty() {

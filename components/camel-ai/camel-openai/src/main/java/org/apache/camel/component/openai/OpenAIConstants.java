@@ -46,8 +46,13 @@ public final class OpenAIConstants {
     public static final String OUTPUT_CLASS = "CamelOpenAIOutputClass";
     @Metadata(description = "The JSON schema to use for structured output validation", javaType = "String")
     public static final String JSON_SCHEMA = "CamelOpenAIJsonSchema";
+    @Metadata(description = "Whether to strip <think>...</think> blocks from the response body", javaType = "Boolean")
+    public static final String STRIP_THINKING = "CamelOpenAIStripThinking";
 
     // Output Headers
+    @Metadata(description = "The thinking content extracted from <think>...</think> blocks in the model response",
+              javaType = "String")
+    public static final String THINKING_CONTENT = "CamelOpenAIThinkingContent";
     @Metadata(description = "The model used for the completion response", javaType = "String")
     public static final String RESPONSE_MODEL = "CamelOpenAIResponseModel";
     @Metadata(description = "The unique identifier for the completion response", javaType = "String")

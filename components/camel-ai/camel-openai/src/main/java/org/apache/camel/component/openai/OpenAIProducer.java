@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,6 +71,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final Pattern THINK_PATTERN = Pattern.compile("^\\s*<think>(.*?)</think>\\s*", Pattern.DOTALL);
 
     public OpenAIProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -383,6 +386,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             exchange.getMessage().setBody(response.choices().get(0).message().toolCalls());
         } else {
             String content = response.choices().get(0).message().content().orElse("");
+            content = processThinkingContent(exchange, content, config);
             exchange.getMessage().setBody(content);
         }
         setResponseHeaders(exchange.getMessage(), response);
@@ -415,6 +419,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 LOG.debug("Agentic loop completed after {} iterations, finish reason: {}", iteration,
                         getFinishReasonString(choice));
                 String content = choice.message().content().orElse("");
+                content = processThinkingContent(exchange, content, config);
                 exchange.getMessage().setBody(content);
                 setResponseHeaders(exchange.getMessage(), response);
                 exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
@@ -728,6 +733,23 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             // treat as literal string
             return value;
         }
+    }
+
+    private String processThinkingContent(Exchange exchange, String content, OpenAIConfiguration config) {
+        Boolean strip = resolveParameter(
+                exchange.getIn(), OpenAIConstants.STRIP_THINKING, config.isStripThinking(), Boolean.class);
+        if (!Boolean.TRUE.equals(strip)) {
+            return content;
+        }
+        Matcher matcher = THINK_PATTERN.matcher(content);
+        if (matcher.find()) {
+            String thinking = matcher.group(1).trim();
+            if (!thinking.isEmpty()) {
+                exchange.getMessage().setHeader(OpenAIConstants.THINKING_CONTENT, thinking);
+            }
+            return matcher.replaceFirst("").trim();
+        }
+        return content;
     }
 
     private <T> T resolveParameter(Message message, String headerName, T defaultValue, Class<T> type) {
