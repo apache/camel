@@ -333,7 +333,7 @@
         <jira-rest-client-api-version>6.0.2</jira-rest-client-api-version>
         <jline-version>4.0.13</jline-version>
         <libthrift-version>0.22.0</libthrift-version>
-        <jodatime2-version>2.14.1</jodatime2-version>
+        <jodatime2-version>2.14.2</jodatime2-version>
         <jolokia-version>2.5.1</jolokia-version>
         <jolt-version>0.1.8</jolt-version>
         <jool-version>0.9.15</jool-version>
