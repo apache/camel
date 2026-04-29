@@ -84,6 +84,47 @@ class ConfigurationValidateToolsTest {
     }
 
     @Test
+    void acceptsPlaceholderValuesAcrossTypes() {
+        ConfigurationValidateTools tools = createTools();
+
+        // Property placeholders ({{...}}) should be accepted as a value for any option type
+        // (boolean, integer, string, ...) since the actual value is resolved at runtime.
+        String input = "camel.main.streamCachingEnabled={{myCacheEnabled}}\n"
+                       + "camel.main.durationMaxSeconds={{myDurationSeconds}}\n"
+                       + "camel.main.uuidGenerator={{myUuidGenerator}}";
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate(input, null, null, null);
+
+        assertThat(result.summary().total()).isEqualTo(3);
+        assertThat(result.summary().valid()).isEqualTo(3);
+        assertThat(result.summary().errors()).isZero();
+        assertThat(result.properties())
+                .allSatisfy(info -> {
+                    assertThat(info.accepted()).isTrue();
+                    assertThat(info.valid()).isTrue();
+                    assertThat(info.errors()).isZero();
+                    assertThat(info.issues()).isEmpty();
+                });
+    }
+
+    @Test
+    void acceptsSpringStylePlaceholderValue() {
+        ConfigurationValidateTools tools = createTools();
+
+        // Spring/Quarkus style ${...} placeholders must also be accepted for typed options.
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate("camel.main.streamCachingEnabled=${my.cache.enabled}", null, null,
+                        null);
+
+        ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
+        assertThat(info.accepted()).isTrue();
+        assertThat(info.valid()).isTrue();
+        assertThat(info.errors()).isZero();
+        assertThat(info.issues()).isEmpty();
+    }
+
+    @Test
     void skipsBlankLinesAndComments() {
         ConfigurationValidateTools tools = createTools();
 
