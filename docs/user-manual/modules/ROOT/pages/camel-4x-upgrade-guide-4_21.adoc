@@ -88,3 +88,7 @@ defense-in-depth only. The primary mitigation should be configured at the messag
 === camel-stomp removal
 
 Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.
+
+=== camel-aws-xray removal
+
+Camel AWS X-Ray was deprecated with Camel 4.17. Amazon Web Services X-Ray service is in maintenance mode since February 2026. The component is now removed.

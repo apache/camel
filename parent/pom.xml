@@ -81,7 +81,6 @@
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
         <aws-java-sdk2-version>2.43.0</aws-java-sdk2-version>
-        <aws-xray-version>2.21.0</aws-xray-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.36</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
@@ -102,10 +101,6 @@
         <cassandra-driver-version>4.19.2</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
-        <!-- This is exclusively required in camel-aws-xray as the dependency is leaking a build time annotation
-            TODO: remove when this issue is solved https://github.com/aws/aws-xray-sdk-java/issues/441
-        -->
-        <checker-framework-version>3.54.1</checker-framework-version>
         <chicory-version>1.7.5</chicory-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>4.10.0</citrus-version>
@@ -815,11 +810,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-aws-security-hub</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-aws-xray</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
