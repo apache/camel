@@ -180,6 +180,16 @@ public class SubscriptionHelper extends ServiceSupport {
             LOG.debug("[CHANNEL:META_SUBSCRIBE]: {}", message);
             var channelName = message.getOrDefault(SUBSCRIPTION_FIELD, "").toString();
             if (!message.isSuccessful()) {
+                if (channelName.isEmpty()) {
+                    Map<String, Object> advice = message.getAdvice();
+                    if (advice != null && "handshake".equals(advice.get("reconnect"))) {
+                        LOG.warn("Subscription failure: empty channel, advice == handshake, so handshaking");
+                        client.handshake();
+                    } else {
+                        LOG.error("Subscription failure: empty channel and no handshake advice");
+                    }
+                    return;
+                }
                 LOG.warn("Subscription failure: {}", message);
                 var consumers = channelToConsumers.getOrDefault(channelName, emptySet());
                 consumers.stream().findFirst().ifPresent(salesforceConsumer -> subscriptionFailed(salesforceConsumer, message));
