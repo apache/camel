@@ -169,7 +169,6 @@
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
         <exec-maven-plugin-version>3.6.3</exec-maven-plugin-version>
         <fastjson-version>2.0.61</fastjson-version>
-        <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
         <flink-version>1.20.3</flink-version>
@@ -4112,11 +4111,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>${findbugs-maven-plugin-version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
                     <artifactId>properties-maven-plugin</artifactId>
                     <version>${properties-maven-plugin-version}</version>
                 </plugin>
@@ -4192,11 +4186,6 @@
                     <maxmemory>500m</maxmemory>
                     <source>${jdk.version}</source>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${findbugs-maven-plugin-version}</version>
             </plugin>
             <plugin>
                 <groupId>org.owasp</groupId>
