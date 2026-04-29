@@ -28,7 +28,6 @@ import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.handler.PropagatingReceiverTracingObservationHandler;
 import io.micrometer.tracing.handler.PropagatingSenderTracingObservationHandler;
 import io.micrometer.tracing.propagation.Propagator;
-import io.micrometer.tracing.test.simple.SimpleTracer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.JdkService;
@@ -81,8 +80,8 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
             tracer = CamelContextHelper.findSingleByType(getCamelContext(), Tracer.class);
         }
         if (tracer == null) {
-            tracer = new SimpleTracer();
-            LOG.warn("No tracer was provided. A default inmemory tracer is used. " +
+            tracer = Tracer.NOOP;
+            LOG.warn("No tracer was provided. A default NOOP tracer is used. " +
                      "This can be useful for development only, avoid this in a production environment.");
         }
         if (observationRegistry == null) {

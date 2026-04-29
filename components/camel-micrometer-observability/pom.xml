@@ -51,12 +51,6 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing</artifactId>
         </dependency>
-        <!-- Used as default development tracer option -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-test</artifactId>
-        </dependency>
-
 
         <!-- START Required to validate a real context propagation implementation -->
         <dependency>
@@ -75,6 +69,11 @@
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-sdk-testing</artifactId>
             <version>${opentelemetry-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
