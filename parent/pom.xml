@@ -132,7 +132,6 @@
         <commons-validator-version>1.10.1</commons-validator-version>
         <compress-lzf-version>1.2.0</compress-lzf-version>
         <consul-client-version>1.12.0</consul-client-version>
-        <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <couchbase-client-version>3.11.2</couchbase-client-version>
         <curator-version>5.9.0</curator-version>
         <cxf-version>4.2.0</cxf-version>
@@ -4079,34 +4078,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>${cobertura-maven-plugin-version}</version>
-                    <configuration>
-                        <check>
-                            <branchRate>85</branchRate>
-                            <lineRate>85</lineRate>
-                            <haltOnFailure>false</haltOnFailure>
-                            <totalBranchRate>85</totalBranchRate>
-                            <totalLineRate>85</totalLineRate>
-                            <packageLineRate>85</packageLineRate>
-                            <packageBranchRate>85</packageBranchRate>
-                            <regexes>
-                                <regex>
-                                    <pattern>org.apache.camel.impl.*</pattern>
-                                    <branchRate>90</branchRate>
-                                    <lineRate>80</lineRate>
-                                </regex>
-                                <regex>
-                                    <pattern>org.apache.camel.builder.*</pattern>
-                                    <branchRate>40</branchRate>
-                                    <lineRate>30</lineRate>
-                                </regex>
-                            </regexes>
-                        </check>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${exec-maven-plugin-version}</version>
                 </plugin>
@@ -4162,16 +4133,6 @@
 
     <reporting>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>${cobertura-maven-plugin-version}</version>
-                <configuration>
-                    <formats>
-                        <format>html</format>
-                    </formats>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
