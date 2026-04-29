@@ -16076,50 +16076,6 @@ public class StaticEndpointBuilders {
         return StitchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Stomp (camel-stomp)
-     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * Syntax: <code>stomp:destination</code>
-     * 
-     * Path parameter: destination (required)
-     * Name of the queue
-     * 
-     * @param path destination
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String path) {
-        return stomp("stomp", path);
-    }
-    /**
-     * Stomp (camel-stomp)
-     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * Syntax: <code>stomp:destination</code>
-     * 
-     * Path parameter: destination (required)
-     * Name of the queue
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path destination
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String componentName, String path) {
-        return StompEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
      * 

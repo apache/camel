@@ -4805,20 +4805,6 @@ public interface ComponentsBuilderFactory {
         return StitchComponentBuilderFactory.stitch();
     }
     /**
-     * Stomp (camel-stomp)
-     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * @return the dsl builder
-     */
-    static StompComponentBuilderFactory.StompComponentBuilder stomp() {
-        return StompComponentBuilderFactory.stomp();
-    }
-    /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
      * 

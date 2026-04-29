@@ -364,7 +364,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.StAXBuilders,
             org.apache.camel.builder.endpoint.dsl.StepFunctions2EndpointBuilderFactory.StepFunctions2Builders,
             org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.StitchBuilders,
-            org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.StompBuilders,
             org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory.StreamBuilders,
             org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory.StringTemplateBuilders,
             org.apache.camel.builder.endpoint.dsl.StripeEndpointBuilderFactory.StripeBuilders,

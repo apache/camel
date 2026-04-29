@@ -84,3 +84,7 @@ defense-in-depth only. The primary mitigation should be configured at the messag
 
 * ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
 * ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property
+
+=== camel-stomp removal
+
+Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.
