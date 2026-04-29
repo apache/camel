@@ -36,7 +36,7 @@ updates:
       Micrometer:
         patterns: ["io.micrometer:*"]
       Opentelemetry:
-        patterns: ["io:opentelemetry:*"]
+        patterns: ["io.opentelemetry:*"]
       LangChain4j:
         patterns: ["dev.langchain4j:*"]
     open-pull-requests-limit: 20
