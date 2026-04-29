@@ -120,15 +120,12 @@
         <commons-collections4-version>4.5.0</commons-collections4-version>
         <commons-compress-version>1.28.0</commons-compress-version>
         <commons-csv-version>1.14.1</commons-csv-version>
-        <commons-cli-version>1.4</commons-cli-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-dbcp2-version>2.14.0</commons-dbcp2-version>
         <commons-exec-version>1.6.0</commons-exec-version>
         <commons-io-version>2.22.0</commons-io-version>
-        <commons-lang-version>2.6</commons-lang-version>
         <commons-lang3-version>3.20.0</commons-lang3-version>
         <commons-logging-version>1.3.6</commons-logging-version>
-        <commons-math3-version>3.6.1</commons-math3-version>
         <commons-net-version>3.13.0</commons-net-version>
         <commons-pool2-version>2.13.1</commons-pool2-version>
         <commons-text-version>1.15.0</commons-text-version>
@@ -182,17 +179,6 @@
         <ftpserver-version>1.2.1</ftpserver-version>
         <freemarker-version>2.3.34</freemarker-version>
         <fory-version>0.17.0</fory-version>
-        <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
-        <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
-        <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
-        <geronimo-el-spec-version>1.0.1</geronimo-el-spec-version>
-        <geronimo-interceptor-1.1-spec-version>1.0</geronimo-interceptor-1.1-spec-version>
-        <geronimo-interceptor-1.2-spec-version>1.0</geronimo-interceptor-1.2-spec-version>
-        <geronimo-j2ee-connector-spec-version>2.0.0</geronimo-j2ee-connector-spec-version>
-        <geronimo-j2ee-jacc-spec-version>1.1</geronimo-j2ee-jacc-spec-version>
-        <geronimo-j2ee-management-spec-version>1.1</geronimo-j2ee-management-spec-version>
-        <geronimo-jcdi-1.0-spec-version>1.0</geronimo-jcdi-1.0-spec-version>
-        <geronimo-jcdi-1.1-spec-version>1.0</geronimo-jcdi-1.1-spec-version>
         <j8583-version>3.0.1</j8583-version>
         <jakarta-jms-api-version>3.1.0</jakarta-jms-api-version>
         <jakarta-persistence-api-version>3.2.0</jakarta-persistence-api-version>
@@ -229,15 +215,12 @@
         <graaljs-version>25.0.3</graaljs-version>
         <graphql-java-version>26.0</graphql-java-version>
         <greenmail-version>2.1.8</greenmail-version>
-        <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>5.0.5</groovy-version>
         <grpc-version>1.80.0</grpc-version>
         <grpc-google-auth-library-version>1.41.0</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.5.1</grpc-java-jwt-version>
-        <grpc-netty-tcnative-boringssl-static-version>2.0.59.Final</grpc-netty-tcnative-boringssl-static-version>
         <gson-version>2.14.0</gson-version>
         <guava-version>33.6.0-jre</guava-version>
-        <guice3-version>3.0</guice3-version>
         <h2-version>2.4.240</h2-version>
         <hadoop3-version>3.5.0</hadoop3-version>
         <hamcrest-version>3.0</hamcrest-version>
@@ -253,9 +236,7 @@
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>9.1.0.Final</hibernate-validator-version>
         <hibernate-version>6.3.2.Final</hibernate-version>
-        <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.4</hsqldb-version>
-        <httpunit-version>1.7</httpunit-version>
         <httpcore-version>5.4.2</httpcore-version>
         <httpclient-version>5.5.2</httpclient-version>
         <httpcore4-version>4.4.16</httpcore4-version>
@@ -295,7 +276,6 @@
         <jnats-version>2.25.2</jnats-version>
         <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
-        <javaparser-version>3.13.10</javaparser-version>
         <javapoet-version>1.13.0</javapoet-version>
         <javassist-version>3.31.0-GA</javassist-version>
         <jakarta-el-api-version>6.0.1</jakarta-el-api-version>
@@ -312,9 +292,7 @@
         <glassfish-jaxb-runtime-version>4.0.7</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>4.1.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
-        <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.6.3.Final</jboss-logging-version>
-        <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi-version>7.6.1.Final</jboss-transaction-spi-version>
         <jboss-xnio-version>3.8.14.Final</jboss-xnio-version>
         <jcache-version>1.1.1</jcache-version>
@@ -328,8 +306,6 @@
         <jgit-version>7.6.0.202603022253-r</jgit-version>
         <jgroups-version>5.5.4.Final</jgroups-version>
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
-        <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
-        <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <jira-rest-client-api-version>6.0.2</jira-rest-client-api-version>
         <jline-version>4.0.13</jline-version>
         <libthrift-version>0.22.0</libthrift-version>
@@ -340,7 +316,6 @@
         <!-- jooq 3.20 is Java 21+ only so we need to be 3.19.x -->
         <jooq-version>3.19.30</jooq-version>
         <joor-version>0.9.15</joor-version>
-        <jose4j-version>0.9.3</jose4j-version>
         <johnzon-version>2.0.2</johnzon-version>
         <jslt-version>0.1.14</jslt-version>
         <jsmpp-version>3.0.2</jsmpp-version>
@@ -381,7 +356,6 @@
         <log4j2-version>2.25.4</log4j2-version>
         <logback-version>1.5.32</logback-version>
         <lucene-version>9.12.3</lucene-version>
-        <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.7.0</littleproxy-version>
         <lz4-java-version>1.11.0</lz4-java-version>
         <mapstruct-version>1.6.3</mapstruct-version>
@@ -418,14 +392,11 @@
         <milo-version>1.1.2</milo-version>
         <milvus-client-version>2.6.18</milvus-client-version>
         <mina-version>2.2.6</mina-version>
-        <minidns-version>0.3.4</minidns-version>
-        <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.6.0</minio-version>
         <mock-javamail-version>1.9</mock-javamail-version>
         <mockito-version>5.23.0</mockito-version>
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.6.5</mongo-java-driver-version>
-        <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
         <msal4j-version>1.24.1</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
@@ -434,7 +405,6 @@
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>6.0.5</neo4j-version>
         <netty-version>4.2.12.Final</netty-version>
-        <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>2.0.1</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.9</nimbus-jose-jwt>
         <olingo2-version>2.0.13</olingo2-version>
@@ -475,7 +445,6 @@
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
         <protobuf-version>4.33.2</protobuf-version>
         <protobuf-maven-plugin-version>4.1.3</protobuf-maven-plugin-version>
-        <protonpack-version>1.8</protonpack-version>
         <prowide-version>SRU2025-10.3.6</prowide-version>
         <pubnub-version>13.1.1</pubnub-version>
         <pulsar-version>4.2.0</pulsar-version>
@@ -543,7 +512,6 @@
         <swagger-java-parser-version>1.0.65</swagger-java-parser-version>
         <swagger-openapi3-java-parser-version>2.1.41</swagger-openapi3-java-parser-version>
         <swagger-request-validator-version>2.46.1</swagger-request-validator-version>
-        <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <tahu-version>1.0.19</tahu-version>
         <tamboui-version>0.2.0</tamboui-version>
@@ -555,12 +523,10 @@
         <undertow-version>2.4.0.RC4</undertow-version>
         <undertow-ee-version>2.0.0.RC1</undertow-ee-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
-        <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>1.0.0</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.4.1</velocity-version>
         <vertx-version>4.5.26</vertx-version>
-        <vysper-version>0.7</vysper-version>
         <weaviate-client-version>5.5.0</weaviate-client-version>
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
@@ -569,7 +535,6 @@
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>7.1.1</woodstox-core-version>
         <xbean-spring-version>4.30</xbean-spring-version>
-        <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
         <xchange-version>5.2.4</xchange-version>
         <xerces-version>2.12.2</xerces-version>
         <!-- needed to manage the xml-apis version in camel-xmljson -->
