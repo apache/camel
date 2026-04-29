@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
+import java.net.URI;
 
 import com.example.external.NotAllowedSerializable;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,12 @@ public class VertxHttpHelperDeserializationFilterTest {
         InputStream is = serialize(new NotAllowedSerializable("blocked"));
         String filter = "java.**;!*";
         assertThrows(InvalidClassException.class, () -> VertxHttpHelper.deserializeJavaObjectFromStream(is, filter));
+    }
+
+    @Test
+    public void testDefaultFilterRejectsJavaNetClass() throws Exception {
+        InputStream is = serialize(URI.create("http://example.com/"));
+        assertThrows(InvalidClassException.class, () -> VertxHttpHelper.deserializeJavaObjectFromStream(is));
     }
 
     private static InputStream serialize(Object value) throws Exception {

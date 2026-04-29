@@ -216,7 +216,8 @@ public class SjmsEndpoint extends DefaultEndpoint
                             + " alone does not prevent gadget-chain execution that happens inside the provider's ObjectInputStream;"
                             + " to block such attacks, also configure the JMS provider's own deserialization filter and/or"
                             + " the JVM-wide -Djdk.serialFilter. When this option is not set and no JVM-wide filter is configured,"
-                            + " a conservative default filter allowing java.**, javax.** and org.apache.camel.** is applied.")
+                            + " a conservative default filter denying java.net.** and otherwise allowing java.**, javax.**"
+                            + " and org.apache.camel.** is applied.")
     private String deserializationFilter;
     @UriParam(label = "advanced", enums = "Bytes,Map,Object,Stream,Text",
               description = "Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages."
@@ -768,8 +769,8 @@ public class SjmsEndpoint extends DefaultEndpoint
      * pattern is evaluated after the JMS provider has deserialized the payload, so this option alone does not prevent
      * gadget-chain execution that happens inside the provider's {@code ObjectInputStream}; to block such attacks, also
      * configure the JMS provider's own deserialization filter and/or the JVM-wide {@code -Djdk.serialFilter}. When this
-     * option is not set and no JVM-wide filter is configured, a conservative default filter allowing {@code java.**},
-     * {@code javax.**} and {@code org.apache.camel.**} is applied.
+     * option is not set and no JVM-wide filter is configured, a conservative default filter denying {@code java.net.**}
+     * and otherwise allowing {@code java.**}, {@code javax.**} and {@code org.apache.camel.**} is applied.
      */
     public void setDeserializationFilter(String deserializationFilter) {
         this.deserializationFilter = deserializationFilter;
