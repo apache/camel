@@ -155,5 +155,19 @@ public enum BlobOperationsDefinition {
     /**
      * Retrieves user-defined index tags from a blob.
      */
-    getBlobTags
+    getBlobTags,
+    /**
+     * Sets a legal hold on a blob. Legal holds prevent blob modification and deletion until the hold is explicitly
+     * cleared. The legal hold flag is read from the {@code CamelAzureStorageBlobLegalHold} header or the message body
+     * (Boolean).
+     */
+    setBlobLegalHold,
+    /**
+     * Sets a time-based immutability policy on a blob. The policy expiry time is read from the
+     * {@code CamelAzureStorageBlobImmutabilityPolicyExpiryTime} header (OffsetDateTime) and the policy mode from the
+     * {@code CamelAzureStorageBlobImmutabilityPolicyMode} header (BlobImmutabilityPolicyMode, defaults to UNLOCKED). A
+     * pre-built {@code BlobImmutabilityPolicy} can also be passed via the message body or the
+     * {@code CamelAzureStorageBlobImmutabilityPolicy} header.
+     */
+    setBlobImmutabilityPolicy
 }

@@ -35,6 +35,9 @@ import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.AppendBlobItem;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobHttpHeaders;
+import com.azure.storage.blob.models.BlobImmutabilityPolicy;
+import com.azure.storage.blob.models.BlobImmutabilityPolicyMode;
+import com.azure.storage.blob.models.BlobLegalHoldResult;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
@@ -659,6 +662,85 @@ public class BlobOperations {
                 .httpHeaders(response.getHeaders());
 
         return BlobOperationResponse.create(tags, exchangeHeaders.toMap());
+    }
+
+    public BlobOperationResponse setBlobLegalHold(final Exchange exchange) {
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Setting legal hold on blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange),
+                    exchange);
+        }
+
+        Boolean legalHold = configurationProxy.getBlobLegalHold(exchange);
+        if (legalHold == null) {
+            legalHold = exchange.getIn().getBody(Boolean.class);
+        }
+        if (legalHold == null) {
+            throw new IllegalArgumentException(
+                    "Legal hold flag must be specified either as the message body (Boolean) or via the "
+                                               + BlobConstants.BLOB_LEGAL_HOLD + " header.");
+        }
+
+        final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
+
+        final Response<BlobLegalHoldResult> response = client.setLegalHold(legalHold, commonRequestOptions.getTimeout());
+
+        final boolean hasLegalHold = response.getValue() != null && response.getValue().hasLegalHold();
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.create()
+                .blobLegalHold(hasLegalHold)
+                .httpHeaders(response.getHeaders());
+
+        return BlobOperationResponse.create(hasLegalHold, exchangeHeaders.toMap());
+    }
+
+    public BlobOperationResponse setBlobImmutabilityPolicy(final Exchange exchange) {
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Setting immutability policy on blob [{}] from exchange [{}]...",
+                    configurationProxy.getBlobName(exchange), exchange);
+        }
+
+        BlobImmutabilityPolicy policy = configurationProxy.getBlobImmutabilityPolicy(exchange);
+        if (policy == null) {
+            final Object body = exchange.getIn().getBody();
+            if (body instanceof BlobImmutabilityPolicy) {
+                policy = (BlobImmutabilityPolicy) body;
+            }
+        }
+        if (policy == null) {
+            final OffsetDateTime expiryTime = configurationProxy.getBlobImmutabilityPolicyExpiryTime(exchange);
+            if (expiryTime == null) {
+                throw new IllegalArgumentException(
+                        "Immutability policy expiry time must be specified via the "
+                                                   + BlobConstants.BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME
+                                                   + " header, or a pre-built BlobImmutabilityPolicy must be provided via the message body or "
+                                                   + BlobConstants.BLOB_IMMUTABILITY_POLICY + " header.");
+            }
+            BlobImmutabilityPolicyMode policyMode = configurationProxy.getBlobImmutabilityPolicyMode(exchange);
+            if (policyMode == null) {
+                policyMode = BlobImmutabilityPolicyMode.UNLOCKED;
+            }
+            policy = new BlobImmutabilityPolicy().setExpiryTime(expiryTime).setPolicyMode(policyMode);
+        }
+
+        final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
+
+        final Response<BlobImmutabilityPolicy> response = client.setImmutabilityPolicy(
+                policy,
+                commonRequestOptions.getBlobRequestConditions(),
+                commonRequestOptions.getTimeout());
+
+        final BlobImmutabilityPolicy result = response.getValue();
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.create()
+                .httpHeaders(response.getHeaders());
+        if (result != null) {
+            exchangeHeaders.blobImmutabilityPolicyExpiryTime(result.getExpiryTime())
+                    .blobImmutabilityPolicyMode(result.getPolicyMode());
+        }
+
+        return BlobOperationResponse.create(result, exchangeHeaders.toMap());
     }
 
     private DownloadRetryOptions getDownloadRetryOptions(final BlobConfigurationOptionsProxy configurationProxy) {

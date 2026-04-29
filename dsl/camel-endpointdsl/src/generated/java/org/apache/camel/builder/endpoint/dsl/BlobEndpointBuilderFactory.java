@@ -4452,6 +4452,69 @@ public interface BlobEndpointBuilderFactory {
         public String azureStorageBlobTagFilter() {
             return "CamelAzureStorageBlobTagFilter";
         }
+        /**
+         * (producer) (setBlobLegalHold) The legal hold status to set on the
+         * blob. When set to true the blob is protected from modification and
+         * deletion until the hold is cleared by setting the value to false.
+         * (consumer) The legal hold status returned by the setBlobLegalHold
+         * operation.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AzureStorageBlobLegalHold}.
+         */
+        public String azureStorageBlobLegalHold() {
+            return "CamelAzureStorageBlobLegalHold";
+        }
+        /**
+         * (setBlobImmutabilityPolicy) A pre-built BlobImmutabilityPolicy object
+         * that overrides the policy expiry time and mode headers when present.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.blob.models.BlobImmutabilityPolicy} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobImmutabilityPolicy}.
+         */
+        public String azureStorageBlobImmutabilityPolicy() {
+            return "CamelAzureStorageBlobImmutabilityPolicy";
+        }
+        /**
+         * (setBlobImmutabilityPolicy) The expiry time of the time-based
+         * retention policy. Required unless a pre-built BlobImmutabilityPolicy
+         * is provided via the body or the
+         * CamelAzureStorageBlobImmutabilityPolicy header.
+         * 
+         * The option is a: {@code java.time.OffsetDateTime} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobImmutabilityPolicyExpiryTime}.
+         */
+        public String azureStorageBlobImmutabilityPolicyExpiryTime() {
+            return "CamelAzureStorageBlobImmutabilityPolicyExpiryTime";
+        }
+        /**
+         * (setBlobImmutabilityPolicy) The mode of the immutability policy:
+         * UNLOCKED (default, can be modified or deleted), LOCKED (cannot be
+         * modified or shortened, only extended), or MUTABLE.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.blob.models.BlobImmutabilityPolicyMode} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobImmutabilityPolicyMode}.
+         */
+        public String azureStorageBlobImmutabilityPolicyMode() {
+            return "CamelAzureStorageBlobImmutabilityPolicyMode";
+        }
     }
     static BlobEndpointBuilder endpointBuilder(String componentName, String path) {
         class BlobEndpointBuilderImpl extends AbstractEndpointBuilder implements BlobEndpointBuilder, AdvancedBlobEndpointBuilder {

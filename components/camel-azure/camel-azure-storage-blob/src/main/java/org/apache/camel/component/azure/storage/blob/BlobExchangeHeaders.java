@@ -28,6 +28,8 @@ import com.azure.storage.blob.models.AppendBlobItem;
 import com.azure.storage.blob.models.ArchiveStatus;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobHttpHeaders;
+import com.azure.storage.blob.models.BlobImmutabilityPolicy;
+import com.azure.storage.blob.models.BlobImmutabilityPolicyMode;
 import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRequestConditions;
@@ -511,8 +513,39 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_TAG_FILTER, String.class);
     }
 
+    public static Boolean getBlobLegalHoldFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_LEGAL_HOLD, Boolean.class);
+    }
+
+    public static BlobImmutabilityPolicy getBlobImmutabilityPolicyFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_IMMUTABILITY_POLICY, BlobImmutabilityPolicy.class);
+    }
+
+    public static OffsetDateTime getBlobImmutabilityPolicyExpiryTimeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME, OffsetDateTime.class);
+    }
+
+    public static BlobImmutabilityPolicyMode getBlobImmutabilityPolicyModeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOB_IMMUTABILITY_POLICY_MODE, BlobImmutabilityPolicyMode.class);
+    }
+
     public BlobExchangeHeaders blobTags(final Map<String, String> tags) {
         headers.put(BlobConstants.BLOB_TAGS, tags);
+        return this;
+    }
+
+    public BlobExchangeHeaders blobLegalHold(final Boolean legalHold) {
+        headers.put(BlobConstants.BLOB_LEGAL_HOLD, legalHold);
+        return this;
+    }
+
+    public BlobExchangeHeaders blobImmutabilityPolicyExpiryTime(final OffsetDateTime expiryTime) {
+        headers.put(BlobConstants.BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME, expiryTime);
+        return this;
+    }
+
+    public BlobExchangeHeaders blobImmutabilityPolicyMode(final BlobImmutabilityPolicyMode policyMode) {
+        headers.put(BlobConstants.BLOB_IMMUTABILITY_POLICY_MODE, policyMode);
         return this;
     }
 }

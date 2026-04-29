@@ -168,6 +168,8 @@ and existing blocks together. Any blocks not specified in the block list and per
 |`createBlobSnapshot`|`Common`|Creates a read-only snapshot of a blob. The snapshot ID is returned in the `CamelAzureStorageBlobSnapshotId` header.
 |`setBlobTags`|`Common`|Sets user-defined index tags on a blob. Tags are key-value pairs that can be used to filter and query blobs across containers. Tags can be provided via the `CamelAzureStorageBlobTags` header or as the message body (`Map<String, String>`).
 |`getBlobTags`|`Common`|Retrieves user-defined index tags from a blob. The tags are returned as the message body (`Map<String, String>`) and also set in the `CamelAzureStorageBlobTags` header.
+|`setBlobLegalHold`|`Common`|Sets a legal hold on a blob. The legal hold flag (`Boolean`) is provided via the `CamelAzureStorageBlobLegalHold` header or the message body. While a legal hold is set, the blob cannot be modified or deleted until the hold is explicitly cleared by calling the operation again with `false`.
+|`setBlobImmutabilityPolicy`|`Common`|Sets a time-based immutability policy on a blob. The policy expiry time (`OffsetDateTime`) is read from the `CamelAzureStorageBlobImmutabilityPolicyExpiryTime` header and the policy mode (`BlobImmutabilityPolicyMode`, defaults to `UNLOCKED`) from `CamelAzureStorageBlobImmutabilityPolicyMode`. A pre-built `BlobImmutabilityPolicy` may also be supplied via the message body or `CamelAzureStorageBlobImmutabilityPolicy` header.
 |===
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
@@ -790,6 +792,37 @@ from("direct:findBlobsByTags")
   .setHeader(BlobConstants.BLOB_TAG_FILTER, constant("\"Environment\" = 'Production' AND \"Status\" = 'Active'"))
   .to("azure-storage-blob://camelazure?operation=findBlobsByTags&serviceClient=#client")
   .log("Matching blobs: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `setBlobLegalHold`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+// place a legal hold on the blob (e.g. for compliance / quarantine workflows)
+from("direct:setLegalHold")
+  .setHeader(BlobConstants.BLOB_LEGAL_HOLD, constant(true))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobLegalHold&serviceClient=#client")
+  .to("mock:result");
+
+// clear the legal hold once the workflow is complete
+from("direct:clearLegalHold")
+  .setHeader(BlobConstants.BLOB_LEGAL_HOLD, constant(false))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobLegalHold&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `setBlobImmutabilityPolicy`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+// apply a 7-day unlocked time-based retention policy (can be modified or deleted)
+from("direct:setImmutabilityPolicy")
+  .setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME, constant(OffsetDateTime.now().plusDays(7)))
+  .setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_MODE, constant(BlobImmutabilityPolicyMode.UNLOCKED))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobImmutabilityPolicy&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 

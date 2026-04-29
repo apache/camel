@@ -40,6 +40,8 @@ import com.azure.storage.blob.models.AppendBlobItem;
 import com.azure.storage.blob.models.AppendBlobRequestConditions;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobHttpHeaders;
+import com.azure.storage.blob.models.BlobImmutabilityPolicy;
+import com.azure.storage.blob.models.BlobLegalHoldResult;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
@@ -380,6 +382,19 @@ public class BlobClientWrapper {
             options.setRequestConditions(requestConditions);
         }
         return client.getTagsWithResponse(options, timeout, Context.NONE);
+    }
+
+    public Response<BlobLegalHoldResult> setLegalHold(
+            final boolean legalHold,
+            final Duration timeout) {
+        return client.setLegalHoldWithResponse(legalHold, timeout, Context.NONE);
+    }
+
+    public Response<BlobImmutabilityPolicy> setImmutabilityPolicy(
+            final BlobImmutabilityPolicy policy,
+            final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+        return client.setImmutabilityPolicyWithResponse(policy, requestConditions, timeout, Context.NONE);
     }
 
     public BlobLeaseClient getLeaseClient() {

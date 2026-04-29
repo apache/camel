@@ -306,6 +306,27 @@ public final class BlobConstants {
                             + " index tags, for example `\"Environment\" = 'Production' AND \"Status\" = 'Active'`.",
               javaType = "String")
     public static final String BLOB_TAG_FILTER = HEADER_PREFIX + "TagFilter";
+    @Metadata(description = "(producer) (setBlobLegalHold) The legal hold status to set on the blob. When set to true the blob is"
+                            + " protected from modification and deletion until the hold is cleared by setting the value to false.\n"
+                            + "(consumer) The legal hold status returned by the setBlobLegalHold operation.",
+              javaType = "Boolean")
+    public static final String BLOB_LEGAL_HOLD = HEADER_PREFIX + "LegalHold";
+    @Metadata(label = "producer",
+              description = "(setBlobImmutabilityPolicy) A pre-built `BlobImmutabilityPolicy` object that overrides the policy"
+                            + " expiry time and mode headers when present.",
+              javaType = "com.azure.storage.blob.models.BlobImmutabilityPolicy")
+    public static final String BLOB_IMMUTABILITY_POLICY = HEADER_PREFIX + "ImmutabilityPolicy";
+    @Metadata(label = "producer",
+              description = "(setBlobImmutabilityPolicy) The expiry time of the time-based retention policy. Required unless a"
+                            + " pre-built `BlobImmutabilityPolicy` is provided via the body or the"
+                            + " `CamelAzureStorageBlobImmutabilityPolicy` header.",
+              javaType = "java.time.OffsetDateTime")
+    public static final String BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME = HEADER_PREFIX + "ImmutabilityPolicyExpiryTime";
+    @Metadata(label = "producer",
+              description = "(setBlobImmutabilityPolicy) The mode of the immutability policy: `UNLOCKED` (default, can be"
+                            + " modified or deleted), `LOCKED` (cannot be modified or shortened, only extended), or `MUTABLE`.",
+              javaType = "com.azure.storage.blob.models.BlobImmutabilityPolicyMode")
+    public static final String BLOB_IMMUTABILITY_POLICY_MODE = HEADER_PREFIX + "ImmutabilityPolicyMode";
 
     private BlobConstants() {
     }

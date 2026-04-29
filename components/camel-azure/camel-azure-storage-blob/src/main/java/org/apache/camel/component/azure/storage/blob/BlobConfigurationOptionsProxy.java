@@ -25,6 +25,8 @@ import java.util.function.Supplier;
 import com.azure.core.util.Context;
 import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.BlobHttpHeaders;
+import com.azure.storage.blob.models.BlobImmutabilityPolicy;
+import com.azure.storage.blob.models.BlobImmutabilityPolicyMode;
 import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
@@ -285,6 +287,22 @@ public class BlobConfigurationOptionsProxy {
 
     public String getBlobTagFilter(final Exchange exchange) {
         return BlobExchangeHeaders.getBlobTagFilterFromHeaders(exchange);
+    }
+
+    public Boolean getBlobLegalHold(final Exchange exchange) {
+        return BlobExchangeHeaders.getBlobLegalHoldFromHeaders(exchange);
+    }
+
+    public BlobImmutabilityPolicy getBlobImmutabilityPolicy(final Exchange exchange) {
+        return BlobExchangeHeaders.getBlobImmutabilityPolicyFromHeaders(exchange);
+    }
+
+    public OffsetDateTime getBlobImmutabilityPolicyExpiryTime(final Exchange exchange) {
+        return BlobExchangeHeaders.getBlobImmutabilityPolicyExpiryTimeFromHeaders(exchange);
+    }
+
+    public BlobImmutabilityPolicyMode getBlobImmutabilityPolicyMode(final Exchange exchange) {
+        return BlobExchangeHeaders.getBlobImmutabilityPolicyModeFromHeaders(exchange);
     }
 
     public BlobConfiguration getConfiguration() {
