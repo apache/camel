@@ -459,7 +459,7 @@
         <parquet-common-version>1.17.0</parquet-common-version>
         <parquet-avro-version>1.17.0</parquet-avro-version>
         <pdfbox-version>3.0.7</pdfbox-version>
-        <pgjdbc-driver-version>42.7.10</pgjdbc-driver-version>
+        <pgjdbc-driver-version>42.7.11</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <pgvector-version>0.1.6</pgvector-version>
         <picocli-version>4.7.7</picocli-version>
