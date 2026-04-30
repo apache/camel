@@ -127,7 +127,7 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
         }
 
         @Override
-        public Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor) {
+        public Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor) {
             io.micrometer.tracing.Span span;
             if (parent != null) {
                 MicrometerObservabilitySpanAdapter microObsParentSpan = (MicrometerObservabilitySpanAdapter) parent;
