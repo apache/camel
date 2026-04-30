@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.telemetry;
+package org.apache.camel.opentelemetry2.mock;
 
 /**
- * This interface is used to manage the lifecycle of a Span.
+ * Span decorator for mock Kafka component used in tests. Extends the real KafkaSpanDecorator to inherit all
+ * Kafka-specific behavior (partition, offset, key tags) and adds SpanKind.
  */
-public interface SpanLifecycleManager {
+public class MockKafkaSpanDecorator extends org.apache.camel.telemetry.decorators.KafkaSpanDecorator {
 
-    Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor);
+    @Override
+    public String getComponent() {
+        return "mock-kafka";
+    }
 
-    void activate(Span span);
-
-    void deactivate(Span span);
-
-    void close(Span span);
-
-    void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing);
-
+    @Override
+    public String getComponentClassName() {
+        return MockKafkaComponent.class.getName();
+    }
 }
