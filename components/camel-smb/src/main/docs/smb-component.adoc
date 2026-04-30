@@ -95,4 +95,33 @@ To maintain backward compatibility, a new Camel Header `CamelSmbUncPath` has bee
 ====
 
 
+== Permissions
+
+The Camel SMB component requires the authenticated user to have appropriate permissions on the SMB share.
+The exact permissions depend on the operations being performed:
+
+* **Reading files**: requires `Read Data` permission on the file.
+* **Writing files**: requires `Write Data` permission on the file and `Create Files` on the parent directory.
+* **Deleting files** (e.g., when using `delete=true` on a consumer): requires `Delete` permission on the file.
+
+=== STATUS_ACCESS_DENIED (0xc0000022) when deleting files
+
+If you receive a `STATUS_ACCESS_DENIED` error when the consumer attempts to delete a file after processing,
+the most common causes are:
+
+1. **The authenticated user lacks the DELETE permission** on the file or the parent directory.
+Ensure the SMB user has been granted the `Delete` and `Delete Child` permissions.
+
+2. **The server's volume uses UNIX security style instead of NTFS**.
+Some storage systems (such as NetApp ONTAP, TrueNAS, or other unified NAS platforms) support multiple
+volume security styles. When a volume uses UNIX security style, the server ignores NTFS ACLs and evaluates
+only UNIX file ownership and mode bits (`chmod`/`chown`). In this case, even if the Windows "Effective Access"
+UI shows full permissions, the delete operation can still be denied because the NTFS ACLs shown are not the
+actual access control mechanism.
+
+To resolve this, either:
+
+* Change the volume security style to NTFS so that NTFS ACLs are evaluated, or
+* Ensure the UNIX file ownership and mode bits grant the SMB user delete access on the files and their parent directory.
+
 include::spring-boot:partial$starter.adoc[]

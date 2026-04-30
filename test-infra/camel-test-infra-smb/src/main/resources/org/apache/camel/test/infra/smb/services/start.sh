@@ -32,7 +32,7 @@ for file in $(seq 1 10) ; do
 done
 chmod 1777 /data/no-delete
 
-echo "Creating unix-security files (simulates ONTAP UNIX security style)"
+echo "Creating unix-security files (simulates UNIX security style)"
 for file in $(seq 1 10) ; do
 	echo ${RANDOM} > /data/unix-security/${file}.txt ;
 done
