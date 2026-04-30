@@ -270,7 +270,9 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         SpanDecorator spanDecorator = spanDecoratorManager.get(endpoint);
         Span parentSpan = spanStorageManager.peek(exchange);
         String spanName = spanDecorator.getOperationName(exchange, endpoint);
-        Span span = spanLifecycleManager.create(spanName, parentSpan, spanDecorator.getExtractor(exchange));
+        String spanKind = spanDecorator.getSpanKind(op.toString());
+        Span span = spanLifecycleManager.create(spanName, spanKind, parentSpan,
+                spanDecorator.getExtractor(exchange));
         span.setTag(TagConstants.OP, op.toString());
         spanDecorator.beforeTracingEvent(span, exchange, endpoint);
         spanLifecycleManager.activate(span);
@@ -286,7 +288,9 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
             // there is some inconsistency
             LOG.warn("Processor tracing parent should not be null!");
         }
-        Span span = spanLifecycleManager.create(processorName, parentSpan, spanDecorator.getExtractor(exchange));
+        String spanKind = spanDecorator.getSpanKind(Op.EVENT_PROCESS.toString());
+        Span span = spanLifecycleManager.create(processorName, spanKind,
+                parentSpan, spanDecorator.getExtractor(exchange));
         span.setTag(TagConstants.OP, Op.EVENT_PROCESS.toString());
         spanDecorator.beforeTracingEvent(span, exchange, null);
         spanLifecycleManager.activate(span);
