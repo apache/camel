@@ -23,6 +23,7 @@ import java.net.CookieStore;
 import java.net.URI;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -144,8 +145,10 @@ public class SubscriptionHelper extends ServiceSupport {
                 LOG.debug("Handshake failed, so try again.");
                 client.handshake();
             } else if (!channelToConsumers.isEmpty()) {
-                channelsToSubscribe.clear();
-                channelsToSubscribe.addAll(channelToConsumers.keySet());
+                synchronized (channelsToSubscribe) {
+                    channelsToSubscribe.clear();
+                    channelsToSubscribe.addAll(channelToConsumers.keySet());
+                }
                 LOG.info("Handshake successful. Channels to subscribe: {}", channelsToSubscribe);
             }
         });
@@ -154,6 +157,9 @@ public class SubscriptionHelper extends ServiceSupport {
     private MessageListener createConnectionListener() {
         return (channel, message) -> component.getHttpClient().getWorkerPool().execute(() -> {
             LOG.debug("[CHANNEL:META_CONNECT]: {}", message);
+            String reconnectAdvice = message.getAdvice() != null
+                    ? (String) message.getAdvice().get("reconnect")
+                    : null;
 
             if (!message.isSuccessful()) {
                 LOG.warn("Connect failure: {}", message);
@@ -165,15 +171,30 @@ public class SubscriptionHelper extends ServiceSupport {
                     LOG.debug("Attempting login...");
                     session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
                 }
-                if (message.getAdvice() == null || "none".equals(message.getAdvice().get("reconnect"))) {
-                    LOG.debug("Advice == none, so handshaking");
+                if (reconnectAdvice != null && !"retry".equals(reconnectAdvice)) {
+                    LOG.debug("Reconnect advice [{}] on failed connect, initiating handshake", reconnectAdvice);
+                    client.handshake();
+                } else if (isTemporaryError(message)) {
+                    LOG.debug("Initiating handshake after temporary error: {}", message);
                     client.handshake();
                 }
-            } else if (!channelsToSubscribe.isEmpty()) {
-                LOG.info("Subscribing to channels: {}", channelsToSubscribe);
-                for (var channelName : channelsToSubscribe) {
-                    for (var consumer : channelToConsumers.get(channelName)) {
-                        subscribe(consumer);
+            } else if (reconnectAdvice != null && !"retry".equals(reconnectAdvice)) {
+                LOG.warn("Reconnect advice [{}] on successful connect, initiating handshake", reconnectAdvice);
+                client.handshake();
+            } else {
+                Set<String> toSubscribe = null;
+                synchronized (channelsToSubscribe) {
+                    if (!channelsToSubscribe.isEmpty()) {
+                        toSubscribe = new HashSet<>(channelsToSubscribe);
+                        channelsToSubscribe.clear();
+                    }
+                }
+                if (toSubscribe != null) {
+                    LOG.info("Subscribing to channels: {}", toSubscribe);
+                    for (var channelName : toSubscribe) {
+                        for (var consumer : channelToConsumers.get(channelName)) {
+                            subscribe(consumer);
+                        }
                     }
                 }
             }
