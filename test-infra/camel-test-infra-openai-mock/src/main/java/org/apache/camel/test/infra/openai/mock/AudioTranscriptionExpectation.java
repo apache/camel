@@ -49,6 +49,10 @@ public class AudioTranscriptionExpectation {
         this.duration = duration;
     }
 
+    public boolean isVerbose() {
+        return duration > 0;
+    }
+
     @Override
     public String toString() {
         return String.format("AudioTranscriptionExpectation{text='%s', language='%s', duration=%.1f}",
