@@ -17,6 +17,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
+The type converters for Java serialized objects with types `java.io.ObjectInput` and `java.io.ObjectOutput` has been removed.
+Java object serialization is a recurring source of security issues and therefor these converters has been removed.
+These converters are not used at all by Camel itself.
+
+To restore compatability then end users can add these type converters back as custom converters in their own Camel applications.
+However, using Java serialization is discouraged and highly recommend to use other means.
+
 === camel-yaml-dsl
 
 A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
