@@ -34,6 +34,11 @@ public final class CliServiceFactory {
         }
 
         @Override
+        public String execute(String command, Boolean getError, Boolean expectFail) {
+            return getService().execute(command, getError, expectFail);
+        }
+
+        @Override
         public String executeBackground(String command) {
             return getService().executeBackground(command);
         }
@@ -41,6 +46,11 @@ public final class CliServiceFactory {
         @Override
         public String executeGenericCommand(String command) {
             return getService().executeGenericCommand(command);
+        }
+
+        @Override
+        public String executeGenericCommand(String command, Boolean getError, Boolean expectFail) {
+            return getService().executeGenericCommand(command, getError, expectFail);
         }
 
         @Override
