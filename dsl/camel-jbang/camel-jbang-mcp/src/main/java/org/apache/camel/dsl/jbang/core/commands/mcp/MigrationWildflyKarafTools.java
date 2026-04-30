@@ -42,24 +42,32 @@ public class MigrationWildflyKarafTools {
     /**
      * WildFly/Karaf migration guidance with archetype-based project creation.
      */
-    @Tool(description = "Get migration guidance for Camel projects running on WildFly, Karaf, or WAR-based "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get migration guidance for Camel projects running on WildFly, Karaf, or WAR-based "
                         + "application servers. Returns the Maven archetype command to create a new target project, "
                         + "migration steps, and relevant migration guide URLs. "
                         + "IMPORTANT: When migrating to a different runtime (e.g., WildFly to Quarkus, Karaf to Spring Boot), "
                         + "you MUST use the archetype command returned by this tool to create a new project. "
                         + "Do NOT manually rewrite the pom.xml — always generate a new project with the archetype first, "
-                        + "then migrate routes and source files into it.")
+                        + "then migrate routes and source files into it. "
+                        + "POM content is automatically sanitized to mask sensitive data (passwords, tokens, API keys) "
+                        + "unless sanitizePom is set to false.")
     public WildflyKarafMigrationResult camel_migration_wildfly_karaf(
-            @ToolArg(description = "The pom.xml file content of the WildFly/Karaf project") String pomContent,
+            @ToolArg(description = "The pom.xml file content of the WildFly/Karaf project. "
+                                   + "IMPORTANT: Avoid including sensitive data such as passwords, tokens, or API keys. "
+                                   + "Sensitive content is automatically detected and masked.") String pomContent,
             @ToolArg(description = "Target runtime: spring-boot or quarkus (default: quarkus)") String targetRuntime,
-            @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion) {
+            @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
+            @ToolArg(description = "If true (default), automatically sanitize POM content by masking credentials") Boolean sanitizePom) {
 
         if (pomContent == null || pomContent.isBlank()) {
             throw new ToolCallException("pomContent is required", null);
         }
 
         try {
-            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(pomContent);
+            PomSanitizer.ProcessedPom processed = PomSanitizer.process(pomContent, sanitizePom);
+
+            MigrationData.PomAnalysis pom = MigrationData.parsePomContent(processed.content());
 
             String sourceRuntime = pom.isWildfly() ? "wildfly" : pom.isKaraf() ? "karaf" : "unknown";
             String resolvedTarget = targetRuntime != null && !targetRuntime.isBlank()
@@ -83,7 +91,7 @@ public class MigrationWildflyKarafTools {
                     .collect(Collectors.toList());
 
             // Warnings specific to the source runtime
-            List<String> warnings = new ArrayList<>();
+            List<String> warnings = new ArrayList<>(processed.warnings());
             if ("karaf".equals(sourceRuntime)) {
                 warnings.add("Blueprint XML is not supported in Camel 3.x+. "
                              + "Routes must be converted to YAML DSL, XML DSL, or Java DSL.");

@@ -49,7 +49,7 @@ public class InfinispanRemoteConfigurationIT {
         try (CamelContext context = new DefaultCamelContext();
              InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
-            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 5000);
+            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 30000);
 
             BasicCache<Object, Object> cache = manager.getCache("misc_cache");
             assertNotNull(cache);
@@ -91,7 +91,7 @@ public class InfinispanRemoteConfigurationIT {
         try (CamelContext context = new DefaultCamelContext();
              InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
-            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 5000);
+            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 30000);
 
             BasicCache<Object, Object> cache = manager.getCache("misc_cache");
             assertNotNull(cache);

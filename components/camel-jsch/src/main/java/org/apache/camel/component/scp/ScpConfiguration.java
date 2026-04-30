@@ -33,15 +33,29 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     public static final String DEFAULT_MOD = "664";
     @UriParam(label = "security", defaultValue = "true")
     private boolean useUserKnownHostsFile = true;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(supportFileReference = true)
     private String knownHostsFile;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String privateKeyFile;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private byte[] privateKeyBytes;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String privateKeyFilePassphrase;
+    @UriParam(label = "security", security = "secret",
+              description = "Set the OpenSSH certificate file path for certificate-based authentication.")
+    private String certFile;
+    @UriParam(label = "security", security = "secret",
+              description = "Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.")
+    @Metadata(supportFileReference = true)
+    private String certUri;
+    @UriParam(label = "security", security = "secret",
+              description = "Set the OpenSSH certificate as a byte array for certificate-based authentication.")
+    private byte[] certBytes;
+    @UriParam(label = "security",
+              description = "Set a comma separated list of CA signature algorithms accepted for host certificate verification."
+                            + " If not specified the default list from JSch will be used (matches OpenSSH 8.2+ defaults).")
+    private String caSignatureAlgorithms;
     @UriParam(enums = "no,yes", defaultValue = "no")
     private String strictHostKeyChecking = "no";
     @UriParam(defaultValue = DEFAULT_MOD)
@@ -50,7 +64,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     // null means default jsch list will be used
     @UriParam(label = "security,advanced")
     private String ciphers;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String preferredAuthentications;
 
     public ScpConfiguration() {
@@ -123,6 +137,51 @@ public class ScpConfiguration extends RemoteFileConfiguration {
      */
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyFilePassphrase = privateKeyFilePassphrase;
+    }
+
+    public String getCertFile() {
+        return certFile;
+    }
+
+    /**
+     * Set the OpenSSH certificate file path for certificate-based authentication.
+     */
+    public void setCertFile(String certFile) {
+        this.certFile = certFile;
+    }
+
+    public String getCertUri() {
+        return certUri;
+    }
+
+    /**
+     * Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.
+     */
+    public void setCertUri(String certUri) {
+        this.certUri = certUri;
+    }
+
+    public byte[] getCertBytes() {
+        return certBytes;
+    }
+
+    /**
+     * Set the OpenSSH certificate as a byte array for certificate-based authentication.
+     */
+    public void setCertBytes(byte[] certBytes) {
+        this.certBytes = certBytes;
+    }
+
+    public String getCaSignatureAlgorithms() {
+        return caSignatureAlgorithms;
+    }
+
+    /**
+     * Set a comma separated list of CA signature algorithms accepted for host certificate verification. If not
+     * specified the default list from JSch will be used (matches OpenSSH 8.2+ defaults).
+     */
+    public void setCaSignatureAlgorithms(String caSignatureAlgorithms) {
+        this.caSignatureAlgorithms = caSignatureAlgorithms;
     }
 
     public String getStrictHostKeyChecking() {

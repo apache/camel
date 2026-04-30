@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-dsl-parent</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-yaml-dsl</artifactId>
@@ -287,6 +287,19 @@
                         <configuration>
                             <additionalProperties>false</additionalProperties>
                             <outputFile>src/generated/resources/schema/camelYamlDsl.json</outputFile>
+                        </configuration>
+                    </execution>
+                    <!-- canonical camelCase -->
+                    <execution>
+                        <id>generate-yaml-schema-canonical</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate-yaml-schema</goal>
+                        </goals>
+                        <configuration>
+                            <additionalProperties>false</additionalProperties>
+                            <canonical>true</canonical>
+                            <outputFile>src/generated/resources/schema/camelYamlDsl-canonical.json</outputFile>
                         </configuration>
                     </execution>
                 </executions>

@@ -339,9 +339,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             response = client.invoke(httpMethod, body);
         } else {
             if (Collection.class.isAssignableFrom(responseClass)) {
-                if (genericType instanceof ParameterizedType) {
+                if (genericType instanceof ParameterizedType parameterizedType) {
                     // Get the collection member type first
-                    Type[] actualTypeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
+                    Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
                     response = client.invokeAndGetCollection(httpMethod, body, (Class<?>) actualTypeArguments[0]);
 
                 } else {
@@ -375,8 +375,8 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             setResponse(exchange, response, binding, statesCode);
         } else {
             // just close the input stream of the response object
-            if (response instanceof Response) {
-                ((Response) response).close();
+            if (response instanceof Response resp) {
+                resp.close();
             }
         }
     }
@@ -390,10 +390,10 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     }
 
     private void evalException(Exchange exchange, Object response) throws CxfOperationException {
-        if (response instanceof Response) {
-            int respCode = ((Response) response).getStatus();
+        if (response instanceof Response resp) {
+            int respCode = resp.getStatus();
             if (respCode > 207) {
-                throw populateCxfRsProducerException(exchange, (Response) response, respCode);
+                throw populateCxfRsProducerException(exchange, resp, respCode);
             }
         }
     }
@@ -494,8 +494,8 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             setResponse(exchange, response, binding, statesCode);
         } else {
             // just close the input stream of the response object
-            if (response instanceof Response) {
-                ((Response) response).close();
+            if (response instanceof Response resp) {
+                resp.close();
             }
         }
     }
@@ -648,9 +648,9 @@ public class CxfRsProducer extends DefaultAsyncProducer {
     protected Map<String, String> parseResponseHeaders(Object response, Exchange camelExchange) {
 
         Map<String, String> answer = new HashMap<>();
-        if (response instanceof Response) {
+        if (response instanceof Response resp) {
 
-            for (Map.Entry<String, List<Object>> entry : ((Response) response).getMetadata().entrySet()) {
+            for (Map.Entry<String, List<Object>> entry : resp.getMetadata().entrySet()) {
                 LOG.trace("Parse external header {}={}", entry.getKey(), entry.getValue());
                 answer.put(entry.getKey(), entry.getValue().get(0).toString());
             }

@@ -32,7 +32,7 @@ import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.weaviate.WeaviateContainer;
 
 @InfraService(service = WeaviateInfraService.class,
-              description = "Weaviate Vector Database",
+              description = "Weaviate is an open source vector database",
               serviceAlias = { "weaviate" })
 public class WeaviateLocalContainerInfraService implements WeaviateInfraService, ContainerService<WeaviateContainer> {
 

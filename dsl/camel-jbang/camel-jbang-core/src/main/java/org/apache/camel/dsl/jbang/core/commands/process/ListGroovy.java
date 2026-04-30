@@ -27,6 +27,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -109,6 +110,10 @@ public class ListGroovy extends ProcessWatchCommand {
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
+                // Flexible column: CLASSES (60)
+                // Fixed columns: PID(8)+NAME(30)+PRELOAD(7)+COMPILE(7)+TIME(8)+SINCE(8) ~= 68
+                int tw = terminalWidth();
+                int classesW = TerminalWidthHelper.flexWidth(tw, 68, TerminalWidthHelper.noBorderOverhead(7), 15, 60);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
@@ -121,7 +126,7 @@ public class ListGroovy extends ProcessWatchCommand {
                         new Column().header("TIME").headerAlign(HorizontalAlign.CENTER).with(this::getTime),
                         new Column().header("SINCE").headerAlign(HorizontalAlign.CENTER).with(this::getLast),
                         new Column().header("CLASSES").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(60, OverflowBehaviour.ELLIPSIS_LEFT).with(this::getClasses))));
+                                .maxWidth(classesW, OverflowBehaviour.ELLIPSIS_LEFT).with(this::getClasses))));
             }
         }
 

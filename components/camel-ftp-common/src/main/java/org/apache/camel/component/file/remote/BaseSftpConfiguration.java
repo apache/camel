@@ -31,7 +31,7 @@ public abstract class BaseSftpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
 
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Sets the known_hosts file, so that the SFTP endpoint can do host key verification.")
     private String knownHostsFile;
     @UriParam(label = "security", defaultValue = "true",
@@ -40,30 +40,40 @@ public abstract class BaseSftpConfiguration extends RemoteFileConfiguration {
     @UriParam(label = "security", defaultValue = "false",
               description = "If knownHostFile does not exist, then attempt to auto-create the path and file (beware that the file will be created by the current user of the running Java process, which may not have file permission).")
     private boolean autoCreateKnownHostsFile;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Sets the known_hosts file (loaded from classpath by default), so that the SFTP endpoint can do host key verification.")
     @Metadata(supportFileReference = true)
     private String knownHostsUri;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Sets the known_hosts from the byte array, so that the SFTP endpoint can do host key verification.")
     private byte[] knownHosts;
     @UriParam(defaultValue = "no", enums = "no,yes", label = "security",
               description = "Sets whether to use strict host key checking.")
     private String strictHostKeyChecking = "no";
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Set the private key file so that the SFTP endpoint can do private key verification.")
     private String privateKeyFile;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Set the private key file (loaded from classpath by default) so that the SFTP endpoint can do private key verification.")
     @Metadata(supportFileReference = true)
     private String privateKeyUri;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Set the private key as byte[] so that the SFTP endpoint can do private key verification.")
     private byte[] privateKey;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Set the private key file passphrase so that the SFTP endpoint can do private key verification.")
     private String privateKeyPassphrase;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
+              description = "Set the OpenSSH certificate file path for certificate-based authentication.")
+    private String certFile;
+    @UriParam(label = "security", security = "secret",
+              description = "Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.")
+    @Metadata(supportFileReference = true)
+    private String certUri;
+    @UriParam(label = "security", security = "secret",
+              description = "Set the OpenSSH certificate as a byte array for certificate-based authentication.")
+    private byte[] certBytes;
+    @UriParam(label = "security", security = "secret",
               description = "Sets a key pair of the public and private key so to that the SFTP endpoint can do public/private key verification.")
     private KeyPair keyPair;
     @UriParam(label = "advanced",
@@ -221,6 +231,39 @@ public abstract class BaseSftpConfiguration extends RemoteFileConfiguration {
      */
     public void setPrivateKeyPassphrase(String privateKeyFilePassphrase) {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
+    }
+
+    public String getCertFile() {
+        return certFile;
+    }
+
+    /**
+     * Set the OpenSSH certificate file path for certificate-based authentication.
+     */
+    public void setCertFile(String certFile) {
+        this.certFile = certFile;
+    }
+
+    public String getCertUri() {
+        return certUri;
+    }
+
+    /**
+     * Set the OpenSSH certificate (loaded from classpath by default) for certificate-based authentication.
+     */
+    public void setCertUri(String certUri) {
+        this.certUri = certUri;
+    }
+
+    public byte[] getCertBytes() {
+        return certBytes;
+    }
+
+    /**
+     * Set the OpenSSH certificate as a byte array for certificate-based authentication.
+     */
+    public void setCertBytes(byte[] certBytes) {
+        this.certBytes = certBytes;
     }
 
     public KeyPair getKeyPair() {

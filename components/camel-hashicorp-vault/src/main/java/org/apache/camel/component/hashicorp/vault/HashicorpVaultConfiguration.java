@@ -39,7 +39,7 @@ public class HashicorpVaultConfiguration implements Cloneable {
     private String scheme = "https";
     @UriParam
     private String secretPath;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String token;
     @UriParam
     private boolean cloud;

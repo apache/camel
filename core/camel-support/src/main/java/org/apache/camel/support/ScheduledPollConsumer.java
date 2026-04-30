@@ -82,11 +82,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer
     private volatile boolean firstPollDone;
     private volatile boolean forceReady;
 
-    public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
+    protected ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
-    public ScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
+    protected ScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
         super(endpoint, processor);
         // we have been given an existing thread pool, so we should not manage its lifecycle
         // so we should keep shutdownExecutor as false

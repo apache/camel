@@ -869,6 +869,14 @@ with the key `camel.jbang.repos` as shown:
 camel.jbang.repos=https://packages.atlassian.com/maven-external
 ----
 
+Alternatively, you can configure default Maven repositories globally via a system property.
+This is useful for custom Camel distributions that require additional repositories without manual configuration on each command:
+
+[source,bash]
+----
+export JAVA_TOOL_OPTIONS="-Dcamel.extra.repos=repo1=https://repo1.example.com/maven2,repo2=https://repo2.example.com/releases"
+----
+
 When running Camel you need to include the properties file to use:
 
 [source,bash]
@@ -4065,6 +4073,9 @@ camel export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --directory=../my
 
 TIP: See the possible options by running: `camel export --help` for more details.
 
+NOTE: The Quarkus platform version is automatically resolved from the Quarkus platform registry based on the Camel version's compatible Quarkus stream.
+If the registry is unavailable or downloads are disabled, the build-time default version is used.
+
 NOTE: You cannot use `--profile` option when exporting to Camel Quarkus.
 
 === Exporting to Camel Main
@@ -4192,7 +4203,7 @@ The camel.jbang supports 45 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.jbang.camel-version* | The version of Apache Camel to use |  | String
-| *camel.jbang.camelSpringBoot{zwsp}Version* | To use a custom Camel version when running or export to Spring Boot |  | String
+| *camel.jbang.camelSpringBootVersion* | To use a custom Camel version when running or export to Spring Boot |  | String
 | *camel.jbang.classpathFiles* | Additional files to add to classpath (Use commas to separate multiple files). |  | String
 | *camel.jbang.compileWorkDir* | Work directory for compiler. Can be used to write compiled classes or other resources. | .camel-jbang/compile | String
 | *camel.jbang.console* | Developer console at /q/dev on local HTTP server (port 8080 by default) | false | boolean

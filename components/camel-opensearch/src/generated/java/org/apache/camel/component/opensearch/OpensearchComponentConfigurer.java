@@ -45,6 +45,10 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
         case "snifferInterval": target.setSnifferInterval(property(camelContext, int.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "user": target.setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -80,6 +84,10 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
         case "snifferInterval": return int.class;
         case "sockettimeout":
         case "socketTimeout": return int.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
         case "user": return java.lang.String.class;
         default: return null;
         }
@@ -111,6 +119,10 @@ public class OpensearchComponentConfigurer extends PropertyConfigurerSupport imp
         case "snifferInterval": return target.getSnifferInterval();
         case "sockettimeout":
         case "socketTimeout": return target.getSocketTimeout();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getSslContextParameters();
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "user": return target.getUser();
         default: return null;
         }

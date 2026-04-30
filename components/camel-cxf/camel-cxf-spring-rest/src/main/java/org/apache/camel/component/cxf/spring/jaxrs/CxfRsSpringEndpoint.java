@@ -44,8 +44,8 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
 
     private void init(AbstractJAXRSFactoryBean bean) {
         this.bean = bean;
-        if (bean instanceof BeanIdAware) {
-            setBeanId(((BeanIdAware) bean).getBeanId());
+        if (bean instanceof BeanIdAware beanIdAware) {
+            setBeanId(beanIdAware.getBeanId());
         }
 
         ApplicationContext applicationContext = ((SpringCamelContext) getCamelContext()).getApplicationContext();

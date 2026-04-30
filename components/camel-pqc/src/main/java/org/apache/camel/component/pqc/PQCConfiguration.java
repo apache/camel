@@ -70,7 +70,7 @@ public class PQCConfiguration implements Cloneable {
     @Metadata(label = "advanced")
     private String keyPairAlias;
     @UriParam
-    @Metadata(label = "advanced", secret = true)
+    @Metadata(label = "advanced", security = "secret")
     private String keyStorePassword;
 
     // Hybrid cryptography configuration
@@ -113,6 +113,14 @@ public class PQCConfiguration implements Cloneable {
                             + "Requires a KeyLifecycleManager and a CamelPQCKeyId header to be set.")
     @Metadata(label = "advanced")
     private boolean strictKeyLifecycle = true;
+
+    @UriParam(defaultValue = "0.1",
+              description = "The warning threshold for stateful key exhaustion as a fraction of total signatures (0.0 to 1.0). "
+                            + "When the remaining signatures for a stateful key (XMSS, XMSSMT, LMS/HSS) drop below this "
+                            + "fraction of the total capacity, a WARN log is emitted. When remaining signatures reach zero, "
+                            + "an exception is thrown to prevent key reuse. Set to 0 to disable warnings.")
+    @Metadata(label = "advanced")
+    private double statefulKeyWarningThreshold = 0.1;
 
     public PQCOperations getOperation() {
         return operation;
@@ -337,6 +345,24 @@ public class PQCConfiguration implements Cloneable {
      */
     public void setStrictKeyLifecycle(boolean strictKeyLifecycle) {
         this.strictKeyLifecycle = strictKeyLifecycle;
+    }
+
+    public double getStatefulKeyWarningThreshold() {
+        return statefulKeyWarningThreshold;
+    }
+
+    /**
+     * The warning threshold for stateful key exhaustion as a fraction of total signatures (0.0 to 1.0). When the
+     * remaining signatures for a stateful key (XMSS, XMSSMT, LMS/HSS) drop below this fraction of the total capacity, a
+     * WARN log is emitted. When remaining signatures reach zero, an exception is thrown to prevent key reuse. Set to 0
+     * to disable warnings.
+     */
+    public void setStatefulKeyWarningThreshold(double statefulKeyWarningThreshold) {
+        if (statefulKeyWarningThreshold < 0.0 || statefulKeyWarningThreshold > 1.0) {
+            throw new IllegalArgumentException(
+                    "statefulKeyWarningThreshold must be between 0.0 and 1.0, but was: " + statefulKeyWarningThreshold);
+        }
+        this.statefulKeyWarningThreshold = statefulKeyWarningThreshold;
     }
 
     // *************************************************

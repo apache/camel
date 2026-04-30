@@ -371,6 +371,78 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * The number of seconds to wait for a read from the binlog connection
+         * to complete before the server times out. A value of 0 means use the
+         * MySQL server default. May need to be increased in high-latency
+         * network environments to prevent EOFException during streaming.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: mysql
+         * 
+         * @param binlogNetReadTimeout the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder binlogNetReadTimeout(long binlogNetReadTimeout) {
+            doSetProperty("binlogNetReadTimeout", binlogNetReadTimeout);
+            return this;
+        }
+        /**
+         * The number of seconds to wait for a read from the binlog connection
+         * to complete before the server times out. A value of 0 means use the
+         * MySQL server default. May need to be increased in high-latency
+         * network environments to prevent EOFException during streaming.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: mysql
+         * 
+         * @param binlogNetReadTimeout the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder binlogNetReadTimeout(String binlogNetReadTimeout) {
+            doSetProperty("binlogNetReadTimeout", binlogNetReadTimeout);
+            return this;
+        }
+        /**
+         * The number of seconds to wait for a write to the binlog connection to
+         * complete before the server times out. A value of 0 means use the
+         * MySQL server default. May need to be increased when large data
+         * volumes cause EOFException during streaming.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: mysql
+         * 
+         * @param binlogNetWriteTimeout the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder binlogNetWriteTimeout(long binlogNetWriteTimeout) {
+            doSetProperty("binlogNetWriteTimeout", binlogNetWriteTimeout);
+            return this;
+        }
+        /**
+         * The number of seconds to wait for a write to the binlog connection to
+         * complete before the server times out. A value of 0 means use the
+         * MySQL server default. May need to be increased when large data
+         * volumes cause EOFException during streaming.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: mysql
+         * 
+         * @param binlogNetWriteTimeout the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder binlogNetWriteTimeout(String binlogNetWriteTimeout) {
+            doSetProperty("binlogNetWriteTimeout", binlogNetWriteTimeout);
+            return this;
+        }
+        /**
          * Regular expressions matching columns to exclude from change events.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2443,6 +2515,46 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          */
         default DebeziumMySqlEndpointBuilder snapshotMaxThreads(String snapshotMaxThreads) {
             doSetProperty("snapshotMaxThreads", snapshotMaxThreads);
+            return this;
+        }
+        /**
+         * The factor used to scale the number of snapshot chunks per table. The
+         * default behavior is to take 'row_count/snapshot.max.threads' to
+         * compute the number of rows per chunks. This may not be ideal for
+         * larger tables, and using the multiplier, the formula is adjusted to
+         * increase the number of chunks by using
+         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: mysql
+         * 
+         * @param snapshotMaxThreadsMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotMaxThreadsMultiplier(int snapshotMaxThreadsMultiplier) {
+            doSetProperty("snapshotMaxThreadsMultiplier", snapshotMaxThreadsMultiplier);
+            return this;
+        }
+        /**
+         * The factor used to scale the number of snapshot chunks per table. The
+         * default behavior is to take 'row_count/snapshot.max.threads' to
+         * compute the number of rows per chunks. This may not be ideal for
+         * larger tables, and using the multiplier, the formula is adjusted to
+         * increase the number of chunks by using
+         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: mysql
+         * 
+         * @param snapshotMaxThreadsMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotMaxThreadsMultiplier(String snapshotMaxThreadsMultiplier) {
+            doSetProperty("snapshotMaxThreadsMultiplier", snapshotMaxThreadsMultiplier);
             return this;
         }
         /**

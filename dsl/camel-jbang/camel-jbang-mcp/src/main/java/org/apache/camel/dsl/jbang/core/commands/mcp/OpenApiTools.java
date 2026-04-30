@@ -48,7 +48,8 @@ public class OpenApiTools {
 
     private static final Set<String> VALID_MISSING_OPERATION_MODES = Set.of("fail", "ignore", "mock");
 
-    @Tool(description = "Validate an OpenAPI specification for use with Camel's contract-first REST support. "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Validate an OpenAPI specification for use with Camel's contract-first REST support. "
                         + "Checks for compatibility issues like missing operationIds, unsupported security schemes, "
                         + "and OpenAPI 3.1 features that Camel does not fully support.")
     public ValidateResult camel_openapi_validate(
@@ -127,7 +128,8 @@ public class OpenApiTools {
         return new ValidateResult(valid, errors, warnings, info, operationCount);
     }
 
-    @Tool(description = "Generate Camel YAML scaffold for contract-first OpenAPI integration. "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Generate Camel YAML scaffold for contract-first OpenAPI integration. "
                         + "Produces a rest:openApi configuration block and route stubs for each operation "
                         + "defined in the spec. This is the recommended approach since Camel 4.6.")
     public ScaffoldResult camel_openapi_scaffold(
@@ -191,7 +193,8 @@ public class OpenApiTools {
         return new ScaffoldResult(yaml.toString(), stubs.size(), filename, mode, apiTitle);
     }
 
-    @Tool(description = "Get guidance on configuring Camel's contract-first REST missingOperation modes "
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = "Get guidance on configuring Camel's contract-first REST missingOperation modes "
                         + "(fail, ignore, mock). For 'mock' mode, provides directory structure, mock file paths, "
                         + "and example content derived from the OpenAPI spec.")
     public MockGuidanceResult camel_openapi_mock_guidance(

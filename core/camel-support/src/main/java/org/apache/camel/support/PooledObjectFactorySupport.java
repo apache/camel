@@ -36,11 +36,11 @@ public abstract class PooledObjectFactorySupport<T> extends ServiceSupport imple
     protected int capacity = 100;
     protected boolean statisticsEnabled;
 
-    public PooledObjectFactorySupport() {
+    protected PooledObjectFactorySupport() {
         this.source = null;
     }
 
-    public PooledObjectFactorySupport(Object source) {
+    protected PooledObjectFactorySupport(Object source) {
         this.source = source;
     }
 

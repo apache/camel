@@ -49,17 +49,17 @@ public class KeycloakConfiguration implements Cloneable {
     @UriParam(description = "Keycloak client ID")
     private String clientId;
 
-    @UriParam(description = "Keycloak client secret", secret = true)
+    @UriParam(description = "Keycloak client secret", security = "secret")
     private String clientSecret;
 
-    @UriParam(description = "Keycloak username", secret = true)
+    @UriParam(description = "Keycloak username", security = "secret")
     private String username;
 
-    @UriParam(description = "Keycloak password", secret = true)
+    @UriParam(description = "Keycloak password", security = "secret")
     private String password;
 
     @UriParam(description = "Pre-obtained access token for authentication. When provided, this token will be used directly instead of obtaining one through username/password or client credentials flow.",
-              secret = true)
+              security = "secret")
     private String accessToken;
 
     @UriParam(description = "The operation to perform")

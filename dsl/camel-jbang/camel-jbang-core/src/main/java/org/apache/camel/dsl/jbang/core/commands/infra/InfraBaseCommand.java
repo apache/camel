@@ -48,6 +48,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
@@ -63,7 +64,7 @@ public abstract class InfraBaseCommand extends CamelCommand {
                         description = "Output in JSON Format")
     boolean jsonOutput;
 
-    public InfraBaseCommand(CamelJBangMain main) {
+    protected InfraBaseCommand(CamelJBangMain main) {
         super(main);
 
         jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -178,11 +179,20 @@ public abstract class InfraBaseCommand extends CamelCommand {
                                     .map(InfraBaseDTO::toMap)
                                     .collect(Collectors.toList())));
         } else {
+            int tw = terminalWidth();
+            // Fixed columns: PID (~8), ALIAS (width+2), SERVICE_DATA (~30), DESCRIPTION (~30)
+            int fixedWidth = (width + 2) + 30 + 30;
+            if (showPidColumn()) {
+                fixedWidth += 8;
+            }
+            int implWidth = TerminalWidthHelper.flexWidth(
+                    tw, fixedWidth, TerminalWidthHelper.noBorderOverhead(showPidColumn() ? 5 : 4),
+                    20, 35);
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").visible(showPidColumn()).headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("ALIAS").minWidth(width + 2).dataAlign(HorizontalAlign.LEFT)
                             .with(Row::alias),
-                    new Column().header("IMPLEMENTATION").maxWidth(35, OverflowBehaviour.NEWLINE)
+                    new Column().header("IMPLEMENTATION").maxWidth(implWidth, OverflowBehaviour.NEWLINE)
                             .dataAlign(HorizontalAlign.LEFT).with(Row::aliasImplementation),
                     new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(Row::description),
                     new Column().header("SERVICE_DATA").dataAlign(HorizontalAlign.LEFT).with(Row::serviceData))));

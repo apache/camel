@@ -53,7 +53,12 @@ import picocli.CommandLine.Parameters;
  */
 @Command(name = "harden",
          description = "Suggest security hardening for Camel routes using AI/LLM",
-         sortOptions = false, showDefaultValues = true)
+         sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel harden hello.java",
+                 "  camel harden hello.yaml --format=markdown",
+                 "  camel harden hello.java --model=gpt-4" })
 public class Harden extends CamelCommand {
 
     public static class FormatCompletionCandidates implements Iterable<String> {

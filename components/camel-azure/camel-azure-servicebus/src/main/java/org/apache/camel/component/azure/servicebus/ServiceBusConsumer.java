@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.servicebus;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.azure.messaging.servicebus.ServiceBusErrorContext;
@@ -31,17 +32,20 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceBusConsumer extends DefaultConsumer {
+public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceBusConsumer.class);
     private ServiceBusProcessorClient client;
+    private final AtomicInteger pendingExchanges = new AtomicInteger();
 
     public ServiceBusConsumer(final ServiceBusEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -75,6 +79,7 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     private void processMessage(ServiceBusReceivedMessageContext messageContext) {
+        pendingExchanges.incrementAndGet();
         final ServiceBusReceivedMessage message = messageContext.getMessage();
         final Exchange exchange = createServiceBusExchange(message);
         final ConsumerOnCompletion onCompletion = new ConsumerOnCompletion(messageContext);
@@ -98,12 +103,43 @@ public class ServiceBusConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         if (client != null) {
-            // shutdown the client
-            client.close();
+            // stop accepting new messages but keep the connection open
+            // so that in-flight exchanges can still complete/abandon messages
+            client.stop();
         }
 
         // shutdown camel consumer
         super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        if (client != null) {
+            // close the client after all in-flight exchanges have completed
+            client.close();
+        }
+
+        super.doShutdown();
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // stop accepting new messages but keep the connection open
+        // so that in-flight exchanges can still complete/abandon messages
+        if (client != null) {
+            client.stop();
+        }
+        return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        return pendingExchanges.get();
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // noop
     }
 
     public ServiceBusConfiguration getConfiguration() {
@@ -171,36 +207,45 @@ public class ServiceBusConsumer extends DefaultConsumer {
 
         @Override
         public void onComplete(Exchange exchange) {
-            super.onComplete(exchange);
-            if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
-                messageContext.complete();
+            try {
+                super.onComplete(exchange);
+                if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
+                    messageContext.complete();
+                }
+            } finally {
+                pendingExchanges.decrementAndGet();
             }
         }
 
         @Override
         public void onFailure(Exchange exchange) {
-            final Exception cause = exchange.getException();
-            if (cause != null) {
-                getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
-            }
-
-            if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
-                if (getConfiguration().isEnableDeadLettering() && (ObjectHelper.isEmpty(getConfiguration().getSubQueue())
-                        || ObjectHelper.equal(getConfiguration().getSubQueue(), SubQueue.NONE))) {
-                    DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
-                    if (cause != null) {
-                        deadLetterOptions
-                                .setDeadLetterReason(String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
-                        deadLetterOptions.setDeadLetterErrorDescription(Arrays.stream(cause.getStackTrace())
-                                .map(StackTraceElement::toString)
-                                .collect(Collectors.joining("\n")));
-                        messageContext.deadLetter(deadLetterOptions);
-                    } else {
-                        messageContext.deadLetter();
-                    }
-                } else {
-                    messageContext.abandon();
+            try {
+                final Exception cause = exchange.getException();
+                if (cause != null) {
+                    getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
                 }
+
+                if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
+                    if (getConfiguration().isEnableDeadLettering() && (ObjectHelper.isEmpty(getConfiguration().getSubQueue())
+                            || ObjectHelper.equal(getConfiguration().getSubQueue(), SubQueue.NONE))) {
+                        DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
+                        if (cause != null) {
+                            deadLetterOptions
+                                    .setDeadLetterReason(
+                                            String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
+                            deadLetterOptions.setDeadLetterErrorDescription(Arrays.stream(cause.getStackTrace())
+                                    .map(StackTraceElement::toString)
+                                    .collect(Collectors.joining("\n")));
+                            messageContext.deadLetter(deadLetterOptions);
+                        } else {
+                            messageContext.deadLetter();
+                        }
+                    } else {
+                        messageContext.abandon();
+                    }
+                }
+            } finally {
+                pendingExchanges.decrementAndGet();
             }
         }
     }

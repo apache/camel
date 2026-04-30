@@ -18,10 +18,11 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -49,13 +50,11 @@ import org.apache.camel.support.ResourceHelper;
  */
 public class CamelYamlParser {
 
-    public List<ValidationMessage> parse(File file) throws Exception {
-        CamelContext camelContext = null;
-        try {
-            DefaultRegistry registry = new DefaultRegistry();
-            registry.addBeanRepository(new StubBeanRepository("*"));
+    public List<Error> parse(File file) throws Exception {
+        DefaultRegistry registry = new DefaultRegistry();
+        registry.addBeanRepository(new StubBeanRepository("*"));
 
-            camelContext = new DefaultCamelContext(registry);
+        try (CamelContext camelContext = new DefaultCamelContext(registry)) {
             camelContext.setAutoStartup(false);
             camelContext.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                     (name, context) -> new StubComponent());
@@ -68,20 +67,21 @@ public class CamelYamlParser {
 
             // when exporting we should ignore some errors and keep attempting to export as far as we can
             PropertiesComponent pc = (PropertiesComponent) camelContext.getPropertiesComponent();
-            pc.addInitialProperty("camel.component.properties.ignore-missing-property", "true");
-            pc.addInitialProperty("camel.component.properties.ignore-missing-location", "true");
+            pc.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+            pc.addInitialProperty("camel.component.properties.ignoreMissingLocation", "true");
             pc.setPropertiesParser(new DummyPropertiesParser(camelContext));
 
             // override default type converters with our export converter that is more flexible during exporting
             DummyTypeConverter ec = new DummyTypeConverter();
-            camelContext.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Override);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Integer.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Long.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Double.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Float.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
+            var tcr = camelContext.getTypeConverterRegistry();
+            tcr.setTypeConverterExists(TypeConverterExists.Override);
+            tcr.addTypeConverter(Integer.class, String.class, ec);
+            tcr.addTypeConverter(Long.class, String.class, ec);
+            tcr.addTypeConverter(Double.class, String.class, ec);
+            tcr.addTypeConverter(Float.class, String.class, ec);
+            tcr.addTypeConverter(Byte.class, String.class, ec);
+            tcr.addTypeConverter(Boolean.class, String.class, ec);
+            tcr.addFallbackTypeConverter(ec, false);
 
             // stub EIPs
             StubEipReifier.registerStubEipReifiers(camelContext);
@@ -98,13 +98,11 @@ public class CamelYamlParser {
                 return Collections.emptyList();
             }
         } catch (Exception e) {
-            ValidationMessage vm = ValidationMessage.builder().type("parser")
-                    .messageSupplier(() -> e.getClass().getName() + ": " + e.getMessage()).build();
-            return List.of(vm);
-        } finally {
-            if (camelContext != null) {
-                camelContext.stop();
-            }
+            Error error = Error.builder()
+                    .messageKey("parser")
+                    .format(new MessageFormat(e.getClass().getName() + ": " + e.getMessage()))
+                    .build();
+            return List.of(error);
         }
     }
 

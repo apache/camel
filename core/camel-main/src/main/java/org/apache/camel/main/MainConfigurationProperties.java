@@ -73,6 +73,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private HttpServerConfigurationProperties httpServerConfigurationProperties;
     private HttpManagementServerConfigurationProperties httpManagementServerConfigurationProperties;
     private SSLConfigurationProperties sslConfigurationProperties;
+    private SecurityConfigurationProperties securityConfigurationProperties;
     private DebuggerConfigurationProperties debuggerConfigurationProperties;
     private TracerConfigurationProperties tracerConfigurationProperties;
     private RouteControllerConfigurationProperties routeControllerConfigurationProperties;
@@ -138,6 +139,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (sslConfigurationProperties != null) {
             sslConfigurationProperties.close();
             sslConfigurationProperties = null;
+        }
+        if (securityConfigurationProperties != null) {
+            securityConfigurationProperties.close();
+            securityConfigurationProperties = null;
         }
         if (debuggerConfigurationProperties != null) {
             debuggerConfigurationProperties.close();
@@ -317,6 +322,23 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasSslConfiguration() {
         return sslConfigurationProperties != null;
+    }
+
+    /**
+     * To configure Security policies.
+     */
+    public SecurityConfigurationProperties securityConfig() {
+        if (securityConfigurationProperties == null) {
+            securityConfigurationProperties = new SecurityConfigurationProperties(this);
+        }
+        return securityConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any Security configuration specified.
+     */
+    public boolean hasSecurityConfiguration() {
+        return securityConfigurationProperties != null;
     }
 
     /**

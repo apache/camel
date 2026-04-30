@@ -19,6 +19,7 @@ camel top context [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--json` | Output in JSON Format |  | boolean
 | `--sort` | Sort by pid, name, mem, or age | mem | String
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean

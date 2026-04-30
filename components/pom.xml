@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -100,6 +100,7 @@
         <module>camel-box</module>
         <module>camel-braintree</module>
         <module>camel-caffeine</module>
+        <module>camel-camunda</module>
         <module>camel-cassandraql</module>
         <module>camel-cbor</module>
         <module>camel-chunk</module>
@@ -203,6 +204,7 @@
         <module>camel-jsonata</module>
         <module>camel-jsonb</module>
         <module>camel-jsonpath</module>
+        <module>camel-jsoup</module>
         <module>camel-json-patch</module>
         <module>camel-jt400</module>
         <module>camel-jta</module>
@@ -308,7 +310,6 @@
         <module>camel-sql</module>
         <module>camel-ssh</module>
         <module>camel-stax</module>
-        <module>camel-stomp</module>
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
         <module>camel-stitch</module>

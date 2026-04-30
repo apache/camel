@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.util.ObjectHelper;
 
+@Deprecated(since = "4.19")
 public class DefaultSplunkConfigurationFactory implements SplunkConfigurationFactory {
 
     @Override

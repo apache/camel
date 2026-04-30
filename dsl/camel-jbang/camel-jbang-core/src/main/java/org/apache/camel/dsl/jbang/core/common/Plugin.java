@@ -33,6 +33,13 @@ public interface Plugin {
     void customize(CommandLine commandLine, CamelJBangMain main);
 
     /**
+     * Custom classloader that was used when downloading additional dependencies.
+     */
+    default void setClassLoader(ClassLoader classLoader) {
+        // noop
+    }
+
+    /**
      * The plugin may provide an optional project exporter implementation that is able to participate in an export
      * performed by Camel JBang. Project exporter implementations may add properties and dependencies to the generated
      * export.
@@ -40,6 +47,17 @@ public interface Plugin {
      * @return the plugin specific exporter implementation, otherwise empty
      */
     default Optional<PluginExporter> getExporter() {
+        return Optional.empty();
+    }
+
+    /**
+     * The plugin may provide an optional run customizer that is called after the Run command has resolved file
+     * arguments and basic dependencies, but before plugin exporter dependencies are added and KameletMain.run() builds
+     * the CamelContext.
+     *
+     * @return the plugin specific run customizer implementation, otherwise empty
+     */
+    default Optional<PluginRunCustomizer> getRunCustomizer() {
         return Optional.empty();
     }
 }

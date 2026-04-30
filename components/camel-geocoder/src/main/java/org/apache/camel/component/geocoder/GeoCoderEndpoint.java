@@ -44,11 +44,11 @@ public class GeoCoderEndpoint extends DefaultEndpoint implements EndpointService
     private String latlng;
     @UriParam(defaultValue = "en")
     private String language = "en";
-    @UriParam(label = "security", secret = true, description = "Client ID to access Google GeoCoding server.")
+    @UriParam(label = "security", security = "secret", description = "Client ID to access Google GeoCoding server.")
     private String clientId;
-    @UriParam(label = "security", secret = true, description = "Client Key to access Google GeoCoding server.")
+    @UriParam(label = "security", security = "secret", description = "Client Key to access Google GeoCoding server.")
     private String clientKey;
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "API Key to access Google. Mandatory for Google GeoCoding server.")
     private String apiKey;
     @UriParam(description = "URL to the geocoder server. Mandatory for Nominatim server.", displayName = "Server URL")

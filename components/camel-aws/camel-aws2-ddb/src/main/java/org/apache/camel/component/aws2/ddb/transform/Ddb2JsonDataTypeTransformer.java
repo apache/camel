@@ -202,16 +202,16 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
             return AttributeValue.builder().n(value.toString()).build();
         }
 
-        if (value instanceof Boolean) {
-            return AttributeValue.builder().bool((Boolean) value).build();
+        if (value instanceof Boolean booleanValue) {
+            return AttributeValue.builder().bool(booleanValue).build();
         }
 
-        if (value instanceof String[]) {
-            return AttributeValue.builder().ss((String[]) value).build();
+        if (value instanceof String[] stringArray) {
+            return AttributeValue.builder().ss(stringArray).build();
         }
 
-        if (value instanceof int[]) {
-            return AttributeValue.builder().ns(Stream.of((int[]) value).map(Object::toString).collect(Collectors.toList()))
+        if (value instanceof int[] intArray) {
+            return AttributeValue.builder().ns(Stream.of(intArray).map(Object::toString).collect(Collectors.toList()))
                     .build();
         }
 

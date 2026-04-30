@@ -41,11 +41,11 @@ public final class ConsulClusterService extends AbstractCamelClusterService<Cons
     private String datacenter;
     @Metadata(label = "security", description = "SSL configuration for advanced security configuration")
     private SSLContextParameters sslContextParameters;
-    @Metadata(label = "security", description = "Sets the ACL token to be used with Consul", secret = true)
+    @Metadata(label = "security", description = "Sets the ACL token to be used with Consul", security = "secret")
     private String aclToken;
-    @Metadata(label = "security", description = "Sets the username to be used for basic authentication", secret = true)
+    @Metadata(label = "security", description = "Sets the username to be used for basic authentication", security = "secret")
     private String userName;
-    @Metadata(label = "security", description = "Sets the password to be used for basic authentication", secret = true)
+    @Metadata(label = "security", description = "Sets the password to be used for basic authentication", security = "secret")
     private String password;
     @Metadata(description = "Connect timeout in millis")
     private int connectTimeout;

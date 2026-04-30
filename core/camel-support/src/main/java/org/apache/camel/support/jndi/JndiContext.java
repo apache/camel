@@ -198,8 +198,7 @@ public class JndiContext implements Context, Serializable {
                     Object value = bindings.get(first);
                     if (value == null) {
                         throw new NameNotFoundException(name);
-                    } else if (value instanceof Context && path.size() > 1) {
-                        Context subContext = (Context) value;
+                    } else if (value instanceof Context subContext && path.size() > 1) {
                         value = subContext.lookup(path.getSuffix(1));
                     }
                     return value;

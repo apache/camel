@@ -4,7 +4,7 @@
 :artifactid: camel-ibm-watsonx-ai
 :description: Interact with IBM watsonx.ai foundation models for text generation, chat, embeddings, and more.
 :since: 4.18
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

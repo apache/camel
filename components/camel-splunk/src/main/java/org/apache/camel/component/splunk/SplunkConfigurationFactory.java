@@ -18,6 +18,7 @@ package org.apache.camel.component.splunk;
 
 import java.util.Map;
 
+@Deprecated(since = "4.19")
 public interface SplunkConfigurationFactory {
 
     SplunkConfiguration parseMap(Map<String, Object> parameters);

@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String token;
     @Metadata
     private @Nullable String serviceUrl;
@@ -36,9 +36,9 @@ public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
     private @Nullable String eventStreamTopic;
     @Metadata
     private @Nullable String eventStreamBootstrapServers;
-    @Metadata
+    @Metadata(security = "secret")
     private @Nullable String eventStreamUsername;
-    @Metadata
+    @Metadata(security = "secret")
     private @Nullable String eventStreamPassword;
     @Metadata
     private @Nullable String eventStreamGroupId;

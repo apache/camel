@@ -126,25 +126,25 @@ public class Sns2Producer extends DefaultProducer {
             // message attribute
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 Object value = entry.getValue();
-                if (value instanceof String && !((String) value).isEmpty()) {
+                if (value instanceof String stringValue && !stringValue.isEmpty()) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType(TYPE_STRING);
-                    mav.stringValue((String) value);
+                    mav.stringValue(stringValue);
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof Number) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType(TYPE_STRING);
                     mav.stringValue(value.toString());
                     result.put(entry.getKey(), mav.build());
-                } else if (value instanceof ByteBuffer) {
+                } else if (value instanceof ByteBuffer byteBuffer) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType(TYPE_BINARY);
-                    mav.binaryValue(SdkBytes.fromByteBuffer((ByteBuffer) value));
+                    mav.binaryValue(SdkBytes.fromByteBuffer(byteBuffer));
                     result.put(entry.getKey(), mav.build());
-                } else if (value instanceof byte[]) {
+                } else if (value instanceof byte[] byteArray) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType(TYPE_BINARY);
-                    mav.binaryValue(SdkBytes.fromByteArray((byte[]) value));
+                    mav.binaryValue(SdkBytes.fromByteArray(byteArray));
                     result.put(entry.getKey(), mav.build());
                 } else if (value instanceof Date) {
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();

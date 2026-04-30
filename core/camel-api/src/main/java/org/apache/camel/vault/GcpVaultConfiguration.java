@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class GcpVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String serviceAccountKey;
     @Metadata
     private @Nullable String projectId;

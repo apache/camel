@@ -45,7 +45,7 @@ public class InfinispanRemoteClusteredViewIT {
         Configuration configuration = createConfiguration(service);
 
         try (RemoteCacheManager cacheContainer = new RemoteCacheManager(configuration)) {
-            InfinispanRemoteTestSupport.waitForCacheReady(cacheContainer, viewName, 5000);
+            InfinispanRemoteTestSupport.waitForCacheReady(cacheContainer, viewName, 30000);
 
             InfinispanRemoteClusterService clusterService = new InfinispanRemoteClusterService();
             clusterService.setCacheContainer(cacheContainer);

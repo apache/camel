@@ -34,11 +34,11 @@ public class AWSConfigConfiguration implements Cloneable, AwsCommonConfiguration
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private ConfigClient configClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam
     @Metadata(required = true)
@@ -53,7 +53,7 @@ public class AWSConfigConfiguration implements Cloneable, AwsCommonConfiguration
     private String region;
     @UriParam
     private boolean pojoRequest;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
     private boolean overrideEndpoint;

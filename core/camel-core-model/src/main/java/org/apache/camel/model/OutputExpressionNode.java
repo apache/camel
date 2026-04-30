@@ -38,27 +38,27 @@ public abstract class OutputExpressionNode extends ExpressionNode implements Out
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
-    public OutputExpressionNode() {
+    protected OutputExpressionNode() {
     }
 
-    public OutputExpressionNode(OutputExpressionNode source) {
+    protected OutputExpressionNode(OutputExpressionNode source) {
         super(source);
         this.outputs = ProcessorDefinitionHelper.deepCopyDefinitions(source.outputs);
     }
 
-    public OutputExpressionNode(ExpressionNode source) {
+    protected OutputExpressionNode(ExpressionNode source) {
         super(source);
     }
 
-    public OutputExpressionNode(ExpressionDefinition expression) {
+    protected OutputExpressionNode(ExpressionDefinition expression) {
         super(expression);
     }
 
-    public OutputExpressionNode(Expression expression) {
+    protected OutputExpressionNode(Expression expression) {
         super(expression);
     }
 
-    public OutputExpressionNode(Predicate predicate) {
+    protected OutputExpressionNode(Predicate predicate) {
         super(predicate);
     }
 

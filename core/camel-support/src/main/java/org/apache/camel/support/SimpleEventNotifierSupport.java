@@ -46,7 +46,7 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
     boolean ignoreExchangeSentEvents;
     boolean ignoreStepEvents;
 
-    public SimpleEventNotifierSupport() {
+    protected SimpleEventNotifierSupport() {
         setupIgnore(true);
     }
 

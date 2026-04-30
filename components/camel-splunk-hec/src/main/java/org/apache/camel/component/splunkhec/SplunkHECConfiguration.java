@@ -40,7 +40,7 @@ public class SplunkHECConfiguration {
     private String host;
     @UriParam(defaultValue = "/services/collector/event")
     private String splunkEndpoint = "/services/collector/event";
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(required = true)
     private String token;
     @UriParam(label = "security")

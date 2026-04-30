@@ -69,6 +69,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "signaturealgorithm":
         case "signatureAlgorithm": getOrCreateConfiguration(target).setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signer": getOrCreateConfiguration(target).setSigner(property(camelContext, java.security.Signature.class, value)); return true;
+        case "statefulkeywarningthreshold":
+        case "statefulKeyWarningThreshold": getOrCreateConfiguration(target).setStatefulKeyWarningThreshold(property(camelContext, double.class, value)); return true;
         case "storeextractedsecretkeyasheader":
         case "storeExtractedSecretKeyAsHeader": getOrCreateConfiguration(target).setStoreExtractedSecretKeyAsHeader(property(camelContext, boolean.class, value)); return true;
         case "strictkeylifecycle":
@@ -128,6 +130,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "signaturealgorithm":
         case "signatureAlgorithm": return java.lang.String.class;
         case "signer": return java.security.Signature.class;
+        case "statefulkeywarningthreshold":
+        case "statefulKeyWarningThreshold": return double.class;
         case "storeextractedsecretkeyasheader":
         case "storeExtractedSecretKeyAsHeader": return boolean.class;
         case "strictkeylifecycle":
@@ -183,6 +187,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "signaturealgorithm":
         case "signatureAlgorithm": return getOrCreateConfiguration(target).getSignatureAlgorithm();
         case "signer": return getOrCreateConfiguration(target).getSigner();
+        case "statefulkeywarningthreshold":
+        case "statefulKeyWarningThreshold": return getOrCreateConfiguration(target).getStatefulKeyWarningThreshold();
         case "storeextractedsecretkeyasheader":
         case "storeExtractedSecretKeyAsHeader": return getOrCreateConfiguration(target).isStoreExtractedSecretKeyAsHeader();
         case "strictkeylifecycle":

@@ -65,9 +65,9 @@ public class PgEventEndpoint extends DefaultEndpoint implements EndpointServiceL
     @UriPath
     @Metadata(required = true)
     private String channel;
-    @UriParam(defaultValue = "postgres", label = "security", secret = true)
+    @UriParam(defaultValue = "postgres", label = "security", security = "secret")
     private String user = "postgres";
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String pass;
     @UriParam(label = "advanced")
     private DataSource datasource;

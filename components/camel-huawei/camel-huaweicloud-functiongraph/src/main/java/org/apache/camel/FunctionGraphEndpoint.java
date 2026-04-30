@@ -68,16 +68,17 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", secret = true, label = "proxy")
+    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", security = "secret", label = "proxy")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true, label = "proxy")
+    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", security = "secret",
+              label = "proxy")
     @Metadata(required = false)
     private String proxyPassword;
 
-    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored", secret = false,
-              defaultValue = "false", label = "security")
+    @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored",
+              defaultValue = "false", label = "security", security = "insecure:ssl")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 
@@ -87,16 +88,16 @@ public class FunctionGraphEndpoint extends DefaultEndpoint {
     private String endpoint;
 
     @UriParam(description = "Configuration object for cloud service authentication", displayName = "Service Configuration",
-              secret = true)
+              security = "secret")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", secret = true,
+    @UriParam(description = "Access key for the cloud user", displayName = "API access key (AK)", security = "secret",
               label = "security")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", secret = true,
+    @UriParam(description = "Secret key for the cloud user", displayName = "API secret key (SK)", security = "secret",
               label = "security")
     @Metadata(required = true)
     private String secretKey;

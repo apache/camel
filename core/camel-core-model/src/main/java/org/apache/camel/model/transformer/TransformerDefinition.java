@@ -55,7 +55,7 @@ public abstract class TransformerDefinition implements CopyableDefinition<Transf
     @XmlAttribute
     private String toType;
 
-    public TransformerDefinition() {
+    protected TransformerDefinition() {
     }
 
     protected TransformerDefinition(TransformerDefinition source) {

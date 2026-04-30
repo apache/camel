@@ -103,10 +103,10 @@ public class MSK2Producer extends DefaultProducer {
     private void listClusters(KafkaClient mskClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListClustersRequest) {
+            if (payload instanceof ListClustersRequest listClustersRequest) {
                 ListClustersResponse result;
                 try {
-                    result = mskClient.listClusters((ListClustersRequest) payload);
+                    result = mskClient.listClusters(listClustersRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -147,10 +147,10 @@ public class MSK2Producer extends DefaultProducer {
     private void createCluster(KafkaClient mskClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateClusterRequest) {
+            if (payload instanceof CreateClusterRequest createClusterRequest) {
                 CreateClusterResponse response;
                 try {
-                    response = mskClient.createCluster((CreateClusterRequest) payload);
+                    response = mskClient.createCluster(createClusterRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -202,10 +202,10 @@ public class MSK2Producer extends DefaultProducer {
     private void deleteCluster(KafkaClient mskClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteClusterRequest) {
+            if (payload instanceof DeleteClusterRequest deleteClusterRequest) {
                 DeleteClusterResponse result;
                 try {
-                    result = mskClient.deleteCluster((DeleteClusterRequest) payload);
+                    result = mskClient.deleteCluster(deleteClusterRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -236,10 +236,10 @@ public class MSK2Producer extends DefaultProducer {
     private void describeCluster(KafkaClient mskClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DescribeClusterRequest) {
+            if (payload instanceof DescribeClusterRequest describeClusterRequest) {
                 DescribeClusterResponse result;
                 try {
-                    result = mskClient.describeCluster((DescribeClusterRequest) payload);
+                    result = mskClient.describeCluster(describeClusterRequest);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

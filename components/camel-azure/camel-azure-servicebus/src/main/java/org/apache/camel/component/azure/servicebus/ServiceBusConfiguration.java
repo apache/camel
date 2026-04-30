@@ -39,12 +39,12 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     @UriParam(label = "common", defaultValue = "queue")
     @Metadata(required = true)
     private ServiceBusType serviceBusType = ServiceBusType.queue;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String connectionString;
     @UriParam(label = "security")
     private String fullyQualifiedNamespace;
     @Metadata(autowired = true)
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private TokenCredential tokenCredential;
     @UriParam(label = "common")
     private ClientOptions clientOptions;

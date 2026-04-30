@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.awscore.AwsResponse;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
@@ -313,6 +314,7 @@ public class AWS2S3Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(uploadResult.versionId())) {
             message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
         }
+        populateHttpResponseCode(uploadResult, message);
 
         if (ObjectHelper.isNotEmpty(filePayload) && getConfiguration().isDeleteAfterWrite()) {
             FileUtil.deleteFile(filePayload);
@@ -470,6 +472,7 @@ public class AWS2S3Producer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(putObjectResult.versionId())) {
             message.setHeader(AWS2S3Constants.VERSION_ID, putObjectResult.versionId());
         }
+        populateHttpResponseCode(putObjectResult, message);
     }
 
     private void copyObject(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
@@ -483,6 +486,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 CopyObjectResponse result = s3Client.copyObject(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             if (ObjectHelper.isEmpty(bucketNameDestination)) {
@@ -544,6 +548,7 @@ public class AWS2S3Producer extends DefaultProducer {
             }
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(copyObjectResult, message);
         }
     }
 
@@ -554,18 +559,20 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof DeleteObjectRequest req) {
-                s3Client.deleteObject(req);
+                DeleteObjectResponse result = s3Client.deleteObject(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(true);
+                populateHttpResponseCode(result, message);
             }
         } else {
             DeleteObjectRequest.Builder deleteObjectRequest = DeleteObjectRequest.builder().bucket(bucketName).key(keyName);
-            s3Client.deleteObject(deleteObjectRequest.build());
+            DeleteObjectResponse result = s3Client.deleteObject(deleteObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
             message.setBody(true);
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -574,6 +581,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(bucketsList.buckets());
+        populateHttpResponseCode(bucketsList, message);
     }
 
     private void deleteBucket(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
@@ -585,6 +593,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 DeleteBucketResponse resp = s3Client.deleteBucket(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(resp);
+                populateHttpResponseCode(resp, message);
             }
         } else {
             DeleteBucketRequest.Builder deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName);
@@ -592,6 +601,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setBody(resp);
+            populateHttpResponseCode(resp, message);
         }
     }
 
@@ -655,6 +665,7 @@ public class AWS2S3Producer extends DefaultProducer {
                         = s3Client.getObject(req, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(res);
+                populateHttpResponseCode(res.response(), message);
             }
         } else {
             if (ObjectHelper.isEmpty(rangeStart) || ObjectHelper.isEmpty(rangeEnd)) {
@@ -670,6 +681,7 @@ public class AWS2S3Producer extends DefaultProducer {
             message.setBody(res);
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(res.response(), message);
         }
     }
 
@@ -682,6 +694,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 ListObjectsResponse objectList = s3Client.listObjects(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(objectList.contents());
+                populateHttpResponseCode(objectList, message);
             }
         } else {
             final String delimiter
@@ -699,6 +712,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setBody(objectList.contents());
+            populateHttpResponseCode(objectList, message);
         }
     }
 
@@ -762,6 +776,7 @@ public class AWS2S3Producer extends DefaultProducer {
             if (!getConfiguration().isIgnoreBody()) {
                 message.setBody(headBucketResponse);
             }
+            populateHttpResponseCode(headBucketResponse, message);
         } catch (NoSuchBucketException e) {
             exists = false;
         }
@@ -779,6 +794,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(headObjectResponse);
+        populateHttpResponseCode(headObjectResponse, message);
     }
 
     private void deleteObjects(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
@@ -790,6 +806,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 DeleteObjectsResponse result = s3Client.deleteObjects(deleteObjectsRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             List<String> keysToDelete = exchange.getIn().getHeader(AWS2S3Constants.KEYS_TO_DELETE, List.class);
@@ -812,6 +829,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -825,6 +843,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 RestoreObjectResponse result = s3Client.restoreObject(restoreObjectRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             Integer days = exchange.getIn().getHeader(AWS2S3Constants.RESTORE_DAYS, 1, Integer.class);
@@ -850,6 +869,7 @@ public class AWS2S3Producer extends DefaultProducer {
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -863,6 +883,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 GetObjectTaggingResponse result = s3Client.getObjectTagging(getObjectTaggingRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.tagSet());
+                populateHttpResponseCode(result, message);
             }
         } else {
             GetObjectTaggingRequest request = GetObjectTaggingRequest.builder()
@@ -876,6 +897,7 @@ public class AWS2S3Producer extends DefaultProducer {
             message.setBody(result.tagSet());
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -889,6 +911,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 PutObjectTaggingResponse result = s3Client.putObjectTagging(putObjectTaggingRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             Map<String, String> tags = exchange.getIn().getHeader(AWS2S3Constants.OBJECT_TAGS, Map.class);
@@ -914,6 +937,7 @@ public class AWS2S3Producer extends DefaultProducer {
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -927,6 +951,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 DeleteObjectTaggingResponse result = s3Client.deleteObjectTagging(deleteObjectTaggingRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             DeleteObjectTaggingRequest request = DeleteObjectTaggingRequest.builder()
@@ -940,6 +965,7 @@ public class AWS2S3Producer extends DefaultProducer {
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -953,6 +979,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 GetObjectAclResponse result = s3Client.getObjectAcl(getObjectAclRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             GetObjectAclRequest request = GetObjectAclRequest.builder()
@@ -966,6 +993,7 @@ public class AWS2S3Producer extends DefaultProducer {
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -979,6 +1007,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 PutObjectAclResponse result = s3Client.putObjectAcl(putObjectAclRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             String cannedAcl = exchange.getIn().getHeader(AWS2S3Constants.CANNED_ACL, String.class);
@@ -999,6 +1028,7 @@ public class AWS2S3Producer extends DefaultProducer {
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1085,6 +1115,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 CreateBucketResponse result = s3Client.createBucket(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             CreateBucketRequest.Builder requestBuilder = CreateBucketRequest.builder().bucket(bucketName);
@@ -1103,6 +1134,7 @@ public class AWS2S3Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1115,6 +1147,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 GetBucketTaggingResponse result = s3Client.getBucketTagging(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.tagSet());
+                populateHttpResponseCode(result, message);
             }
         } else {
             GetBucketTaggingRequest request = GetBucketTaggingRequest.builder()
@@ -1126,6 +1159,7 @@ public class AWS2S3Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result.tagSet());
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1138,6 +1172,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 PutBucketTaggingResponse result = s3Client.putBucketTagging(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             Map<String, String> tags = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_TAGS, Map.class);
@@ -1161,6 +1196,7 @@ public class AWS2S3Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1173,6 +1209,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 DeleteBucketTaggingResponse result = s3Client.deleteBucketTagging(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             DeleteBucketTaggingRequest request = DeleteBucketTaggingRequest.builder()
@@ -1184,6 +1221,7 @@ public class AWS2S3Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1196,6 +1234,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 GetBucketVersioningResponse result = s3Client.getBucketVersioning(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             GetBucketVersioningRequest request = GetBucketVersioningRequest.builder()
@@ -1207,6 +1246,7 @@ public class AWS2S3Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1219,6 +1259,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 PutBucketVersioningResponse result = s3Client.putBucketVersioning(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             String versioningStatus = exchange.getIn().getHeader(AWS2S3Constants.VERSIONING_STATUS, String.class);
@@ -1244,6 +1285,7 @@ public class AWS2S3Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1256,6 +1298,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 GetBucketPolicyResponse result = s3Client.getBucketPolicy(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.policy());
+                populateHttpResponseCode(result, message);
             }
         } else {
             GetBucketPolicyRequest request = GetBucketPolicyRequest.builder()
@@ -1267,6 +1310,7 @@ public class AWS2S3Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result.policy());
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1279,6 +1323,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 PutBucketPolicyResponse result = s3Client.putBucketPolicy(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             String policy = exchange.getIn().getHeader(AWS2S3Constants.BUCKET_POLICY, String.class);
@@ -1296,6 +1341,7 @@ public class AWS2S3Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1308,6 +1354,7 @@ public class AWS2S3Producer extends DefaultProducer {
                 DeleteBucketPolicyResponse result = s3Client.deleteBucketPolicy(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                populateHttpResponseCode(result, message);
             }
         } else {
             DeleteBucketPolicyRequest request = DeleteBucketPolicyRequest.builder()
@@ -1319,6 +1366,7 @@ public class AWS2S3Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
+            populateHttpResponseCode(result, message);
         }
     }
 
@@ -1354,6 +1402,13 @@ public class AWS2S3Producer extends DefaultProducer {
         message.setHeader(AWS2S3Constants.REPLICATION_STATUS, res.response().replicationStatus());
         message.setHeader(AWS2S3Constants.STORAGE_CLASS, res.response().storageClass());
         message.setHeader(AWS2S3Constants.METADATA, res.response().metadata());
+        populateHttpResponseCode(res.response(), message);
+    }
+
+    private static void populateHttpResponseCode(AwsResponse response, Message message) {
+        if (response != null && response.sdkHttpResponse() != null) {
+            message.setHeader(Exchange.HTTP_RESPONSE_CODE, response.sdkHttpResponse().statusCode());
+        }
     }
 
     protected AWS2S3Configuration getConfiguration() {

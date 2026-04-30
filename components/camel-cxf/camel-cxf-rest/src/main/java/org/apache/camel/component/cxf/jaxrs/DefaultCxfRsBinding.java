@@ -106,16 +106,17 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             cxfExchange.put(org.apache.cxf.message.Message.RESPONSE_CODE,
                     response.getHeader(CxfConstants.HTTP_RESPONSE_CODE, Integer.class));
         }
-        if (response.getHeader(CxfConstants.CONTENT_TYPE) != null
-                && !cxfExchange.containsKey(org.apache.cxf.message.Message.CONTENT_TYPE)) {
+        if (response.getHeader(CxfConstants.CONTENT_TYPE) != null) {
+            // Set the Content-Type on the CXF exchange unconditionally when it comes from the Camel
+            // message, because CXF pre-sets a default Content-Type of */* which would otherwise
+            // prevent the explicit value from being applied (CAMEL-23249).
             if (!ObjectHelper.isEmpty(cxfExchange) && !ObjectHelper.isEmpty(cxfExchange.getOutMessage())) {
                 cxfExchange.getOutMessage().putIfAbsent(CxfConstants.PROTOCOL_HEADERS,
                         new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
-            }
-            final Map<String, List<String>> cxfHeaders = CastUtils
-                    .cast((Map<?, ?>) cxfExchange.getOutMessage().get(CxfConstants.PROTOCOL_HEADERS));
 
-            if (!cxfHeaders.containsKey(CxfConstants.CONTENT_TYPE)) {
+                final Map<String, List<String>> cxfHeaders = CastUtils
+                        .cast((Map<?, ?>) cxfExchange.getOutMessage().get(CxfConstants.PROTOCOL_HEADERS));
+
                 List<String> a = Arrays.asList((String) response.getHeader(CxfConstants.CONTENT_TYPE));
                 cxfHeaders.put(CxfConstants.CONTENT_TYPE, a);
                 cxfExchange.getOutMessage().put(CxfConstants.CONTENT_TYPE, response.getHeader(CxfConstants.CONTENT_TYPE));
@@ -175,10 +176,10 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
 
         // propagate the security subject from CXF security context
         SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
-        if (securityContext instanceof LoginSecurityContext
-                && ((LoginSecurityContext) securityContext).getSubject() != null) {
+        if (securityContext instanceof LoginSecurityContext loginSecurityContext
+                && loginSecurityContext.getSubject() != null) {
             camelExchange.getIn().getHeaders().put(CxfConstants.AUTHENTICATION,
-                    ((LoginSecurityContext) securityContext).getSubject());
+                    loginSecurityContext.getSubject());
         } else if (securityContext != null && securityContext.getUserPrincipal() != null) {
             Subject subject = new Subject();
             subject.getPrincipals().add(securityContext.getUserPrincipal());
@@ -243,8 +244,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             throws Exception {
 
         Map<String, Object> answer = new HashMap<>();
-        if (response instanceof Response) {
-            Map<String, List<Object>> responseHeaders = ((Response) response).getMetadata();
+        if (response instanceof Response resp) {
+            Map<String, List<Object>> responseHeaders = resp.getMetadata();
             CxfHeaderHelper.propagateCxfHeadersToCamelHeaders(headerFilterStrategy, responseHeaders, answer, camelExchange);
         }
 

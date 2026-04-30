@@ -517,6 +517,79 @@ public class ServiceBusConsumerTest {
         }
     }
 
+    @Test
+    void deferShutdownStopsClientAndReturnsTrue() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            boolean deferred = consumer.deferShutdown(ShutdownRunningTask.CompleteAllTasks);
+
+            assertThat(deferred).isTrue();
+            verify(client).stop();
+        }
+    }
+
+    @Test
+    void pendingExchangesSizeTracksInflightMessages() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+            consumer.doStart();
+
+            assertThat(consumer.getPendingExchangesSize()).isZero();
+
+            when(messageContext.getMessage()).thenReturn(message);
+            processMessageCaptor.getValue().accept(messageContext);
+
+            assertThat(consumer.getPendingExchangesSize()).isEqualTo(1);
+
+            Exchange exchange = exchangeCaptor.getValue();
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            synchronization.onComplete(exchange);
+
+            assertThat(consumer.getPendingExchangesSize()).isZero();
+        }
+    }
+
+    @Test
+    void pendingExchangesSizeDecrementsOnFailure() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+            consumer.doStart();
+
+            when(messageContext.getMessage()).thenReturn(message);
+            processMessageCaptor.getValue().accept(messageContext);
+
+            assertThat(consumer.getPendingExchangesSize()).isEqualTo(1);
+
+            Exchange exchange = exchangeCaptor.getValue();
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            synchronization.onFailure(exchange);
+
+            assertThat(consumer.getPendingExchangesSize()).isZero();
+        }
+    }
+
+    @Test
+    void doStopStopsClientWithoutClosing() throws Exception {
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+
+        consumer.doStop();
+
+        verify(client).stop();
+        verify(client, never()).close();
+    }
+
+    @Test
+    void doShutdownClosesClient() throws Exception {
+        ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor);
+        consumer.doStart();
+
+        consumer.doShutdown();
+
+        verify(client).close();
+    }
+
     private void configureMockMessage() {
         when(message.getApplicationProperties()).thenReturn(new HashMap<>());
         when(message.getBody()).thenReturn(BinaryData.fromBytes(MESSAGE_BODY.getBytes()));

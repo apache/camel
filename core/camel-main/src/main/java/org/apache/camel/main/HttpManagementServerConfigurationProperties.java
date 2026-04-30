@@ -44,13 +44,17 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private String jolokiaPath = "/observe/jolokia";
 
     private boolean infoEnabled;
+    @Metadata(security = "insecure:dev")
     private boolean devConsoleEnabled;
     private boolean healthCheckEnabled;
     private boolean jolokiaEnabled;
     private boolean metricsEnabled;
+    @Metadata(security = "insecure:dev")
     private boolean uploadEnabled;
     private String uploadSourceDir;
+    @Metadata(security = "insecure:dev")
     private boolean downloadEnabled;
+    @Metadata(security = "insecure:dev")
     private boolean sendEnabled;
 
     @Metadata(label = "security")
@@ -67,7 +71,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     private String jwtKeystoreType;
     @Metadata(label = "security")
     private String jwtKeystorePath;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String jwtKeystorePassword;
 
     public HttpManagementServerConfigurationProperties(MainConfigurationProperties parent) {

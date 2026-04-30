@@ -37,6 +37,7 @@ import org.apache.camel.component.netty.ChannelHandlerFactory;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.ServerInitializerFactory;
+import org.apache.camel.component.netty.handlers.SslHandshakeFailureHandler;
 import org.apache.camel.component.netty.http.handlers.HttpInboundStreamHandler;
 import org.apache.camel.component.netty.http.handlers.HttpOutboundStreamHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
@@ -83,16 +84,14 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
 
         ChannelHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
-            //TODO must close on SSL exception
-            // sslHandler.setCloseOnSSLException(true);
-
-            if (sslHandler instanceof ChannelHandlerFactory) {
+            if (sslHandler instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                sslHandler = ((ChannelHandlerFactory) sslHandler).newChannelHandler();
+                sslHandler = channelHandlerFactory.newChannelHandler();
             }
 
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             pipeline.addLast("ssl", sslHandler);
+            pipeline.addLast("sslHandshakeFailure", SslHandshakeFailureHandler.INSTANCE);
         }
 
         pipeline.addLast("decoder", new HttpRequestDecoder(
@@ -100,9 +99,9 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         List<ChannelHandler> decoders = consumer.getConfiguration().getDecodersAsList();
         for (int x = 0; x < decoders.size(); x++) {
             ChannelHandler decoder = decoders.get(x);
-            if (decoder instanceof ChannelHandlerFactory) {
+            if (decoder instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                decoder = ((ChannelHandlerFactory) decoder).newChannelHandler();
+                decoder = channelHandlerFactory.newChannelHandler();
             }
             pipeline.addLast("decoder-" + x, decoder);
         }
@@ -110,9 +109,9 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
         List<ChannelHandler> encoders = consumer.getConfiguration().getEncodersAsList();
         for (int x = 0; x < encoders.size(); x++) {
             ChannelHandler encoder = encoders.get(x);
-            if (encoder instanceof ChannelHandlerFactory) {
+            if (encoder instanceof ChannelHandlerFactory channelHandlerFactory) {
                 // use the factory to create a new instance of the channel as it may not be shareable
-                encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
+                encoder = channelHandlerFactory.newChannelHandler();
             }
             pipeline.addLast("encoder-" + x, encoder);
         }
@@ -181,6 +180,8 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             if (consumer.getConfiguration().getSslContextParameters() == null) {
                 // just set the enabledProtocols if the SslContextParameter doesn't set
                 engine.setEnabledProtocols(consumer.getConfiguration().getEnabledProtocols().split(","));
+                // apply PQC named groups for the fallback path
+                SSLEngineFactory.applyPqcNamedGroups(engine);
             }
             return new SslHandler(engine);
         }

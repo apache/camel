@@ -82,7 +82,7 @@ public class DoclingConfiguration implements Cloneable {
     private String doclingServeUrl = "http://localhost:5001";
 
     @UriParam(label = "security")
-    @Metadata(description = "Authentication token for docling-serve API (Bearer token or API key)", secret = true)
+    @Metadata(description = "Authentication token for docling-serve API (Bearer token or API key)", security = "secret")
     private String authenticationToken;
 
     @UriParam(label = "security")

@@ -372,6 +372,28 @@ public interface PqcComponentBuilderFactory {
     
         
         /**
+         * The warning threshold for stateful key exhaustion as a fraction of
+         * total signatures (0.0 to 1.0). When the remaining signatures for a
+         * stateful key (XMSS, XMSSMT, LMS/HSS) drop below this fraction of the
+         * total capacity, a WARN log is emitted. When remaining signatures
+         * reach zero, an exception is thrown to prevent key reuse. Set to 0 to
+         * disable warnings.
+         * 
+         * The option is a: &lt;code&gt;double&lt;/code&gt; type.
+         * 
+         * Default: 0.1
+         * Group: advanced
+         * 
+         * @param statefulKeyWarningThreshold the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder statefulKeyWarningThreshold(double statefulKeyWarningThreshold) {
+            doSetProperty("statefulKeyWarningThreshold", statefulKeyWarningThreshold);
+            return this;
+        }
+    
+        
+        /**
          * In the context of extractSecretKeyFromEncapsulation operation, this
          * option define if we want to have the key set as header.
          * 
@@ -520,6 +542,7 @@ public interface PqcComponentBuilderFactory {
             case "keyStorePassword": getOrCreateConfiguration((PQCComponent) component).setKeyStorePassword((java.lang.String) value); return true;
             case "signatureAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSignatureAlgorithm((java.lang.String) value); return true;
             case "signer": getOrCreateConfiguration((PQCComponent) component).setSigner((java.security.Signature) value); return true;
+            case "statefulKeyWarningThreshold": getOrCreateConfiguration((PQCComponent) component).setStatefulKeyWarningThreshold((double) value); return true;
             case "storeExtractedSecretKeyAsHeader": getOrCreateConfiguration((PQCComponent) component).setStoreExtractedSecretKeyAsHeader((boolean) value); return true;
             case "strictKeyLifecycle": getOrCreateConfiguration((PQCComponent) component).setStrictKeyLifecycle((boolean) value); return true;
             case "symmetricKeyAlgorithm": getOrCreateConfiguration((PQCComponent) component).setSymmetricKeyAlgorithm((java.lang.String) value); return true;

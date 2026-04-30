@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.Schema;
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
@@ -31,26 +31,26 @@ public class JsonValidationException extends ValidationException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private final JsonSchema schema;
-    private final Set<ValidationMessage> errors;
+    private final Schema schema;
+    private final Set<Error> errors;
 
-    public JsonValidationException(Exchange exchange, JsonSchema schema, Set<ValidationMessage> errors) {
+    public JsonValidationException(Exchange exchange, Schema schema, Set<Error> errors) {
         super(exchange, "JSON validation error with " + errors.size() + " errors:\n" + toString(errors));
         this.schema = schema;
         this.errors = errors;
     }
 
-    public JsonValidationException(Exchange exchange, JsonSchema schema, Exception e) {
+    public JsonValidationException(Exchange exchange, Schema schema, Exception e) {
         super(e.getMessage(), exchange, e);
         this.schema = schema;
         this.errors = Collections.emptySet();
     }
 
-    public JsonSchema getSchema() {
+    public Schema getSchema() {
         return schema;
     }
 
-    public Set<ValidationMessage> getErrors() {
+    public Set<Error> getErrors() {
         return errors;
     }
 
@@ -58,7 +58,7 @@ public class JsonValidationException extends ValidationException {
         return errors.size();
     }
 
-    private static String toString(Set<ValidationMessage> errors) {
-        return errors.stream().map(ValidationMessage::toString).collect(Collectors.joining("\n"));
+    private static String toString(Set<Error> errors) {
+        return errors.stream().map(Error::toString).collect(Collectors.joining("\n"));
     }
 }

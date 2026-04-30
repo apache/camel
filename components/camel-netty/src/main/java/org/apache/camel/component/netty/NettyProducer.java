@@ -179,8 +179,8 @@ public class NettyProducer extends DefaultAsyncProducer {
         } else {
             correlationManager = new DefaultNettyCamelStateCorrelationManager();
         }
-        if (correlationManager instanceof CamelContextAware) {
-            ((CamelContextAware) correlationManager).setCamelContext(getContext());
+        if (correlationManager instanceof CamelContextAware camelContextAware) {
+            camelContextAware.setCamelContext(getContext());
         }
         ServiceHelper.startService(correlationManager);
 

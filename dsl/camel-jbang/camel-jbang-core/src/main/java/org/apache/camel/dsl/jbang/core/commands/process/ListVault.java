@@ -28,6 +28,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -203,15 +204,20 @@ public class ListVault extends ProcessWatchCommand {
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
+                // Flexible columns: NAME (40), SECRET (40)
+                // Fixed columns: PID(8)+VAULT(10)+REGION(10)+AGE(8)+UPDATE(8)+CHECK(8) ~= 52
+                int tw = terminalWidth();
+                int nameW = TerminalWidthHelper.flexWidth(tw, 52 + 40, TerminalWidthHelper.noBorderOverhead(8), 15, 40);
+                int secretW = TerminalWidthHelper.flexWidth(tw, 52 + nameW, TerminalWidthHelper.noBorderOverhead(8), 15, 40);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .maxWidth(nameW, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> r.name),
                         new Column().header("VAULT").dataAlign(HorizontalAlign.LEFT).with(r -> r.vault),
                         new Column().header("REGION").dataAlign(HorizontalAlign.LEFT).with(r -> r.region),
                         new Column().header("SECRET").dataAlign(HorizontalAlign.LEFT)
-                                .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .maxWidth(secretW, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> r.secret),
                         new Column().header("AGE").headerAlign(HorizontalAlign.CENTER).with(this::getAgo),
                         new Column().header("UPDATE").headerAlign(HorizontalAlign.LEFT).with(this::getReloadAgo),

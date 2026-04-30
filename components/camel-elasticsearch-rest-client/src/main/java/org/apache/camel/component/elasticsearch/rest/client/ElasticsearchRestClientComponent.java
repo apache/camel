@@ -35,9 +35,9 @@ public class ElasticsearchRestClientComponent extends DefaultComponent {
     private int connectionTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
     @Metadata(defaultValue = "" + ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT)
     private int socketTimeout = ElasticSearchRestClientConstant.SOCKET_CONNECTION_TIMEOUT;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String user;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String password;
     @Metadata(label = "security", supportFileReference = true)
     private String certificatePath;

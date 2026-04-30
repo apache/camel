@@ -30,6 +30,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -117,6 +118,10 @@ public class ListRest extends ProcessWatchCommand {
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
+                // Flexible column: DESCRIPTION (40)
+                // Fixed columns: PID(8)+NAME(30)+URL(10)+METHOD(6)+FIRST(8)+CONTENT-TYPE(20) ~= 82
+                int tw = terminalWidth();
+                int descW = TerminalWidthHelper.flexWidth(tw, 82, TerminalWidthHelper.noBorderOverhead(7), 15, 40);
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                         new Column().header("NAME").dataAlign(HorizontalAlign.LEFT)
@@ -125,7 +130,7 @@ public class ListRest extends ProcessWatchCommand {
                         new Column().header("URL").dataAlign(HorizontalAlign.LEFT).with(r -> r.url),
                         new Column().header("METHOD").dataAlign(HorizontalAlign.LEFT).with(r -> r.method),
                         new Column().header("FIRST").visible(verbose).dataAlign(HorizontalAlign.LEFT).with(this::getKind),
-                        new Column().header("DESCRIPTION").visible(verbose).maxWidth(40, OverflowBehaviour.NEWLINE)
+                        new Column().header("DESCRIPTION").visible(verbose).maxWidth(descW, OverflowBehaviour.NEWLINE)
                                 .dataAlign(HorizontalAlign.LEFT).with(r -> r.description),
                         new Column().header("CONTENT-TYPE").dataAlign(HorizontalAlign.LEFT).with(this::getContent))));
             }

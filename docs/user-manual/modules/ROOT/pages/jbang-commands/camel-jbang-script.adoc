@@ -20,7 +20,7 @@ camel script [options]
 |===
 | Option | Description | Default | Type
 | `--logging` | Can be used to turn on logging (logs to file in <user home>/.camel directory) | false | boolean
-| `--logging-level` | Logging level () | info | String
+| `--logging-level` | Logging level (ERROR, WARN, INFO, DEBUG, TRACE) | info | String
 | `--max-idle-seconds` | For how long time in seconds Camel can be idle before stopping | 1 | int
 | `--max-messages` | Max number of messages to process before stopping | 0 | int
 | `--max-seconds` | Max seconds to run before stopping | 0 | int

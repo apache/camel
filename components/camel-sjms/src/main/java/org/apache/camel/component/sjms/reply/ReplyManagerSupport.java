@@ -60,7 +60,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected final long replyToTimeout = 10000;
     protected CorrelationTimeoutMap correlation;
 
-    public ReplyManagerSupport(CamelContext camelContext) {
+    protected ReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
@@ -172,11 +172,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     exchange.setOut(response);
                     Object body = response.getBody();
 
-                    if (endpoint.isTransferException() && body instanceof Exception) {
+                    if (endpoint.isTransferException() && body instanceof Exception exception) {
                         log.debug("Reply was an Exception. Setting the Exception on the Exchange: {}", body);
                         // we got an exception back and endpoint was configured to transfer exception
                         // therefore set response as exception
-                        exchange.setException((Exception) body);
+                        exchange.setException(exception);
                     } else {
                         log.debug("Reply received. OUT message body set to reply payload: {}", body);
                     }

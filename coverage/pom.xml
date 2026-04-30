@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -319,11 +319,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws-security-hub</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-aws-xray</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -2150,11 +2145,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-stomp</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-stream</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -2650,6 +2640,7 @@
                                     <!-- Workaround to multi-release jar https://github.com/jacoco/jacoco/issues/407 -->
                                     <excludes>
                                         <exclude>**/CamelThreadFactory*</exclude>
+                                        <exclude>**/ContextValueFactory*</exclude>
                                     </excludes>
                                 </configuration>
                             </execution>

@@ -23,10 +23,10 @@ import org.apache.camel.support.PooledObjectFactorySupport;
 public abstract class PooledTaskFactory extends PooledObjectFactorySupport<PooledExchangeTask>
         implements PooledExchangeTaskFactory {
 
-    public PooledTaskFactory() {
+    protected PooledTaskFactory() {
     }
 
-    public PooledTaskFactory(Object source) {
+    protected PooledTaskFactory(Object source) {
         super(source);
     }
 

@@ -4,7 +4,7 @@
 :artifactid: camel-mina-sftp
 :description: Upload and download files to/from SFTP servers using Apache MINA SSHD.
 :since: 4.18
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

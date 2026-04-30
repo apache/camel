@@ -51,7 +51,11 @@ import picocli.CommandLine;
 
 @CommandLine.Command(name = "send",
                      description = "Send messages to endpoints", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel cmd send --endpoint=kafka:myTopic --body='Hello World'",
+                             "  camel cmd send hello --endpoint=direct:foo --body='Hello'" })
 public class CamelSendAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "To use an existing running Camel integration for sending the message (name or pid)",

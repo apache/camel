@@ -463,6 +463,246 @@ In the route above, the following message
 Would have failed the JSonPath expression `person.middlename` because the JSon payload
 does not have a `middlename` field. To remedy this we have suppressed the exception.
 
+== Schema Variants
+
+The YAML DSL provides two JSON Schema variants for validation:
+
+=== Classic Schema (`camelYamlDsl.json`)
+
+The default schema supports several convenient shorthands to make YAML routes more concise:
+
+* *String shorthands*: Some EIPs like `log` accept a plain string instead of an object.
+For example, `log: "$\{body}"` is equivalent to `log: { message: "$\{body}" }`.
+
+* *Implicit expressions*: Expression-aware EIPs like `filter`, `setBody`, and `split` allow
+the expression language to be specified directly without the `expression` wrapper.
+For example, `setBody: { simple: "Hello" }` is equivalent to `setBody: { expression: { simple: { expression: "Hello" } } }`.
+
+While these shorthands make hand-written YAML more concise, they also increase the complexity of the
+JSON Schema with `oneOf`, `anyOf`, and `not` constructs. This can cause problems for tooling such as
+IDE auto-completion, schema-based code generators, and AI assistants that struggle with these patterns.
+
+=== Canonical Schema (`camelYamlDsl-canonical.json`)
+
+The canonical schema removes all implicit patterns:
+
+* No string shorthands: EIPs like `log` must use the object form with explicit properties.
+* No implicit expressions: Expression-aware EIPs require the `expression` wrapper.
+* No `oneOf`/`anyOf`/`not` constructs: The schema uses only simple `type: object` with `properties`.
+
+This results in a schema that is approximately 25% smaller and significantly easier for tooling to process.
+
+==== Example: log shorthand
+
+[tabs]
+====
+Classic::
++
+[source,yaml]
+----
+- log: "${body}"
+----
+
+Canonical::
++
+[source,yaml]
+----
+- log:
+    message: "${body}"
+----
+====
+
+==== Example: setBody with expression
+
+[tabs]
+====
+Classic::
++
+[source,yaml]
+----
+- setBody:
+    simple: "Hello Camel from ${routeId}"
+----
+
+Canonical::
++
+[source,yaml]
+----
+- setBody:
+    expression:
+      simple:
+        expression: "Hello Camel from ${routeId}"
+----
+====
+
+==== Example: setHeader with constant
+
+[tabs]
+====
+Classic::
++
+[source,yaml]
+----
+- setHeader:
+    name: Content-Type
+    constant: "application/json"
+----
+
+Canonical::
++
+[source,yaml]
+----
+- setHeader:
+    name: Content-Type
+    expression:
+      constant:
+        expression: "application/json"
+----
+====
+
+==== Example: choice with when
+
+[tabs]
+====
+Classic::
++
+[source,yaml]
+----
+- choice:
+    when:
+      - simple: "${body} == 'Hello'"
+        steps:
+          - setProperty:
+              name: myProp
+              simple: "${body}"
+    otherwise:
+      steps:
+        - setProperty:
+            name: myProp
+            constant: "default"
+----
+
+Canonical::
++
+[source,yaml]
+----
+- choice:
+    when:
+      - expression:
+          simple:
+            expression: "${body} == 'Hello'"
+        steps:
+          - setProperty:
+              name: myProp
+              expression:
+                simple:
+                  expression: "${body}"
+    otherwise:
+      steps:
+        - setProperty:
+            name: myProp
+            expression:
+              constant:
+                expression: "default"
+----
+====
+
+==== Example: complete route
+
+[tabs]
+====
+Classic::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:yaml
+      steps:
+        - setBody:
+            simple: "Hello Camel from ${routeId}"
+        - log: "${body}"
+----
+
+Canonical::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:yaml
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Hello Camel from ${routeId}"
+        - log:
+            message: "${body}"
+----
+====
+
+Both forms are accepted by the Camel runtime. The classic schema validates both forms, while the
+canonical schema only validates the explicit form. In other words, the canonical form is a strict subset
+of the classic form: any YAML file that validates against the canonical schema will also validate against
+the classic schema and work with the Camel runtime.
+
+The canonical schema is intended for use by tooling (IDEs, code generators, AI assistants) that benefits from
+a simpler, more predictable schema structure. The classic schema remains the default for human-authored YAML.
+
+=== Using the schemas with IDEs
+
+The classic schema is registered in the https://www.schemastore.org/[JSON Schema Store] and is automatically
+used by IDEs like VS Code and IntelliJ for files matching `*.camel.yaml` and `*.camelk.yaml`.
+
+To use the canonical schema instead, configure your IDE to point to the canonical schema URL:
+
+----
+https://raw.githubusercontent.com/apache/camel/main/dsl/camel-yaml-dsl/camel-yaml-dsl/src/generated/resources/schema/camelYamlDsl-canonical.json
+----
+
+Or reference the schema locally from the `camel-yaml-dsl` JAR at `/schema/camelYamlDsl-canonical.json`.
+
+=== Normalizing YAML routes
+
+To convert existing YAML routes from the classic (shorthand) form to the canonical (explicit) form,
+use the Camel JBang `normalize` command:
+
+[source,bash]
+----
+camel validate normalize myroute.yaml
+----
+
+This parses the YAML routes and rewrites them in canonical form, expanding all shorthands and
+implicit expressions. The output is printed to the console by default, or can be written to a file
+or directory using the `--output` option:
+
+[source,bash]
+----
+camel validate normalize --output normalized/ myroute.yaml
+----
+
+=== Validating with the canonical schema
+
+To validate YAML routes against the canonical schema:
+
+[source,bash]
+----
+camel validate yaml --canonical myroute.yaml
+----
+
+This reports any shorthands or implicit forms that are not valid in the canonical schema.
+
+The `YamlValidator` class supports both schemas programmatically:
+
+[source,java]
+----
+// Classic validation (default)
+YamlValidator validator = new YamlValidator();
+
+// Canonical validation
+YamlValidator canonicalValidator = new YamlValidator(true);
+----
+
 == External examples
 
 You can find a set of examples using `main-yaml` in https://github.com/apache/camel-examples[Camel Examples]

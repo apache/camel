@@ -98,8 +98,8 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                 }
                 // write location information
                 if (sourceLocation || context.isDebugging()) {
-                    String loc = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
-                    int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
+                    String loc = (def instanceof RouteDefinition rd1 ? rd1.getInput() : def).getLocation();
+                    int line = (def instanceof RouteDefinition rd2 ? rd2.getInput() : def).getLineNumber();
                     if (line != -1) {
                         writer.addAttribute("sourceLineNumber", Integer.toString(line));
                         writer.addAttribute("sourceLocation", loc);

@@ -32,7 +32,7 @@ public class FilesConfiguration extends RemoteFileConfiguration {
     public static final int DEFAULT_HTTPS_PORT = 443;
     public static final String DEFAULT_INTERNET_DOMAIN = "file.core.windows.net";
 
-    @UriParam(label = "common", description = "Shared key (storage account key)", secret = true)
+    @UriParam(label = "common", description = "Shared key (storage account key)", security = "secret")
     private String sharedKey;
 
     @UriPath(name = "account", description = "The account to use")

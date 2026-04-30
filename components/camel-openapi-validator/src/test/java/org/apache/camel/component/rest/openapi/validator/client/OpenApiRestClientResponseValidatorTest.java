@@ -63,7 +63,7 @@ public class OpenApiRestClientResponseValidatorTest extends ExchangeTestSupport 
         exchange.getMessage().setBody("{ \"name\": \"tiger\" }");
         error = validator.validate(exchange, new RestClientResponseValidator.ValidationContext(
                 "application/json", "application/json", null, null));
-        Assertions.assertTrue(error.body().contains("Object has missing required properties ([\\\"photoUrls\\\"])"));
+        Assertions.assertTrue(error.body().contains("Object has missing required properties ([\"photoUrls\"])"));
 
         exchange.getMessage().setBody("{ \"name\": \"tiger\", \"photoUrls\": [\"image.jpg\"] }");
         error = validator.validate(exchange, new RestClientResponseValidator.ValidationContext(

@@ -21,13 +21,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.exec.impl.DefaultExecBinding;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -49,25 +47,25 @@ public class ExecEndpoint extends DefaultEndpoint {
     private String args;
     @UriParam
     private String workingDir;
-    @UriParam(javaType = "java.time.Duration")
+    @UriParam
     private long timeout;
     @UriParam
     private String exitValues;
     @UriParam
     private String outFile;
-    @UriParam
+    @UriParam(label = "advanced")
     private ExecCommandExecutor commandExecutor;
-    @UriParam
+    @UriParam(label = "advanced")
     private ExecBinding binding;
     @UriParam
     private boolean useStderrOnEmptyStdout;
     @UriParam(defaultValue = "DEBUG")
     private LoggingLevel commandLogLevel = LoggingLevel.DEBUG;
+    @UriParam(label = "advanced")
+    private boolean allowControlHeaders;
 
     public ExecEndpoint(String uri, ExecComponent component) {
         super(uri, component);
-        this.timeout = NO_TIMEOUT;
-        this.binding = new DefaultExecBinding();
     }
 
     @Override
@@ -166,12 +164,10 @@ public class ExecEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command
-     * execution. The default command executor utilizes the commons-exec library, which adds a shutdown hook for every
-     * executed command.
+     * To use a custom org.apache.commons.exec.ExecCommandExecutor that customizes the command execution. The default
+     * command executor utilizes the commons-exec library, which adds a shutdown hook for every executed command.
      */
     public void setCommandExecutor(ExecCommandExecutor commandExecutor) {
-        ObjectHelper.notNull(commandExecutor, "commandExecutor");
         this.commandExecutor = commandExecutor;
     }
 
@@ -180,10 +176,9 @@ public class ExecEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
+     * To use a custom org.apache.commons.exec.ExecBinding for advanced use-cases.
      */
     public void setBinding(ExecBinding binding) {
-        ObjectHelper.notNull(binding, "binding");
         this.binding = binding;
     }
 
@@ -209,5 +204,18 @@ public class ExecEndpoint extends DefaultEndpoint {
      */
     public void setCommandLogLevel(LoggingLevel commandLogLevel) {
         this.commandLogLevel = commandLogLevel;
+    }
+
+    public boolean isAllowControlHeaders() {
+        return allowControlHeaders;
+    }
+
+    /**
+     * Whether to allow to use Camel headers or not (default false). Enabling this allows to specify dynamic command
+     * line arguments via message header. However this can be seen as a potential security vulnerability if the header
+     * is coming from a malicious user, so use this with care.
+     */
+    public void setAllowControlHeaders(boolean allowControlHeaders) {
+        this.allowControlHeaders = allowControlHeaders;
     }
 }

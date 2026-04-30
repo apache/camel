@@ -24,9 +24,9 @@ import org.jspecify.annotations.Nullable;
  */
 public class AwsVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String accessKey;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String secretKey;
     @Metadata
     private @Nullable String region;

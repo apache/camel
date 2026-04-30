@@ -74,7 +74,12 @@ import picocli.CommandLine.Command;
 import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.CAMEL_JBANG_WORK_DIR;
 import static org.apache.camel.util.IOHelper.buffered;
 
-@Command(name = "debug", description = "Debug local Camel integration", sortOptions = false, showDefaultValues = true)
+@Command(name = "debug", description = "Debug local Camel integration", sortOptions = false, showDefaultValues = true,
+         footer = {
+                 "%nExamples:",
+                 "  camel debug hello.java",
+                 "  camel debug hello.yaml --breakpoint=myBreakpoint",
+                 "  camel debug hello.java --stop-on-exit=false" })
 public class Debug extends Run {
 
     @CommandLine.Option(names = { "--remote-attach" },

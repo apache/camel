@@ -159,19 +159,19 @@ public class SmppBinding {
             try {
                 Tag valueOfTag = OptionalParameter.Tag.valueOf(optPara.tag);
                 if (valueOfTag != null) {
-                    if (optPara instanceof COctetString) {
-                        optParams.put(valueOfTag.toString(), ((COctetString) optPara).getValueAsString());
-                    } else if (optPara instanceof OctetString) {
-                        optParams.put(valueOfTag.toString(), ((OctetString) optPara).getValueAsString());
-                    } else if (optPara instanceof OptionalParameter.Byte) {
+                    if (optPara instanceof COctetString cOctetString) {
+                        optParams.put(valueOfTag.toString(), cOctetString.getValueAsString());
+                    } else if (optPara instanceof OctetString octetString) {
+                        optParams.put(valueOfTag.toString(), octetString.getValueAsString());
+                    } else if (optPara instanceof OptionalParameter.Byte byteParam) {
                         optParams.put(valueOfTag.toString(),
-                                ((OptionalParameter.Byte) optPara).getValue());
-                    } else if (optPara instanceof OptionalParameter.Short) {
+                                byteParam.getValue());
+                    } else if (optPara instanceof OptionalParameter.Short shortParam) {
                         optParams.put(valueOfTag.toString(),
-                                ((OptionalParameter.Short) optPara).getValue());
-                    } else if (optPara instanceof OptionalParameter.Int) {
+                                shortParam.getValue());
+                    } else if (optPara instanceof OptionalParameter.Int intParam) {
                         optParams.put(valueOfTag.toString(),
-                                ((OptionalParameter.Int) optPara).getValue());
+                                intParam.getValue());
                     } else if (optPara instanceof Null) {
                         optParams.put(valueOfTag.toString(), null);
                     }
@@ -188,19 +188,19 @@ public class SmppBinding {
     private Map<Short, Object> createOptionalParameterByCode(DeliverSm deliverSm) {
         Map<Short, Object> optParams = new HashMap<>();
         for (OptionalParameter optPara : deliverSm.getOptionalParameters()) {
-            if (optPara instanceof COctetString) {
-                optParams.put(optPara.tag, ((COctetString) optPara).getValueAsString());
-            } else if (optPara instanceof OctetString) {
-                optParams.put(optPara.tag, ((OctetString) optPara).getValue());
-            } else if (optPara instanceof OptionalParameter.Byte) {
+            if (optPara instanceof COctetString cOctetString) {
+                optParams.put(optPara.tag, cOctetString.getValueAsString());
+            } else if (optPara instanceof OctetString octetString) {
+                optParams.put(optPara.tag, octetString.getValue());
+            } else if (optPara instanceof OptionalParameter.Byte byteParam) {
                 optParams.put(optPara.tag,
-                        ((OptionalParameter.Byte) optPara).getValue());
-            } else if (optPara instanceof OptionalParameter.Short) {
+                        byteParam.getValue());
+            } else if (optPara instanceof OptionalParameter.Short shortParam) {
                 optParams.put(optPara.tag,
-                        ((OptionalParameter.Short) optPara).getValue());
-            } else if (optPara instanceof OptionalParameter.Int) {
+                        shortParam.getValue());
+            } else if (optPara instanceof OptionalParameter.Int intParam) {
                 optParams.put(optPara.tag,
-                        ((OptionalParameter.Int) optPara).getValue());
+                        intParam.getValue());
             } else if (optPara instanceof Null) {
                 optParams.put(optPara.tag, null);
             }

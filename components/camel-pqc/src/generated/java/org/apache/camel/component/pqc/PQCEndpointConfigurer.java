@@ -55,6 +55,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signaturealgorithm":
         case "signatureAlgorithm": target.getConfiguration().setSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "signer": target.getConfiguration().setSigner(property(camelContext, java.security.Signature.class, value)); return true;
+        case "statefulkeywarningthreshold":
+        case "statefulKeyWarningThreshold": target.getConfiguration().setStatefulKeyWarningThreshold(property(camelContext, double.class, value)); return true;
         case "storeextractedsecretkeyasheader":
         case "storeExtractedSecretKeyAsHeader": target.getConfiguration().setStoreExtractedSecretKeyAsHeader(property(camelContext, boolean.class, value)); return true;
         case "strictkeylifecycle":
@@ -107,6 +109,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signaturealgorithm":
         case "signatureAlgorithm": return java.lang.String.class;
         case "signer": return java.security.Signature.class;
+        case "statefulkeywarningthreshold":
+        case "statefulKeyWarningThreshold": return double.class;
         case "storeextractedsecretkeyasheader":
         case "storeExtractedSecretKeyAsHeader": return boolean.class;
         case "strictkeylifecycle":
@@ -155,6 +159,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signaturealgorithm":
         case "signatureAlgorithm": return target.getConfiguration().getSignatureAlgorithm();
         case "signer": return target.getConfiguration().getSigner();
+        case "statefulkeywarningthreshold":
+        case "statefulKeyWarningThreshold": return target.getConfiguration().getStatefulKeyWarningThreshold();
         case "storeextractedsecretkeyasheader":
         case "storeExtractedSecretKeyAsHeader": return target.getConfiguration().isStoreExtractedSecretKeyAsHeader();
         case "strictkeylifecycle":

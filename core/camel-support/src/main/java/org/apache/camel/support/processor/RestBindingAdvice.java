@@ -203,8 +203,8 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
 
         // set data type if in use
         if (exchange.getContext().isUseDataType()) {
-            if (exchange.getIn() instanceof DataTypeAware && (isJson || isXml)) {
-                ((DataTypeAware) exchange.getIn()).setDataType(new DataType(isJson ? "json" : "xml"));
+            if (exchange.getIn() instanceof DataTypeAware dataTypeAware && (isJson || isXml)) {
+                dataTypeAware.setDataType(new DataType(isJson ? "json" : "xml"));
             }
         }
 

@@ -247,10 +247,10 @@ public final class CxfPayloadConverter {
     private static <T> T tryFromSource(Class<T> type, Exchange exchange, CxfPayload<?> payload, Source s, TypeConverter tc) {
         XMLStreamReader r = null;
         if (payload.getNsMap() != null) {
-            if (s instanceof StaxSource) {
-                r = ((StaxSource) s).getXMLStreamReader();
-            } else if (s instanceof StAXSource) {
-                r = ((StAXSource) s).getXMLStreamReader();
+            if (s instanceof StaxSource staxSource) {
+                r = staxSource.getXMLStreamReader();
+            } else if (s instanceof StAXSource stAXSource) {
+                r = stAXSource.getXMLStreamReader();
             }
             if (r != null) {
                 s = new StAXSource(new DelegatingXMLStreamReader(r, payload.getNsMap()));
@@ -261,8 +261,8 @@ public final class CxfPayloadConverter {
 
     private static <
             T> T tryFromStaxSource(Class<T> type, Exchange exchange, Source s, CxfPayload<?> payload, TypeConverter tc) {
-        XMLStreamReader r = (s instanceof StAXSource)
-                ? ((StAXSource) s).getXMLStreamReader() : ((StaxSource) s).getXMLStreamReader();
+        XMLStreamReader r = (s instanceof StAXSource stAXSource)
+                ? stAXSource.getXMLStreamReader() : ((StaxSource) s).getXMLStreamReader();
         if (payload.getNsMap() != null) {
             r = new DelegatingXMLStreamReader(r, payload.getNsMap());
         }
@@ -284,16 +284,16 @@ public final class CxfPayloadConverter {
         Source src = null;
         // many of the common format that can have a Source created
         // directly
-        if (value instanceof InputStream) {
-            src = new StreamSource((InputStream) value);
-        } else if (value instanceof Reader) {
-            src = new StreamSource((Reader) value);
-        } else if (value instanceof String) {
-            src = new StreamSource(new StringReader((String) value));
-        } else if (value instanceof Node) {
-            src = new DOMSource((Node) value);
-        } else if (value instanceof Source) {
-            src = (Source) value;
+        if (value instanceof InputStream inputStream) {
+            src = new StreamSource(inputStream);
+        } else if (value instanceof Reader reader) {
+            src = new StreamSource(reader);
+        } else if (value instanceof String string) {
+            src = new StreamSource(new StringReader(string));
+        } else if (value instanceof Node node) {
+            src = new DOMSource(node);
+        } else if (value instanceof Source source) {
+            src = source;
         }
         return src;
     }

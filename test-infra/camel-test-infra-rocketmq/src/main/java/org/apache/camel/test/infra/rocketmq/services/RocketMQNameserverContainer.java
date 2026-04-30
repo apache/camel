@@ -32,7 +32,6 @@ public class RocketMQNameserverContainer extends GenericContainer<RocketMQNamese
         addExposedPort(RocketMQProperties.ROCKETMQ_NAMESRV_PORT);
         withTmpFs(Collections.singletonMap("/home/rocketmq/logs", "rw"));
         withCommand("sh", "mqnamesrv");
-        withCreateContainerCmdModifier(cmd -> cmd.withName("nameserver"));
 
         waitingFor(Wait.forListeningPort());
     }

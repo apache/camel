@@ -24,11 +24,11 @@ import org.jspecify.annotations.Nullable;
  */
 public class SpringCloudConfigConfiguration extends VaultConfiguration {
 
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String password;
-    @Metadata(secret = true, defaultValue = "user")
+    @Metadata(security = "secret", defaultValue = "user")
     private String username = "user";
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String token;
     @Metadata(defaultValue = "http://localhost:8888", description = "Comma separated list of Spring Config Server URIs")
     private String uris = "http://localhost:8888";

@@ -63,9 +63,35 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "sslendpointalgorithm":
+        case "sslEndpointAlgorithm": target.getConfiguration().setSslEndpointAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeypassword":
+        case "sslKeyPassword": target.getConfiguration().setSslKeyPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeymanageralgorithm":
+        case "sslKeymanagerAlgorithm": target.getConfiguration().setSslKeymanagerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeystorelocation":
+        case "sslKeystoreLocation": target.getConfiguration().setSslKeystoreLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeystorepassword":
+        case "sslKeystorePassword": target.getConfiguration().setSslKeystorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslkeystoretype":
+        case "sslKeystoreType": target.getConfiguration().setSslKeystoreType(property(camelContext, java.lang.String.class, value)); return true;
+        case "sslprotocol":
+        case "sslProtocol": target.getConfiguration().setSslProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssltrustmanageralgorithm":
+        case "sslTrustmanagerAlgorithm": target.getConfiguration().setSslTrustmanagerAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssltruststorelocation":
+        case "sslTruststoreLocation": target.getConfiguration().setSslTruststoreLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssltruststorepassword":
+        case "sslTruststorePassword": target.getConfiguration().setSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "ssltruststoretype":
+        case "sslTruststoreType": target.getConfiguration().setSslTruststoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "storefullresponse":
         case "storeFullResponse": target.getConfiguration().setStoreFullResponse(property(camelContext, boolean.class, value)); return true;
         case "streaming": target.getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
+        case "stripthinking":
+        case "stripThinking": target.getConfiguration().setStripThinking(property(camelContext, boolean.class, value)); return true;
         case "systemmessage":
         case "systemMessage": target.getConfiguration().setSystemMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
@@ -120,9 +146,35 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return java.lang.String.class;
         case "outputclass":
         case "outputClass": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "sslendpointalgorithm":
+        case "sslEndpointAlgorithm": return java.lang.String.class;
+        case "sslkeypassword":
+        case "sslKeyPassword": return java.lang.String.class;
+        case "sslkeymanageralgorithm":
+        case "sslKeymanagerAlgorithm": return java.lang.String.class;
+        case "sslkeystorelocation":
+        case "sslKeystoreLocation": return java.lang.String.class;
+        case "sslkeystorepassword":
+        case "sslKeystorePassword": return java.lang.String.class;
+        case "sslkeystoretype":
+        case "sslKeystoreType": return java.lang.String.class;
+        case "sslprotocol":
+        case "sslProtocol": return java.lang.String.class;
+        case "ssltrustmanageralgorithm":
+        case "sslTrustmanagerAlgorithm": return java.lang.String.class;
+        case "ssltruststorelocation":
+        case "sslTruststoreLocation": return java.lang.String.class;
+        case "ssltruststorepassword":
+        case "sslTruststorePassword": return java.lang.String.class;
+        case "ssltruststoretype":
+        case "sslTruststoreType": return java.lang.String.class;
         case "storefullresponse":
         case "storeFullResponse": return boolean.class;
         case "streaming": return boolean.class;
+        case "stripthinking":
+        case "stripThinking": return boolean.class;
         case "systemmessage":
         case "systemMessage": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
@@ -178,9 +230,35 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
+        case "sslendpointalgorithm":
+        case "sslEndpointAlgorithm": return target.getConfiguration().getSslEndpointAlgorithm();
+        case "sslkeypassword":
+        case "sslKeyPassword": return target.getConfiguration().getSslKeyPassword();
+        case "sslkeymanageralgorithm":
+        case "sslKeymanagerAlgorithm": return target.getConfiguration().getSslKeymanagerAlgorithm();
+        case "sslkeystorelocation":
+        case "sslKeystoreLocation": return target.getConfiguration().getSslKeystoreLocation();
+        case "sslkeystorepassword":
+        case "sslKeystorePassword": return target.getConfiguration().getSslKeystorePassword();
+        case "sslkeystoretype":
+        case "sslKeystoreType": return target.getConfiguration().getSslKeystoreType();
+        case "sslprotocol":
+        case "sslProtocol": return target.getConfiguration().getSslProtocol();
+        case "ssltrustmanageralgorithm":
+        case "sslTrustmanagerAlgorithm": return target.getConfiguration().getSslTrustmanagerAlgorithm();
+        case "ssltruststorelocation":
+        case "sslTruststoreLocation": return target.getConfiguration().getSslTruststoreLocation();
+        case "ssltruststorepassword":
+        case "sslTruststorePassword": return target.getConfiguration().getSslTruststorePassword();
+        case "ssltruststoretype":
+        case "sslTruststoreType": return target.getConfiguration().getSslTruststoreType();
         case "storefullresponse":
         case "storeFullResponse": return target.getConfiguration().isStoreFullResponse();
         case "streaming": return target.getConfiguration().isStreaming();
+        case "stripthinking":
+        case "stripThinking": return target.getConfiguration().isStripThinking();
         case "systemmessage":
         case "systemMessage": return target.getConfiguration().getSystemMessage();
         case "temperature": return target.getConfiguration().getTemperature();

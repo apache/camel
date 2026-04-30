@@ -35,6 +35,10 @@ public class InfrastructureITCase extends JBangTestSupport {
     private static final String IMPL_SERVICE = "artemis";
     private static final String IMPLEMENTATION = "amqp";
 
+    private String getServicePID(String message) {
+        return message.split(":")[1].replaceAll("[^0-9]", "");
+    }
+
     @Test
     public void infraListTest() {
         checkCommandOutputsPattern("infra list", "ALIAS\s+IMPLEMENTATION\s+DESCRIPTION");
@@ -72,7 +76,17 @@ public class InfrastructureITCase extends JBangTestSupport {
         checkCommandDoesNotOutput("infra ps", PID);
     }
 
-    private String getServicePID(String message) {
-        return message.split(":")[1].replaceAll("[^0-9]", "");
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                              disabledReason = "Requires too much resources")
+    @Test
+    public void sendMessageTest() {
+        String msg = execute("infra run --background " + SERVICE);
+        String PID = getServicePID(msg);
+        Awaitility.await()
+                .atMost(Duration.ofSeconds(30))
+                .pollInterval(Duration.ofSeconds(1))
+                .untilAsserted(() -> Assertions.assertThat(execute("infra ps"))
+                        .containsPattern(PID));
+        checkCommandOutputs("cmd send --infra " + SERVICE + " --body=\'hello\'", "Sent (success)");
     }
 }

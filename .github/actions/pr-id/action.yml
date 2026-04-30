@@ -16,13 +16,7 @@
 # ---------------------------------------------------------------------------
 
 name: PR id
-description: Store an artifact with the number of the PR issued
-
-inputs:
-  artifact-name:
-    default: pr-id
-    description: 'The name of the artifact to store PR id number'
-    required: true
+description: Store the number of the PR issued
 
 runs:
   using: "composite"
@@ -30,15 +24,11 @@ runs:
   steps:
 
   # Only run these on pull request events
-  - name: Save new coverage value
+  - name: Save PR id
     if: github.event_name == 'pull_request'
     shell: bash
+    env:
+      EVENT_NUMBER: ${{ github.event.number }}
     run: |
-      mkdir -p /tmp/${{ inputs.artifact-name }}
-      echo ${{ github.event.number }} > /tmp/${{ inputs.artifact-name }}/id
-
-  - uses: actions/upload-artifact@v4
-    if: github.event_name == 'pull_request'
-    with:
-      name: ${{ inputs.artifact-name }}
-      path: /tmp/${{ inputs.artifact-name }}/
+      mkdir -p "/tmp/pr-id"
+      echo "$EVENT_NUMBER" > "/tmp/pr-id/id"

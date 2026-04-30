@@ -116,6 +116,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.SecurityUtils;
+import org.apache.camel.util.SecurityViolation;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
@@ -137,13 +139,21 @@ public abstract class BaseMainSupport extends BaseService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
 
+    private static final String PREFIX_SERVER = "camel.server.";
+    private static final String PREFIX_SSL = "camel.ssl.";
+    private static final String PREFIX_SECURITY = "camel.security.";
+    private static final String PREFIX_DEBUG = "camel.debug.";
+    private static final String PREFIX_TRACE = "camel.trace.";
+    private static final String PREFIX_ROUTE_CONTROLLER = "camel.routeController.";
+
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
             "camel.rest.", "camel.vault.", "camel.threadpool.", "camel.health.",
             "camel.lra.", "camel.opentelemetry2.", "camel.opentelemetry.",
             "camel.telemetryDev.", "camel.management.", "camel.mdc.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
-            "camel.server.", "camel.ssl.", "camel.debug.", "camel.trace.", "camel.routeController." };
+            PREFIX_SERVER, PREFIX_SSL, PREFIX_SECURITY, PREFIX_DEBUG, PREFIX_TRACE,
+            PREFIX_ROUTE_CONTROLLER };
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
@@ -663,7 +673,11 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
 
-        // log summary of configurations
+        // enforce security policies on all auto-configured properties
+        // (must run before logConfigurationSummary which clears the map)
+        enforceSecurityPolicies(camelContext, autoConfiguredProperties);
+
+        // log summary must be last as it removes entries from autoConfiguredProperties
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             logConfigurationSummary(camelContext, autoConfiguredProperties);
         }
@@ -1345,6 +1359,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties httpServerProperties = new OrderedLocationProperties();
         OrderedLocationProperties httpManagementServerProperties = new OrderedLocationProperties();
         OrderedLocationProperties sslProperties = new OrderedLocationProperties();
+        OrderedLocationProperties securityProperties = new OrderedLocationProperties();
         OrderedLocationProperties debuggerProperties = new OrderedLocationProperties();
         OrderedLocationProperties tracerProperties = new OrderedLocationProperties();
         OrderedLocationProperties routeControllerProperties = new OrderedLocationProperties();
@@ -1453,7 +1468,7 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(20);
                 validateOptionAndValue(key, option, value);
                 globalOptions.put(loc, optionKey(option), value);
-            } else if (startsWithIgnoreCase(key, "camel.server.")) {
+            } else if (startsWithIgnoreCase(key, PREFIX_SERVER)) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(13);
@@ -1465,25 +1480,31 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(17);
                 validateOptionAndValue(key, option, value);
                 httpManagementServerProperties.put(loc, optionKey(option), value);
-            } else if (startsWithIgnoreCase(key, "camel.ssl.")) {
+            } else if (startsWithIgnoreCase(key, PREFIX_SSL)) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(10);
                 validateOptionAndValue(key, option, value);
                 sslProperties.put(loc, optionKey(option), value);
-            } else if (startsWithIgnoreCase(key, "camel.debug.")) {
+            } else if (startsWithIgnoreCase(key, PREFIX_SECURITY)) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(15);
+                validateOptionAndValue(key, option, value);
+                securityProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, PREFIX_DEBUG)) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(12);
                 validateOptionAndValue(key, option, value);
                 debuggerProperties.put(loc, optionKey(option), value);
-            } else if (startsWithIgnoreCase(key, "camel.trace.")) {
+            } else if (startsWithIgnoreCase(key, PREFIX_TRACE)) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(12);
                 validateOptionAndValue(key, option, value);
                 tracerProperties.put(loc, optionKey(option), value);
-            } else if (startsWithIgnoreCase(key, "camel.routeController.")) {
+            } else if (startsWithIgnoreCase(key, PREFIX_ROUTE_CONTROLLER)) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(22);
@@ -1525,6 +1546,13 @@ public abstract class BaseMainSupport extends BaseService {
             setPropertiesOnTarget(camelContext, rest, restProperties, "camel.rest.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
             camelContext.setRestConfiguration(rest);
+        }
+        // SSL must be configured before HTTP servers, so global SSL context is available
+        if (!sslProperties.isEmpty() || mainConfigurationProperties.hasSslConfiguration()) {
+            LOG.debug("Auto-configuring SSL from loaded properties: {}", sslProperties.size());
+            setSslProperties(camelContext, sslProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
         }
         if (!httpServerProperties.isEmpty() || mainConfigurationProperties.hasHttpServerConfiguration()) {
             LOG.debug("Auto-configuring HTTP Server from loaded properties: {}", httpServerProperties.size());
@@ -1591,6 +1619,12 @@ public abstract class BaseMainSupport extends BaseService {
         if (!devConsoleProperties.isEmpty()) {
             LOG.debug("Auto-configuring Dev Console from loaded properties: {}", devConsoleProperties.size());
             setDevConsoleProperties(camelContext, devConsoleProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
+        if (!securityProperties.isEmpty() || mainConfigurationProperties.hasSecurityConfiguration()) {
+            LOG.debug("Auto-configuring Security from loaded properties: {}", securityProperties.size());
+            setSecurityProperties(camelContext, securityProperties,
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
@@ -1663,6 +1697,9 @@ public abstract class BaseMainSupport extends BaseService {
             healthProperties.forEach((k, v) -> {
                 LOG.warn("Property not auto-configured: camel.health.{}={}", k, v);
             });
+        }
+        if (!securityProperties.isEmpty()) {
+            securityProperties.forEach((k, v) -> LOG.warn("Property not auto-configured: camel.security.{}={}", k, v));
         }
         if (!sslProperties.isEmpty()) {
             sslProperties.forEach((k, v) -> {
@@ -2015,12 +2052,20 @@ public abstract class BaseMainSupport extends BaseService {
 
         HttpServerConfigurationProperties server = mainConfigurationProperties.httpServer();
 
-        setPropertiesOnTarget(camelContext, server, properties, "camel.server.",
+        setPropertiesOnTarget(camelContext, server, properties, PREFIX_SERVER,
                 mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
         if (!server.isEnabled()) {
             // http server is disabled
             return;
+        }
+
+        // when global SSL is enabled, automatically use it for the HTTP server
+        // (unless the user has explicitly configured useGlobalSslContextParameters)
+        if (!server.isUseGlobalSslContextParameters()
+                && camelContext.getSSLContextParameters() != null
+                && !properties.containsKey("useGlobalSslContextParameters")) {
+            server.setUseGlobalSslContextParameters(true);
         }
 
         // auto-detect camel-platform-http-main on classpath
@@ -2045,6 +2090,14 @@ public abstract class BaseMainSupport extends BaseService {
         if (!server.isEnabled()) {
             // http management server is disabled
             return;
+        }
+
+        // when global SSL is enabled, automatically use it for the HTTP management server
+        // (unless the user has explicitly configured useGlobalSslContextParameters)
+        if (!server.isUseGlobalSslContextParameters()
+                && camelContext.getSSLContextParameters() != null
+                && !properties.containsKey("useGlobalSslContextParameters")) {
+            server.setUseGlobalSslContextParameters(true);
         }
 
         // auto-detect camel-platform-http-main on classpath
@@ -2104,31 +2157,66 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    private void setSslProperties(
+    private void setSecurityProperties(
             CamelContext camelContext, OrderedLocationProperties properties,
             boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties) {
 
+        SecurityConfigurationProperties securityConfig = mainConfigurationProperties.securityConfig();
+        setPropertiesOnTarget(camelContext, securityConfig, properties, PREFIX_SECURITY,
+                failIfNotSet, true, autoConfiguredProperties);
+    }
+
+    private void setSslProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
         SSLConfigurationProperties sslConfig = mainConfigurationProperties.sslConfig();
-        setPropertiesOnTarget(camelContext, sslConfig, properties, "camel.ssl.",
+        setPropertiesOnTarget(camelContext, sslConfig, properties, PREFIX_SSL,
                 failIfNotSet, true, autoConfiguredProperties);
 
         if (!sslConfig.isEnabled()) {
             return;
         }
 
-        KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setCamelContext(camelContext);
-        ksp.setResource(sslConfig.getKeyStore());
-        ksp.setType(sslConfig.getKeyStoreType());
-        ksp.setPassword(sslConfig.getKeystorePassword());
-        ksp.setProvider(sslConfig.getKeyStoreProvider());
+        KeyManagersParameters kmp;
+        if (sslConfig.getKeyStore() != null) {
+            // use the configured keystore
+            KeyStoreParameters ksp = new KeyStoreParameters();
+            ksp.setCamelContext(camelContext);
+            ksp.setResource(sslConfig.getKeyStore());
+            ksp.setType(sslConfig.getKeyStoreType());
+            ksp.setPassword(sslConfig.getKeystorePassword());
+            ksp.setProvider(sslConfig.getKeyStoreProvider());
 
-        KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setCamelContext(camelContext);
-        kmp.setKeyPassword(sslConfig.getKeystorePassword());
-        kmp.setKeyStore(ksp);
-        kmp.setAlgorithm(sslConfig.getKeyManagerAlgorithm());
-        kmp.setProvider(sslConfig.getKeyManagerProvider());
+            kmp = new KeyManagersParameters();
+            kmp.setCamelContext(camelContext);
+            kmp.setKeyPassword(sslConfig.getKeystorePassword());
+            kmp.setKeyStore(ksp);
+            kmp.setAlgorithm(sslConfig.getKeyManagerAlgorithm());
+            kmp.setProvider(sslConfig.getKeyManagerProvider());
+        } else if (sslConfig.isSelfSigned()) {
+            // generate a self-signed certificate for development use
+            LOG.warn("Generating self-signed SSL certificate for development use."
+                     + " Do NOT use this in production.");
+            String password = "camel-self-signed"; // NOSONAR
+            KeyStore ks = SelfSignedCertificateGenerator.generateKeyStore(password);
+
+            KeyStoreParameters ksp = new KeyStoreParameters();
+            ksp.setCamelContext(camelContext);
+            ksp.setKeyStore(ks);
+            ksp.setType("PKCS12");
+            ksp.setPassword(password);
+
+            kmp = new KeyManagersParameters();
+            kmp.setCamelContext(camelContext);
+            kmp.setKeyPassword(password);
+            kmp.setKeyStore(ksp);
+        } else {
+            LOG.warn("SSL is enabled but no keystore is configured."
+                     + " Set camel.ssl.keyStore or camel.ssl.selfSigned=true for development.");
+            return;
+        }
 
         final SSLContextParameters sslContextParameters = createSSLContextParameters(camelContext, sslConfig, kmp);
         camelContext.setSSLContextParameters(sslContextParameters);
@@ -2255,7 +2343,7 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         DebuggerConfigurationProperties config = mainConfigurationProperties.debuggerConfig();
-        setPropertiesOnTarget(camelContext, config, properties, "camel.debug.",
+        setPropertiesOnTarget(camelContext, config, properties, PREFIX_DEBUG,
                 failIfNotSet, true, autoConfiguredProperties);
 
         // use common logic to configure debugger
@@ -2268,7 +2356,7 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         TracerConfigurationProperties config = mainConfigurationProperties.tracerConfig();
-        setPropertiesOnTarget(camelContext, config, properties, "camel.trace.",
+        setPropertiesOnTarget(camelContext, config, properties, PREFIX_TRACE,
                 failIfNotSet, true, autoConfiguredProperties);
 
         if (!config.isEnabled() && !config.isStandby()) {
@@ -2310,7 +2398,7 @@ public abstract class BaseMainSupport extends BaseService {
             throws Exception {
 
         RouteControllerConfigurationProperties config = mainConfigurationProperties.routeControllerConfig();
-        setPropertiesOnTarget(camelContext, config, properties, "camel.routeController.",
+        setPropertiesOnTarget(camelContext, config, properties, PREFIX_ROUTE_CONTROLLER,
                 failIfNotSet, true, autoConfiguredProperties);
 
         // supervising route controller
@@ -2801,8 +2889,51 @@ public abstract class BaseMainSupport extends BaseService {
                     MainHelper.sensitiveAwareLogging(camelContext, LOG, k, v, loc, debug);
                 }
             }
+
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
+        }
+    }
+
+    private void enforceSecurityPolicies(CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties) {
+        SecurityConfigurationProperties securityConfig = mainConfigurationProperties.securityConfig();
+
+        // build a properties map for the shared detection utility
+        Map<String, Object> propsMap = new LinkedHashMap<>();
+        for (var entry : autoConfiguredProperties.entrySet()) {
+            propsMap.put(entry.getKey().toString(), entry.getValue());
+        }
+
+        // build the allowed keys set
+        Set<String> allowedKeys = securityConfig.getAllowedPropertySet();
+
+        // detect all violations using the shared utility
+        List<SecurityViolation> violations = SecurityUtils.detectViolations(
+                propsMap,
+                (k, v) -> MainHelper.containsSensitive(camelContext, k, v),
+                securityConfig::resolvePolicy,
+                allowedKeys);
+
+        // store violations for health check access
+        camelContext.getCamelContextExtension()
+                .addContextPlugin(SecurityPolicyResult.class, new SecurityPolicyResult(violations));
+
+        // apply policy: warn or fail (policy is carried in each violation from detection)
+        List<String> failures = new ArrayList<>();
+        for (SecurityViolation v : violations) {
+            if ("fail".equals(v.policy())) {
+                failures.add(v.toString());
+            } else {
+                // default: warn
+                LOG.warn("SECURITY WARNING: {}", v);
+            }
+        }
+
+        if (!failures.isEmpty()) {
+            throw new RuntimeCamelException(
+                    "Security policy violations detected (policy=fail):\n - " + String.join("\n - ", failures)
+                                            + "\nTo allow specific properties, add them to camel.security.allowedProperties"
+                                            + " or change the policy to 'warn' or 'allow'.");
         }
     }
 

@@ -40,7 +40,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     private @Nullable DataType from;
     private @Nullable DataType to;
 
-    public Transformer() {
+    protected Transformer() {
         if (this.getClass().isAnnotationPresent(DataTypeTransformer.class)) {
             DataTypeTransformer annotation = this.getClass().getAnnotation(DataTypeTransformer.class);
             if (ObjectHelper.isNotEmpty(annotation.name())) {
@@ -57,7 +57,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
         }
     }
 
-    public Transformer(String name) {
+    protected Transformer(String name) {
         this.name = Objects.requireNonNull(name, "name");
     }
 

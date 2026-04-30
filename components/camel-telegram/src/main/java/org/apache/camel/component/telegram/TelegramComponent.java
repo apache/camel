@@ -28,7 +28,7 @@ import org.apache.camel.support.HealthCheckComponent;
 public class TelegramComponent extends HealthCheckComponent {
     public static final String BOT_API_DEFAULT_URL = "https://api.telegram.org";
 
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String authorizationToken;
 
     @Metadata(label = "advanced")

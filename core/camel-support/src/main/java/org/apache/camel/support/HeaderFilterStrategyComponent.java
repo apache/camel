@@ -31,10 +31,10 @@ public abstract class HeaderFilterStrategyComponent extends DefaultComponent imp
               description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
 
-    public HeaderFilterStrategyComponent() {
+    protected HeaderFilterStrategyComponent() {
     }
 
-    public HeaderFilterStrategyComponent(CamelContext context) {
+    protected HeaderFilterStrategyComponent(CamelContext context) {
         super(context);
     }
 

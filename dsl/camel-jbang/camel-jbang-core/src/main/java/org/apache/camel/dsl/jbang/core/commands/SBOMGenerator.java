@@ -34,7 +34,12 @@ import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 @CommandLine.Command(name = "sbom",
                      description = "Generate a CycloneDX or SPDX SBOM for a specific project", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel sbom hello.java",
+                             "  camel sbom hello.java --sbom-format=spdx",
+                             "  camel sbom hello.java --sbom-output-format=xml" })
 public class SBOMGenerator extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";

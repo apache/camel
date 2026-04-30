@@ -787,4 +787,40 @@ class PipeLoaderTest extends YamlTestSupport {
         }
     }
 
+    def "Pipe kamelet property with placeholder should not be URL-encoded"() {
+        setup:
+        context.propertiesComponent.setInitialProperties(['my.message': 'Hello Camel'] as Properties)
+
+        when:
+        loadBindings('''
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: placeholder-pipe
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: timer-source
+                    properties:
+                      message: "{{my.message}}"
+                  sink:
+                    ref:
+                      kind: Kamelet
+                      apiVersion: camel.apache.org/v1
+                      name: log-sink
+        ''')
+        then:
+        context.routeDefinitions.size() == 3
+
+        with (context.routeDefinitions[0]) {
+            routeId == 'placeholder-pipe'
+            // CAMEL-23284: verify placeholder is preserved and NOT URL-encoded to %7B%7B...%7D%7D
+            input.endpointUri == 'kamelet:timer-source?message={{my.message}}'
+            !input.endpointUri.contains('%7B')
+            !input.endpointUri.contains('%7D')
+        }
+    }
+
 }

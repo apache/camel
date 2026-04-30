@@ -27,13 +27,18 @@ import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 /**
  * Consumer to poll atom feeds and return each entry from the feed step by step.
  */
-public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
+public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer<Item> {
 
     private RssReader rssReader;
     private List<Item> items;
 
     public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean throttleEntries) {
         super(endpoint, processor, throttleEntries);
+    }
+
+    @Override
+    public AtomEndpoint getEndpoint() {
+        return (AtomEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -60,11 +65,20 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
 
     private List<Item> readItems() throws IOException {
         if (items == null) {
-            items = AtomUtils.readItems(endpoint.getCamelContext(), endpoint.getFeedUri(), rssReader, endpoint.isSortEntries());
+            items = AtomUtils.readItems(getEndpoint().getCamelContext(), getEndpoint().getFeedUri(), rssReader,
+                    getEndpoint().isSortEntries());
             list = items;
             entryIndex = list.size() - 1;
         }
         return items;
     }
 
+    @Override
+    protected boolean isValidItem(Item entry) {
+        boolean valid = true;
+        if (getEndpoint().isIdempotent()) {
+            valid = getEndpoint().getIdempotentStrategy().isValidItem(entry);
+        }
+        return valid;
+    }
 }

@@ -69,7 +69,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         void cleanUp();
     }
 
-    public ServicePool(ThrowingFunction<Endpoint, S, Exception> creator, Function<S, Endpoint> getEndpoint, int capacity) {
+    protected ServicePool(ThrowingFunction<Endpoint, S, Exception> creator, Function<S, Endpoint> getEndpoint, int capacity) {
         this.creator = creator;
         this.getEndpoint = getEndpoint;
         this.capacity = capacity;

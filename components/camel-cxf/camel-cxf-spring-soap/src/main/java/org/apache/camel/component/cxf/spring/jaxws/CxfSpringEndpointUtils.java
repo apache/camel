@@ -143,8 +143,7 @@ public final class CxfSpringEndpointUtils {
     public static Bus createBus(CamelContext context) {
         BusFactory busFactory = BusFactory.newInstance();
 
-        if (context instanceof SpringCamelContext) {
-            SpringCamelContext springCamelContext = (SpringCamelContext) context;
+        if (context instanceof SpringCamelContext springCamelContext) {
             ApplicationContext applicationContext = springCamelContext.getApplicationContext();
             busFactory = new SpringBusFactory(applicationContext);
         }

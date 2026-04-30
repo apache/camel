@@ -16,11 +16,10 @@
  */
 package org.apache.camel.test.infra.hazelcast.services;
 
-import org.apache.camel.test.infra.common.services.ContainerTestService;
 import org.apache.camel.test.infra.common.services.TestService;
 
 /**
  * Test infra service for Hazelcast
  */
-public interface HazelcastService extends TestService, HazelcastInfraService, ContainerTestService {
+public interface HazelcastService extends TestService, HazelcastInfraService {
 }

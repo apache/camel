@@ -26,11 +26,11 @@ public class AzureVaultConfiguration extends VaultConfiguration {
 
     @Metadata
     private @Nullable String vaultName;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String clientId;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String clientSecret;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String tenantId;
     @Metadata
     private boolean azureIdentityEnabled;
@@ -40,9 +40,9 @@ public class AzureVaultConfiguration extends VaultConfiguration {
     private long refreshPeriod = 30000;
     @Metadata
     private @Nullable String secrets;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String eventhubConnectionString;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private @Nullable String blobAccessKey;
     @Metadata
     private @Nullable String blobAccountName;

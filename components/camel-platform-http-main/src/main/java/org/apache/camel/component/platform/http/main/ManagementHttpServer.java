@@ -583,6 +583,13 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     }
 
     protected void setupHealthCheckConsole() {
+        // ensure camel has health check available
+        HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
+        if (registry == null) {
+            throw new IllegalArgumentException(
+                    "Camel health-check is not available. Add camel-health or camel-observability-services JAR");
+        }
+
         final Route health = router.route(this.healthPath);
         health.method(HttpMethod.GET);
         health.produces("application/json");
@@ -1285,6 +1292,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 camelContext,
                 platformHttpComponent.getHttpManagementEndpoints(),
                 (server != null ? server.getPort() : getPort()),
+                configuration.isUseGlobalSslContextParameters(),
                 "HTTP Management endpoints summary");
     }
 

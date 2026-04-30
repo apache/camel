@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-pgvector/src/main/docs/pgvector-component.adoc

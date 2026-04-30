@@ -71,10 +71,10 @@ public class RocketMQComponent extends DefaultComponent {
     @Metadata(label = "producer", defaultValue = "false")
     private boolean waitForSendResult;
 
-    @Metadata(label = "secret", secret = true)
+    @Metadata(label = "secret", security = "secret")
     private String accessKey;
 
-    @Metadata(label = "secret", secret = true)
+    @Metadata(label = "secret", security = "secret")
     private String secretKey;
 
     @Override

@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -25,7 +24,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -48,7 +50,7 @@ class ExportSpringBoot extends Export {
 
     public ExportSpringBoot(CamelJBangMain main) {
         super(main);
-        pomTemplateName = "spring-boot-pom.tmpl";
+        pomTemplateName = "spring-boot-pom.ftl";
     }
 
     @Override
@@ -190,35 +192,42 @@ class ExportSpringBoot extends Export {
             camelVersion = VersionHelper.extractCamelVersion();
         }
 
-        // First try to load a specialized template from the catalog, if the catalog does not provide it
-        // fallback to the template defined in camel-jbang-core
-        String context;
-        InputStream template = catalog.loadResource("camel-jbang", pomTemplateName);
-        if (template != null) {
-            context = IOHelper.loadText(template);
-        } else {
-            context = readResourceTemplate("templates/" + pomTemplateName);
+        // Check if catalog provides a custom template (backward compatibility)
+        // Also check old .tmpl name for catalogs that haven't been updated
+        InputStream catalogTemplate = catalog.loadResource("camel-jbang", pomTemplateName);
+        if (catalogTemplate == null) {
+            catalogTemplate = catalog.loadResource("camel-jbang", pomTemplateName.replace(".ftl", ".tmpl"));
+        }
+        if (catalogTemplate != null) {
+            // Catalog provides a custom template - use legacy regex-based processing
+            String context = IOHelper.loadText(catalogTemplate);
+            IOHelper.close(catalogTemplate);
+            context = processLegacyPomTemplate(context, ids, repos, deps, catalog);
+            IOHelper.writeText(context, Files.newOutputStream(pom));
+            return;
         }
 
-        context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
-        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
-        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
-        context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
-        context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
-        context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
-        context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}",
+        // Build template data model
+        List<Map<String, Object>> depList = buildSpringBootDependencyList(deps, catalog);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("GroupId", ids[0]);
+        model.put("ArtifactId", ids[1]);
+        model.put("Version", ids[2]);
+        model.put("SpringBootVersion", springBootVersion);
+        model.put("JavaVersion", javaVersion);
+        model.put("CamelSpringBootVersion",
                 Objects.requireNonNullElseGet(camelSpringBootVersion, () -> camelVersion));
-        context = context.replaceFirst("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());
+        model.put("ProjectBuildOutputTimestamp", this.getBuildMavenProjectDate());
+        model.put("BuildProperties", formatBuildProperties());
+        model.put("Repositories", buildRepositoryList(repos));
+        model.put("Dependencies", depList);
 
-        context = replaceBuildProperties(context);
+        String context = TemplateHelper.processTemplate(pomTemplateName, model);
+        IOHelper.writeText(context, Files.newOutputStream(pom));
+    }
 
-        if (repos == null || repos.isEmpty()) {
-            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
-        } else {
-            String s = mavenRepositoriesAsPomXml(repos);
-            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", s);
-        }
-
+    private List<Map<String, Object>> buildSpringBootDependencyList(Set<String> deps, CamelCatalog catalog) {
         List<MavenGav> gavs = new ArrayList<>();
         for (String dep : deps) {
             MavenGav gav = parseMavenGav(dep);
@@ -229,23 +238,78 @@ class ExportSpringBoot extends Export {
             if ("org.apache.camel".equals(gid)) {
                 ArtifactModel<?> am = catalog.modelFromMavenGAV("org.apache.camel.springboot", aid + "-starter", null);
                 if (am != null) {
-                    // use spring-boot starter
                     gav.setGroupId(am.getGroupId());
                     gav.setArtifactId(am.getArtifactId());
-                    gav.setVersion(null); // uses BOM so version should not be included
+                    gav.setVersion(null);
                 } else {
-                    // there is no spring boot starter so use plain camel
                     gav.setVersion(camelVersion);
                 }
             }
-            // use spring-boot version from BOM
             if ("org.springframework.boot".equals(gid)) {
-                gav.setVersion(null); // uses BOM so version should not be included
+                gav.setVersion(null);
             }
             gavs.add(gav);
         }
 
-        // sort artifacts
+        gavs.sort(mavenGavComparator());
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (MavenGav gav : gavs) {
+            Map<String, Object> dep = new HashMap<>();
+            dep.put("groupId", gav.getGroupId());
+            dep.put("artifactId", gav.getArtifactId());
+            dep.put("version", gav.getVersion());
+            dep.put("scope", gav.getScope());
+            dep.put("isLib", "lib".equals(gav.getPackaging()));
+            dep.put("isKameletsUtils", "camel-kamelets-utils".equals(gav.getArtifactId()));
+            result.add(dep);
+        }
+        return result;
+    }
+
+    /**
+     * Legacy processing for catalog-provided templates that use {{ .Name }} syntax.
+     */
+    private String processLegacyPomTemplate(
+            String context, String[] ids, String repos, Set<String> deps, CamelCatalog catalog) {
+        context = context.replaceAll("\\{\\{ \\.GroupId }}", ids[0]);
+        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
+        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
+        context = context.replaceAll("\\{\\{ \\.SpringBootVersion }}", springBootVersion);
+        context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
+        context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
+        context = context.replaceAll("\\{\\{ \\.CamelSpringBootVersion }}",
+                Objects.requireNonNullElseGet(camelSpringBootVersion, () -> camelVersion));
+        context = context.replaceFirst("\\{\\{ \\.ProjectBuildOutputTimestamp }}", this.getBuildMavenProjectDate());
+        context = replaceBuildProperties(context);
+
+        if (repos == null || repos.isEmpty()) {
+            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
+        } else {
+            String s = legacyMavenRepositoriesAsPomXml(repos);
+            context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", s);
+        }
+
+        List<MavenGav> gavs = new ArrayList<>();
+        for (String dep : deps) {
+            MavenGav gav = parseMavenGav(dep);
+            String gid = gav.getGroupId();
+            String aid = gav.getArtifactId();
+            if ("org.apache.camel".equals(gid)) {
+                ArtifactModel<?> am = catalog.modelFromMavenGAV("org.apache.camel.springboot", aid + "-starter", null);
+                if (am != null) {
+                    gav.setGroupId(am.getGroupId());
+                    gav.setArtifactId(am.getArtifactId());
+                    gav.setVersion(null);
+                } else {
+                    gav.setVersion(camelVersion);
+                }
+            }
+            if ("org.springframework.boot".equals(gid)) {
+                gav.setVersion(null);
+            }
+            gavs.add(gav);
+        }
         gavs.sort(mavenGavComparator());
 
         StringBuilder sb = new StringBuilder();
@@ -260,12 +324,10 @@ class ExportSpringBoot extends Export {
                 sb.append("            <scope>").append(gav.getScope()).append("</scope>\n");
             }
             if ("lib".equals(gav.getPackaging())) {
-                // special for lib JARs
                 sb.append("            <scope>system</scope>\n");
                 sb.append("            <systemPath>\\$\\{project.basedir}/lib/").append(gav.getArtifactId()).append("-")
                         .append(gav.getVersion()).append(".jar</systemPath>\n");
             } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
-                // special for camel-kamelets-utils
                 sb.append("            <exclusions>\n");
                 sb.append("                <exclusion>\n");
                 sb.append("                    <groupId>org.apache.camel</groupId>\n");
@@ -276,8 +338,48 @@ class ExportSpringBoot extends Export {
             sb.append("        </dependency>\n");
         }
         context = context.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
+        return context;
+    }
 
-        IOHelper.writeText(context, Files.newOutputStream(pom));
+    /**
+     * Legacy method for backward compatibility with catalog-provided templates.
+     */
+    private static String legacyMavenRepositoriesAsPomXml(String repos) {
+        StringBuilder sb = new StringBuilder();
+        int i = 1;
+        sb.append("    <repositories>\n");
+        for (String repo : repos.split(",")) {
+            sb.append("        <repository>\n");
+            sb.append("            <id>custom").append(i++).append("</id>\n");
+            sb.append("            <url>").append(repo).append("</url>\n");
+            if (repo.contains("snapshots")) {
+                sb.append("            <releases>\n");
+                sb.append("                <enabled>false</enabled>\n");
+                sb.append("            </releases>\n");
+                sb.append("            <snapshots>\n");
+                sb.append("                <enabled>true</enabled>\n");
+                sb.append("            </snapshots>\n");
+            }
+            sb.append("        </repository>\n");
+        }
+        sb.append("    </repositories>\n");
+        sb.append("    <pluginRepositories>\n");
+        for (String repo : repos.split(",")) {
+            sb.append("        <pluginRepository>\n");
+            sb.append("            <id>custom").append(i++).append("</id>\n");
+            sb.append("            <url>").append(repo).append("</url>\n");
+            if (repo.contains("snapshots")) {
+                sb.append("            <releases>\n");
+                sb.append("                <enabled>false</enabled>\n");
+                sb.append("            </releases>\n");
+                sb.append("            <snapshots>\n");
+                sb.append("                <enabled>true</enabled>\n");
+                sb.append("            </snapshots>\n");
+            }
+            sb.append("        </pluginRepository>\n");
+        }
+        sb.append("    </pluginRepositories>\n");
+        return sb.toString();
     }
 
     @Override
@@ -301,12 +403,12 @@ class ExportSpringBoot extends Export {
     }
 
     private void createMainClassSource(Path srcJavaDir, String packageName, String mainClassname) throws Exception {
-        String context = readResourceTemplate("templates/spring-boot-main.tmpl");
+        Map<String, Object> model = new HashMap<>();
+        model.put("PackageName", packageName);
+        model.put("MainClassname", mainClassname);
 
-        context = context.replaceFirst("\\{\\{ \\.PackageName }}", packageName);
-        context = context.replaceAll("\\{\\{ \\.MainClassname }}", mainClassname);
-        IOHelper.writeText(context,
-                Files.newOutputStream(srcJavaDir.resolve(mainClassname + ".java")));
+        String content = TemplateHelper.processTemplate("spring-boot-main.ftl", model);
+        IOHelper.writeText(content, Files.newOutputStream(srcJavaDir.resolve(mainClassname + ".java")));
     }
 
     @Override
@@ -333,13 +435,6 @@ class ExportSpringBoot extends Export {
             }
         }
         return super.applicationPropertyLine(key, value);
-    }
-
-    private String readResourceTemplate(String name) throws IOException {
-        InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream(name);
-        String text = IOHelper.loadText(is);
-        IOHelper.close(is);
-        return text;
     }
 
 }

@@ -26,7 +26,7 @@ public abstract class LoadBalancerDefinition extends IdentifiedType implements C
     @XmlTransient
     private String loadBalancerTypeName;
 
-    public LoadBalancerDefinition() {
+    protected LoadBalancerDefinition() {
     }
 
     protected LoadBalancerDefinition(LoadBalancerDefinition source) {

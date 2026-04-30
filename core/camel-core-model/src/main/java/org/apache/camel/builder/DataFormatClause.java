@@ -52,6 +52,7 @@ import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.OcsfDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.PQCDataFormat;
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.ProtobufLibrary;
@@ -558,6 +559,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         pgp.setArmored(Boolean.toString(armored));
         pgp.setIntegrity(Boolean.toString(integrity));
         return dataFormat(pgp);
+    }
+
+    /**
+     * Uses the PQC (Post-Quantum Cryptography) data format
+     */
+    public T pqc() {
+        return dataFormat(new PQCDataFormat());
     }
 
     /**

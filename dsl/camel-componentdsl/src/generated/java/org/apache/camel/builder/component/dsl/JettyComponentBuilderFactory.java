@@ -602,14 +602,14 @@ public interface JettyComponentBuilderFactory {
          * the same principle as sslSocketConnectors.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.Integer,
-         * org.eclipse.jetty.server.Connector&amp;gt;&lt;/code&gt; type.
+         * org.eclipse.jetty.server.ServerConnector&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
          * 
          * @param socketConnectors the value to set
          * @return the dsl builder
          */
-        default JettyComponentBuilder socketConnectors(java.util.Map<java.lang.Integer, org.eclipse.jetty.server.Connector> socketConnectors) {
+        default JettyComponentBuilder socketConnectors(java.util.Map<java.lang.Integer, org.eclipse.jetty.server.ServerConnector> socketConnectors) {
             doSetProperty("socketConnectors", socketConnectors);
             return this;
         }
@@ -684,14 +684,14 @@ public interface JettyComponentBuilderFactory {
          * A map which contains per port number specific SSL connectors.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.Integer,
-         * org.eclipse.jetty.server.Connector&amp;gt;&lt;/code&gt; type.
+         * org.eclipse.jetty.server.ServerConnector&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
          * 
          * @param sslSocketConnectors the value to set
          * @return the dsl builder
          */
-        default JettyComponentBuilder sslSocketConnectors(java.util.Map<java.lang.Integer, org.eclipse.jetty.server.Connector> sslSocketConnectors) {
+        default JettyComponentBuilder sslSocketConnectors(java.util.Map<java.lang.Integer, org.eclipse.jetty.server.ServerConnector> sslSocketConnectors) {
             doSetProperty("sslSocketConnectors", sslSocketConnectors);
             return this;
         }

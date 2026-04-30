@@ -29,7 +29,7 @@ import org.apache.camel.support.HealthCheckComponent;
 @Component("github2")
 public class GitHub2Component extends HealthCheckComponent {
 
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String oauthToken;
 
     @Metadata(label = "advanced")

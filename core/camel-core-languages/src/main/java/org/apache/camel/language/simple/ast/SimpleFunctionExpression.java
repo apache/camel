@@ -392,6 +392,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return exp;
             }
         }
+        // html
+        if ("htmlClean".equals(function) || "htmlParse".equals(function) || "htmlDecode".equals(function)
+                || ifStartsWithReturnRemainder("htmlClean", function) != null
+                || ifStartsWithReturnRemainder("htmlParse", function) != null
+                || ifStartsWithReturnRemainder("htmlDecode", function) != null) {
+            Expression exp = createSimpleHtml(camelContext, function);
+            if (exp != null) {
+                return exp;
+            }
+        }
 
         // it may be a custom function
         String name = StringHelper.before(function, "(", function);
@@ -430,6 +440,15 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
                 SimpleLanguageFunctionFactory.class,
                 "camel-base64");
+        return factory.createFunction(camelContext, function, token.getIndex());
+    }
+
+    private Expression createSimpleHtml(CamelContext camelContext, String function) {
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
+                camelContext,
+                SimpleLanguageFunctionFactory.FACTORY + "/camel-jsoup",
+                SimpleLanguageFunctionFactory.class,
+                "camel-jsoup");
         return factory.createFunction(camelContext, function, token.getIndex());
     }
 

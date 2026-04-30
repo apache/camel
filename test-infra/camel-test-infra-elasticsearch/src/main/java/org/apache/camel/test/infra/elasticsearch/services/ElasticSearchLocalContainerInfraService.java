@@ -38,7 +38,7 @@ import org.testcontainers.elasticsearch.ElasticsearchContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = ElasticSearchInfraService.class,
-              description = "NoSQL Database Elasticsearch",
+              description = "Elasticsearch is a distributed search and analytics engine",
               serviceAlias = "elasticsearch")
 public class ElasticSearchLocalContainerInfraService
         implements ElasticSearchInfraService, ContainerService<ElasticsearchContainer> {

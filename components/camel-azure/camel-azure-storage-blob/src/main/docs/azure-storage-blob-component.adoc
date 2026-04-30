@@ -125,6 +125,7 @@ For these operations, `accountName` is *required*.
 |Operation |Description
 |`listBlobContainers`  |Get the content of the blob. You can restrict the output of this operation to a blob range.
 |`getChangeFeed` | Returns transaction logs of all the changes that occur to the blobs and the blob metadata in your storage account. The change feed provides ordered, guaranteed, durable, immutable, read-only log of these changes.
+|`findBlobsByTags` | Returns a list of blobs across the storage account whose index tags match the SQL-like filter expression provided via the `CamelAzureStorageBlobTagFilter` header or the message body. Optionally honours `CamelAzureStorageBlobMaxResultsPerPage` and `CamelAzureStorageBlobTimeout`. The result body is a `List<TaggedBlobItem>`.
 |===
 
 *Operations on the container level*
@@ -164,6 +165,11 @@ and existing blocks together. Any blocks not specified in the block list and per
 |`clearPageBlob`|`PageBlob`| Free the specified pages from the page blob. The size of the range must be a multiple of 512.
 |`getPageBlobRanges`|`PageBlob`|Returns the list of valid page ranges for a page blob or snapshot of a page blob.
 |`copyBlob`|`Common`|Copy a blob from one container to another one, even from different accounts.
+|`createBlobSnapshot`|`Common`|Creates a read-only snapshot of a blob. The snapshot ID is returned in the `CamelAzureStorageBlobSnapshotId` header.
+|`setBlobTags`|`Common`|Sets user-defined index tags on a blob. Tags are key-value pairs that can be used to filter and query blobs across containers. Tags can be provided via the `CamelAzureStorageBlobTags` header or as the message body (`Map<String, String>`).
+|`getBlobTags`|`Common`|Retrieves user-defined index tags from a blob. The tags are returned as the message body (`Map<String, String>`) and also set in the `CamelAzureStorageBlobTags` header.
+|`setBlobLegalHold`|`Common`|Sets a legal hold on a blob. The legal hold flag (`Boolean`) is provided via the `CamelAzureStorageBlobLegalHold` header or the message body. While a legal hold is set, the blob cannot be modified or deleted until the hold is explicitly cleared by calling the operation again with `false`.
+|`setBlobImmutabilityPolicy`|`Common`|Sets a time-based immutability policy on a blob. The policy expiry time (`OffsetDateTime`) is read from the `CamelAzureStorageBlobImmutabilityPolicyExpiryTime` header and the policy mode (`BlobImmutabilityPolicyMode`, defaults to `UNLOCKED`) from `CamelAzureStorageBlobImmutabilityPolicyMode`. A pre-built `BlobImmutabilityPolicy` may also be supplied via the message body or `CamelAzureStorageBlobImmutabilityPolicy` header.
 |===
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
@@ -712,6 +718,113 @@ from("direct:copyBlob")
 --------------------------------------------------------------------------------
 
 In this way the `file.txt` in the container `containerblob1` of the account `account`, will be copied to the container `containerblob2` of the same account.
+
+- `createBlobSnapshot`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:createBlobSnapshot")
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=createBlobSnapshot&serviceClient=#client")
+  .log("Snapshot ID: ${header.CamelAzureStorageBlobSnapshotId}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Reading a specific blob snapshot
+
+The `getBlob`, `downloadBlobToFile` and `downloadLink` operations can target a specific snapshot by setting the
+`snapshotId` URI parameter or the `CamelAzureStorageBlobSnapshotId` exchange header. When set, the read is scoped
+to the snapshot version of the blob instead of the live one. The header takes precedence over the URI parameter.
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:readSnapshot")
+  .process(exchange -> exchange.getIn().setHeader(BlobConstants.BLOB_SNAPSHOT_ID, "2026-04-15T10:00:00.0000000Z"))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Reading a specific blob version
+
+When blob versioning is enabled on the storage account, the `getBlob`, `downloadBlobToFile` and `downloadLink`
+operations can target a specific version by setting the `versionId` URI parameter or the
+`CamelAzureStorageBlobVersionId` exchange header. When set, the read is scoped to the version of the blob instead
+of the live one. The header takes precedence over the URI parameter.
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:readVersion")
+  .setHeader(BlobConstants.BLOB_VERSION_ID, constant("2026-04-15T10:00:00.0000000Z"))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlob&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `setBlobTags`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:setBlobTags")
+  .setHeader(BlobConstants.BLOB_TAGS, constant(Map.of("status", "quarantine", "category", "document")))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobTags&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `getBlobTags`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:getBlobTags")
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=getBlobTags&serviceClient=#client")
+  .log("Tags: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `findBlobsByTags`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+from("direct:findBlobsByTags")
+  .setHeader(BlobConstants.BLOB_TAG_FILTER, constant("\"Environment\" = 'Production' AND \"Status\" = 'Active'"))
+  .to("azure-storage-blob://camelazure?operation=findBlobsByTags&serviceClient=#client")
+  .log("Matching blobs: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `setBlobLegalHold`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+// place a legal hold on the blob (e.g. for compliance / quarantine workflows)
+from("direct:setLegalHold")
+  .setHeader(BlobConstants.BLOB_LEGAL_HOLD, constant(true))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobLegalHold&serviceClient=#client")
+  .to("mock:result");
+
+// clear the legal hold once the workflow is complete
+from("direct:clearLegalHold")
+  .setHeader(BlobConstants.BLOB_LEGAL_HOLD, constant(false))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobLegalHold&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `setBlobImmutabilityPolicy`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+// apply a 7-day unlocked time-based retention policy (can be modified or deleted)
+from("direct:setImmutabilityPolicy")
+  .setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME, constant(OffsetDateTime.now().plusDays(7)))
+  .setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_MODE, constant(BlobImmutabilityPolicyMode.UNLOCKED))
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobImmutabilityPolicy&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
 
 === SAS Token generation example
 

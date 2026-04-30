@@ -21,6 +21,7 @@ camel get health [options]
 | Option | Description | Default | Type
 | `--depth` | Max depth of stack-trace | 1 | int
 | `--down` | Show only checks which are DOWN |  | boolean
+| `--json` | Output in JSON Format |  | boolean
 | `--level` | Level of details: full, or default | default | String
 | `--live` | Show only liveness checks |  | boolean
 | `--ready` | Show only readiness checks |  | boolean

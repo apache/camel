@@ -36,8 +36,12 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String databaseInitialStatements;
     @UriParam(label = LABEL_NAME)
     private String converters;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private long binlogNetWriteTimeout = 0;
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
+    @UriParam(label = LABEL_NAME, defaultValue = "1")
+    private int snapshotMaxThreadsMultiplier = 1;
     @UriParam(label = LABEL_NAME)
     private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
@@ -220,6 +224,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String eventDeserializationFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME)
     private String postProcessors;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private long binlogNetReadTimeout = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "3306")
     private int databasePort = 3306;
     @UriParam(label = LABEL_NAME)
@@ -390,6 +396,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The number of seconds to wait for a write to the binlog connection to
+     * complete before the server times out. A value of 0 means use the MySQL
+     * server default. May need to be increased when large data volumes cause
+     * EOFException during streaming.
+     */
+    public void setBinlogNetWriteTimeout(long binlogNetWriteTimeout) {
+        this.binlogNetWriteTimeout = binlogNetWriteTimeout;
+    }
+
+    public long getBinlogNetWriteTimeout() {
+        return binlogNetWriteTimeout;
+    }
+
+    /**
      * The maximum number of records that should be loaded into memory while
      * performing a snapshot.
      */
@@ -399,6 +419,22 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public int getSnapshotFetchSize() {
         return snapshotFetchSize;
+    }
+
+    /**
+     * The factor used to scale the number of snapshot chunks per table. The
+     * default behavior is to take 'row_count/snapshot.max.threads' to compute
+     * the number of rows per chunks. This may not be ideal for larger tables,
+     * and using the multiplier, the formula is adjusted to increase the number
+     * of chunks by using 'row_count/(snapshot.max.threads *
+     * snapshot.max.threads.multiplier).
+     */
+    public void setSnapshotMaxThreadsMultiplier(int snapshotMaxThreadsMultiplier) {
+        this.snapshotMaxThreadsMultiplier = snapshotMaxThreadsMultiplier;
+    }
+
+    public int getSnapshotMaxThreadsMultiplier() {
+        return snapshotMaxThreadsMultiplier;
     }
 
     /**
@@ -1629,6 +1665,20 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The number of seconds to wait for a read from the binlog connection to
+     * complete before the server times out. A value of 0 means use the MySQL
+     * server default. May need to be increased in high-latency network
+     * environments to prevent EOFException during streaming.
+     */
+    public void setBinlogNetReadTimeout(long binlogNetReadTimeout) {
+        this.binlogNetReadTimeout = binlogNetReadTimeout;
+    }
+
+    public long getBinlogNetReadTimeout() {
+        return binlogNetReadTimeout;
+    }
+
+    /**
      * Port of the database server.
      */
     public void setDatabasePort(int databasePort) {
@@ -1740,7 +1790,9 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "database.initial.statements", databaseInitialStatements);
         addPropertyIfNotNull(configBuilder, "converters", converters);
+        addPropertyIfNotNull(configBuilder, "binlog.net.write.timeout", binlogNetWriteTimeout);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
+        addPropertyIfNotNull(configBuilder, "snapshot.max.threads.multiplier", snapshotMaxThreadsMultiplier);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
         addPropertyIfNotNull(configBuilder, "use.nongraceful.disconnect", useNongracefulDisconnect);
@@ -1831,6 +1883,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "event.deserialization.failure.handling.mode", eventDeserializationFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
+        addPropertyIfNotNull(configBuilder, "binlog.net.read.timeout", binlogNetReadTimeout);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "database.ssl.truststore", databaseSslTruststore);
         addPropertyIfNotNull(configBuilder, "database.ssl.keystore.password", databaseSslKeystorePassword);

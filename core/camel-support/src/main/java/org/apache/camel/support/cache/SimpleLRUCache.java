@@ -383,7 +383,7 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
     }
 
     /**
-     * Removes duplicates from the queue of changes if the queue is full.
+     * Removes duplicates and entries that no longer exist from the queue of changes if the queue is full.
      */
     private void compressChangesIfNeeded() {
         if (isQueueFull()) {
@@ -392,7 +392,8 @@ public class SimpleLRUCache<K, V> implements Map<K, V> {
             Set<K> keys = new HashSet<>();
             Entry<K, ValueHolder<V>> entry;
             while ((entry = currentChanges.pollLast()) != null) {
-                if (keys.add(entry.getKey())) {
+                K key = entry.getKey();
+                if (delegate.containsKey(key) && keys.add(key)) {
                     newChanges.addFirst(entry);
                 }
             }

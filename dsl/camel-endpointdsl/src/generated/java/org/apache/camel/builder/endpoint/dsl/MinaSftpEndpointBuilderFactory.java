@@ -2093,7 +2093,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate as byte array.
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -2107,7 +2108,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate as byte array.
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -2136,7 +2138,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate as a classpath: or file: URI.
+         * Set the OpenSSH certificate (loaded from classpath by default) for
+         * certificate-based authentication.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -4163,7 +4166,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate as byte array.
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -4177,7 +4181,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate as byte array.
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -4206,7 +4211,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate as a classpath: or file: URI.
+         * Set the OpenSSH certificate (loaded from classpath by default) for
+         * certificate-based authentication.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.
@@ -5786,7 +5792,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate as byte array.
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -5800,7 +5807,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate as byte array.
+         * Set the OpenSSH certificate as a byte array for certificate-based
+         * authentication.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -5829,7 +5837,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the OpenSSH certificate as a classpath: or file: URI.
+         * Set the OpenSSH certificate (loaded from classpath by default) for
+         * certificate-based authentication.
          * 
          * This option can also be loaded from an existing file, by prefixing
          * with file: or classpath: followed by the location of the file.

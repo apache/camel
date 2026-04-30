@@ -122,10 +122,10 @@ public class FunctionsInvocationClient {
     }
 
     private String convertBodyToString(Object body) {
-        if (body instanceof String) {
-            return (String) body;
-        } else if (body instanceof byte[]) {
-            return new String((byte[]) body, StandardCharsets.UTF_8);
+        if (body instanceof String string) {
+            return string;
+        } else if (body instanceof byte[] bytes) {
+            return new String(bytes, StandardCharsets.UTF_8);
         } else {
             // For other objects, use toString (caller should serialize to JSON if needed)
             return body.toString();

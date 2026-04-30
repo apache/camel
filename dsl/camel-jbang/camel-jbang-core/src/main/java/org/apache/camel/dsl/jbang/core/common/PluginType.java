@@ -29,7 +29,8 @@ public enum PluginType {
     EDIT("edit", "edit", "Edit Camel files with suggestions", "4.12.0", null),
     TEST("test", "test", "Manage tests for Camel applications", "4.14.0", null),
     ROUTE_PARSER("route-parser", "route-parser", "Parses Java route and dumps route structure", "4.17.0", null),
-    VALIDATE("validate", "validate", "Validate Camel routes", "4.18.0", null);
+    VALIDATE("validate", "validate", "Validate Camel routes", "4.18.0", null),
+    TUI("tui", "tui", "Camel Dashboard", "4.20.0", null);
 
     private final String name;
     private final String command;

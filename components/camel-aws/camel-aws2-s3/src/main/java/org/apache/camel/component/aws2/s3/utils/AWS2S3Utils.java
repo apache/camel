@@ -91,8 +91,8 @@ public final class AWS2S3Utils {
     }
 
     public static long determineLengthInputStream(InputStream is) throws IOException {
-        if (is instanceof StreamCache) {
-            long len = ((StreamCache) is).length();
+        if (is instanceof StreamCache streamCache) {
+            long len = streamCache.length();
             if (len > 0) {
                 return len;
             }

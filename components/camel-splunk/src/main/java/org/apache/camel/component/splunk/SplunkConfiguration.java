@@ -25,6 +25,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 @UriParams
+@Deprecated(since = "4.19")
 public class SplunkConfiguration {
 
     private SplunkConnectionFactory connectionFactory;
@@ -40,17 +41,17 @@ public class SplunkConfiguration {
     private int port = Service.DEFAULT_PORT;
     @UriParam(enums = "TLSv1.2,TLSv1.1,TLSv1,SSLv3", defaultValue = "TLSv1.2", label = "security")
     private SSLSecurityProtocol sslProtocol = SSLSecurityProtocol.TLSv1_2;
-    @UriParam(defaultValue = "true", label = "security")
+    @UriParam(defaultValue = "true", label = "security", security = "insecure:ssl", insecureValue = "false")
     private boolean validateCertificates = true;
     @UriParam
     private String app;
     @UriParam
     private String owner;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String token;
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;

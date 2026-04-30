@@ -59,6 +59,7 @@ public final class DependencyDownloaderTransformerResolver extends DefaultTransf
             answer = super.resolve(key, context);
         } else {
             answer = new StubTransformer();
+            answer.setName(name);
         }
 
         if (answer == null) {

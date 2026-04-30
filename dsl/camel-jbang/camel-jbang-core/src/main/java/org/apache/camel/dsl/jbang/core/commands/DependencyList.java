@@ -46,7 +46,11 @@ import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.*;
 
 @CommandLine.Command(name = "list",
                      description = "Displays all Camel dependencies required to run", sortOptions = false,
-                     showDefaultValues = true)
+                     showDefaultValues = true,
+                     footer = {
+                             "%nExamples:",
+                             "  camel dependency list hello.java",
+                             "  camel dependency list hello.java --output=gav" })
 public class DependencyList extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
