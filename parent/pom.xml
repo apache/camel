@@ -505,7 +505,7 @@
         <swagger-request-validator-version>2.46.1</swagger-request-validator-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <tahu-version>1.0.19</tahu-version>
-        <tamboui-version>0.2.0</tamboui-version>
+        <tamboui-version>0.2.1-SNAPSHOT</tamboui-version>
         <testcontainers-version>2.0.3</testcontainers-version>
         <thymeleaf-version>3.1.5.RELEASE</thymeleaf-version>
         <tika-version>3.3.0</tika-version>
