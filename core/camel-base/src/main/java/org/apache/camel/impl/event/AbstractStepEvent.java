@@ -28,7 +28,7 @@ public abstract class AbstractStepEvent extends AbstractExchangeEvent {
 
     private final String stepId;
 
-    public AbstractStepEvent(Exchange source, String stepId) {
+    protected AbstractStepEvent(Exchange source, String stepId) {
         super(source);
         this.stepId = stepId;
     }

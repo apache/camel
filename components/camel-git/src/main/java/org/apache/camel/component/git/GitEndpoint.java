@@ -56,10 +56,10 @@ public class GitEndpoint extends ScheduledPollEndpoint {
     @UriParam(enums = "commit,tag,branch", label = "consumer")
     private GitType type;
 
-    @UriParam(label = "producer,security", secret = true)
+    @UriParam(label = "producer,security", security = "secret")
     private String username;
 
-    @UriParam(label = "producer,security", secret = true)
+    @UriParam(label = "producer,security", security = "secret")
     private String password;
 
     @UriParam(label = "producer")

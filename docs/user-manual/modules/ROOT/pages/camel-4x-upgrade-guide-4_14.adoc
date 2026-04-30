@@ -11,6 +11,12 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+== Upgrading from 4.14.3 to 4.18.8
+
+=== camel-core
+
+The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
+
 == Upgrading from 4.14.2 to 4.14.3
 
 === camel-tika

@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -34,7 +35,7 @@ import org.apache.camel.util.json.Jsoner;
 
 abstract class ActionBaseCommand extends CamelCommand {
 
-    public ActionBaseCommand(CamelJBangMain main) {
+    protected ActionBaseCommand(CamelJBangMain main) {
         super(main);
     }
 
@@ -130,6 +131,22 @@ abstract class ActionBaseCommand extends CamelCommand {
             // ignore
         }
         return null;
+    }
+
+    /**
+     * Quotes each element in the given array with {@link Pattern#quote} and compiles a case-insensitive pattern for it.
+     * The array is modified in place (elements are replaced with their quoted form).
+     *
+     * @param  values the raw search terms
+     * @return        compiled patterns ready for matching
+     */
+    static Pattern[] quoteAndCompilePatterns(String[] values) {
+        Pattern[] patterns = new Pattern[values.length];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = Pattern.quote(values[i]);
+            patterns[i] = Pattern.compile("(?i)" + values[i]);
+        }
+        return patterns;
     }
 
     /**

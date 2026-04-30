@@ -36,7 +36,7 @@ public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint imp
     @UriParam
     private TwitterConfiguration properties;
 
-    public AbstractTwitterEndpoint(String uri, AbstractTwitterComponent component, TwitterConfiguration properties) {
+    protected AbstractTwitterEndpoint(String uri, AbstractTwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
         setDelay(DEFAULT_CONSUMER_DELAY);
         this.properties = properties;

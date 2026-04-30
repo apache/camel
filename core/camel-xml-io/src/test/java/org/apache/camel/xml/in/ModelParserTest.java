@@ -469,8 +469,9 @@ public class ModelParserTest {
                   </route>
                 </routes>
                 """;
+        ModelParser parser = new ModelParser(new StringReader(routesXml));
         Exception e = assertThrows(Exception.class, () -> {
-            new ModelParser(new StringReader(routesXml)).parseRoutesDefinition();
+            parser.parseRoutesDefinition();
         });
         assertThat(e).hasStackTraceContaining("already has a predicate");
     }

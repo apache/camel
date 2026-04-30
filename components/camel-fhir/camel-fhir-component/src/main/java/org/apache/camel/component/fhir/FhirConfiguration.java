@@ -52,11 +52,11 @@ public class FhirConfiguration {
     private boolean prettyPrint;
     @UriParam(description = "Encoding to use for all request", enums = "JSON, XML", javaType = "java.lang.String")
     private EncodingEnum encoding;
-    @UriParam(description = "Username to use for basic authentication", label = "security", secret = true)
+    @UriParam(description = "Username to use for basic authentication", label = "security", security = "secret")
     private String username;
-    @UriParam(description = "Password to use for basic authentication", label = "security", secret = true)
+    @UriParam(description = "Password to use for basic authentication", label = "security", security = "secret")
     private String password;
-    @UriParam(description = "OAuth access token", label = "security", secret = true)
+    @UriParam(description = "OAuth access token", label = "security", security = "secret")
     private String accessToken;
     @UriParam(description = "Will log every requests and responses")
     private boolean log;
@@ -90,9 +90,9 @@ public class FhirConfiguration {
     private String proxyHost;
     @UriParam(label = "proxy", description = "The proxy port")
     private Integer proxyPort;
-    @UriParam(label = "proxy", description = "The proxy username", secret = true)
+    @UriParam(label = "proxy", description = "The proxy username", security = "secret")
     private String proxyUser;
-    @UriParam(label = "proxy", description = "The proxy password", secret = true)
+    @UriParam(label = "proxy", description = "The proxy password", security = "secret")
     private String proxyPassword;
     @UriParam(label = "advanced", description = "To use the custom client")
     private IGenericClient client;

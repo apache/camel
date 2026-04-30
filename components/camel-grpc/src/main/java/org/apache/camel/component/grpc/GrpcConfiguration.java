@@ -60,7 +60,7 @@ public class GrpcConfiguration {
     @UriParam(label = "security", defaultValue = "HMAC256", enums = "HMAC256,HMAC384,HMAC512,RSA256,RSA384,RSA512")
     private JwtAlgorithm jwtAlgorithm = JwtAlgorithm.HMAC256;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String jwtSecret;
 
     @UriParam(label = "security")
@@ -81,7 +81,7 @@ public class GrpcConfiguration {
     @Metadata(supportFileReference = true)
     private String keyResource;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String keyPassword;
 
     @UriParam(label = "security")

@@ -52,11 +52,11 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
     private String operation;
 
     @UriParam
-    @Metadata(required = true, secret = true)
+    @Metadata(required = true, security = "secret")
     private String username;
 
     @UriParam
-    @Metadata(required = true, secret = true)
+    @Metadata(required = true, security = "secret")
     private String password;
 
     @UriParam

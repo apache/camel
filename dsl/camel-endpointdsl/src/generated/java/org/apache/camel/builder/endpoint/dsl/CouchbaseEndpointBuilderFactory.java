@@ -1080,6 +1080,24 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Couchbase SDK connection string to use (e.g.,
+         * couchbase://hostname:11210). When set, this takes precedence over the
+         * hostname and port options for the SDK connection. This is useful when
+         * the KV port is not the default 11210, for example when connecting to
+         * a container with dynamic port mappings.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param connectionString the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCouchbaseEndpointConsumerBuilder connectionString(String connectionString) {
+            doSetProperty("connectionString", connectionString);
+            return this;
+        }
+        /**
          * Define the timeoutconnect in milliseconds.
          * 
          * The option is a: <code>long</code> type.
@@ -1502,6 +1520,24 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Couchbase SDK connection string to use (e.g.,
+         * couchbase://hostname:11210). When set, this takes precedence over the
+         * hostname and port options for the SDK connection. This is useful when
+         * the KV port is not the default 11210, for example when connecting to
+         * a container with dynamic port mappings.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param connectionString the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCouchbaseEndpointProducerBuilder connectionString(String connectionString) {
+            doSetProperty("connectionString", connectionString);
+            return this;
+        }
+        /**
          * Define the timeoutconnect in milliseconds.
          * 
          * The option is a: <code>long</code> type.
@@ -1684,6 +1720,24 @@ public interface CouchbaseEndpointBuilderFactory {
          */
         default AdvancedCouchbaseEndpointBuilder additionalHosts(String additionalHosts) {
             doSetProperty("additionalHosts", additionalHosts);
+            return this;
+        }
+        /**
+         * The Couchbase SDK connection string to use (e.g.,
+         * couchbase://hostname:11210). When set, this takes precedence over the
+         * hostname and port options for the SDK connection. This is useful when
+         * the KV port is not the default 11210, for example when connecting to
+         * a container with dynamic port mappings.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param connectionString the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCouchbaseEndpointBuilder connectionString(String connectionString) {
+            doSetProperty("connectionString", connectionString);
             return this;
         }
         /**

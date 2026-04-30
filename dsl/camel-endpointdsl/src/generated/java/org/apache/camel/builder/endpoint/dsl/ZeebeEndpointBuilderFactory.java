@@ -413,6 +413,7 @@ public interface ZeebeEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default ZeebeHeaderNameBuilder zeebe() {
             return ZeebeHeaderNameBuilder.INSTANCE;
         }
@@ -436,6 +437,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @param path operationName
          * @return the dsl builder
          */
+        @Deprecated
         default ZeebeEndpointBuilder zeebe(String path) {
             return ZeebeEndpointBuilderFactory.endpointBuilder("zeebe", path);
         }
@@ -461,6 +463,7 @@ public interface ZeebeEndpointBuilderFactory {
          * @param path operationName
          * @return the dsl builder
          */
+        @Deprecated
         default ZeebeEndpointBuilder zeebe(String componentName, String path) {
             return ZeebeEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

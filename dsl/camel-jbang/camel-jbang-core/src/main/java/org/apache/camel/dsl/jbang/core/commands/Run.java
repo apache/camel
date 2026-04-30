@@ -60,6 +60,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
+import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
@@ -194,12 +195,12 @@ public class Run extends CamelCommand {
     @Option(names = { "--kamelets-version" }, description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
+    @Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
+            defaultValue = "io.quarkus.platform")
     String quarkusGroupId = "io.quarkus.platform";
 
-    @CommandLine.Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
-                        defaultValue = "quarkus-bom")
+    @Option(names = { "--quarkus-artifact-id" }, description = "Quarkus Platform Maven artifactId",
+            defaultValue = "quarkus-bom")
     String quarkusArtifactId = "quarkus-bom";
 
     @Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
@@ -219,8 +220,8 @@ public class Run extends CamelCommand {
             split = ",")
     List<String> dependencies = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    @Option(names = { "--repo", "--repos" },
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 
     @Option(names = { "--gav" }, description = "The Maven group:artifact:version (used during exporting)")
@@ -250,8 +251,8 @@ public class Run extends CamelCommand {
             description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
+    @Option(names = { "--package-scan-jars" }, defaultValue = "false",
+            description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang")
     boolean packageScanJars;
 
     @CommandLine.ArgGroup(validate = false, heading = "%nLogging Options:%n")
@@ -274,7 +275,7 @@ public class Run extends CamelCommand {
     @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
     String name;
 
-    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    @Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
     // Logging, execution limit, debug, and server options are defined in their respective @ArgGroup inner classes below
@@ -667,7 +668,8 @@ public class Run extends CamelCommand {
             }
             main.addInitialProperty(EXPORT, "true");
             // enable stub in silent mode so we do not use real components
-            main.setStubPattern("*");
+            //we need i.e. transformers to not be stubbed since https://github.com/apache/camel/pull/21931
+            main.setStubPattern("component:*");
             // do not run for very long in silent run
             main.addInitialProperty("camel.main.autoStartup", "false");
             main.addInitialProperty("camel.main.durationMaxSeconds", "-1");
@@ -967,8 +969,18 @@ public class Run extends CamelCommand {
         addRuntimeSpecificDependenciesFromProperties(profileProperties);
 
         // Add plugin dependencies
+        Map<String, Plugin> activePlugins = Collections.emptyMap();
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
+            activePlugins = PluginHelper.getActivePlugins(getMain(), repositories);
+
+            // Let plugins customize the run environment (e.g., set config directories)
+            // before plugin exporter dependencies are added, so exporters can scan the right locations
+            for (Plugin plugin : activePlugins.values()) {
+                plugin.getRunCustomizer()
+                        .ifPresent(customizer -> customizer.beforeRun(main, Collections.unmodifiableList(files)));
+            }
+
+            Set<PluginExporter> exporters = activePlugins.values()
                     .stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
@@ -1121,6 +1133,7 @@ public class Run extends CamelCommand {
         eq.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
         eq.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
         eq.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
+        eq.javaVersion = javaVersion;
         eq.camelVersion = this.camelVersion;
         eq.javaVersion = this.javaVersion;
         eq.kameletsVersion = this.kameletsVersion;
@@ -1227,6 +1240,7 @@ public class Run extends CamelCommand {
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
         eq.springBootVersion = this.springBootVersion;
+        eq.javaVersion = this.javaVersion;
         eq.camelVersion = this.camelVersion;
         eq.camelSpringBootVersion = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION,
                 () -> this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion);
@@ -1629,16 +1643,9 @@ public class Run extends CamelCommand {
     }
 
     protected int runCustomCamelVersion(KameletMain main) throws Exception {
-        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/run-custom-camel-version.tmpl");
-        String content = IOHelper.loadText(is);
-        IOHelper.close(is);
-
-        content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "21");
-        if (repositories != null) {
-            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repositories);
-        } else {
-            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
-        }
+        Map<String, Object> model = new HashMap<>();
+        model.put("JavaVersion", "21");
+        model.put("MavenRepositories", repositories != null ? "//REPOS " + repositories : "");
 
         // use custom distribution of camel
         StringBuilder sb = new StringBuilder();
@@ -1652,18 +1659,20 @@ public class Run extends CamelCommand {
         if (VersionHelper.isGE(camelVersion, "3.19.0")) {
             sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s%n", camelVersion));
         }
-        content = content.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
+        model.put("CamelDependencies", sb.toString());
 
         // use apache distribution of camel-jbang/github-resolver
         String v = camelVersion.substring(0, camelVersion.lastIndexOf('.'));
         sb = new StringBuilder();
         sb.append(String.format("//DEPS org.apache.camel:camel-jbang-core:%s%n", v));
         sb.append(String.format("//DEPS org.apache.camel:camel-resourceresolver-github:%s%n", v));
-        content = content.replaceFirst("\\{\\{ \\.CamelJBangDependencies }}", sb.toString());
+        model.put("CamelJBangDependencies", sb.toString());
 
         sb = new StringBuilder();
         sb.append(String.format("//DEPS org.apache.camel.kamelets:camel-kamelets:%s%n", kameletsVersion));
-        content = content.replaceFirst("\\{\\{ \\.CamelKameletsDependencies }}", sb.toString());
+        model.put("CamelKameletsDependencies", sb.toString());
+
+        String content = TemplateHelper.processTemplate("run-custom-camel-version.ftl", model);
 
         String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java";
         Files.writeString(Paths.get(fn), content);
@@ -1730,9 +1739,6 @@ public class Run extends CamelCommand {
 
     private String loadFromCode(String code, String name, boolean file) throws IOException {
         String fn = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/" + name + ".java";
-        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/code-java.tmpl");
-        String content = IOHelper.loadText(is);
-        IOHelper.close(is);
         if (!file) {
             // need to replace single quote as double quotes (from input string)
             code = code.replace("'", "\"");
@@ -1742,8 +1748,10 @@ public class Run extends CamelCommand {
         if (!code.endsWith(";")) {
             code = code + ";";
         }
-        content = StringHelper.replaceFirst(content, "{{ .Name }}", name);
-        content = StringHelper.replaceFirst(content, "{{ .Code }}", code);
+        Map<String, Object> model = new HashMap<>();
+        model.put("Name", name);
+        model.put("Code", code);
+        String content = TemplateHelper.processTemplate("code-java.ftl", model);
         Files.writeString(Paths.get(fn), content);
         return "file:" + fn;
     }
@@ -1925,16 +1933,13 @@ public class Run extends CamelCommand {
             throw new FileNotFoundException("Cannot find file: " + filePath);
         }
 
-        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/rest-dsl.yaml.tmpl")) {
-            String content = IOHelper.loadText(is);
-            String onlyName = filePath.toString();
-            content = content.replaceFirst("\\{\\{ \\.Spec }}", onlyName);
+        Map<String, Object> model = new HashMap<>();
+        model.put("Spec", filePath.toString());
+        String content = TemplateHelper.processTemplate("rest-dsl.yaml.ftl", model);
+        Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
 
-            Files.writeString(Paths.get(OPENAPI_GENERATED_FILE), content);
-
-            // we need to include the spec on the classpath
-            files.add(openapi);
-        }
+        // we need to include the spec on the classpath
+        files.add(openapi);
     }
 
     private boolean knownFile(String file) throws Exception {
@@ -1959,6 +1964,10 @@ public class Run extends CamelCommand {
                     }
                     return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
                 } else {
+                    // for yaml we only accept xxx.camel.yaml or xxx.yaml
+                    if (!"camel.yaml".equals(ext) && !"yaml".equals(ext)) {
+                        return false;
+                    }
                     return ACCEPTED_YAML_ROOT_ELEMENTS.stream().anyMatch(tag -> source.content().contains(tag));
                 }
             }

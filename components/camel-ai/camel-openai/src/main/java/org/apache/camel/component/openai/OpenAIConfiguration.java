@@ -30,8 +30,8 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class OpenAIConfiguration implements Cloneable {
 
-    @UriParam(secret = true)
-    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", secret = true)
+    @UriParam(security = "secret")
+    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", security = "secret")
     private String apiKey;
 
     @UriParam(label = "security")
@@ -101,6 +101,11 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
     private boolean storeFullResponse = false;
 
+    @UriParam(defaultValue = "false")
+    @Metadata(description = "Strip <think>...</think> blocks from model responses (used by reasoning models like Qwen3, DeepSeek-R1). "
+                            + "The thinking content is stored in the CamelOpenAIThinkingContent header.")
+    private boolean stripThinking = false;
+
     @UriParam(prefix = "additionalBodyProperty.", multiValue = true)
     @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
     private Map<String, Object> additionalBodyProperty;
@@ -164,7 +169,7 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The location of the trust store file, used to validate the server's certificate")
     private String sslTruststoreLocation;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(description = "The password for the trust store file. If a password is not set, the configured trust store can still "
                             + "be used, but integrity checking is disabled")
     private String sslTruststorePassword;
@@ -178,7 +183,7 @@ public class OpenAIConfiguration implements Cloneable {
                             + "for the OpenAI API")
     private String sslKeystoreLocation;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(description = "The store password for the key store file")
     private String sslKeystorePassword;
 
@@ -186,7 +191,7 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The file format of the key store file")
     private String sslKeystoreType = "JKS";
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(description = "The password of the private key in the key store file")
     private String sslKeyPassword;
 
@@ -333,6 +338,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setStoreFullResponse(boolean storeFullResponse) {
         this.storeFullResponse = storeFullResponse;
+    }
+
+    public boolean isStripThinking() {
+        return stripThinking;
+    }
+
+    public void setStripThinking(boolean stripThinking) {
+        this.stripThinking = stripThinking;
     }
 
     public Map<String, Object> getAdditionalBodyProperty() {

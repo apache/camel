@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zeebe.internal;
 
+@Deprecated(since = "4.19.0")
 public enum OperationName {
     START_PROCESS("startProcess"),
     CANCEL_PROCESS("cancelProcess"),

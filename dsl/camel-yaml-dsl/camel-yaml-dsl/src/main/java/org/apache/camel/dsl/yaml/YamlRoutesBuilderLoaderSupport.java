@@ -47,7 +47,7 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
     // need to use shared bean deserializer
     final BeansDeserializer beansDeserializer = new BeansDeserializer();
 
-    public YamlRoutesBuilderLoaderSupport(String extension) {
+    protected YamlRoutesBuilderLoaderSupport(String extension) {
         super(extension);
     }
 

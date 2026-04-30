@@ -51,7 +51,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
     protected final T definition;
 
-    public DataFormatReifier(CamelContext camelContext, T definition) {
+    protected DataFormatReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
     }

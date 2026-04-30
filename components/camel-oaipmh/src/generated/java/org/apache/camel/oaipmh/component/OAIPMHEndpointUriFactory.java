@@ -23,7 +23,7 @@ public class OAIPMHEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(31);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -34,6 +34,7 @@ public class OAIPMHEndpointUriFactory extends org.apache.camel.support.component
         props.add("exchangePattern");
         props.add("from");
         props.add("greedy");
+        props.add("httpHeaders");
         props.add("identifier");
         props.add("ignoreSSLWarnings");
         props.add("initialDelay");
@@ -56,7 +57,8 @@ public class OAIPMHEndpointUriFactory extends org.apache.camel.support.component
         props.add("verb");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Map<String, String> prefixes = new HashMap<>(1);
+        Map<String, String> prefixes = new HashMap<>(2);
+        prefixes.put("httpHeaders", "httpHeader.");
         prefixes.put("schedulerProperties", "scheduler.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }

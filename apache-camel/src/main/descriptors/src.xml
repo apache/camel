@@ -43,7 +43,6 @@
         <exclude>**/*.iml</exclude>
         <exclude>**/*.ipr</exclude>
         <exclude>**/*.iws</exclude>
-        <exclude>**/cobertura.ser</exclude>
         <exclude>**/node_modules/**</exclude>
         <exclude>**/docs/node/**</exclude>
         <exclude>**/docs/.yarn/**</exclude>

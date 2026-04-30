@@ -29,7 +29,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
  */
 public abstract class DefaultAsyncProducer extends DefaultProducer implements AsyncProducer {
 
-    public DefaultAsyncProducer(Endpoint endpoint) {
+    protected DefaultAsyncProducer(Endpoint endpoint) {
         super(endpoint);
     }
 

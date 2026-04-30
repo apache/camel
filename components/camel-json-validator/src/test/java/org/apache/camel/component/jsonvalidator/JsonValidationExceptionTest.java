@@ -20,7 +20,7 @@ import java.text.MessageFormat;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,13 +30,13 @@ public class JsonValidationExceptionTest {
 
     @Test
     void testErrorsInfoInMessage() {
-        Set<ValidationMessage> errors = new LinkedHashSet<>();
+        Set<Error> errors = new LinkedHashSet<>();
         errors.add(createError("name: is missing but it is required"));
         errors.add(createError("id: string found, integer expected"));
         final JsonValidationException jsonValidationException = new JsonValidationException(null, null, errors);
 
         assertEquals(
-                "JSON validation error with 2 errors:\nname: is missing but it is required\nid: string found, integer expected",
+                "JSON validation error with 2 errors:\n: name: is missing but it is required\n: id: string found, integer expected",
                 jsonValidationException.getMessage());
     }
 
@@ -45,9 +45,10 @@ public class JsonValidationExceptionTest {
         assertEquals(0, new JsonValidationException(null, null, new Exception()).getNumberOfErrors());
     }
 
-    private ValidationMessage createError(String msg) {
-        return new ValidationMessage.Builder()
+    private Error createError(String msg) {
+        return Error.builder()
                 .messageKey(String.valueOf(errorId++))
-                .format(new MessageFormat(msg)).build();
+                .format(new MessageFormat(msg))
+                .build();
     }
 }

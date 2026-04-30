@@ -42,12 +42,12 @@ public abstract class AbstractReifier implements BeanRepository {
     protected final org.apache.camel.Route route;
     protected final CamelContext camelContext;
 
-    public AbstractReifier(Route route) {
+    protected AbstractReifier(Route route) {
         this.route = ObjectHelper.notNull(route, "Route");
         this.camelContext = route.getCamelContext();
     }
 
-    public AbstractReifier(CamelContext camelContext) {
+    protected AbstractReifier(CamelContext camelContext) {
         this.route = null;
         this.camelContext = ObjectHelper.notNull(camelContext, "CamelContext");
     }

@@ -512,8 +512,11 @@ public interface DebeziumOracleEndpointBuilderFactory {
         }
         /**
          * The adapter to use when capturing changes from the database. Options
-         * include: 'logminer': (the default) to capture changes using native
-         * Oracle LogMiner; 'xstream' to capture changes using Oracle XStreams.
+         * include: 'LogMiner': (the default) to capture changes using native
+         * Oracle LogMiner with buffered transactions; 'LogMiner_Unbuffered': to
+         * capture changes using native Oracle LogMiner without buffering;
+         * 'XStream': to capture changes using Oracle XStreams; 'OLR': to
+         * capture changes using OpenLogReplicator.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -557,7 +560,7 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
-         * Name of the XStream Out server to connect to.
+         * Name of the XStream Outbound server to connect to.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1432,6 +1435,22 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the inner body the Ehcache tag for the rollbacks cache, but
+         * should not include the nor the attributes as these are managed by
+         * Debezium.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferEhcacheRollbacksConfig the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferEhcacheRollbacksConfig(String logMiningBufferEhcacheRollbacksConfig) {
+            doSetProperty("logMiningBufferEhcacheRollbacksConfig", logMiningBufferEhcacheRollbacksConfig);
+            return this;
+        }
+        /**
          * Specifies the inner body the Ehcache tag for the schema changes
          * cache, but should not include the nor the attributes as these are
          * managed by Debezium.
@@ -1509,6 +1528,20 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the XML configuration for the Infinispan 'rollbacks' cache.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param logMiningBufferInfinispanCacheRollbacks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferInfinispanCacheRollbacks(String logMiningBufferInfinispanCacheRollbacks) {
+            doSetProperty("logMiningBufferInfinispanCacheRollbacks", logMiningBufferInfinispanCacheRollbacks);
+            return this;
+        }
+        /**
          * Specifies the XML configuration for the Infinispan 'schema-changes'
          * cache.
          * 
@@ -1536,6 +1569,42 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder logMiningBufferInfinispanCacheTransactions(String logMiningBufferInfinispanCacheTransactions) {
             doSetProperty("logMiningBufferInfinispanCacheTransactions", logMiningBufferInfinispanCacheTransactions);
+            return this;
+        }
+        /**
+         * This controls whether the 'RS_ID' column values are tracked. When set
+         * to true (the default), the 'RS_ID' values are buffered and provided
+         * in events when available. When set to false, the 'RS_ID' values are
+         * not buffered and can reduce the memory footprint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackRsId the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackRsId(boolean logMiningBufferTrackRsId) {
+            doSetProperty("logMiningBufferTrackRsId", logMiningBufferTrackRsId);
+            return this;
+        }
+        /**
+         * This controls whether the 'RS_ID' column values are tracked. When set
+         * to true (the default), the 'RS_ID' values are buffered and provided
+         * in events when available. When set to false, the 'RS_ID' values are
+         * not buffered and can reduce the memory footprint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: oracle
+         * 
+         * @param logMiningBufferTrackRsId the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningBufferTrackRsId(String logMiningBufferTrackRsId) {
+            doSetProperty("logMiningBufferTrackRsId", logMiningBufferTrackRsId);
             return this;
         }
         /**
@@ -2086,6 +2155,42 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder logMiningUsernameIncludeList(String logMiningUsernameIncludeList) {
             doSetProperty("logMiningUsernameIncludeList", logMiningUsernameIncludeList);
+            return this;
+        }
+        /**
+         * The maximum number of milliseconds that the mining window can span.
+         * If a transaction remains open for longer than this duration, the
+         * mining window start SCN will be advanced to minimize the window size,
+         * preventing it from growing indefinitely. Defaults to 0 (disabled).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0ms
+         * Group: oracle
+         * 
+         * @param logMiningWindowMaxMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningWindowMaxMs(long logMiningWindowMaxMs) {
+            doSetProperty("logMiningWindowMaxMs", logMiningWindowMaxMs);
+            return this;
+        }
+        /**
+         * The maximum number of milliseconds that the mining window can span.
+         * If a transaction remains open for longer than this duration, the
+         * mining window start SCN will be advanced to minimize the window size,
+         * preventing it from growing indefinitely. Defaults to 0 (disabled).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0ms
+         * Group: oracle
+         * 
+         * @param logMiningWindowMaxMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder logMiningWindowMaxMs(String logMiningWindowMaxMs) {
+            doSetProperty("logMiningWindowMaxMs", logMiningWindowMaxMs);
             return this;
         }
         /**
@@ -3023,6 +3128,46 @@ public interface DebeziumOracleEndpointBuilderFactory {
             return this;
         }
         /**
+         * The factor used to scale the number of snapshot chunks per table. The
+         * default behavior is to take 'row_count/snapshot.max.threads' to
+         * compute the number of rows per chunks. This may not be ideal for
+         * larger tables, and using the multiplier, the formula is adjusted to
+         * increase the number of chunks by using
+         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: oracle
+         * 
+         * @param snapshotMaxThreadsMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotMaxThreadsMultiplier(int snapshotMaxThreadsMultiplier) {
+            doSetProperty("snapshotMaxThreadsMultiplier", snapshotMaxThreadsMultiplier);
+            return this;
+        }
+        /**
+         * The factor used to scale the number of snapshot chunks per table. The
+         * default behavior is to take 'row_count/snapshot.max.threads' to
+         * compute the number of rows per chunks. This may not be ideal for
+         * larger tables, and using the multiplier, the formula is adjusted to
+         * increase the number of chunks by using
+         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 1
+         * Group: oracle
+         * 
+         * @param snapshotMaxThreadsMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder snapshotMaxThreadsMultiplier(String snapshotMaxThreadsMultiplier) {
+            doSetProperty("snapshotMaxThreadsMultiplier", snapshotMaxThreadsMultiplier);
+            return this;
+        }
+        /**
          * The criteria for running a snapshot upon startup of the connector.
          * Select one of the following snapshot options: 'always': The connector
          * runs a snapshot every time that it starts. After the snapshot
@@ -3493,6 +3638,20 @@ public interface DebeziumOracleEndpointBuilderFactory {
          */
         default DebeziumOracleEndpointBuilder unavailableValuePlaceholder(String unavailableValuePlaceholder) {
             doSetProperty("unavailableValuePlaceholder", unavailableValuePlaceholder);
+            return this;
+        }
+        /**
+         * Name of the XStream Outbound server to connect to.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: oracle
+         * 
+         * @param xstreamOutServerName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleEndpointBuilder xstreamOutServerName(String xstreamOutServerName) {
+            doSetProperty("xstreamOutServerName", xstreamOutServerName);
             return this;
         }
     }

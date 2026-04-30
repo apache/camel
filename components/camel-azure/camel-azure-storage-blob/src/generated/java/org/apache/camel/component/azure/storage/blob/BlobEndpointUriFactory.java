@@ -23,7 +23,7 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(66);
+        Set<String> props = new HashSet<>(68);
         props.add("accessKey");
         props.add("accountName");
         props.add("azureClientId");
@@ -85,11 +85,13 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("schedulerProperties");
         props.add("sendEmptyMessageWhenIdle");
         props.add("serviceClient");
+        props.add("snapshotId");
         props.add("sourceBlobAccessKey");
         props.add("startScheduler");
         props.add("timeUnit");
         props.add("timeout");
         props.add("useFixedDelay");
+        props.add("versionId");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(4);
         secretProps.add("accessKey");

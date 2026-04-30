@@ -29,7 +29,6 @@ import org.apache.camel.component.jetty.JettyHttpEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -56,7 +55,7 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
     }
 
     @Override
-    protected AbstractConnector createConnectorJettyInternal(
+    protected ServerConnector createConnectorJettyInternal(
             Server server, JettyHttpEndpoint endpoint, SslContextFactory.Server sslcf) {
         try {
             String host = endpoint.getHttpUri().getHost();

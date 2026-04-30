@@ -40,6 +40,8 @@ import com.azure.storage.blob.models.AppendBlobItem;
 import com.azure.storage.blob.models.AppendBlobRequestConditions;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobHttpHeaders;
+import com.azure.storage.blob.models.BlobImmutabilityPolicy;
+import com.azure.storage.blob.models.BlobLegalHoldResult;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
@@ -53,13 +55,16 @@ import com.azure.storage.blob.models.PageBlobRequestConditions;
 import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.models.ParallelTransferOptions;
+import com.azure.storage.blob.options.BlobGetTagsOptions;
 import com.azure.storage.blob.options.BlobParallelUploadOptions;
+import com.azure.storage.blob.options.BlobSetTagsOptions;
 import com.azure.storage.blob.options.BlobUploadFromFileOptions;
 import com.azure.storage.blob.options.BlockBlobSimpleUploadOptions;
 import com.azure.storage.blob.options.ListPageRangesOptions;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.AppendBlobClient;
+import com.azure.storage.blob.specialized.BlobClientBase;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.blob.specialized.BlobLeaseClient;
 import com.azure.storage.blob.specialized.BlobLeaseClientBuilder;
@@ -326,6 +331,70 @@ public class BlobClientWrapper {
 
     private PageBlobClient getPageBlobClient() {
         return client.getPageBlobClient();
+    }
+
+    public Response<BlobClientBase> createSnapshot(
+            final Map<String, String> metadata,
+            final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+        return client.createSnapshotWithResponse(metadata, requestConditions, timeout, Context.NONE);
+    }
+
+    /**
+     * Returns a wrapper scoped to the given blob snapshot, or {@code this} when the snapshot id is empty. Subsequent
+     * read operations on the returned wrapper target the snapshot version of the blob instead of the live one.
+     */
+    public BlobClientWrapper withSnapshot(final String snapshotId) {
+        if (ObjectHelper.isEmpty(snapshotId)) {
+            return this;
+        }
+        return new BlobClientWrapper(client.getSnapshotClient(snapshotId));
+    }
+
+    /**
+     * Returns a wrapper scoped to the given blob version, or {@code this} when the version id is empty. Subsequent read
+     * operations on the returned wrapper target the specified version of the blob instead of the live one. Requires
+     * blob versioning to be enabled on the storage account.
+     */
+    public BlobClientWrapper withVersion(final String versionId) {
+        if (ObjectHelper.isEmpty(versionId)) {
+            return this;
+        }
+        return new BlobClientWrapper(client.getVersionClient(versionId));
+    }
+
+    public Response<Void> setTags(
+            final Map<String, String> tags,
+            final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+        BlobSetTagsOptions options = new BlobSetTagsOptions(tags);
+        if (requestConditions != null) {
+            options.setRequestConditions(requestConditions);
+        }
+        return client.setTagsWithResponse(options, timeout, Context.NONE);
+    }
+
+    public Response<Map<String, String>> getTags(
+            final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+        BlobGetTagsOptions options = new BlobGetTagsOptions();
+        if (requestConditions != null) {
+            options.setRequestConditions(requestConditions);
+        }
+        return client.getTagsWithResponse(options, timeout, Context.NONE);
+    }
+
+    public Response<BlobLegalHoldResult> setLegalHold(
+            final boolean legalHold,
+            final Duration timeout) {
+        return client.setLegalHoldWithResponse(legalHold, timeout, Context.NONE);
+    }
+
+    public Response<BlobImmutabilityPolicy> setImmutabilityPolicy(
+            final BlobImmutabilityPolicy policy,
+            final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+        return client.setImmutabilityPolicyWithResponse(policy, requestConditions, timeout, Context.NONE);
     }
 
     public BlobLeaseClient getLeaseClient() {

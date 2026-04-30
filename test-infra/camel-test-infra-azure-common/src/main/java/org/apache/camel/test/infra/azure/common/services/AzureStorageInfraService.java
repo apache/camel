@@ -29,11 +29,11 @@ public abstract class AzureStorageInfraService implements AzureInfraService, Con
     private static final Logger LOG = LoggerFactory.getLogger(AzureStorageInfraService.class);
     private final AzuriteContainer container;
 
-    public AzureStorageInfraService() {
+    protected AzureStorageInfraService() {
         this(LocalPropertyResolver.getProperty(AzureStorageInfraService.class, AzureProperties.AZURE_CONTAINER));
     }
 
-    public AzureStorageInfraService(String imageName) {
+    protected AzureStorageInfraService(String imageName) {
         this.container = initContainer(imageName);
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
         if (name != null) {
@@ -41,7 +41,7 @@ public abstract class AzureStorageInfraService implements AzureInfraService, Con
         }
     }
 
-    public AzureStorageInfraService(AzuriteContainer container) {
+    protected AzureStorageInfraService(AzuriteContainer container) {
         this.container = container;
     }
 

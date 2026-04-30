@@ -32,14 +32,14 @@ public class EventGridConfiguration implements Cloneable {
     @Metadata(required = true)
     private String topicEndpoint;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(autowired = true)
     private AzureKeyCredential azureKeyCredential;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(autowired = true)
     private TokenCredential tokenCredential;
 

@@ -77,8 +77,7 @@ final class InternalRouteStartupManager {
     public void doInitRoutes(AbstractCamelContext camelContext, Map<String, RouteService> routeServices)
             throws Exception {
 
-        camelContext.setStartingRoutes(true);
-        try {
+        camelContext.startingRoutes(() -> {
             for (RouteService routeService : routeServices.values()) {
                 StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(Route.class,
                         routeService.getId(),
@@ -95,9 +94,8 @@ final class InternalRouteStartupManager {
                     camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
                 }
             }
-        } finally {
-            camelContext.setStartingRoutes(false);
-        }
+            return null;
+        });
     }
 
     /**
@@ -116,8 +114,7 @@ final class InternalRouteStartupManager {
             Map<String, RouteService> routeServices, boolean checkClash, boolean startConsumer, boolean resumeConsumer,
             boolean addingRoutes)
             throws Exception {
-        camelContext.setStartingRoutes(true);
-        try {
+        camelContext.startingRoutes(() -> {
             // filter out already started routes
             Map<String, RouteService> filtered = new LinkedHashMap<>();
             for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
@@ -130,10 +127,8 @@ final class InternalRouteStartupManager {
 
             // the context is in last phase of staring, so lets start the routes
             safelyStartRouteServices(camelContext, checkClash, startConsumer, resumeConsumer, addingRoutes, filtered.values());
-
-        } finally {
-            camelContext.setStartingRoutes(false);
-        }
+            return null;
+        });
     }
 
     private static boolean isStartable(Map.Entry<String, RouteService> entry) {

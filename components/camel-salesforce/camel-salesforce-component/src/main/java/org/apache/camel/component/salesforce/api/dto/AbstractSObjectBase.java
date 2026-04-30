@@ -47,7 +47,7 @@ public abstract class AbstractSObjectBase extends AbstractDTOBase {
 
     private Set<String> fieldsToNull = new HashSet<>();
 
-    public AbstractSObjectBase() {
+    protected AbstractSObjectBase() {
         attributes = new Attributes();
     }
 

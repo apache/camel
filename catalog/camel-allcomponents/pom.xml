@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-allcomponents</artifactId>
@@ -160,11 +160,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws-security-hub</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-aws-xray</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -425,6 +420,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-caffeine</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-camunda</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1269,6 +1269,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jsoup</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-jt400</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1694,6 +1699,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-pgvector</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-pinecone</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -2055,11 +2065,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-stitch</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-stomp</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

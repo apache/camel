@@ -26,15 +26,15 @@ public class HttpConfiguration implements Serializable {
     @Metadata(label = "producer,security",
               description = "Authentication methods allowed to use as a comma separated list of values Basic, or NTLM. (NTLM is deprecated)")
     private String authMethod;
-    @Metadata(label = "producer,security", secret = true, description = "Authentication username")
+    @Metadata(label = "producer,security", security = "secret", description = "Authentication username")
     private String authUsername;
-    @Metadata(label = "producer,security", secret = true, description = "Authentication password")
+    @Metadata(label = "producer,security", security = "secret", description = "Authentication password")
     private String authPassword;
-    @Metadata(label = "producer,security", secret = true, description = "Authentication bearer token")
+    @Metadata(label = "producer,security", security = "secret", description = "Authentication bearer token")
     private String authBearerToken;
-    @Metadata(label = "producer,security", secret = true, description = "OAuth2 client id")
+    @Metadata(label = "producer,security", security = "secret", description = "OAuth2 client id")
     private String oauth2ClientId;
-    @Metadata(label = "producer,security", secret = true, description = "OAuth2 client secret")
+    @Metadata(label = "producer,security", security = "secret", description = "OAuth2 client secret")
     private String oauth2ClientSecret;
     @Metadata(label = "producer,security", description = "OAuth2 token endpoint")
     private String oauth2TokenEndpoint;
@@ -72,9 +72,9 @@ public class HttpConfiguration implements Serializable {
     private String proxyAuthScheme;
     @Metadata(label = "producer,proxy", enums = "Basic,Bearer,NTLM", description = "Proxy authentication method to use")
     private String proxyAuthMethod;
-    @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication username")
+    @Metadata(label = "producer,proxy", security = "secret", description = "Proxy authentication username")
     private String proxyAuthUsername;
-    @Metadata(label = "producer,proxy", secret = true, description = "Proxy authentication password")
+    @Metadata(label = "producer,proxy", security = "secret", description = "Proxy authentication password")
     private String proxyAuthPassword;
     @Metadata(label = "producer,proxy", description = "Proxy authentication host")
     private String proxyAuthHost;

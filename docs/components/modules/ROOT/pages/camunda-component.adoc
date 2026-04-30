@@ -1,0 +1,1 @@
+../../../../../components/camel-camunda/src/main/docs/camunda-component.adoc

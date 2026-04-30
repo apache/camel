@@ -134,6 +134,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
         case "serviceclient":
         case "serviceClient": target.getConfiguration().setServiceClient(property(camelContext, com.azure.storage.blob.BlobServiceClient.class, value)); return true;
+        case "snapshotid":
+        case "snapshotId": target.getConfiguration().setSnapshotId(property(camelContext, java.lang.String.class, value)); return true;
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": target.getConfiguration().setSourceBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "startscheduler":
@@ -143,6 +145,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "versionid":
+        case "versionId": target.getConfiguration().setVersionId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -266,6 +270,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return boolean.class;
         case "serviceclient":
         case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "snapshotid":
+        case "snapshotId": return java.lang.String.class;
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": return java.lang.String.class;
         case "startscheduler":
@@ -275,6 +281,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeout": return java.time.Duration.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "versionid":
+        case "versionId": return java.lang.String.class;
         default: return null;
         }
     }
@@ -394,6 +402,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
         case "serviceclient":
         case "serviceClient": return target.getConfiguration().getServiceClient();
+        case "snapshotid":
+        case "snapshotId": return target.getConfiguration().getSnapshotId();
         case "sourceblobaccesskey":
         case "sourceBlobAccessKey": return target.getConfiguration().getSourceBlobAccessKey();
         case "startscheduler":
@@ -403,6 +413,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeout": return target.getConfiguration().getTimeout();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "versionid":
+        case "versionId": return target.getConfiguration().getVersionId();
         default: return null;
         }
     }

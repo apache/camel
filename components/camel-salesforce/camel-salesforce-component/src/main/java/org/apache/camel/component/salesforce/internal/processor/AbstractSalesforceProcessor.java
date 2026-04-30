@@ -57,7 +57,7 @@ public abstract class AbstractSalesforceProcessor extends ServiceSupport impleme
 
     protected boolean rawPayload;
 
-    public AbstractSalesforceProcessor(final SalesforceEndpoint endpoint) {
+    protected AbstractSalesforceProcessor(final SalesforceEndpoint endpoint) {
         this.endpoint = endpoint;
         this.operationName = endpoint.getOperationName();
         this.endpointConfigMap = endpoint.getConfiguration().toValueMap();

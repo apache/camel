@@ -40,22 +40,21 @@ import org.testcontainers.utility.DockerImageName;
               serviceAlias = { "couchbase" })
 public class CouchbaseLocalContainerInfraService implements CouchbaseInfraService, ContainerService<CouchbaseContainer> {
 
-    /*
-     * Couchbase container uses a dynamic port for the KV service. The configuration
-     * used in the Camel component tries to use that port by default, and it seems
-     * we cannot configure it. Therefore, we override the default container and
-     * force the default KV port to be used.
-     */
     private class CustomCouchbaseContainer extends CouchbaseContainer {
         public CustomCouchbaseContainer(String imageName) {
             super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("couchbase/server"));
 
+            // Couchbase 8.0+ validates CPU microarchitecture (requires x86-64-v3 / AVX2).
+            // CI agents may run on older hardware, causing the container to exit immediately.
+            withEnv("COUCHBASE_DO_NOT_VALIDATE_CPU_MICROARCHITECTURE", "1");
+
+            boolean fixedPort = ContainerEnvironmentUtil.isFixedPort(CouchbaseLocalContainerInfraService.class);
             final int kvPort = 11210;
             final int managementPort = 8091;
             final int viewPort = 8092;
             final int queryPort = 8093;
             final int searchPort = 8094;
-            ContainerEnvironmentUtil.configurePorts(this, true,
+            ContainerEnvironmentUtil.configurePorts(this, fixedPort,
                     ContainerEnvironmentUtil.PortConfig.primary(kvPort),
                     ContainerEnvironmentUtil.PortConfig.secondary(managementPort),
                     ContainerEnvironmentUtil.PortConfig.secondary(viewPort),

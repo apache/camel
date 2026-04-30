@@ -21,11 +21,11 @@ import org.apache.hc.core5.http.HttpException;
 
 abstract public class AS2ErrorDispositionException extends HttpException {
 
-    public AS2ErrorDispositionException(String message) {
+    protected AS2ErrorDispositionException(String message) {
         super(message);
     }
 
-    public AS2ErrorDispositionException(String message, Exception exception) {
+    protected AS2ErrorDispositionException(String message, Exception exception) {
         super(message, exception);
     }
 

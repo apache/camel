@@ -18,11 +18,15 @@ package org.apache.camel.component.huggingface.tasks;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.EnumSet;
 
 import ai.djl.inference.Predictor;
 import ai.djl.modality.Input;
@@ -57,7 +61,14 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
 
     @Override
     public void loadModel() throws Exception {
-        tmpDir = Files.createTempDirectory("hf_model");
+        if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
+            tmpDir = Files.createTempDirectory("hf_model",
+                    PosixFilePermissions.asFileAttribute(
+                            EnumSet.of(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE,
+                                    PosixFilePermission.OWNER_EXECUTE)));
+        } else {
+            tmpDir = Files.createTempDirectory("hf_model");
+        }
         Path handlerPath = tmpDir.resolve("handler.py");
         String pythonScript = getPythonScript();
         Files.writeString(handlerPath, pythonScript);

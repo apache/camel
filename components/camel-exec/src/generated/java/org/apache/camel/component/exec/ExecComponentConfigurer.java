@@ -23,10 +23,18 @@ public class ExecComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ExecComponent target = (ExecComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontrolheaders":
+        case "allowControlHeaders": target.setAllowControlHeaders(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "binding": target.setBinding(property(camelContext, org.apache.camel.component.exec.ExecBinding.class, value)); return true;
+        case "commandexecutor":
+        case "commandExecutor": target.setCommandExecutor(property(camelContext, org.apache.camel.component.exec.ExecCommandExecutor.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
+        case "workingdir":
+        case "workingDir": target.setWorkingDir(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -34,10 +42,18 @@ public class ExecComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontrolheaders":
+        case "allowControlHeaders": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "binding": return org.apache.camel.component.exec.ExecBinding.class;
+        case "commandexecutor":
+        case "commandExecutor": return org.apache.camel.component.exec.ExecCommandExecutor.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "timeout": return long.class;
+        case "workingdir":
+        case "workingDir": return java.lang.String.class;
         default: return null;
         }
     }
@@ -46,10 +62,18 @@ public class ExecComponentConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ExecComponent target = (ExecComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontrolheaders":
+        case "allowControlHeaders": return target.isAllowControlHeaders();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "binding": return target.getBinding();
+        case "commandexecutor":
+        case "commandExecutor": return target.getCommandExecutor();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "timeout": return target.getTimeout();
+        case "workingdir":
+        case "workingDir": return target.getWorkingDir();
         default: return null;
         }
     }

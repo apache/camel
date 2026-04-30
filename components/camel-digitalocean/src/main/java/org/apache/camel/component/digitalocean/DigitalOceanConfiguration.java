@@ -40,7 +40,7 @@ public class DigitalOceanConfiguration {
     @UriParam(label = "advanced")
     private DigitalOceanClient digitalOceanClient;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String oAuthToken;
 
     @UriParam(defaultValue = "1")
@@ -51,9 +51,9 @@ public class DigitalOceanConfiguration {
 
     @UriParam(label = "proxy")
     private String httpProxyHost;
-    @UriParam(label = "proxy", secret = true)
+    @UriParam(label = "proxy", security = "secret")
     private String httpProxyUser;
-    @UriParam(label = "proxy", secret = true)
+    @UriParam(label = "proxy", security = "secret")
     private String httpProxyPassword;
     @UriParam(label = "proxy")
     private Integer httpProxyPort;

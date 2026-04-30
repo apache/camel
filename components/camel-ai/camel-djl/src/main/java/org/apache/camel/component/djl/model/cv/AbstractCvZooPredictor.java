@@ -31,7 +31,7 @@ public abstract class AbstractCvZooPredictor<T> extends AbstractPredictor {
 
     protected ZooModel<Image, T> model;
 
-    public AbstractCvZooPredictor(DJLEndpoint endpoint) {
+    protected AbstractCvZooPredictor(DJLEndpoint endpoint) {
         super(endpoint);
     }
 

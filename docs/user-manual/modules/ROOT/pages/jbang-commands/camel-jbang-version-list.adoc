@@ -31,7 +31,7 @@ camel version list [options]
 | `--patch` | Whether to include patch releases (x.y.z) | true | boolean
 | `--rc` | Include also milestone or RC releases | false | boolean
 | `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
-| `--runtime` | Runtime () | camel-main | RuntimeType
+| `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
 | `--sort` | Sort by (version, date, or days) | version | String
 | `--tail` | The number of lines from the end of the table to show. |  | int
 | `--to-date` | Filter by release date (exclusive) |  | String

@@ -48,6 +48,7 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Prepares camel-jbang by scanning command classes and generating command metadata for documentation.
@@ -56,9 +57,9 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
       requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
 
-    // Pattern to match .addSubcommand("name", new CommandLine(new ClassName(main))
+    // Pattern to match .addSubcommand("name", new CommandLine(new ClassName(this/main))
     private static final Pattern SUBCOMMAND_PATTERN = Pattern.compile(
-            "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(\\s*main\\s*\\)\\s*\\)");
+            "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(\\s*(?:this|main)\\s*\\)\\s*\\)");
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
@@ -164,7 +165,8 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         // Find the start of the commandLine builder chain
         int startLine = -1;
         for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).contains("commandLine = new CommandLine(main)")) {
+            if (lines.get(i).contains("commandLine = new CommandLine(this)")
+                    || lines.get(i).contains("commandLine = new CommandLine(main)")) {
                 startLine = i;
                 break;
             }
@@ -486,7 +488,17 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         String description = optionAnn.getStringValue("description");
         if (description != null) {
             description = description.replace("\"", "");
-            // Remove Picocli placeholders that AsciiDoctor interprets as attributes
+            // Resolve ${COMPLETION-CANDIDATES} by looking up the completionCandidates class
+            if (description.contains("${COMPLETION-CANDIDATES}")) {
+                String candidatesLiteral = optionAnn.getLiteralValue("completionCandidates");
+                if (candidatesLiteral != null) {
+                    String resolved = resolveCompletionCandidates(candidatesLiteral, field.getOrigin());
+                    if (resolved != null) {
+                        description = description.replace("${COMPLETION-CANDIDATES}", resolved);
+                    }
+                }
+            }
+            // Remove any remaining Picocli placeholders that AsciiDoctor interprets as attributes
             description = sanitizeDescription(description);
             option.description = description;
         }
@@ -536,16 +548,101 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         if (description == null) {
             return null;
         }
-        // Remove ${COMPLETION-CANDIDATES} placeholder
+        // Remove ${COMPLETION-CANDIDATES} placeholder (should already be resolved, but clean up if not)
         description = description.replace("${COMPLETION-CANDIDATES}", "");
-        description = description.replace("(${COMPLETION-CANDIDATES})", "");
         // Remove ${camel-version} and similar version placeholders
         description = description.replaceAll("\\$\\{[^}]+\\}", "");
+        // Clean up empty or near-empty parentheses left after placeholder removal
+        // e.g. "(supports: )" or "()" or "( )"
+        description = description.replaceAll("\\([^)]*:\\s*\\)", "");
+        description = description.replaceAll("\\(\\s*\\)", "");
         // Remove Java string concatenation artifacts (+ at end of line from multi-line strings)
         description = description.replaceAll("\\s*\\+\\s*", " ");
         // Clean up any resulting double spaces
         description = description.replaceAll("\\s+", " ").trim();
         return description;
+    }
+
+    /**
+     * Resolves picocli completionCandidates class reference to extract the actual candidate values.
+     */
+    private String resolveCompletionCandidates(String candidatesLiteral, JavaClassSource declaringClass) {
+        // Extract class name from literal (e.g., "OutputFormatCompletionCandidates.class")
+        String className = candidatesLiteral.replace(".class", "").trim();
+        if (className.contains(".")) {
+            className = className.substring(className.lastIndexOf('.') + 1);
+        }
+
+        // Try to find as a nested type in the declaring class
+        for (JavaSource<?> nested : declaringClass.getNestedTypes()) {
+            if (nested instanceof JavaClassSource nestedClass && nestedClass.getName().equals(className)) {
+                return extractCandidateValues(nestedClass);
+            }
+        }
+
+        // Try to find as a separate class file in commands/ or common/ directories
+        File classFile = findClassFileRecursive(commandsDir, className);
+        if (classFile == null) {
+            // Also search in common/ sibling directory
+            File commonDir = new File(commandsDir.getParentFile(), "common");
+            if (commonDir.exists()) {
+                classFile = new File(commonDir, className + ".java");
+                if (!classFile.exists()) {
+                    classFile = null;
+                }
+            }
+        }
+
+        if (classFile != null) {
+            try {
+                JavaClassSource candidatesClass = (JavaClassSource) Roaster.parse(classFile);
+                return extractCandidateValues(candidatesClass);
+            } catch (Exception e) {
+                getLog().debug("Could not parse completion candidates class: " + className + " - " + e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Extracts candidate values from a CompletionCandidates class by finding List.of() or Arrays.asList() calls in the
+     * source.
+     */
+    private String extractCandidateValues(JavaClassSource clazz) {
+        String source = clazz.toString();
+
+        // Look for List.of("value1", "value2", ...) pattern
+        Matcher matcher = Pattern.compile("List\\.of\\(([^)]+)\\)").matcher(source);
+        if (matcher.find()) {
+            String result = extractStringLiterals(matcher.group(1));
+            if (result != null) {
+                return result;
+            }
+        }
+
+        // Also try Arrays.asList pattern
+        matcher = Pattern.compile("Arrays\\.asList\\(([^)]+)\\)").matcher(source);
+        if (matcher.find()) {
+            String result = extractStringLiterals(matcher.group(1));
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Extracts string literals from a source fragment like {@code "a", "b", "c"}.
+     */
+    private String extractStringLiterals(String source) {
+        Matcher matcher = Pattern.compile("\"([^\"]+)\"").matcher(source);
+        List<String> values = new ArrayList<>();
+        while (matcher.find()) {
+            values.add(matcher.group(1));
+        }
+        return values.isEmpty() ? null : String.join(", ", values);
     }
 
     // Helper classes

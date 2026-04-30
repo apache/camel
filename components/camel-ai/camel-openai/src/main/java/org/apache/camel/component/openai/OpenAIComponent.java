@@ -66,7 +66,7 @@ public class OpenAIComponent extends DefaultComponent implements SSLContextParam
 
         OpenAIEndpoint endpoint = new OpenAIEndpoint(uri, this, configuration);
         // set the operation from the URI path (e.g., chat-completion)
-        endpoint.setOperation(remaining);
+        endpoint.setOperation(OpenAIOperations.fromValue(remaining));
         setProperties(endpoint, parameters);
 
         if (configuration.getSslContextParameters() == null) {

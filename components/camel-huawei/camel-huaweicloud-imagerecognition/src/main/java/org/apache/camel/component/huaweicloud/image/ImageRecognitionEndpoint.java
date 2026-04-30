@@ -43,15 +43,15 @@ public class ImageRecognitionEndpoint extends DefaultEndpoint {
     private String operation;
 
     @UriParam(description = "Configuration object for cloud service authentication",
-              displayName = "Service Configuration", secret = true)
+              displayName = "Service Configuration", security = "secret")
     @Metadata(required = false)
     private ServiceKeys serviceKeys;
 
-    @UriParam(description = "Access key for the cloud user", displayName = "Account access key (AK)", secret = true)
+    @UriParam(description = "Access key for the cloud user", displayName = "Account access key (AK)", security = "secret")
     @Metadata(required = true)
     private String accessKey;
 
-    @UriParam(description = "Secret key for the cloud user", displayName = "Account secret key (SK)", secret = true)
+    @UriParam(description = "Secret key for the cloud user", displayName = "Account secret key (SK)", security = "secret")
     @Metadata(required = true)
     private String secretKey;
 
@@ -67,16 +67,16 @@ public class ImageRecognitionEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private int proxyPort;
 
-    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", secret = true)
+    @UriParam(description = "Proxy authentication user", displayName = "Proxy user", security = "secret")
     @Metadata(required = false)
     private String proxyUser;
 
-    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", secret = true)
+    @UriParam(description = "Proxy authentication password", displayName = "Proxy password", security = "secret")
     @Metadata(required = false)
     private String proxyPassword;
 
     @UriParam(description = "Ignore SSL verification", displayName = "SSL Verification Ignored",
-              defaultValue = "false", label = "security")
+              defaultValue = "false", label = "security", security = "insecure:ssl")
     @Metadata(required = false)
     private boolean ignoreSslVerification;
 

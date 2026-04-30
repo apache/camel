@@ -84,20 +84,21 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
               description = "A list of decoders to be used. You can use a String which have values separated by comma, and have the values be"
                             + " looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup.")
     private String decoders;
-    @UriParam(label = "common,security", description = "To enable/disable hostname verification on SSLEngine")
+    @UriParam(label = "common,security", description = "To enable/disable hostname verification on SSLEngine",
+              security = "insecure:ssl", insecureValue = "false")
     private boolean hostnameVerification;
     @UriParam(label = "common", description = "Whether or not to disconnect(close) from Netty Channel right after use.")
     private boolean disconnect;
     @UriParam(label = "producer,advanced", defaultValue = "true",
               description = "Channels can be lazily created to avoid exceptions, if the remote server is not up and running when the Camel producer is started.")
     private boolean lazyChannelCreation = true;
-    @UriParam(label = "advanced",
+    @UriParam(label = "advanced", security = "insecure:serialization",
               description = "Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are"
                             + " transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange"
                             + " exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and"
                             + " log it at WARN level.")
     private boolean transferExchange;
-    @UriParam(label = "advanced",
+    @UriParam(label = "advanced", security = "insecure:serialization",
               description = "Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties"
                             + " will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level.")
     private boolean allowSerializedHeaders;

@@ -189,7 +189,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                          + "org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in "
                                                          + "progress files being consumed. By default a memory based repository is used.")
     protected IdempotentRepository inProgressRepository
-            = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
+            = MemoryIdempotentRepository.memoryIdempotentRepositoryFifo(DEFAULT_IN_PROGRESS_CACHE_SIZE);
     @UriParam(label = "consumer,advanced", description = "When consuming, a local work directory can be used to "
                                                          + "store the remote file content directly in local files, to avoid loading the content into memory. This "
                                                          + "is beneficial, if you consume a very big remote file and thus can conserve memory.")
@@ -1502,7 +1502,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository. The in-progress repository is used
-     * to account the current in progress files being consumed. By default a memory based repository is used.
+     * to account the current in progress files being consumed. By default, a memory based repository is used.
      */
     public void setInProgressRepository(IdempotentRepository inProgressRepository) {
         this.inProgressRepository = inProgressRepository;

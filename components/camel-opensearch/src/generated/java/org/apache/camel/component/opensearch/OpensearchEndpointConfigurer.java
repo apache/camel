@@ -55,6 +55,8 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "snifferInterval": target.getConfiguration().setSnifferInterval(property(camelContext, int.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.getConfiguration().setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "sslcontextparameters":
+        case "sslContextParameters": target.getConfiguration().setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "usescroll":
         case "useScroll": target.getConfiguration().setUseScroll(property(camelContext, boolean.class, value)); return true;
         case "waitforactiveshards":
@@ -98,6 +100,8 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "snifferInterval": return int.class;
         case "sockettimeout":
         case "socketTimeout": return int.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "usescroll":
         case "useScroll": return boolean.class;
         case "waitforactiveshards":
@@ -142,6 +146,8 @@ public class OpensearchEndpointConfigurer extends PropertyConfigurerSupport impl
         case "snifferInterval": return target.getConfiguration().getSnifferInterval();
         case "sockettimeout":
         case "socketTimeout": return target.getConfiguration().getSocketTimeout();
+        case "sslcontextparameters":
+        case "sslContextParameters": return target.getConfiguration().getSslContextParameters();
         case "usescroll":
         case "useScroll": return target.getConfiguration().isUseScroll();
         case "waitforactiveshards":

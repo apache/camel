@@ -27,6 +27,7 @@ import org.apache.camel.component.zeebe.processor.ProcessProcessor;
 import org.apache.camel.component.zeebe.processor.ZeebeProcessor;
 import org.apache.camel.support.DefaultProducer;
 
+@Deprecated(since = "4.19.0")
 public class ZeebeProducer extends DefaultProducer {
     private ZeebeProcessor processor;
 

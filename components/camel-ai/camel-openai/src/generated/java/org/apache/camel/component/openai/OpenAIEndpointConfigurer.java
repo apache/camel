@@ -90,6 +90,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "storefullresponse":
         case "storeFullResponse": target.getConfiguration().setStoreFullResponse(property(camelContext, boolean.class, value)); return true;
         case "streaming": target.getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
+        case "stripthinking":
+        case "stripThinking": target.getConfiguration().setStripThinking(property(camelContext, boolean.class, value)); return true;
         case "systemmessage":
         case "systemMessage": target.getConfiguration().setSystemMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
@@ -171,6 +173,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "storefullresponse":
         case "storeFullResponse": return boolean.class;
         case "streaming": return boolean.class;
+        case "stripthinking":
+        case "stripThinking": return boolean.class;
         case "systemmessage":
         case "systemMessage": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
@@ -253,6 +257,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "storefullresponse":
         case "storeFullResponse": return target.getConfiguration().isStoreFullResponse();
         case "streaming": return target.getConfiguration().isStreaming();
+        case "stripthinking":
+        case "stripThinking": return target.getConfiguration().isStripThinking();
         case "systemmessage":
         case "systemMessage": return target.getConfiguration().getSystemMessage();
         case "temperature": return target.getConfiguration().getTemperature();

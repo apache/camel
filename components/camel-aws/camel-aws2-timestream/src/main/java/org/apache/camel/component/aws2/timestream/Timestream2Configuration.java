@@ -38,11 +38,11 @@ public class Timestream2Configuration implements Cloneable, AwsCommonConfigurati
     @UriParam
     @Metadata(required = true)
     private Timestream2Operations operation;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam(label = "security")
     private boolean useSessionCredentials;
@@ -62,7 +62,7 @@ public class Timestream2Configuration implements Cloneable, AwsCommonConfigurati
     private TimestreamQueryClient awsTimestreamQueryClient;
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
-    @UriParam(defaultValue = "false")
+    @UriParam(security = "insecure:ssl", defaultValue = "false")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false")
     private boolean overrideEndpoint;

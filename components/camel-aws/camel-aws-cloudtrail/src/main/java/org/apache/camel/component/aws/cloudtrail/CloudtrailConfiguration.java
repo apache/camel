@@ -31,12 +31,12 @@ public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguratio
     @UriPath(description = "A label for indexing cloudtrail endpoints")
     @Metadata(required = true)
     private String label;
-    @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
+    @UriParam(label = "security", security = "secret", description = "Amazon AWS Access Key")
     private String accessKey;
-    @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
+    @UriParam(label = "security", security = "secret", description = "Amazon AWS Secret Key")
     private String secretKey;
 
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               description = "Amazon AWS Session Token used when the user needs to assume a IAM role")
     private String sessionToken;
 
@@ -59,7 +59,8 @@ public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguratio
     private String proxyHost;
     @UriParam(label = "proxy", description = "To define a proxy port when instantiating the Cloudtrail client")
     private Integer proxyPort;
-    @UriParam(label = "security", description = "If we want to trust all certificates in case of overriding the endpoint")
+    @UriParam(security = "insecure:ssl", label = "security",
+              description = "If we want to trust all certificates in case of overriding the endpoint")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false",
               description = "Set the need for overriding the endpoint. This option needs to be used in combination with uriEndpointOverride option")

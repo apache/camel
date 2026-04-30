@@ -44,17 +44,17 @@ public class DataLakeConfiguration implements Cloneable {
     private String directoryName;
     @UriParam(description = "name of file to be handled in component")
     private String fileName;
-    @UriParam(label = "security", secret = true, description = "client secret credential for authentication")
+    @UriParam(label = "security", security = "secret", description = "client secret credential for authentication")
     @Metadata(autowired = true)
     private ClientSecretCredential clientSecretCredential;
     @UriParam(description = "data lake service client for azure storage data lake")
     @Metadata(autowired = true)
     private DataLakeServiceClient serviceClient;
-    @UriParam(label = "security", secret = true, description = "account key for authentication")
+    @UriParam(label = "security", security = "secret", description = "account key for authentication")
     private String accountKey;
     @UriParam(description = "client id for azure account")
     private String clientId;
-    @UriParam(label = "security", secret = true, description = "client secret for azure account")
+    @UriParam(label = "security", security = "secret", description = "client secret for azure account")
     private String clientSecret;
     @UriParam(description = "tenant id for azure account")
     private String tenantId;
@@ -96,9 +96,9 @@ public class DataLakeConfiguration implements Cloneable {
     private String umask;
     @UriParam(description = "set open options for creating file")
     private Set<OpenOption> openOptions;
-    @UriParam(label = "security", secret = true, description = "SAS token signature")
+    @UriParam(label = "security", security = "secret", description = "SAS token signature")
     private String sasSignature;
-    @UriParam(label = "security", secret = true, description = "SAS token credential")
+    @UriParam(label = "security", security = "secret", description = "SAS token credential")
     @Metadata(autowired = true)
     private AzureSasCredential sasCredential;
 

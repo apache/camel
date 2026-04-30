@@ -154,7 +154,9 @@ public class PahoConsumer extends DefaultConsumer {
                     try {
                         PahoConsumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
-                        LOG.warn("Failed to commit message with ID {} due to MqttException.", mqttMessage.getId());
+                        getExceptionHandler().handleException(
+                                "Error acknowledging MQTT message with ID: " + mqttMessage.getId(),
+                                exchange, e);
                     }
                 }
 

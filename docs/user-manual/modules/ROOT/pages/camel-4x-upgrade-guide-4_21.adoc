@@ -1,0 +1,94 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+[NOTE]
+====
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
+====
+
+== Upgrading Camel 4.20 to 4.21
+
+=== camel-core
+
+The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
+
+=== camel-yaml-dsl
+
+A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
+schema (`camelYamlDsl.json`). The canonical schema removes all implicit patterns (string shorthands, inline
+expressions, `oneOf`/`anyOf`/`not` constructs) to provide a simpler, more predictable schema for tooling
+such as IDEs, code generators, and AI assistants. See the xref:components:others:yaml-dsl.adoc[YAML DSL]
+documentation for details.
+
+The `YamlValidator` class now accepts a `boolean canonical` constructor parameter to validate against the
+canonical schema.
+
+A new `camel yaml normalize` command has been added to Camel JBang. It rewrites YAML routes from the
+classic (shorthand) form to the canonical (explicit) form. The `camel validate yaml` command also
+supports a new `--canonical` flag to validate against the canonical schema.
+
+=== camel-kafka / Spring Boot
+
+When using `camel-kafka-starter` with Spring Boot, the standard `spring.kafka.*` properties are now automatically
+bridged to the Camel Kafka component configuration (CAMEL-22760). This means you no longer need to duplicate
+Kafka settings under both `spring.kafka.*` and `camel.component.kafka.*`.
+
+The bridged properties include `bootstrap-servers`, `security.protocol`, SSL/TLS settings (keystore, truststore),
+`consumer.group-id`, `client-id`, and SASL properties (`sasl.mechanism`, `sasl.jaas.config`, `sasl.kerberos.service.name`).
+
+Explicit `camel.component.kafka.*` settings always take precedence over the bridged Spring Boot values.
+
+The bridge is enabled by default. To disable it, set:
+
+[source,properties]
+----
+camel.component.kafka.bridge-spring-kafka-properties=false
+----
+
+=== Default deserialization filter tightened
+
+The default `ObjectInputFilter` pattern that ships with the components listed below has been tightened
+to explicitly deny classes under `java.net.**` before allowing the rest of `java.**`, `javax.**` and
+`org.apache.camel.**`. The previous default did not deny `java.net.**`, which meant classes whose
+`hashCode`/`equals` methods perform network I/O (notably `java.net.URL` and `java.net.InetAddress`)
+could be deserialized by the in-code default.
+
+Affected components:
+
+* `camel-jms`, `camel-sjms`, `camel-amqp`, `camel-mina`, `camel-netty`, `camel-netty-http`,
+`camel-vertx-http`, `camel-infinispan`
+* The aggregation repository components: `camel-leveldb`, `camel-cassandraql`, `camel-consul`,
+`camel-sql` (JDBC aggregation repository)
+
+The new default is:
+
+[source,text]
+----
+!java.net.**;java.**;javax.**;org.apache.camel.**;!*
+----
+
+(or `!java.net.**;java.**;org.apache.camel.**;!*` for the aggregation repository components, which
+do not include `javax.**`).
+
+The endpoint-level option `deserializationFilter` and the JVM-wide system property
+`-Djdk.serialFilter` continue to override this default. Applications that have a legitimate need to
+deserialize `java.net.URL` or other `java.net.*` types must configure an explicit filter.
+
+For production deployments handling untrusted serialized payloads, the in-code filter is intended as
+defense-in-depth only. The primary mitigation should be configured at the messaging provider:
+
+* ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
+* ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property
+
+=== camel-stomp removal
+
+Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.
+
+=== camel-aws-xray removal
+
+Camel AWS X-Ray was deprecated with Camel 4.17. Amazon Web Services X-Ray service is in maintenance mode since February 2026. The component is now removed.

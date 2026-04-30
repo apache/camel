@@ -39,6 +39,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.setConnectTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "connectionstring":
+        case "connectionString": target.setConnectionString(property(camelContext, java.lang.String.class, value)); return true;
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": target.setConsumerProcessedStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "consumerretrypause":
@@ -128,6 +130,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "collection": return java.lang.String.class;
         case "connecttimeout":
         case "connectTimeout": return long.class;
+        case "connectionstring":
+        case "connectionString": return java.lang.String.class;
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": return java.lang.String.class;
         case "consumerretrypause":
@@ -218,6 +222,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "collection": return target.getCollection();
         case "connecttimeout":
         case "connectTimeout": return target.getConnectTimeout();
+        case "connectionstring":
+        case "connectionString": return target.getConnectionString();
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": return target.getConsumerProcessedStrategy();
         case "consumerretrypause":

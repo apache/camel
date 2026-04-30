@@ -107,11 +107,11 @@ public class Jt400Configuration {
     private final AS400ConnectionPool connectionPool;
 
     @UriPath(label = "security")
-    @Metadata(required = true, secret = true)
+    @Metadata(required = true, security = "secret")
     private String userID;
 
     @UriPath(label = "security")
-    @Metadata(required = true, secret = true)
+    @Metadata(required = true, security = "secret")
     private String password;
 
     @UriPath(label = "security")

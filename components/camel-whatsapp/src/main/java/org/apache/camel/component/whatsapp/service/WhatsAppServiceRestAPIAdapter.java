@@ -172,8 +172,8 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
         private final String uri;
         private final Class<? extends MessageResponse> resultClass;
 
-        public OutgoingMessageHandler(HttpClient httpClient, ObjectMapper mapper, String uri, String contentType,
-                                      Class<? extends MessageResponse> resultClass) {
+        protected OutgoingMessageHandler(HttpClient httpClient, ObjectMapper mapper, String uri, String contentType,
+                                         Class<? extends MessageResponse> resultClass) {
             this.resultClass = resultClass;
             this.httpClient = httpClient;
             this.mapper = mapper;

@@ -190,6 +190,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotLockTimeoutMs": getOrCreateConfiguration(target).setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": getOrCreateConfiguration(target).setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": getOrCreateConfiguration(target).setSnapshotMaxThreadsMultiplier(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -397,6 +399,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotLockTimeoutMs": return long.class;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return int.class;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -605,6 +609,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "snapshotLockTimeoutMs": return getOrCreateConfiguration(target).getSnapshotLockTimeoutMs();
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return getOrCreateConfiguration(target).getSnapshotMaxThreads();
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return getOrCreateConfiguration(target).getSnapshotMaxThreadsMultiplier();
         case "snapshotmode":
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
         case "snapshotmodeconfigurationbasedsnapshotdata":

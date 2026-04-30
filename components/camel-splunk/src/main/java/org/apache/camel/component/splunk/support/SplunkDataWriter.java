@@ -42,7 +42,7 @@ public abstract class SplunkDataWriter implements DataWriter {
     private Socket socket;
     protected final Lock lock = new ReentrantLock();
 
-    public SplunkDataWriter(SplunkEndpoint endpoint, Args args) {
+    protected SplunkDataWriter(SplunkEndpoint endpoint, Args args) {
         this.endpoint = endpoint;
         this.args = args;
     }

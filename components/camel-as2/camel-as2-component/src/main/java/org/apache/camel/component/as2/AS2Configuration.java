@@ -123,19 +123,19 @@ public class AS2Configuration {
     private Integer asyncMdnPortNumber;
     @UriParam
     private String receiptDeliveryOption;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String userName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessToken;
     @UriParam(defaultValue = "false", label = "producer")
     private boolean expectContinue;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String mdnUserName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String mdnPassword;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String mdnAccessToken;
 
     public AS2ApiName getApiName() {

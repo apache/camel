@@ -56,6 +56,8 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "decodersaslist":
         case "decodersAsList": target.setDecodersAsList(property(camelContext, java.util.List.class, value)); return true;
         case "delimiter": target.setDelimiter(property(camelContext, org.apache.camel.component.netty.TextLineDelimiter.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "disablestreamcache":
         case "disableStreamCache": target.setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
         case "disconnect": target.setDisconnect(property(camelContext, boolean.class, value)); return true;
@@ -228,6 +230,8 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "decodersaslist":
         case "decodersAsList": return java.util.List.class;
         case "delimiter": return org.apache.camel.component.netty.TextLineDelimiter.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "disablestreamcache":
         case "disableStreamCache": return boolean.class;
         case "disconnect": return boolean.class;
@@ -401,6 +405,8 @@ public class NettyHttpConfigurationConfigurer extends org.apache.camel.support.c
         case "decodersaslist":
         case "decodersAsList": return target.getDecodersAsList();
         case "delimiter": return target.getDelimiter();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "disablestreamcache":
         case "disableStreamCache": return target.isDisableStreamCache();
         case "disconnect": return target.isDisconnect();

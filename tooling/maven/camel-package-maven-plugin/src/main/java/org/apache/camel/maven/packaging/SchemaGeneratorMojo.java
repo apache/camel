@@ -394,6 +394,12 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                             o.setDeprecationNote(metadata.deprecationNote());
                         }
                         o.setSecret(metadata.secret());
+                        String sec = metadata.security();
+                        if (Strings.isNullOrEmpty(sec) && metadata.secret()) {
+                            sec = "secret";
+                        }
+                        o.setSecurity(sec);
+                        o.setInsecureValue(metadata.insecureValue());
                         o.setJavaType(metadata.javaType());
                         // special if the property is for input (such as AGGREGATION_COMPLETE_CURRENT_GROUP)
                         if (labels.startsWith("consumer,")) {

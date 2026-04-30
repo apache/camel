@@ -20,6 +20,7 @@ package org.apache.camel.component.zeebe.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 
+@Deprecated(since = "4.19.0")
 public interface ZeebeProcessor extends Service {
     void process(Exchange exchange) throws Exception;
 }

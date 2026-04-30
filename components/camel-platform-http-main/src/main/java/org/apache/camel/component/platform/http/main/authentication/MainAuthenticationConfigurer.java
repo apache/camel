@@ -19,6 +19,7 @@ package org.apache.camel.component.platform.http.main.authentication;
 import org.apache.camel.component.platform.http.vertx.auth.AuthenticationConfig;
 import org.apache.camel.main.HttpManagementServerConfigurationProperties;
 import org.apache.camel.main.HttpServerConfigurationProperties;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Configure authentication on the embedded HTTP server.
@@ -29,5 +30,16 @@ public interface MainAuthenticationConfigurer {
 
     void configureAuthentication(
             AuthenticationConfig authenticationConfig, HttpManagementServerConfigurationProperties properties);
+
+    /**
+     * Resolves the effective authentication path. When no explicit authentication path is configured, defaults to
+     * {@code /*} so that all subpaths under the context path are protected.
+     */
+    default String resolveAuthenticationPath(String authenticationPath, String contextPath) {
+        if (ObjectHelper.isNotEmpty(authenticationPath)) {
+            return authenticationPath;
+        }
+        return "/*";
+    }
 
 }

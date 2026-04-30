@@ -72,7 +72,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     private int maximumRedeliveries;
     @Metadata(description = "Sets an optional dead letter channel which exhausted recovered Exchange should be send to.")
     private String deadLetterUri;
-    @Metadata(label = "advanced",
+    @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
     @Metadata(label = "advanced",
@@ -87,11 +87,12 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      */
     @Metadata(label = "advanced",
               description = "Sets a deserialization filter while reading Object from Aggregation Repository."
-                            + " By default the filter will allow all java packages and subpackages and all org.apache.camel packages and subpackages,"
-                            + " while the remaining will be blacklisted and not deserialized."
+                            + " By default the filter denies java.net.** (to avoid classes whose hash/equals methods perform"
+                            + " network I/O) and otherwise allows all java packages and subpackages and all org.apache.camel"
+                            + " packages and subpackages, while the remaining will be blacklisted and not deserialized."
                             + " This parameter should be customized if you're using classes you trust to be deserialized.",
-              defaultValue = "java.**;org.apache.camel.**;!*")
-    private String deserializationFilter = "java.**;org.apache.camel.**;!*";
+              defaultValue = "!java.net.**;java.**;org.apache.camel.**;!*")
+    private String deserializationFilter = "!java.net.**;java.**;org.apache.camel.**;!*";
 
     /**
      * Creates an aggregation repository

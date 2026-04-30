@@ -80,7 +80,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
                             + " On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException."
                             + " The caused exception is required to be serialized."
                             + " This is by default turned off. If you enable this then be aware that Java will deserialize the incoming"
-                            + " data from the request to Java and that can be a potential security risk.")
+                            + " data from the request to Java and that can be a potential security risk.",
+              security = "insecure:serialization")
     boolean transferException;
     @UriParam(label = "consumer",
               description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
@@ -141,15 +142,15 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @UriParam(label = "producer,security", enums = "Basic,Bearer,NTLM",
               description = "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM. (NTLM is deprecated)")
     private String authMethod;
-    @UriParam(label = "producer,security", secret = true, description = "Authentication username")
+    @UriParam(label = "producer,security", security = "secret", description = "Authentication username")
     private String authUsername;
-    @UriParam(label = "producer,security", secret = true, description = "Authentication bearer token")
+    @UriParam(label = "producer,security", security = "secret", description = "Authentication bearer token")
     private String authBearerToken;
-    @UriParam(label = "producer,security", secret = true, description = "Authentication password")
+    @UriParam(label = "producer,security", security = "secret", description = "Authentication password")
     private String authPassword;
-    @UriParam(label = "producer,security", secret = true, description = "OAuth2 client id")
+    @UriParam(label = "producer,security", security = "secret", description = "OAuth2 client id")
     private String oauth2ClientId;
-    @UriParam(label = "producer,security", secret = true, description = "OAuth2 client secret")
+    @UriParam(label = "producer,security", security = "secret", description = "OAuth2 client secret")
     private String oauth2ClientSecret;
     @UriParam(label = "producer,security", description = "OAuth2 Token endpoint")
     private String oauth2ResourceIndicator;
@@ -187,9 +188,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @UriParam(label = "producer,proxy", enums = "Basic,Bearer,NTLM",
               description = "Proxy authentication method to use (NTLM is deprecated)")
     private String proxyAuthMethod;
-    @UriParam(label = "producer,proxy", secret = true, description = "Proxy server username")
+    @UriParam(label = "producer,proxy", security = "secret", description = "Proxy server username")
     private String proxyAuthUsername;
-    @UriParam(label = "producer,proxy", secret = true, description = "Proxy server password")
+    @UriParam(label = "producer,proxy", security = "secret", description = "Proxy server password")
     private String proxyAuthPassword;
     @Deprecated
     @UriParam(label = "producer,proxy", description = "Proxy server host")

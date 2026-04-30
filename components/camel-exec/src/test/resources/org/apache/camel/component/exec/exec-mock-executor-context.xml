@@ -31,6 +31,11 @@
       <to
         uri="exec:mockedByCommandExecutorMock.exe?commandExecutor=#commandExecutorMock"/>
     </route>
+    <route>
+      <from uri="direct:input2"/>
+      <to
+        uri="exec:mockedByCommandExecutorMock.exe?commandExecutor=#commandExecutorMock&amp;allowControlHeaders=true"/>
+    </route>
   </camelContext>
 
   <bean id="commandExecutorMock"

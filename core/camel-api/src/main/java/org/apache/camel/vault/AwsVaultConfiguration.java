@@ -23,9 +23,9 @@ import org.apache.camel.spi.Metadata;
  */
 public class AwsVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String accessKey;
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String secretKey;
     @Metadata
     private String region;

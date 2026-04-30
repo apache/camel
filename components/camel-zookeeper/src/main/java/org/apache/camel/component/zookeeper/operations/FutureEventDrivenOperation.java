@@ -42,7 +42,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
 
     private WatchedEvent event;
 
-    public FutureEventDrivenOperation(ZooKeeper connection, String node, EventType... awaitedTypes) {
+    protected FutureEventDrivenOperation(ZooKeeper connection, String node, EventType... awaitedTypes) {
         super(connection, node);
         this.awaitedTypes = awaitedTypes;
     }

@@ -61,10 +61,10 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
 
     private final Lock lock = new ReentrantLock();
 
-    public ResourceEndpoint() {
+    protected ResourceEndpoint() {
     }
 
-    public ResourceEndpoint(String endpointUri, Component component, String resourceUri) {
+    protected ResourceEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component);
         this.resourceUri = resourceUri;
     }

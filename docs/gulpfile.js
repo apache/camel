@@ -207,7 +207,8 @@ const sources = {
         '../core/camel-main/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../components/{*,*/*}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../dsl/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
-        '../dsl/{*,*/!(target)}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../dsl/*/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../dsl/*/*/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
       ],
       destination: 'components/modules/others/pages',
       keep: [
@@ -315,6 +316,43 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
     })
   }
 
+  // Wraps gulp.src to gracefully handle ENOENT from ephemeral directories
+  // (e.g. .camel-jbang/work created/deleted by tests running in parallel).
+  // Each source pattern is processed as a separate gulp.src stream so that
+  // an ENOENT in one pattern (e.g. the dsl glob) doesn't abort the other
+  // patterns (e.g. core, components). Results are merged into a single
+  // passthrough stream.
+  const ignorePatterns = ['**/target/**', '**/.camel-jbang/**']
+  const resilientSrc = (source, options) => {
+    const patterns = Array.isArray(source) ? source : [source]
+    const passthrough = through2.obj()
+    let remaining = patterns.length
+
+    const onStreamDone = () => {
+      remaining--
+      if (remaining === 0) {
+        passthrough.end()
+      }
+    }
+
+    patterns.forEach(pattern => {
+      const src = gulp.src(pattern, options)
+      let done = false
+      src.on('data', chunk => passthrough.write(chunk))
+      src.on('error', err => {
+        if (err.code === 'ENOENT') {
+          console.error(`⚠️ ENOENT (skipped): ${err.path || err.message}`)
+        } else {
+          passthrough.destroy(err)
+        }
+      })
+      src.on('end', () => { if (!done) { done = true; onStreamDone() } })
+      src.on('close', () => { if (!done) { done = true; onStreamDone() } })
+    })
+
+    return passthrough
+  }
+
   // creates symlinks from source to destination that satisfy the
   // given filter removing the basedir from a path, i.e. symlinking
   // from a flat hiearchy
@@ -327,10 +365,12 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       }
     })
 
-    return gulp.src(source, { ignore: ['**/target/**'] })
+    let fileCount = 0
+    return resilientSrc(source, { ignore: ignorePatterns, allowEmpty: true })
       .pipe(filterFn)
       .pipe(
         map((file, done) => {
+          fileCount++
           // this flattens the output to just .../pages/.../file.ext
           // instead of .../pages/camel-.../src/main/docs/.../file.ext
           file.base = path.dirname(file.path)
@@ -340,6 +380,9 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       .pipe(gulp.symlink(destination, {
         relativeSymlinks: true,
       }))
+      .on('end', () => {
+        console.log(`  → symlinked ${fileCount} files to ${destination}`)
+      })
   }
 
   // generates sorted & grouped nav.adoc file from a set of .adoc
@@ -410,7 +453,7 @@ const tasks = Array.from(sourcesMap).flatMap(([type, definition]) => {
       return done()
     }
 
-    return gulp.src(source, { ignore: ['**/target/**'] }) // asciidoc files
+    return resilientSrc(source, { ignore: ignorePatterns, allowEmpty: true }) // asciidoc files
       .pipe(through2.obj(extractExamples)) // extracted example files
       // symlink links from a fixed directory, i.e. we could link to
       // the example files from `destination`, that would not work for

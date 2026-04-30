@@ -54,7 +54,6 @@ org.apache.camel.telemetry.decorators.Sjms2SpanDecorator
 org.apache.camel.telemetry.decorators.SjmsSpanDecorator
 org.apache.camel.telemetry.decorators.SpringRabbitmqSpanDecorator
 org.apache.camel.telemetry.decorators.SqlSpanDecorator
-org.apache.camel.telemetry.decorators.StompSpanDecorator
 org.apache.camel.telemetry.decorators.TimerSpanDecorator
 org.apache.camel.telemetry.decorators.UndertowSpanDecorator
 org.apache.camel.telemetry.decorators.VertxHttpSpanDecorator

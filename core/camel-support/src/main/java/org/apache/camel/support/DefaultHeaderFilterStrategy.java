@@ -68,16 +68,16 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     private Pattern outFilterPattern;
     private String[] outFilterStartsWith;
 
-    @Metadata(label = "advanced", defaultValue = "false",
-              description = "Whether header names should be converted to lower case before checking it with the filter Set."
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether header names should be converted to lower case before checking it with the filter Set. This ensures that all variations of header names will be taken into account."
                             + " It does not affect filtering using regular expression pattern.")
-    private boolean lowerCase;
+    private boolean lowerCase = true;
     @Metadata(label = "advanced", defaultValue = "false",
               description = "Whether to allow null values. By default a header is skipped if its value is null. Setting this to true will preserve the header.")
     private boolean allowNullValues;
     @Metadata(label = "advanced", defaultValue = "true",
               description = "Sets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive"
-                            + " when checking it with the filter set. It does not affect filtering using regular expression pattern.")
+                            + " when checking it with the filter set. This ensures that all variations of header names will be taken into account. It does not affect filtering using regular expression pattern.")
     private boolean caseInsensitive = true;
     @Metadata(label = "advanced", defaultValue = "true",
               description = "Sets what to do when a pattern or filter set is matched."
@@ -250,7 +250,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Gets the isLowercase property which is a boolean to determine whether header names should be converted to lower
-     * case before checking it with the filter Set. It does not affect filtering using regular expression pattern.
+     * case before checking it with the filter Set. This ensures that all variations of header names will be taken into
+     * account. It does not affect filtering using regular expression pattern.
      */
     public boolean isLowerCase() {
         return lowerCase;
@@ -258,7 +259,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Sets the isLowercase property which is a boolean to determine whether header names should be converted to lower
-     * case before checking it with the filter Set. It does not affect filtering using regular expression pattern.
+     * case before checking it with the filter Set. This ensures that all variations of header names will be taken into
+     * account. It does not affect filtering using regular expression pattern.
      */
     public void setLowerCase(boolean value) {
         lowerCase = value;
@@ -266,7 +268,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Gets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive
-     * when checking it with the filter set. It does not affect filtering using regular expression pattern.
+     * when checking it with the filter set. This ensures that all variations of header names will be taken into
+     * account.. It does not affect filtering using regular expression pattern.
      *
      * @return <tt>true</tt> if header names is case insensitive.
      */
@@ -276,7 +279,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Sets the caseInsensitive property which is a boolean to determine whether header names should be case insensitive
-     * when checking it with the filter set. It does not affect filtering using regular expression pattern,
+     * when checking it with the filter set. This ensures that all variations of header names will be taken into
+     * account.. It does not affect filtering using regular expression pattern,
      *
      * @param caseInsensitive <tt>true</tt> if header names is case insensitive.
      */

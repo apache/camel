@@ -44,7 +44,7 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
 
     private final AuthenticationClient authenticationClient;
 
-    public WorkdayDefaultProducer(WorkdayEndpoint endpoint) {
+    protected WorkdayDefaultProducer(WorkdayEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
         this.authenticationClient = new AuthClientForIntegration(this.endpoint.getWorkdayConfiguration());

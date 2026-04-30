@@ -30,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Contains information about a Zeebe process
  */
 
+@Deprecated(since = "4.19.0")
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessRequest implements ZeebeMessage {

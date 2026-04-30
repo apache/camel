@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws-parent</artifactId>
@@ -72,7 +72,6 @@
         <module>camel-aws2-timestream</module>
         <module>camel-aws2-transcribe</module>
         <module>camel-aws2-translate</module>
-        <module>camel-aws-xray</module>
         <module>camel-aws2-rekognition</module>
         <module>camel-aws-security-hub</module>
     </modules>

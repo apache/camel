@@ -25,7 +25,7 @@ public abstract class ClassifierSearchCriteria extends SearchCriteria {
     private String slug;
     private Context context;
 
-    public ClassifierSearchCriteria() {
+    protected ClassifierSearchCriteria() {
 
     }
 

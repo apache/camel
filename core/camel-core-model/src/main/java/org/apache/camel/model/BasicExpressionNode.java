@@ -37,18 +37,18 @@ public abstract class BasicExpressionNode<T extends BasicExpressionNode<T>> exte
     @XmlElementRef
     private ExpressionDefinition expression;
 
-    public BasicExpressionNode() {
+    protected BasicExpressionNode() {
     }
 
-    public BasicExpressionNode(ExpressionDefinition expression) {
+    protected BasicExpressionNode(ExpressionDefinition expression) {
         setExpression(expression);
     }
 
-    public BasicExpressionNode(Expression expression) {
+    protected BasicExpressionNode(Expression expression) {
         setExpression(expression);
     }
 
-    public BasicExpressionNode(Predicate predicate) {
+    protected BasicExpressionNode(Predicate predicate) {
         setPredicate(predicate);
     }
 

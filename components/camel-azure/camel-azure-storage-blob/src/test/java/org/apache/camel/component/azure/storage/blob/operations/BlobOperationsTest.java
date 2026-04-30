@@ -30,8 +30,12 @@ import java.util.Map;
 import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.rest.ResponseBase;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
+import com.azure.storage.blob.models.BlobImmutabilityPolicy;
+import com.azure.storage.blob.models.BlobImmutabilityPolicyMode;
+import com.azure.storage.blob.models.BlobLegalHoldResult;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlockBlobItem;
+import com.azure.storage.blob.specialized.BlobClientBase;
 import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
@@ -49,6 +53,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,6 +62,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -85,6 +91,8 @@ class BlobOperationsTest extends CamelTestSupport {
         mockedResults.put("inputStream", new ByteArrayInputStream("testInput".getBytes(Charset.defaultCharset())));
         mockedResults.put("properties", createBlobProperties());
 
+        when(client.withSnapshot(any())).thenReturn(client);
+        when(client.withVersion(any())).thenReturn(client);
         when(client.openInputStream(any(), any())).thenReturn(mockedResults);
 
         final Exchange exchange = new DefaultExchange(context);
@@ -203,6 +211,338 @@ class BlobOperationsTest extends CamelTestSupport {
 
         assertNotNull(response);
         assertTrue((boolean) response.getBody());
+    }
+
+    @Test
+    void testGetBlobWithSnapshotIdReadsFromScopedClient() throws IOException {
+        final String snapshotId = "2026-04-15T10:00:00.0000000Z";
+        final BlobClientWrapper snapshotScopedClient = mock(BlobClientWrapper.class);
+
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("fromSnapshot".getBytes(Charset.defaultCharset())));
+        mockedResults.put("properties", createBlobProperties());
+
+        when(client.withSnapshot(snapshotId)).thenReturn(snapshotScopedClient);
+        when(snapshotScopedClient.withVersion(any())).thenReturn(snapshotScopedClient);
+        when(snapshotScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
+
+        configuration.setSnapshotId(snapshotId);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.getBlob(null);
+
+        assertNotNull(response);
+        assertEquals("fromSnapshot",
+                new BufferedReader(new InputStreamReader((InputStream) response.getBody())).readLine());
+
+        verify(client, times(1)).withSnapshot(snapshotId);
+        verify(snapshotScopedClient, times(1)).openInputStream(any(), any());
+    }
+
+    @Test
+    void testGetBlobWithSnapshotIdHeaderOverridesConfig() throws IOException {
+        final String configuredSnapshotId = "2026-04-15T10:00:00.0000000Z";
+        final String headerSnapshotId = "2026-04-16T12:00:00.0000000Z";
+        final BlobClientWrapper snapshotScopedClient = mock(BlobClientWrapper.class);
+
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("fromHeader".getBytes(Charset.defaultCharset())));
+        mockedResults.put("properties", createBlobProperties());
+
+        when(client.withSnapshot(headerSnapshotId)).thenReturn(snapshotScopedClient);
+        when(snapshotScopedClient.withVersion(any())).thenReturn(snapshotScopedClient);
+        when(snapshotScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
+
+        configuration.setSnapshotId(configuredSnapshotId);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.BLOB_SNAPSHOT_ID, headerSnapshotId);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        operations.getBlob(exchange);
+
+        verify(client, times(1)).withSnapshot(headerSnapshotId);
+    }
+
+    @Test
+    void testGetBlobWithVersionIdReadsFromScopedClient() throws IOException {
+        final String versionId = "2026-04-15T10:00:00.0000000Z";
+        final BlobClientWrapper versionScopedClient = mock(BlobClientWrapper.class);
+
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("fromVersion".getBytes(Charset.defaultCharset())));
+        mockedResults.put("properties", createBlobProperties());
+
+        when(client.withSnapshot(any())).thenReturn(client);
+        when(client.withVersion(versionId)).thenReturn(versionScopedClient);
+        when(versionScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
+
+        configuration.setVersionId(versionId);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.getBlob(null);
+
+        assertNotNull(response);
+        assertEquals("fromVersion",
+                new BufferedReader(new InputStreamReader((InputStream) response.getBody())).readLine());
+
+        verify(client, times(1)).withVersion(versionId);
+        verify(versionScopedClient, times(1)).openInputStream(any(), any());
+    }
+
+    @Test
+    void testGetBlobWithVersionIdHeaderOverridesConfig() throws IOException {
+        final String configuredVersionId = "2026-04-15T10:00:00.0000000Z";
+        final String headerVersionId = "2026-04-16T12:00:00.0000000Z";
+        final BlobClientWrapper versionScopedClient = mock(BlobClientWrapper.class);
+
+        final Map<String, Object> mockedResults = new HashMap<>();
+        mockedResults.put("inputStream", new ByteArrayInputStream("fromHeader".getBytes(Charset.defaultCharset())));
+        mockedResults.put("properties", createBlobProperties());
+
+        when(client.withSnapshot(any())).thenReturn(client);
+        when(client.withVersion(headerVersionId)).thenReturn(versionScopedClient);
+        when(versionScopedClient.openInputStream(any(), any())).thenReturn(mockedResults);
+
+        configuration.setVersionId(configuredVersionId);
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.BLOB_VERSION_ID, headerVersionId);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        operations.getBlob(exchange);
+
+        verify(client, times(1)).withVersion(headerVersionId);
+    }
+
+    @Test
+    void testSetBlobTags() {
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");
+
+        when(client.setTags(any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 204, httpHeaders, null, null));
+
+        final Map<String, String> tags = new HashMap<>();
+        tags.put("status", "quarantine");
+        tags.put("category", "document");
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.BLOB_TAGS, tags);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.setBlobTags(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertNotNull(response.getHeaders());
+        assertEquals("123", ((HttpHeaders) response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                .get("x-test-header").getValue());
+    }
+
+    @Test
+    void testSetBlobTagsFromBody() {
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "456");
+
+        when(client.setTags(any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 204, httpHeaders, null, null));
+
+        final Map<String, String> tags = new HashMap<>();
+        tags.put("owner", "test-user");
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(tags);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.setBlobTags(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+    }
+
+    @Test
+    void testSetBlobTagsWithNoTagsThrows() {
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("not-a-map");
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        assertThrows(IllegalArgumentException.class, () -> operations.setBlobTags(exchange));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void testGetBlobTags() {
+        final Map<String, String> tags = new HashMap<>();
+        tags.put("status", "clean");
+        tags.put("scannedBy", "antivirus");
+
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "789");
+
+        when(client.getTags(any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, tags, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.getBlobTags(exchange);
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        final Map<String, String> resultTags = (Map<String, String>) response.getBody();
+        assertEquals("clean", resultTags.get("status"));
+        assertEquals("antivirus", resultTags.get("scannedBy"));
+        assertEquals(tags, response.getHeaders().get(BlobConstants.BLOB_TAGS));
+        assertEquals("789", ((HttpHeaders) response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                .get("x-test-header").getValue());
+    }
+
+    @Test
+    void testSetBlobLegalHoldFromHeader() {
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "111");
+        final BlobLegalHoldResult legalHoldResult = mock(BlobLegalHoldResult.class);
+        when(legalHoldResult.hasLegalHold()).thenReturn(true);
+
+        when(client.setLegalHold(eq(true), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, legalHoldResult, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.BLOB_LEGAL_HOLD, true);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.setBlobLegalHold(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertEquals(true, response.getHeaders().get(BlobConstants.BLOB_LEGAL_HOLD));
+        assertEquals("111", ((HttpHeaders) response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                .get("x-test-header").getValue());
+    }
+
+    @Test
+    void testSetBlobLegalHoldFromBody() {
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "222");
+        final BlobLegalHoldResult legalHoldResult = mock(BlobLegalHoldResult.class);
+        when(legalHoldResult.hasLegalHold()).thenReturn(false);
+
+        when(client.setLegalHold(eq(false), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, legalHoldResult, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(false);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.setBlobLegalHold(exchange);
+
+        assertNotNull(response);
+        assertFalse((boolean) response.getBody());
+        assertEquals(false, response.getHeaders().get(BlobConstants.BLOB_LEGAL_HOLD));
+    }
+
+    @Test
+    void testSetBlobLegalHoldWithNoFlagThrows() {
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("not-a-boolean");
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        assertThrows(IllegalArgumentException.class, () -> operations.setBlobLegalHold(exchange));
+    }
+
+    @Test
+    void testSetBlobImmutabilityPolicyFromHeaders() {
+        final OffsetDateTime expiryTime = OffsetDateTime.now().plusDays(7);
+        final BlobImmutabilityPolicy persistedPolicy
+                = new BlobImmutabilityPolicy().setExpiryTime(expiryTime).setPolicyMode(BlobImmutabilityPolicyMode.LOCKED);
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "333");
+
+        when(client.setImmutabilityPolicy(any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, persistedPolicy, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME, expiryTime);
+        exchange.getIn().setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_MODE, BlobImmutabilityPolicyMode.LOCKED);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.setBlobImmutabilityPolicy(exchange);
+
+        assertNotNull(response);
+        final BlobImmutabilityPolicy result = (BlobImmutabilityPolicy) response.getBody();
+        assertNotNull(result);
+        assertEquals(expiryTime, result.getExpiryTime());
+        assertEquals(BlobImmutabilityPolicyMode.LOCKED, result.getPolicyMode());
+        assertEquals(expiryTime, response.getHeaders().get(BlobConstants.BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME));
+        assertEquals(BlobImmutabilityPolicyMode.LOCKED,
+                response.getHeaders().get(BlobConstants.BLOB_IMMUTABILITY_POLICY_MODE));
+    }
+
+    @Test
+    void testSetBlobImmutabilityPolicyDefaultsToUnlocked() {
+        final OffsetDateTime expiryTime = OffsetDateTime.now().plusDays(1);
+        final BlobImmutabilityPolicy persistedPolicy
+                = new BlobImmutabilityPolicy().setExpiryTime(expiryTime).setPolicyMode(BlobImmutabilityPolicyMode.UNLOCKED);
+        final HttpHeaders httpHeaders = new HttpHeaders();
+
+        when(client.setImmutabilityPolicy(any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, persistedPolicy, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME, expiryTime);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.setBlobImmutabilityPolicy(exchange);
+
+        assertNotNull(response);
+        assertEquals(BlobImmutabilityPolicyMode.UNLOCKED,
+                ((BlobImmutabilityPolicy) response.getBody()).getPolicyMode());
+    }
+
+    @Test
+    void testSetBlobImmutabilityPolicyFromBody() {
+        final OffsetDateTime expiryTime = OffsetDateTime.now().plusDays(3);
+        final BlobImmutabilityPolicy bodyPolicy
+                = new BlobImmutabilityPolicy().setExpiryTime(expiryTime).setPolicyMode(BlobImmutabilityPolicyMode.UNLOCKED);
+        final HttpHeaders httpHeaders = new HttpHeaders();
+
+        when(client.setImmutabilityPolicy(eq(bodyPolicy), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, bodyPolicy, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(bodyPolicy);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.setBlobImmutabilityPolicy(exchange);
+
+        assertNotNull(response);
+        assertEquals(expiryTime, ((BlobImmutabilityPolicy) response.getBody()).getExpiryTime());
+        verify(client, times(1)).setImmutabilityPolicy(eq(bodyPolicy), any(), any());
+    }
+
+    @Test
+    void testSetBlobImmutabilityPolicyWithoutExpiryThrows() {
+        final Exchange exchange = new DefaultExchange(context);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        assertThrows(IllegalArgumentException.class, () -> operations.setBlobImmutabilityPolicy(exchange));
+    }
+
+    @Test
+    void testCreateBlobSnapshot() {
+        final String snapshotId = "2026-04-15T10:00:00.0000000Z";
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");
+
+        final BlobClientBase snapshotClient = mock(BlobClientBase.class);
+        when(snapshotClient.getSnapshotId()).thenReturn(snapshotId);
+
+        when(client.createSnapshot(any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 201, httpHeaders, snapshotClient, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.createBlobSnapshot(exchange);
+
+        assertNotNull(response);
+        assertEquals(snapshotId, response.getBody());
+        assertNotNull(response.getHeaders());
+        assertEquals(snapshotId, response.getHeaders().get(BlobConstants.BLOB_SNAPSHOT_ID));
+        assertEquals("123", ((HttpHeaders) response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                .get("x-test-header").getValue());
     }
 
     private BlobProperties createBlobProperties() {

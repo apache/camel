@@ -55,7 +55,7 @@ public class InfinispanRemoteClusterService extends InfinispanClusterService {
     private boolean secure;
     @Metadata(label = "security", description = "Define the username to access the infinispan instance")
     private String username;
-    @Metadata(label = "security", description = "Define the password to access the infinispan instance", secret = true)
+    @Metadata(label = "security", description = "Define the password to access the infinispan instance", security = "secret")
     private String password;
     @Metadata(label = "security", description = "Define the security server name to access the infinispan instance")
     private String securityServerName;

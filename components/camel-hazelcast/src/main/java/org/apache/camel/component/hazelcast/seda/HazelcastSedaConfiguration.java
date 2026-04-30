@@ -34,7 +34,7 @@ public class HazelcastSedaConfiguration {
     private int pollTimeout = 1000;
     @UriParam(label = "seda", defaultValue = "1000")
     private int onErrorDelay = 1000;
-    @UriParam(label = "seda")
+    @UriParam(label = "seda", security = "insecure:serialization")
     private boolean transferExchange;
     @UriParam(label = "seda")
     private boolean transacted;

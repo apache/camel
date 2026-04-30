@@ -315,6 +315,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                 camelContext,
                 platformHttpComponent.getHttpEndpoints(),
                 (server != null ? server.getPort() : getPort()),
+                configuration.isUseGlobalSslContextParameters(),
                 "HTTP endpoints summary");
     }
 

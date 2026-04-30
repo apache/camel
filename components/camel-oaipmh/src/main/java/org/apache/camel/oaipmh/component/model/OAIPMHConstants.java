@@ -19,6 +19,7 @@ package org.apache.camel.oaipmh.component.model;
 import org.apache.camel.spi.Metadata;
 
 public final class OAIPMHConstants {
+
     @Metadata(label = "producer", description = "This header is obtained when onlyFirst option is enable. " +
                                                 "Return resumption token of the request when data is still available.",
               javaType = "String")
@@ -33,6 +34,11 @@ public final class OAIPMHConstants {
     public static final String FROM = "CamelOaimphFrom";
     public static final String SET = "CamelOaimphSet";
     public static final String IDENTIFIER = "CamelOaimphIdentifier";
+
+    @Metadata(label = "producer",
+              description = "Custom HTTP headers to send with the request, overriding any httpHeader.* endpoint parameters.",
+              javaType = "java.util.Map<java.lang.String, java.lang.String>")
+    public static final String HTTP_HEADERS = "CamelOaimphHttpHeaders";
 
     private OAIPMHConstants() {
     }
