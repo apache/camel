@@ -30,6 +30,7 @@ import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.hierynomus.smbj.share.File;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.test.infra.smb.services.SmbService;
 import org.apache.camel.test.infra.smb.services.SmbServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -42,15 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that STATUS_ACCESS_DENIED (0xc0000022) is thrown when attempting to delete a file on a share where the
- * authenticated user lacks delete permissions. This reproduces the scenario reported by customers using NetApp ONTAP
- * SMB shares where read/write is allowed but delete is denied.
- *
- * Two shares simulate the ONTAP behavior:
- * <ul>
- * <li>{@code data-no-delete} - sticky bit on directory, root-owned files (POSIX-level denial)</li>
- * <li>{@code data-unix-security} - {@code nt acl support = no} simulates ONTAP UNIX security style where NTFS ACLs are
- * ignored and only POSIX permissions are evaluated</li>
- * </ul>
+ * authenticated user lacks delete permissions.
  */
 public class SmbDeleteAccessDeniedIT extends CamelTestSupport {
 
@@ -70,12 +63,13 @@ public class SmbDeleteAccessDeniedIT extends CamelTestSupport {
         try {
             operations.connect(config, null);
 
-            SMBApiException thrown = assertThrows(SMBApiException.class,
+            GenericFileOperationFailedException thrown = assertThrows(GenericFileOperationFailedException.class,
                     () -> operations.deleteFile("1.txt"));
 
-            assertEquals(0xc0000022L, thrown.getStatusCode(),
-                    "Expected STATUS_ACCESS_DENIED (0xc0000022) but got: "
-                                                              + String.format("0x%08x", thrown.getStatusCode()));
+            assertTrue(thrown.getMessage().contains("Access denied"),
+                    "Expected access denied message but got: " + thrown.getMessage());
+            assertTrue(thrown.getCause() instanceof SMBApiException);
+            assertEquals(0xc0000022L, ((SMBApiException) thrown.getCause()).getStatusCode());
         } finally {
             operations.disconnect();
         }
@@ -89,12 +83,15 @@ public class SmbDeleteAccessDeniedIT extends CamelTestSupport {
         try {
             operations.connect(config, null);
 
-            SMBApiException thrown = assertThrows(SMBApiException.class,
+            GenericFileOperationFailedException thrown = assertThrows(GenericFileOperationFailedException.class,
                     () -> operations.deleteFile("1.txt"));
 
-            assertEquals(0xc0000022L, thrown.getStatusCode(),
-                    "Expected STATUS_ACCESS_DENIED (0xc0000022) but got: "
-                                                              + String.format("0x%08x", thrown.getStatusCode()));
+            assertTrue(thrown.getMessage().contains("Access denied"),
+                    "Expected access denied message but got: " + thrown.getMessage());
+            assertTrue(thrown.getMessage().contains("volume security style"),
+                    "Error message should mention volume security style");
+            assertTrue(thrown.getCause() instanceof SMBApiException);
+            assertEquals(0xc0000022L, ((SMBApiException) thrown.getCause()).getStatusCode());
         } finally {
             operations.disconnect();
         }
