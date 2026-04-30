@@ -171,6 +171,7 @@ class ExportSpringBoot extends Export {
         }
         // copy to export dir and remove work dir
         PathUtils.copyDirectory(buildDir, Paths.get(exportDir));
+        createDeferredSymlinks(buildDir, Paths.get(exportDir));
         PathUtils.deleteDirectory(buildDir);
 
         return 0;

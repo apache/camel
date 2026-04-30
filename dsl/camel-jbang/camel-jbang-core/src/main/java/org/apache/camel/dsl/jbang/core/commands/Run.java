@@ -1235,7 +1235,10 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
-        // Java codes reload is not supported in Spring Boot since it has to be recompiled to trigger the restart
+        // the code reload is not supported, since we use symlink, spring-boot devtools doesn't support symlink
+        if (this.dev) {
+            printer().println("WARN: Code reload is not supported with Spring Boot.");
+        }
         eq.javaLiveReload = false;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
