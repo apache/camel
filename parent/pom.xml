@@ -151,7 +151,6 @@
         <docling-java-version>0.5.1</docling-java-version>
         <docker-java-version>3.7.1</docker-java-version>
         <dropbox-version>7.0.0</dropbox-version>
-        <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <ehcache3-version>3.12.0</ehcache3-version>
         <!-- github-api (kohsuke) for camel-github2 -->
