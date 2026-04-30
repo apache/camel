@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class PahoMqtt5ITSupport extends CamelTestSupport {
     @RegisterExtension
-    public static MosquittoService service = MosquittoServiceFactory.createService();
+    public static MosquittoService service = MosquittoServiceFactory.createSingletonService();
 
     protected int mqttPort;
 

@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class OpenAIMcpToolsIT extends OpenAITestSupport {
 
     @RegisterExtension
-    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createService();
+    static McpEverythingService MCP_EVERYTHING = McpEverythingServiceFactory.createSingletonService();
 
     @Override
     protected RouteBuilder createRouteBuilder() {

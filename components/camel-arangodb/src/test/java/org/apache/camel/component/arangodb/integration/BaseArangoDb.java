@@ -42,7 +42,7 @@ public abstract class BaseArangoDb implements ConfigurableRoute, CamelTestSuppor
 
     @Order(1)
     @RegisterExtension
-    public static ArangoDBService service = ArangoDBServiceFactory.createService();
+    public static ArangoDBService service = ArangoDBServiceFactory.createSingletonService();
     @Order(2)
     @RegisterExtension
     public static final CamelContextExtension camelContextExtension = new TransientCamelContextExtension();

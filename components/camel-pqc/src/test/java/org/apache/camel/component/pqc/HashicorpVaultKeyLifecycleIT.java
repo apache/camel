@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HashicorpVaultKeyLifecycleIT extends CamelTestSupport {
 
     @RegisterExtension
-    public static HashicorpVaultService service = HashicorpServiceFactory.createService();
+    public static HashicorpVaultService service = HashicorpServiceFactory.createSingletonService();
 
     private HashicorpVaultKeyLifecycleManager keyManager;
 

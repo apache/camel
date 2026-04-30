@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class LdifTestSupport extends CamelTestSupport {
     @RegisterExtension
-    public static OpenldapService service = OpenldapServiceFactory.createService();
+    public static OpenldapService service = OpenldapServiceFactory.createSingletonService();
 
     protected int port;
 

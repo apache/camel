@@ -30,9 +30,13 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 public abstract class RabbitMQITSupport extends CamelTestSupport {
 
     @RegisterExtension
-    public static RabbitMQService service = RabbitMQServiceFactory.createService();
+    public static RabbitMQService service = RabbitMQServiceFactory.createSingletonService();
 
     protected Logger log = LoggerFactory.getLogger(getClass());
+
+    protected String uniqueName(String baseName) {
+        return getClass().getSimpleName() + "-" + baseName;
+    }
 
     ConnectionFactory createConnectionFactory(boolean confirm) {
         CachingConnectionFactory cf = new CachingConnectionFactory();

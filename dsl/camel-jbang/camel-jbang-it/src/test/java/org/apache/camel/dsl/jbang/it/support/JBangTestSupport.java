@@ -60,7 +60,7 @@ public abstract class JBangTestSupport {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @RegisterExtension
-    protected static CliService containerService = CliServiceFactory.createService();
+    protected static CliService containerService = CliServiceFactory.createSingletonService();
 
     private static final String DATA_FOLDER = System.getProperty(CliProperties.DATA_FOLDER);
 
@@ -111,7 +111,8 @@ public abstract class JBangTestSupport {
         FORMATS_MAPPING_DATA("data.csv", "/jbang/it/data-mapping/data-formats/data.csv"),
         STUB_ROUTE("StubRoute.java", "/jbang/it/StubRoute.java"),
         HISTORY_ROUTE("HistoryRoute.java", "/jbang/it/HistoryRoute.java"),
-        USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml");
+        USER_SOURCE_KAMELET("user-source.kamelet.yaml", "/jbang/it/user-source.kamelet.yaml"),
+        GROUP_ROUTE("GroupRoute.java", "/jbang/it/GroupRoute.java");
 
         private String name;
         private String resPath;

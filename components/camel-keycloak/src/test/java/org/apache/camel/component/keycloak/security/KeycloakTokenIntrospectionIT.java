@@ -73,7 +73,7 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(KeycloakTokenIntrospectionIT.class);
 
     @RegisterExtension
-    static KeycloakService keycloakService = KeycloakServiceFactory.createService();
+    static KeycloakService keycloakService = KeycloakServiceFactory.createSingletonService();
 
     // Test data - use unique names to avoid conflicts
     private static final String TEST_REALM_NAME = "introspection-realm-" + UUID.randomUUID().toString().substring(0, 8);

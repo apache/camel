@@ -23,6 +23,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 class MinioIntegrationTestSupport extends CamelTestSupport {
     @RegisterExtension
-    static MinioService service = MinioServiceFactory.createService();
+    static MinioService service = MinioServiceFactory.createSingletonService();
 
 }

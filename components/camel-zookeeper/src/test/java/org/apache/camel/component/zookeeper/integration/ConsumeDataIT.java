@@ -64,7 +64,7 @@ public class ConsumeDataIT extends ZooKeeperITSupport {
         updateNode(10);
 
         delay(500);
-        client.delete("/camel");
+        client.deleteAll("/camel");
 
         MockEndpoint.assertIsSatisfied(30, TimeUnit.SECONDS);
 
@@ -90,7 +90,7 @@ public class ConsumeDataIT extends ZooKeeperITSupport {
         delay(500);
 
         // by now we are back waiting for a change so delete the node
-        client.delete("/camel");
+        client.deleteAll("/camel");
 
         // recreate and update a number of times.
         createCamelNode();
@@ -98,7 +98,7 @@ public class ConsumeDataIT extends ZooKeeperITSupport {
 
         MockEndpoint.assertIsSatisfied(30, TimeUnit.SECONDS);
 
-        client.delete("/camel");
+        client.deleteAll("/camel");
     }
 
     private void updateNode(int times) throws Exception {
