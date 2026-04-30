@@ -300,7 +300,7 @@
         <jgroups-version>5.5.4.Final</jgroups-version>
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
         <jira-rest-client-api-version>6.0.2</jira-rest-client-api-version>
-        <jline-version>4.0.13</jline-version>
+        <jline-version>4.0.14</jline-version>
         <libthrift-version>0.22.0</libthrift-version>
         <jodatime2-version>2.14.2</jodatime2-version>
         <jolokia-version>2.5.1</jolokia-version>
