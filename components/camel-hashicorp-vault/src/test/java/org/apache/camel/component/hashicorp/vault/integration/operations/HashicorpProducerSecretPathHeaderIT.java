@@ -52,20 +52,21 @@ public class HashicorpProducerSecretPathHeaderIT extends HashicorpVaultBase {
             @Override
             public void process(Exchange exchange) {
                 Message message = exchange.getMessage();
-                message.setHeader(SECRET_PATH, "test");
+                message.setHeader(SECRET_PATH, secretPath());
                 exchange.getMessage().setBody(Map.of("integer", "30"));
             }
         });
         template.request("direct:readSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getMessage().setHeader(HashicorpVaultConstants.SECRET_PATH, "test");
+                exchange.getMessage().setHeader(HashicorpVaultConstants.SECRET_PATH,
+                        secretPath());
             }
         });
         template.request("direct:deleteSecret", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getMessage().setHeader(SECRET_PATH, "test");
+                exchange.getMessage().setHeader(SECRET_PATH, secretPath());
             }
         });
 

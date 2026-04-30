@@ -45,7 +45,7 @@ public abstract class IggyTestBase {
 
     @Order(1)
     @RegisterExtension
-    protected static IggyService iggyService = IggyServiceFactory.createService();
+    protected static IggyService iggyService = IggyServiceFactory.createSingletonService();
 
     @Order(2)
     @RegisterExtension

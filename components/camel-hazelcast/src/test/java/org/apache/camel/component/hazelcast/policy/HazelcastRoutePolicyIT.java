@@ -49,7 +49,7 @@ public class HazelcastRoutePolicyIT {
     private static final List<String> CLIENTS = List.of("0", "1", "2");
 
     @RegisterExtension
-    public static HazelcastService hazelcastService = HazelcastServiceFactory.createService();
+    public static HazelcastService hazelcastService = HazelcastServiceFactory.createSingletonService();
 
     @Test
     @Timeout(value = 2, unit = TimeUnit.MINUTES)

@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JmsReplyToIbmMQTest extends CamelTestSupport {
 
     @RegisterExtension
-    static IbmMQService service = IbmMQServiceFactory.createService();
+    static IbmMQService service = IbmMQServiceFactory.createSingletonService();
 
     @Test
     void testCustomJMSReplyToInOut() {

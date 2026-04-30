@@ -29,6 +29,7 @@ import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.kiwiproject.consul.AgentClient;
 import org.kiwiproject.consul.Consul;
 import org.kiwiproject.consul.model.agent.ImmutableRegistration;
@@ -38,19 +39,12 @@ import org.kiwiproject.consul.model.health.ServiceHealth;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsulHealthIT extends CamelTestSupport {
-    /*
-     NOTE: this one is not registered as extension because it requires a different lifecycle. It
-     needs to be started much earlier than usual, so in this test we take care of handling it.
-     */
-    private ConsulService consulService = ConsulServiceFactory.createService();
+    @RegisterExtension
+    static ConsulService consulService = ConsulServiceFactory.createSingletonService();
 
     private AgentClient client;
     private List<Registration> registrations;
     private String service;
-
-    public ConsulHealthIT() {
-        consulService.initialize();
-    }
 
     @BindToRegistry("consul")
     public ConsulComponent getConsulComponent() {

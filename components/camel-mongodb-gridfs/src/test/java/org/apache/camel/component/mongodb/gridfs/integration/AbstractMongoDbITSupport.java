@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
     @RegisterExtension
-    public static MongoDBService service = MongoDBServiceFactory.createService();
+    public static MongoDBService service = MongoDBServiceFactory.createSingletonService();
 
     protected static final String FILE_NAME = "filename.for.db.txt";
     protected static final String FILE_DATA = "This is some stuff to go into the db";
