@@ -29,10 +29,29 @@ public class AudioTranscriptionResponseBuilder {
     }
 
     public String createTranscriptionResponse(AudioTranscriptionExpectation expectation) throws Exception {
+        if (expectation.isVerbose()) {
+            return createVerboseResponse(expectation);
+        }
+        return createSimpleResponse(expectation);
+    }
+
+    private String createSimpleResponse(AudioTranscriptionExpectation expectation) throws Exception {
         record TranscriptionResponse(String text) {
         }
 
-        TranscriptionResponse response = new TranscriptionResponse(expectation.getTranscriptionText());
-        return objectMapper.writeValueAsString(response);
+        return objectMapper.writeValueAsString(new TranscriptionResponse(expectation.getTranscriptionText()));
+    }
+
+    private String createVerboseResponse(AudioTranscriptionExpectation expectation) throws Exception {
+        record VerboseTranscriptionResponse(String text, String language, double duration, java.util.List<?> segments,
+                java.util.List<?> words) {
+        }
+
+        return objectMapper.writeValueAsString(new VerboseTranscriptionResponse(
+                expectation.getTranscriptionText(),
+                expectation.getLanguage(),
+                expectation.getDuration(),
+                java.util.List.of(),
+                java.util.List.of()));
     }
 }

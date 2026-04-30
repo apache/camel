@@ -110,6 +110,14 @@ public final class OpenAIConstants {
     @Metadata(description = "The response format for audio transcription (json, text, srt, verbose_json, vtt)",
               javaType = "String")
     public static final String AUDIO_RESPONSE_FORMAT = "CamelOpenAIAudioResponseFormat";
+    @Metadata(description = "Sampling temperature for audio transcription (0.0 to 1.0)", javaType = "Double")
+    public static final String AUDIO_TEMPERATURE = "CamelOpenAIAudioTemperature";
+    @Metadata(description = "Optional text to guide the model's style or continue a previous audio segment",
+              javaType = "String")
+    public static final String AUDIO_PROMPT = "CamelOpenAIAudioPrompt";
+    @Metadata(description = "Comma-separated timestamp granularities: word, segment, or word,segment (verbose_json only)",
+              javaType = "String")
+    public static final String AUDIO_TIMESTAMP_GRANULARITIES = "CamelOpenAIAudioTimestampGranularities";
 
     // Audio Transcription Output Headers
     @Metadata(description = "Duration of the audio in seconds (verbose_json only)", javaType = "Double")

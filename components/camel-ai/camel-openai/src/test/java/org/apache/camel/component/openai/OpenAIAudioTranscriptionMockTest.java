@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -61,6 +63,11 @@ public class OpenAIAudioTranscriptionMockTest extends CamelTestSupport {
                 from("direct:transcribe-no-model")
                         .to("openai:audio-transcription?apiKey=dummy&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
+
+                from("file:" + tempDir.toString() + "?noop=true&initialDelay=0&delay=100")
+                        .to("openai:audio-transcription?audioModel=whisper-1&apiKey=dummy&baseUrl="
+                            + openAIMock.getBaseUrl() + "/v1")
+                        .to("mock:transcribed");
             }
         };
     }
@@ -124,6 +131,18 @@ public class OpenAIAudioTranscriptionMockTest extends CamelTestSupport {
         assertNotNull(result);
         assertNull(result.getException());
         assertEquals(TRANSCRIPTION_TEXT, result.getMessage().getBody(String.class));
+    }
+
+    @Test
+    void testTranscriptionFromFileComponent() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:transcribed");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived(TRANSCRIPTION_TEXT);
+
+        Files.write(tempDir.resolve("recording.wav"), new byte[] { 0x00, 0x01, 0x02 });
+
+        mock.await(10, TimeUnit.SECONDS);
+        mock.assertIsSatisfied();
     }
 
     @Test

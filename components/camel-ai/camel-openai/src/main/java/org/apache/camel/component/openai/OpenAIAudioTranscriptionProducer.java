@@ -28,16 +28,16 @@ import com.openai.models.audio.AudioResponseFormat;
 import com.openai.models.audio.transcriptions.TranscriptionCreateParams;
 import com.openai.models.audio.transcriptions.TranscriptionCreateResponse;
 import com.openai.models.audio.transcriptions.TranscriptionVerbose;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.WrappedFile;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * OpenAI producer for audio transcription.
  */
-public class OpenAIAudioTranscriptionProducer extends DefaultAsyncProducer {
+public class OpenAIAudioTranscriptionProducer extends DefaultProducer {
 
     public OpenAIAudioTranscriptionProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -49,19 +49,7 @@ public class OpenAIAudioTranscriptionProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        try {
-            processInternal(exchange);
-            callback.done(true);
-            return true;
-        } catch (Exception e) {
-            exchange.setException(e);
-            callback.done(true);
-            return true;
-        }
-    }
-
-    private void processInternal(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         OpenAIConfiguration config = getEndpoint().getConfiguration();
         Message in = exchange.getIn();
 
@@ -74,9 +62,11 @@ public class OpenAIAudioTranscriptionProducer extends DefaultAsyncProducer {
         String language = resolveParameter(in, OpenAIConstants.AUDIO_LANGUAGE, config.getAudioLanguage(), String.class);
         String responseFormat = resolveParameter(in, OpenAIConstants.AUDIO_RESPONSE_FORMAT,
                 config.getAudioResponseFormat(), String.class);
-        Double temperature = resolveParameter(in, null, config.getAudioTemperature(), Double.class);
-        String prompt = resolveParameter(in, null, config.getAudioPrompt(), String.class);
-        String timestampGranularities = resolveParameter(in, null, config.getAudioTimestampGranularities(), String.class);
+        Double temperature = resolveParameter(in, OpenAIConstants.AUDIO_TEMPERATURE, config.getAudioTemperature(),
+                Double.class);
+        String prompt = resolveParameter(in, OpenAIConstants.AUDIO_PROMPT, config.getAudioPrompt(), String.class);
+        String timestampGranularities = resolveParameter(in, OpenAIConstants.AUDIO_TIMESTAMP_GRANULARITIES,
+                config.getAudioTimestampGranularities(), String.class);
 
         TranscriptionCreateParams.Builder paramsBuilder = TranscriptionCreateParams.builder()
                 .model(model);
@@ -98,9 +88,14 @@ public class OpenAIAudioTranscriptionProducer extends DefaultAsyncProducer {
         if (ObjectHelper.isNotEmpty(timestampGranularities)) {
             List<TranscriptionCreateParams.TimestampGranularity> granularities = new ArrayList<>();
             for (String g : timestampGranularities.split(",")) {
-                granularities.add(TranscriptionCreateParams.TimestampGranularity.of(g.trim()));
+                String trimmed = g.trim();
+                if (!trimmed.isEmpty()) {
+                    granularities.add(TranscriptionCreateParams.TimestampGranularity.of(trimmed));
+                }
             }
-            paramsBuilder.timestampGranularities(granularities);
+            if (!granularities.isEmpty()) {
+                paramsBuilder.timestampGranularities(granularities);
+            }
         }
 
         TranscriptionCreateParams params = paramsBuilder.build();
@@ -128,14 +123,18 @@ public class OpenAIAudioTranscriptionProducer extends DefaultAsyncProducer {
     private void setFileInput(TranscriptionCreateParams.Builder paramsBuilder, Message in) {
         Object body = in.getBody();
 
+        if (body instanceof WrappedFile<?> wrappedFile) {
+            body = wrappedFile.getFile();
+        }
+
         if (body instanceof File file) {
             paramsBuilder.file(file.toPath());
         } else if (body instanceof Path path) {
             paramsBuilder.file(path);
         } else if (body instanceof byte[] bytes) {
-            paramsBuilder.file(multipartWithFilename(new ByteArrayInputStream(bytes)));
+            paramsBuilder.file(multipartWithFilename(new ByteArrayInputStream(bytes), resolveFilename(in)));
         } else if (body instanceof InputStream inputStream) {
-            paramsBuilder.file(multipartWithFilename(inputStream));
+            paramsBuilder.file(multipartWithFilename(inputStream, resolveFilename(in)));
         } else {
             InputStream converted = in.getBody(InputStream.class);
             if (converted == null) {
@@ -144,14 +143,22 @@ public class OpenAIAudioTranscriptionProducer extends DefaultAsyncProducer {
                                                    + (body != null ? body.getClass().getName() : "null")
                                                    + ". Supported: File, Path, InputStream, byte[]");
             }
-            paramsBuilder.file(multipartWithFilename(converted));
+            paramsBuilder.file(multipartWithFilename(converted, resolveFilename(in)));
         }
     }
 
-    private MultipartField<InputStream> multipartWithFilename(InputStream stream) {
+    private String resolveFilename(Message in) {
+        String filename = in.getHeader(Exchange.FILE_NAME_ONLY, String.class);
+        if (ObjectHelper.isNotEmpty(filename)) {
+            return filename;
+        }
+        return "audio";
+    }
+
+    private MultipartField<InputStream> multipartWithFilename(InputStream stream, String filename) {
         return MultipartField.<InputStream> builder()
                 .value(stream)
-                .filename("audio")
+                .filename(filename)
                 .build();
     }
 
