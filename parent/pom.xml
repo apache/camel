@@ -297,7 +297,7 @@
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.5</jettison-version>
         <jgit-version>7.6.0.202603022253-r</jgit-version>
-        <jgroups-version>5.5.4.Final</jgroups-version>
+        <jgroups-version>5.5.5.Final</jgroups-version>
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
         <jira-rest-client-api-version>6.0.2</jira-rest-client-api-version>
         <jline-version>4.0.14</jline-version>
