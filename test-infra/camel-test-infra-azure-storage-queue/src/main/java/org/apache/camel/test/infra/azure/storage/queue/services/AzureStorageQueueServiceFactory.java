@@ -17,10 +17,45 @@
 
 package org.apache.camel.test.infra.azure.storage.queue.services;
 
+import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
 import org.apache.camel.test.infra.azure.common.services.AzureService;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class AzureStorageQueueServiceFactory {
+
+    private static class SingletonAzureStorageQueueService extends SingletonService<AzureService>
+            implements AzureService {
+        public SingletonAzureStorageQueueService(AzureService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public AzureCredentialsHolder azureCredentials() {
+            return getService().azureCredentials();
+        }
+
+        @Override
+        public String accountName() {
+            return getService().accountName();
+        }
+
+        @Override
+        public String accessKey() {
+            return getService().accessKey();
+        }
+
+        @Override
+        public String host() {
+            return getService().host();
+        }
+
+        @Override
+        public int port() {
+            return getService().port();
+        }
+    }
+
     private AzureStorageQueueServiceFactory() {
 
     }
@@ -34,6 +69,21 @@ public final class AzureStorageQueueServiceFactory {
                 .addLocalMapping(AzureStorageQueueLocalContainerService::new)
                 .addRemoteMapping(AzureStorageQueueRemoteService::new)
                 .build();
+    }
+
+    public static AzureService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final AzureService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<AzureService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonAzureStorageQueueService(new AzureStorageQueueLocalContainerService(), "azure"))
+                    .addRemoteMapping(AzureStorageQueueRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class AzureStorageQueueLocalContainerService extends AzureStorageQueueLocalContainerInfraService

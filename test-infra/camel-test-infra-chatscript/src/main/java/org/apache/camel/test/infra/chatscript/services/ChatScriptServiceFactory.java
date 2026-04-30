@@ -17,8 +17,21 @@
 package org.apache.camel.test.infra.chatscript.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class ChatScriptServiceFactory {
+
+    private static class SingletonChatScriptService extends SingletonService<ChatScriptService>
+            implements ChatScriptService {
+        public SingletonChatScriptService(ChatScriptService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String serviceAddress() {
+            return getService().serviceAddress();
+        }
+    }
 
     private ChatScriptServiceFactory() {
 
@@ -33,6 +46,21 @@ public final class ChatScriptServiceFactory {
                 .addLocalMapping(ChatScriptLocalContainerTestService::new)
                 .addRemoteMapping(ChatScriptRemoteTestService::new)
                 .build();
+    }
+
+    public static ChatScriptService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final ChatScriptService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<ChatScriptService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonChatScriptService(new ChatScriptLocalContainerTestService(), "chatscript"))
+                    .addRemoteMapping(ChatScriptRemoteTestService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class ChatScriptLocalContainerTestService extends ChatScriptLocalContainerInfraService

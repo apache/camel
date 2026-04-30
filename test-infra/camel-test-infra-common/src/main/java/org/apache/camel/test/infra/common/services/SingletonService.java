@@ -78,8 +78,7 @@ public class SingletonService<T extends InfrastructureService>
 
     @Override
     public final void shutdown() {
-        LOG.error("Singleton services must not be shutdown manually");
-        throw new IllegalArgumentException("Singleton services must not be shutdown manually");
+        LOG.debug("Ignoring shutdown request for singleton service {}: will be shutdown via JVM shutdown hook", name);
     }
 
     @Override

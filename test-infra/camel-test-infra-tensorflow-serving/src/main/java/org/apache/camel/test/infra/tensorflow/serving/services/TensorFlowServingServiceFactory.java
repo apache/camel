@@ -17,8 +17,27 @@
 package org.apache.camel.test.infra.tensorflow.serving.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class TensorFlowServingServiceFactory {
+
+    private static class SingletonTensorFlowServingService extends SingletonService<TensorFlowServingService>
+            implements TensorFlowServingService {
+        public SingletonTensorFlowServingService(TensorFlowServingService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public int grpcPort() {
+            return getService().grpcPort();
+        }
+
+        @Override
+        public int restPort() {
+            return getService().restPort();
+        }
+    }
+
     private TensorFlowServingServiceFactory() {
     }
 
@@ -31,5 +50,22 @@ public final class TensorFlowServingServiceFactory {
                 .addLocalMapping(TensorFlowServingLocalContainerService::new)
                 .addRemoteMapping(TensorFlowServingRemoteService::new)
                 .build();
+    }
+
+    public static TensorFlowServingService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final TensorFlowServingService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<TensorFlowServingService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonTensorFlowServingService(
+                            new TensorFlowServingLocalContainerService(),
+                            "tensorflow-serving"))
+                    .addRemoteMapping(TensorFlowServingRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 }

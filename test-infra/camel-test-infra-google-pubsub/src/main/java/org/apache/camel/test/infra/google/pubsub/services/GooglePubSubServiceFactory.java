@@ -17,8 +17,22 @@
 package org.apache.camel.test.infra.google.pubsub.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
 
 public final class GooglePubSubServiceFactory {
+
+    private static class SingletonGooglePubSubService extends SingletonService<GooglePubSubService>
+            implements GooglePubSubService {
+        public SingletonGooglePubSubService(GooglePubSubService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getServiceAddress() {
+            return getService().getServiceAddress();
+        }
+    }
+
     private GooglePubSubServiceFactory() {
 
     }
@@ -32,6 +46,21 @@ public final class GooglePubSubServiceFactory {
                 .addLocalMapping(GooglePubSubLocalContainerService::new)
                 .addRemoteMapping(GooglePubSubRemoteService::new)
                 .build();
+    }
+
+    public static GooglePubSubService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    private static class SingletonServiceHolder {
+        static final GooglePubSubService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<GooglePubSubService> instance = builder();
+            instance.addLocalMapping(
+                    () -> new SingletonGooglePubSubService(new GooglePubSubLocalContainerService(), "google"))
+                    .addRemoteMapping(GooglePubSubRemoteService::new);
+            INSTANCE = instance.build();
+        }
     }
 
     public static class GooglePubSubLocalContainerService extends GooglePubSubLocalContainerInfraService
