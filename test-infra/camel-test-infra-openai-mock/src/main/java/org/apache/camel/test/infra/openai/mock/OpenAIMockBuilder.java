@@ -34,14 +34,18 @@ public class OpenAIMockBuilder {
     private final OpenAIMock mock;
     private final List<MockExpectation> expectations;
     private final List<EmbeddingExpectation> embeddingExpectations;
+    private final List<AudioTranscriptionExpectation> audioTranscriptionExpectations;
     private MockExpectation currentExpectation;
     private EmbeddingExpectation currentEmbeddingExpectation;
+    private AudioTranscriptionExpectation currentAudioTranscriptionExpectation;
 
     public OpenAIMockBuilder(OpenAIMock mock, List<MockExpectation> expectations,
-                             List<EmbeddingExpectation> embeddingExpectations) {
+                             List<EmbeddingExpectation> embeddingExpectations,
+                             List<AudioTranscriptionExpectation> audioTranscriptionExpectations) {
         this.mock = mock;
         this.expectations = expectations;
         this.embeddingExpectations = embeddingExpectations;
+        this.audioTranscriptionExpectations = audioTranscriptionExpectations;
     }
 
     public OpenAIMockBuilder when(String expectedInput) {
@@ -162,6 +166,35 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    // Audio Transcription API methods
+
+    public OpenAIMockBuilder whenTranscription() {
+        log.debug("Setting up audio transcription expectation");
+        currentAudioTranscriptionExpectation = new AudioTranscriptionExpectation();
+        return this;
+    }
+
+    public OpenAIMockBuilder replyWithTranscription(String text) {
+        validateCurrentAudioTranscriptionExpectation("replyWithTranscription()");
+        log.debug("Setting transcription text: {}", text);
+        currentAudioTranscriptionExpectation.setTranscriptionText(text);
+        return this;
+    }
+
+    public OpenAIMockBuilder withDuration(double duration) {
+        validateCurrentAudioTranscriptionExpectation("withDuration()");
+        log.debug("Setting transcription duration: {}", duration);
+        currentAudioTranscriptionExpectation.setDuration(duration);
+        return this;
+    }
+
+    public OpenAIMockBuilder withLanguage(String language) {
+        validateCurrentAudioTranscriptionExpectation("withLanguage()");
+        log.debug("Setting transcription language: {}", language);
+        currentAudioTranscriptionExpectation.setLanguage(language);
+        return this;
+    }
+
     public OpenAIMockBuilder end() {
         if (currentExpectation != null) {
             log.debug("Finalizing expectation for input: {}", currentExpectation.getExpectedInput());
@@ -171,8 +204,12 @@ public class OpenAIMockBuilder {
             log.debug("Finalizing embedding expectation for input: {}", currentEmbeddingExpectation.getExpectedInput());
             embeddingExpectations.add(currentEmbeddingExpectation);
             currentEmbeddingExpectation = null;
+        } else if (currentAudioTranscriptionExpectation != null) {
+            log.debug("Finalizing audio transcription expectation");
+            audioTranscriptionExpectations.add(currentAudioTranscriptionExpectation);
+            currentAudioTranscriptionExpectation = null;
         } else {
-            throw new IllegalStateException("Call when() or whenEmbedding() before end()");
+            throw new IllegalStateException("Call when(), whenEmbedding(), or whenTranscription() before end()");
         }
         return this;
     }
@@ -188,8 +225,13 @@ public class OpenAIMockBuilder {
             embeddingExpectations.add(currentEmbeddingExpectation);
             currentEmbeddingExpectation = null;
         }
-        log.info("Built OpenAIMock with {} chat expectations and {} embedding expectations",
-                expectations.size(), embeddingExpectations.size());
+        if (currentAudioTranscriptionExpectation != null) {
+            log.debug("Auto-finalizing current audio transcription expectation during build");
+            audioTranscriptionExpectations.add(currentAudioTranscriptionExpectation);
+            currentAudioTranscriptionExpectation = null;
+        }
+        log.info("Built OpenAIMock with {} chat, {} embedding, and {} audio transcription expectations",
+                expectations.size(), embeddingExpectations.size(), audioTranscriptionExpectations.size());
         return mock;
     }
 
@@ -202,6 +244,12 @@ public class OpenAIMockBuilder {
     private void validateCurrentEmbeddingExpectation(String methodName) {
         if (currentEmbeddingExpectation == null) {
             throw new IllegalStateException("Call whenEmbedding() before " + methodName);
+        }
+    }
+
+    private void validateCurrentAudioTranscriptionExpectation(String methodName) {
+        if (currentAudioTranscriptionExpectation == null) {
+            throw new IllegalStateException("Call whenTranscription() before " + methodName);
         }
     }
 

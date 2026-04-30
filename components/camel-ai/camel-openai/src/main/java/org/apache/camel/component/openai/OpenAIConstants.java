@@ -102,6 +102,21 @@ public final class OpenAIConstants {
     @Metadata(description = "Original text content when embeddings operation is used", javaType = "String or List<String>")
     public static final String ORIGINAL_TEXT = "CamelOpenAIOriginalText";
 
+    // Audio Transcription Input Headers
+    @Metadata(description = "The model to use for audio transcription", javaType = "String")
+    public static final String AUDIO_MODEL = "CamelOpenAIAudioModel";
+    @Metadata(description = "The language of the input audio (ISO-639-1)", javaType = "String")
+    public static final String AUDIO_LANGUAGE = "CamelOpenAIAudioLanguage";
+    @Metadata(description = "The response format for audio transcription (json, text, srt, verbose_json, vtt)",
+              javaType = "String")
+    public static final String AUDIO_RESPONSE_FORMAT = "CamelOpenAIAudioResponseFormat";
+
+    // Audio Transcription Output Headers
+    @Metadata(description = "Duration of the audio in seconds (verbose_json only)", javaType = "Double")
+    public static final String AUDIO_DURATION = "CamelOpenAIAudioDuration";
+    @Metadata(description = "Language detected in the audio (verbose_json only)", javaType = "String")
+    public static final String AUDIO_DETECTED_LANGUAGE = "CamelOpenAIAudioDetectedLanguage";
+
     private OpenAIConstants() {
         // Utility class
     }
