@@ -85,6 +85,34 @@ defense-in-depth only. The primary mitigation should be configured at the messag
 * ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
 * ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property
 
+=== camel-jms
+
+JMS `ObjectMessage` support is now disabled by default. Java object serialization is a recurring source
+of security issues, and Camel JMS routes rarely use `ObjectMessage` in practice. The component will now
+refuse to create or read `jakarta.jms.ObjectMessage` instances unless the new `objectMessageEnabled`
+option is explicitly set to `true`.
+
+This affects the following endpoint/component options that rely on `ObjectMessage` internally:
+
+* `jmsMessageType=Object` (or sending a `Serializable` body that is auto-detected as `Object`)
+* `transferExchange=true`
+* `transferException=true`
+* receiving a JMS `ObjectMessage` produced by an external sender
+
+To restore the previous behavior, enable the option at the component or endpoint level:
+
+[source,properties]
+----
+camel.component.jms.objectMessageEnabled=true
+----
+
+Or, on a single endpoint:
+
+[source,text]
+----
+jms:queue:foo?objectMessageEnabled=true
+----
+
 === camel-stomp removal
 
 Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.

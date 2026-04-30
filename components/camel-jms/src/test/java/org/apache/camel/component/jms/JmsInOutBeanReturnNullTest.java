@@ -89,6 +89,8 @@ public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
         final JmsComponent jmsComponent = super.setupComponent(camelContext, service, componentName);
 
         jmsComponent.setRequestTimeout(5000);
+        // Test sends a Serializable MyBean reply, which requires JMS ObjectMessage
+        jmsComponent.setObjectMessageEnabled(true);
 
         return jmsComponent;
     }
