@@ -1880,6 +1880,30 @@ public interface AmqpComponentBuilderFactory {
     
         
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
@@ -2545,6 +2569,7 @@ public interface AmqpComponentBuilderFactory {
             case "messageIdEnabled": getOrCreateConfiguration((AMQPComponent) component).setMessageIdEnabled((boolean) value); return true;
             case "messageListenerContainerFactory": getOrCreateConfiguration((AMQPComponent) component).setMessageListenerContainerFactory((org.apache.camel.component.jms.MessageListenerContainerFactory) value); return true;
             case "messageTimestampEnabled": getOrCreateConfiguration((AMQPComponent) component).setMessageTimestampEnabled((boolean) value); return true;
+            case "objectMessageEnabled": getOrCreateConfiguration((AMQPComponent) component).setObjectMessageEnabled((boolean) value); return true;
             case "pubSubNoLocal": getOrCreateConfiguration((AMQPComponent) component).setPubSubNoLocal((boolean) value); return true;
             case "queueBrowseStrategy": ((AMQPComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
             case "receiveTimeout": getOrCreateConfiguration((AMQPComponent) component).setReceiveTimeout((long) value); return true;

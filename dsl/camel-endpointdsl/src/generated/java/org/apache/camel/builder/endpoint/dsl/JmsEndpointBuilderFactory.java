@@ -2119,6 +2119,50 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointConsumerBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointConsumerBuilder objectMessageEnabled(String objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
@@ -4722,6 +4766,50 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointProducerBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointProducerBuilder objectMessageEnabled(String objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
@@ -6470,6 +6558,50 @@ public interface JmsEndpointBuilderFactory {
          */
         default AdvancedJmsEndpointBuilder messageTimestampEnabled(String messageTimestampEnabled) {
             doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJmsEndpointBuilder objectMessageEnabled(String objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
             return this;
         }
         /**
