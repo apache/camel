@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelException;
@@ -109,6 +111,7 @@ public class SubscriptionHelper extends ServiceSupport {
             = new ConcurrentHashMap<>();
 
     private final Set<String> channelsToSubscribe = ConcurrentHashMap.newKeySet();
+    private final Lock channelsLock = new ReentrantLock();
 
     private final ClientSessionChannel.MessageListener handshakeListener = createHandshakeListener();
 
@@ -145,9 +148,12 @@ public class SubscriptionHelper extends ServiceSupport {
                 LOG.debug("Handshake failed, so try again.");
                 client.handshake();
             } else if (!channelToConsumers.isEmpty()) {
-                synchronized (channelsToSubscribe) {
+                channelsLock.lock();
+                try {
                     channelsToSubscribe.clear();
                     channelsToSubscribe.addAll(channelToConsumers.keySet());
+                } finally {
+                    channelsLock.unlock();
                 }
                 LOG.info("Handshake successful. Channels to subscribe: {}", channelsToSubscribe);
             }
@@ -183,11 +189,14 @@ public class SubscriptionHelper extends ServiceSupport {
                 client.handshake();
             } else {
                 Set<String> toSubscribe = null;
-                synchronized (channelsToSubscribe) {
+                channelsLock.lock();
+                try {
                     if (!channelsToSubscribe.isEmpty()) {
                         toSubscribe = new HashSet<>(channelsToSubscribe);
                         channelsToSubscribe.clear();
                     }
+                } finally {
+                    channelsLock.unlock();
                 }
                 if (toSubscribe != null) {
                     LOG.info("Subscribing to channels: {}", toSubscribe);
