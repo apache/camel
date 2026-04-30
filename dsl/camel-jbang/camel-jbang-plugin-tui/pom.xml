@@ -50,6 +50,10 @@
             <artifactId>camel-catalog</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-diagram</artifactId>
+        </dependency>
+        <dependency>
             <groupId>dev.tamboui</groupId>
             <artifactId>tamboui-tui</artifactId>
             <version>${tamboui-version}</version>
@@ -62,6 +66,11 @@
         <dependency>
             <groupId>dev.tamboui</groupId>
             <artifactId>tamboui-jline3-backend</artifactId>
+            <version>${tamboui-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.tamboui</groupId>
+            <artifactId>tamboui-image</artifactId>
             <version>${tamboui-version}</version>
         </dependency>
     </dependencies>

@@ -37,6 +37,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import dev.tamboui.image.Image;
+import dev.tamboui.image.ImageData;
+import dev.tamboui.image.ImageScaling;
+import dev.tamboui.image.capability.TerminalImageCapabilities;
+import dev.tamboui.image.protocol.ImageProtocol;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -51,6 +56,8 @@ import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.MouseEvent;
+import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.tui.event.TickEvent;
 import dev.tamboui.widgets.barchart.Bar;
 import dev.tamboui.widgets.barchart.BarChart;
@@ -67,7 +74,10 @@ import dev.tamboui.widgets.tabs.Tabs;
 import dev.tamboui.widgets.tabs.TabsState;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
@@ -156,6 +166,14 @@ public class CamelMonitor extends CamelCommand {
     // Selected integration for detail views
     private String selectedPid;
 
+    // Diagram state
+    private boolean showDiagram;
+    private List<String> diagramLines = Collections.emptyList();
+    private int diagramScroll;
+    private String diagramRouteId;
+    private ImageData diagramImageData;
+    private ImageProtocol diagramProtocol;
+
     private volatile long lastRefresh;
 
     private ClassLoader classLoader;
@@ -188,9 +206,26 @@ public class CamelMonitor extends CamelCommand {
     // ---- Event Handling ----
 
     private boolean handleEvent(Event event, TuiRunner runner) {
+        if (event instanceof MouseEvent me) {
+            if (showDiagram && diagramImageData == null && tabsState.selected() == TAB_ROUTES) {
+                if (me.kind() == MouseEventKind.SCROLL_UP) {
+                    diagramScroll = Math.max(0, diagramScroll - 3);
+                    return true;
+                }
+                if (me.kind() == MouseEventKind.SCROLL_DOWN) {
+                    diagramScroll = Math.min(Math.max(0, diagramLines.size() - 1), diagramScroll + 3);
+                    return true;
+                }
+            }
+        }
         if (event instanceof KeyEvent ke) {
             // Global keys
             if (ke.isQuit() || ke.isCharIgnoreCase('q') || ke.isKey(KeyCode.ESCAPE)) {
+                if (showDiagram) {
+                    showDiagram = false;
+                    diagramImageData = null;
+                    return true;
+                }
                 // If in a detail tab, go back to overview first
                 if (tabsState.selected() != TAB_OVERVIEW) {
                     tabsState.select(TAB_OVERVIEW);
@@ -240,15 +275,25 @@ public class CamelMonitor extends CamelCommand {
 
             // Navigation (all tabs)
             if (ke.isUp()) {
-                navigateUp();
+                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                    diagramScroll = Math.max(0, diagramScroll - 1);
+                } else {
+                    navigateUp();
+                }
                 return true;
             }
             if (ke.isDown()) {
-                navigateDown();
+                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                    diagramScroll = Math.min(Math.max(0, diagramLines.size() - 1), diagramScroll + 1);
+                } else {
+                    navigateDown();
+                }
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_UP)) {
-                if (tab == TAB_LOG) {
+                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                    diagramScroll = Math.max(0, diagramScroll - 20);
+                } else if (tab == TAB_LOG) {
                     logFollowMode = false;
                     for (int i = 0; i < 20; i++) {
                         logTableState.selectPrevious();
@@ -257,7 +302,9 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (tab == TAB_LOG) {
+                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                    diagramScroll = Math.min(Math.max(0, diagramLines.size() - 1), diagramScroll + 20);
+                } else if (tab == TAB_LOG) {
                     for (int i = 0; i < 20; i++) {
                         logTableState.selectNext(filteredLogEntries.size());
                     }
@@ -274,10 +321,19 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
-            // Routes tab: sort
+            // Routes tab: sort and diagram
             if (tab == TAB_ROUTES && ke.isCharIgnoreCase('s')) {
                 routeSortIndex = (routeSortIndex + 1) % ROUTE_SORT_COLUMNS.length;
                 routeSort = ROUTE_SORT_COLUMNS[routeSortIndex];
+                return true;
+            }
+            if (tab == TAB_ROUTES && ke.isCharIgnoreCase('d')) {
+                if (showDiagram) {
+                    showDiagram = false;
+                    diagramImageData = null;
+                } else {
+                    loadDiagramForSelectedRoute();
+                }
                 return true;
             }
 
@@ -682,20 +738,24 @@ public class CamelMonitor extends CamelCommand {
 
         frame.renderStatefulWidget(routeTable, chunks.get(0), routeTableState);
 
-        // Processors for selected route
-        Integer selectedRoute = routeTableState.selected();
-        if (selectedRoute != null && selectedRoute >= 0 && selectedRoute < sortedRoutes.size()) {
-            RouteInfo route = sortedRoutes.get(selectedRoute);
-            renderProcessors(frame, chunks.get(1), route);
-        } else if (!sortedRoutes.isEmpty()) {
-            renderProcessors(frame, chunks.get(1), sortedRoutes.get(0));
+        // Bottom panel: diagram or processors
+        if (showDiagram && (diagramImageData != null || !diagramLines.isEmpty())) {
+            renderDiagram(frame, chunks.get(1));
         } else {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled("No routes", Style.create().dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).title(" Processors ").build())
-                            .build(),
-                    chunks.get(1));
+            Integer selectedRoute = routeTableState.selected();
+            if (selectedRoute != null && selectedRoute >= 0 && selectedRoute < sortedRoutes.size()) {
+                RouteInfo route = sortedRoutes.get(selectedRoute);
+                renderProcessors(frame, chunks.get(1), route);
+            } else if (!sortedRoutes.isEmpty()) {
+                renderProcessors(frame, chunks.get(1), sortedRoutes.get(0));
+            } else {
+                frame.renderWidget(
+                        Paragraph.builder()
+                                .text(Text.from(Line.from(Span.styled("No routes", Style.create().dim()))))
+                                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Processors ").build())
+                                .build(),
+                        chunks.get(1));
+            }
         }
     }
 
@@ -765,6 +825,253 @@ public class CamelMonitor extends CamelCommand {
                 .build();
 
         frame.renderStatefulWidget(table, area, new TableState());
+    }
+
+    private void renderDiagram(Frame frame, Rect area) {
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" Diagram [" + diagramRouteId + "] ")
+                .build();
+
+        if (diagramImageData != null) {
+            Image img = Image.builder()
+                    .data(diagramImageData)
+                    .protocol(diagramProtocol)
+                    .scaling(ImageScaling.FIT)
+                    .block(block)
+                    .build();
+            frame.renderWidget(img, area);
+            return;
+        }
+
+        Rect inner = block.inner(area);
+        int visibleLines = inner.height();
+        int maxScroll = Math.max(0, diagramLines.size() - visibleLines);
+        diagramScroll = Math.min(diagramScroll, maxScroll);
+
+        List<Line> lines = new ArrayList<>();
+        int end = Math.min(diagramScroll + visibleLines, diagramLines.size());
+        for (int i = diagramScroll; i < end; i++) {
+            lines.add(styleDiagramLine(diagramLines.get(i)));
+        }
+
+        Paragraph paragraph = Paragraph.builder()
+                .text(Text.from(lines))
+                .block(block)
+                .build();
+
+        frame.renderWidget(paragraph, area);
+    }
+
+    private Line styleDiagramLine(String text) {
+        List<Span> spans = new ArrayList<>();
+        int idx = 0;
+        while (idx < text.length()) {
+            int open = text.indexOf('[', idx);
+            if (open < 0) {
+                spans.add(Span.styled(text.substring(idx), Style.create().fg(Color.WHITE)));
+                break;
+            }
+            int close = text.indexOf(']', open);
+            if (close < 0) {
+                spans.add(Span.styled(text.substring(idx), Style.create().fg(Color.WHITE)));
+                break;
+            }
+            if (open > idx) {
+                spans.add(Span.styled(text.substring(idx, open), Style.create().fg(Color.GRAY)));
+            }
+            String tag = text.substring(open + 1, close);
+            Color tagColor = getDiagramNodeColor(tag);
+            spans.add(Span.styled("[" + tag + "]", Style.create().fg(tagColor).bold()));
+
+            int afterTag = close + 1;
+            int nextOpen = text.indexOf('[', afterTag);
+            int nextNewline = text.length();
+            int labelEnd = nextOpen >= 0 ? nextOpen : nextNewline;
+            if (afterTag < labelEnd) {
+                spans.add(Span.styled(text.substring(afterTag, labelEnd), Style.create().fg(Color.WHITE)));
+            }
+            idx = labelEnd;
+        }
+        return Line.from(spans);
+    }
+
+    private Color getDiagramNodeColor(String type) {
+        if (type == null) {
+            return Color.GRAY;
+        }
+        return switch (type) {
+            case "from" -> Color.GREEN;
+            case "to", "toD", "wireTap", "enrich", "pollEnrich" -> Color.BLUE;
+            case "choice", "when", "otherwise" -> Color.YELLOW;
+            case "marshal", "unmarshal", "transform", "setBody", "setHeader", "setProperty",
+                    "convertBodyTo", "removeHeader", "removeHeaders", "removeProperty", "removeProperties" ->
+                Color.CYAN;
+            case "bean", "process", "log", "script", "delay" -> Color.MAGENTA;
+            case "filter", "split", "aggregate", "multicast", "recipientList",
+                    "routingSlip", "dynamicRouter", "loadBalance",
+                    "circuitBreaker", "saga", "doTry", "doCatch", "doFinally",
+                    "onException", "onCompletion", "intercept",
+                    "loop", "resequence", "throttle", "kamelet", "pipeline", "threads" ->
+                Color.rgb(0x89, 0x57, 0xE5);
+            default -> Color.GRAY;
+        };
+    }
+
+    private void loadDiagramForSelectedRoute() {
+        if (selectedPid == null) {
+            return;
+        }
+
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null || info.routes.isEmpty()) {
+            return;
+        }
+
+        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
+        sortedRoutes.sort(this::sortRoute);
+
+        Integer sel = routeTableState.selected();
+        RouteInfo selectedRoute;
+        if (sel != null && sel >= 0 && sel < sortedRoutes.size()) {
+            selectedRoute = sortedRoutes.get(sel);
+        } else {
+            selectedRoute = sortedRoutes.get(0);
+        }
+
+        Path outputFile = getOutputFile(selectedPid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "route-structure");
+        root.put("filter", "*");
+        root.put("brief", false);
+
+        Path actionFile = getActionFile(selectedPid);
+        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+        JsonObject jo = pollJsonResponse(outputFile, 2000);
+        PathUtils.deleteFile(outputFile);
+
+        if (jo == null) {
+            diagramLines = List.of("(No response from integration)");
+            diagramRouteId = selectedRoute.routeId;
+            showDiagram = true;
+            diagramScroll = 0;
+            return;
+        }
+
+        JsonArray arr = (JsonArray) jo.get("routes");
+        if (arr == null) {
+            diagramLines = List.of("(No routes in response)");
+            diagramRouteId = selectedRoute.routeId;
+            showDiagram = true;
+            diagramScroll = 0;
+            return;
+        }
+
+        List<RouteDiagramLayoutEngine.RouteInfo> diagramRoutes = new ArrayList<>();
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject o = (JsonObject) arr.get(i);
+            String routeId = objToString(o.get("routeId"));
+            if (selectedRoute.routeId != null && !selectedRoute.routeId.equals(routeId)) {
+                continue;
+            }
+            RouteDiagramLayoutEngine.RouteInfo route = new RouteDiagramLayoutEngine.RouteInfo();
+            route.routeId = routeId;
+            List<JsonObject> lines = o.getCollection("code");
+            if (lines != null) {
+                for (JsonObject line : lines) {
+                    RouteDiagramLayoutEngine.NodeInfo node = new RouteDiagramLayoutEngine.NodeInfo();
+                    node.type = objToString(line.get("type"));
+                    node.code = Jsoner.unescape(objToString(line.get("code")));
+                    Integer level = line.getInteger("level");
+                    node.level = level != null ? level : 0;
+                    route.nodes.add(node);
+                }
+            }
+            diagramRoutes.add(route);
+        }
+
+        diagramRouteId = selectedRoute.routeId;
+        diagramScroll = 0;
+
+        TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
+        if (caps.supportsNativeImages()) {
+            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+            List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
+            int totalHeight = 0;
+            for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
+                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, totalHeight);
+                layoutRoutes.add(lr);
+                totalHeight = lr.maxY;
+            }
+            RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+            RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
+            java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
+            diagramImageData = ImageData.fromBufferedImage(image);
+            diagramProtocol = caps.bestProtocol();
+            diagramLines = Collections.emptyList();
+        } else {
+            diagramImageData = null;
+            diagramProtocol = null;
+
+            StringBuilder sb = new StringBuilder();
+            org.apache.camel.dsl.jbang.core.common.Printer capturingPrinter
+                    = new org.apache.camel.dsl.jbang.core.common.Printer() {
+                        @Override
+                        public void println() {
+                            sb.append('\n');
+                        }
+
+                        @Override
+                        public void println(String line) {
+                            sb.append(line).append('\n');
+                        }
+
+                        @Override
+                        public void print(String output) {
+                            sb.append(output);
+                        }
+
+                        @Override
+                        public void printf(String format, Object... args) {
+                            sb.append(String.format(format, args));
+                        }
+                    };
+
+            RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+            renderer.printTextDiagram(diagramRoutes, capturingPrinter);
+
+            List<String> result = new ArrayList<>();
+            for (String line : sb.toString().split("\n", -1)) {
+                if (!line.isEmpty()) {
+                    result.add(line);
+                }
+            }
+            diagramLines = result;
+        }
+
+        showDiagram = true;
+    }
+
+    private static JsonObject pollJsonResponse(Path outputFile, long timeout) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < timeout) {
+            try {
+                Thread.sleep(100);
+                if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {
+                    String text = Files.readString(outputFile);
+                    return (JsonObject) Jsoner.deserialize(text);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return null;
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return null;
     }
 
     // ---- Tab 3: Health ----
@@ -1349,16 +1656,30 @@ public class CamelMonitor extends CamelCommand {
                     Span.raw(" tabs  "),
                     Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
         } else if (tab == TAB_ROUTES) {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("s", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" sort  "),
-                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
-                    Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+            if (showDiagram) {
+                footer = Line.from(
+                        Span.styled(" d", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw("/"),
+                        Span.styled("Esc", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" close  "),
+                        Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" scroll  "),
+                        Span.styled("PgUp/PgDn", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" page"));
+            } else {
+                footer = Line.from(
+                        Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" back  "),
+                        Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" navigate  "),
+                        Span.styled("s", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" sort  "),
+                        Span.styled("d", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" diagram  "),
+                        Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" tabs  "),
+                        Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+            }
         } else if (tab == TAB_HEALTH) {
             footer = Line.from(
                     Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
