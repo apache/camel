@@ -87,7 +87,6 @@ public class SubscriptionHelper extends ServiceSupport {
     private static final String CHANNEL_INVALID_PATTERN = "400::The channel.*";
     private static final String DENIED_BY_SEC_POLICY = "403:denied_by_security_policy";
     private static final String AUTHORIZATION_ERROR = "403::";
-    private static final String ORG_LIMIT_ERROR = "403::Organization total events daily limit exceeded";
 
     BayeuxClient client;
 
@@ -226,8 +225,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
         LOG.warn(msg);
         if (isTemporaryError(message) || error.equals(AUTHENTICATION_INVALID) || error.startsWith(DENIED_BY_SEC_POLICY)
-                || error.startsWith(AUTHORIZATION_ERROR) || error.equals(ORG_LIMIT_ERROR)
-                || error.equals("Missing error message")) {
+                || error.startsWith(AUTHORIZATION_ERROR)) {
 
             // retry after delay
             final long backoff = handshakeBackoff.getAndAdd(backoffIncrement);
@@ -237,6 +235,8 @@ public class SubscriptionHelper extends ServiceSupport {
                 abort = false;
 
                 LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
+                // Use Camel's task API for backoff delay instead of Thread.sleep()
+                // We use initialDelay for the actual delay, and maxIterations(1) to run once
                 Tasks.foregroundTask()
                         .withBudget(Budgets.iterationBudget()
                                 .withMaxIterations(1)
