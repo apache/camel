@@ -89,7 +89,7 @@ class OpenAISslContextParametersTest extends CamelTestSupport {
         expectations.add(expectation);
 
         httpsServer.createContext("/",
-                new OpenAIMockServerHandler(expectations, List.of(), new ObjectMapper()));
+                new OpenAIMockServerHandler(expectations, List.of(), List.of(), new ObjectMapper()));
 
         executor = Executors.newSingleThreadExecutor();
         httpsServer.setExecutor(executor);

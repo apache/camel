@@ -95,7 +95,7 @@ class OpenAIMtlsMockTest extends CamelTestSupport {
         expectations.add(expectation);
 
         httpsServer.createContext("/",
-                new OpenAIMockServerHandler(expectations, List.of(), new ObjectMapper()));
+                new OpenAIMockServerHandler(expectations, List.of(), List.of(), new ObjectMapper()));
 
         executor = Executors.newSingleThreadExecutor();
         httpsServer.setExecutor(executor);
@@ -260,7 +260,7 @@ class OpenAIMtlsMockTest extends CamelTestSupport {
         expectations.add(expectation);
 
         server.createContext("/",
-                new OpenAIMockServerHandler(expectations, List.of(), new ObjectMapper()));
+                new OpenAIMockServerHandler(expectations, List.of(), List.of(), new ObjectMapper()));
 
         server.setExecutor(Executors.newSingleThreadExecutor());
         server.start();
