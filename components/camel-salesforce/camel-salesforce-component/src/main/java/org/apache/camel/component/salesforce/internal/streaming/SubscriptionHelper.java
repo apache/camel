@@ -177,7 +177,9 @@ public class SubscriptionHelper extends ServiceSupport {
                     LOG.debug("Attempting login...");
                     session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
                 }
-                if (reconnectAdvice != null && !"retry".equals(reconnectAdvice)) {
+                // Per Bayeux spec: handshake on null advice, "none", "handshake", or any non-"retry" value.
+                // When advice is "retry", the CometD client handles reconnection automatically.
+                if (reconnectAdvice == null || !"retry".equals(reconnectAdvice)) {
                     LOG.debug("Reconnect advice [{}] on failed connect, initiating handshake", reconnectAdvice);
                     client.handshake();
                 } else if (isTemporaryError(message)) {
