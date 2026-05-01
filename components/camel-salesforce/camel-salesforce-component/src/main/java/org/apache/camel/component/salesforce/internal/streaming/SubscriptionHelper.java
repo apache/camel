@@ -480,7 +480,6 @@ public class SubscriptionHelper extends ServiceSupport {
             // create subscription for consumer
             final String channelName = getChannelName(consumer.getTopicName());
             channelToConsumers.computeIfAbsent(channelName, key -> ConcurrentHashMap.newKeySet()).add(consumer);
-            channelsToSubscribe.add(channelName);
 
             setReplayIdIfAbsent(consumer.getEndpoint());
 
