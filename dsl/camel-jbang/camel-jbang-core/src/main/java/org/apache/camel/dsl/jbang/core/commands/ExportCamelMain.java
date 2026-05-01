@@ -177,6 +177,7 @@ class ExportCamelMain extends Export {
         }
         // copy to export dir and remove work dir
         PathUtils.copyDirectory(buildDir, Path.of(exportDir));
+        createDeferredSymlinks(buildDir, Path.of(exportDir));
         PathUtils.deleteDirectory(buildDir);
 
         return 0;
