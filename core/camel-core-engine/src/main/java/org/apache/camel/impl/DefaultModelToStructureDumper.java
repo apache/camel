@@ -27,21 +27,41 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.util.StringHelper;
 
 @JdkService(ModelToStructureDumper.FACTORY)
 public class DefaultModelToStructureDumper implements ModelToStructureDumper {
 
     @Override
-    public List<ModelDumpLine> dumpStructure(CamelContext context, Route def, boolean brief) throws Exception {
+    public List<ModelDumpLine> dumpStructure(CamelContext context, String routeId, boolean brief) throws Exception {
         List<ModelDumpLine> answer = new ArrayList<>();
 
-        String loc = def.getSourceLocationShort();
+        // lookup model and runtime route
+        final Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+        final RouteDefinition def = model.getRouteDefinition(routeId);
+        final Route route = context.getRoute(routeId);
+        // dump in text format padded by level
+        String scheme = def.getResource() != null ? def.getResource().getScheme() : "file";
+
+        String loc
+                = scheme + ":" + (route != null ? route.getSourceLocationShort() : LoggerHelper.getLineNumberLoggerName(def));
         answer.add(new ModelDumpLine(loc, "route", def.getRouteId(), 0, "route[" + def.getRouteId() + "]"));
-        String uri = brief ? def.getEndpoint().getEndpointBaseUri() : def.getEndpoint().getEndpointUri();
-        answer.add(new ModelDumpLine(loc, "from", def.getRouteId(), 1, "from[" + uri + "]"));
+        String uri;
+        if (route != null) {
+            uri = brief ? route.getEndpoint().getEndpointBaseUri() : route.getEndpoint().getEndpointUri();
+        } else {
+            uri = def.getInput().getEndpointUri();
+            if (brief) {
+                uri = StringHelper.before(uri, "?", uri);
+            }
+        }
+        answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]"));
 
         MBeanServer server = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
@@ -65,7 +85,8 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
 
             // dump in text format padded by level
             for (ManagedProcessorMBean processor : mps) {
-                loc = processor.getSourceLocationShort();
+                // include scheme in loc
+                loc = scheme + ":" + processor.getSourceLocationShort();
                 String kind = processor.getProcessorName();
                 String id = processor.getProcessorId();
                 int level = processor.getLevel() + 1;

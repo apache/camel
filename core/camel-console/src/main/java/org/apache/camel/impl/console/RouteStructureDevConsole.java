@@ -69,8 +69,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         Function<ManagedRouteMBean, Object> task = mrb -> {
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
-                Route route = getCamelContext().getRoute(mrb.getRouteId());
-                List<ModelDumpLine> lines = dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
+                List<ModelDumpLine> lines
+                        = dumper.dumpStructure(getCamelContext(), mrb.getRouteId(), "true".equalsIgnoreCase(brief));
 
                 sb.append(String.format("    Id: %s", mrb.getRouteId()));
                 if (mrb.getSourceLocation() != null) {
@@ -117,8 +117,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
 
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
-                Route route = getCamelContext().getRoute(mrb.getRouteId());
-                List<ModelDumpLine> lines = dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
+                List<ModelDumpLine> lines
+                        = dumper.dumpStructure(getCamelContext(), mrb.getRouteId(), "true".equalsIgnoreCase(brief));
                 List<JsonObject> code = dumpAsJSon(lines);
                 jo.put("code", code);
             } catch (Exception e) {

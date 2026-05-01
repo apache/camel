@@ -1614,7 +1614,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * This requires to have camel-xml-jaxb on the classpath to be able to dump the routes as XML.
      *
-     * @return <tt>xml</tt>, or <tt>yaml</tt> if dumping is enabled
+     * Using json is a special feature to dump route structure in JSon which can be useful for tooling.
+     *
+     * @return <tt>xml</tt>, <tt>yaml</tt>, or <tt>json</tt> if dumping is enabled
      */
     String getDumpRoutes();
 
@@ -1627,7 +1629,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
      *
-     * @param format xml or yaml (additional configuration can be specified using query parameters, eg
+     * Using json is a special feature to dump route structure in JSon which can be useful for tooling.
+     *
+     * @param format xml, yaml or json (additional configuration can be specified using query parameters, eg
      *               ?include=all&uriAsParameters=true)
      */
     void setDumpRoutes(String format);

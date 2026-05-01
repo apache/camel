@@ -3174,10 +3174,6 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
-        if (getDumpRoutes() != null && !"false".equals(getDumpRoutes())) {
-            doDumpRoutes();
-        }
-
         if (!getRouteController().isSupervising()) {
             // invoke this logic to warmup the routes and if possible also start the routes (using default route controller)
             StartupStep subStep
@@ -3187,6 +3183,11 @@ public abstract class AbstractCamelContext extends BaseService
                     true);
             EventHelper.notifyCamelContextRoutesStarted(this);
             startupStepRecorder.endStep(subStep);
+        }
+
+        // dump routes after they have been initialized and started so we have full information
+        if (getDumpRoutes() != null && !"false".equals(getDumpRoutes())) {
+            doDumpRoutes();
         }
 
         // ensure extra dev consoles is loaded in case additional JARs has been dynamically added to the classpath
