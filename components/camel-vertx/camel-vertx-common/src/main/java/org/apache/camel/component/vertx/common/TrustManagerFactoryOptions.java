@@ -47,6 +47,9 @@ public class TrustManagerFactoryOptions implements TrustOptions {
 
     @Override
     public Function<String, TrustManager[]> trustManagerMapper(Vertx vertx) {
+        if (trustManagerFactory == null) {
+            return null;
+        }
         return serverName -> trustManagerFactory.getTrustManagers();
     }
 }
