@@ -137,7 +137,7 @@ public class SubscriptionHelper extends ServiceSupport {
                 if (handshakeError != null) {
                     if (handshakeError.startsWith("403::")) {
                         String failureReason = getFailureReason(message);
-                        if (failureReason.equals(AUTHENTICATION_INVALID)) {
+                        if (AUTHENTICATION_INVALID.equals(failureReason)) {
                             LOG.debug(
                                     "attempting login due to handshake error: 403 -> 401::Authentication invalid");
                             session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
