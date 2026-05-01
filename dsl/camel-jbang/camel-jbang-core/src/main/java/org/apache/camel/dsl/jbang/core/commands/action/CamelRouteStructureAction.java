@@ -90,21 +90,6 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         super(main);
     }
 
-    protected void doCallPid(Long pid) {
-        this.pid = pid;
-
-        JsonObject root = new JsonObject();
-        root.put("action", "route-structure");
-        root.put("filter", "*");
-        root.put("brief", brief);
-        Path file = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(file, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-    }
-
     @Override
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
@@ -198,6 +183,21 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         PathUtils.deleteFile(outputFile);
 
         return 0;
+    }
+
+    private void doCallPid(Long pid) {
+        this.pid = pid;
+
+        JsonObject root = new JsonObject();
+        root.put("action", "route-structure");
+        root.put("filter", "*");
+        root.put("brief", brief);
+        Path file = getActionFile(Long.toString(pid));
+        try {
+            Files.writeString(file, root.toJson());
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     private int doCallSource(String name) throws Exception {
