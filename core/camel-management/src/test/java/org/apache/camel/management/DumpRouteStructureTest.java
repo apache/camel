@@ -34,7 +34,7 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
     @Test
     public void testDump() throws Exception {
         ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(context);
-        List<ModelDumpLine> lines = dumper.dumpStructure(context, context.getRoute("myOtherRoute"), false);
+        List<ModelDumpLine> lines = dumper.dumpStructure(context, "myOtherRoute", false);
         assertEquals(5, lines.size());
         assertEquals(0, lines.get(0).level());
         assertEquals("route", lines.get(0).type());
@@ -61,7 +61,7 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
     @Test
     public void testDumpBrief() throws Exception {
         ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(context);
-        List<ModelDumpLine> lines = dumper.dumpStructure(context, context.getRoute("myOtherRoute"), true);
+        List<ModelDumpLine> lines = dumper.dumpStructure(context, "myOtherRoute", true);
         assertEquals(5, lines.size());
         assertEquals(0, lines.get(0).level());
         assertEquals("route", lines.get(0).type());

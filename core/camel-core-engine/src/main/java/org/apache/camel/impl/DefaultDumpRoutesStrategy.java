@@ -43,19 +43,25 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.DumpRoutesStrategy;
+import org.apache.camel.spi.ModelDumpLine;
+import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.LoggerHelper.extractSourceLocationLineNumber;
 import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
 /**
@@ -151,7 +157,48 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             doDumpRoutesAsYaml(camelContext);
         } else if ("xml".equalsIgnoreCase(format)) {
             doDumpRoutesAsXml(camelContext);
+        } else if ("json".equals(format)) {
+            doDumpRoutesStructureAsJSon(camelContext);
         }
+    }
+
+    protected void doDumpRoutesStructureAsJSon(CamelContext camelContext) {
+        ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
+        final DummyResource dummy = new DummyResource(null, null);
+        final Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
+        final Set<String> files = new HashSet<>();
+
+        int size = model.getRouteDefinitions().size();
+        if (size > 0) {
+            Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
+            for (RouteDefinition route : model.getRouteDefinitions()) {
+                if ((route.isRest() != null && route.isRest()) || (route.isTemplate() != null && route.isTemplate())) {
+                    // skip routes that are rest/templates
+                    continue;
+                }
+                Resource res = route.getResource();
+                if (res == null) {
+                    res = dummy;
+                }
+                RoutesDefinition routes = groups.computeIfAbsent(res, resource -> new RoutesDefinition());
+                routes.getRoutes().add(route);
+            }
+            StringBuilder sbLog = new StringBuilder();
+            for (Map.Entry<Resource, RoutesDefinition> entry : groups.entrySet()) {
+                RoutesDefinition def = entry.getValue();
+                Resource resource = entry.getKey();
+
+                StringBuilder sbLocal = new StringBuilder();
+                doDumpStructureJSon(camelContext, def, resource == dummy ? null : resource, dumper, "routes", sbLocal, sbLog);
+                // dump each resource into its own file
+                doDumpToDirectory(resource, sbLocal, "route-structure", "json", files);
+            }
+            if (!sbLog.isEmpty() && log) {
+                LOG.info("Dumping {} route structure as JSon", size);
+                LOG.info("{}", sbLog);
+            }
+        }
+
     }
 
     protected void doDumpRoutesAsYaml(CamelContext camelContext) {
@@ -356,6 +403,55 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         } catch (Exception e) {
             LOG.warn("Error dumping {}} to YAML due to {}. This exception is ignored.", kind, e.getMessage(), e);
         }
+    }
+
+    protected void doDumpStructureJSon(
+            CamelContext camelContext, RoutesDefinition routes, Resource resource,
+            ModelToStructureDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
+
+        try {
+            final JsonObject root = new JsonObject();
+            final List<JsonObject> list = new ArrayList<>();
+            for (RouteDefinition def : routes.getRoutes()) {
+                JsonObject jo = new JsonObject();
+                List<ModelDumpLine> lines = dumper.dumpStructure(camelContext, def.getRouteId(), false);
+                jo.put("routeId", def.getRouteId());
+                jo.put("from", def.getInput().getEndpointUri());
+                String loc = LoggerHelper.getSourceLocation(def);
+                if (loc != null) {
+                    jo.put("source", loc);
+                }
+                List<JsonObject> code = dumpAsJSon(lines);
+                jo.put("code", code);
+                list.add(jo);
+                String dump = Jsoner.prettyPrint(jo.toJson(), 2);
+                appendLogDump(resource, dump, sbLog);
+            }
+            root.put(kind, list);
+            sbLocal.append(root.toJson());
+        } catch (Exception e) {
+            LOG.warn("Error dumping {}} to JSon due to {}. This exception is ignored.", kind, e.getMessage(), e);
+        }
+    }
+
+    private static List<JsonObject> dumpAsJSon(List<ModelDumpLine> lines) {
+        List<JsonObject> code = new ArrayList<>();
+        int counter = 0;
+        for (var line : lines) {
+            counter++;
+            JsonObject c = new JsonObject();
+            Integer idx = extractSourceLocationLineNumber(line.location());
+            if (idx == null) {
+                idx = counter;
+            }
+            c.put("line", idx);
+            c.put("type", line.type());
+            c.put("id", line.id());
+            c.put("level", line.level());
+            c.put("code", Jsoner.escape(line.code()));
+            code.add(c);
+        }
+        return code;
     }
 
     protected void doDumpYamlBeans(
