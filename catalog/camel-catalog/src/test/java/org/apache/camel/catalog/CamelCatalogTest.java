@@ -1133,6 +1133,15 @@ public class CamelCatalogTest {
         result = catalog.validateLanguagePredicate(null, "simple", "${body.length} =!= 12");
         assertFalse(result.isSuccess());
         assertEquals("Unexpected token =", result.getShortError());
+
+        result = catalog.validateLanguageExpression(null, "simple", "${int:body}");
+        assertTrue(result.isSuccess());
+        assertEquals("${int:body}", result.getText());
+
+        result = catalog.validateLanguageExpression(null, "simple", "${unknown:body}");
+        assertFalse(result.isSuccess());
+        assertEquals("${unknown:body}", result.getText());
+        assertEquals("Unknown function: unknown:body", result.getShortError());
     }
 
     @Test
