@@ -18,9 +18,12 @@ package org.apache.camel.management;
 
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.TestSupportNodeIdFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -31,8 +34,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisabledOnOs(OS.AIX)
 public class DumpRouteStructureTest extends ManagementTestSupport {
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getCamelContextExtension().addContextPlugin(NodeIdFactory.class, new TestSupportNodeIdFactory());
+        return context;
+    }
+
     @Test
     public void testDump() throws Exception {
+        TestSupportNodeIdFactory.resetCounters();
+
         ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(context);
         List<ModelDumpLine> lines = dumper.dumpStructure(context, "myOtherRoute", false);
         assertEquals(5, lines.size());
@@ -60,6 +72,8 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
 
     @Test
     public void testDumpBrief() throws Exception {
+        TestSupportNodeIdFactory.resetCounters();
+
         ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(context);
         List<ModelDumpLine> lines = dumper.dumpStructure(context, "myOtherRoute", true);
         assertEquals(5, lines.size());
@@ -93,7 +107,7 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
 
                 from("seda:bar?size=1234&multipleConsumers=true").routeId("myOtherRoute")
                         .filter().header("bar").id("myfilter")
-                            .to("mock:bar").id("mybar")
+                        .to("mock:bar").id("mybar")
                         .end()
                         .to("log:end").id("myend");
             }

@@ -17,17 +17,14 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
-import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
@@ -63,50 +60,39 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
         }
         answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]"));
 
-        MBeanServer server = context.getManagementStrategy().getManagementAgent().getMBeanServer();
-        if (server != null) {
-            String jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
-            // get all the processor mbeans and sort them accordingly to their index
-            String prefix = context.getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            ObjectName query = ObjectName.getInstance(
-                    jmxDomain + ":context=" + prefix + context.getManagementName() + ",type=processors,*");
-            Set<ObjectName> names = server.queryNames(query, null);
-            List<ManagedProcessorMBean> mps = new ArrayList<>();
-            for (ObjectName on : names) {
-                ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
-                        ManagedProcessorMBean.class);
-                // the processor must belong to this route
-                if (def.getRouteId().equals(processor.getRouteId())) {
-                    mps.add(processor);
-                }
-            }
-            // sort by index
-            mps.sort(new OrderProcessorMBeans());
+        var outputs = ProcessorDefinitionHelper.filterTypeInOutputs(def.getOutputs(), OptionalIdentifiedDefinition.class);
 
-            // dump in text format padded by level
-            for (ManagedProcessorMBean processor : mps) {
-                // include scheme in loc
-                loc = scheme + ":" + processor.getSourceLocationShort();
-                String kind = processor.getProcessorName();
-                String id = processor.getProcessorId();
-                int level = processor.getLevel() + 1;
-                String code = brief ? processor.getProcessorName() : processor.getModelLabel();
-                answer.add(new ModelDumpLine(loc, kind, id, level, code));
+        for (var output : outputs) {
+            loc = scheme + ":" + output.getLocation();
+            if (output.getLineNumber() > 0) {
+                loc += ":" + output.getLineNumber();
             }
+            String kind = output.getShortName();
+            String id = output.getId();
+            int level = getLevel(output) + 1;
+            boolean choice = "choice".equals(output.getShortName());
+            String code = choice || brief ? output.getShortName() : output.getLabel();
+            answer.add(new ModelDumpLine(loc, kind, id, level, code));
         }
 
         return answer;
     }
 
-    /**
-     * Used for sorting the processor mbeans accordingly to their index.
-     */
-    private static final class OrderProcessorMBeans implements Comparator<ManagedProcessorMBean> {
-
-        @Override
-        public int compare(ManagedProcessorMBean o1, ManagedProcessorMBean o2) {
-            return o1.getIndex().compareTo(o2.getIndex());
+    private static int getLevel(NamedNode node) {
+        int level = 0;
+        while (node != null && node.getParent() != null) {
+            // special for choice
+            boolean choice = "choice".equals(node.getParent().getShortName());
+            if (choice) {
+                level++;
+            }
+            boolean shallow = "when".equals(node.getShortName()) || "otherwise".equals(node.getShortName());
+            if (!shallow) {
+                level++;
+            }
+            node = node.getParent();
         }
+        return level;
     }
 
 }

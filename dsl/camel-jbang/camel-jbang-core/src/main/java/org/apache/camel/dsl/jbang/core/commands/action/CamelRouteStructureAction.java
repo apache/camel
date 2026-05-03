@@ -139,6 +139,10 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                                 code.id = line.getString("id");
                                 code.level = line.getInteger("level");
                                 code.code = line.getString("code");
+                                if (brief) {
+                                    // make code brief
+                                    code.code = StringHelper.before(code.code, "[", code.code);
+                                }
                                 row.code.add(code);
                             }
                         }
