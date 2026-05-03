@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
-import org.apache.camel.Route;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -37,31 +36,24 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
 
     @Override
     public List<ModelDumpLine> dumpStructure(CamelContext context, String routeId, boolean brief) throws Exception {
+        // dump in text format padded by level
         List<ModelDumpLine> answer = new ArrayList<>();
 
         // lookup model and runtime route
         final Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
         final RouteDefinition def = model.getRouteDefinition(routeId);
-        final Route route = context.getRoute(routeId);
-        // dump in text format padded by level
         String scheme = def.getResource() != null ? def.getResource().getScheme() : "file";
 
-        String loc
-                = scheme + ":" + (route != null ? route.getSourceLocationShort() : LoggerHelper.getLineNumberLoggerName(def));
-        answer.add(new ModelDumpLine(loc, "route", def.getRouteId(), 0, "route[" + def.getRouteId() + "]"));
-        String uri;
-        if (route != null) {
-            uri = brief ? route.getEndpoint().getEndpointBaseUri() : route.getEndpoint().getEndpointUri();
-        } else {
-            uri = def.getInput().getEndpointUri();
-            if (brief) {
-                uri = StringHelper.before(uri, "?", uri);
-            }
+        String loc = scheme + ":" + LoggerHelper.getLineNumberLoggerName(def);
+        answer.add(
+                new ModelDumpLine(loc, "route", def.getRouteId(), 0, "route[" + def.getRouteId() + "]", def.getDescription()));
+        String uri = def.getInput().getLabel();
+        if (brief) {
+            uri = StringHelper.before(uri, "?", uri);
         }
-        answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]"));
+        answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]", def.getDescription()));
 
         var outputs = ProcessorDefinitionHelper.filterTypeInOutputs(def.getOutputs(), OptionalIdentifiedDefinition.class);
-
         for (var output : outputs) {
             loc = scheme + ":" + output.getLocation();
             if (output.getLineNumber() > 0) {
@@ -72,7 +64,8 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
             int level = getLevel(output) + 1;
             boolean choice = "choice".equals(output.getShortName());
             String code = choice || brief ? output.getShortName() : output.getLabel();
-            answer.add(new ModelDumpLine(loc, kind, id, level, code));
+            String desc = output.getDescription();
+            answer.add(new ModelDumpLine(loc, kind, id, level, code, desc));
         }
 
         return answer;

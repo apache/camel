@@ -63,7 +63,7 @@ public class DumpRouteStructureChoiceTest extends ManagementTestSupport {
         assertEquals(1, lines.get(1).level());
         assertEquals("from", lines.get(1).type());
         assertEquals("myChoiceRoute", lines.get(1).id());
-        assertEquals("from[direct://start]", lines.get(1).code());
+        assertEquals("from[direct:start]", lines.get(1).code());
         assertEquals(2, lines.get(2).level());
         assertEquals("choice", lines.get(2).type());
         assertEquals("choice1", lines.get(2).id());
@@ -115,7 +115,7 @@ public class DumpRouteStructureChoiceTest extends ManagementTestSupport {
         assertEquals(1, lines.get(1).level());
         assertEquals("from", lines.get(1).type());
         assertEquals("myChoiceRoute", lines.get(1).id());
-        assertEquals("from[direct://start]", lines.get(1).code());
+        assertEquals("from[direct:start]", lines.get(1).code());
         assertEquals(2, lines.get(2).level());
         assertEquals("choice", lines.get(2).type());
         assertEquals("choice1", lines.get(2).id());

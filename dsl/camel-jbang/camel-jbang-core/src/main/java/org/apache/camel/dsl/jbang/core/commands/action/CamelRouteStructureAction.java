@@ -68,6 +68,10 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                         description = "To show less detailed route structure")
     boolean brief;
 
+    @CommandLine.Option(names = { "--description" },
+            description = "To show description instead of code")
+    boolean description;
+
     @CommandLine.Option(names = { "--filter" },
                         description = "Filter route by filename or route id (multiple names can be separated by comma)")
     String filter;
@@ -139,9 +143,13 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                                 code.id = line.getString("id");
                                 code.level = line.getInteger("level");
                                 code.code = line.getString("code");
+                                code.description = line.getString("description");
                                 if (brief) {
                                     // make code brief
                                     code.code = StringHelper.before(code.code, "[", code.code);
+                                } else if (description) {
+                                    // show description
+                                    code.code = code.type + (code.description != null ? "[" + code.description + "]" : "");
                                 }
                                 row.code.add(code);
                             }
@@ -324,6 +332,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         String id;
         int level;
         String code;
+        String description;
     }
 
 }
