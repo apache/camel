@@ -69,7 +69,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     boolean brief;
 
     @CommandLine.Option(names = { "--description" },
-            description = "To show description instead of code")
+                        description = "To show description instead of code")
     boolean description;
 
     @CommandLine.Option(names = { "--filter" },
