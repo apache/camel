@@ -522,6 +522,25 @@ class BlobOperationsTest extends CamelTestSupport {
     }
 
     @Test
+    void testUndeleteBlob() {
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "777");
+
+        when(client.undelete(any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.undeleteBlob(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertEquals("777", ((HttpHeaders) response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                .get("x-test-header").getValue());
+        verify(client, times(1)).undelete(any());
+    }
+
+    @Test
     void testCreateBlobSnapshot() {
         final String snapshotId = "2026-04-15T10:00:00.0000000Z";
         final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "123");

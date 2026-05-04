@@ -169,5 +169,11 @@ public enum BlobOperationsDefinition {
      * pre-built {@code BlobImmutabilityPolicy} can also be passed via the message body or the
      * {@code CamelAzureStorageBlobImmutabilityPolicy} header.
      */
-    setBlobImmutabilityPolicy
+    setBlobImmutabilityPolicy,
+    /**
+     * Restores the contents and metadata of a soft-deleted blob and any associated soft-deleted snapshots. Soft delete
+     * must be enabled on the storage account for this operation to succeed. The HTTP response headers from the
+     * underlying request are returned in the exchange headers.
+     */
+    undeleteBlob
 }
