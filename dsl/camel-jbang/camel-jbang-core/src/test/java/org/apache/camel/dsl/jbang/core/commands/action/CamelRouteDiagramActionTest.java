@@ -443,6 +443,97 @@ class CamelRouteDiagramActionTest {
         assertEquals("timer:tick", routes.get(0).nodes.get(0).code);
     }
 
+    @Test
+    void testChoiceInsideDoTryNoSpuriousMergeConnection() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tryChoiceInside", 0));
+        route.nodes.add(node("setHeader", "setHeader[type]", 1));
+        route.nodes.add(node("doTry", "doTry", 1));
+        route.nodes.add(node("choice", "choice()", 2));
+        route.nodes.add(node("when", "when(header(type) == A)", 3));
+        route.nodes.add(node("log", "log[Type A]", 4));
+        route.nodes.add(node("otherwise", "otherwise()", 3));
+        route.nodes.add(node("log", "log[Other type]", 4));
+        route.nodes.add(node("throwException", "throwException[java.lang.Exception]", 4));
+        route.nodes.add(node("doCatch", "doCatch[java.lang.Exception]", 2));
+        route.nodes.add(node("log", "log[Err: ${exception.message}]", 3));
+        route.nodes.add(node("log", "log[Do other processing...]", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode logAfter = lr.nodes.get(lr.nodes.size() - 1);
+        assertEquals("log[Do other processing...]", logAfter.label);
+        assertTrue(logAfter.connectFromMerge, "Should connect from doTry merge point");
+
+        LayoutNode choiceNode = lr.nodes.stream()
+                .filter(n -> "choice".equals(n.type))
+                .findFirst().orElseThrow();
+        TreeNode choiceTn = choiceNode.treeNode;
+        assertTrue(RouteDiagramLayoutEngine.isBranchingEip(choiceTn.parent.info.type),
+                "Choice parent (doTry) should be a branching EIP");
+    }
+
+    @Test
+    void testFilterAsScopeEip() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "direct:start", 0));
+        route.nodes.add(node("setBody", "setBody[simple{Hello}]", 1));
+        route.nodes.add(node("filter", "filter[{header(x) == value}]", 1));
+        route.nodes.add(node("removeHeader", "removeHeader[x-another-header]", 2));
+        route.nodes.add(node("to", "to[log:after]", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertEquals(5, lr.nodes.size());
+
+        LayoutNode toNode = lr.nodes.get(4);
+        assertEquals("to[log:after]", toNode.label);
+        assertTrue(toNode.connectFromMerge, "Node after filter should connect from merge point");
+
+        LayoutNode filterNode = lr.nodes.get(2);
+        assertTrue(RouteDiagramLayoutEngine.hasScope(filterNode.treeNode));
+
+        LayoutNode removeNode = lr.nodes.get(3);
+        assertEquals(filterNode.x, removeNode.x, "Filter child should be in same column (sequential)");
+    }
+
+    @Test
+    void testSplitAsScopeEip() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "direct:start", 0));
+        route.nodes.add(node("split", "split[body()]", 1));
+        route.nodes.add(node("log", "log[${body}]", 2));
+        route.nodes.add(node("to", "to[mock:end]", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode toNode = lr.nodes.get(3);
+        assertTrue(toNode.connectFromMerge, "Node after split should connect from merge point");
+    }
+
+    @Test
+    void testFilterLastChildNoMerge() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "direct:start", 0));
+        route.nodes.add(node("filter", "filter[{header(x)}]", 1));
+        route.nodes.add(node("log", "log[filtered]", 2));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertEquals(3, lr.nodes.size());
+        LayoutNode logNode = lr.nodes.get(2);
+        assertNull(logNode.parentNode == null ? null : (logNode.connectFromMerge ? "merge" : null),
+                "Filter as last child should not produce merge connection on its children");
+    }
+
     private static NodeInfo node(String type, String code, int level) {
         NodeInfo n = new NodeInfo();
         n.type = type;
