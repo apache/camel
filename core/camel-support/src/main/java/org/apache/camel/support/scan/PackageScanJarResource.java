@@ -22,20 +22,17 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.URLConnection;
 
 import org.apache.camel.support.ResourceSupport;
-import org.apache.camel.util.StringHelper;
 
 public class PackageScanJarResource extends ResourceSupport {
 
     private final URL url;
-    private final URLClassLoader uc;
 
     public PackageScanJarResource(String scheme, URL url, String shortName) {
         super(scheme, url.getFile() + shortName);
         this.url = url;
-        this.uc = new URLClassLoader(new URL[] { url });
     }
 
     @Override
@@ -59,8 +56,14 @@ public class PackageScanJarResource extends ResourceSupport {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        String loc = StringHelper.afterLast(getLocation(), "!");
-        return uc.getResourceAsStream(loc);
+        try {
+            URL jarUrl = URI.create("jar:" + getLocation()).toURL();
+            URLConnection con = jarUrl.openConnection();
+            con.setUseCaches(false);
+            return con.getInputStream();
+        } catch (Exception e) {
+            throw new IOException("Cannot open JAR resource: " + getLocation(), e);
+        }
     }
 
 }
