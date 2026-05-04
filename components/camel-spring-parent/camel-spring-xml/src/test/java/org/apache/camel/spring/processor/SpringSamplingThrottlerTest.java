@@ -48,6 +48,11 @@ public class SpringSamplingThrottlerTest extends SamplingThrottlerTest {
     }
 
     @Override
+    public void testSamplingWithPropertyPlaceholder() throws Exception {
+        super.testSamplingWithPropertyPlaceholder();
+    }
+
+    @Override
     public void testSamplingUsingMessageFrequency() throws Exception {
         super.testSamplingUsingMessageFrequency();
     }
