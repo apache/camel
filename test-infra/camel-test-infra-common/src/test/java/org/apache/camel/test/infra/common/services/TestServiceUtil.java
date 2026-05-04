@@ -70,14 +70,18 @@ public final class TestServiceUtil {
      */
     public static void logAndRethrow(TestService service, ExtensionContext extensionContext, Exception exception)
             throws Exception {
-        final Object testInstance = extensionContext.getTestInstance().orElse(null);
+        if (extensionContext != null) {
+            final Object testInstance = extensionContext.getTestInstance().orElse(null);
 
-        if (testInstance != null) {
-            LOG.error("Failed to initialize service {} for test {} on ({})", service.getClass().getSimpleName(),
-                    extensionContext.getDisplayName(), testInstance.getClass().getName());
+            if (testInstance != null) {
+                LOG.error("Failed to initialize service {} for test {} on ({})", service.getClass().getSimpleName(),
+                        extensionContext.getDisplayName(), testInstance.getClass().getName());
+            } else {
+                LOG.error("Failed to initialize service {} for test {}", service.getClass().getSimpleName(),
+                        extensionContext.getDisplayName());
+            }
         } else {
-            LOG.error("Failed to initialize service {} for test {}", service.getClass().getSimpleName(),
-                    extensionContext.getDisplayName());
+            LOG.error("Failed to initialize service {}", service.getClass().getSimpleName());
         }
 
         throw exception;
