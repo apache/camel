@@ -208,7 +208,7 @@
         <graphql-java-version>26.0</graphql-java-version>
         <greenmail-version>2.1.8</greenmail-version>
         <groovy-version>5.0.5</groovy-version>
-        <grpc-version>1.80.0</grpc-version>
+        <grpc-version>1.81.0</grpc-version>
         <grpc-google-auth-library-version>1.41.0</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.5.2</grpc-java-jwt-version>
         <gson-version>2.14.0</gson-version>
