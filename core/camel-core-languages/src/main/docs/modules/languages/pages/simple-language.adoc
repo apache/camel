@@ -141,7 +141,7 @@ as an integer instead of _what it would otherwise do_. To make this easy we have
 |====
 
 You do this by prefixing the function with any of the above, such as `${int:header.age}` to return the age header as an integer.
-If you use XML then the XPath function can do this as well such as `${int:xpath(//food/quantity)`.
+If you use XML then the XPath function can do this as well such as `${int:xpath(//food/quantity)}`.
 
 If you need to use a type that is not in the table above, then you can combine two functions together with the `${convertTo(type)}` function, as follows:
 
