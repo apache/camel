@@ -9,7 +9,7 @@ approvers:
   - "@zbendhiba"
   - "@davsclaus"
 creation-date: 2025-01-08
-last-updated: 2026-03-10
+last-updated: 2026-05-04
 status: implemented
 see-also: []
 replaces: []
@@ -98,7 +98,9 @@ The **Context propagation** is a way to correlate distributed traces between eac
 
 The Exchange stack storage already exists and it may suffice to this proposal goals. Again, we need to remove the implementation specific details from the abstraction and make sure that we don't slip any implementation detail in the future by design. Some concern we may have would be about the correct handling of opening and closure of spans which may be different according the each implementation specific. However, if the lifecycle we have in place takes care of consistency, this should not be a problem at all: each implementation should be in charge to do the needful when each lifecycle method is called. The Exchange stack storage can be used to store a span wrapper and maintain a state for it: this is something already available.
 
-In order to clarify this aspect, let's take `camel-opentelemetry` as an example. When we call the *activation* method, then, we must make sure that the span passed is correctly activated, calling therefore the `span.makeCurrent()` method. The generated scope has therefore to be kept in the same span wrapper in order to be later closed when the *closure* method is called via `scope.close()`. As each span wrapper is stored in the Exchange, then we can use this approach to maintain the state of each wrapper regardless how its specific implementation works.
+=== Thread local scope management
+
+Certain implementations (i.e., Opentelemetry) may leverage the `ThreadLocal` Java API. This is an implementation details that we don't want to manage directly in the abstraction and has to be managed in each concrete implementation. In the specific case of Opentelemetry, since this is materialized by the concept of a `Scope` and that the `Scope` must be opened and closed within the same Thread to maintain consistency and avoid leakage, we will implement it exclusively in the process via some `InterceptStrategy`. This means that the access to the given Opentelemetry context can be only available within a custom Processor execution (for example to provide any additional custom Span to your trace execution).
 
 === Context propagation
 
@@ -157,3 +159,11 @@ Added a chapter to clarify the adoption and compliancy of W3C trace context of C
 === Deprecation of older `camel-tracing` components (2026-03-10)
 
 Added a deprecation notice for `camel-tracing` and related components. Also, identified the custom logic previously required by these components into core dependencies. Also deprecated that part for future removals.
+
+=== Removal of explicit `camel-opentelemetry2` Scope wrapping to avoid leakage (2026-05-04)
+
+As described in https://issues.apache.org/jira/browse/CAMEL-23380 any version before 4.21 was suffering from potential leaks. This was due to the assumption that it was fine to deal with "dirty" context (context that could be reused by asynchronous threads). Although the final solution was consistent, we realized that, in the long run, the leak could provoke disruptions.
+
+In order to prevent this problem we need to rethink the implementation details of `camel-opentelemetry2` and remove the explicit `Scope` management that, when asynchronous, was opening the `Scope` in a thread and closing in another (what we had called "dirty" context). We are now removing this explicit management and moving this part exclusively in the custom Camel `Processors`. Here Camel will take care to open the Opentelemetry scope and close it within the same thread.
+
+What it means is that, from now on we get rid of the leak but the final user or any third party dependency can only access the Opentelemetry context within the boundary of a Processor execution.
