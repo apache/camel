@@ -175,5 +175,12 @@ public enum BlobOperationsDefinition {
      * must be enabled on the storage account for this operation to succeed. The HTTP response headers from the
      * underlying request are returned in the exchange headers.
      */
-    undeleteBlob
+    undeleteBlob,
+    /**
+     * Sets the access tier of an existing blob. The target tier is read from the
+     * {@code CamelAzureStorageBlobAccessTier} header (AccessTier) or from the message body (AccessTier). When
+     * rehydrating an archived blob, the optional {@code CamelAzureStorageBlobRehydratePriority} header
+     * (RehydratePriority) controls the rehydration priority.
+     */
+    setBlobTier
 }

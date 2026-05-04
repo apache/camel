@@ -47,6 +47,7 @@ import com.azure.storage.blob.models.PageBlobItem;
 import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.ParallelTransferOptions;
 import com.azure.storage.blob.models.PublicAccessType;
+import com.azure.storage.blob.models.RehydratePriority;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
@@ -527,6 +528,10 @@ public class BlobExchangeHeaders {
 
     public static BlobImmutabilityPolicyMode getBlobImmutabilityPolicyModeFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, BlobConstants.BLOB_IMMUTABILITY_POLICY_MODE, BlobImmutabilityPolicyMode.class);
+    }
+
+    public static RehydratePriority getRehydratePriorityFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.REHYDRATE_PRIORITY, RehydratePriority.class);
     }
 
     public BlobExchangeHeaders blobTags(final Map<String, String> tags) {

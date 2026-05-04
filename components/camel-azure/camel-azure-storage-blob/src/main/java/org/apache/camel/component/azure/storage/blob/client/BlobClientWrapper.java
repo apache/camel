@@ -55,6 +55,7 @@ import com.azure.storage.blob.models.PageBlobRequestConditions;
 import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.models.ParallelTransferOptions;
+import com.azure.storage.blob.models.RehydratePriority;
 import com.azure.storage.blob.options.BlobGetTagsOptions;
 import com.azure.storage.blob.options.BlobParallelUploadOptions;
 import com.azure.storage.blob.options.BlobSetTagsOptions;
@@ -399,6 +400,14 @@ public class BlobClientWrapper {
 
     public Response<Void> undelete(final Duration timeout) {
         return client.undeleteWithResponse(timeout, Context.NONE);
+    }
+
+    public Response<Void> setAccessTier(
+            final AccessTier tier,
+            final RehydratePriority priority,
+            final String leaseId,
+            final Duration timeout) {
+        return client.setAccessTierWithResponse(tier, priority, leaseId, timeout, Context.NONE);
     }
 
     public BlobLeaseClient getLeaseClient() {
