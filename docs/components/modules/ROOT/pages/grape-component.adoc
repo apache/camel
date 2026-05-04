@@ -1,1 +1,0 @@
-../../../../../components/camel-grape/src/main/docs/grape-component.adoc

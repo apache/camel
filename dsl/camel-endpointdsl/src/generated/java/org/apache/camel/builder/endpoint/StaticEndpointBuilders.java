@@ -6510,50 +6510,6 @@ public class StaticEndpointBuilders {
         return GoogleCloudVisionEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * Syntax: <code>grape:defaultCoordinates</code>
-     * 
-     * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
-     * 
-     * @param path defaultCoordinates
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String path) {
-        return grape("grape", path);
-    }
-    /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * Syntax: <code>grape:defaultCoordinates</code>
-     * 
-     * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path defaultCoordinates
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String componentName, String path) {
-        return GrapeEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
      * 
