@@ -18,9 +18,12 @@ package org.apache.camel.management;
 
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.TestSupportNodeIdFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -31,8 +34,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisabledOnOs(OS.AIX)
 public class DumpRouteStructureTest extends ManagementTestSupport {
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getCamelContextExtension().addContextPlugin(NodeIdFactory.class, new TestSupportNodeIdFactory());
+        return context;
+    }
+
     @Test
     public void testDump() throws Exception {
+        TestSupportNodeIdFactory.resetCounters();
+
         ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(context);
         List<ModelDumpLine> lines = dumper.dumpStructure(context, "myOtherRoute", false);
         assertEquals(5, lines.size());
@@ -40,18 +52,22 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
         assertEquals("route", lines.get(0).type());
         assertEquals("myOtherRoute", lines.get(0).id());
         assertEquals("route[myOtherRoute]", lines.get(0).code());
+        assertEquals("my cool route", lines.get(0).description());
         assertEquals(1, lines.get(1).level());
         assertEquals("from", lines.get(1).type());
         assertEquals("myOtherRoute", lines.get(1).id());
-        assertEquals("from[seda://bar?multipleConsumers=true&size=1234]", lines.get(1).code());
+        assertEquals("from[seda:bar?size=1234&multipleConsumers=true]", lines.get(1).code());
+        assertEquals("my cool route", lines.get(1).description());
         assertEquals(2, lines.get(2).level());
         assertEquals("filter", lines.get(2).type());
         assertEquals("myfilter", lines.get(2).id());
         assertEquals("filter[header{bar}]", lines.get(2).code());
+        assertEquals("my special filter", lines.get(2).description());
         assertEquals(3, lines.get(3).level());
         assertEquals("to", lines.get(3).type());
         assertEquals("mybar", lines.get(3).id());
         assertEquals("to[mock:bar]", lines.get(3).code());
+        assertEquals("my great bar", lines.get(3).description());
         assertEquals(2, lines.get(4).level());
         assertEquals("to", lines.get(4).type());
         assertEquals("myend", lines.get(4).id());
@@ -60,6 +76,8 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
 
     @Test
     public void testDumpBrief() throws Exception {
+        TestSupportNodeIdFactory.resetCounters();
+
         ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(context);
         List<ModelDumpLine> lines = dumper.dumpStructure(context, "myOtherRoute", true);
         assertEquals(5, lines.size());
@@ -70,7 +88,7 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
         assertEquals(1, lines.get(1).level());
         assertEquals("from", lines.get(1).type());
         assertEquals("myOtherRoute", lines.get(1).id());
-        assertEquals("from[seda://bar]", lines.get(1).code());
+        assertEquals("from[seda:bar]", lines.get(1).code());
         assertEquals(2, lines.get(2).level());
         assertEquals("filter", lines.get(2).type());
         assertEquals("myfilter", lines.get(2).id());
@@ -78,11 +96,12 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
         assertEquals(3, lines.get(3).level());
         assertEquals("to", lines.get(3).type());
         assertEquals("mybar", lines.get(3).id());
-        assertEquals("to", lines.get(3).code());
+        assertEquals("to[mock:bar]", lines.get(3).code());
+        assertEquals("my great bar", lines.get(3).description());
         assertEquals(2, lines.get(4).level());
         assertEquals("to", lines.get(4).type());
         assertEquals("myend", lines.get(4).id());
-        assertEquals("to", lines.get(4).code());
+        assertEquals("to[log:end]", lines.get(4).code());
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -91,9 +110,9 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
             public void configure() {
                 context.setDebugging(true);
 
-                from("seda:bar?size=1234&multipleConsumers=true").routeId("myOtherRoute")
-                        .filter().header("bar").id("myfilter")
-                            .to("mock:bar").id("mybar")
+                from("seda:bar?size=1234&multipleConsumers=true").routeId("myOtherRoute").routeDescription("my cool route")
+                        .filter().header("bar").id("myfilter").description("my special filter")
+                        .to("mock:bar").id("mybar").description("my great bar")
                         .end()
                         .to("log:end").id("myend");
             }

@@ -307,6 +307,10 @@ public final class ProcessorDefinitionHelper {
 
                     // otherwise is optional
                     if (choice.getOtherwise() != null) {
+                        OtherwiseDefinition other = choice.getOtherwise();
+                        if (type.isInstance(other)) {
+                            found.add((T) other);
+                        }
                         List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
                         doFindType(children, type, found, ++current, maxDeep);
                     }
