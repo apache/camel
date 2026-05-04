@@ -165,3 +165,12 @@ extend from:
 - `AbstractSpanDecorator` (returns `INTERNAL` for all operations)
 - `AbstractHttpSpanDecorator` (returns `CLIENT` for `EVENT_SENT`, `SERVER` for `EVENT_RECEIVED`)
 - `AbstractMessagingSpanDecorator` (returns `PRODUCER` for `EVENT_SENT`, `CONSUMER` for `EVENT_RECEIVED`)
+
+=== camel-opentelemetry2
+
+In order to prevent a potential leak when running asynchronous components we need to rethink the implementation details of `camel-opentelemetry2` and remove the  `Scope` wrapping that, when asynchronous, was opening the `Scope` in a thread and closing in another (what we had called "dirty" context). We are now removing this wrapping and moving this part exclusively in the custom Camel `Processors`. Here Camel will take care to open the Opentelemetry scope and close it within the same thread.
+
+What it means is that, from now on, the final user or any third party dependency can only "control" the Opentelemetry context within the boundary of a Processor execution.
+
+This is just an informative note, there is not action expected by the final user.
+

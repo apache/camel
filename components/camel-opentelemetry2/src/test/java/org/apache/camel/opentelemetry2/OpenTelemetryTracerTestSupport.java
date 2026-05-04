@@ -19,10 +19,14 @@ package org.apache.camel.opentelemetry2;
 import java.util.List;
 
 import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.telemetry.Op;
 import org.apache.camel.telemetry.TagConstants;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
+import org.junit.jupiter.api.AfterEach;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OpenTelemetryTracerTestSupport extends ExchangeTestSupport {
 
@@ -39,6 +43,12 @@ public class OpenTelemetryTracerTestSupport extends ExchangeTestSupport {
             }
         }
         throw new IllegalArgumentException("Trying to get a non existing span!");
+    }
+
+    @AfterEach
+    public void assertCurrentIsRoot() {
+        // We must guarantee no context leaking
+        assertEquals(Context.root(), Context.current());
     }
 
 }
