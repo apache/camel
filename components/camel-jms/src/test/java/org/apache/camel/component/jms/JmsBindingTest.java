@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import jakarta.jms.JMSException;
+import jakarta.jms.ObjectMessage;
 
 import com.example.external.NotAllowedPayload;
 import org.apache.activemq.artemis.jms.client.ActiveMQTextMessage;
@@ -160,5 +161,24 @@ public class JmsBindingTest {
                 .thenReturn("com.example.external.*;java.**;javax.**;org.apache.camel.**;!*");
         JmsBinding bindingWithCustomFilter = new JmsBinding(mockJmsEndpoint);
         assertDoesNotThrow(() -> bindingWithCustomFilter.checkDeserializedClass(new NotAllowedPayload()));
+    }
+
+    @Test
+    public void testObjectMessageDisabledByDefault() {
+        // default mockJmsConfiguration.isObjectMessageEnabled() returns false
+        ObjectMessage message = mock(ObjectMessage.class);
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> jmsBindingUnderTest.extractBodyFromJms(null, message));
+        assertNotNull(ex.getMessage());
+        assertEquals(true, ex.getMessage().contains("objectMessageEnabled=true"));
+    }
+
+    @Test
+    public void testObjectMessageReceivingAllowedWhenEnabled() throws JMSException {
+        when(mockJmsConfiguration.isObjectMessageEnabled()).thenReturn(true);
+        ObjectMessage message = mock(ObjectMessage.class);
+        when(message.getObject()).thenReturn(new java.util.HashMap<>());
+        // when enabled, extraction proceeds (returns the deserialized payload)
+        assertDoesNotThrow(() -> jmsBindingUnderTest.extractBodyFromJms(null, message));
     }
 }
