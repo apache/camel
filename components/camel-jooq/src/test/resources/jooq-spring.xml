@@ -26,13 +26,18 @@
     <context:property-placeholder location="classpath:config.properties"
                                   xmlns:context="http://www.springframework.org/schema/context"/>
 
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="url" value="${db.url}"/>
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="jdbcUrl" value="${db.url}"/>
         <property name="driverClassName" value="${db.driver}"/>
         <property name="username" value="${db.username}"/>
         <property name="password" value="${db.password}"/>
-        <property name="maxActive" value="${db.pool.maxActive}" />
-        <property name="maxIdle" value="${db.pool.maxIdle}" />
+        <property name="maximumPoolSize" value="${db.pool.maximumPoolSize}" />
+        <property name="minimumIdle" value="${db.pool.minimumIdle}" />
+        <!-- Test-optimized settings -->
+        <property name="connectionTimeout" value="10000" />
+        <property name="idleTimeout" value="300000" />
+        <property name="maxLifetime" value="600000" />
+        <property name="poolName" value="CamelJooqTestPool" />
     </bean>
     
     <bean id="bookStoreBean" class="org.apache.camel.component.jooq.beans.BookStoreRecordBean">

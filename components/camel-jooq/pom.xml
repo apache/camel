@@ -54,9 +54,10 @@
             <version>${jakarta-annotation-api-version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>${commons-dbcp-version}</version>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikaricp-version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- test dependencies -->
