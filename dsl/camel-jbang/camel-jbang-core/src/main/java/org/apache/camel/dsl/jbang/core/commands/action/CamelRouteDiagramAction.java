@@ -84,6 +84,35 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
         super(main);
     }
 
+    /**
+     * Renders the routes contained in the given source file as a PNG diagram saved to {@code outputFile}. Convenience
+     * entry point for programmatic invocation (e.g. from MCP tools) that always targets a non-running source file and
+     * skips the running-PID lookup.
+     *
+     * @param  sourceFile         path to the route source file (YAML, XML, Java, ...)
+     * @param  outputFile         path to the PNG file to write
+     * @param  theme              color theme spec (e.g. "dark", "light", "transparent" or custom)
+     * @param  filter             optional route filter (route id or filename pattern)
+     * @param  width              image width in pixels (0 = auto)
+     * @param  ignoreLoadingError whether to ignore route loading and compilation errors
+     * @return                    exit code; 0 on success, non-zero otherwise
+     * @throws Exception          if the source cannot be read or the diagram cannot be rendered
+     */
+    public Integer renderSourceToFile(
+            String sourceFile, String outputFile, String theme, String filter,
+            int width, boolean ignoreLoadingError)
+            throws Exception {
+        this.name = sourceFile;
+        this.output = outputFile;
+        if (theme != null && !theme.isBlank()) {
+            this.theme = theme;
+        }
+        this.filter = filter;
+        this.width = width;
+        this.ignoreLoadingError = ignoreLoadingError;
+        return doCall();
+    }
+
     @Override
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
