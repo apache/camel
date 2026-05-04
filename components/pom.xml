@@ -156,7 +156,6 @@
         <module>camel-grok</module>
         <module>camel-grpc</module>
         <module>camel-gson</module>
-        <module>camel-guava-eventbus</module>
         <module>camel-hashicorp-vault</module>
         <module>camel-hazelcast</module>
         <module>camel-headersmap</module>

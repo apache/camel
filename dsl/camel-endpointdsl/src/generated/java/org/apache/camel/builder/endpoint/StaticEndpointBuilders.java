@@ -6650,48 +6650,6 @@ public class StaticEndpointBuilders {
         return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * Syntax: <code>guava-eventbus:eventBusRef</code>
-     * 
-     * Path parameter: eventBusRef
-     * To lookup the Guava EventBus from the registry with the given name
-     * 
-     * @param path eventBusRef
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String path) {
-        return guavaEventbus("guava-eventbus", path);
-    }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * Syntax: <code>guava-eventbus:eventBusRef</code>
-     * 
-     * Path parameter: eventBusRef
-     * To lookup the Guava EventBus from the registry with the given name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path eventBusRef
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String componentName, String path) {
-        return GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Hashicorp Vault (camel-hashicorp-vault)
      * Manage secrets in Hashicorp Vault Service
      * 

@@ -1039,11 +1039,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-guava-eventbus</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-hashicorp-vault</artifactId>
         <version>4.21.0-SNAPSHOT</version>
       </dependency>

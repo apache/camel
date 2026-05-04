@@ -174,7 +174,6 @@
 ** xref:grape-component.adoc[Grape]
 ** xref:graphql-component.adoc[GraphQL]
 ** xref:grpc-component.adoc[gRPC]
-** xref:guava-eventbus-component.adoc[Guava EventBus]
 ** xref:hashicorp-vault-component.adoc[Hashicorp Vault]
 ** xref:hazelcast-summary.adoc[Hazelcast]
 *** xref:hazelcast-atomicvalue-component.adoc[Hazelcast Atomic Number]

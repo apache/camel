@@ -2027,19 +2027,6 @@ public interface ComponentsBuilderFactory {
         return GrpcComponentBuilderFactory.grpc();
     }
     /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * @return the dsl builder
-     */
-    static GuavaEventbusComponentBuilderFactory.GuavaEventbusComponentBuilder guavaEventbus() {
-        return GuavaEventbusComponentBuilderFactory.guavaEventbus();
-    }
-    /**
      * Hashicorp Vault (camel-hashicorp-vault)
      * Manage secrets in Hashicorp Vault Service
      * 
