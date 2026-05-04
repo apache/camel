@@ -170,6 +170,7 @@ and existing blocks together. Any blocks not specified in the block list and per
 |`getBlobTags`|`Common`|Retrieves user-defined index tags from a blob. The tags are returned as the message body (`Map<String, String>`) and also set in the `CamelAzureStorageBlobTags` header.
 |`setBlobLegalHold`|`Common`|Sets a legal hold on a blob. The legal hold flag (`Boolean`) is provided via the `CamelAzureStorageBlobLegalHold` header or the message body. While a legal hold is set, the blob cannot be modified or deleted until the hold is explicitly cleared by calling the operation again with `false`.
 |`setBlobImmutabilityPolicy`|`Common`|Sets a time-based immutability policy on a blob. The policy expiry time (`OffsetDateTime`) is read from the `CamelAzureStorageBlobImmutabilityPolicyExpiryTime` header and the policy mode (`BlobImmutabilityPolicyMode`, defaults to `UNLOCKED`) from `CamelAzureStorageBlobImmutabilityPolicyMode`. A pre-built `BlobImmutabilityPolicy` may also be supplied via the message body or `CamelAzureStorageBlobImmutabilityPolicy` header.
+|`undeleteBlob`|`Common`|Restores the contents and metadata of a soft-deleted blob and any associated soft-deleted snapshots. Soft delete must be enabled on the storage account for this operation to succeed.
 |===
 
 Refer to the example section in this page to learn how to use these operations into your camel application.
@@ -823,6 +824,17 @@ from("direct:setImmutabilityPolicy")
   .setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_EXPIRY_TIME, constant(OffsetDateTime.now().plusDays(7)))
   .setHeader(BlobConstants.BLOB_IMMUTABILITY_POLICY_MODE, constant(BlobImmutabilityPolicyMode.UNLOCKED))
   .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=setBlobImmutabilityPolicy&serviceClient=#client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `undeleteBlob`
+
+[source,java]
+--------------------------------------------------------------------------------
+
+// restore a soft-deleted blob (requires soft delete to be enabled on the storage account)
+from("direct:undeleteBlob")
+  .to("azure-storage-blob://camelazure/container1?blobName=hello.txt&operation=undeleteBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
 

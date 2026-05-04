@@ -397,6 +397,10 @@ public class BlobClientWrapper {
         return client.setImmutabilityPolicyWithResponse(policy, requestConditions, timeout, Context.NONE);
     }
 
+    public Response<Void> undelete(final Duration timeout) {
+        return client.undeleteWithResponse(timeout, Context.NONE);
+    }
+
     public BlobLeaseClient getLeaseClient() {
         return new BlobLeaseClientBuilder().blobClient(client).buildClient();
     }

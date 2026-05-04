@@ -743,6 +743,21 @@ public class BlobOperations {
         return BlobOperationResponse.create(result, exchangeHeaders.toMap());
     }
 
+    public BlobOperationResponse undeleteBlob(final Exchange exchange) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Undeleting blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+        }
+
+        final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
+
+        final Response<Void> response = client.undelete(commonRequestOptions.getTimeout());
+
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.create()
+                .httpHeaders(response.getHeaders());
+
+        return BlobOperationResponse.createWithEmptyBody(exchangeHeaders.toMap());
+    }
+
     private DownloadRetryOptions getDownloadRetryOptions(final BlobConfigurationOptionsProxy configurationProxy) {
         return new DownloadRetryOptions().setMaxRetryRequests(configurationProxy.getMaxRetryRequests());
     }
