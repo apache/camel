@@ -150,7 +150,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.GoogleSheetsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleSheetsStreamEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GoogleVertexAIEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.GrapeEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GraphqlEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GridFsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.GrpcEndpointBuilderFactory,

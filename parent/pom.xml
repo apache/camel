@@ -252,7 +252,6 @@
         <influx-client-java-driver-version>8.0.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
-        <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.1</jackson-jq-version>
         <jackson2-version>2.21.3</jackson2-version>
@@ -1521,11 +1520,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-google-vision</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-grape</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

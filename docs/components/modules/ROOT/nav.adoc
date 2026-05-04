@@ -171,7 +171,6 @@
 *** xref:google-sheets-stream-component.adoc[Google Sheets Stream]
 *** xref:google-storage-component.adoc[Google Storage]
 *** xref:google-vertexai-component.adoc[Google Vertex AI]
-** xref:grape-component.adoc[Grape]
 ** xref:graphql-component.adoc[GraphQL]
 ** xref:grpc-component.adoc[gRPC]
 ** xref:hashicorp-vault-component.adoc[Hashicorp Vault]

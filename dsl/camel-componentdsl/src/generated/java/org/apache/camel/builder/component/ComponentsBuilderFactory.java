@@ -1987,20 +1987,6 @@ public interface ComponentsBuilderFactory {
         return GoogleVisionComponentBuilderFactory.googleVision();
     }
     /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * @return the dsl builder
-     */
-    static GrapeComponentBuilderFactory.GrapeComponentBuilder grape() {
-        return GrapeComponentBuilderFactory.grape();
-    }
-    /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
      * 
