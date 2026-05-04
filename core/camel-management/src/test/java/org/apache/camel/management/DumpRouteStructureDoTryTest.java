@@ -32,7 +32,7 @@ import org.junit.jupiter.api.condition.OS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
-public class DumpRouteStructureChoiceTest extends ManagementTestSupport {
+public class DumpRouteStructureDoTryTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -54,48 +54,40 @@ public class DumpRouteStructureChoiceTest extends ManagementTestSupport {
         context.start();
 
         ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(context);
-        List<ModelDumpLine> lines = dumper.dumpStructure(context, "myChoiceRoute", false);
-        assertEquals(10, lines.size());
+        List<ModelDumpLine> lines = dumper.dumpStructure(context, "myDoTryRoute", false);
+        assertEquals(8, lines.size());
         assertEquals(0, lines.get(0).level());
         assertEquals("route", lines.get(0).type());
-        assertEquals("myChoiceRoute", lines.get(0).id());
-        assertEquals("route[myChoiceRoute]", lines.get(0).code());
+        assertEquals("myDoTryRoute", lines.get(0).id());
+        assertEquals("route[myDoTryRoute]", lines.get(0).code());
         assertEquals(1, lines.get(1).level());
         assertEquals("from", lines.get(1).type());
-        assertEquals("myChoiceRoute", lines.get(1).id());
+        assertEquals("myDoTryRoute", lines.get(1).id());
         assertEquals("from[direct:start]", lines.get(1).code());
         assertEquals(2, lines.get(2).level());
-        assertEquals("choice", lines.get(2).type());
-        assertEquals("choice1", lines.get(2).id());
-        assertEquals("choice", lines.get(2).code());
+        assertEquals("doTry", lines.get(2).type());
+        assertEquals("doTry1", lines.get(2).id());
+        assertEquals("doTry", lines.get(2).code());
         assertEquals(3, lines.get(3).level());
-        assertEquals("when", lines.get(3).type());
-        assertEquals("when1", lines.get(3).id());
-        assertEquals("when[xpath{$foo = 'bar'}]", lines.get(3).code());
+        assertEquals("split", lines.get(3).type());
+        assertEquals("split1", lines.get(3).id());
+        assertEquals("split[tokenize(body, ,)]", lines.get(3).code());
         assertEquals(4, lines.get(4).level());
         assertEquals("to", lines.get(4).type());
         assertEquals("to1", lines.get(4).id());
-        assertEquals("to[mock:x]", lines.get(4).code());
+        assertEquals("to[mock:line]", lines.get(4).code());
         assertEquals(3, lines.get(5).level());
-        assertEquals("when", lines.get(5).type());
-        assertEquals("when2", lines.get(5).id());
-        assertEquals("when[xpath{$foo = 'cheese'}]", lines.get(5).code());
+        assertEquals("doCatch", lines.get(5).type());
+        assertEquals("doCatch1", lines.get(5).id());
+        assertEquals("doCatch[java.lang.IllegalArgumentException]", lines.get(5).code());
         assertEquals(4, lines.get(6).level());
         assertEquals("to", lines.get(6).type());
         assertEquals("to2", lines.get(6).id());
-        assertEquals("to[mock:y]", lines.get(6).code());
-        assertEquals(3, lines.get(7).level());
-        assertEquals("otherwise", lines.get(7).type());
-        assertEquals("otherwise1", lines.get(7).id());
-        assertEquals("otherwise", lines.get(7).code());
-        assertEquals(4, lines.get(8).level());
-        assertEquals("to", lines.get(8).type());
-        assertEquals("to3", lines.get(8).id());
-        assertEquals("to[mock:z]", lines.get(8).code());
-        assertEquals(2, lines.get(9).level());
-        assertEquals("to", lines.get(9).type());
-        assertEquals("to4", lines.get(9).id());
-        assertEquals("to[mock:end]", lines.get(9).code());
+        assertEquals("to[mock:iae]", lines.get(6).code());
+        assertEquals(2, lines.get(7).level());
+        assertEquals("to", lines.get(7).type());
+        assertEquals("to3", lines.get(7).id());
+        assertEquals("to[mock:end]", lines.get(7).code());
     }
 
     @Test
@@ -106,48 +98,40 @@ public class DumpRouteStructureChoiceTest extends ManagementTestSupport {
         context.start();
 
         ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(context);
-        List<ModelDumpLine> lines = dumper.dumpStructure(context, "myChoiceRoute", true);
-        assertEquals(10, lines.size());
+        List<ModelDumpLine> lines = dumper.dumpStructure(context, "myDoTryRoute", true);
+        assertEquals(8, lines.size());
         assertEquals(0, lines.get(0).level());
         assertEquals("route", lines.get(0).type());
-        assertEquals("myChoiceRoute", lines.get(0).id());
-        assertEquals("route[myChoiceRoute]", lines.get(0).code());
+        assertEquals("myDoTryRoute", lines.get(0).id());
+        assertEquals("route[myDoTryRoute]", lines.get(0).code());
         assertEquals(1, lines.get(1).level());
         assertEquals("from", lines.get(1).type());
-        assertEquals("myChoiceRoute", lines.get(1).id());
+        assertEquals("myDoTryRoute", lines.get(1).id());
         assertEquals("from[direct:start]", lines.get(1).code());
         assertEquals(2, lines.get(2).level());
-        assertEquals("choice", lines.get(2).type());
-        assertEquals("choice1", lines.get(2).id());
-        assertEquals("choice", lines.get(2).code());
+        assertEquals("doTry", lines.get(2).type());
+        assertEquals("doTry1", lines.get(2).id());
+        assertEquals("doTry", lines.get(2).code());
         assertEquals(3, lines.get(3).level());
-        assertEquals("when", lines.get(3).type());
-        assertEquals("when1", lines.get(3).id());
-        assertEquals("when", lines.get(3).code());
+        assertEquals("split", lines.get(3).type());
+        assertEquals("split1", lines.get(3).id());
+        assertEquals("split", lines.get(3).code());
         assertEquals(4, lines.get(4).level());
         assertEquals("to", lines.get(4).type());
         assertEquals("to1", lines.get(4).id());
-        assertEquals("to[mock:x]", lines.get(4).code());
+        assertEquals("to[mock:line]", lines.get(4).code());
         assertEquals(3, lines.get(5).level());
-        assertEquals("when", lines.get(5).type());
-        assertEquals("when2", lines.get(5).id());
-        assertEquals("when", lines.get(5).code());
+        assertEquals("doCatch", lines.get(5).type());
+        assertEquals("doCatch1", lines.get(5).id());
+        assertEquals("doCatch", lines.get(5).code());
         assertEquals(4, lines.get(6).level());
         assertEquals("to", lines.get(6).type());
         assertEquals("to2", lines.get(6).id());
-        assertEquals("to[mock:y]", lines.get(6).code());
-        assertEquals(3, lines.get(7).level());
-        assertEquals("otherwise", lines.get(7).type());
-        assertEquals("otherwise1", lines.get(7).id());
-        assertEquals("otherwise", lines.get(7).code());
-        assertEquals(4, lines.get(8).level());
-        assertEquals("to", lines.get(8).type());
-        assertEquals("to3", lines.get(8).id());
-        assertEquals("to[mock:z]", lines.get(8).code());
-        assertEquals(2, lines.get(9).level());
-        assertEquals("to", lines.get(9).type());
-        assertEquals("to4", lines.get(9).id());
-        assertEquals("to[mock:end]", lines.get(9).code());
+        assertEquals("to[mock:iae]", lines.get(6).code());
+        assertEquals(2, lines.get(7).level());
+        assertEquals("to", lines.get(7).type());
+        assertEquals("to3", lines.get(7).id());
+        assertEquals("to[mock:end]", lines.get(7).code());
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -156,13 +140,15 @@ public class DumpRouteStructureChoiceTest extends ManagementTestSupport {
             public void configure() {
                 context.setDebugging(true);
 
-                from("direct:start").routeId("myChoiceRoute")
-                        .choice()
-                            .when().xpath("$foo = 'bar'").to("mock:x")
-                            .when().xpath("$foo = 'cheese'").to("mock:y")
-                            .otherwise().to("mock:z")
+                from("direct:start").routeId("myDoTryRoute")
+                        .doTry()
+                            .split(body().tokenize(","))
+                                .to("mock:line")
+                        .endDoTry()
+                        .doCatch(IllegalArgumentException.class)
+                            .to("mock:iae")
                         .end()
-                    .to("mock:end");
+                        .to("mock:end");
             }
         };
     }

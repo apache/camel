@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
+import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -64,6 +65,11 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
             int level = getLevel(output) + 1;
             boolean choice = "choice".equals(output.getShortName());
             String code = choice || brief ? output.getShortName() : output.getLabel();
+            // even in brief mode we want to see the uri for EIPs
+            if (brief && output instanceof EndpointRequiredDefinition erd) {
+                uri = StringHelper.before(erd.getEndpointUri(), "?", erd.getEndpointUri());
+                code = output.getShortName() + "[" + uri + "]";
+            }
             String desc = output.getDescription();
             answer.add(new ModelDumpLine(loc, kind, id, level, code, desc));
         }

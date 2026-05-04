@@ -96,12 +96,12 @@ public class DumpRouteStructureTest extends ManagementTestSupport {
         assertEquals(3, lines.get(3).level());
         assertEquals("to", lines.get(3).type());
         assertEquals("mybar", lines.get(3).id());
-        assertEquals("to", lines.get(3).code());
+        assertEquals("to[mock:bar]", lines.get(3).code());
         assertEquals("my great bar", lines.get(3).description());
         assertEquals(2, lines.get(4).level());
         assertEquals("to", lines.get(4).type());
         assertEquals("myend", lines.get(4).id());
-        assertEquals("to", lines.get(4).code());
+        assertEquals("to[log:end]", lines.get(4).code());
     }
 
     protected RouteBuilder createRouteBuilder() {
