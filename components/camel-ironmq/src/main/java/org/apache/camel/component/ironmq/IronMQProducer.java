@@ -64,13 +64,7 @@ public class IronMQProducer extends DefaultProducer {
     }
 
     private Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 
     @Override

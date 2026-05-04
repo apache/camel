@@ -451,18 +451,14 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
     private void processResponse(
             Exchange exchange, Object body, Map<String, String> headers, SalesforceException ex, AsyncCallback callback) {
-        final Message out = exchange.getOut();
+        final Message message = exchange.getMessage();
         if (ex != null) {
             exchange.setException(ex);
         } else {
-            out.setBody(body);
+            message.setBody(body);
         }
 
-        // copy headers
-        Message inboundMessage = exchange.getIn();
-        Map<String, Object> outboundHeaders = out.getHeaders();
-        outboundHeaders.putAll(inboundMessage.getHeaders());
-        outboundHeaders.putAll(headers);
+        message.getHeaders().putAll(headers);
 
         // signal exchange completion
         callback.done(false);

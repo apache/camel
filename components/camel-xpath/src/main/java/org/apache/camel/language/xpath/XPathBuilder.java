@@ -53,6 +53,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
@@ -669,8 +670,10 @@ public class XPathBuilder extends ServiceSupport
      * A default function will be assigned (if no custom assigned) when either starting this builder or on first
      * evaluation.
      *
-     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
+     * @return     the function, or <tt>null</tt> if this builder has not been started/used before.
+     * @deprecated use the <tt>in:</tt> namespace functions instead, as the in/out distinction on Exchange is deprecated
      */
+    @Deprecated
     public XPathFunction getOutBodyFunction() {
         return outBodyFunction;
     }
@@ -679,14 +682,19 @@ public class XPathBuilder extends ServiceSupport
         return new XPathFunction() {
             @SuppressWarnings("rawtypes")
             public Object evaluate(List list) throws XPathFunctionException {
-                if (exchange.get() != null && exchange.get().hasOut()) {
-                    return exchange.get().getOut().getBody();
+                if (exchange.get() != null) {
+                    Message response = ExchangeHelper.getResponse(exchange.get());
+                    return response != null ? response.getBody() : null;
                 }
                 return null;
             }
         };
     }
 
+    /**
+     * @deprecated the in/out distinction on Exchange is deprecated
+     */
+    @Deprecated
     public void setOutBodyFunction(XPathFunction outBodyFunction) {
         this.outBodyFunction = outBodyFunction;
     }
@@ -697,8 +705,10 @@ public class XPathBuilder extends ServiceSupport
      * A default function will be assigned (if no custom assigned) when either starting this builder or on first
      * evaluation.
      *
-     * @return the function, or <tt>null</tt> if this builder has not been started/used before.
+     * @return     the function, or <tt>null</tt> if this builder has not been started/used before.
+     * @deprecated use the <tt>in:</tt> namespace functions instead, as the in/out distinction on Exchange is deprecated
      */
+    @Deprecated
     public XPathFunction getOutHeaderFunction() {
         return outHeaderFunction;
     }
@@ -708,10 +718,14 @@ public class XPathBuilder extends ServiceSupport
             @SuppressWarnings("rawtypes")
             public Object evaluate(List list) throws XPathFunctionException {
                 if (exchange.get() != null && !list.isEmpty()) {
-                    Object value = list.get(0);
-                    if (value != null) {
-                        String headerText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
-                        return exchange.get().getOut().getHeader(headerText);
+                    Message response = ExchangeHelper.getResponse(exchange.get());
+                    if (response != null) {
+                        Object value = list.get(0);
+                        if (value != null) {
+                            String headerText
+                                    = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
+                            return response.getHeader(headerText);
+                        }
                     }
                 }
                 return null;
@@ -719,6 +733,10 @@ public class XPathBuilder extends ServiceSupport
         };
     }
 
+    /**
+     * @deprecated the in/out distinction on Exchange is deprecated
+     */
+    @Deprecated
     public void setOutHeaderFunction(XPathFunction outHeaderFunction) {
         this.outHeaderFunction = outHeaderFunction;
     }

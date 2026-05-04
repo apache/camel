@@ -131,13 +131,13 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
         String bodyAsString = new String(body, charsetName);
         Message message = parser.parse(bodyAsString);
 
-        // add MSH fields as message out headers
+        // add MSH fields as message headers
         Terser terser = new Terser(message);
         for (Map.Entry<String, String> entry : HEADER_MAP.entrySet()) {
-            exchange.getOut().setHeader(entry.getKey(), terser.get(entry.getValue()));
+            exchange.getMessage().setHeader(entry.getKey(), terser.get(entry.getValue()));
         }
-        exchange.getOut().setHeader(HL7_CONTEXT, hapiContext);
-        exchange.getOut().setHeader(Exchange.CHARSET_NAME, charsetName);
+        exchange.getMessage().setHeader(HL7_CONTEXT, hapiContext);
+        exchange.getMessage().setHeader(Exchange.CHARSET_NAME, charsetName);
         return message;
     }
 

@@ -21,10 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class SedaWaitForTaskIfReplyExpectedTest extends ContextTestSupport {
 
@@ -51,7 +52,7 @@ public class SedaWaitForTaskIfReplyExpectedTest extends ContextTestSupport {
         // we do not expecy a reply and thus do no wait so we just get our own
         // input back
         assertEquals("Hello World", out.getIn().getBody());
-        assertNull(out.getOut().getBody());
+        assertFalse(ExchangeHelper.hasResponse(out));
 
         assertMockEndpointsSatisfied();
     }

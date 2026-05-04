@@ -170,7 +170,7 @@ public class SoapDataFormat extends JaxbDataFormat {
         if (soapAction != null && elementNameStrategy instanceof ServiceInterfaceStrategy) {
             ServiceInterfaceStrategy strategy = (ServiceInterfaceStrategy) elementNameStrategy;
             String methodName = strategy.getMethodForSoapAction(soapAction);
-            exchange.getOut().setHeader(SOAP_METHOD_NAME, methodName);
+            exchange.getMessage().setHeader(SOAP_METHOD_NAME, methodName);
         }
 
         // Store soap action for an eventual later marshal step.

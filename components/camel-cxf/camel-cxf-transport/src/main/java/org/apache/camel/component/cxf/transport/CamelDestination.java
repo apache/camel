@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.transport.message.DefaultCxfMessageMapper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
@@ -260,10 +261,11 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     protected void propagateResponseHeadersToCamel(Message outMessage, Exchange camelExchange) {
+        ExchangeHelper.createResponse(camelExchange);
         // copy the camel in message header to the out message
-        camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
+        camelExchange.getMessage().getHeaders().putAll(camelExchange.getIn().getHeaders());
         CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage,
-                camelExchange.getOut(), camelExchange);
+                camelExchange.getMessage(), camelExchange);
     }
 
     /**
@@ -289,9 +291,9 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             }
             OutputStream outputStream = outMessage.getContent(OutputStream.class);
             if (outputStream instanceof CachedOutputStream cachedOutputStream) {
-                camelExchange.getOut().setBody(cachedOutputStream.getInputStream());
+                camelExchange.getMessage().setBody(cachedOutputStream.getInputStream());
             } else {
-                camelExchange.getOut().setBody(outputStream);
+                camelExchange.getMessage().setBody(outputStream);
             }
             LOG.debug("send the response message: {}", outputStream);
         }

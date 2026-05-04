@@ -68,8 +68,8 @@ public class MarshalProcessor extends AsyncProcessorSupport
 
         // lets setup the out message before we invoke the dataFormat
         // so that it can mutate it if necessary
-        Message out = exchange.getOut();
-        out.copyFrom(in);
+        ExchangeHelper.setResponse(exchange, in.copy());
+        Message out = exchange.getMessage();
 
         try {
             dataFormat.marshal(exchange, body, osb);
@@ -82,7 +82,7 @@ public class MarshalProcessor extends AsyncProcessorSupport
             }
         } catch (Exception e) {
             // remove OUT message, as an exception occurred
-            exchange.setOut(null);
+            ExchangeHelper.setResponse(exchange, null);
             exchange.setException(e);
         }
 

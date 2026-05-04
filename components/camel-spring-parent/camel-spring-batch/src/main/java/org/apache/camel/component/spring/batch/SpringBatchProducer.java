@@ -76,8 +76,7 @@ public class SpringBatchProducer extends DefaultProducer {
         }
 
         JobExecution jobExecution = jobLauncher.run(job2run, jobParameters);
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-        exchange.getOut().setBody(jobExecution);
+        exchange.getMessage().setBody(jobExecution);
     }
 
     /**

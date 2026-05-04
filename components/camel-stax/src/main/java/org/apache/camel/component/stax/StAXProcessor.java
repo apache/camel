@@ -24,7 +24,6 @@ import org.xml.sax.InputSource;
 import com.ctc.wstx.sr.ValidatingStreamReader;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.ExchangeHelper;
 
 /**
  * It uses SAX content handler to handle events.
@@ -62,12 +61,7 @@ public class StAXProcessor implements Processor {
             reader.setContentHandler(handler);
             // InputSource is ignored anyway
             reader.parse((InputSource) null);
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-                exchange.getOut().setBody(handler);
-            } else {
-                exchange.getIn().setBody(handler);
-            }
+            exchange.getMessage().setBody(handler);
         } finally {
             if (stream != null) {
                 stream.close();

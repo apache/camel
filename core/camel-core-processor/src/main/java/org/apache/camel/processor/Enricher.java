@@ -272,7 +272,7 @@ public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAw
 
     private static void prepareResult(Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
-            exchange.getOut().copyFrom(exchange.getIn());
+            ExchangeHelper.createResponseFromInput(exchange);
         }
     }
 

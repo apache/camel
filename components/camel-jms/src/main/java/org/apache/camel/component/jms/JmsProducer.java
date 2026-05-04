@@ -40,6 +40,7 @@ import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.component.jms.reply.UseMessageIdAsCorrelationIdMessageSentCallback;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -474,10 +475,9 @@ public class JmsProducer extends DefaultAsyncProducer {
     }
 
     protected void setMessageId(Exchange exchange) {
-        if (exchange.hasOut()) {
-            JmsMessage out = exchange.getOut(JmsMessage.class);
+        if (ExchangeHelper.getResponse(exchange) instanceof JmsMessage out) {
             try {
-                if (out != null && out.getJmsMessage() != null) {
+                if (out.getJmsMessage() != null) {
                     out.setMessageId(out.getJmsMessage().getJMSMessageID());
                 }
             } catch (JMSException e) {

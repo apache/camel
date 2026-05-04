@@ -76,9 +76,7 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
             text = new String(Base64.decodeBase64(text));
         }
 
-        // copy the header of in message to the out message
-        exchange.getOut().copyFrom(exchange.getIn());
-        exchange.getOut().setBody(text);
+        exchange.getMessage().setBody(text);
     }
 
 }

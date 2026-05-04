@@ -95,6 +95,7 @@ public class MinaTransferExchangeOptionTest extends BaseMinaTest {
         assertNull(exchange.getProperty("Charset"));
     }
 
+    @SuppressWarnings("deprecation") // transferExchange=true tests intentionally use getOut() for IN/OUT exchange semantics
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

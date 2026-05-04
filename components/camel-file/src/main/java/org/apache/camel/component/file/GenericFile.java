@@ -25,6 +25,7 @@ import java.util.function.LongSupplier;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -133,8 +134,8 @@ public class GenericFile<T> implements WrappedFile<T> {
         headers = exchange.getMessage().hasHeaders() ? exchange.getMessage().getHeaders() : null;
         // force storing on IN as that is what Camel expects
         exchange.setIn(msg);
-        if (exchange.hasOut()) {
-            exchange.setOut(null);
+        if (ExchangeHelper.hasResponse(exchange)) {
+            ExchangeHelper.setResponse(exchange, null);
         }
 
         // preserve any existing (non file) headers, before we re-populate

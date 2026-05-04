@@ -57,9 +57,7 @@ public class CreateIssueProducer extends AbstractGitHubProducer {
 
         Issue finalIssue = issueService.createIssue(getRepository(), issue);
 
-        // copy the header of in message to the out message
-        exchange.getOut().copyFrom(exchange.getIn());
-        exchange.getOut().setBody(finalIssue);
+        exchange.getMessage().setBody(finalIssue);
     }
 
 }

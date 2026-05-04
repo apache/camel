@@ -20,10 +20,11 @@ import javax.jcr.LoginException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JcrAuthLoginFailureTest extends JcrAuthTestBase {
@@ -33,8 +34,7 @@ public class JcrAuthLoginFailureTest extends JcrAuthTestBase {
         Exchange exchange = createExchangeWithBody("<message>hello!</message>");
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
-        assertNull(uuid, "Expected body to be null, found JCR node UUID");
+        assertFalse(ExchangeHelper.hasResponse(out), "Should not have a response on login failure");
         assertTrue(out.getException() instanceof LoginException, "Wrong exception type");
     }
 

@@ -198,7 +198,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         Message message = holder.getMessage();
         Session session = holder.getSession();
         JmsMessage response = new JmsMessage(exchange, message, session, endpoint.getBinding());
-        exchange.setOut(response);
+        ExchangeHelper.setResponse(exchange, response);
 
         Object to = exchange.getIn().getHeader(JmsConstants.JMS_DESTINATION_NAME_PRODUCED);
         if (to != null) {
@@ -219,7 +219,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     private void restoreOriginalCorrelationId(ReplyHolder holder, Exchange exchange, Message message) {
         if (holder.getOriginalCorrelationId() != null) {
             JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
-            exchange.getOut().setHeader(JmsConstants.JMS_HEADER_CORRELATION_ID, holder.getOriginalCorrelationId());
+            exchange.getMessage().setHeader(JmsConstants.JMS_HEADER_CORRELATION_ID, holder.getOriginalCorrelationId());
         }
     }
 

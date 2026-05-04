@@ -245,9 +245,7 @@ public class MyBatisProducer extends DefaultProducer {
         Message answer = exchange.getIn();
 
         if (ExchangeHelper.isOutCapable(exchange)) {
-            answer = exchange.getOut();
-            // preserve headers
-            answer.getHeaders().putAll(exchange.getIn().getHeaders());
+            answer = exchange.getMessage();
             if (outputHeader != null) {
                 //if we put the MyBatis result into a header we should preserve the body as well
                 answer.setBody(exchange.getIn().getBody());

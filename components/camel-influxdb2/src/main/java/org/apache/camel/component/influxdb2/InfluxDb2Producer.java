@@ -28,7 +28,6 @@ import org.apache.camel.component.influxdb2.data.Points;
 import org.apache.camel.component.influxdb2.data.Record;
 import org.apache.camel.component.influxdb2.data.Records;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +173,6 @@ public class InfluxDb2Producer extends DefaultProducer {
 
     private void doPing(Exchange exchange) {
         Boolean result = connection.ping();
-        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getMessage().setBody(result);
     }
 

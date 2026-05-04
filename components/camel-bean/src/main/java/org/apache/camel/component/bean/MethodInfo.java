@@ -395,16 +395,12 @@ public class MethodInfo {
     private void fillResult(Exchange exchange, Object result) {
         LOG.trace("Setting bean invocation result : {}", result);
 
-        // the bean component forces OUT if the MEP is OUT capable
-        boolean out = exchange.hasOut() || ExchangeHelper.isOutCapable(exchange);
-        Message old;
-        if (out) {
-            old = exchange.getOut();
-            // propagate headers
-            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-        } else {
-            old = exchange.getIn();
+        // the bean component forces OUT if the MEP is OUT capable;
+        // createResponseFromInput() both creates the OUT and propagates headers in one step
+        if (ExchangeHelper.isOutCapable(exchange) && !ExchangeHelper.hasResponse(exchange)) {
+            ExchangeHelper.createResponseFromInput(exchange);
         }
+        Message old = exchange.getMessage();
 
         // create a new message container, so we do not drag specialized message objects along
         // but that is only needed if the old message is a specialized message

@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -98,7 +99,7 @@ public class RoutingSlipRedeliverTest extends ContextTestSupport {
                     public void process(Exchange exchange) {
                         // should be same input body
                         assertEquals("Hello World", exchange.getIn().getBody());
-                        assertFalse(exchange.hasOut(), "Should not have OUT");
+                        assertFalse(ExchangeHelper.hasResponse(exchange), "Should not have OUT");
                         assertNull(exchange.getException());
 
                         counter++;
@@ -111,7 +112,7 @@ public class RoutingSlipRedeliverTest extends ContextTestSupport {
                     public void process(Exchange exchange) {
                         // should be same input body
                         assertEquals("Hello World", exchange.getIn().getBody());
-                        assertFalse(exchange.hasOut(), "Should not have OUT");
+                        assertFalse(ExchangeHelper.hasResponse(exchange), "Should not have OUT");
                         assertNull(exchange.getException());
 
                         // mutate IN body

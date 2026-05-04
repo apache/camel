@@ -108,8 +108,9 @@ public class XsltBuilder implements Processor {
 
         ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
         Result result = resultHandler.getResult();
-        // let's copy the headers before we invoke the transform in case they modify them
-        Message out = exchange.getOut();
+        // copy headers before invoking the transform; getMessage() returns IN here
+        // (no OUT yet), so copyFrom is a no-op for headers but sets up the message state
+        Message out = exchange.getMessage();
         out.copyFrom(exchange.getIn());
 
         // the underlying input stream, which we need to close to avoid locking files or other resources
@@ -489,7 +490,11 @@ public class XsltBuilder implements Processor {
         addParameters(transformer, getParameters());
         transformer.setParameter("exchange", exchange);
         transformer.setParameter("in", exchange.getIn());
-        transformer.setParameter("out", exchange.getOut());
+        // only set "out" param if a response exists; avoids creating an empty OUT as side effect
+        Message response = ExchangeHelper.getResponse(exchange);
+        if (response != null) {
+            transformer.setParameter("out", response);
+        }
     }
 
     protected void addParameters(Transformer transformer, Map<String, Object> map) {

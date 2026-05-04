@@ -126,7 +126,6 @@ public class CometdProducerConsumerInOutTest extends CamelTestSupport {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
@@ -140,11 +139,11 @@ public class CometdProducerConsumerInOutTest extends CamelTestSupport {
 
                 from(uri)
                         .setExchangePattern(ExchangePattern.InOut)
-                        .process(exchange -> exchange.getOut().setBody("reply: " + exchange.getIn().getBody()));
+                        .process(exchange -> exchange.getMessage().setBody("reply: " + exchange.getIn().getBody()));
 
                 from(uriSSL)
                         .setExchangePattern(ExchangePattern.InOut)
-                        .process(exchange -> exchange.getOut().setBody("reply SSL: " + exchange.getIn().getBody()));
+                        .process(exchange -> exchange.getMessage().setBody("reply SSL: " + exchange.getIn().getBody()));
             }
         };
     }

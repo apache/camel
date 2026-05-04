@@ -109,7 +109,8 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
                     ServerChannel channel = getBayeux().getChannel(channelName);
                     ServerSession serverSession = getServerSession();
 
-                    ServerMessage.Mutable outMessage = binding.createCometdMessage(channel, serverSession, exchange.getOut());
+                    ServerMessage.Mutable outMessage
+                            = binding.createCometdMessage(channel, serverSession, exchange.getMessage());
                     remote.deliver(serverSession, outMessage, Promise.noop());
                 }
             } finally {

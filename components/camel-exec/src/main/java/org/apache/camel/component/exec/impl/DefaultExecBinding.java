@@ -118,12 +118,7 @@ public class DefaultExecBinding implements ExecBinding {
         ObjectHelper.notNull(exchange, "exchange");
         ObjectHelper.notNull(result, "result");
 
-        if (exchange.getPattern().isOutCapable()) {
-            writeOutputInMessage(exchange.getOut(), result);
-            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-        } else {
-            writeOutputInMessage(exchange.getIn(), result);
-        }
+        writeOutputInMessage(exchange.getMessage(), result);
     }
 
     /**

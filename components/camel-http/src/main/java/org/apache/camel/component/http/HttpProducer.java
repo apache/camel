@@ -354,7 +354,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             HeaderFilterStrategy strategy, int responseCode)
             throws IOException, ClassNotFoundException {
 
-        Message answer = exchange.getOut();
+        // separate response from request so response headers don't mix with request headers
+        Message answer = ExchangeHelper.createResponse(exchange);
         populateResponseCode(answer, httpResponse, responseCode);
 
         // We just make the out message is not create when extractResponseBody throws exception

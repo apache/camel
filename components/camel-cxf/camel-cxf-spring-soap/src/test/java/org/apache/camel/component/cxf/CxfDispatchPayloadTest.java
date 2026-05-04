@@ -28,14 +28,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.converter.CxfPayloadConverter;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -67,10 +68,7 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
         Exchange exchange = sendJaxWsDispatchPayload(name, true);
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
 
-        org.apache.camel.Message response = exchange.getOut();
-        assertNotNull(response, "The response must not be null");
-
-        assertNull(response.getBody(), "The response must be null");
+        assertFalse(ExchangeHelper.hasResponse(exchange), "The oneway response must not have a response message");
     }
 
     private Exchange sendJaxWsDispatchPayload(final String name, final boolean oneway) {

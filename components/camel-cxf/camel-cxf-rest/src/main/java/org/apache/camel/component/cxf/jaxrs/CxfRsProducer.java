@@ -383,7 +383,6 @@ public class CxfRsProducer extends DefaultAsyncProducer {
 
     private static void setResponse(Exchange exchange, Object response, CxfRsBinding binding, int statesCode) throws Exception {
         LOG.trace("Response body = {}", response);
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
         exchange.getMessage().setBody(binding.bindResponseToCamelBody(response, exchange));
         exchange.getMessage().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
         exchange.getMessage().setHeader(CxfConstants.HTTP_RESPONSE_CODE, statesCode);

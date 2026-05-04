@@ -304,8 +304,8 @@ public final class ExchangeHelper {
         Exchange copy = exchange.copy();
         // do not reuse message id on copy
         if (!useSameMessageId) {
-            if (copy.hasOut()) {
-                copy.getOut().setMessageId(null);
+            if (hasResponse(copy)) {
+                copy.getMessage().setMessageId(null);
             }
             copy.getIn().setMessageId(null);
         }
@@ -366,7 +366,7 @@ public final class ExchangeHelper {
             return;
         }
 
-        if (source.hasOut()) {
+        if (hasResponse(source)) {
             copyFromOutMessage(result, source, preserverPattern);
         } else {
             copyFromInMessage(result, source, preserverPattern);
@@ -400,9 +400,9 @@ public final class ExchangeHelper {
     private static void copyFromOutMessageConditionally(Exchange result, Exchange source) {
         // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
         // and the result is not failed
-        if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
+        if (result.getPattern().isOutCapable() && !hasResponse(result) && !result.isFailed()) {
             // copy IN to OUT as we expect a OUT response
-            result.getOut().copyFrom(source.getIn());
+            setResponse(result, source.getIn().copy());
         }
     }
 
@@ -413,13 +413,13 @@ public final class ExchangeHelper {
         // so lets assume the last IN is the OUT
         if (!preserverPattern && result.getPattern().isOutCapable()) {
             // only set OUT if its OUT capable
-            result.getOut().copyFrom(source.getIn());
+            setResponse(result, source.getIn().copy());
         } else {
             // if not replace IN instead to keep the MEP
             result.getIn().copyFrom(source.getIn());
             // clear any existing OUT as the result is on the IN
-            if (result.hasOut()) {
-                result.setOut(null);
+            if (hasResponse(result)) {
+                setResponse(result, null);
             }
         }
     }
@@ -428,9 +428,9 @@ public final class ExchangeHelper {
         if (preserverPattern) {
             // exchange pattern sensitive
             Message resultMessage = getResultMessage(result);
-            resultMessage.copyFrom(source.getOut());
+            resultMessage.copyFrom(source.getMessage());
         } else {
-            result.getOut().copyFrom(source.getOut());
+            setResponse(result, source.getMessage().copy());
         }
     }
 
@@ -442,7 +442,7 @@ public final class ExchangeHelper {
      */
     public static Message getResultMessage(Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
-            return exchange.getOut();
+            return createResponse(exchange);
         } else {
             return exchange.getIn();
         }
@@ -704,10 +704,10 @@ public final class ExchangeHelper {
             // okay no fault then return the response according to the pattern
             // try to honor pattern if provided
             boolean notOut = pattern != null && !pattern.isOutCapable();
-            boolean hasOut = exchange.hasOut();
+            boolean hasOut = hasResponse(exchange);
             if (hasOut && !notOut) {
                 // we have a response in out and the pattern is out capable
-                answer = exchange.getOut().getBody();
+                answer = exchange.getMessage().getBody();
             } else {
                 // use IN as the response
                 answer = exchange.getIn().getBody();
@@ -810,9 +810,9 @@ public final class ExchangeHelper {
      */
     public static void prepareOutToIn(Exchange exchange) {
         // we are routing using pipes and filters so we need to manually copy OUT to IN
-        if (exchange.hasOut()) {
-            exchange.setIn(exchange.getOut());
-            exchange.setOut(null);
+        if (hasResponse(exchange)) {
+            exchange.setIn(exchange.getMessage());
+            setResponse(exchange, null);
         }
     }
 
@@ -853,8 +853,8 @@ public final class ExchangeHelper {
         setMessageHistory(answer, exchange);
 
         answer.setIn(exchange.getIn().copy());
-        if (exchange.hasOut()) {
-            answer.setOut(exchange.getOut().copy());
+        if (hasResponse(exchange)) {
+            setResponse(answer, exchange.getMessage().copy());
         }
         answer.setException(exchange.getException());
         return answer;
@@ -869,8 +869,8 @@ public final class ExchangeHelper {
      */
     public static void replaceMessage(Exchange exchange, Message newMessage, boolean outOnly) {
         Message old = exchange.getMessage();
-        if (outOnly || exchange.hasOut()) {
-            exchange.setOut(newMessage);
+        if (outOnly || hasResponse(exchange)) {
+            setResponse(exchange, newMessage);
         } else {
             exchange.setIn(newMessage);
         }
@@ -1095,8 +1095,7 @@ public final class ExchangeHelper {
      */
     public static void setInOutBodyPatternAware(Exchange exchange, Object body) {
         if (exchange.getPattern().isOutCapable()) {
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(body);
+            createResponseFromInput(exchange).setBody(body);
         } else {
             exchange.getIn().setBody(body);
         }
@@ -1111,8 +1110,7 @@ public final class ExchangeHelper {
      */
     public static void setOutBodyPatternAware(Exchange exchange, Object body) {
         if (exchange.getPattern().isOutCapable()) {
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(body);
+            createResponseFromInput(exchange).setBody(body);
         }
     }
 
@@ -1301,6 +1299,74 @@ public final class ExchangeHelper {
             sc.reset();
         }
         return exchange.getMessage().getBody(type);
+    }
+
+    /**
+     * Returns true if a response message has been explicitly set on this exchange.
+     * <p>
+     * This is a non-deprecated equivalent of {@link Exchange#hasOut()}, provided as a utility until a proper
+     * {@code hasResponse()} method is added to the {@link Exchange} API.
+     */
+    public static boolean hasResponse(Exchange exchange) {
+        return exchange.getIn() != exchange.getMessage();
+    }
+
+    /**
+     * Returns the response message if one has been explicitly set, null otherwise. Unlike the deprecated
+     * {@link Exchange#getOut()}, this does NOT lazily create an empty message.
+     * <p>
+     * This is provided as a utility until a proper {@code getResponse()} method is added to the {@link Exchange} API.
+     */
+    public static Message getResponse(Exchange exchange) {
+        return hasResponse(exchange) ? exchange.getMessage() : null;
+    }
+
+    /**
+     * Sets the response message on this exchange. Unlike {@link Exchange#getOut()} which lazily creates an empty
+     * message on read, this makes response creation explicit.
+     * <p>
+     * This is a non-deprecated equivalent of {@link Exchange#setOut(Message)}, provided as a utility until a proper
+     * {@code setResponse(Message)} method is added to the {@link Exchange} API.
+     */
+    @SuppressWarnings("deprecation")
+    public static void setResponse(Exchange exchange, Message response) {
+        exchange.setOut(response);
+    }
+
+    /**
+     * Creates a new empty response message on the exchange and returns it. If a response already exists, returns it
+     * as-is. This is the non-deprecated equivalent of the lazy-creation side effect of {@link Exchange#getOut()}.
+     * <p>
+     * Typical usage:
+     *
+     * <pre>
+     * Message response = ExchangeHelper.createResponse(exchange);
+     * response.setBody(result);
+     * </pre>
+     */
+    public static Message createResponse(Exchange exchange) {
+        if (!hasResponse(exchange)) {
+            setResponse(exchange, new DefaultMessage(exchange.getContext()));
+        }
+        return exchange.getMessage();
+    }
+
+    /**
+     * Creates a response message by copying the input message (headers, body, attachments) and returns it. Use this
+     * when the response should inherit the input message's headers. If a response already exists, returns it as-is.
+     * <p>
+     * Typical usage:
+     *
+     * <pre>
+     * Message response = ExchangeHelper.createResponseFromInput(exchange);
+     * response.setBody(result);
+     * </pre>
+     */
+    public static Message createResponseFromInput(Exchange exchange) {
+        if (!hasResponse(exchange)) {
+            setResponse(exchange, exchange.getIn().copy());
+        }
+        return exchange.getMessage();
     }
 
 }

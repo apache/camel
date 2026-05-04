@@ -59,7 +59,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
@@ -304,12 +303,8 @@ public class NettyProducer extends DefaultAsyncProducer {
                 @Override
                 public void onComplete(Exchange exchange) {
                     // should channel be closed after complete?
-                    Boolean close;
-                    if (ExchangeHelper.isOutCapable(exchange)) {
-                        close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-                    } else {
-                        close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-                    }
+                    Boolean close
+                            = exchange.getMessage().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
 
                     // should we disconnect, the header can override the configuration
                     boolean disconnect = getConfiguration().isDisconnect();
@@ -393,13 +388,8 @@ public class NettyProducer extends DefaultAsyncProducer {
                 if (!configuration.isSync()) {
                     try {
                         // should channel be closed after complete?
-                        Boolean close;
-                        if (ExchangeHelper.isOutCapable(exchange)) {
-                            close = exchange.getOut().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE,
-                                    Boolean.class);
-                        } else {
-                            close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
-                        }
+                        Boolean close = exchange.getMessage()
+                                .getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
 
                         // should we disconnect, the header can override the configuration
                         boolean disconnect = getConfiguration().isDisconnect();
@@ -433,7 +423,7 @@ public class NettyProducer extends DefaultAsyncProducer {
      * @throws Exception is thrown if error getting the request body
      */
     protected Object getRequestBody(Exchange exchange) throws Exception {
-        Object body = NettyPayloadHelper.getIn(getEndpoint(), exchange);
+        Object body = NettyPayloadHelper.getRequestPayload(getEndpoint(), exchange);
         if (body == null) {
             return null;
         }

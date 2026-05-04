@@ -28,6 +28,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
@@ -170,7 +171,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
         cxfExchange.put(org.apache.camel.Exchange.class, camelExchange);
 
         if (response != null) {
-            camelExchange.getOut().setBody(response);
+            ExchangeHelper.createResponse(camelExchange).setBody(response);
         }
         CxfRsBinding binding = endpoint.getBinding();
         binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);

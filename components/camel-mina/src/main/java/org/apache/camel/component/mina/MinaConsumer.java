@@ -30,7 +30,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
@@ -385,7 +384,7 @@ public class MinaConsumer extends DefaultConsumer {
         exchange.getIn().setHeader(MinaConstants.MINA_IOSESSION, session);
         exchange.getIn().setHeader(MinaConstants.MINA_LOCAL_ADDRESS, session.getLocalAddress());
         exchange.getIn().setHeader(MinaConstants.MINA_REMOTE_ADDRESS, session.getRemoteAddress());
-        MinaPayloadHelper.setIn(exchange, payload);
+        MinaPayloadHelper.setPayload(exchange, payload);
         return exchange;
     }
 
@@ -440,12 +439,7 @@ public class MinaConsumer extends DefaultConsumer {
                 // If there's a response to send, send it.
                 //
                 boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
-                Object response;
-                if (exchange.hasOut()) {
-                    response = MinaPayloadHelper.getOut(getEndpoint(), exchange);
-                } else {
-                    response = MinaPayloadHelper.getIn(getEndpoint(), exchange);
-                }
+                Object response = MinaPayloadHelper.getResponsePayload(getEndpoint(), exchange);
 
                 boolean failed = exchange.isFailed();
                 if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
@@ -453,7 +447,7 @@ public class MinaConsumer extends DefaultConsumer {
                         response = exchange.getException();
                     } else {
                         // failed and no exception, must be a fault
-                        response = exchange.getOut().getBody();
+                        response = exchange.getMessage().getBody();
                     }
                 }
 
@@ -466,12 +460,8 @@ public class MinaConsumer extends DefaultConsumer {
                 }
 
                 // should session be closed after complete?
-                Boolean close;
-                if (ExchangeHelper.isOutCapable(exchange)) {
-                    close = exchange.getOut().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-                } else {
-                    close = exchange.getIn().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-                }
+                Boolean close
+                        = exchange.getMessage().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
 
                 // should we disconnect, the header can override the configuration
                 if (close != null) {

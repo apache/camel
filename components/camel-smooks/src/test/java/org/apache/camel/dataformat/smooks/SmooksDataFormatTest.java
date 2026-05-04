@@ -76,7 +76,7 @@ public class SmooksDataFormatTest extends CamelTestSupport {
 
         unmarshalProcessor.process(exchange);
 
-        assertEquals(Customer.class, exchange.getOut().getBody().getClass());
+        assertEquals(Customer.class, exchange.getMessage().getBody().getClass());
     }
 
     @Test
@@ -96,8 +96,9 @@ public class SmooksDataFormatTest extends CamelTestSupport {
 
         marshalProcessor.process(exchange);
 
-        assertFalse(DiffBuilder.compare(getCustomerXml(EXPECTED_CUSTOMER_XML)).withTest(exchange.getOut().getBody(String.class))
-                .ignoreComments().ignoreWhitespace().build().hasDifferences());
+        assertFalse(
+                DiffBuilder.compare(getCustomerXml(EXPECTED_CUSTOMER_XML)).withTest(exchange.getMessage().getBody(String.class))
+                        .ignoreComments().ignoreWhitespace().build().hasDifferences());
     }
 
     @Test

@@ -35,6 +35,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.jackrabbit.util.Text;
 
@@ -66,7 +67,7 @@ public class JcrProducer extends DefaultProducer {
                     }
                 }
                 node.addMixin("mix:referenceable");
-                exchange.getOut().setBody(node.getIdentifier());
+                ExchangeHelper.createResponse(exchange).setBody(node.getIdentifier());
                 session.save();
             } else if (JcrConstants.JCR_GET_BY_ID.equals(operation)) {
                 Node node = session.getNodeByIdentifier(exchange.getIn()

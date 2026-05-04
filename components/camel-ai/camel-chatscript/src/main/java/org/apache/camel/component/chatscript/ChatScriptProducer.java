@@ -50,7 +50,7 @@ public class ChatScriptProducer extends DefaultProducer {
         inputMessage.setBotName(endpoint.getBotName());
         String response = this.endpoint.getBot().sendChat(inputMessage);
         inputMessage.setReply(response);
-        exchange.getOut().setBody(inputMessage);
+        exchange.getMessage().setBody(inputMessage);
     }
 
     private ChatScriptMessage buildMessage(Object body) throws Exception {

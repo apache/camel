@@ -18,7 +18,6 @@ package org.apache.camel.component.jooq;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.jooq.Configuration;
@@ -71,8 +70,7 @@ public class JooqProducer extends DefaultProducer {
                     result = context.fetch(querySQL);
                 }
 
-                Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
-                target.setBody(result);
+                exchange.getMessage().setBody(result);
                 break;
             case NONE:
                 DSLContext context = DSL.using(dbConfig);

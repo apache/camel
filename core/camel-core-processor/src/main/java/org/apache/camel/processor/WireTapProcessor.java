@@ -39,6 +39,7 @@ import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -253,11 +254,7 @@ public class WireTapProcessor extends BaseProcessorSupport
         target.removeProperty(ExchangePropertyKey.CORRELATION_ID);
         // set MEP to InOnly as this wire tap is a fire and forget
         target.setPattern(ExchangePattern.InOnly);
-        // move OUT to IN if needed
-        if (target.hasOut()) {
-            target.setIn(target.getOut());
-            target.setOut(null);
-        }
+        ExchangeHelper.prepareOutToIn(target);
         // remove STREAM_CACHE_UNIT_OF_WORK property because this wire tap will
         // close its own created stream cache(s)
         target.removeProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK);

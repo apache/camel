@@ -65,12 +65,10 @@ public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4
 
                 // producer returns a single response, even for methods with
                 // List return types
-                exchange.getOut().setBody(response);
-                // copy headers
-                exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                exchange.getMessage().setBody(response);
 
                 // Add http response headers
-                exchange.getOut().setHeader(Olingo4Constants.FULL_RESPONSE_HTTP_HEADERS, responseHeaders);
+                exchange.getMessage().setHeader(Olingo4Constants.FULL_RESPONSE_HTTP_HEADERS, responseHeaders);
 
                 interceptResult(response, exchange);
 

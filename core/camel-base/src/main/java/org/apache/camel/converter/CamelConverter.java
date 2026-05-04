@@ -18,9 +18,9 @@ package org.apache.camel.converter;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * Some useful converters for Camel APIs such as to convert a {@link Predicate} or {@link Expression} to a
@@ -40,9 +40,7 @@ public final class CamelConverter {
         return exchange -> {
             // the response from a expression should be set on OUT
             Object answer = expression.evaluate(exchange, Object.class);
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            out.setBody(answer);
+            ExchangeHelper.createResponseFromInput(exchange).setBody(answer);
         };
     }
 
@@ -51,9 +49,7 @@ public final class CamelConverter {
         return exchange -> {
             // the response from a predicate should be set on OUT
             boolean answer = predicate.matches(exchange);
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            out.setBody(answer);
+            ExchangeHelper.createResponseFromInput(exchange).setBody(answer);
         };
     }
 

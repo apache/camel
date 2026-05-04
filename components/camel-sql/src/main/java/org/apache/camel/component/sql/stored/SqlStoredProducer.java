@@ -80,24 +80,19 @@ public class SqlStoredProducer extends DefaultProducer {
                     exchange.getIn().setHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, total);
                 } else {
                     Object result = ps.executeStatement();
-                    // preserve headers first, so we can override the SQL_ROW_COUNT and SQL_UPDATE_COUNT headers
-                    // if statement returns them
-                    exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
 
                     if (result != null) {
-                        if (getEndpoint().isNoop()) {
-                            exchange.getOut().setBody(exchange.getIn().getBody());
-                        } else if (getEndpoint().getOutputHeader() != null) {
-                            exchange.getOut().setBody(exchange.getIn().getBody());
-                            exchange.getOut().setHeader(getEndpoint().getOutputHeader(), result);
-                        } else {
-                            exchange.getOut().setBody(result);
+                        if (!getEndpoint().isNoop()) {
+                            if (getEndpoint().getOutputHeader() != null) {
+                                exchange.getMessage().setHeader(getEndpoint().getOutputHeader(), result);
+                            } else {
+                                exchange.getMessage().setBody(result);
+                            }
                         }
                     }
-                    // for noop=true we still want to enrich with the headers
 
                     if (ps.getUpdateCount() != null) {
-                        exchange.getOut().setHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, ps.getUpdateCount());
+                        exchange.getMessage().setHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, ps.getUpdateCount());
                     }
                 }
             }

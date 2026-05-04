@@ -490,7 +490,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
 
     private static void prepareResult(Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
-            exchange.getOut().copyFrom(exchange.getIn());
+            ExchangeHelper.createResponseFromInput(exchange);
         }
     }
 
@@ -638,7 +638,7 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 // and therefore we should set an empty body to indicate this fact
                 // but keep headers/attachments as we want to propagate those
                 oldExchange.getIn().setBody(null);
-                oldExchange.setOut(null);
+                ExchangeHelper.setResponse(oldExchange, null);
             }
             return oldExchange;
         }

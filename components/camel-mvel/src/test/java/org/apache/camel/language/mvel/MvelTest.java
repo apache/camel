@@ -35,12 +35,14 @@ public class MvelTest extends LanguageTestSupport {
         assertExpression("request.headers.foo", "abc");
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetOutFalseKeepsNullOutMessage() {
         assertExpression("exchange.hasOut()", false);
         assertFalse(exchange.hasOut());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testResponseCreatesOutMessage() {
         assertExpression("response.body", null);

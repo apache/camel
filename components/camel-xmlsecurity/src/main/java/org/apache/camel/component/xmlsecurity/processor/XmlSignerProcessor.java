@@ -196,30 +196,21 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        try {
-            LOG.debug("XML signature generation started using algorithm {} and canonicalization method {}", getConfiguration()
-                    .getSignatureAlgorithm(), getConfiguration().getCanonicalizationMethod().getAlgorithm());
+        LOG.debug("XML signature generation started using algorithm {} and canonicalization method {}", getConfiguration()
+                .getSignatureAlgorithm(), getConfiguration().getCanonicalizationMethod().getAlgorithm());
 
-            // lets setup the out message before we invoke the signing
-            // so that it can mutate it if necessary
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
+        Message out = exchange.getMessage();
 
-            Document outputDoc = sign(out);
+        Document outputDoc = sign(out);
 
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            XmlSignatureHelper.transformNonTextNodeToOutputStream(outputDoc, outStream, omitXmlDeclaration(out),
-                    getConfiguration().getOutputXmlEncoding());
-            byte[] data = outStream.toByteArray();
-            out.setBody(data);
-            setOutputEncodingToMessageHeader(out);
-            clearMessageHeaders(out);
-            LOG.debug("XML signature generation finished");
-        } catch (Exception e) {
-            // remove OUT message, as an exception occurred
-            exchange.setOut(null);
-            throw e;
-        }
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        XmlSignatureHelper.transformNonTextNodeToOutputStream(outputDoc, outStream, omitXmlDeclaration(out),
+                getConfiguration().getOutputXmlEncoding());
+        byte[] data = outStream.toByteArray();
+        out.setBody(data);
+        setOutputEncodingToMessageHeader(out);
+        clearMessageHeaders(out);
+        LOG.debug("XML signature generation finished");
     }
 
     protected Document sign(final Message out) throws Exception {

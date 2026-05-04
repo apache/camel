@@ -50,7 +50,7 @@ public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 Message input = exchange.getIn().getBody(Message.class);
-                                exchange.getOut().setBody(input.generateACK());
+                                exchange.getMessage().setBody(input.generateACK());
                             }
                         }).to("mock:result");
             }

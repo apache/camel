@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.ExchangeHelper;
 import org.quickfixj.QFJException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,7 @@ public class QuickfixjConsumer extends DefaultConsumer {
             try {
                 getProcessor().process(exchange);
 
-                if (exchange.getPattern().isOutCapable() && exchange.hasOut()) {
+                if (exchange.getPattern().isOutCapable() && ExchangeHelper.hasResponse(exchange)) {
                     sendOutMessage(exchange);
                 }
             } catch (Exception e) {

@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
@@ -191,7 +192,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         exchange.setPattern(ExchangePattern.InOut);
         exchange.getIn().setBody("bar");
         exchange.getIn().setHeader("quote", "Camel rocks");
-        assertFalse(exchange.hasOut());
+        assertFalse(ExchangeHelper.hasResponse(exchange));
 
         Map<?, ?> map = ExchangeHelper.createVariableMap(exchange, true);
 
@@ -210,7 +211,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
 
         // but the Exchange does still not have an OUT message to avoid
         // causing side effects with the createVariableMap method
-        assertFalse(exchange.hasOut());
+        assertFalse(ExchangeHelper.hasResponse(exchange));
     }
 
     @Test
@@ -247,6 +248,76 @@ public class ExchangeHelperTest extends ContextTestSupport {
         exchange.getMessage().setBody(null);
         String third = ExchangeHelper.getBodyAndResetStreamCache(exchange, String.class);
         assertNull(third);
+    }
+
+    @Test
+    public void testHasResponseNoOut() {
+        assertFalse(ExchangeHelper.hasResponse(exchange));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testHasResponseWithOut() {
+        exchange.setOut(exchange.getIn().copy());
+        assertTrue(ExchangeHelper.hasResponse(exchange));
+    }
+
+    @Test
+    public void testGetResponseNoOut() {
+        assertNull(ExchangeHelper.getResponse(exchange));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testGetResponseWithOut() {
+        exchange.setOut(exchange.getIn().copy());
+        assertNotNull(ExchangeHelper.getResponse(exchange));
+        assertSame(exchange.getMessage(), ExchangeHelper.getResponse(exchange));
+    }
+
+    @Test
+    public void testSetResponseCreatesOut() {
+        assertFalse(ExchangeHelper.hasResponse(exchange));
+        ExchangeHelper.setResponse(exchange, exchange.getIn().copy());
+        assertTrue(ExchangeHelper.hasResponse(exchange));
+    }
+
+    @Test
+    public void testSetResponseNullClearsOut() {
+        ExchangeHelper.setResponse(exchange, exchange.getIn().copy());
+        assertTrue(ExchangeHelper.hasResponse(exchange));
+        ExchangeHelper.setResponse(exchange, null);
+        assertFalse(ExchangeHelper.hasResponse(exchange));
+    }
+
+    @Test
+    public void testGetResponseDoesNotCreateOut() {
+        // unlike getOut(), getResponse() must NOT lazily create a message
+        assertNull(ExchangeHelper.getResponse(exchange));
+        assertFalse(ExchangeHelper.hasResponse(exchange));
+    }
+
+    @Test
+    public void testCreateResponse() {
+        assertFalse(ExchangeHelper.hasResponse(exchange));
+        Message response = ExchangeHelper.createResponse(exchange);
+        assertNotNull(response);
+        assertTrue(ExchangeHelper.hasResponse(exchange));
+        assertSame(response, exchange.getMessage());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    public void testCreateResponseFromInput() {
+        exchange.getIn().setBody("hello");
+        exchange.getIn().setHeader("myHeader", "myValue");
+        assertFalse(ExchangeHelper.hasResponse(exchange));
+        Message response = ExchangeHelper.createResponseFromInput(exchange);
+        assertNotNull(response);
+        assertTrue(ExchangeHelper.hasResponse(exchange));
+        assertSame(response, exchange.getMessage());
+        assertEquals("hello", response.getBody());
+        assertEquals("myValue", response.getHeader("myHeader"));
     }
 
     @Override

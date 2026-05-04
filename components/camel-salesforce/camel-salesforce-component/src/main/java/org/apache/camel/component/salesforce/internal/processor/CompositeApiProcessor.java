@@ -108,13 +108,12 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             if (!responseBody.isPresent()) {
                 exchange.setException(exception);
             } else {
-                final Message in = exchange.getIn();
-                final Message out = exchange.getOut();
+                final Message message = exchange.getMessage();
 
                 final SObjectBatchResponse response = responseBody.get();
 
-                out.copyFromWithNewBody(in, response);
-                out.getHeaders().putAll(headers);
+                message.setBody(response);
+                message.getHeaders().putAll(headers);
             }
         } finally {
             // notify callback that exchange is done
@@ -129,13 +128,12 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             if (!responseBody.isPresent()) {
                 exchange.setException(exception);
             } else {
-                final Message in = exchange.getIn();
-                final Message out = exchange.getOut();
+                final Message message = exchange.getMessage();
 
                 final InputStream response = responseBody.get();
 
-                out.copyFromWithNewBody(in, response);
-                out.getHeaders().putAll(headers);
+                message.setBody(response);
+                message.getHeaders().putAll(headers);
             }
         } finally {
             // notify callback that exchange is done
@@ -150,13 +148,12 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             if (!responseBody.isPresent()) {
                 exchange.setException(exception);
             } else {
-                final Message in = exchange.getIn();
-                final Message out = exchange.getOut();
+                final Message message = exchange.getMessage();
 
                 final SObjectCompositeResponse response = responseBody.get();
 
-                out.copyFromWithNewBody(in, response);
-                out.getHeaders().putAll(headers);
+                message.setBody(response);
+                message.getHeaders().putAll(headers);
             }
         } finally {
             // notify callback that exchange is done
@@ -172,11 +169,9 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
             if (!responseBody.isPresent()) {
                 exchange.setException(exception);
             } else {
+                final Message message = exchange.getMessage();
 
-                final Message in = exchange.getIn();
-                final Message out = exchange.getOut();
-
-                final SObjectTree tree = in.getBody(SObjectTree.class);
+                final SObjectTree tree = message.getBody(SObjectTree.class);
 
                 final SObjectTreeResponse response = responseBody.get();
 
@@ -196,8 +191,8 @@ public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
                     exchange.setException(withErrors);
                 }
 
-                out.copyFromWithNewBody(in, tree);
-                out.getHeaders().putAll(headers);
+                message.setBody(tree);
+                message.getHeaders().putAll(headers);
             }
         } finally {
             // notify callback that exchange is done

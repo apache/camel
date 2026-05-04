@@ -425,7 +425,7 @@ public class SmooksProcessorTest extends CamelTestSupport {
         context.start();
         Exchange response = template.request("direct:b",
                 exchange -> exchange.getIn().setBody(new StringSource("<coord x='1234' y='98765.76' />")));
-        Map javaResult = response.getOut().getBody(Map.class);
+        Map javaResult = response.getMessage().getBody(Map.class);
         Integer x = (Integer) javaResult.get("x");
         assertEquals(1234, (int) x);
         Double y = (Double) javaResult.get("y");
