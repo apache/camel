@@ -22,6 +22,8 @@ Java object serialization is a recurring source of security issues and therefore
 These converters are not used at all by Camel itself. To restore compatibility then end users can add these type converters back as custom converters in their own Camel applications.
 However, using Java serialization is discouraged and highly recommend to use other means.
 
+Removed `org.apache.camel.spi.ReifierStrategy` which is no longer in use by Camel and can safely be removed.
+
 === camel-yaml-dsl
 
 A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic

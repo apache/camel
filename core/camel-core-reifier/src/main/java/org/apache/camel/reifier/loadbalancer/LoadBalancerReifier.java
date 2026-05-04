@@ -31,7 +31,6 @@ import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.reifier.AbstractReifier;
-import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.util.StringHelper;
 
 public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends AbstractReifier {
@@ -50,9 +49,6 @@ public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends Abstr
     public static void registerReifier(
             Class<?> processorClass,
             BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> creator) {
-        if (LOAD_BALANCERS.isEmpty()) {
-            ReifierStrategy.addReifierClearer(LoadBalancerReifier::clearReifiers);
-        }
         LOAD_BALANCERS.put(processorClass, creator);
     }
 
