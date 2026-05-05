@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -783,10 +784,16 @@ public final class RouteDefinitionHelper {
             }
         }
 
-        List<ProcessorDefinition<?>> children = processor.getOutputs();
-        if (children != null && !children.isEmpty()) {
-            for (ProcessorDefinition child : children) {
-                forceAssignIds(context, child);
+        for (NamedNode child : ((NamedNode) processor).getChildren()) {
+            if (child instanceof ProcessorDefinition<?> pd) {
+                forceAssignIds(context, pd);
+            } else if (child instanceof OptionalIdentifiedDefinition<?> oid) {
+                oid.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
+                for (NamedNode grandchild : child.getChildren()) {
+                    if (grandchild instanceof ProcessorDefinition<?> gpd) {
+                        forceAssignIds(context, gpd);
+                    }
+                }
             }
         }
     }

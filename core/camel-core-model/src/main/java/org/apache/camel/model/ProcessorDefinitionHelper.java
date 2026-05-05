@@ -208,16 +208,33 @@ public final class ProcessorDefinitionHelper {
             }
         }
 
-        // traverse outputs and recursive children as well
-        List<ProcessorDefinition<?>> children = node.getOutputs();
-        if (children != null && !children.isEmpty()) {
-            for (ProcessorDefinition<?> child : children) {
-                // traverse children also
-                gatherAllNodeIds(child, set, onlyCustomId, includeAbstract);
+        // traverse children (including non-ProcessorDefinition nodes like WhenDefinition, OtherwiseDefinition)
+        for (NamedNode child : node.getChildren()) {
+            if (child instanceof ProcessorDefinition<?> pd) {
+                gatherAllNodeIds(pd, set, onlyCustomId, includeAbstract);
+            } else {
+                gatherAllNodeIdsFromNode(child, set, onlyCustomId);
             }
         }
 
         return set;
+    }
+
+    private static void gatherAllNodeIdsFromNode(NamedNode node, List<String> set, boolean onlyCustomId) {
+        if (node instanceof OptionalIdentifiedDefinition<?> oid) {
+            if (oid.getId() != null) {
+                if (!onlyCustomId || oid.hasCustomIdAssigned()) {
+                    set.add(oid.getId());
+                }
+            }
+        }
+        for (NamedNode child : node.getChildren()) {
+            if (child instanceof ProcessorDefinition<?> pd) {
+                gatherAllNodeIds(pd, set, onlyCustomId, false);
+            } else {
+                gatherAllNodeIdsFromNode(child, set, onlyCustomId);
+            }
+        }
     }
 
     /**
@@ -239,12 +256,27 @@ public final class ProcessorDefinitionHelper {
             }
         }
 
-        // traverse outputs and recursive children as well
-        List<ProcessorDefinition<?>> children = node.getOutputs();
-        if (children != null && !children.isEmpty()) {
-            for (ProcessorDefinition<?> child : children) {
-                // traverse children also
-                resetAllAutoAssignedNodeIds(child);
+        // traverse children (including non-ProcessorDefinition nodes like WhenDefinition, OtherwiseDefinition)
+        for (NamedNode child : node.getChildren()) {
+            if (child instanceof ProcessorDefinition<?> pd) {
+                resetAllAutoAssignedNodeIds(pd);
+            } else {
+                resetAllAutoAssignedNodeIdsFromNode(child);
+            }
+        }
+    }
+
+    private static void resetAllAutoAssignedNodeIdsFromNode(NamedNode node) {
+        if (node instanceof OptionalIdentifiedDefinition<?> oid) {
+            if (oid.getId() != null && !oid.hasCustomIdAssigned()) {
+                oid.setId(null);
+            }
+        }
+        for (NamedNode child : node.getChildren()) {
+            if (child instanceof ProcessorDefinition<?> pd) {
+                resetAllAutoAssignedNodeIds(pd);
+            } else {
+                resetAllAutoAssignedNodeIdsFromNode(child);
             }
         }
     }
@@ -264,13 +296,12 @@ public final class ProcessorDefinitionHelper {
         }
 
         // start from level 1
-        doFindType(outputs, type, found, 1, maxDeep);
+        doFindTypeInNodes(outputs, type, found, 1, maxDeep);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static <
-            T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int current, int maxDeep) {
-        if (outputs == null || outputs.isEmpty()) {
+    private static <T> void doFindTypeInNodes(
+            List<? extends NamedNode> nodes, Class<T> type, List<T> found, int current, int maxDeep) {
+        if (nodes == null || nodes.isEmpty()) {
             return;
         }
 
@@ -279,104 +310,14 @@ public final class ProcessorDefinitionHelper {
             return;
         }
 
-        for (ProcessorDefinition out : outputs) {
-
-            // send is much common
-            if (out instanceof SendDefinition send) {
-                List<ProcessorDefinition<?>> children = send.getOutputs();
-                doFindType(children, type, found, ++current, maxDeep);
+        for (NamedNode node : nodes) {
+            if (type.isInstance(node)) {
+                found.add(type.cast(node));
             }
-
-            // special for choice
-            if (out instanceof ChoiceDefinition choice) {
-                // ensure to add ourself if we match also
-                if (type.isInstance(choice)) {
-                    found.add((T) choice);
-                }
-
-                // only look at when/otherwise if current < maxDeep (or max deep
-                // is disabled)
-                if (maxDeep < 0 || current < maxDeep) {
-                    for (WhenDefinition when : choice.getWhenClauses()) {
-                        if (type.isInstance(when)) {
-                            found.add((T) when);
-                        }
-                        List<ProcessorDefinition<?>> children = when.getOutputs();
-                        doFindType(children, type, found, ++current, maxDeep);
-                    }
-
-                    // otherwise is optional
-                    if (choice.getOtherwise() != null) {
-                        OtherwiseDefinition other = choice.getOtherwise();
-                        if (type.isInstance(other)) {
-                            found.add((T) other);
-                        }
-                        List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
-                        doFindType(children, type, found, ++current, maxDeep);
-                    }
-                }
-
-                // do not check children as we already did that
-                continue;
-            }
-
-            // special for try ... catch ... finally
-            if (out instanceof TryDefinition doTry) {
-                // ensure to add ourself if we match also
-                if (type.isInstance(doTry)) {
-                    found.add((T) doTry);
-                }
-
-                // only look at children if current < maxDeep (or max deep is
-                // disabled)
-                if (maxDeep < 0 || current < maxDeep) {
-                    List<ProcessorDefinition<?>> doTryOut = doTry.getOutputsWithoutCatches();
-                    doFindType(doTryOut, type, found, ++current, maxDeep);
-
-                    List<CatchDefinition> doTryCatch = doTry.getCatchClauses();
-                    for (CatchDefinition doCatch : doTryCatch) {
-                        // ensure to add ourself if we match also
-                        if (type.isInstance(doCatch)) {
-                            found.add((T) doCatch);
-                        }
-                        doFindType(doCatch.getOutputs(), type, found, ++current, maxDeep);
-                    }
-
-                    if (doTry.getFinallyClause() != null) {
-                        // ensure to add ourself if we match also
-                        FinallyDefinition doFinally = doTry.getFinallyClause();
-                        if (type.isInstance(doFinally)) {
-                            found.add((T) doFinally);
-                        }
-                        doFindType(doFinally.getOutputs(), type, found, ++current, maxDeep);
-                    }
-                }
-
-                // do not check children as we already did that
-                continue;
-            }
-
-            // special for some types which has special outputs
-            if (out instanceof OutputDefinition outDef) {
-                // ensure to add ourself if we match also
-                if (type.isInstance(outDef)) {
-                    found.add((T) outDef);
-                }
-
-                List<ProcessorDefinition<?>> outDefOut = outDef.getOutputs();
-                doFindType(outDefOut, type, found, ++current, maxDeep);
-
-                // do not check children as we already did that
-                continue;
-            }
-
-            if (type.isInstance(out)) {
-                found.add((T) out);
-            }
-
-            // try children as well
-            List<ProcessorDefinition<?>> children = out.getOutputs();
-            doFindType(children, type, found, ++current, maxDeep);
+            // structural nodes (non-ProcessorDefinition children like WhenDefinition, OtherwiseDefinition)
+            // are transparent for depth counting — they don't consume a maxDeep level
+            int childLevel = node instanceof ProcessorDefinition ? current + 1 : current;
+            doFindTypeInNodes(node.getChildren(), type, found, childLevel, maxDeep);
         }
     }
 
