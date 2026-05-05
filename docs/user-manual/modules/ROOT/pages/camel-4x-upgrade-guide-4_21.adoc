@@ -202,6 +202,10 @@ Camel Guava EventBus was deprecated with Camel 4.6. The component is now removed
 
 Camel Grape was deprecated with Camel 4.1. The component is now removed.
 
+=== camel-elytron removal
+
+Camel Grape was deprecated with Camel 4.0. The component is now removed.
+
 === camel-telemetry
 
 If you have custom telemetry implementations, the following interfaces have changed:

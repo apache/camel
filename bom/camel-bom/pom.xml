@@ -829,11 +829,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-elytron</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-endpointdsl</artifactId>
         <version>4.21.0-SNAPSHOT</version>
       </dependency>
