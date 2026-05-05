@@ -83,7 +83,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
                             + " a conservative default filter denying java.net.** and otherwise allowing java.**, javax.**"
                             + " and org.apache.camel.** is applied.")
     private String deserializationFilter;
-    @Metadata(label = "advanced",
+    @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether to enable sending and receiving JMS ObjectMessage."
                             + " By default this is disabled because Java object serialization is a known source of security"
                             + " vulnerabilities. Enable this option only if you trust the source of the messages and need"
