@@ -26,6 +26,7 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.NamedNode;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -58,6 +59,11 @@ public class OtherwiseDefinition extends OptionalIdentifiedDefinition<OtherwiseD
     @Override
     public OtherwiseDefinition copyDefinition() {
         return new OtherwiseDefinition(this);
+    }
+
+    @Override
+    public List<NamedNode> getChildren() {
+        return new ArrayList<>(outputs);
     }
 
     public List<ProcessorDefinition<?>> getOutputs() {

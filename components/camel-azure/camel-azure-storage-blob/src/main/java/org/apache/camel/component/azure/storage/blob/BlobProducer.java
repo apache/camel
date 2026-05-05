@@ -147,6 +147,12 @@ public class BlobProducer extends DefaultProducer {
             case setBlobImmutabilityPolicy:
                 setResponse(exchange, getBlobOperations(exchange).setBlobImmutabilityPolicy(exchange));
                 break;
+            case undeleteBlob:
+                setResponse(exchange, getBlobOperations(exchange).undeleteBlob(exchange));
+                break;
+            case setBlobTier:
+                setResponse(exchange, getBlobOperations(exchange).setBlobTier(exchange));
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }

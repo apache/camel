@@ -3174,6 +3174,8 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("Skip starting routes as CamelContext has been configured with autoStartup=false");
         }
 
+        // dump routes when as we have model before creating the runtime models, which can help during troubleshooting
+        // when routes have problems starting
         if (getDumpRoutes() != null && !"false".equals(getDumpRoutes())) {
             doDumpRoutes();
         }

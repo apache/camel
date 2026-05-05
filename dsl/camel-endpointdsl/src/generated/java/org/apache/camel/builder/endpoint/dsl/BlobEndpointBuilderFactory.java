@@ -4515,6 +4515,22 @@ public interface BlobEndpointBuilderFactory {
         public String azureStorageBlobImmutabilityPolicyMode() {
             return "CamelAzureStorageBlobImmutabilityPolicyMode";
         }
+        /**
+         * (setBlobTier) The rehydrate priority used when rehydrating a blob
+         * from the archive tier: Standard or High. Ignored when changing tier
+         * between non-archive tiers.
+         * 
+         * The option is a: {@code
+         * com.azure.storage.blob.models.RehydratePriority} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobRehydratePriority}.
+         */
+        public String azureStorageBlobRehydratePriority() {
+            return "CamelAzureStorageBlobRehydratePriority";
+        }
     }
     static BlobEndpointBuilder endpointBuilder(String componentName, String path) {
         class BlobEndpointBuilderImpl extends AbstractEndpointBuilder implements BlobEndpointBuilder, AdvancedBlobEndpointBuilder {

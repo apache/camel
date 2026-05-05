@@ -94,11 +94,8 @@ public class AtomGoodBlogsRepositoryItempotencyTest {
         // There should be at least two good blog entries from the feed
         mock.expectedMessageCount(7);
 
-        // Make sure that the component has time for several reads
-        Thread.sleep(3000);
-
         // Assert
-        mock.assertIsSatisfied(3000);
+        mock.assertIsSatisfied(10000);
 
         // stop Camel after use
         context.stop();

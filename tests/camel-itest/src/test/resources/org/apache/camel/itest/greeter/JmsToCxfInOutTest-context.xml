@@ -56,6 +56,7 @@
         </bean>
       </property>
       <property name="deserializationFilter" value="org.apache.cxf.*"/>
+      <property name="objectMessageEnabled" value="true"/>
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">

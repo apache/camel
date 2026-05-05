@@ -27,6 +27,18 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalBodyProperty": target.getConfiguration().setAdditionalBodyProperty(property(camelContext, java.util.Map.class, value)); return true;
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiolanguage":
+        case "audioLanguage": target.getConfiguration().setAudioLanguage(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiomodel":
+        case "audioModel": target.getConfiguration().setAudioModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "audioprompt":
+        case "audioPrompt": target.getConfiguration().setAudioPrompt(property(camelContext, java.lang.String.class, value)); return true;
+        case "audioresponseformat":
+        case "audioResponseFormat": target.getConfiguration().setAudioResponseFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "audiotemperature":
+        case "audioTemperature": target.getConfiguration().setAudioTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "audiotimestampgranularities":
+        case "audioTimestampGranularities": target.getConfiguration().setAudioTimestampGranularities(property(camelContext, java.lang.String.class, value)); return true;
         case "autotoolexecution":
         case "autoToolExecution": target.getConfiguration().setAutoToolExecution(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
@@ -110,6 +122,18 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalBodyProperty": return java.util.Map.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "audiolanguage":
+        case "audioLanguage": return java.lang.String.class;
+        case "audiomodel":
+        case "audioModel": return java.lang.String.class;
+        case "audioprompt":
+        case "audioPrompt": return java.lang.String.class;
+        case "audioresponseformat":
+        case "audioResponseFormat": return java.lang.String.class;
+        case "audiotemperature":
+        case "audioTemperature": return java.lang.Double.class;
+        case "audiotimestampgranularities":
+        case "audioTimestampGranularities": return java.lang.String.class;
         case "autotoolexecution":
         case "autoToolExecution": return boolean.class;
         case "baseurl":
@@ -194,6 +218,18 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "additionalBodyProperty": return target.getConfiguration().getAdditionalBodyProperty();
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
+        case "audiolanguage":
+        case "audioLanguage": return target.getConfiguration().getAudioLanguage();
+        case "audiomodel":
+        case "audioModel": return target.getConfiguration().getAudioModel();
+        case "audioprompt":
+        case "audioPrompt": return target.getConfiguration().getAudioPrompt();
+        case "audioresponseformat":
+        case "audioResponseFormat": return target.getConfiguration().getAudioResponseFormat();
+        case "audiotemperature":
+        case "audioTemperature": return target.getConfiguration().getAudioTemperature();
+        case "audiotimestampgranularities":
+        case "audioTimestampGranularities": return target.getConfiguration().getAudioTimestampGranularities();
         case "autotoolexecution":
         case "autoToolExecution": return target.getConfiguration().isAutoToolExecution();
         case "baseurl":

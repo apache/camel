@@ -6510,50 +6510,6 @@ public class StaticEndpointBuilders {
         return GoogleCloudVisionEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * Syntax: <code>grape:defaultCoordinates</code>
-     * 
-     * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
-     * 
-     * @param path defaultCoordinates
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String path) {
-        return grape("grape", path);
-    }
-    /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * Syntax: <code>grape:defaultCoordinates</code>
-     * 
-     * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path defaultCoordinates
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String componentName, String path) {
-        return GrapeEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
      * 
@@ -6648,48 +6604,6 @@ public class StaticEndpointBuilders {
      */
     public static GrpcEndpointBuilderFactory.GrpcEndpointBuilder grpc(String componentName, String path) {
         return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * Syntax: <code>guava-eventbus:eventBusRef</code>
-     * 
-     * Path parameter: eventBusRef
-     * To lookup the Guava EventBus from the registry with the given name
-     * 
-     * @param path eventBusRef
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String path) {
-        return guavaEventbus("guava-eventbus", path);
-    }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * Syntax: <code>guava-eventbus:eventBusRef</code>
-     * 
-     * Path parameter: eventBusRef
-     * To lookup the Guava EventBus from the registry with the given name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path eventBusRef
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String componentName, String path) {
-        return GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Hashicorp Vault (camel-hashicorp-vault)
@@ -12546,7 +12460,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion and embeddings.
+     * OpenAI endpoint for chat completion, embeddings, and audio transcription.
      * 
      * Category: ai
      * Since: 4.17
@@ -12555,10 +12469,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'embeddings', or
-     * 'tool-execution'
-     * There are 3 enums and the value can be one of: chat-completion,
-     * embeddings, tool-execution
+     * The operation to perform: 'chat-completion', 'embeddings',
+     * 'tool-execution', or 'audio-transcription'
+     * There are 4 enums and the value can be one of: chat-completion,
+     * embeddings, tool-execution, audio-transcription
      * 
      * @param path operation
      * @return the dsl builder
@@ -12568,7 +12482,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion and embeddings.
+     * OpenAI endpoint for chat completion, embeddings, and audio transcription.
      * 
      * Category: ai
      * Since: 4.17
@@ -12577,10 +12491,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'embeddings', or
-     * 'tool-execution'
-     * There are 3 enums and the value can be one of: chat-completion,
-     * embeddings, tool-execution
+     * The operation to perform: 'chat-completion', 'embeddings',
+     * 'tool-execution', or 'audio-transcription'
+     * There are 4 enums and the value can be one of: chat-completion,
+     * embeddings, tool-execution, audio-transcription
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

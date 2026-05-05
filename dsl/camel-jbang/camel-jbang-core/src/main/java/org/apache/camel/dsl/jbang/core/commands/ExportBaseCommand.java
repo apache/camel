@@ -103,6 +103,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Path exportBaseDir;
     private MavenDownloader downloader;
     private Printer quietPrinter;
+    // Map to store deferred symbolic links: target path in BUILD_DIR → original source path
+    private Map<Path, Path> deferredSymlinks = new HashMap<>();
 
     @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -915,17 +917,26 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     }
                     if (!java) {
                         if (kamelet) {
-                            ExportHelper.safeCopy(source, out, true, symbolicLink);
+                            ExportHelper.safeCopy(source, out, true);
+                            if (symbolicLink) {
+                                deferredSymlinks.put(out, source);
+                            }
                         } else if (jkube) {
                             // file should be renamed and moved into src/main/jkube
                             f = f.replace(".jkube.yaml", ".yaml");
                             f = f.replace(".jkube.yml", ".yml");
                             out = srcCamelResourcesDir.getParent().getParent().resolve("jkube/" + f);
                             Files.createDirectories(out.getParent());
-                            ExportHelper.safeCopy(source, out, true, symbolicLink);
+                            ExportHelper.safeCopy(source, out, true);
+                            if (symbolicLink) {
+                                deferredSymlinks.put(out, source);
+                            }
                         } else {
                             Files.createDirectories(out.getParent());
-                            ExportHelper.safeCopy(getClass().getClassLoader(), scheme, source, out, true, symbolicLink);
+                            ExportHelper.safeCopy(getClass().getClassLoader(), scheme, source, out, true);
+                            if (symbolicLink) {
+                                deferredSymlinks.put(out, source);
+                            }
                         }
                     } else {
                         // need to append package name in java source file
@@ -953,7 +964,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             }
                         }
                         if (javaLiveReload) {
-                            ExportHelper.safeCopy(source, out, true, symbolicLink);
+                            ExportHelper.safeCopy(source, out, true);
+                            if (symbolicLink) {
+                                deferredSymlinks.put(out, source);
+                            }
                         } else {
                             fos = Files.newOutputStream(out);
                             for (String line : lines) {
@@ -1242,7 +1256,43 @@ public abstract class ExportBaseCommand extends CamelCommand {
     // This method is kept for backward compatibility with derived classes
     @Deprecated
     protected void safeCopy(java.io.File source, java.io.File target, boolean override) throws Exception {
-        ExportHelper.safeCopy(source.toPath(), target.toPath(), override, symbolicLink);
+        ExportHelper.safeCopy(source.toPath(), target.toPath(), override);
+    }
+
+    /**
+     * Creates symbolic links for files that were deferred during the copy phase. This method should be called after
+     * copying BUILD_DIR to exportDir and before deleting BUILD_DIR.
+     *
+     * @param  buildDir  the temporary build directory
+     * @param  exportDir the final export directory
+     * @throws Exception if symbolic link creation fails
+     */
+    protected void createDeferredSymlinks(Path buildDir, Path exportDir) throws Exception {
+        if (!symbolicLink || deferredSymlinks.isEmpty()) {
+            return;
+        }
+
+        for (Map.Entry<Path, Path> entry : deferredSymlinks.entrySet()) {
+            Path targetInBuildDir = entry.getKey();
+            Path originalSource = entry.getValue();
+
+            // Compute relative path from buildDir to target
+            Path relativePath = buildDir.relativize(targetInBuildDir);
+
+            // Create symlink in exportDir at same relative path
+            Path linkInExportDir = exportDir.resolve(relativePath);
+
+            // Delete the copied file and create symlink instead
+            if (Files.exists(linkInExportDir)) {
+                Files.delete(linkInExportDir);
+            }
+
+            // Create symbolic link pointing to the original source
+            Path absoluteSource = originalSource.toAbsolutePath();
+            Files.createSymbolicLink(linkInExportDir, absoluteSource);
+        }
+
+        deferredSymlinks.clear();
     }
 
     // This method is kept for backward compatibility with derived classes
@@ -1344,7 +1394,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 String n = d.substring(4);
                 Path sourcePath = Paths.get(n);
                 Path targetPath = libDirPath.resolve(n);
-                ExportHelper.safeCopy(sourcePath, targetPath, true, symbolicLink);
+                ExportHelper.safeCopy(sourcePath, targetPath, true);
             }
         }
     }
@@ -1403,7 +1453,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     })
                     .forEach(p -> {
                         try {
-                            ExportHelper.safeCopy(p, srcResourcesDir.resolve(p.getFileName()), true, symbolicLink);
+                            ExportHelper.safeCopy(p, srcResourcesDir.resolve(p.getFileName()), true);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }

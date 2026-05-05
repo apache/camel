@@ -216,7 +216,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             boolean match = PATH_MATCHER.match(subPattern, shortName);
             LOG.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
             if (match) {
-                Resource resource = new PackageScanJarResource("jar", url, name);
+                Resource resource = new PackageScanJarResource("jar", url, shortName);
                 resources.add(resource);
             }
         }

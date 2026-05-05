@@ -66,6 +66,8 @@ public class BaggageInjectionTest extends OpenTelemetryTracerTestSupport {
                 Map<String, OtelTrace> traces = otelExtension.getTraces();
                 assertEquals(1, traces.size());
                 checkTrace(traces.values().iterator().next());
+            } finally {
+                span.end();
             }
         }
     }

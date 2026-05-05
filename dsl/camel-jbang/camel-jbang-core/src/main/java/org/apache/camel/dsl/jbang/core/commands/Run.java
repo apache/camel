@@ -262,7 +262,7 @@ public class Run extends CamelCommand {
     DebugOptions debugOptions = new DebugOptions();
 
     @CommandLine.ArgGroup(validate = false, heading = "%nExecution Limit Options:%n")
-    ExecutionLimitOptions executionLimitOptions = new ExecutionLimitOptions();
+    public ExecutionLimitOptions executionLimitOptions = new ExecutionLimitOptions();
 
     @CommandLine.ArgGroup(validate = false, heading = "%nServer Options:%n")
     ServerOptions serverOptions = new ServerOptions();
@@ -373,7 +373,7 @@ public class Run extends CamelCommand {
         return run();
     }
 
-    protected Integer runTransform(boolean ignoreLoadingError) throws Exception {
+    public Integer runTransform(boolean ignoreLoadingError) throws Exception {
         // just boot silently and exit
         this.transformRun = true;
         this.ignoreLoadingError = ignoreLoadingError;
@@ -1235,7 +1235,10 @@ public class Run extends CamelCommand {
 
         // export to hidden folder
         ExportSpringBoot eq = new ExportSpringBoot(getMain());
-        // Java codes reload is not supported in Spring Boot since it has to be recompiled to trigger the restart
+        // the code reload is not supported, since we use symlink, spring-boot devtools doesn't support symlink
+        if (this.dev) {
+            printer().println("WARN: Code reload is not supported with Spring Boot.");
+        }
         eq.javaLiveReload = false;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
@@ -2231,13 +2234,13 @@ public class Run extends CamelCommand {
         boolean backlogTrace;
     }
 
-    static class ExecutionLimitOptions {
+    public static class ExecutionLimitOptions {
         @Option(names = { "--max-messages" }, defaultValue = "0",
                 description = "Max number of messages to process before stopping")
         int maxMessages;
 
         @Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
-        int maxSeconds;
+        public int maxSeconds;
 
         @Option(names = { "--max-idle-seconds" }, defaultValue = "0",
                 description = "For how long time in seconds Camel can be idle before stopping")

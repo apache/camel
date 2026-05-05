@@ -23,7 +23,7 @@ public class AMQPEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(105);
+        Set<String> props = new HashSet<>(106);
         props.add("acceptMessagesWhileStopping");
         props.add("acknowledgementModeName");
         props.add("allowAdditionalHeaders");
@@ -86,6 +86,7 @@ public class AMQPEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("messageIdEnabled");
         props.add("messageListenerContainerFactory");
         props.add("messageTimestampEnabled");
+        props.add("objectMessageEnabled");
         props.add("password");
         props.add("preserveMessageQos");
         props.add("priority");

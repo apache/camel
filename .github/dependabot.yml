@@ -32,6 +32,8 @@ updates:
       - dependency-name: "io.smallrye:jandex:*"
       # Spring Boot Dependencies related
       - dependency-name: "org.apache.logging.log4j:*"
+      # This is a virtual plugin which doesn't really exist
+      - dependency-name: "org.eclipse.m2e:lifecycle-mapping"
     groups:
       Micrometer:
         patterns: ["io.micrometer:*"]

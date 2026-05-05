@@ -2739,6 +2739,29 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testInlinedResultType() {
+        exchange.getMessage().setBody("123");
+        Expression expression = context.resolveLanguage("simple").createExpression("${int:body}");
+        Object s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, s);
+        expression = context.resolveLanguage("simple").createExpression("${integer:body}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, s);
+        expression = context.resolveLanguage("simple").createExpression("${long:body}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Long.class, s);
+
+        exchange.getMessage().setBody("true");
+        expression = context.resolveLanguage("simple").createExpression("${boolean:body}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Boolean.class, s);
+
+        exchange.getMessage().setBody("Hello World");
+        expression = context.resolveLanguage("simple").createExpression("${string:body}");
+        s = expression.evaluate(exchange, String.class);
+    }
+
+    @Test
     public void testConvertToCamelJson() {
         exchange.getMessage().setBody("{ \"name\": \"Scott\", \"age\": 44 }");
 

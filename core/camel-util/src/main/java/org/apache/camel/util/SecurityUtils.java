@@ -64,6 +64,7 @@ public final class SecurityUtils {
         map.put("hostnameverification", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("httpshostnameverificationenabled", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("ignoresslverification", new SecurityOption(INSECURE_SSL, "true"));
+        map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
         map.put("transferexception", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("transferexchange", new SecurityOption(INSECURE_SERIALIZATION, "true"));

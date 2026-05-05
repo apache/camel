@@ -167,6 +167,7 @@ class ExportQuarkus extends Export {
         }
         // copy to export dir and remove work dir
         PathUtils.copyDirectory(buildDir, Path.of(exportDir));
+        createDeferredSymlinks(buildDir, Path.of(exportDir));
         PathUtils.deleteDirectory(buildDir);
 
         return 0;
@@ -410,10 +411,17 @@ class ExportQuarkus extends Export {
             Map<String, Object> dep = new HashMap<>();
             dep.put("groupId", gav.getGroupId());
             dep.put("artifactId", gav.getArtifactId());
-            dep.put("version", gav.getVersion());
+            if (!"org.apache.camel.kamelets".equals(gav.getGroupId())
+                    || !"camel-kamelets".equals(gav.getArtifactId())) {
+                // org.apache.camel.kamelets:camel-kamelets is managed in org.apache.camel.quarkus:camel-quarkus-bom
+                // as well as in io.quarkus.platform:quarkus-camel-bom
+                // so we do not need to add the version for it
+                dep.put("version", gav.getVersion());
+            }
             dep.put("scope", gav.getScope());
             dep.put("isLib", "lib".equals(gav.getPackaging()));
             dep.put("isKameletsUtils", "camel-kamelets-utils".equals(gav.getArtifactId()));
+
             result.add(dep);
         }
         return result;

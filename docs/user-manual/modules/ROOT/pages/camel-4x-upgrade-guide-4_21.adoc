@@ -17,6 +17,25 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
+The type converters for Java serialized objects with types `java.io.ObjectInput` and `java.io.ObjectOutput` has been removed.
+Java object serialization is a recurring source of security issues and therefore these converters has been removed.
+These converters are not used at all by Camel itself. To restore compatibility then end users can add these type converters back as custom converters in their own Camel applications.
+However, using Java serialization is discouraged and highly recommend to use other means.
+
+Removed `org.apache.camel.spi.ReifierStrategy` which is no longer in use by Camel and can safely be removed.
+
+A new `getChildren()` default method has been added to `org.apache.camel.NamedNode`. It returns `List<NamedNode>` and
+provides a uniform API for traversing the route model tree, including structural nodes like `WhenDefinition` and
+`OtherwiseDefinition` that are not `ProcessorDefinition` subclasses and therefore invisible to `getOutputs()`.
+Code that walks the model tree recursively should prefer `getChildren()` over `getOutputs()` to avoid needing
+special-case handling for Choice EIP.
+
+The `NamedNode.getLevel()` and `getParentId()` methods no longer treat `when` and `otherwise` nodes as "shallow".
+Previously these nodes were flattened to the same level as their parent `choice`, which was inconsistent with how
+`doCatch` and `doFinally` work inside `doTry`. Now `when` and `otherwise` contribute their own level, consistent
+with the tree structure exposed by `getChildren()`. This affects level values reported via JMX (`ManagedProcessor.getLevel()`)
+and dev consoles for nodes inside Choice EIP branches.
+
 === camel-yaml-dsl
 
 A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
@@ -85,6 +104,88 @@ defense-in-depth only. The primary mitigation should be configured at the messag
 * ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
 * ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property
 
+=== camel-jms
+
+JMS `ObjectMessage` support is now disabled by default. Java object serialization is a recurring source
+of security issues, and Camel JMS routes rarely use `ObjectMessage` in practice. The component will now
+refuse to create or read `jakarta.jms.ObjectMessage` instances unless the new `objectMessageEnabled`
+option is explicitly set to `true`.
+
+This affects the following endpoint/component options that rely on `ObjectMessage` internally:
+
+* `jmsMessageType=Object` (or sending a `Serializable` body that is auto-detected as `Object`)
+* `transferExchange=true`
+* `transferException=true`
+* receiving a JMS `ObjectMessage` produced by an external sender
+
+To restore the previous behavior, enable the option at the component or endpoint level:
+
+[source,properties]
+----
+camel.component.jms.objectMessageEnabled=true
+----
+
+Or, on a single endpoint:
+
+[source,text]
+----
+jms:queue:foo?objectMessageEnabled=true
+----
+
+=== camel-sjms / camel-sjms2
+
+The same default applies to `camel-sjms` (and `camel-sjms2`, which inherits from it): JMS `ObjectMessage`
+support is now disabled by default and gated by a new `objectMessageEnabled` option (default `false`)
+on `SjmsComponent` / `SjmsEndpoint`.
+
+This affects the same endpoint/component options as `camel-jms`:
+
+* `jmsMessageType=Object` (or sending a `Serializable` body that is auto-detected as `Object`)
+* `transferException=true`
+* receiving a JMS `ObjectMessage` produced by an external sender
+
+To restore the previous behavior, enable the option at the component or endpoint level:
+
+[source,properties]
+----
+camel.component.sjms.objectMessageEnabled=true
+camel.component.sjms2.objectMessageEnabled=true
+----
+
+Or, on a single endpoint:
+
+[source,text]
+----
+sjms:queue:foo?objectMessageEnabled=true
+sjms2:queue:foo?objectMessageEnabled=true
+----
+
+=== camel-hazelcast
+
+Hazelcast instances created and managed by Camel (when no user-supplied
+`Config` or `HazelcastInstance` is provided) now apply a default
+`JavaSerializationFilterConfig` on the `SerializationConfig` of the
+`Config` built by Camel. The default whitelists the class name prefixes
+`java.`, `javax.`, `org.apache.camel.` and blacklists `java.net.`.
+
+This affects:
+
+* `camel-hazelcast` component endpoints when neither `hazelcastInstance`,
+`hazelcastConfigUri`, nor a referenced `Config` is supplied
+* `HazelcastAggregationRepository` and `HazelcastIdempotentRepository`
+when no `hazelcastInstance` is supplied
+* `HazelcastUtil#newInstance()` (no-arg)
+
+A user-supplied `JavaSerializationFilterConfig` (set on the
+`SerializationConfig` of a `Config` provided via `hazelcastConfigUri`, a
+referenced `Config` bean, or already wired into a pre-built
+`HazelcastInstance`) is respected and is not overwritten.
+
+Applications that store classes outside the default whitelist on a
+Hazelcast topic, queue, map, list, set, or in one of the repositories
+above must provide their own `Config` with a
+`JavaSerializationFilterConfig` configured for their class names.
+
 === camel-stomp removal
 
 Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any activities in the last 10 years. The component is now removed.
@@ -92,3 +193,54 @@ Camel stomp was deprecated with Camel 4.17. The stomp library didn't have any ac
 === camel-aws-xray removal
 
 Camel AWS X-Ray was deprecated with Camel 4.17. Amazon Web Services X-Ray service is in maintenance mode since February 2026. The component is now removed.
+
+=== camel-guava-eventbus removal
+
+Camel Guava EventBus was deprecated with Camel 4.6. The component is now removed.
+
+=== camel-grape removal
+
+Camel Grape was deprecated with Camel 4.1. The component is now removed.
+
+=== camel-telemetry
+
+If you have custom telemetry implementations, the following interfaces have changed:
+
+==== `org.apache.camel.telemetry.SpanLifecycleManager`
+
+The `create` method signature has changed:
+
+[source,java]
+----
+// Old signature
+Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor)
+
+// New signature
+Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor
+extractor)
+----
+
+==== `org.apache.camel.telemetry.SpanDecorator`
+
+A new method must be implemented:
+
+[source,java]
+----
+String getSpanKind(String operation)
+----
+
+This method should return the appropriate SpanKind based on the operation. Most implementations can
+extend from:
+
+- `AbstractSpanDecorator` (returns `INTERNAL` for all operations)
+- `AbstractHttpSpanDecorator` (returns `CLIENT` for `EVENT_SENT`, `SERVER` for `EVENT_RECEIVED`)
+- `AbstractMessagingSpanDecorator` (returns `PRODUCER` for `EVENT_SENT`, `CONSUMER` for `EVENT_RECEIVED`)
+
+=== camel-opentelemetry2
+
+In order to prevent a potential leak when running asynchronous components we need to rethink the implementation details of `camel-opentelemetry2` and remove the  `Scope` wrapping that, when asynchronous, was opening the `Scope` in a thread and closing in another (what we had called "dirty" context). We are now removing this wrapping and moving this part exclusively in the custom Camel `Processors`. Here Camel will take care to open the Opentelemetry scope and close it within the same thread.
+
+What it means is that, from now on, the final user or any third party dependency can only "control" the Opentelemetry context within the boundary of a Processor execution.
+
+This is just an informative note, there is not action expected by the final user.
+

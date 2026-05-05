@@ -1987,20 +1987,6 @@ public interface ComponentsBuilderFactory {
         return GoogleVisionComponentBuilderFactory.googleVision();
     }
     /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * @return the dsl builder
-     */
-    static GrapeComponentBuilderFactory.GrapeComponentBuilder grape() {
-        return GrapeComponentBuilderFactory.grape();
-    }
-    /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
      * 
@@ -2025,19 +2011,6 @@ public interface ComponentsBuilderFactory {
      */
     static GrpcComponentBuilderFactory.GrpcComponentBuilder grpc() {
         return GrpcComponentBuilderFactory.grpc();
-    }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * @return the dsl builder
-     */
-    static GuavaEventbusComponentBuilderFactory.GuavaEventbusComponentBuilder guavaEventbus() {
-        return GuavaEventbusComponentBuilderFactory.guavaEventbus();
     }
     /**
      * Hashicorp Vault (camel-hashicorp-vault)
@@ -3773,7 +3746,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion and embeddings.
+     * OpenAI endpoint for chat completion, embeddings, and audio transcription.
      * 
      * Category: ai
      * Since: 4.17

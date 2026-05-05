@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.atom;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,6 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -84,13 +88,10 @@ public class AtomGoodBlogDefaultIdempotencyTest {
 
         // Get the mock endpoint
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
-        Thread.sleep(5000);
 
-        // There should be at least two good blog entries from the feed
-        mock.expectedMessageCount(7);
-
-        // Assert
-        mock.assertIsSatisfied();
+        // Wait for the polling consumer to read all 7 entries from the feed
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(7, mock.getReceivedCounter()));
 
         // stop Camel after use
         context.stop();

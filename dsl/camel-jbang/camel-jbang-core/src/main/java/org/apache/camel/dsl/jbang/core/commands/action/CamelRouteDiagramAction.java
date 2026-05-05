@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +26,21 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import org.apache.camel.diagram.RouteDiagramHelper;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.diagram.RouteDiagramRenderer;
+import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.LayoutRoute;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.NodeInfo;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.RouteInfo;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramRenderer.DiagramColors;
+import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.terminal.impl.TerminalGraphics;
@@ -46,7 +52,7 @@ import picocli.CommandLine.Command;
          showDefaultValues = true)
 public class CamelRouteDiagramAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @CommandLine.Parameters(description = "Source file name, or name/pid of a running Camel integration", arity = "0..1")
     String name = "*";
 
     @CommandLine.Option(names = { "--filter" },
@@ -69,8 +75,62 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                         defaultValue = "dark")
     String theme;
 
+    @CommandLine.Option(names = { "--font-size" },
+                        description = "Font size in logical pixels for node text", defaultValue = "12")
+    int fontSize;
+
+    @CommandLine.Option(names = { "--box-width" },
+                        description = "Node box width in logical pixels", defaultValue = "180")
+    int boxWidth;
+
+    @CommandLine.Option(names = { "--node-label" },
+                        description = "What text to display in diagram nodes: code, description, or both (default)",
+                        defaultValue = "both")
+    String nodeLabel;
+
+    @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
+                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    boolean ignoreLoadingError;
+
+    private volatile long pid;
+
     public CamelRouteDiagramAction(CamelJBangMain main) {
         super(main);
+    }
+
+    /**
+     * Renders the routes contained in the given source file as a PNG diagram saved to {@code outputFile}. Convenience
+     * entry point for programmatic invocation (e.g. from MCP tools) that always targets a non-running source file and
+     * skips the running-PID lookup.
+     *
+     * @param  sourceFile         path to the route source file (YAML, XML, Java, ...)
+     * @param  outputFile         path to the PNG file to write
+     * @param  theme              color theme spec (e.g. "dark", "light", "transparent" or custom)
+     * @param  filter             optional route filter (route id or filename pattern)
+     * @param  width              image width in pixels (0 = auto)
+     * @param  ignoreLoadingError whether to ignore route loading and compilation errors
+     * @return                    exit code; 0 on success, non-zero otherwise
+     * @throws Exception          if the source cannot be read or the diagram cannot be rendered
+     */
+    public Integer renderSourceToFile(
+            String sourceFile, String outputFile, String theme, String filter,
+            int width, boolean ignoreLoadingError,
+            int fontSize, int boxWidth, String nodeLabel)
+            throws Exception {
+        this.name = sourceFile;
+        this.output = outputFile;
+        if (theme != null && !theme.isBlank()) {
+            this.theme = theme;
+        }
+        this.filter = filter;
+        this.width = width;
+        this.ignoreLoadingError = ignoreLoadingError;
+        this.fontSize = fontSize;
+        this.boxWidth = boxWidth;
+        if (nodeLabel != null && !nodeLabel.isBlank()) {
+            this.nodeLabel = nodeLabel;
+        }
+        return doCall();
     }
 
     @Override
@@ -80,21 +140,28 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
         String colorSpec = System.getenv("DIAGRAM_COLORS");
         DiagramColors colors = DiagramColors.parse(colorSpec != null ? colorSpec : theme);
 
+        Path outputFile;
+        int exit = 0;
         List<Long> pids = findPids(name);
         if (pids.isEmpty()) {
-            return 1;
+            // no running so check source files
+            outputFile = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "/structure-output.json");
+            PathUtils.deleteFile(outputFile);
+            exit = doCallSource(name);
         } else if (pids.size() > 1) {
             printer().println("Name or pid " + name + " matches " + pids.size()
                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
             return 1;
+        } else {
+            // ensure output file is deleted before executing action
+            this.pid = pids.get(0);
+            outputFile = getOutputFile(Long.toString(this.pid));
+            PathUtils.deleteFile(outputFile);
+            doCallPid(this.pid);
         }
-
-        long pid = pids.get(0);
-
-        Path outputFile = prepareAction(Long.toString(pid), "route-structure", root -> {
-            root.put("filter", "*");
-            root.put("brief", false);
-        });
+        if (exit != 0) {
+            return exit;
+        }
 
         try {
             JsonObject jo = getJsonObject(outputFile);
@@ -121,8 +188,10 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                 return 0;
             }
 
-            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
-            RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+            NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
+            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
+            RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding());
 
             List<LayoutRoute> layoutRoutes = new ArrayList<>();
             int currentY = RouteDiagramLayoutEngine.PADDING;
@@ -166,12 +235,16 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                                     "Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
                             printer().println(
                                     "Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
-                            renderer.printTextDiagram(routes, printer());
+                            for (String line : renderer.printTextDiagram(routes, labelMode)) {
+                                printer().println(line);
+                            }
                         }
                     } catch (IOException | UnsupportedOperationException e) {
                         printer().println("Failed to display diagram in terminal: " + e.getMessage());
                         printer().println("Falling back to text diagram.");
-                        renderer.printTextDiagram(routes, printer());
+                        for (String line : renderer.printTextDiagram(routes)) {
+                            printer().println(line);
+                        }
                     }
                 }
             }
@@ -182,32 +255,63 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
         }
     }
 
-    List<RouteInfo> parseRoutes(JsonObject jo) {
-        List<RouteInfo> routes = new ArrayList<>();
-        JsonArray arr = (JsonArray) jo.get("routes");
-        if (arr == null) {
-            return routes;
+    private void doCallPid(Long pid) {
+        this.pid = pid;
+
+        JsonObject root = new JsonObject();
+        root.put("action", "route-structure");
+        root.put("filter", "*");
+        root.put("brief", false);
+        Path file = getActionFile(Long.toString(pid));
+        try {
+            Files.writeString(file, root.toJson());
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    private int doCallSource(String name) throws Exception {
+        File f = new File(name);
+        if (!f.isFile() || !f.exists()) {
+            printer().printErr("File does not exist: " + name);
+            return 1;
         }
 
-        for (int i = 0; i < arr.size(); i++) {
-            JsonObject o = (JsonObject) arr.get(i);
-            RouteInfo route = new RouteInfo();
-            route.routeId = o.getString("routeId");
-            route.source = CamelRouteStructureAction.extractSourceName(o.getString("source"));
+        final String target = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/structure-output.json";
 
-            List<JsonObject> lines = o.getCollection("code");
-            if (lines != null) {
-                for (JsonObject line : lines) {
-                    NodeInfo node = new NodeInfo();
-                    node.type = line.getString("type");
-                    node.code = Jsoner.unescape(line.getString("code"));
-                    Integer level = line.getInteger("level");
-                    node.level = level != null ? level : 0;
-                    route.nodes.add(node);
+        Run run = new Run(getMain()) {
+            @Override
+            protected void doAddInitialProperty(KameletMain main) {
+                main.addInitialProperty("camel.main.dumpRoutes", "json");
+                main.addInitialProperty("camel.main.dumpRoutesLog", "false");
+                main.addInitialProperty("camel.main.dumpRoutesOutput", target);
+                // turn debug off as this can otherwise include source location in dump
+                main.addInitialProperty("camel.debug.enabled", "false");
+                main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
+                main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+                if (ignoreLoadingError) {
+                    // turn off bean method validator if ignore loading error
+                    main.addInitialProperty("camel.language.bean.validate", "false");
                 }
             }
-            routes.add(route);
+        };
+        run.files = List.of(name);
+        run.executionLimitOptions.maxSeconds = 1;
+        return run.runTransform(ignoreLoadingError);
+    }
+
+    List<RouteInfo> parseRoutes(JsonObject jo) {
+        return RouteDiagramHelper.parseRoutes(jo);
+    }
+
+    static NodeLabelMode parseNodeLabelMode(String value) {
+        if (value == null || value.isBlank() || "code".equalsIgnoreCase(value)) {
+            return NodeLabelMode.CODE;
+        } else if ("description".equalsIgnoreCase(value)) {
+            return NodeLabelMode.DESCRIPTION;
+        } else if ("both".equalsIgnoreCase(value)) {
+            return NodeLabelMode.BOTH;
         }
-        return routes;
+        return NodeLabelMode.CODE;
     }
 }

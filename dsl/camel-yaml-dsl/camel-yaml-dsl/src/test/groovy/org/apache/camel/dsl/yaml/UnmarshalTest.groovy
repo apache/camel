@@ -69,11 +69,19 @@ class UnmarshalTest extends YamlTestSupport {
                              data-format-type:
                                json: {}
                           - to: "mock:result"
-                    ''')
+                    '''),
+                        asResource('data-format-xml', '''
+                    - from:
+                        uri: "direct:start"
+                        steps:    
+                          - unmarshal:
+                             jacksonXml: {}
+                          - to: "mock:result"
+                    '''),
             ]
 
             expected << [
-                'gson', 'gson', 'jackson', 'jackson'
+                'gson', 'gson', 'jackson', 'jackson', 'jacksonXml'
             ]
     }
 

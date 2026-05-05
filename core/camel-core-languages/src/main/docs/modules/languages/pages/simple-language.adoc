@@ -122,6 +122,31 @@ The Simple language has many built-in functions which allows access to various p
 
 NOTE: Some functions take 1 or more arguments enclosed in parentheses, and arguments separated by comma (ie `${replace('custID','customerId')}`.
 
+=== Inlined Result Type Function
+
+**Available as of Camel 4.21**
+
+The simple language, has many built-in functions, and each of them take different set of parameters, and some are more advanced than others, for example
+the functions working with JSon or XML payloads. Regards of that, you may have need for being able to easily specify that the function should return the value
+as an integer instead of _what it would otherwise do_. To make this easy we have built-in a fixed set of very common result types to make this easy.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|====
+|Prefix |Response Type |Description
+|`int:` | `Integer` | To use `Integer` as a result type.
+|`integer:` | `Integer` | To use `Integer` as a result type.
+|`long:` | `Long` | To use `Long` as a result type.
+|`boolean:` | `Boolean` | To use `Boolean` as a result type.
+|`string:` | `String` | To use `String` (text) as a result type.
+|====
+
+You do this by prefixing the function with any of the above, such as `${int:header.age}` to return the age header as an integer.
+If you use XML then the XPath function can do this as well such as `${int:xpath(//food/quantity)}`.
+
+If you need to use a type that is not in the table above, then you can combine two functions together with the `${convertTo(type)}` function, as follows:
+
+`${xpath(//food[name='food1']/price/text())} ~> ${convertTo(java.math.BigDecimal)}`
+
 === Core Camel Functions
 
 The Camel functions are as the name implies specific to Apache Camel and these functions are primary used
