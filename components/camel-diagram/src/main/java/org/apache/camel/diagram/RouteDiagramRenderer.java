@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.action;
+package org.apache.camel.diagram;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -23,24 +23,24 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.LayoutNode;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.LayoutRoute;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.RouteInfo;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.TreeNode;
-import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 
-import static org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.NODE_HEIGHT;
-import static org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.NODE_WIDTH;
-import static org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.PADDING;
-import static org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.SCALE;
-import static org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
-import static org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.V_GAP;
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.NODE_HEIGHT;
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.NODE_WIDTH;
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCALE;
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.V_GAP;
 
-class RouteDiagramRenderer {
+public class RouteDiagramRenderer {
 
     private static final int ARC = 14 * SCALE;
     private static final int FONT_SIZE_LABEL = 13 * SCALE;
@@ -50,7 +50,7 @@ class RouteDiagramRenderer {
     private static final float BORDER_STROKE_WIDTH = 1.0f * SCALE;
     private static final int NODE_TEXT_PADDING = 16 * SCALE;
     private static final int LABEL_TEXT_BASELINE = 14 * SCALE;
-    static final int MAX_IMAGE_DIMENSION = 16384;
+    public static final int MAX_IMAGE_DIMENSION = 16384;
 
     private static final String DARK_COLORS
             = "bg=#0d1117:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
@@ -67,7 +67,7 @@ class RouteDiagramRenderer {
             "light", LIGHT_COLORS,
             "transparent", TRANSPARENT_COLORS);
 
-    static class DiagramColors {
+    public static class DiagramColors {
         private Color bg;
         private Color text;
         private Color arrow;
@@ -80,7 +80,7 @@ class RouteDiagramRenderer {
         private Color nodeTransform;
         private Color nodeProcessor;
 
-        static DiagramColors parse(String spec) {
+        public static DiagramColors parse(String spec) {
             String resolved = COLOR_PRESETS.getOrDefault(spec, spec);
             Map<String, String> map = new HashMap<>();
             for (String entry : DARK_COLORS.split(":")) {
@@ -128,52 +128,52 @@ class RouteDiagramRenderer {
             return null;
         }
 
-        Color getBg() {
+        public Color getBg() {
             return bg;
         }
 
-        Color getText() {
+        public Color getText() {
             return text;
         }
 
-        Color getArrow() {
+        public Color getArrow() {
             return arrow;
         }
 
-        Color getRouteLabel() {
+        public Color getRouteLabel() {
             return routeLabel;
         }
 
-        Color getNodeFrom() {
+        public Color getNodeFrom() {
             return nodeFrom;
         }
 
-        Color getNodeTo() {
+        public Color getNodeTo() {
             return nodeTo;
         }
 
-        Color getNodeEip() {
+        public Color getNodeEip() {
             return nodeEip;
         }
 
-        Color getNodeChoice() {
+        public Color getNodeChoice() {
             return nodeChoice;
         }
 
-        Color getNodeDefault() {
+        public Color getNodeDefault() {
             return nodeDefault;
         }
 
-        Color getNodeTransform() {
+        public Color getNodeTransform() {
             return nodeTransform;
         }
 
-        Color getNodeProcessor() {
+        public Color getNodeProcessor() {
             return nodeProcessor;
         }
     }
 
-    BufferedImage renderDiagram(List<LayoutRoute> layoutRoutes, int totalHeight, DiagramColors colors) {
+    public BufferedImage renderDiagram(List<LayoutRoute> layoutRoutes, int totalHeight, DiagramColors colors) {
         int imgWidth = layoutRoutes.stream().mapToInt(lr -> lr.maxX).max().orElse(400) + PADDING;
         int imgHeight = totalHeight + PADDING;
 
@@ -350,24 +350,26 @@ class RouteDiagramRenderer {
         };
     }
 
-    void printTextDiagram(List<RouteInfo> routes, Printer printer) {
+    public List<String> printTextDiagram(List<RouteInfo> routes) {
+        List<String> lines = new ArrayList<>();
         for (RouteInfo route : routes) {
-            printer.println();
+            lines.add("");
             String header = "Route: " + route.routeId;
             if (route.source != null && !route.source.isEmpty()) {
                 header += " (" + route.source + ")";
             }
-            printer.println(header);
+            lines.add(header);
 
             TreeNode tree = RouteDiagramLayoutEngine.buildTree(route.nodes);
             if (tree != null) {
-                printTreeNode(tree, "", true, true, printer);
+                printTreeNode(tree, "", true, true, lines);
             }
-            printer.println();
+            lines.add("");
         }
+        return lines;
     }
 
-    private void printTreeNode(TreeNode node, String prefix, boolean isLast, boolean isRoot, Printer printer) {
+    private void printTreeNode(TreeNode node, String prefix, boolean isLast, boolean isRoot, List<String> lines) {
         String connector;
         if (isRoot) {
             connector = "  ";
@@ -380,7 +382,7 @@ class RouteDiagramRenderer {
         String typeTag = node.info.type != null ? "[" + node.info.type + "] " : "";
         String code = RouteDiagramLayoutEngine.cleanLabel(node.info.code);
 
-        printer.println(prefix + connector + typeTag + code);
+        lines.add(prefix + connector + typeTag + code);
 
         String childPrefix;
         if (isRoot) {
@@ -392,7 +394,7 @@ class RouteDiagramRenderer {
         }
 
         for (int i = 0; i < node.children.size(); i++) {
-            printTreeNode(node.children.get(i), childPrefix, i == node.children.size() - 1, false, printer);
+            printTreeNode(node.children.get(i), childPrefix, i == node.children.size() - 1, false, lines);
         }
     }
 }
