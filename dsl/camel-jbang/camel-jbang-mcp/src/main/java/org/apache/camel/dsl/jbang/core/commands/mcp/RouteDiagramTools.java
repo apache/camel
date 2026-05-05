@@ -49,6 +49,8 @@ public class RouteDiagramTools {
             @ToolArg(description = "Optional filter to limit the diagram to routes whose route id or source filename "
                                    + "matches the given pattern (supports wildcards)") String filter,
             @ToolArg(description = "Image width in pixels; 0 (or unset) = auto") Integer width,
+            @ToolArg(description = "Font size in logical pixels for node text (default 12)") Integer fontSize,
+            @ToolArg(description = "Node box width in logical pixels (default 180)") Integer boxWidth,
             @ToolArg(description = "Whether to ignore route loading and compilation errors (use with care)") Boolean ignoreLoadingError) {
 
         if (sourceFile == null || sourceFile.isBlank()) {
@@ -84,7 +86,9 @@ public class RouteDiagramTools {
             int exit = action.renderSourceToFile(
                     sourceFile, resolvedOutput, theme, filter,
                     width != null ? width : 0,
-                    ignoreLoadingError != null && ignoreLoadingError);
+                    ignoreLoadingError != null && ignoreLoadingError,
+                    fontSize != null ? fontSize : 12,
+                    boxWidth != null ? boxWidth : 180);
 
             File out = new File(resolvedOutput);
             boolean success = exit == 0 && out.isFile() && out.length() > 0;

@@ -74,6 +74,14 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                         defaultValue = "dark")
     String theme;
 
+    @CommandLine.Option(names = { "--font-size" },
+                        description = "Font size in logical pixels for node text", defaultValue = "12")
+    int fontSize;
+
+    @CommandLine.Option(names = { "--box-width" },
+                        description = "Node box width in logical pixels", defaultValue = "180")
+    int boxWidth;
+
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
@@ -100,7 +108,8 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
      */
     public Integer renderSourceToFile(
             String sourceFile, String outputFile, String theme, String filter,
-            int width, boolean ignoreLoadingError)
+            int width, boolean ignoreLoadingError,
+            int fontSize, int boxWidth)
             throws Exception {
         this.name = sourceFile;
         this.output = outputFile;
@@ -110,6 +119,8 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
         this.filter = filter;
         this.width = width;
         this.ignoreLoadingError = ignoreLoadingError;
+        this.fontSize = fontSize;
+        this.boxWidth = boxWidth;
         return doCall();
     }
 
@@ -168,8 +179,9 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                 return 0;
             }
 
-            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
-            RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize);
+            RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE);
 
             List<LayoutRoute> layoutRoutes = new ArrayList<>();
             int currentY = RouteDiagramLayoutEngine.PADDING;
