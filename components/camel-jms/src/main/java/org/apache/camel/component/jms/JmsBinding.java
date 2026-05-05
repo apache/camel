@@ -144,6 +144,20 @@ public class JmsBinding {
     }
 
     /**
+     * Whether sending and receiving JMS {@link ObjectMessage} is enabled on the endpoint. Disabled by default for
+     * security reasons; see {@link JmsConfiguration#setObjectMessageEnabled(boolean)}.
+     */
+    protected boolean isObjectMessageEnabled() {
+        return endpoint != null && endpoint.getConfiguration().isObjectMessageEnabled();
+    }
+
+    private static IllegalStateException objectMessageDisabled(String operation) {
+        return new IllegalStateException(
+                "JMS ObjectMessage is disabled by default for security reasons (" + operation + ")."
+                                         + " Set objectMessageEnabled=true on the JMS endpoint or component to enable it.");
+    }
+
+    /**
      * Applies the configured (or default) deserialization filter to the class of an object returned by
      * {@link jakarta.jms.ObjectMessage#getObject()}. Throws {@link SecurityException} if the class is rejected.
      *
@@ -225,6 +239,9 @@ public class JmsBinding {
             }
 
             if (message instanceof ObjectMessage objectMessage) {
+                if (!isObjectMessageEnabled()) {
+                    throw objectMessageDisabled("receiving ObjectMessage");
+                }
                 LOG.trace("Extracting body as a ObjectMessage from JMS message: {}", message);
                 Object payload = objectMessage.getObject();
                 checkDeserializedClass(payload);
@@ -598,6 +615,9 @@ public class JmsBinding {
     }
 
     protected Message createJmsMessage(Exception cause, Session session) throws JMSException {
+        if (!isObjectMessageEnabled()) {
+            throw objectMessageDisabled("transferException reply");
+        }
         LOG.trace("Using JmsMessageType: {}", Object);
         Message answer = session.createObjectMessage(cause);
         // ensure default delivery mode is used by default
@@ -618,6 +638,9 @@ public class JmsBinding {
 
         // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
+            if (!isObjectMessageEnabled()) {
+                throw objectMessageDisabled("transferExchange");
+            }
             LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
             Serializable holder = DefaultExchangeHolder.marshal(exchange, true, endpoint.isAllowSerializedHeaders(), false);
             Message answer = session.createObjectMessage(holder);
@@ -768,6 +791,9 @@ public class JmsBinding {
                 return message;
             }
             case Object: {
+                if (!isObjectMessageEnabled()) {
+                    throw objectMessageDisabled("creating ObjectMessage");
+                }
                 ObjectMessage message = session.createObjectMessage();
                 if (body != null) {
                     try {

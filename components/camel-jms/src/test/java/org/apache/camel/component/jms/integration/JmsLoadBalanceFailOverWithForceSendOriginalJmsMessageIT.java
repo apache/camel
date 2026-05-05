@@ -143,6 +143,8 @@ public class JmsLoadBalanceFailOverWithForceSendOriginalJmsMessageIT extends Abs
 
         // we want to transfer the exception
         jms.getConfiguration().setTransferException(true);
+        // transferException uses JMS ObjectMessage which is disabled by default
+        jms.setObjectMessageEnabled(true);
         return jms;
     }
 
