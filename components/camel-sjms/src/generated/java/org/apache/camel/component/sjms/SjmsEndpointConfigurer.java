@@ -85,6 +85,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageCreatedStrategy": target.setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
         case "messageselector":
         case "messageSelector": target.setMessageSelector(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectmessageenabled":
+        case "objectMessageEnabled": target.setObjectMessageEnabled(property(camelContext, boolean.class, value)); return true;
         case "preservemessageqos":
         case "preserveMessageQos": target.setPreserveMessageQos(property(camelContext, boolean.class, value)); return true;
         case "priority": target.setPriority(property(camelContext, int.class, value)); return true;
@@ -181,6 +183,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
         case "messageselector":
         case "messageSelector": return java.lang.String.class;
+        case "objectmessageenabled":
+        case "objectMessageEnabled": return boolean.class;
         case "preservemessageqos":
         case "preserveMessageQos": return boolean.class;
         case "priority": return int.class;
@@ -278,6 +282,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageCreatedStrategy": return target.getMessageCreatedStrategy();
         case "messageselector":
         case "messageSelector": return target.getMessageSelector();
+        case "objectmessageenabled":
+        case "objectMessageEnabled": return target.isObjectMessageEnabled();
         case "preservemessageqos":
         case "preserveMessageQos": return target.isPreserveMessageQos();
         case "priority": return target.getPriority();
