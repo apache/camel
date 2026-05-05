@@ -70,7 +70,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
         command.doCall();
 
         List<String> output = printer.getLines();
-        Assertions.assertEquals(10, output.size());
+        Assertions.assertEquals(11, output.size());
         Assertions.assertEquals("Supported plugins:", output.get(0));
         Assertions.assertEquals("NAME          COMMAND       DEPENDENCY                                        DESCRIPTION",
                 output.get(2));
@@ -120,7 +120,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
         command.doCall();
 
         List<String> output = printer.getLines();
-        Assertions.assertEquals(13, output.size());
+        Assertions.assertEquals(14, output.size());
         Assertions.assertEquals("NAME        COMMAND  DEPENDENCY                         DESCRIPTION", output.get(0));
         Assertions.assertEquals(
                 "foo-plugin  foo      org.apache.camel:foo-plugin:1.0.0  Plugin foo-plugin called with command foo",
@@ -153,6 +153,14 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
                 "validate      validate      org.apache.camel:camel-jbang-plugin-validate      %s"
                         .formatted(PluginType.VALIDATE.getDescription()),
                 output.get(11));
+        Assertions.assertEquals(
+                "kit           kit           org.apache.camel:camel-jbang-plugin-kit           %s"
+                        .formatted(PluginType.KIT.getDescription()),
+                output.get(12));
+        Assertions.assertEquals(
+                "tui           tui           org.apache.camel:camel-jbang-plugin-tui           %s"
+                        .formatted(PluginType.TUI.getDescription()),
+                output.get(13));
     }
 
 }
