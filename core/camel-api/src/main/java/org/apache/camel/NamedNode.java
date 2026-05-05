@@ -16,6 +16,9 @@
  */
 package org.apache.camel;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Represents a node in the {@link org.apache.camel.model routes} which is identified by an id.
  */
@@ -69,28 +72,32 @@ public interface NamedNode extends LineNumberAware {
      * Processor Level in the route tree
      */
     default int getLevel() {
-        NamedNode node = this;
         int level = 0;
+        NamedNode node = this;
         while (node != null && node.getParent() != null) {
-            boolean shallow = "when".equals(node.getShortName()) || "otherwise".equals(node.getShortName());
             node = node.getParent();
-            if (!shallow) {
-                level++;
-            }
+            level++;
         }
         return level;
     }
 
     default String getParentId() {
         NamedNode node = this;
-        while (node != null && node.getParent() != null) {
-            boolean shallow = "when".equals(node.getShortName()) || "otherwise".equals(node.getShortName());
-            node = node.getParent();
-            if (!shallow) {
-                return node.getId();
-            }
+        if (node.getParent() != null) {
+            return node.getParent().getId();
         }
         return null;
+    }
+
+    /**
+     * Returns the direct children of this node in the route model tree.
+     *
+     * This provides a uniform API for tree walkers to traverse the full model structure without needing to special-case
+     * EIPs like Choice (whose when/otherwise children are not {@link org.apache.camel.model.ProcessorDefinition}s and
+     * therefore invisible to {@code getOutputs()}).
+     */
+    default List<NamedNode> getChildren() {
+        return Collections.emptyList();
     }
 
     /**

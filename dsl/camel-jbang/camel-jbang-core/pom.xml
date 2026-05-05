@@ -47,6 +47,10 @@
         <!-- camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-diagram</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
         </dependency>
         <dependency>

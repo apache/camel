@@ -27,20 +27,20 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import org.apache.camel.diagram.RouteDiagramHelper;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.diagram.RouteDiagramRenderer;
+import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.LayoutRoute;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.NodeInfo;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.RouteInfo;
-import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.terminal.impl.TerminalGraphics;
@@ -83,6 +83,35 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
 
     public CamelRouteDiagramAction(CamelJBangMain main) {
         super(main);
+    }
+
+    /**
+     * Renders the routes contained in the given source file as a PNG diagram saved to {@code outputFile}. Convenience
+     * entry point for programmatic invocation (e.g. from MCP tools) that always targets a non-running source file and
+     * skips the running-PID lookup.
+     *
+     * @param  sourceFile         path to the route source file (YAML, XML, Java, ...)
+     * @param  outputFile         path to the PNG file to write
+     * @param  theme              color theme spec (e.g. "dark", "light", "transparent" or custom)
+     * @param  filter             optional route filter (route id or filename pattern)
+     * @param  width              image width in pixels (0 = auto)
+     * @param  ignoreLoadingError whether to ignore route loading and compilation errors
+     * @return                    exit code; 0 on success, non-zero otherwise
+     * @throws Exception          if the source cannot be read or the diagram cannot be rendered
+     */
+    public Integer renderSourceToFile(
+            String sourceFile, String outputFile, String theme, String filter,
+            int width, boolean ignoreLoadingError)
+            throws Exception {
+        this.name = sourceFile;
+        this.output = outputFile;
+        if (theme != null && !theme.isBlank()) {
+            this.theme = theme;
+        }
+        this.filter = filter;
+        this.width = width;
+        this.ignoreLoadingError = ignoreLoadingError;
+        return doCall();
     }
 
     @Override
@@ -185,12 +214,16 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                                     "Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
                             printer().println(
                                     "Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
-                            renderer.printTextDiagram(routes, printer());
+                            for (String line : renderer.printTextDiagram(routes)) {
+                                printer().println(line);
+                            }
                         }
                     } catch (IOException | UnsupportedOperationException e) {
                         printer().println("Failed to display diagram in terminal: " + e.getMessage());
                         printer().println("Falling back to text diagram.");
-                        renderer.printTextDiagram(routes, printer());
+                        for (String line : renderer.printTextDiagram(routes)) {
+                            printer().println(line);
+                        }
                     }
                 }
             }
@@ -247,31 +280,6 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
     }
 
     List<RouteInfo> parseRoutes(JsonObject jo) {
-        List<RouteInfo> routes = new ArrayList<>();
-        JsonArray arr = (JsonArray) jo.get("routes");
-        if (arr == null) {
-            return routes;
-        }
-
-        for (int i = 0; i < arr.size(); i++) {
-            JsonObject o = (JsonObject) arr.get(i);
-            RouteInfo route = new RouteInfo();
-            route.routeId = o.getString("routeId");
-            route.source = CamelRouteStructureAction.extractSourceName(o.getString("source"));
-
-            List<JsonObject> lines = o.getCollection("code");
-            if (lines != null) {
-                for (JsonObject line : lines) {
-                    NodeInfo node = new NodeInfo();
-                    node.type = line.getString("type");
-                    node.code = Jsoner.unescape(line.getString("code"));
-                    Integer level = line.getInteger("level");
-                    node.level = level != null ? level : 0;
-                    route.nodes.add(node);
-                }
-            }
-            routes.add(route);
-        }
-        return routes;
+        return RouteDiagramHelper.parseRoutes(jo);
     }
 }

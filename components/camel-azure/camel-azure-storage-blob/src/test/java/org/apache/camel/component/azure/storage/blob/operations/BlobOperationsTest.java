@@ -29,12 +29,14 @@ import java.util.Map;
 
 import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.rest.ResponseBase;
+import com.azure.storage.blob.models.AccessTier;
 import com.azure.storage.blob.models.BlobDownloadHeaders;
 import com.azure.storage.blob.models.BlobImmutabilityPolicy;
 import com.azure.storage.blob.models.BlobImmutabilityPolicyMode;
 import com.azure.storage.blob.models.BlobLegalHoldResult;
 import com.azure.storage.blob.models.BlobProperties;
 import com.azure.storage.blob.models.BlockBlobItem;
+import com.azure.storage.blob.models.RehydratePriority;
 import com.azure.storage.blob.specialized.BlobClientBase;
 import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
@@ -519,6 +521,75 @@ class BlobOperationsTest extends CamelTestSupport {
 
         final BlobOperations operations = new BlobOperations(configuration, client);
         assertThrows(IllegalArgumentException.class, () -> operations.setBlobImmutabilityPolicy(exchange));
+    }
+
+    @Test
+    void testUndeleteBlob() {
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "777");
+
+        when(client.undelete(any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.undeleteBlob(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertEquals("777", ((HttpHeaders) response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                .get("x-test-header").getValue());
+        verify(client, times(1)).undelete(any());
+    }
+
+    @Test
+    void testSetBlobTierFromHeader() {
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "111");
+
+        when(client.setAccessTier(eq(AccessTier.COOL), eq(null), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(BlobConstants.ACCESS_TIER, AccessTier.COOL);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.setBlobTier(exchange);
+
+        assertNotNull(response);
+        assertEquals(AccessTier.COOL, response.getBody());
+        assertEquals(AccessTier.COOL, response.getHeaders().get(BlobConstants.ACCESS_TIER));
+        assertEquals("111", ((HttpHeaders) response.getHeaders().get(BlobConstants.RAW_HTTP_HEADERS))
+                .get("x-test-header").getValue());
+        verify(client, times(1)).setAccessTier(eq(AccessTier.COOL), eq(null), any(), any());
+    }
+
+    @Test
+    void testSetBlobTierFromBodyWithRehydratePriority() {
+        final HttpHeaders httpHeaders = new HttpHeaders().set("x-test-header", "222");
+
+        when(client.setAccessTier(eq(AccessTier.HOT), eq(RehydratePriority.HIGH), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(AccessTier.HOT);
+        exchange.getIn().setHeader(BlobConstants.REHYDRATE_PRIORITY, RehydratePriority.HIGH);
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        final BlobOperationResponse response = operations.setBlobTier(exchange);
+
+        assertNotNull(response);
+        assertEquals(AccessTier.HOT, response.getBody());
+        assertEquals(AccessTier.HOT, response.getHeaders().get(BlobConstants.ACCESS_TIER));
+        verify(client, times(1)).setAccessTier(eq(AccessTier.HOT), eq(RehydratePriority.HIGH), any(), any());
+    }
+
+    @Test
+    void testSetBlobTierWithNoTierThrows() {
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("not-an-access-tier");
+
+        final BlobOperations operations = new BlobOperations(configuration, client);
+        assertThrows(IllegalArgumentException.class, () -> operations.setBlobTier(exchange));
     }
 
     @Test

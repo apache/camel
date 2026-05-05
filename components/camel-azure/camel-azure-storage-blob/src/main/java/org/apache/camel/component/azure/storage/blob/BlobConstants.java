@@ -327,6 +327,11 @@ public final class BlobConstants {
                             + " modified or deleted), `LOCKED` (cannot be modified or shortened, only extended), or `MUTABLE`.",
               javaType = "com.azure.storage.blob.models.BlobImmutabilityPolicyMode")
     public static final String BLOB_IMMUTABILITY_POLICY_MODE = HEADER_PREFIX + "ImmutabilityPolicyMode";
+    @Metadata(label = "producer",
+              description = "(setBlobTier) The rehydrate priority used when rehydrating a blob from the archive tier:"
+                            + " `Standard` or `High`. Ignored when changing tier between non-archive tiers.",
+              javaType = "com.azure.storage.blob.models.RehydratePriority")
+    public static final String REHYDRATE_PRIORITY = HEADER_PREFIX + "RehydratePriority";
 
     private BlobConstants() {
     }

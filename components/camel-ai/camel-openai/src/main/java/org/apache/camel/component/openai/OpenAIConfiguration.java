@@ -158,6 +158,33 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The format for embedding output: 'float' for list of floats, 'base64' for compressed format")
     private String encodingFormat = "base64";
 
+    // ========== AUDIO TRANSCRIPTION CONFIGURATION ==========
+
+    @UriParam
+    @Metadata(description = "The model to use for audio transcription (e.g., whisper-1, gpt-4o-transcribe)")
+    private String audioModel;
+
+    @UriParam
+    @Metadata(description = "The language of the input audio in ISO-639-1 format (e.g., 'en'). Improves accuracy and latency.")
+    private String audioLanguage;
+
+    @UriParam
+    @Metadata(description = "Optional text to guide the model's style or continue a previous audio segment")
+    private String audioPrompt;
+
+    @UriParam(enums = "json,text,srt,verbose_json,vtt", defaultValue = "json")
+    @Metadata(description = "The format of the transcription output")
+    private String audioResponseFormat = "json";
+
+    @UriParam
+    @Metadata(description = "Sampling temperature for transcription (0.0 to 1.0)")
+    private Double audioTemperature;
+
+    @UriParam
+    @Metadata(description = "Comma-separated timestamp granularities: 'word', 'segment', or 'word,segment'. "
+                            + "Only applicable with verbose_json response format.")
+    private String audioTimestampGranularities;
+
     // ========== SSL CONFIGURATION ==========
 
     @UriParam(label = "security")
@@ -378,6 +405,54 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setEncodingFormat(String encodingFormat) {
         this.encodingFormat = encodingFormat;
+    }
+
+    public String getAudioModel() {
+        return audioModel;
+    }
+
+    public void setAudioModel(String audioModel) {
+        this.audioModel = audioModel;
+    }
+
+    public String getAudioLanguage() {
+        return audioLanguage;
+    }
+
+    public void setAudioLanguage(String audioLanguage) {
+        this.audioLanguage = audioLanguage;
+    }
+
+    public String getAudioPrompt() {
+        return audioPrompt;
+    }
+
+    public void setAudioPrompt(String audioPrompt) {
+        this.audioPrompt = audioPrompt;
+    }
+
+    public String getAudioResponseFormat() {
+        return audioResponseFormat;
+    }
+
+    public void setAudioResponseFormat(String audioResponseFormat) {
+        this.audioResponseFormat = audioResponseFormat;
+    }
+
+    public Double getAudioTemperature() {
+        return audioTemperature;
+    }
+
+    public void setAudioTemperature(Double audioTemperature) {
+        this.audioTemperature = audioTemperature;
+    }
+
+    public String getAudioTimestampGranularities() {
+        return audioTimestampGranularities;
+    }
+
+    public void setAudioTimestampGranularities(String audioTimestampGranularities) {
+        this.audioTimestampGranularities = audioTimestampGranularities;
     }
 
     public Map<String, Object> getMcpServer() {

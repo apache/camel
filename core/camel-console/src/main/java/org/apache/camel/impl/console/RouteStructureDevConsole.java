@@ -114,6 +114,9 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             if (mrb.getSourceLocation() != null) {
                 jo.put("source", mrb.getSourceLocation());
             }
+            if (mrb.getDescription() != null) {
+                jo.put("description", mrb.getDescription());
+            }
 
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
@@ -184,6 +187,9 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             c.put("type", line.type());
             c.put("id", line.id());
             c.put("level", line.level());
+            if (line.description() != null) {
+                c.put("description", line.description());
+            }
             c.put("code", Jsoner.escape(line.code()));
             code.add(c);
         }

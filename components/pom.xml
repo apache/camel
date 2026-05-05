@@ -120,6 +120,7 @@
         <module>camel-dapr</module>
         <module>camel-datasonnet</module>
         <module>camel-debug</module>
+        <module>camel-diagram</module>
         <module>camel-debezium</module>
         <module>camel-dhis2</module>
         <module>camel-digitalocean</module>
@@ -151,12 +152,10 @@
         <module>camel-github</module>
         <module>camel-github2</module>
         <module>camel-google</module>
-        <module>camel-grape</module>
         <module>camel-graphql</module>
         <module>camel-grok</module>
         <module>camel-grpc</module>
         <module>camel-gson</module>
-        <module>camel-guava-eventbus</module>
         <module>camel-hashicorp-vault</module>
         <module>camel-hazelcast</module>
         <module>camel-headersmap</module>

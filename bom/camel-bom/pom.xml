@@ -749,6 +749,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-diagram</artifactId>
+        <version>4.21.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-digitalocean</artifactId>
         <version>4.21.0-SNAPSHOT</version>
       </dependency>
@@ -1009,11 +1014,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-grape</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-graphql</artifactId>
         <version>4.21.0-SNAPSHOT</version>
       </dependency>
@@ -1035,11 +1035,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-gson</artifactId>
-        <version>4.21.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-guava-eventbus</artifactId>
         <version>4.21.0-SNAPSHOT</version>
       </dependency>
       <dependency>

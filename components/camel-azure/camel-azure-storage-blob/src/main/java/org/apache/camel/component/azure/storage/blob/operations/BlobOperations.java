@@ -52,6 +52,7 @@ import com.azure.storage.blob.models.PageBlobItem;
 import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.models.ParallelTransferOptions;
+import com.azure.storage.blob.models.RehydratePriority;
 import com.azure.storage.blob.sas.BlobSasPermission;
 import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.BlobClientBase;
@@ -742,6 +743,52 @@ public class BlobOperations {
         }
 
         return BlobOperationResponse.create(result, exchangeHeaders.toMap());
+    }
+
+    public BlobOperationResponse undeleteBlob(final Exchange exchange) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Undeleting blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange), exchange);
+        }
+
+        final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
+
+        final Response<Void> response = client.undelete(commonRequestOptions.getTimeout());
+
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.create()
+                .httpHeaders(response.getHeaders());
+
+        return BlobOperationResponse.createWithEmptyBody(exchangeHeaders.toMap());
+    }
+
+    public BlobOperationResponse setBlobTier(final Exchange exchange) {
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Setting access tier on blob [{}] from exchange [{}]...", configurationProxy.getBlobName(exchange),
+                    exchange);
+        }
+
+        AccessTier tier = configurationProxy.getAccessTier(exchange);
+        if (tier == null) {
+            tier = exchange.getIn().getBody(AccessTier.class);
+        }
+        if (tier == null) {
+            throw new IllegalArgumentException(
+                    "Access tier must be specified either as the message body (AccessTier) or via the "
+                                               + BlobConstants.ACCESS_TIER + " header.");
+        }
+
+        final RehydratePriority priority = configurationProxy.getRehydratePriority(exchange);
+        final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
+
+        final Response<Void> response = client.setAccessTier(tier, priority, commonRequestOptions.leaseId(),
+                commonRequestOptions.getTimeout());
+
+        final BlobExchangeHeaders exchangeHeaders = BlobExchangeHeaders.create()
+                .accessTierHeader(tier)
+                .httpHeaders(response.getHeaders());
+
+        return BlobOperationResponse.create(tier, exchangeHeaders.toMap());
     }
 
     private DownloadRetryOptions getDownloadRetryOptions(final BlobConfigurationOptionsProxy configurationProxy) {
