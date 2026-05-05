@@ -1,0 +1,10 @@
+- route:
+    id: timer-log
+    from:
+      uri: timer:tick
+      parameters:
+        period: "1000"
+      steps:
+        - setBody:
+            simple: "Hello Camel! (message #${exchangeProperty.CamelTimerCounter})"
+        - log: "${body}"
