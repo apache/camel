@@ -241,7 +241,7 @@ analyzePomDependencies() {
 # Sets caller-visible variables: scalpel_module_ids, scalpel_module_paths,
 #   scalpel_props, scalpel_managed_deps, scalpel_managed_plugins
 runScalpelDetection() {
-  echo "  Running Scalpel 0.3.0 change detection..."
+  echo "  Running Scalpel change detection..."
 
   # Scalpel is permanently configured in .mvn/extensions.xml.
   # On developer machines it's a no-op (no GITHUB_BASE_REF → no base branch detected).
@@ -291,7 +291,7 @@ runScalpelDetection() {
   scalpel_managed_deps=$(jq -r '(.changedManagedDependencies // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
   scalpel_managed_plugins=$(jq -r '(.changedManagedPlugins // []) | if length > 0 then join(", ") else "" end' "$report" 2>/dev/null || true)
 
-  # Scalpel 0.3.0 shadow comparison data:
+  # Scalpel shadow comparison data:
   # - Modules Scalpel skip-tests mode would test (testsSkipped != true)
   # - Modules Scalpel would skip (testsSkipped == true, from skipTestsForDownstreamModules)
   # - Breakdown by category (DIRECT, DOWNSTREAM)
@@ -418,7 +418,7 @@ writeScalpelComparison() {
   fi
 
   echo "" >> "$comment_file"
-  echo "<details><summary>:microscope: Scalpel 0.3.0 shadow comparison</summary>" >> "$comment_file"
+  echo "<details><summary>:microscope: Scalpel shadow comparison (skip-tests mode)</summary>" >> "$comment_file"
   echo "" >> "$comment_file"
   echo "**Scalpel skip-tests mode would test ${scalpel_test_count} modules** (${scalpel_direct_count} direct + ${scalpel_downstream_tested} downstream)" >> "$comment_file"
 
@@ -616,7 +616,7 @@ main() {
   scalpel_props=""
   scalpel_managed_deps=""
   scalpel_managed_plugins=""
-  # Scalpel 0.3.0 shadow comparison data
+  # Scalpel shadow comparison data
   scalpel_would_test=""
   scalpel_would_skip=""
   scalpel_direct_count="0"
@@ -841,7 +841,7 @@ main() {
   local comment_file="incremental-test-comment.md"
   writeComment "$comment_file" "$pl" "$dep_module_ids" "$all_changed_props" "$testedDependents" "$extraModules" "$scalpel_managed_deps" "$scalpel_managed_plugins"
 
-  # Scalpel 0.3.0 shadow comparison (observation only)
+  # Scalpel shadow comparison (observation only)
   writeScalpelComparison "$comment_file"
 
   # Check for tests disabled in CI via @DisabledIfSystemProperty(named = "ci.env.name")

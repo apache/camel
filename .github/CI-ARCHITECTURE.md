@@ -154,9 +154,9 @@ Both methods run in parallel. Results are merged (union) before testing. This le
 2. **No regression** — If Scalpel fails, grep results are still used
 3. **Gradual migration** — Once Scalpel is validated, grep can be removed
 
-Scalpel is configured permanently in `.mvn/extensions.xml` (version `0.3.0`). On developer machines it is a no-op — without CI environment variables (`GITHUB_BASE_REF`), no base branch is detected and Scalpel returns immediately. The `mvn validate` with report mode adds ~60-90 seconds in CI.
+Scalpel is configured permanently in `.mvn/extensions.xml`. On developer machines it is a no-op (disabled via `-Dscalpel.enabled=false` in `.mvn/maven.config`). The CI script overrides this with `-Dscalpel.enabled=true`. The `mvn validate` with report mode adds ~60-90 seconds in CI.
 
-#### Scalpel 0.3.0 features
+#### Scalpel features used for shadow comparison
 
 - **Source-set-aware propagation**: Distinguishes test-jar dependencies from regular dependencies. A module that depends only on another module's test-jar (e.g., `camel-core`'s test-jar with test utilities) is propagated through the `TEST` source set, not the `MAIN` source set. This prevents a change to test utilities from triggering tests in all ~500 modules that depend on `camel-core`.
 - **`skipTestsForDownstreamModules`**: Allows specifying modules whose tests should be skipped when they appear as downstream dependents (mirrors the `EXCLUSION_LIST` in `incremental-build.sh`). This gives Scalpel an accurate picture of what skip-tests mode would actually test.
