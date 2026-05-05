@@ -34,6 +34,32 @@ Or, on a single endpoint:
 jms:queue:foo?objectMessageEnabled=true
 ----
 
+=== camel-hazelcast
+
+Hazelcast instances created and managed by Camel (when no user-supplied
+`Config` or `HazelcastInstance` is provided) now apply a default
+`JavaSerializationFilterConfig` on the `SerializationConfig` of the
+`Config` built by Camel. The default whitelists the class name prefixes
+`java.`, `javax.`, `org.apache.camel.` and blacklists `java.net.`.
+
+This affects:
+
+* `camel-hazelcast` component endpoints when neither `hazelcastInstance`,
+`hazelcastConfigUri`, nor a referenced `Config` is supplied
+* `HazelcastAggregationRepository` and `HazelcastIdempotentRepository`
+when no `hazelcastInstance` is supplied
+* `HazelcastUtil#newInstance()` (no-arg)
+
+A user-supplied `JavaSerializationFilterConfig` (set on the
+`SerializationConfig` of a `Config` provided via `hazelcastConfigUri`, a
+referenced `Config` bean, or already wired into a pre-built
+`HazelcastInstance`) is respected and is not overwritten.
+
+Applications that store classes outside the default whitelist on a
+Hazelcast topic, queue, map, list, set, or in one of the repositories
+above must provide their own `Config` with a
+`JavaSerializationFilterConfig` configured for their class names.
+
 == Upgrading from 4.14.5 to 4.14.6
 
 === camel-platform-http-main
