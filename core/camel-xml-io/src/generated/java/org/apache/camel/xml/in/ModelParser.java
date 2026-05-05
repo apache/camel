@@ -92,6 +92,7 @@ public class ModelParser extends BaseParser {
                 case "forceCompletionOnStop": def.setForceCompletionOnStop(val); yield true;
                 case "ignoreInvalidCorrelationKeys": def.setIgnoreInvalidCorrelationKeys(val); yield true;
                 case "optimisticLocking": def.setOptimisticLocking(val); yield true;
+                case "optimisticLockingSyncRetry": def.setOptimisticLockingSyncRetry(val); yield true;
                 case "parallelProcessing": def.setParallelProcessing(val); yield true;
                 case "timeoutCheckerExecutorService": def.setTimeoutCheckerExecutorService(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);

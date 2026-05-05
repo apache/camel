@@ -774,6 +774,7 @@ public class ModelWriter extends BaseWriter {
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
         doWriteAttribute("optimisticLocking", def.getOptimisticLocking(), null);
+        doWriteAttribute("optimisticLockingSyncRetry", def.getOptimisticLockingSyncRetry(), "false");
         doWriteAttribute("executorService", def.getExecutorService(), null);
         doWriteAttribute("timeoutCheckerExecutorService", def.getTimeoutCheckerExecutorService(), null);
         doWriteAttribute("aggregateController", def.getAggregateController(), null);
