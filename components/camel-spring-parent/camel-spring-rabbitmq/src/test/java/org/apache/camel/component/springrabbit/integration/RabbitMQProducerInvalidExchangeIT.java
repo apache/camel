@@ -50,7 +50,13 @@ public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
 
         final CamelExecutionException exception = Assertions.assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Hello World"));
-        Assertions.assertInstanceOf(ShutdownSignalException.class, exception.getCause());
+        // Spring AMQP may wrap ShutdownSignalException in AmqpException depending on timing
+        Throwable cause = exception.getCause();
+        while (cause != null && !(cause instanceof ShutdownSignalException)) {
+            cause = cause.getCause();
+        }
+        Assertions.assertInstanceOf(ShutdownSignalException.class, cause,
+                "Expected ShutdownSignalException in cause chain, but got: " + exception.getCause());
     }
 
     @Override
