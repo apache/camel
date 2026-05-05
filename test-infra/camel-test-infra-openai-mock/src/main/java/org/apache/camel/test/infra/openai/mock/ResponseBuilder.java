@@ -41,8 +41,15 @@ public class ResponseBuilder {
     }
 
     public String createSimpleTextResponse(String content) throws Exception {
+        return createSimpleTextResponse(content, null);
+    }
+
+    public String createSimpleTextResponse(String content, String reasoningContent) throws Exception {
         Map<String, Object> responseMessage = createBaseMessage();
         responseMessage.put("content", content);
+        if (reasoningContent != null) {
+            responseMessage.put("reasoning_content", reasoningContent);
+        }
 
         Map<String, Object> choice = createBaseChoice("stop", responseMessage);
         Map<String, Object> chatCompletion = createBaseChatCompletion(choice);

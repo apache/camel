@@ -110,6 +110,12 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
     private Map<String, Object> additionalBodyProperty;
 
+    @UriParam(prefix = "additionalResponseHeader.", multiValue = true)
+    @Metadata(description = "Map additional fields from the response message to Camel headers. "
+                            + "The key is the field name in the API response, the value is the Camel header name "
+                            + "(e.g. additionalResponseHeader.reasoning_content=CamelMyReasoningHeader)")
+    private Map<String, Object> additionalResponseHeader;
+
     @UriParam(prefix = "mcpServer.", multiValue = true)
     @Metadata(description = "MCP (Model Context Protocol) server configurations. "
                             + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, "
@@ -381,6 +387,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setAdditionalBodyProperty(Map<String, Object> additionalBodyProperty) {
         this.additionalBodyProperty = additionalBodyProperty;
+    }
+
+    public Map<String, Object> getAdditionalResponseHeader() {
+        return additionalResponseHeader;
+    }
+
+    public void setAdditionalResponseHeader(Map<String, Object> additionalResponseHeader) {
+        this.additionalResponseHeader = additionalResponseHeader;
     }
 
     public String getEmbeddingModel() {

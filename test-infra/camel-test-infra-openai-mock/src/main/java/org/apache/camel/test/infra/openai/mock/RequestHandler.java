@@ -124,7 +124,8 @@ public class RequestHandler {
             case SIMPLE_TEXT:
             default:
                 LOG.debug("Creating simple text response");
-                return responseBuilder.createSimpleTextResponse(expectation.getExpectedResponse());
+                return responseBuilder.createSimpleTextResponse(
+                        expectation.getExpectedResponse(), expectation.getReasoningContent());
         }
     }
 
