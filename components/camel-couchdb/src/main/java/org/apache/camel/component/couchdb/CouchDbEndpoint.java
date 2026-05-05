@@ -58,9 +58,9 @@ public class CouchDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     private String database;
     @UriParam(label = "consumer", enums = "all_docs,main_only", defaultValue = DEFAULT_STYLE)
     private String style = DEFAULT_STYLE;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam(label = "consumer", defaultValue = "" + DEFAULT_HEARTBEAT, javaType = "java.time.Duration")
     private long heartbeat = DEFAULT_HEARTBEAT;

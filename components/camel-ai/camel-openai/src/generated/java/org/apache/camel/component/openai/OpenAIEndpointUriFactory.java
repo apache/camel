@@ -23,9 +23,15 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(40);
+        Set<String> props = new HashSet<>(47);
         props.add("additionalBodyProperty");
         props.add("apiKey");
+        props.add("audioLanguage");
+        props.add("audioModel");
+        props.add("audioPrompt");
+        props.add("audioResponseFormat");
+        props.add("audioTemperature");
+        props.add("audioTimestampGranularities");
         props.add("autoToolExecution");
         props.add("baseUrl");
         props.add("conversationHistoryProperty");
@@ -60,6 +66,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("sslTruststoreType");
         props.add("storeFullResponse");
         props.add("streaming");
+        props.add("stripThinking");
         props.add("systemMessage");
         props.add("temperature");
         props.add("topP");

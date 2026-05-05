@@ -23,6 +23,7 @@ import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.FileUtil;
@@ -280,6 +281,74 @@ class MavenDownloaderImplTest {
         } catch (MavenResolutionException e) {
             // Expected
             LOG.info("Expected failure in offline mode: {}", e.getMessage());
+        }
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "enableMavenDownloaderTests", matches = "true")
+    void testPreferLocalResolvesFromCache() throws Exception {
+        File customLocalRepo = new File(tempDir, "prefer-local-repo");
+        Files.createDirectories(customLocalRepo.toPath());
+
+        // First, download the artifact into the custom local repo (online)
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.build();
+
+            MavenDownloader customDownloader = downloader.customize(
+                    customLocalRepo.getAbsolutePath(), 5000, 10000);
+
+            customDownloader.resolveArtifacts(
+                    List.of("org.apache.commons:commons-lang3:3.12.0"),
+                    null, false, false);
+        }
+
+        // Verify artifact is in custom local repo
+        File cachedJar = new File(
+                customLocalRepo,
+                "org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar");
+        assertTrue(cachedJar.exists(), "Artifact should have been downloaded to custom local repo");
+
+        // Now create a new downloader with preferLocal=true, Maven Central disabled,
+        // and a non-existent fake repo. Without preferLocal, this would fail because
+        // there are no reachable remote repos. With preferLocal, it should succeed
+        // by resolving from the local cache via offline-first resolution.
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setPreferLocal(true);
+            downloader.setMavenCentralEnabled(false);
+            downloader.setMavenApacheSnapshotEnabled(false);
+            downloader.setMavenSettingsLocation("false"); // disable settings.xml repos
+            downloader.setRepos("http://localhost:1/non-existent-repo"); // unreachable repo
+            downloader.build();
+
+            MavenDownloader customDownloader = downloader.customize(
+                    customLocalRepo.getAbsolutePath(), 1000, 1000);
+
+            List<MavenArtifact> artifacts = customDownloader.resolveArtifacts(
+                    List.of("org.apache.commons:commons-lang3:3.12.0"),
+                    null, false, false);
+
+            assertEquals(1, artifacts.size());
+            assertTrue(artifacts.get(0).getFile().exists());
+            LOG.info("preferLocal resolved artifact from local cache without contacting remote repos");
+        }
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "enableMavenDownloaderTests", matches = "true")
+    void testPreferLocalFallsBackToOnline() throws Exception {
+        // With preferLocal=true, if the artifact is NOT in the local repo,
+        // it should fall back to online resolution and succeed
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+            downloader.setPreferLocal(true);
+            downloader.build();
+
+            List<MavenArtifact> artifacts = downloader.resolveArtifacts(
+                    List.of("org.apache.commons:commons-lang3:3.12.0"),
+                    null, false, false);
+
+            assertEquals(1, artifacts.size());
+            assertTrue(artifacts.get(0).getFile().exists());
+            LOG.info("preferLocal fell back to online resolution for non-cached artifact");
         }
     }
 
@@ -553,6 +622,78 @@ class MavenDownloaderImplTest {
                     "Should have downloaded from mirror, got: " + content);
 
             LOG.info("Authentication and mirror test passed - artifact resolved through authenticated mirror");
+        }
+    }
+
+    @Test
+    void testExtraDefaultRepositoriesFromSystemProperty() throws Exception {
+        // This test verifies that MIMA correctly loads extra default repositories from system properties.
+
+        // Use the local test server that requires authentication
+        String testRepoUrl = "http://localhost:" + localServer.getLocalPort() + "/maven/repository";
+        String extraReposValue = "test-server=" + testRepoUrl;
+
+        File customLocalRepo = new File(tempDir, "extra-repos-test-m2");
+        Files.createDirectories(customLocalRepo.toPath());
+
+        String artifactCoords = "org.apache.camel:camel-test:9.99.9-non-exist";
+
+        // Callable that captures local variables and performs artifact resolution
+        Callable<List<MavenArtifact>> resolve = () -> {
+            try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
+                downloader.setMavenCentralEnabled(false);
+                downloader.setMavenApacheSnapshotEnabled(false);
+                downloader.build();
+
+                MavenDownloader customDownloader = downloader.customize(
+                        customLocalRepo.getAbsolutePath(),
+                        5000,
+                        10000);
+
+                return customDownloader.resolveArtifacts(
+                        List.of(artifactCoords),
+                        null,
+                        false,
+                        false);
+            }
+        };
+
+        String originalValue = System.getProperty("camel.extra.repos");
+        try {
+            // NEGATIVE TEST: without the extra repo, the resolution fails because of no artifact can be resolved, definitely not authentication failure
+            System.clearProperty("camel.extra.repos");
+
+            try {
+                resolve.call();
+                fail("Should have failed without extra repos system property");
+            } catch (MavenResolutionException e) {
+                // Expected - no repositories configured
+                assertFalse(e.getMessage().contains("401") || e.getMessage().contains("Unauthorized")
+                        || e.getMessage().contains("status code"),
+                        "Should fail due to no repositories, not authentication, got: " + e.getMessage());
+            }
+
+            // POSITIVE TEST: with the extra repo configured, we have to receive authentication failure
+            System.setProperty("camel.extra.repos", extraReposValue);
+
+            try {
+                resolve.call();
+                fail("Should have failed with 401 Unauthorized (proves repo was loaded from system property)");
+            } catch (MavenResolutionException e) {
+                // Expected - repository loaded but download fails due to no authentication
+                // The 401 error proves the repository from the system property was actually used
+                assertTrue(e.getMessage().contains("401") || e.getMessage().contains("Unauthorized")
+                        || e.getMessage().contains("status code"),
+                        "Should fail with 401/authentication error (proves repository was used), got: " + e.getMessage());
+            }
+
+        } finally {
+            // Clean up system property
+            if (originalValue != null) {
+                System.setProperty("camel.extra.repos", originalValue);
+            } else {
+                System.clearProperty("camel.extra.repos");
+            }
         }
     }
 }

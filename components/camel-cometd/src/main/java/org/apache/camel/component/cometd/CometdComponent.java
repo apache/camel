@@ -63,9 +63,9 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
 
     private List<BayeuxServer.BayeuxServerListener> serverListeners;
 
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String sslKeyPassword;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String sslPassword;
     @Metadata(label = "security")
     private String sslKeystore;

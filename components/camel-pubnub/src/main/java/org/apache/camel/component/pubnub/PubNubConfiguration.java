@@ -28,14 +28,14 @@ public class PubNubConfiguration implements Cloneable {
     @UriPath
     @Metadata(required = true)
     private String channel;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String publishKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String subscribeKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
     @Deprecated
-    @UriParam(label = "security", secret = true,
+    @UriParam(label = "security", security = "secret",
               defaultValueNote = "This setting is deprecated because it relates to deprecated Access Manager (PAM V2) and will be removed in the future. Please, migrate to new Access Manager (PAM V3) https://www.pubnub.com/docs/general/resources/migration-guides/pam-v3-migration")
     private String authKey;
     @UriParam(label = "security", defaultValue = "true")

@@ -23,6 +23,8 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ExecEndpoint target = (ExecEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontrolheaders":
+        case "allowControlHeaders": target.setAllowControlHeaders(property(camelContext, boolean.class, value)); return true;
         case "args": target.setArgs(property(camelContext, java.lang.String.class, value)); return true;
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.exec.ExecBinding.class, value)); return true;
         case "commandexecutor":
@@ -35,7 +37,7 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "outfile":
         case "outFile": target.setOutFile(property(camelContext, java.lang.String.class, value)); return true;
-        case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
         case "usestderronemptystdout":
         case "useStderrOnEmptyStdout": target.setUseStderrOnEmptyStdout(property(camelContext, boolean.class, value)); return true;
         case "workingdir":
@@ -47,6 +49,8 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontrolheaders":
+        case "allowControlHeaders": return boolean.class;
         case "args": return java.lang.String.class;
         case "binding": return org.apache.camel.component.exec.ExecBinding.class;
         case "commandexecutor":
@@ -72,6 +76,8 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ExecEndpoint target = (ExecEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontrolheaders":
+        case "allowControlHeaders": return target.isAllowControlHeaders();
         case "args": return target.getArgs();
         case "binding": return target.getBinding();
         case "commandexecutor":

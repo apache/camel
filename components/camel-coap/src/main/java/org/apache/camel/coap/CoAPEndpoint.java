@@ -84,7 +84,7 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     private URI uri;
     @UriParam(label = "consumer", enums = "DELETE,GET,POST,PUT")
     private String coapMethodRestrict;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private PrivateKey privateKey;
     @UriParam(label = "security")
     private PublicKey publicKey;

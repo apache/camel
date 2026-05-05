@@ -1,0 +1,95 @@
+= Diagram Component
+:doctitle: Diagram
+:shortname: diagram
+:artifactid: camel-diagram
+:description: Camel Route Diagram rendering
+:since: 4.21
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The Diagram module provides route diagram rendering capabilities for Apache Camel routes.
+It can generate visual route diagrams as PNG images or text-based tree representations
+from route structure data.
+
+== Features
+
+* Render route diagrams as PNG images with colored nodes and scope boxes
+* Generate text-based tree diagrams for terminal output
+* Support for all Camel EIPs: choice, doTry/doCatch, filter, split, loop, multicast, and more
+* Scope boxes visually group branching and scoping EIPs
+* Multiple color themes: dark, light, transparent, or custom
+
+== Usage
+
+=== As a library
+
+Add the `camel-diagram` dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-diagram</artifactId>
+</dependency>
+----
+
+Then use the API to render diagrams:
+
+[source,java]
+----
+import org.apache.camel.diagram.*;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.*;
+import org.apache.camel.diagram.RouteDiagramRenderer.*;
+
+// Parse route structure from JSON
+List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(jsonObject);
+
+// Layout and render
+RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+
+LayoutRoute lr = engine.layoutRoute(routes.get(0), RouteDiagramLayoutEngine.PADDING);
+DiagramColors colors = DiagramColors.parse("dark");
+BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP, colors);
+
+// Save to file
+ImageIO.write(image, "PNG", new File("diagram.png"));
+----
+
+=== Text diagram
+
+For terminal or log output, generate a text-based tree:
+
+[source,java]
+----
+List<String> lines = renderer.printTextDiagram(routes);
+lines.forEach(System.out::println);
+----
+
+=== With Camel JBang
+
+The diagram rendering is used by the `camel cmd route-diagram` command in Camel JBang:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.java
+----
+
+== Color Themes
+
+The following built-in themes are available:
+
+* `dark` - dark background (default)
+* `light` - light background
+* `transparent` - transparent background
+
+Custom colors can be specified using the format:
+
+[source,text]
+----
+bg=#1e1e1e:from=#2e7d32:to=#1565c0:eip=#8957e5:choice=#d29922
+----
+
+Color values can be `#hex` codes or ANSI color names (e.g., `seagreen`, `steelblue`).

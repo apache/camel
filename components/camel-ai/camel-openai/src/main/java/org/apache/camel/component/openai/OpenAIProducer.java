@@ -27,9 +27,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openai.core.JsonField;
 import com.openai.core.JsonValue;
 import com.openai.core.http.StreamResponse;
 import com.openai.models.ResponseFormatJsonSchema;
@@ -68,6 +71,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenAIProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final Pattern THINK_PATTERN = Pattern.compile("^\\s*<think>(.*?)</think>\\s*", Pattern.DOTALL);
 
     public OpenAIProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
@@ -378,10 +382,11 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             exchange.setProperty(OpenAIConstants.RESPONSE, response);
         }
 
-        if (response.choices().get(0).finishReason().equals(ChatCompletion.Choice.FinishReason.TOOL_CALLS)) {
+        if (isToolCallsFinishReason(response.choices().get(0))) {
             exchange.getMessage().setBody(response.choices().get(0).message().toolCalls());
         } else {
             String content = response.choices().get(0).message().content().orElse("");
+            content = processThinkingContent(exchange, content, config);
             exchange.getMessage().setBody(content);
         }
         setResponseHeaders(exchange.getMessage(), response);
@@ -409,11 +414,12 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             ChatCompletion response = getEndpoint().getClient().chat().completions().create(paramsBuilder.build());
             ChatCompletion.Choice choice = response.choices().get(0);
 
-            if (!choice.finishReason().equals(ChatCompletion.Choice.FinishReason.TOOL_CALLS)) {
+            if (!isToolCallsFinishReason(choice)) {
                 // Final LLM response
                 LOG.debug("Agentic loop completed after {} iterations, finish reason: {}", iteration,
-                        choice.finishReason());
+                        getFinishReasonString(choice));
                 String content = choice.message().content().orElse("");
+                content = processThinkingContent(exchange, content, config);
                 exchange.getMessage().setBody(content);
                 setResponseHeaders(exchange.getMessage(), response);
                 exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
@@ -566,13 +572,27 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     }
 
+    private static boolean isToolCallsFinishReason(ChatCompletion.Choice choice) {
+        JsonField<ChatCompletion.Choice.FinishReason> field = choice._finishReason();
+        return field.asKnown()
+                .map(r -> r.equals(ChatCompletion.Choice.FinishReason.TOOL_CALLS))
+                .orElse(false);
+    }
+
+    private static String getFinishReasonString(ChatCompletion.Choice choice) {
+        JsonField<ChatCompletion.Choice.FinishReason> field = choice._finishReason();
+        return field.asKnown()
+                .map(ChatCompletion.Choice.FinishReason::toString)
+                .orElse("stop");
+    }
+
     private void setResponseHeaders(Message message, ChatCompletion response) {
         message.setHeader(OpenAIConstants.RESPONSE_ID, response.id());
         message.setHeader(OpenAIConstants.RESPONSE_MODEL, response.model());
 
         if (!response.choices().isEmpty()) {
             ChatCompletion.Choice choice = response.choices().get(0);
-            message.setHeader(OpenAIConstants.FINISH_REASON, choice.finishReason().toString());
+            message.setHeader(OpenAIConstants.FINISH_REASON, getFinishReasonString(choice));
         }
 
         if (response.usage().isPresent()) {
@@ -713,6 +733,23 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             // treat as literal string
             return value;
         }
+    }
+
+    private String processThinkingContent(Exchange exchange, String content, OpenAIConfiguration config) {
+        Boolean strip = resolveParameter(
+                exchange.getIn(), OpenAIConstants.STRIP_THINKING, config.isStripThinking(), Boolean.class);
+        if (!Boolean.TRUE.equals(strip)) {
+            return content;
+        }
+        Matcher matcher = THINK_PATTERN.matcher(content);
+        if (matcher.find()) {
+            String thinking = matcher.group(1).trim();
+            if (!thinking.isEmpty()) {
+                exchange.getMessage().setHeader(OpenAIConstants.THINKING_CONTENT, thinking);
+            }
+            return matcher.replaceFirst("").trim();
+        }
+        return content;
     }
 
     private <T> T resolveParameter(Message message, String headerName, T defaultValue, Class<T> type) {

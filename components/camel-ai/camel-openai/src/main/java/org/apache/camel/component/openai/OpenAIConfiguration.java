@@ -30,8 +30,8 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class OpenAIConfiguration implements Cloneable {
 
-    @UriParam(secret = true)
-    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", secret = true)
+    @UriParam(security = "secret")
+    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", security = "secret")
     private String apiKey;
 
     @UriParam(label = "security")
@@ -101,6 +101,11 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
     private boolean storeFullResponse = false;
 
+    @UriParam(defaultValue = "false")
+    @Metadata(description = "Strip <think>...</think> blocks from model responses (used by reasoning models like Qwen3, DeepSeek-R1). "
+                            + "The thinking content is stored in the CamelOpenAIThinkingContent header.")
+    private boolean stripThinking = false;
+
     @UriParam(prefix = "additionalBodyProperty.", multiValue = true)
     @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
     private Map<String, Object> additionalBodyProperty;
@@ -153,6 +158,33 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The format for embedding output: 'float' for list of floats, 'base64' for compressed format")
     private String encodingFormat = "base64";
 
+    // ========== AUDIO TRANSCRIPTION CONFIGURATION ==========
+
+    @UriParam
+    @Metadata(description = "The model to use for audio transcription (e.g., whisper-1, gpt-4o-transcribe)")
+    private String audioModel;
+
+    @UriParam
+    @Metadata(description = "The language of the input audio in ISO-639-1 format (e.g., 'en'). Improves accuracy and latency.")
+    private String audioLanguage;
+
+    @UriParam
+    @Metadata(description = "Optional text to guide the model's style or continue a previous audio segment")
+    private String audioPrompt;
+
+    @UriParam(enums = "json,text,srt,verbose_json,vtt", defaultValue = "json")
+    @Metadata(description = "The format of the transcription output")
+    private String audioResponseFormat = "json";
+
+    @UriParam
+    @Metadata(description = "Sampling temperature for transcription (0.0 to 1.0)")
+    private Double audioTemperature;
+
+    @UriParam
+    @Metadata(description = "Comma-separated timestamp granularities: 'word', 'segment', or 'word,segment'. "
+                            + "Only applicable with verbose_json response format.")
+    private String audioTimestampGranularities;
+
     // ========== SSL CONFIGURATION ==========
 
     @UriParam(label = "security")
@@ -164,7 +196,7 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The location of the trust store file, used to validate the server's certificate")
     private String sslTruststoreLocation;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(description = "The password for the trust store file. If a password is not set, the configured trust store can still "
                             + "be used, but integrity checking is disabled")
     private String sslTruststorePassword;
@@ -178,7 +210,7 @@ public class OpenAIConfiguration implements Cloneable {
                             + "for the OpenAI API")
     private String sslKeystoreLocation;
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(description = "The store password for the key store file")
     private String sslKeystorePassword;
 
@@ -186,7 +218,7 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "The file format of the key store file")
     private String sslKeystoreType = "JKS";
 
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(description = "The password of the private key in the key store file")
     private String sslKeyPassword;
 
@@ -335,6 +367,14 @@ public class OpenAIConfiguration implements Cloneable {
         this.storeFullResponse = storeFullResponse;
     }
 
+    public boolean isStripThinking() {
+        return stripThinking;
+    }
+
+    public void setStripThinking(boolean stripThinking) {
+        this.stripThinking = stripThinking;
+    }
+
     public Map<String, Object> getAdditionalBodyProperty() {
         return additionalBodyProperty;
     }
@@ -365,6 +405,54 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setEncodingFormat(String encodingFormat) {
         this.encodingFormat = encodingFormat;
+    }
+
+    public String getAudioModel() {
+        return audioModel;
+    }
+
+    public void setAudioModel(String audioModel) {
+        this.audioModel = audioModel;
+    }
+
+    public String getAudioLanguage() {
+        return audioLanguage;
+    }
+
+    public void setAudioLanguage(String audioLanguage) {
+        this.audioLanguage = audioLanguage;
+    }
+
+    public String getAudioPrompt() {
+        return audioPrompt;
+    }
+
+    public void setAudioPrompt(String audioPrompt) {
+        this.audioPrompt = audioPrompt;
+    }
+
+    public String getAudioResponseFormat() {
+        return audioResponseFormat;
+    }
+
+    public void setAudioResponseFormat(String audioResponseFormat) {
+        this.audioResponseFormat = audioResponseFormat;
+    }
+
+    public Double getAudioTemperature() {
+        return audioTemperature;
+    }
+
+    public void setAudioTemperature(Double audioTemperature) {
+        this.audioTemperature = audioTemperature;
+    }
+
+    public String getAudioTimestampGranularities() {
+        return audioTimestampGranularities;
+    }
+
+    public void setAudioTimestampGranularities(String audioTimestampGranularities) {
+        this.audioTimestampGranularities = audioTimestampGranularities;
     }
 
     public Map<String, Object> getMcpServer() {

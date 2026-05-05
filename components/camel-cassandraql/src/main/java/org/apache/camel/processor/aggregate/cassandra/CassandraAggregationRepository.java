@@ -111,17 +111,18 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Metadata(description = "Sets an optional limit of the number of redelivery attempt of recovered Exchange should be attempted, before its exhausted."
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.")
     private int maximumRedeliveries;
-    @Metadata(label = "advanced",
+    @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     private boolean allowSerializedHeaders;
 
     /**
-     * Sets a deserialization filter while reading Object from Aggregation Repository. By default the filter will allow
-     * all java packages and subpackages and all org.apache.camel packages and subpackages, while the remaining will be
+     * Sets a deserialization filter while reading Object from Aggregation Repository. By default the filter denies
+     * {@code java.net.**} (to avoid classes whose hash/equals methods perform network I/O) and otherwise allows all
+     * java packages and subpackages and all org.apache.camel packages and subpackages, while the remaining will be
      * blacklisted and not deserialized. This parameter should be customized if you're using classes you trust to be
      * deserialized.
      */
-    private String deserializationFilter = "java.**;org.apache.camel.**;!*";
+    private String deserializationFilter = "!java.net.**;java.**;org.apache.camel.**;!*";
 
     public CassandraAggregationRepository() {
     }

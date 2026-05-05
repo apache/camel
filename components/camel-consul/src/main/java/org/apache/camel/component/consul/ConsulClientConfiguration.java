@@ -48,11 +48,11 @@ public abstract class ConsulClientConfiguration implements Cloneable {
 
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String aclToken;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String userName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
 
     @UriParam

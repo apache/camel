@@ -4298,6 +4298,18 @@ public interface SalesforceEndpointBuilderFactory {
             return "CamelSalesforceReplayId";
         }
         /**
+         * The Streaming API eventUuid.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforceEventUuid}.
+         */
+        public String salesforceEventUuid() {
+            return "CamelSalesforceEventUuid";
+        }
+        /**
          * The change event schema.
          * 
          * The option is a: {@code Object} type.

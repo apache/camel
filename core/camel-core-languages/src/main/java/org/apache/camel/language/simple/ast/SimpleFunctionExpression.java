@@ -81,6 +81,33 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private Expression createSimpleExpression(CamelContext camelContext, String function, boolean strict) {
+        Class<?> type = null;
+
+        // is it a known result type (make it easy in simple to return the value as you need)
+        if (function.startsWith("int:")) {
+            type = int.class;
+            function = function.substring(4);
+        } else if (function.startsWith("integer:")) {
+            type = int.class;
+            function = function.substring(8);
+        } else if (function.startsWith("long:")) {
+            type = long.class;
+            function = function.substring(5);
+        } else if (function.startsWith("boolean:")) {
+            type = boolean.class;
+            function = function.substring(8);
+        } else if (function.startsWith("string:")) {
+            type = String.class;
+            function = function.substring(7);
+        }
+        Expression exp = doCreateSimpleExpression(camelContext, function, strict);
+        if (type != null) {
+            exp = ExpressionBuilder.convertToExpression(exp, type);
+        }
+        return exp;
+    }
+
+    private Expression doCreateSimpleExpression(CamelContext camelContext, String function, boolean strict) {
         // return the function directly if we can create function without analyzing the prefix
         Expression answer = createSimpleExpressionDirectly(camelContext, function);
         if (answer != null) {
@@ -392,6 +419,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return exp;
             }
         }
+        // html
+        if ("htmlClean".equals(function) || "htmlParse".equals(function) || "htmlDecode".equals(function)
+                || ifStartsWithReturnRemainder("htmlClean", function) != null
+                || ifStartsWithReturnRemainder("htmlParse", function) != null
+                || ifStartsWithReturnRemainder("htmlDecode", function) != null) {
+            Expression exp = createSimpleHtml(camelContext, function);
+            if (exp != null) {
+                return exp;
+            }
+        }
 
         // it may be a custom function
         String name = StringHelper.before(function, "(", function);
@@ -430,6 +467,15 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
                 SimpleLanguageFunctionFactory.class,
                 "camel-base64");
+        return factory.createFunction(camelContext, function, token.getIndex());
+    }
+
+    private Expression createSimpleHtml(CamelContext camelContext, String function) {
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
+                camelContext,
+                SimpleLanguageFunctionFactory.FACTORY + "/camel-jsoup",
+                SimpleLanguageFunctionFactory.class,
+                "camel-jsoup");
         return factory.createFunction(camelContext, function, token.getIndex());
     }
 
@@ -694,7 +740,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String exp = StringHelper.beforeLast(remainder, ")");
             if (exp == null) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${simpleJsonpath(input,exp)} was: " + function, token.getIndex());
+                        "Valid syntax: ${simpleJsonpath(exp)} was: " + function, token.getIndex());
             }
             String input = null;
             exp = StringHelper.removeLeadingAndEndingQuotes(exp);

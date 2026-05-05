@@ -255,6 +255,8 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
             option.setDeprecated(opt.isDeprecated());
             option.setDeprecationNote(opt.getDeprecationNote());
             option.setSecret(opt.isSecret());
+            option.setSecurity(opt.getSecurity());
+            option.setInsecureValue(opt.getInsecureValue());
             option.setDefaultValue(opt.getDefaultValue());
             option.setDefaultValueNote(opt.getDefaultValueNote());
             option.setAsPredicate(opt.isAsPredicate());
@@ -330,6 +332,12 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         fun.setDeprecated(field.isAnnotationPresent(Deprecated.class));
         fun.setDeprecationNote(metadata.deprecationNote());
         fun.setSecret(metadata.secret());
+        String sec = metadata.security();
+        if (Strings.isNullOrEmpty(sec) && metadata.secret()) {
+            sec = "secret";
+        }
+        fun.setSecurity(sec);
+        fun.setInsecureValue(metadata.insecureValue());
         String label = metadata.label();
         boolean ognl = false;
         if (label.contains(",ognl")) {

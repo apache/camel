@@ -150,7 +150,7 @@ public class WrapperCommand extends CamelCommand {
             Set<PosixFilePermission> perms = Files.getPosixFilePermissions(path);
             perms.add(PosixFilePermission.OWNER_EXECUTE);
             perms.add(PosixFilePermission.GROUP_EXECUTE);
-            perms.add(PosixFilePermission.OTHERS_EXECUTE);
+            perms.add(PosixFilePermission.OTHERS_EXECUTE); // NOSONAR
             Files.setPosixFilePermissions(path, perms);
         } catch (UnsupportedOperationException | IOException e) {
             // Windows or other OS that doesn't support POSIX permissions

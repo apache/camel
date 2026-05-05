@@ -17,13 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
@@ -31,10 +32,9 @@ import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.SourceScheme;
-import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION;
@@ -300,72 +300,6 @@ public class Export extends ExportBaseCommand {
         return "1.0-SNAPSHOT";
     }
 
-    public Comparator<MavenGav> mavenGavComparator() {
-        return new Comparator<MavenGav>() {
-            @Override
-            public int compare(MavenGav o1, MavenGav o2) {
-                int r1 = rankGroupId(o1);
-                int r2 = rankGroupId(o2);
-
-                if (r1 > r2) {
-                    return -1;
-                } else if (r2 > r1) {
-                    return 1;
-                } else {
-                    return o1.toString().compareTo(o2.toString());
-                }
-            }
-
-            int rankGroupId(MavenGav o1) {
-                String g1 = o1.getGroupId();
-                if (g1 == null) {
-                    return 0;
-                }
-
-                switch (g1) {
-                    case "org.springframework.boot" -> {
-                        return 30;
-                    }
-                    case "io.quarkus" -> {
-                        return 30;
-                    }
-                    case "org.apache.camel.quarkus" -> {
-                        String a1 = o1.getArtifactId();
-                        // main/core/engine first
-                        if ("camel-quarkus-core".equals(a1)) {
-                            return 21;
-                        }
-                        return 20;
-                    }
-                    case "org.apache.camel.springboot" -> {
-                        String a1 = o1.getArtifactId();
-                        // main/core/engine first
-                        if ("camel-spring-boot-starter".equals(a1)) {
-                            return 21;
-                        } else if ("camel-spring-boot-engine-starter".equals(a1)) {
-                            return 22;
-                        }
-                        return 20;
-                    }
-                    case "org.apache.camel" -> {
-                        String a1 = o1.getArtifactId();
-                        // main/core/engine first
-                        if ("camel-main".equals(a1)) {
-                            return 11;
-                        }
-                        return 10;
-                    }
-                    case "org.apache.camel.kamelets" -> {
-                        return 5;
-                    }
-                    default -> {
-                        return 0;
-                    }
-                }
-            }
-        };
-    }
-
     // Maven reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html
     protected String getBuildMavenProjectDate() {
         // 2024-09-23T10:00:00Z
@@ -378,33 +312,33 @@ public class Export extends ExportBaseCommand {
         Path docker = Path.of(buildDir).resolve("src/main/docker");
         Files.createDirectories(docker);
         String[] ids = gav.split(":");
-        String templateName = "templates/Dockerfile" + javaVersion + ".tmpl";
-        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream(templateName);
-        if (is == null) {
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("ArtifactId", ids[1]);
+        model.put("Version", ids[2]);
+        model.put("AppJar", ids[1] + "-" + ids[2] + ".jar");
+
+        String ftlName = "Dockerfile" + javaVersion + ".ftl";
+        String context;
+        try {
+            context = TemplateHelper.processTemplate(ftlName, model);
+        } catch (IOException e) {
             // fallback to JDK 21 template
             printer().printf("No Dockerfile template for Java %s, falling back to Java 21 template%n", javaVersion);
-            is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/Dockerfile21.tmpl");
+            context = TemplateHelper.processTemplate("Dockerfile21.ftl", model);
         }
-        String context = IOHelper.loadText(is);
-        IOHelper.close(is);
-
-        String appJar = ids[1] + "-" + ids[2] + ".jar";
-        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
-        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
-        context = context.replaceAll("\\{\\{ \\.AppJar }}", appJar);
         Files.writeString(docker.resolve("Dockerfile"), context);
     }
 
     // Copy the readme.md into the same Maven project root directory.
     protected void copyReadme(String buildDir, String appJar) throws Exception {
         String[] ids = gav.split(":");
-        InputStream is = ExportCamelMain.class.getClassLoader().getResourceAsStream("templates/readme.md.tmpl");
-        String context = IOHelper.loadText(is);
-        IOHelper.close(is);
+        Map<String, Object> model = new HashMap<>();
+        model.put("ArtifactId", ids[1]);
+        model.put("Version", ids[2]);
+        model.put("AppRuntimeJar", appJar);
 
-        context = context.replaceAll("\\{\\{ \\.ArtifactId }}", ids[1]);
-        context = context.replaceAll("\\{\\{ \\.Version }}", ids[2]);
-        context = context.replaceAll("\\{\\{ \\.AppRuntimeJar }}", appJar);
+        String context = TemplateHelper.processTemplate("readme.md.ftl", model);
         Files.writeString(Path.of(buildDir).resolve("readme.md"), context);
     }
 }

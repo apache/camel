@@ -69,8 +69,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         Function<ManagedRouteMBean, Object> task = mrb -> {
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
-                Route route = getCamelContext().getRoute(mrb.getRouteId());
-                List<ModelDumpLine> lines = dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
+                List<ModelDumpLine> lines
+                        = dumper.dumpStructure(getCamelContext(), mrb.getRouteId(), "true".equalsIgnoreCase(brief));
 
                 sb.append(String.format("    Id: %s", mrb.getRouteId()));
                 if (mrb.getSourceLocation() != null) {
@@ -114,11 +114,14 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             if (mrb.getSourceLocation() != null) {
                 jo.put("source", mrb.getSourceLocation());
             }
+            if (mrb.getDescription() != null) {
+                jo.put("description", mrb.getDescription());
+            }
 
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
-                Route route = getCamelContext().getRoute(mrb.getRouteId());
-                List<ModelDumpLine> lines = dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
+                List<ModelDumpLine> lines
+                        = dumper.dumpStructure(getCamelContext(), mrb.getRouteId(), "true".equalsIgnoreCase(brief));
                 List<JsonObject> code = dumpAsJSon(lines);
                 jo.put("code", code);
             } catch (Exception e) {
@@ -184,6 +187,9 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             c.put("type", line.type());
             c.put("id", line.id());
             c.put("level", line.level());
+            if (line.description() != null) {
+                c.put("description", line.description());
+            }
             c.put("code", Jsoner.escape(line.code()));
             code.add(c);
         }

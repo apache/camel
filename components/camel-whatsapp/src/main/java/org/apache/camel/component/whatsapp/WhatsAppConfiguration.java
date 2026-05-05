@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriPath;
 public class WhatsAppConfiguration {
 
     @UriParam(description = "The authorization access token taken from whatsapp-business dashboard.", label = "security",
-              secret = true)
+              security = "secret")
     @Metadata(required = true)
     private String authorizationToken;
 

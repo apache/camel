@@ -431,6 +431,10 @@ The `camel-json-patch` is now deprecated - the library it uses is not active mai
 When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
 the bean which is similar to what `camel-file` do as well.
 
+=== camel-file / camel-aws2-s3 / camel-ibm-cos
+
+The default `inProgressRepository` is now FIFO based instead of LRU as there was no need for LRU behavior, which is lighter in memory overhead.
+
 === camel-openapi-java
 
 When using _code first_ Rest DSL and have configured `base.path` then this will now be exclusively used
@@ -466,6 +470,26 @@ Previously the context-path would always be used:
 ----
 
 The intention is to allow to configure the `base.path` _as is_ in the return API specification.
+
+=== camel-arangodb
+
+The ArangoDB Java driver (upgraded to 7.24+) no longer defaults to `localhost:8529` when no host is configured.
+You must now explicitly set the host and port:
+
+[source,properties]
+----
+camel.component.arangodb.host=localhost
+camel.component.arangodb.port=8529
+----
+
+Or when using the Java API directly:
+
+[source,java]
+----
+ArangoDbConfiguration config = new ArangoDbConfiguration();
+config.setHost("localhost");
+config.setPort(8529);
+----
 
 === camel-as2
 
@@ -508,6 +532,11 @@ documentation for migration guidance.
 === camel-debezium
 
 Debezium has been upgraded from 3.4.x to 3.5.0.
+
+=== camel-mail
+
+When using a custom `MailSender` implementation then Camel will now configure this instances as well, with the various
+settings for hostname, protocol, port, etc.
 
 === camel-ftp
 

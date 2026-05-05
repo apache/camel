@@ -63,6 +63,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int consumerTemplateCacheSize = 1000;
     private boolean loadTypeConverters;
     private boolean loadHealthChecks;
+    @Metadata(security = "insecure:dev")
     private boolean devConsoleEnabled;
     private boolean modeline;
     private int logDebugMaxChars;
@@ -150,7 +151,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
-    @Metadata(enums = "xml,yaml")
+    @Metadata(enums = "xml,yaml,json")
     private String dumpRoutes;
     private String dumpRoutesInclude = "routes";
     private boolean dumpRoutesLog = true;
@@ -1574,6 +1575,9 @@ public abstract class DefaultConfigurationProperties<T> {
      * output and is therefore not recommended being used for production usage.
      *
      * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     *
+     * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
+     * useful for tooling to understand the structure of the routes and how EIPs are nested together.
      */
     public void setDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
@@ -2799,6 +2803,9 @@ public abstract class DefaultConfigurationProperties<T> {
      * output and is therefore not recommended being used for production usage.
      *
      * This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML.
+     *
+     * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
+     * useful for tooling to understand the structure of the routes and how EIPs are nested together.
      */
     public T withDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;

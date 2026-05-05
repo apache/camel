@@ -17,74 +17,65 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.NamedNode;
+import org.apache.camel.model.EndpointRequiredDefinition;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.util.StringHelper;
 
 @JdkService(ModelToStructureDumper.FACTORY)
 public class DefaultModelToStructureDumper implements ModelToStructureDumper {
 
     @Override
-    public List<ModelDumpLine> dumpStructure(CamelContext context, Route def, boolean brief) throws Exception {
+    public List<ModelDumpLine> dumpStructure(CamelContext context, String routeId, boolean brief) throws Exception {
+        // dump in text format padded by level
         List<ModelDumpLine> answer = new ArrayList<>();
 
-        String loc = def.getSourceLocationShort();
-        answer.add(new ModelDumpLine(loc, "route", def.getRouteId(), 0, "route[" + def.getRouteId() + "]"));
-        String uri = brief ? def.getEndpoint().getEndpointBaseUri() : def.getEndpoint().getEndpointUri();
-        answer.add(new ModelDumpLine(loc, "from", def.getRouteId(), 1, "from[" + uri + "]"));
+        // lookup model and runtime route
+        final Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+        final RouteDefinition def = model.getRouteDefinition(routeId);
+        String scheme = def.getResource() != null ? def.getResource().getScheme() : "file";
 
-        MBeanServer server = context.getManagementStrategy().getManagementAgent().getMBeanServer();
-        if (server != null) {
-            String jmxDomain = context.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
-            // get all the processor mbeans and sort them accordingly to their index
-            String prefix = context.getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            ObjectName query = ObjectName.getInstance(
-                    jmxDomain + ":context=" + prefix + context.getManagementName() + ",type=processors,*");
-            Set<ObjectName> names = server.queryNames(query, null);
-            List<ManagedProcessorMBean> mps = new ArrayList<>();
-            for (ObjectName on : names) {
-                ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
-                        ManagedProcessorMBean.class);
-                // the processor must belong to this route
-                if (def.getRouteId().equals(processor.getRouteId())) {
-                    mps.add(processor);
-                }
-            }
-            // sort by index
-            mps.sort(new OrderProcessorMBeans());
-
-            // dump in text format padded by level
-            for (ManagedProcessorMBean processor : mps) {
-                loc = processor.getSourceLocationShort();
-                String kind = processor.getProcessorName();
-                String id = processor.getProcessorId();
-                int level = processor.getLevel() + 1;
-                String code = brief ? processor.getProcessorName() : processor.getModelLabel();
-                answer.add(new ModelDumpLine(loc, kind, id, level, code));
-            }
+        String loc = scheme + ":" + LoggerHelper.getLineNumberLoggerName(def);
+        answer.add(
+                new ModelDumpLine(loc, "route", def.getRouteId(), 0, "route[" + def.getRouteId() + "]", def.getDescription()));
+        String uri = def.getInput().getLabel();
+        if (brief) {
+            uri = StringHelper.before(uri, "?", uri);
         }
+        answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]", def.getDescription()));
+
+        dumpChildren(def, scheme, brief, 2, answer);
 
         return answer;
     }
 
-    /**
-     * Used for sorting the processor mbeans accordingly to their index.
-     */
-    private static final class OrderProcessorMBeans implements Comparator<ManagedProcessorMBean> {
-
-        @Override
-        public int compare(ManagedProcessorMBean o1, ManagedProcessorMBean o2) {
-            return o1.getIndex().compareTo(o2.getIndex());
+    private static void dumpChildren(NamedNode parent, String scheme, boolean brief, int level, List<ModelDumpLine> answer) {
+        for (NamedNode child : parent.getChildren()) {
+            if (child instanceof OptionalIdentifiedDefinition<?> output) {
+                String loc = scheme + ":" + output.getLocation();
+                if (output.getLineNumber() > 0) {
+                    loc += ":" + output.getLineNumber();
+                }
+                String kind = output.getShortName();
+                String id = output.getId();
+                boolean choice = "choice".equals(kind);
+                String code = choice || brief ? output.getShortName() : output.getLabel();
+                if (brief && output instanceof EndpointRequiredDefinition erd) {
+                    String uri = StringHelper.before(erd.getEndpointUri(), "?", erd.getEndpointUri());
+                    code = output.getShortName() + "[" + uri + "]";
+                }
+                answer.add(new ModelDumpLine(loc, kind, id, level, code, output.getDescription()));
+            }
+            dumpChildren(child, scheme, brief, level + 1, answer);
         }
     }
 

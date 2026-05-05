@@ -3,7 +3,6 @@
 
 * xref:others:index.adoc[Miscellaneous Components]
 ** xref:attachments.adoc[Attachments]
-*** xref:aws-xray.adoc[AWS XRay]
 *** xref:azure-schema-registry.adoc[Azure Schema Registry]
 ** xref:camel-yaml-dsl-validator-maven-plugin.adoc[Camel YAML DSL Validator Maven Plugin]
 ** xref:cli-connector.adoc[CLI Connector]
@@ -12,6 +11,7 @@
 ** xref:csimple-joor.adoc[CSimple jOOR]
 ** xref:cxf-transport.adoc[CXF Transport]
 ** xref:debug.adoc[Debug]
+** xref:diagram.adoc[Diagram]
 ** xref:dsl.adoc[DSL]
 *** xref:dsl-modeline.adoc[DSL Modeline]
 *** xref:java-joor-dsl.adoc[Java DSL (runtime compiled)]
@@ -25,6 +25,7 @@
 ** xref:jandex.adoc[Jandex]
 ** xref:jasypt.adoc[Jasypt]
 ** xref:jfr.adoc[JFR]
+** xref:jsoup.adoc[Jsoup]
 ** xref:jta.adoc[JTA]
 ** xref:langchain4j-tokenizer.adoc[LangChain4j Tokenizer]
 ** xref:leveldb.adoc[LevelDB]

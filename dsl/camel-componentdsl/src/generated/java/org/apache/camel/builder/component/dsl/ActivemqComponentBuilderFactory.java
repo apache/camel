@@ -1801,6 +1801,30 @@ public interface ActivemqComponentBuilderFactory {
     
         
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default ActivemqComponentBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
@@ -2172,6 +2196,31 @@ public interface ActivemqComponentBuilderFactory {
         }
     
         /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter denying java.net.
+         * and otherwise allowing java., javax. and org.apache.camel. is
+         * applied.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default ActivemqComponentBuilder deserializationFilter(java.lang.String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
+            return this;
+        }
+    
+        /**
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
@@ -2425,6 +2474,7 @@ public interface ActivemqComponentBuilderFactory {
             case "messageIdEnabled": getOrCreateConfiguration((ActiveMQComponent) component).setMessageIdEnabled((boolean) value); return true;
             case "messageListenerContainerFactory": getOrCreateConfiguration((ActiveMQComponent) component).setMessageListenerContainerFactory((org.apache.camel.component.jms.MessageListenerContainerFactory) value); return true;
             case "messageTimestampEnabled": getOrCreateConfiguration((ActiveMQComponent) component).setMessageTimestampEnabled((boolean) value); return true;
+            case "objectMessageEnabled": getOrCreateConfiguration((ActiveMQComponent) component).setObjectMessageEnabled((boolean) value); return true;
             case "pubSubNoLocal": getOrCreateConfiguration((ActiveMQComponent) component).setPubSubNoLocal((boolean) value); return true;
             case "queueBrowseStrategy": ((ActiveMQComponent) component).setQueueBrowseStrategy((org.apache.camel.component.jms.QueueBrowseStrategy) value); return true;
             case "receiveTimeout": getOrCreateConfiguration((ActiveMQComponent) component).setReceiveTimeout((long) value); return true;
@@ -2444,6 +2494,7 @@ public interface ActivemqComponentBuilderFactory {
             case "headerFilterStrategy": ((ActiveMQComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "errorHandlerLoggingLevel": getOrCreateConfiguration((ActiveMQComponent) component).setErrorHandlerLoggingLevel((org.apache.camel.LoggingLevel) value); return true;
             case "errorHandlerLogStackTrace": getOrCreateConfiguration((ActiveMQComponent) component).setErrorHandlerLogStackTrace((boolean) value); return true;
+            case "deserializationFilter": getOrCreateConfiguration((ActiveMQComponent) component).setDeserializationFilter((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((ActiveMQComponent) component).setPassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((ActiveMQComponent) component).setUsername((java.lang.String) value); return true;
             case "transacted": getOrCreateConfiguration((ActiveMQComponent) component).setTransacted((boolean) value); return true;

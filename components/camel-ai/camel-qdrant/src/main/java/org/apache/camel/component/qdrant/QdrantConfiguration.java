@@ -39,7 +39,7 @@ public class QdrantConfiguration implements Cloneable {
     @Metadata(defaultValue = "false", label = "security")
     @UriParam
     private boolean tls;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String apiKey;
     @UriParam
     private Duration timeout;

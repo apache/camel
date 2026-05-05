@@ -19,7 +19,6 @@ package org.apache.camel.spi;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
 
 /**
  * SPI for dumping model definitions into textual structure
@@ -35,10 +34,10 @@ public interface ModelToStructureDumper {
      * Dumps the route (structure only) with source code lines
      *
      * @param  context the CamelContext
-     * @param  route   the route
+     * @param  routeId the route id
      * @param  brief   whether to include fewer details (brief mode)
      * @return         the output in textual structure
      */
-    List<ModelDumpLine> dumpStructure(CamelContext context, Route route, boolean brief) throws Exception;
+    List<ModelDumpLine> dumpStructure(CamelContext context, String routeId, boolean brief) throws Exception;
 
 }

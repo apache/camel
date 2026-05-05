@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-oauth</artifactId>
@@ -92,9 +92,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.undertow.ee</groupId>
+            <groupId>io.undertow</groupId>
             <artifactId>undertow-servlet</artifactId>
-            <version>${undertow-ee-version}</version>
+            <version>${undertow-servlet-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

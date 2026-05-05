@@ -31,7 +31,7 @@ public class StripeConfiguration {
     @Metadata(required = true, description = "The Stripe operation to perform")
     private StripeOperation operation;
 
-    @UriParam(label = "security", secret = true, description = "The Stripe API key for authentication")
+    @UriParam(label = "security", security = "secret", description = "The Stripe API key for authentication")
     private String apiKey;
 
     @UriParam(label = "advanced", description = "Override the default Stripe API base URL (for testing purposes)")

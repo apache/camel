@@ -46,16 +46,20 @@ public class BlobConfiguration implements Cloneable {
     @UriParam
     @Metadata(autowired = true)
     private BlobServiceClient serviceClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
     @UriParam(label = "producer",
-              enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
+              enums = "listBlobContainers,findBlobsByTags,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
                       + "uploadBlockBlob,uploadBlockBlobChunked,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
-                      + "clearPageBlob,getPageBlobRanges",
+                      + "clearPageBlob,getPageBlobRanges,getChangeFeed,copyBlob,createBlobSnapshot,setBlobTags,getBlobTags,undeleteBlob,setBlobTier",
               defaultValue = "listBlobContainers")
     private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
     @UriParam(label = "common")
     private String blobName;
+    @UriParam(label = "common")
+    private String snapshotId;
+    @UriParam(label = "common")
+    private String versionId;
     @UriParam(label = "common", enums = "blockblob,appendblob,pageblob", defaultValue = "blockblob")
     private BlobType blobType = BlobType.blockblob;
     @UriParam(label = "common")
@@ -104,7 +108,7 @@ public class BlobConfiguration implements Cloneable {
     private Long maxSingleUploadSize;
     @UriParam(label = "common")
     private String regex;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sourceBlobAccessKey;
     @UriParam(label = "common", enums = "SHARED_ACCOUNT_KEY,SHARED_KEY_CREDENTIAL,AZURE_IDENTITY,AZURE_SAS",
               defaultValue = "AZURE_IDENTITY")
@@ -113,9 +117,9 @@ public class BlobConfiguration implements Cloneable {
     private boolean leaseBlob;
     @UriParam(label = "common", defaultValue = "60")
     private Integer leaseDurationInSeconds = 60;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String azureClientId;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String azureClientSecret;
     @UriParam(label = "security")
     private String azureTenantId;
@@ -215,6 +219,33 @@ public class BlobConfiguration implements Cloneable {
 
     public void setBlobName(String blobName) {
         this.blobName = blobName;
+    }
+
+    /**
+     * The snapshot identifier used to target a specific blob snapshot on read operations (getBlob, downloadBlobToFile,
+     * downloadLink). When set, the read targets the snapshot scoped client instead of the live blob. Can also be
+     * provided per-exchange via the {@code CamelAzureStorageBlobSnapshotId} header.
+     */
+    public String getSnapshotId() {
+        return snapshotId;
+    }
+
+    public void setSnapshotId(String snapshotId) {
+        this.snapshotId = snapshotId;
+    }
+
+    /**
+     * The blob version identifier used to target a specific blob version on read operations (getBlob,
+     * downloadBlobToFile, downloadLink). Requires blob versioning to be enabled on the storage account. When set, the
+     * read targets the version scoped client instead of the live blob. Can also be provided per-exchange via the
+     * {@code CamelAzureStorageBlobVersionId} header.
+     */
+    public String getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(String versionId) {
+        this.versionId = versionId;
     }
 
     /**

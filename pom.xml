@@ -29,7 +29,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.19.0-SNAPSHOT</version>
+    <version>4.21.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -118,7 +118,7 @@
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
         <!-- reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>2026-02-17T16:11:10Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-04-25T11:23:57Z</project.build.outputTimestamp>
 
         <sonar.java.source>${jdk.version}</sonar.java.source>
         <!-- NOTE: this is required to correctly map each module coverage in Sonarqube. The ${maven.multiModuleProjectDirectory} may require some change
@@ -138,7 +138,7 @@
         <maven-compiler-plugin-version>3.15.0</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.10.0</maven-dependency-plugin-version>
         <maven-enforcer-plugin-version>3.6.2</maven-enforcer-plugin-version>
-        <maven-invoker-plugin-version>3.9.1</maven-invoker-plugin-version>
+        <maven-invoker-plugin-version>3.10.0</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.12.0</maven-javadoc-plugin-version>
         <maven-release-plugin-version>3.3.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.3.0</maven-remote-resources-plugin-version>
@@ -195,6 +195,14 @@
                     <execution>
                         <id>enforce-java-version</id>
                         <phase>${enforcer.phase}</phase>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[21,)</version>
+                                    <message>JDK 21+ is required to build Apache Camel. JDK 21-specific classes (e.g., virtual thread support in camel-util) are only compiled with JDK 21+. Building with JDK 17 silently omits these classes from the resulting JARs.</message>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -860,6 +868,23 @@
                         <configuration>
                             <outputName>${project.artifactId}-${project.version}-sbom</outputName>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-java-version</id>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <version>[25,)</version>
+                                            <message>JDK 25+ is required for releases to ensure all multi-release JAR layers (java-21, java-25) are compiled.</message>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
 
                 </plugins>

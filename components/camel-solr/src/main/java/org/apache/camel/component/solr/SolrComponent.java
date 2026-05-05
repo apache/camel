@@ -43,9 +43,9 @@ public class SolrComponent extends DefaultComponent {
     private long requestTimeout = SolrConstants.DEFAULT_REQUEST_TIMEOUT;
     @Metadata(defaultValue = "" + SolrConstants.DEFAULT_CONNECT_TIMEOUT)
     private long connectionTimeout = SolrConstants.DEFAULT_CONNECT_TIMEOUT;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String username;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String password;
     @Metadata(label = "security")
     private boolean enableSSL;

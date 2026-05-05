@@ -252,8 +252,8 @@ public final class URISupport {
      *
      * @param  uri                the uri
      * @param  useRaw             whether to force using raw values
-     * @param  lenient            whether to parse lenient and ignore trailing & markers which has no key or value which
-     *                            can happen when using HTTP components
+     * @param  lenient            whether to parse lenient and ignore trailing {@code &} markers that have no key or
+     *                            value, which can happen when using HTTP components
      * @return                    the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      * @see                       #RAW_TOKEN_PREFIX
@@ -499,8 +499,8 @@ public final class URISupport {
      * Assembles a query from the given map.
      *
      * @param  options the map with the options (eg key/value pairs)
-     * @return         a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no
-     *                 options.
+     * @return         a query string with {@code key1=value&key2=value2&...}, or an empty string if there are no
+     *                 options
      */
     public static String createQueryString(Map<String, Object> options) {
         final Set<String> keySet = options.keySet();
@@ -512,8 +512,8 @@ public final class URISupport {
      *
      * @param  options the map with the options (eg key/value pairs)
      * @param  encode  whether to URL encode the query string
-     * @return         a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no
-     *                 options.
+     * @return         a query string with {@code key1=value&key2=value2&...}, or an empty string if there are no
+     *                 options
      */
     public static String createQueryString(Map<String, Object> options, boolean encode) {
         return createQueryString(options.keySet(), options, encode);
@@ -561,9 +561,9 @@ public final class URISupport {
      * Assembles a query from the given map.
      *
      * @param  options            the map with the options (eg key/value pairs)
-     * @param  ampersand          to use & for Java code, and &amp; for XML
-     * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
-     *                            is no options.
+     * @param  ampersand          to use {@code &} for Java code, and {@code &amp;} for XML
+     * @return                    a query string with {@code key1=value&key2=value2&...}, or an empty string if there
+     *                            are no options
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
     @Deprecated(since = "4.1.0")

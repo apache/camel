@@ -273,6 +273,40 @@ public interface OpensearchComponentBuilderFactory {
         }
     
         /**
+         * To configure security using SSLContextParameters. When configured,
+         * this takes precedence over the certificatePath option.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpensearchComponentBuilder sslContextParameters(org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
+            doSetProperty("sslContextParameters", sslContextParameters);
+            return this;
+        }
+    
+        
+        /**
+         * Enable usage of global SSL context parameters.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
+         */
+        default OpensearchComponentBuilder useGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+            doSetProperty("useGlobalSslContextParameters", useGlobalSslContextParameters);
+            return this;
+        }
+    
+        /**
          * Basic authenticate user.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -313,6 +347,8 @@ public interface OpensearchComponentBuilderFactory {
             case "snifferInterval": ((OpensearchComponent) component).setSnifferInterval((int) value); return true;
             case "enableSSL": ((OpensearchComponent) component).setEnableSSL((boolean) value); return true;
             case "password": ((OpensearchComponent) component).setPassword((java.lang.String) value); return true;
+            case "sslContextParameters": ((OpensearchComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "useGlobalSslContextParameters": ((OpensearchComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "user": ((OpensearchComponent) component).setUser((java.lang.String) value); return true;
             default: return false;
             }

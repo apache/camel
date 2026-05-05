@@ -2125,6 +2125,50 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointConsumerBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointConsumerBuilder objectMessageEnabled(String objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
@@ -2596,6 +2640,30 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(String waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
             doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter denying java.net.
+         * and otherwise allowing java., javax. and org.apache.camel. is
+         * applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointConsumerBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
             return this;
         }
         /**
@@ -4710,6 +4778,50 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointProducerBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointProducerBuilder objectMessageEnabled(String objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
@@ -5181,6 +5293,30 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(String waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
             doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter denying java.net.
+         * and otherwise allowing java., javax. and org.apache.camel. is
+         * applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointProducerBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
             return this;
         }
         /**
@@ -6443,6 +6579,50 @@ public interface AMQPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferExchange and transferException) require
+         * this option to be enabled.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointBuilder objectMessageEnabled(String objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+        /**
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
@@ -6914,6 +7094,30 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder waitForTemporaryReplyToToBeUpdatedThreadSleepingTime(String waitForTemporaryReplyToToBeUpdatedThreadSleepingTime) {
             doSetProperty("waitForTemporaryReplyToToBeUpdatedThreadSleepingTime", waitForTemporaryReplyToToBeUpdatedThreadSleepingTime);
+            return this;
+        }
+        /**
+         * Sets an ObjectInputFilter pattern (jdk.serialFilter syntax) applied
+         * as a defense-in-depth check on the class of the body returned by
+         * jakarta.jms.ObjectMessage.getObject(). The pattern is evaluated after
+         * the JMS provider has deserialized the payload, so this option alone
+         * does not prevent gadget-chain execution that happens inside the
+         * provider's ObjectInputStream; to block such attacks, also configure
+         * the JMS provider's own deserialization filter and/or the JVM-wide
+         * -Djdk.serialFilter. When this option is not set and no JVM-wide
+         * filter is configured, a conservative default filter denying java.net.
+         * and otherwise allowing java., javax. and org.apache.camel. is
+         * applied.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param deserializationFilter the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAMQPEndpointBuilder deserializationFilter(String deserializationFilter) {
+            doSetProperty("deserializationFilter", deserializationFilter);
             return this;
         }
         /**

@@ -27,6 +27,7 @@ import org.apache.camel.component.mail.Mailbox.Protocol;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailCustomMailSenderTest extends CamelTestSupport {
@@ -42,9 +43,14 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         sendBody(claus.uriPrefix(Protocol.smtp) + "&javaMailSender=#mySender", "Hello World");
 
         assertTrue(sent, "Should have used custom mail sender");
+
+        // should also be configured
+        assertEquals(Protocol.smtp.name(), sender.getProtocol());
     }
 
     private static class MySender implements JavaMailSender {
+
+        private String protocol;
 
         @Override
         public void send(MimeMessage mimeMessage) {
@@ -53,7 +59,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
 
         @Override
         public Properties getJavaMailProperties() {
-            return null;
+            return new Properties();
         }
 
         @Override
@@ -102,11 +108,12 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
 
         @Override
         public void setProtocol(String protocol) {
+            this.protocol = protocol;
         }
 
         @Override
         public String getProtocol() {
-            return null;
+            return protocol;
         }
 
         @Override

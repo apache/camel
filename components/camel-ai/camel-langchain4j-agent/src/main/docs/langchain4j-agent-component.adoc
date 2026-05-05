@@ -1303,6 +1303,85 @@ public class AgentConfig {
 |Retries LLM call
 |===
 
+=== Structured Outputs with JSON Schema
+
+The LangChain4j Agent component supports structured outputs by configuring the `ChatModel` with a `ResponseFormat` that enforces a JSON schema. This feature is available for providers that support structured outputs including Amazon Bedrock, Azure OpenAI, Google AI Gemini, Mistral, Ollama, and OpenAI.
+
+IMPORTANT: The `ResponseFormat` must be configured on the `ChatModel` itself before passing it to the `AgentConfiguration`. The LangChain4j `AiServices` builder does not support setting response format directly.
+
+==== Configuring Structured Outputs
+
+To use structured outputs with the agent component:
+
+1. Define your JSON schema
+2. Create a `ResponseFormat` with the schema
+3. Configure your `ChatModel` with the `ResponseFormat`
+4. Pass the configured model to `AgentConfiguration`
+
+===== Complete Example with OpenAI
+
+[source,java]
+----
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ResponseFormat;
+import dev.langchain4j.model.chat.request.json.JsonRawSchema;
+import dev.langchain4j.model.chat.request.json.JsonSchema;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+import static dev.langchain4j.model.chat.request.ResponseFormatType.JSON;
+
+// Define JSON schema
+String personSchema = """
+    {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "description": "The person's full name"},
+            "age": {"type": "integer", "description": "The person's age in years"},
+            "occupation": {"type": "string", "description": "The person's job"}
+        },
+        "required": ["name", "age", "occupation"],
+        "additionalProperties": false
+    }
+    """;
+
+// Create ResponseFormat with JSON Schema
+JsonRawSchema jsonRawSchema = JsonRawSchema.from(personSchema);
+ResponseFormat responseFormat = ResponseFormat.builder()
+        .type(JSON)
+        .jsonSchema(JsonSchema.builder()
+                .name("person_schema")
+                .rootElement(jsonRawSchema)
+                .build())
+        .build();
+
+// Configure ChatModel with ResponseFormat
+ChatModel chatModel = OpenAiChatModel.builder()
+        .apiKey(openAiApiKey)
+        .modelName("gpt-4o-mini")
+        .responseFormat(responseFormat)  // Apply structured output here
+        .build();
+
+// Create agent with the configured model
+AgentConfiguration configuration = new AgentConfiguration()
+        .withChatModel(chatModel);
+
+Agent agent = new AgentWithoutMemory(configuration);
+context.getRegistry().bind("structuredAgent", agent);
+
+// Use in route
+from("direct:extract-person-info")
+    .setBody(constant("Extract information about John Smith, a 35-year-old software engineer"))
+    .to("langchain4j-agent:structured?agent=#structuredAgent")
+    .unmarshal().json()  // Parse the JSON response
+    .log("Extracted person: ${body}");
+----
+
+[NOTE]
+====
+* The LLM response will be guaranteed to conform to the provided schema
+* No prompt engineering is needed for output formatting
+* The same schema file can be shared across `camel-openai` and `camel-langchain4j-agent` components
+====
+
 === Multimodal Content Support
 
 The LangChain4j Agent component supports multimodal content, allowing you to send images, PDFs, audio, video, and text files to AI models that support vision and document understanding capabilities.

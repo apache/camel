@@ -46,8 +46,13 @@ public final class OpenAIConstants {
     public static final String OUTPUT_CLASS = "CamelOpenAIOutputClass";
     @Metadata(description = "The JSON schema to use for structured output validation", javaType = "String")
     public static final String JSON_SCHEMA = "CamelOpenAIJsonSchema";
+    @Metadata(description = "Whether to strip <think>...</think> blocks from the response body", javaType = "Boolean")
+    public static final String STRIP_THINKING = "CamelOpenAIStripThinking";
 
     // Output Headers
+    @Metadata(description = "The thinking content extracted from <think>...</think> blocks in the model response",
+              javaType = "String")
+    public static final String THINKING_CONTENT = "CamelOpenAIThinkingContent";
     @Metadata(description = "The model used for the completion response", javaType = "String")
     public static final String RESPONSE_MODEL = "CamelOpenAIResponseModel";
     @Metadata(description = "The unique identifier for the completion response", javaType = "String")
@@ -96,6 +101,29 @@ public final class OpenAIConstants {
     public static final String SIMILARITY_SCORE = "CamelOpenAISimilarityScore";
     @Metadata(description = "Original text content when embeddings operation is used", javaType = "String or List<String>")
     public static final String ORIGINAL_TEXT = "CamelOpenAIOriginalText";
+
+    // Audio Transcription Input Headers
+    @Metadata(description = "The model to use for audio transcription", javaType = "String")
+    public static final String AUDIO_MODEL = "CamelOpenAIAudioModel";
+    @Metadata(description = "The language of the input audio (ISO-639-1)", javaType = "String")
+    public static final String AUDIO_LANGUAGE = "CamelOpenAIAudioLanguage";
+    @Metadata(description = "The response format for audio transcription (json, text, srt, verbose_json, vtt)",
+              javaType = "String")
+    public static final String AUDIO_RESPONSE_FORMAT = "CamelOpenAIAudioResponseFormat";
+    @Metadata(description = "Sampling temperature for audio transcription (0.0 to 1.0)", javaType = "Double")
+    public static final String AUDIO_TEMPERATURE = "CamelOpenAIAudioTemperature";
+    @Metadata(description = "Optional text to guide the model's style or continue a previous audio segment",
+              javaType = "String")
+    public static final String AUDIO_PROMPT = "CamelOpenAIAudioPrompt";
+    @Metadata(description = "Comma-separated timestamp granularities: word, segment, or word,segment (verbose_json only)",
+              javaType = "String")
+    public static final String AUDIO_TIMESTAMP_GRANULARITIES = "CamelOpenAIAudioTimestampGranularities";
+
+    // Audio Transcription Output Headers
+    @Metadata(description = "Duration of the audio in seconds (verbose_json only)", javaType = "Double")
+    public static final String AUDIO_DURATION = "CamelOpenAIAudioDuration";
+    @Metadata(description = "Language detected in the audio (verbose_json only)", javaType = "String")
+    public static final String AUDIO_DETECTED_LANGUAGE = "CamelOpenAIAudioDetectedLanguage";
 
     private OpenAIConstants() {
         // Utility class

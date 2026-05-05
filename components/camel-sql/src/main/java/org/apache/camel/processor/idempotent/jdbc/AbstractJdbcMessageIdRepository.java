@@ -140,11 +140,12 @@ public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport imp
             public Boolean doInTransaction(TransactionStatus status) {
                 int count = queryForInt(key);
                 if (count == 0) {
-                    insert(key);
-                    return Boolean.TRUE;
-                } else {
-                    return Boolean.FALSE;
+                    int insertedCount = insert(key);
+                    if (insertedCount != 0) {
+                        return Boolean.TRUE;
+                    }
                 }
+                return Boolean.FALSE;
             }
         });
         return rc.booleanValue();

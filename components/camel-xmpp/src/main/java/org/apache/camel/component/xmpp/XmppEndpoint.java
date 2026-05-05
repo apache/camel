@@ -76,9 +76,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private int port;
     @UriPath(label = "common")
     private String participant;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String user;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam(label = "common,advanced", defaultValue = "Camel")
     private String resource = "Camel";
@@ -88,7 +88,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private boolean createAccount;
     @UriParam(label = "common")
     private String room;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String roomPassword;
     @UriParam(label = "common")
     private String nickname;

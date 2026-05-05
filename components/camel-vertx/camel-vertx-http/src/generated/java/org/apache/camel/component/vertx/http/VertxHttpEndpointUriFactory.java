@@ -23,13 +23,14 @@ public class VertxHttpEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(28);
+        Set<String> props = new HashSet<>(29);
         props.add("basicAuthPassword");
         props.add("basicAuthUsername");
         props.add("bearerToken");
         props.add("bridgeEndpoint");
         props.add("connectTimeout");
         props.add("cookieStore");
+        props.add("deserializationFilter");
         props.add("headerFilterStrategy");
         props.add("httpMethod");
         props.add("httpUri");

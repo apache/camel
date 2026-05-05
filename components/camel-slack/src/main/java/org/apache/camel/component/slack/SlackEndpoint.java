@@ -46,7 +46,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     private String channel;
     @UriParam(label = "producer")
     private String webhookUrl;
-    @UriParam(label = "producer", secret = true)
+    @UriParam(label = "producer", security = "secret")
     @Deprecated
     private String username;
     @UriParam(label = "producer")
@@ -55,7 +55,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "producer")
     @Deprecated
     private String iconEmoji;
-    @UriParam(secret = true)
+    @UriParam(security = "secret")
     private String token;
     @UriParam(label = "consumer", defaultValue = "10")
     private String maxResults = "10";

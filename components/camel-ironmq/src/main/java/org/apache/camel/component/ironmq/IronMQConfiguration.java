@@ -34,7 +34,7 @@ public class IronMQConfiguration {
     private String projectId;
 
     @UriParam(label = "security")
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String token;
 
     @UriParam(defaultValue = "https://mq-aws-us-east-1-1.iron.io")

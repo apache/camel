@@ -27,9 +27,9 @@ import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.handler.PropagatingReceiverTracingObservationHandler;
 import io.micrometer.tracing.handler.PropagatingSenderTracingObservationHandler;
 import io.micrometer.tracing.propagation.Propagator;
-import io.micrometer.tracing.test.simple.SimpleTracer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.telemetry.Span;
@@ -80,8 +80,8 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
             tracer = CamelContextHelper.findSingleByType(getCamelContext(), Tracer.class);
         }
         if (tracer == null) {
-            tracer = new SimpleTracer();
-            LOG.warn("No tracer was provided. A default inmemory tracer is used. " +
+            tracer = Tracer.NOOP;
+            LOG.warn("No tracer was provided. A default NOOP tracer is used. " +
                      "This can be useful for development only, avoid this in a production environment.");
         }
         if (observationRegistry == null) {
@@ -106,6 +106,9 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
                      "This can be useful for development only, avoid this in a production environment.");
         }
 
+        InterceptStrategy interceptStrategy = new TraceProcessorsMicrometerObsInterceptStrategy(tracer);
+        getCamelContext().getCamelContextExtension().addInterceptStrategy(interceptStrategy);
+
         this.setSpanLifecycleManager(new MicrometerObservabilitySpanLifecycleManager());
     }
 
@@ -126,7 +129,7 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
         }
 
         @Override
-        public Span create(String spanName, Span parent, SpanContextPropagationExtractor extractor) {
+        public Span create(String spanName, String spanKind, Span parent, SpanContextPropagationExtractor extractor) {
             io.micrometer.tracing.Span span;
             if (parent != null) {
                 MicrometerObservabilitySpanAdapter microObsParentSpan = (MicrometerObservabilitySpanAdapter) parent;
@@ -135,7 +138,6 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
                 Builder builder = propagator.extract(extractor, (carrier, key) -> {
                     return extractor.get(key) == null ? null : (String) extractor.get(key);
                 });
-
                 span = builder.start();
             }
             span.name(spanName);

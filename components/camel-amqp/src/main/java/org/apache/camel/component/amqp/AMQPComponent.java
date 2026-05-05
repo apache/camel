@@ -58,13 +58,13 @@ public class AMQPComponent extends JmsComponent {
     private String keyStoreLocation;
     @Metadata(defaultValue = "JKS", description = "The SSL keystore type.")
     private String keyStoreType = "JKS";
-    @Metadata(label = "security", secret = true, description = "The SSL keystore password.")
+    @Metadata(label = "security", security = "secret", description = "The SSL keystore password.")
     private String keyStorePassword;
     @Metadata(description = "The SSL truststore location.")
     private String trustStoreLocation;
     @Metadata(defaultValue = "JKS", description = "The SSL truststore type.")
     private String trustStoreType = "JKS";
-    @Metadata(label = "security", secret = true, description = "The SSL truststore password.")
+    @Metadata(label = "security", security = "secret", description = "The SSL truststore password.")
     private String trustStorePassword;
 
     // Constructors

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -23,6 +26,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
@@ -64,6 +68,11 @@ public class WhenDefinition extends BasicOutputExpressionNode
 
     public WhenDefinition(ExpressionDefinition expression) {
         super(expression);
+    }
+
+    @Override
+    public List<NamedNode> getChildren() {
+        return new ArrayList<>(getOutputs());
     }
 
     @Override

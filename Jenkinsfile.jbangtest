@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
-def JDK_NAME = env.JDK_NAME ?: 'jdk_17_latest'
+def JDK_NAME = env.JDK_NAME ?: 'jdk_21_latest'
 
 def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true "
 
@@ -59,12 +59,10 @@ pipeline {
             when {
                 anyOf {
                     branch 'main'
-                    branch 'camel-4.18.x'
-                    branch 'camel-4.14.x'
                 }
             }
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean"
+                sh "./mvnw $MAVEN_PARAMS -Pdeploy,apache-snapshots -Dquickly clean install"
                 sh "./mvnw $MAVEN_PARAMS -f test-infra/camel-test-infra-cli/pom.xml -Pjbang-it-test"
                 sh "./mvnw $MAVEN_PARAMS -f dsl/camel-jbang/camel-jbang-it/pom.xml -Pjbang-it-test"
             }

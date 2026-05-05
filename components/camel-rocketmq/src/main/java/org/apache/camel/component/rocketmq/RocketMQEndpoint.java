@@ -71,9 +71,9 @@ public class RocketMQEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private long requestTimeoutCheckerIntervalMillis = 1000L;
     @UriParam(label = "producer")
     private boolean waitForSendResult;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
 
     public RocketMQEndpoint() {

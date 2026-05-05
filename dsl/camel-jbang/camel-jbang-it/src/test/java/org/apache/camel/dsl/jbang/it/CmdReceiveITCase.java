@@ -1,0 +1,70 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.dsl.jbang.it;
+
+import java.io.IOException;
+
+import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.mosquitto.services.MosquittoLocalContainerService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.testcontainers.containers.GenericContainer;
+
+@Tag("container-only")
+public class CmdReceiveITCase extends JBangTestSupport {
+
+    @RegisterExtension
+    static AvailablePortFinder.Port mqttPort = AvailablePortFinder.find();
+    private static MosquittoLocalContainerService service;
+
+    @BeforeAll
+    public static void init() {
+        service = new MosquittoLocalContainerService(mqttPort.getPort());
+        service.initialize();
+    }
+
+    @AfterAll
+    public static void end() {
+        service.shutdown();
+    }
+
+    @Test
+    public void testCmdSendAndReceive() throws IOException {
+        copyResourceInDataFolder(TestResources.MQQT_CONSUMER);
+        final String ipAddr = getIpAddr(service.getContainer());
+        final String process = executeBackground(String.format("run --property=brokerUrl=%s %s/%s",
+                "tcp://" + ipAddr + ":1883",
+                mountPoint(), TestResources.MQQT_CONSUMER.getName()));
+        checkLogContains("Started route1 (kamelet:mqtt5-source)");
+        final String payloadFile = "payload.json";
+        newFileInDataFolder(payloadFile, "{\"value\": 42}");
+        checkCommandOutputs(String.format("cmd send --body=file:%s/%s %s", mountPoint(), payloadFile, process),
+                "Sent (success)");
+        checkLogContains("The temperature is 42");
+    }
+
+    private String getIpAddr(final GenericContainer container) {
+        return container.getCurrentContainerInfo().getNetworkSettings().getNetworks().entrySet()
+                .stream().filter(entry -> "127.0.0.1" != entry.getValue().getIpAddress())
+                .map(entry -> entry.getValue().getIpAddress()).findFirst()
+                .orElseThrow(() -> new IllegalStateException("no ip address found"));
+    }
+}

@@ -33,7 +33,7 @@ import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
-import org.infinispan.client.hotrod.exceptions.RemoteIllegalLifecycleStateException;
+import org.infinispan.client.hotrod.exceptions.HotRodClientException;
 import org.infinispan.commons.api.BasicCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,7 +143,8 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
     /**
      * Registers the embedding store schema with retry logic to handle the case where Camel and the remote Infinispan
      * server start up concurrently (e.g., in Kubernetes). The server's internal {@code ___protobuf_metadata} cache may
-     * not be ready yet, causing a {@link RemoteIllegalLifecycleStateException}.
+     * not be ready yet, causing either a {@code RemoteIllegalLifecycleStateException} or a generic
+     * {@link HotRodClientException} wrapping an {@code IllegalLifecycleStateException} in its message.
      */
     private void registerSchemaWithRetry() throws Exception {
         Duration timeout = configuration.getEmbeddingStoreSchemaRegistrationTimeout();
@@ -160,7 +161,10 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
             try {
                 EmbeddingStoreUtil.registerSchema(configuration, cacheContainer);
                 return true;
-            } catch (RemoteIllegalLifecycleStateException e) {
+            } catch (HotRodClientException e) {
+                if (!isIllegalLifecycleStateException(e)) {
+                    throw e;
+                }
                 if (firstAttempt[0]) {
                     firstAttempt[0] = false;
                     LOG.info("Infinispan server not ready for schema registration, will retry for up to {}: {}",
@@ -177,6 +181,22 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
                     "Failed to register Infinispan schema after " + timeout
                                             + " of retries. The server may not be fully started.");
         }
+    }
+
+    private static boolean isIllegalLifecycleStateException(HotRodClientException e) {
+        if (e.getClass().getSimpleName().contains("IllegalLifecycleStateException")) {
+            return true;
+        }
+        String message = e.getMessage();
+        if (message != null && message.contains("IllegalLifecycleStateException")) {
+            return true;
+        }
+        for (Throwable cause = e.getCause(); cause != null; cause = cause.getCause()) {
+            if (cause.getClass().getSimpleName().contains("IllegalLifecycleStateException")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

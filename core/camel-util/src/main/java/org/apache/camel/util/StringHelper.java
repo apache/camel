@@ -225,7 +225,7 @@ public final class StringHelper {
     }
 
     /**
-     * Encodes the text into safe XML by replacing < > and & with XML tokens
+     * Encodes the text into safe XML by replacing {@code <}, {@code >}, and {@code &} with XML tokens.
      *
      * @param  text the text
      * @return      the encoded text

@@ -95,10 +95,10 @@ public class MiloClientConfiguration implements Cloneable {
     @UriParam(label = "client")
     private String keyAlias;
 
-    @UriParam(label = "client", secret = true)
+    @UriParam(label = "client", security = "secret")
     private String keyStorePassword;
 
-    @UriParam(label = "client", secret = true)
+    @UriParam(label = "client", security = "secret")
     private String keyPassword;
 
     @UriParam(label = "client", javaType = "java.lang.String")

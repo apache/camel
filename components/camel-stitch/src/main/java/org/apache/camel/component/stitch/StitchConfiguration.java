@@ -32,7 +32,7 @@ public class StitchConfiguration implements Cloneable {
 
     @UriPath
     private String tableName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(required = true)
     private String token;
     @UriParam(label = "producer", defaultValue = "EUROPE")

@@ -31,6 +31,7 @@ import com.hazelcast.transaction.TransactionalMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.hazelcast.HazelcastSerializationFilterHelper;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
@@ -86,7 +87,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
                             + " When this limit is hit, then the Exchange is moved to the dead letter channel.",
               defaultValue = "3")
     protected int maximumRedeliveries = 3;
-    @Metadata(label = "advanced",
+    @Metadata(label = "advanced", security = "insecure:serialization",
               description = "Whether headers on the Exchange that are Java objects and Serializable should be included and saved to the repository")
     protected boolean allowSerializedHeaders;
 
@@ -450,6 +451,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
             useLocalHzInstance = true;
             Config cfg = new XmlConfigBuilder().build();
             cfg.setProperty("hazelcast.version.check.enabled", "false");
+            HazelcastSerializationFilterHelper.applyDefault(cfg);
             hazelcastInstance = Hazelcast.newHazelcastInstance(cfg);
         } else {
             ObjectHelper.notNull(hazelcastInstance, "hazelcastInstance");

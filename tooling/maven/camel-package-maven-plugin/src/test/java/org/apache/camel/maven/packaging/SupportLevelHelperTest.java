@@ -28,14 +28,15 @@ public class SupportLevelHelperTest {
         Assertions.assertEquals(SupportLevel.Preview, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.20.1"));
         Assertions.assertEquals(SupportLevel.Preview, SupportLevelHelper.defaultSupportLevel("3.19.1", "3.20.1"));
         Assertions.assertEquals(SupportLevel.Preview, SupportLevelHelper.defaultSupportLevel("3.19.1", "3.20.2"));
-        Assertions.assertNotEquals(SupportLevel.Preview, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.21.0"));
+        Assertions.assertEquals(SupportLevel.Preview, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.21.0"));
+        Assertions.assertEquals(SupportLevel.Stable, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.22.0"));
     }
 
     @Test
     public void testStable() {
-        Assertions.assertNotEquals(SupportLevel.Stable, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.20.0"));
-        Assertions.assertEquals(SupportLevel.Stable, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.21.0"));
-        Assertions.assertEquals(SupportLevel.Stable, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.21.1"));
+        Assertions.assertEquals(SupportLevel.Preview, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.20.0"));
+        Assertions.assertEquals(SupportLevel.Preview, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.21.0"));
+        Assertions.assertEquals(SupportLevel.Preview, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.21.1"));
         Assertions.assertEquals(SupportLevel.Stable, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.22.0"));
         Assertions.assertEquals(SupportLevel.Stable, SupportLevelHelper.defaultSupportLevel("3.19.0", "3.22.3"));
     }

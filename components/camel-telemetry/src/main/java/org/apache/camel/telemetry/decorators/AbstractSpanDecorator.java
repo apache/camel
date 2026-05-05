@@ -175,4 +175,9 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     public SpanContextPropagationInjector getInjector(Exchange exchange) {
         return new CamelHeadersSpanContextPropagationInjector(exchange.getIn().getHeaders());
     }
+
+    @Override
+    public String getSpanKind(String operationName) {
+        return "INTERNAL";
+    }
 }

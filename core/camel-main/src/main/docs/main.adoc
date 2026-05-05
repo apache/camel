@@ -49,7 +49,7 @@ The camel.main supports 131 options, which are listed below.
 | *camel.main.contextReloadEnabled* | Used for enabling context reloading. If enabled then Camel allow external systems such as security vaults (AWS secrets manager, etc.) to trigger refreshing Camel by updating property placeholders and reload all existing routes to take changes into effect. | false | boolean
 | *camel.main.description* | Sets the description (intended for humans) of the Camel application. |  | String
 | *camel.main.devConsoleEnabled* | Whether to enable developer console (requires camel-console on classpath). The developer console is only for assisting during development. This is NOT for production usage. | false | boolean
-| *camel.main.dumpRoutes* | If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information that may be configured in the route endpoints could potentially be included in the dump output and is therefore not recommended being used for production usage. This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML. |  | String
+| *camel.main.dumpRoutes* | If dumping is enabled then Camel will during startup dump all loaded routes (incl rests and route templates) represented as XML/YAML DSL into the log. This is intended for trouble shooting or to assist during development. Sensitive information that may be configured in the route endpoints could potentially be included in the dump output and is therefore not recommended being used for production usage. This requires to have camel-xml-io/camel-yaml-io on the classpath to be able to dump the routes as XML/YAML. You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it useful for tooling to understand the structure of the routes and how EIPs are nested together. |  | String
 | *camel.main.dumpRoutesGeneratedIds* | Whether to include auto generated IDs in the dumped output. Default is false. | false | boolean
 | *camel.main.dumpRoutesInclude* | Controls what to include in output for route dumping. Possible values: all, routes, rests, routeConfigurations, routeTemplates, beans, dataFormats. Multiple values can be separated by comma. Default is routes. | routes | String
 | *camel.main.dumpRoutesLog* | Whether to log route dumps to Logger | true | boolean
@@ -302,8 +302,23 @@ The camel.trace supports 14 options, which are listed below.
 |===
 
 
+=== Camel Security Policy configurations
+The camel.security supports 6 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.security.allowedProperties* | Comma-separated list of property keys to exclude from security policy checks. Use full property paths to allow specific properties regardless of the configured policy. |  | String
+| *camel.security.insecureDevPolicy* | Security policy for development-only features. When set, overrides the global policy for options intended only for development environments. |  | String
+| *camel.security.insecureSerializationPolicy* | Security policy for insecure deserialization configuration. When set, overrides the global policy for options that enable dangerous deserialization of untrusted data. |  | String
+| *camel.security.insecureSslPolicy* | Security policy for insecure SSL/TLS configuration. When set, overrides the global policy for options that disable certificate validation or hostname verification. |  | String
+| *camel.security.policy* | Global security policy applied to all categories unless overridden. Controls how Camel reacts when insecure configuration is detected at startup. | warn | String
+| *camel.security.secretPolicy* | Security policy for plain-text secrets. When set, overrides the global policy for properties that contain sensitive values configured as plain text. |  | String
+|===
+
+
 === Camel SSL configurations
-The camel.ssl supports 26 options, which are listed below.
+The camel.ssl supports 27 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -327,6 +342,7 @@ The camel.ssl supports 26 options, which are listed below.
 | *camel.ssl.secureRandomAlgorithm* | Algorithm name used for creating the SecureRandom. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html |  | String
 | *camel.ssl.secureRandomProvider* | To use a specific provider for creating SecureRandom. The list of available providers returned by java.security.Security.getProviders() or null to use the highest priority provider implementing the secure socket protocol. |  | String
 | *camel.ssl.secureSocketProtocol* | The protocol for the secure sockets created by the SSLContext. See \https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html | TLSv1.3 | String
+| *camel.ssl.selfSigned* | Whether to generate a self-signed certificate for development use when no keystore is configured. This can be used in development environment to easily enable HTTPS without providing a keystore. Do NOT use this in production as the certificate is not trusted and is regenerated on each restart. | false | boolean
 | *camel.ssl.sessionTimeout* | Timeout in seconds to use for SSLContext. The default is 24 hours. | 86400 | int
 | *camel.ssl.signatureSchemes* | List of TLS/SSL signature schemes. Multiple names can be separated by comma. Signature schemes control which signature algorithms are available during the TLS handshake, including post-quantum signature algorithms such as ML-DSA. |  | String
 | *camel.ssl.signatureSchemesExclude* | Filters TLS/SSL signature schemes. This filter is used for excluding signature schemes that match the naming pattern. Multiple names can be separated by comma. Notice that if the signatureSchemes option has been configured then the include/exclude filters are not in use. |  | String

@@ -16,10 +16,21 @@
  */
 package org.apache.camel.component.jms;
 
+import jakarta.jms.ConnectionFactory;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.jms.support.PurchaseOrder;
 import org.junit.jupiter.api.Test;
 
 public class JmsRouteWithObjectMessageTest extends JmsRouteTest {
+
+    @Override
+    protected JmsComponent setupComponent(
+            CamelContext camelContext, ConnectionFactory connectionFactory, String componentName) {
+        JmsComponent component = super.setupComponent(camelContext, connectionFactory, componentName);
+        component.setObjectMessageEnabled(true);
+        return component;
+    }
 
     @Override
     @Test

@@ -31,19 +31,20 @@ public class Neo4jConfiguration implements Cloneable {
     @UriParam(description = "Url for connecting to Neo database")
     private String databaseUrl;
     @UriParam(label = "security", description = "Basic authentication database user", displayName = "Database user",
-              secret = true)
+              security = "secret")
     private String username;
     @UriParam(label = "security", description = "Basic authentication database password", displayName = "Database password",
-              secret = true)
+              security = "secret")
     private String password;
     @UriParam(label = "security", description = "Basic authentication database realm", displayName = "Database realm",
-              secret = true)
+              security = "secret")
     private String realm;
-    @UriParam(label = "security", description = "Bearer authentication database realm", displayName = "Realm", secret = true)
+    @UriParam(label = "security", description = "Bearer authentication database realm", displayName = "Realm",
+              security = "secret")
     private String token;
     @UriParam(label = "security", description = "Kerberos Authentication encoded base64 ticket",
               displayName = "Encoded base64 ticket",
-              secret = true)
+              security = "secret")
     private String kerberosAuthTicket;
 
     @UriParam

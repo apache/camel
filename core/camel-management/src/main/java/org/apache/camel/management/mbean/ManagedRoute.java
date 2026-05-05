@@ -542,7 +542,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                     sb.append("    <processorStat")
                             .append(String.format(
                                     " id=\"%s\" index=\"%s\" state=\"%s\" disabled=\"%s\" sourceLineNumber=\"%s\"",
-                                    processor.getProcessorId(), processor.getIndex(), processor.getState(),
+                                    escapeXml(processor.getProcessorId()), processor.getIndex(), processor.getState(),
                                     processor.getDisabled(), line));
                     // do we have an accumulated time then append that
                     Long accTime = accumulatedTimes.get(processor.getProcessorId());
@@ -564,11 +564,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
 
         StringBuilder answer = new StringBuilder();
-        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
+        answer.append("<routeStat").append(String.format(" id=\"%s\"", escapeXml(route.getId())))
                 .append(String.format(" state=\"%s\"", getState()))
                 .append(String.format(" uptime=\"%s\"", getUptimeMillis()));
         if (getRouteGroup() != null) {
-            answer.append(String.format(" group=\"%s\"", getRouteGroup()));
+            answer.append(String.format(" group=\"%s\"", escapeXml(getRouteGroup())));
         }
         if (sourceLocation != null) {
             answer.append(String.format(" sourceLocation=\"%s\"", getSourceLocation()));
@@ -725,7 +725,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 int line = step.getSourceLineNumber() != null ? step.getSourceLineNumber() : -1;
                 sb.append("    <stepStat")
                         .append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\" sourceLineNumber=\"%s\"",
-                                step.getProcessorId(),
+                                escapeXml(step.getProcessorId()),
                                 step.getIndex(), step.getState(), line));
                 // use substring as we only want the attributes
                 sb.append(" ").append(step.dumpStatsAsXml(fullStats).substring(7)).append("\n");
@@ -734,11 +734,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         sb.append("  </stepStats>\n");
 
         StringBuilder answer = new StringBuilder();
-        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()))
+        answer.append("<routeStat").append(String.format(" id=\"%s\"", escapeXml(route.getId())))
                 .append(String.format(" state=\"%s\"", getState()))
                 .append(String.format(" uptime=\"%s\"", getUptimeMillis()));
         if (getRouteGroup() != null) {
-            answer.append(String.format(" group=\"%s\"", getRouteGroup()));
+            answer.append(String.format(" group=\"%s\"", escapeXml(getRouteGroup())));
         }
         if (sourceLocation != null) {
             answer.append(String.format(" sourceLocation=\"%s\"", getSourceLocation()));
@@ -794,7 +794,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 sb.append("\n    <routeLocation")
                         .append(String.format(
                                 " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
-                                route.getRouteId(), id, 0, location, line));
+                                escapeXml(route.getRouteId()), id, 0, location, line));
             }
             for (ManagedProcessorMBean processor : processors) {
                 // the step must belong to this route
@@ -804,7 +804,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                     sb.append("\n    <routeLocation")
                             .append(String.format(
                                     " routeId=\"%s\" id=\"%s\" index=\"%s\" sourceLocation=\"%s\" sourceLineNumber=\"%s\"/>",
-                                    route.getRouteId(), processor.getProcessorId(), processor.getIndex(), location, line));
+                                    escapeXml(route.getRouteId()), escapeXml(processor.getProcessorId()), processor.getIndex(),
+                                    location, line));
                 }
             }
         }
@@ -1009,4 +1010,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             return o1.getIndex().compareTo(o2.getIndex());
         }
     }
+
+    private static String escapeXml(String text) {
+        return text
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
+    }
+
 }

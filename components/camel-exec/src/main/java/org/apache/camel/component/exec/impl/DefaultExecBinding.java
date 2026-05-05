@@ -52,16 +52,20 @@ public class DefaultExecBinding implements ExecBinding {
         ObjectHelper.notNull(endpoint, "endpoint");
 
         // do not convert args as we do that manually later
-        Object args = exchange.getIn().removeHeader(EXEC_COMMAND_ARGS);
-        String cmd = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXECUTABLE, endpoint.getExecutable(), String.class);
-        String dir = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_WORKING_DIR, endpoint.getWorkingDir(), String.class);
-        long timeout = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_TIMEOUT, endpoint.getTimeout(), Long.class);
+        Object args = endpoint.isAllowControlHeaders() ? exchange.getIn().removeHeader(EXEC_COMMAND_ARGS) : null;
+        String cmd = getAndRemoveHeader(endpoint, exchange.getIn(), EXEC_COMMAND_EXECUTABLE, endpoint.getExecutable(),
+                String.class);
+        String dir = getAndRemoveHeader(endpoint, exchange.getIn(), EXEC_COMMAND_WORKING_DIR, endpoint.getWorkingDir(),
+                String.class);
+        long timeout = getAndRemoveHeader(endpoint, exchange.getIn(), EXEC_COMMAND_TIMEOUT, endpoint.getTimeout(), Long.class);
         String exitValuesString
-                = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_EXIT_VALUES, endpoint.getExitValues(), String.class);
-        String outFilePath = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_OUT_FILE, endpoint.getOutFile(), String.class);
-        boolean useStderrOnEmptyStdout = getAndRemoveHeader(exchange.getIn(), EXEC_USE_STDERR_ON_EMPTY_STDOUT,
+                = getAndRemoveHeader(endpoint, exchange.getIn(), EXEC_COMMAND_EXIT_VALUES, endpoint.getExitValues(),
+                        String.class);
+        String outFilePath
+                = getAndRemoveHeader(endpoint, exchange.getIn(), EXEC_COMMAND_OUT_FILE, endpoint.getOutFile(), String.class);
+        boolean useStderrOnEmptyStdout = getAndRemoveHeader(endpoint, exchange.getIn(), EXEC_USE_STDERR_ON_EMPTY_STDOUT,
                 endpoint.isUseStderrOnEmptyStdout(), Boolean.class);
-        LoggingLevel commandLogLevel = getAndRemoveHeader(exchange.getIn(), EXEC_COMMAND_LOG_LEVEL,
+        LoggingLevel commandLogLevel = getAndRemoveHeader(endpoint, exchange.getIn(), EXEC_COMMAND_LOG_LEVEL,
                 endpoint.getCommandLogLevel(), LoggingLevel.class);
         InputStream input = exchange.getIn().getBody(InputStream.class);
 
@@ -83,7 +87,7 @@ public class DefaultExecBinding implements ExecBinding {
         }
 
         Set<Integer> exitValues = new HashSet<>();
-        if (exitValuesString != null && exitValuesString.length() > 0) {
+        if (exitValuesString != null && !exitValuesString.isEmpty()) {
             exitValues = new HashSet<>(splitCommaSeparatedToListOfInts(exitValuesString));
         }
 
@@ -140,9 +144,13 @@ public class DefaultExecBinding implements ExecBinding {
      * Gets and removes the <code> <code>headerName</code> header form the input <code>message</code> (the header will
      * not be propagated)
      */
-    protected <T> T getAndRemoveHeader(Message message, String headerName, T defaultValue, Class<T> headerType) {
-        T h = message.getHeader(headerName, defaultValue, headerType);
-        message.removeHeader(headerName);
+    protected <T> T getAndRemoveHeader(
+            ExecEndpoint endpoint, Message message, String headerName, T defaultValue, Class<T> headerType) {
+        T h = defaultValue;
+        if (endpoint.isAllowControlHeaders()) {
+            h = message.getHeader(headerName, defaultValue, headerType);
+            message.removeHeader(headerName);
+        }
         return h;
     }
 }
