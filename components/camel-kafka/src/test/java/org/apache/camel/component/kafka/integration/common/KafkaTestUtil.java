@@ -91,14 +91,13 @@ public final class KafkaTestUtil {
     }
 
     public static void createTopic(KafkaService service, String topic, int numPartitions) {
-        AdminClient kafkaAdminClient = createAdminClient(service);
-        NewTopic testTopic = new NewTopic(topic, numPartitions, CreateTopicsRequest.NO_REPLICATION_FACTOR);
-        kafkaAdminClient.createTopics(Collections.singleton(testTopic));
-        KafkaFuture<TopicDescription> tdFuture
-                = kafkaAdminClient.describeTopics(Collections.singletonList(topic)).topicNameValues().get(topic);
+        try (AdminClient kafkaAdminClient = createAdminClient(service)) {
+            NewTopic testTopic = new NewTopic(topic, numPartitions, CreateTopicsRequest.NO_REPLICATION_FACTOR);
+            kafkaAdminClient.createTopics(Collections.singleton(testTopic)).all().get(30L, TimeUnit.SECONDS);
+            KafkaFuture<TopicDescription> tdFuture
+                    = kafkaAdminClient.describeTopics(Collections.singletonList(topic)).topicNameValues().get(topic);
 
-        try {
-            TopicDescription td = tdFuture.get(5L, TimeUnit.SECONDS);
+            TopicDescription td = tdFuture.get(30L, TimeUnit.SECONDS);
             List<TopicPartitionInfo> pi = td.partitions();
             assertEquals(numPartitions, pi.size());
         } catch (Exception e) {
