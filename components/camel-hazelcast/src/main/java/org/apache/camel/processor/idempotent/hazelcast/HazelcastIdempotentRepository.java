@@ -21,6 +21,7 @@ import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
+import org.apache.camel.component.hazelcast.HazelcastSerializationFilterHelper;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
@@ -59,6 +60,7 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
         if (hazelcastInstance == null) {
             Config cfg = new XmlConfigBuilder().build();
             cfg.setProperty("hazelcast.version.check.enabled", "false");
+            HazelcastSerializationFilterHelper.applyDefault(cfg);
             hazelcastInstance = Hazelcast.newHazelcastInstance(cfg);
             useLocalHzInstance = true;
         } else {
