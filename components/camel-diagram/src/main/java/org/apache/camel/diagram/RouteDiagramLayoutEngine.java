@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Layout engine that builds a tree from flat route node lists and computes positions for diagram rendering.
+ */
 public class RouteDiagramLayoutEngine {
 
     public static final int SCALE = 2;

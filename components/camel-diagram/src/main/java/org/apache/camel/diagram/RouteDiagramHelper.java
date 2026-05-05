@@ -25,6 +25,10 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
+/**
+ * Utility class for parsing Camel route structure JSON into {@link RouteDiagramLayoutEngine.RouteInfo} objects that can
+ * be rendered as diagrams.
+ */
 public final class RouteDiagramHelper {
 
     private RouteDiagramHelper() {

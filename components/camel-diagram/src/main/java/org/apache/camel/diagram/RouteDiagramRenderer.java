@@ -40,6 +40,9 @@ import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCALE;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.V_GAP;
 
+/**
+ * Renders route diagrams as PNG images or text-based tree representations.
+ */
 public class RouteDiagramRenderer {
 
     private static final int ARC = 14 * SCALE;
