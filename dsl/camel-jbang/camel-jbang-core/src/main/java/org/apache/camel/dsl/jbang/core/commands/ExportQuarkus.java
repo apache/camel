@@ -546,7 +546,13 @@ class ExportQuarkus extends Export {
             sb.append("        <dependency>\n");
             sb.append("            <groupId>").append(gav.getGroupId()).append("</groupId>\n");
             sb.append("            <artifactId>").append(gav.getArtifactId()).append("</artifactId>\n");
-            if (gav.getVersion() != null) {
+            if (gav.getVersion() != null
+                    && (
+                    // org.apache.camel.kamelets:camel-kamelets is managed in org.apache.camel.quarkus:camel-quarkus-bom
+                    // as well as in io.quarkus.platform:quarkus-camel-bom
+                    // so we do not need to add the version for it
+                    !"org.apache.camel.kamelets".equals(gav.getGroupId())
+                            || !"camel-kamelets".equals(gav.getArtifactId()))) {
                 sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
             }
             if (gav.getScope() != null) {
