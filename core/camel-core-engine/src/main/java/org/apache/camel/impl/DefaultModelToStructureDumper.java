@@ -24,7 +24,6 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
@@ -54,44 +53,30 @@ public class DefaultModelToStructureDumper implements ModelToStructureDumper {
         }
         answer.add(new ModelDumpLine(loc, "from", routeId, 1, "from[" + uri + "]", def.getDescription()));
 
-        var outputs = ProcessorDefinitionHelper.filterTypeInOutputs(def.getOutputs(), OptionalIdentifiedDefinition.class);
-        for (var output : outputs) {
-            loc = scheme + ":" + output.getLocation();
-            if (output.getLineNumber() > 0) {
-                loc += ":" + output.getLineNumber();
-            }
-            String kind = output.getShortName();
-            String id = output.getId();
-            int level = getLevel(output) + 1;
-            boolean choice = "choice".equals(output.getShortName());
-            String code = choice || brief ? output.getShortName() : output.getLabel();
-            // even in brief mode we want to see the uri for EIPs
-            if (brief && output instanceof EndpointRequiredDefinition erd) {
-                uri = StringHelper.before(erd.getEndpointUri(), "?", erd.getEndpointUri());
-                code = output.getShortName() + "[" + uri + "]";
-            }
-            String desc = output.getDescription();
-            answer.add(new ModelDumpLine(loc, kind, id, level, code, desc));
-        }
+        dumpChildren(def, scheme, brief, 2, answer);
 
         return answer;
     }
 
-    private static int getLevel(NamedNode node) {
-        int level = 0;
-        while (node != null && node.getParent() != null) {
-            // special for choice
-            boolean choice = "choice".equals(node.getParent().getShortName());
-            if (choice) {
-                level++;
+    private static void dumpChildren(NamedNode parent, String scheme, boolean brief, int level, List<ModelDumpLine> answer) {
+        for (NamedNode child : parent.getChildren()) {
+            if (child instanceof OptionalIdentifiedDefinition<?> output) {
+                String loc = scheme + ":" + output.getLocation();
+                if (output.getLineNumber() > 0) {
+                    loc += ":" + output.getLineNumber();
+                }
+                String kind = output.getShortName();
+                String id = output.getId();
+                boolean choice = "choice".equals(kind);
+                String code = choice || brief ? output.getShortName() : output.getLabel();
+                if (brief && output instanceof EndpointRequiredDefinition erd) {
+                    String uri = StringHelper.before(erd.getEndpointUri(), "?", erd.getEndpointUri());
+                    code = output.getShortName() + "[" + uri + "]";
+                }
+                answer.add(new ModelDumpLine(loc, kind, id, level, code, output.getDescription()));
             }
-            boolean shallow = "when".equals(node.getShortName()) || "otherwise".equals(node.getShortName());
-            if (!shallow) {
-                level++;
-            }
-            node = node.getParent();
+            dumpChildren(child, scheme, brief, level + 1, answer);
         }
-        return level;
     }
 
 }

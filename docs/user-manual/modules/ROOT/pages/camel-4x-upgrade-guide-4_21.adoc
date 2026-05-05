@@ -24,6 +24,18 @@ However, using Java serialization is discouraged and highly recommend to use oth
 
 Removed `org.apache.camel.spi.ReifierStrategy` which is no longer in use by Camel and can safely be removed.
 
+A new `getChildren()` default method has been added to `org.apache.camel.NamedNode`. It returns `List<NamedNode>` and
+provides a uniform API for traversing the route model tree, including structural nodes like `WhenDefinition` and
+`OtherwiseDefinition` that are not `ProcessorDefinition` subclasses and therefore invisible to `getOutputs()`.
+Code that walks the model tree recursively should prefer `getChildren()` over `getOutputs()` to avoid needing
+special-case handling for Choice EIP.
+
+The `NamedNode.getLevel()` and `getParentId()` methods no longer treat `when` and `otherwise` nodes as "shallow".
+Previously these nodes were flattened to the same level as their parent `choice`, which was inconsistent with how
+`doCatch` and `doFinally` work inside `doTry`. Now `when` and `otherwise` contribute their own level, consistent
+with the tree structure exposed by `getChildren()`. This affects level values reported via JMX (`ManagedProcessor.getLevel()`)
+and dev consoles for nodes inside Choice EIP branches.
+
 === camel-yaml-dsl
 
 A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
