@@ -73,7 +73,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 String base64 = imageToBase64(image, "png");
                 // For HTML embedding:
                 String html = "<html>%n<body>%n<img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\"%n</body>%n</html>>"
-                        .formatted(base64);
+                String html = "<html>\n<body>\n<img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\">\n</body>\n</html>"
                 sj.add(html);
             } catch (Exception e) {
                 // ignore
