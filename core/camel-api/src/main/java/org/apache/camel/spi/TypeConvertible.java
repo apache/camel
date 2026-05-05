@@ -42,11 +42,8 @@ public final class TypeConvertible<F, T> {
      * @param to   The class instance that defines the "to" type (that is: Class&lt;F&gt;.class). Must NOT be null.
      */
     public TypeConvertible(Class<F> from, Class<T> to) {
-        assert from != null;
-        assert to != null;
-
-        this.from = from;
-        this.to = to;
+        this.from = Objects.requireNonNull(from, "from");
+        this.to = Objects.requireNonNull(to, "to");
 
         this.hash = calculateHash();
     }
@@ -62,6 +59,7 @@ public final class TypeConvertible<F, T> {
      * @return      true if there is a conversion match between the give TypeConvertible and this instance.
      */
     public boolean matches(TypeConvertible<?, ?> that) {
+        Objects.requireNonNull(that, "that");
         return match(this.from, this.to, that.from, that.to);
     }
 
@@ -135,6 +133,7 @@ public final class TypeConvertible<F, T> {
      *              convertible
      */
     public boolean isAssignableMatch(TypeConvertible<?, ?> that) {
+        Objects.requireNonNull(that, "that");
         return isAssignableMatch(this.from, this.to, that.from, that.to);
     }
 

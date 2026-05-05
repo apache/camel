@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.Channel;
@@ -567,6 +568,7 @@ public final class ServiceHelper {
      * @return         the services, including the parent service, and all its children
      */
     public static Set<Service> getChildServices(Service service) {
+        Objects.requireNonNull(service, "service");
         return getChildServices(service, false);
     }
 
@@ -578,6 +580,7 @@ public final class ServiceHelper {
      * @return                     the services, including the parent service, and all its children
      */
     public static Set<Service> getChildServices(Service service, boolean includeErrorHandler) {
+        Objects.requireNonNull(service, "service");
         Set<Service> answer = new LinkedHashSet<>();
         doGetChildServices(answer, service, includeErrorHandler);
         return answer;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.util.ObjectHelper;
 import org.jspecify.annotations.Nullable;
@@ -48,13 +50,13 @@ public class CamelLogger {
     }
 
     public CamelLogger(Logger log, LoggingLevel level, @Nullable String marker) {
-        this.log = log;
+        this.log = Objects.requireNonNull(log, "log");
         setLevel(level);
         setMarker(marker);
     }
 
     public CamelLogger(String logName) {
-        this(LoggerFactory.getLogger(logName));
+        this(LoggerFactory.getLogger(Objects.requireNonNull(logName, "logName")));
     }
 
     public CamelLogger(String logName, LoggingLevel level) {
@@ -62,7 +64,7 @@ public class CamelLogger {
     }
 
     public CamelLogger(String logName, LoggingLevel level, @Nullable String marker) {
-        this(LoggerFactory.getLogger(logName), level, marker);
+        this(LoggerFactory.getLogger(Objects.requireNonNull(logName, "logName")), level, marker);
     }
 
     @Override
@@ -71,6 +73,8 @@ public class CamelLogger {
     }
 
     public void log(String message, LoggingLevel loggingLevel) {
+        Objects.requireNonNull(message, "message");
+        Objects.requireNonNull(loggingLevel, "loggingLevel");
         LoggingLevel oldLogLevel = getLevel();
         setLevel(loggingLevel);
         log(message);
@@ -83,6 +87,7 @@ public class CamelLogger {
      * @param message the message to log, if {@link #shouldLog()} returned <tt>true</tt>
      */
     public void log(String message) {
+        Objects.requireNonNull(message, "message");
         if (shouldLog(log, level)) {
             if (marker != null) {
                 log(log, level, marker, message);
@@ -98,6 +103,7 @@ public class CamelLogger {
      * @param message the message to log
      */
     public void doLog(String message) {
+        Objects.requireNonNull(message, "message");
         if (marker != null) {
             log(log, level, marker, message);
         } else {
@@ -106,10 +112,15 @@ public class CamelLogger {
     }
 
     public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
+        Objects.requireNonNull(message, "message");
+        Objects.requireNonNull(exception, "exception");
+        Objects.requireNonNull(loggingLevel, "loggingLevel");
         log(log, loggingLevel, marker, message, exception);
     }
 
     public void log(String message, Throwable exception) {
+        Objects.requireNonNull(message, "message");
+        Objects.requireNonNull(exception, "exception");
         if (shouldLog(log, level)) {
             log(log, level, marker, message, exception);
         }
@@ -120,7 +131,7 @@ public class CamelLogger {
     }
 
     public void setLog(Logger log) {
-        this.log = log;
+        this.log = Objects.requireNonNull(log, "log");
     }
 
     public LoggingLevel getLevel() {
@@ -136,6 +147,7 @@ public class CamelLogger {
     }
 
     public void setLogName(String logName) {
+        Objects.requireNonNull(logName, "logName");
         this.log = LoggerFactory.getLogger(logName);
     }
 
@@ -156,6 +168,9 @@ public class CamelLogger {
     }
 
     public static void log(Logger log, LoggingLevel level, String message) {
+        Objects.requireNonNull(log, "log");
+        Objects.requireNonNull(level, "level");
+        Objects.requireNonNull(message, "message");
         switch (level) {
             case DEBUG:
                 log.debug(message);
@@ -177,6 +192,10 @@ public class CamelLogger {
     }
 
     public static void log(Logger log, LoggingLevel level, Marker marker, String message) {
+        Objects.requireNonNull(log, "log");
+        Objects.requireNonNull(level, "level");
+        Objects.requireNonNull(marker, "marker");
+        Objects.requireNonNull(message, "message");
         switch (level) {
             case DEBUG:
                 log.debug(marker, message);
@@ -198,6 +217,10 @@ public class CamelLogger {
     }
 
     public static void log(Logger log, LoggingLevel level, String message, Throwable th) {
+        Objects.requireNonNull(log, "log");
+        Objects.requireNonNull(level, "level");
+        Objects.requireNonNull(message, "message");
+        Objects.requireNonNull(th, "th");
         switch (level) {
             case DEBUG:
                 log.debug(message, th);
@@ -219,6 +242,10 @@ public class CamelLogger {
     }
 
     public static void log(Logger log, LoggingLevel level, @Nullable Marker marker, String message, Throwable th) {
+        Objects.requireNonNull(log, "log");
+        Objects.requireNonNull(level, "level");
+        Objects.requireNonNull(message, "message");
+        Objects.requireNonNull(th, "th");
         if (marker == null) {
             log(log, level, message, th);
             return;
@@ -250,6 +277,8 @@ public class CamelLogger {
     }
 
     public static boolean shouldLog(Logger log, LoggingLevel level) {
+        Objects.requireNonNull(log, "log");
+        Objects.requireNonNull(level, "level");
         switch (level) {
             case DEBUG:
                 return log.isDebugEnabled();

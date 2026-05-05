@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.jspecify.annotations.Nullable;
@@ -41,6 +43,7 @@ public class Contract {
      * @param inputType input data type
      */
     public void setInputType(String inputType) {
+        Objects.requireNonNull(inputType, "inputType");
         this.inputType = new DataType(inputType);
         this.contractString = null;
     }
@@ -51,6 +54,7 @@ public class Contract {
      * @param clazz Java class which represents input data type
      */
     public void setInputType(Class<?> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
         this.inputType = new DataType(clazz);
         this.contractString = null;
     }
@@ -65,6 +69,7 @@ public class Contract {
      * @param outputType output data type
      */
     public void setOutputType(String outputType) {
+        Objects.requireNonNull(outputType, "outputType");
         this.outputType = new DataType(outputType);
         this.contractString = null;
     }
@@ -75,6 +80,7 @@ public class Contract {
      * @param clazz Java class which represents output data type
      */
     public void setOutputType(Class<?> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
         this.outputType = new DataType(clazz);
         this.contractString = null;
     }

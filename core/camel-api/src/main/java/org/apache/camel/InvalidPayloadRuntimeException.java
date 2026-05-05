@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -34,15 +36,18 @@ public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
     }
 
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Message message) {
-        super("No body available of type: " + type.getName()
-              + NoSuchPropertyException.valueDescription(message.getBody()) + " on: " + message, exchange);
+        super("No body available of type: " + Objects.requireNonNull(type, "type").getName()
+              + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())
+              + " on: " + message, Objects.requireNonNull(exchange, "exchange"));
         this.type = type;
     }
 
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Message message, Throwable cause) {
-        super("No body available of type: " + type.getName()
-              + NoSuchPropertyException.valueDescription(message.getBody()) + " on: " + message
-              + ". Caused by: " + cause.getMessage(), exchange, cause);
+        super("No body available of type: " + Objects.requireNonNull(type, "type").getName()
+              + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())
+              + " on: " + message
+              + ". Caused by: " + Objects.requireNonNull(cause, "cause").getMessage(),
+              Objects.requireNonNull(exchange, "exchange"), cause);
         this.type = type;
     }
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,30 +28,33 @@ public class NoSuchBeanException extends RuntimeCamelException {
     private final @Nullable String name;
 
     public NoSuchBeanException(String name) {
-        super("No bean could be found in the registry for: " + name);
+        super("No bean could be found in the registry for: " + Objects.requireNonNull(name, "name"));
         this.name = name;
     }
 
     public NoSuchBeanException(String name, int size) {
         super(size > 0
-                ? "Found " + size + " beans for: " + name + " in the registry, only 1 bean excepted."
+                ? "Found " + size + " beans for: " + Objects.requireNonNull(name, "name")
+                  + " in the registry, only 1 bean excepted."
                 : "No bean could be found in the registry for: " + name);
         this.name = name;
     }
 
     public NoSuchBeanException(@Nullable String name, String type) {
-        super("No bean could be found in the registry" + (name != null ? " for: " + name : "") + " of type: " + type);
+        super("No bean could be found in the registry" + (name != null ? " for: " + name : "") + " of type: "
+              + Objects.requireNonNull(type, "type"));
         this.name = name;
     }
 
     public NoSuchBeanException(String name, Throwable cause) {
-        super("No bean could be found in the registry for: " + name + ". Cause: " + cause.getMessage(), cause);
+        super("No bean could be found in the registry for: " + Objects.requireNonNull(name, "name") + ". Cause: "
+              + Objects.requireNonNull(cause, "cause").getMessage(), cause);
         this.name = name;
     }
 
     public NoSuchBeanException(String name, String message, Throwable cause) {
-        super(message, cause);
-        this.name = name;
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
+        this.name = Objects.requireNonNull(name, "name");
     }
 
     public @Nullable String getName() {

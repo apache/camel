@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.apache.camel.util.URISupport;
 import org.jspecify.annotations.Nullable;
 
@@ -28,30 +30,36 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
     private final @Nullable String location;
 
     public FailedToCreateRouteException(String cause) {
-        super("Failed to create route because: " + cause);
+        super("Failed to create route because: " + Objects.requireNonNull(cause, "cause"));
         this.routeId = null;
         this.location = null;
     }
 
     public FailedToCreateRouteException(String routeId, @Nullable String location, String route, String cause) {
-        super("Failed to create route: " + routeId + (location != null ? " (source: " + location + ")" : "") + ": "
-              + getRouteMessage(route) + " because: " + cause);
+        super("Failed to create route: " + Objects.requireNonNull(routeId, "routeId")
+              + (location != null ? " (source: " + location + ")" : "") + ": "
+              + getRouteMessage(Objects.requireNonNull(route, "route")) + " because: "
+              + Objects.requireNonNull(cause, "cause"));
         this.routeId = routeId;
         this.location = location;
     }
 
     public FailedToCreateRouteException(String routeId, @Nullable String location, String route, Throwable cause) {
-        super("Failed to create route: " + routeId + (location != null ? " (source: " + location + ")" : "") + ": "
-              + getRouteMessage(route) + " because: " + getExceptionMessage(cause),
+        super("Failed to create route: " + Objects.requireNonNull(routeId, "routeId")
+              + (location != null ? " (source: " + location + ")" : "") + ": "
+              + getRouteMessage(Objects.requireNonNull(route, "route")) + " because: "
+              + getExceptionMessage(Objects.requireNonNull(cause, "cause")),
               cause);
         this.routeId = routeId;
         this.location = location;
     }
 
     public FailedToCreateRouteException(String routeId, @Nullable String location, String route, String at, Throwable cause) {
-        super("Failed to create route: " + routeId + (location != null ? " (source: " + location + ")" : "") + " at: >>> " + at
-              + " <<< in route: " + getRouteMessage(route)
-              + " because: " + getExceptionMessage(cause), cause);
+        super("Failed to create route: " + Objects.requireNonNull(routeId, "routeId")
+              + (location != null ? " (source: " + location + ")" : "") + " at: >>> "
+              + Objects.requireNonNull(at, "at")
+              + " <<< in route: " + getRouteMessage(Objects.requireNonNull(route, "route"))
+              + " because: " + getExceptionMessage(Objects.requireNonNull(cause, "cause")), cause);
         this.routeId = routeId;
         this.location = location;
     }
@@ -65,10 +73,12 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
     }
 
     protected static String getExceptionMessage(Throwable cause) {
+        Objects.requireNonNull(cause, "cause");
         return cause.getMessage() != null ? cause.getMessage() : cause.getClass().getSimpleName();
     }
 
     protected static String getRouteMessage(String route) {
+        Objects.requireNonNull(route, "route");
         // cut the route after 60 chars, so it won't be too big in the message
         // users just need to be able to identify the route, so they know where to look
         if (route.length() > 60) {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -33,8 +35,9 @@ public class NoSuchPropertyException extends CamelExchangeException {
     }
 
     public NoSuchPropertyException(Exchange exchange, String propertyName, @Nullable Class<?> type) {
-        super("No '" + propertyName + "' exchange property available" + (type != null ? " of type: " + type.getName() : "")
-              + reason(exchange, propertyName), exchange);
+        super("No '" + Objects.requireNonNull(propertyName, "propertyName") + "' exchange property available"
+              + (type != null ? " of type: " + type.getName() : "")
+              + reason(Objects.requireNonNull(exchange, "exchange"), propertyName), exchange);
         this.propertyName = propertyName;
         this.type = type;
     }
@@ -48,6 +51,8 @@ public class NoSuchPropertyException extends CamelExchangeException {
     }
 
     protected static String reason(Exchange exchange, String propertyName) {
+        Objects.requireNonNull(exchange, "exchange");
+        Objects.requireNonNull(propertyName, "propertyName");
         Object value = exchange.getProperty(propertyName);
         return valueDescription(value);
     }

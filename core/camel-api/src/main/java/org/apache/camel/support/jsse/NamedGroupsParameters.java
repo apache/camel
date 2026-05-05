@@ -18,6 +18,7 @@ package org.apache.camel.support.jsse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -42,6 +43,7 @@ public class NamedGroupsParameters {
     }
 
     public void addNamedGroup(String group) {
+        Objects.requireNonNull(group, "group");
         if (this.namedGroup == null) {
             this.namedGroup = new ArrayList<>();
         }
@@ -54,7 +56,8 @@ public class NamedGroupsParameters {
      * @param namedGroup named groups
      */
     public void setNamedGroup(List<String> namedGroup) {
-        this.namedGroup = namedGroup == null ? null : new ArrayList<>(namedGroup);
+        Objects.requireNonNull(namedGroup, "namedGroup");
+        this.namedGroup = new ArrayList<>(namedGroup);
     }
 
     @Override

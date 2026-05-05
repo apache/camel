@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -27,15 +29,17 @@ public class ExpressionEvaluationException extends RuntimeCamelException {
     private final transient @Nullable Exchange exchange;
 
     public ExpressionEvaluationException(
-                                         @Nullable Expression expression, Exchange exchange, @Nullable Throwable cause) {
+                                         @Nullable Expression expression, @Nullable Exchange exchange,
+                                         @Nullable Throwable cause) {
         super(cause);
         this.expression = expression;
         this.exchange = exchange;
     }
 
     public ExpressionEvaluationException(
-                                         Expression expression, String message, Exchange exchange, @Nullable Throwable cause) {
-        super(message, cause);
+                                         @Nullable Expression expression, String message, @Nullable Exchange exchange,
+                                         @Nullable Throwable cause) {
+        super(Objects.requireNonNull(message, "message"), cause);
         this.expression = expression;
         this.exchange = exchange;
     }

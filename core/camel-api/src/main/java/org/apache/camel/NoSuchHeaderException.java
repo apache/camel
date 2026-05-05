@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -29,14 +31,15 @@ public class NoSuchHeaderException extends CamelExchangeException {
     private final transient @Nullable Class<?> type;
 
     public NoSuchHeaderException(String message, Exchange exchange, String headerName) {
-        super(message, exchange);
-        this.headerName = headerName;
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"));
+        this.headerName = Objects.requireNonNull(headerName, "headerName");
         this.type = null;
     }
 
     public NoSuchHeaderException(Exchange exchange, String headerName, @Nullable Class<?> type) {
-        super("No '" + headerName + "' header available" + (type != null ? " of type: " + type.getName() : "")
-              + reason(exchange, headerName), exchange);
+        super("No '" + Objects.requireNonNull(headerName, "headerName") + "' header available"
+              + (type != null ? " of type: " + type.getName() : "")
+              + reason(Objects.requireNonNull(exchange, "exchange"), headerName), exchange);
         this.headerName = headerName;
         this.type = type;
     }
@@ -50,6 +53,8 @@ public class NoSuchHeaderException extends CamelExchangeException {
     }
 
     protected static String reason(Exchange exchange, String headerName) {
+        Objects.requireNonNull(exchange, "exchange");
+        Objects.requireNonNull(headerName, "headerName");
         Object value = exchange.getMessage().getHeader(headerName);
         return valueDescription(value);
     }

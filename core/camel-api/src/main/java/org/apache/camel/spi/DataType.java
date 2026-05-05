@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.util.StringHelper;
 import org.jspecify.annotations.Nullable;
 
@@ -68,6 +70,7 @@ public class DataType {
     }
 
     public DataType(Class<?> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
         scheme = JAVA_TYPE_SCHEME;
         isJavaType = true;
         name = clazz.getName();

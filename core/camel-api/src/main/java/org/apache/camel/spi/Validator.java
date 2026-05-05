@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
@@ -58,6 +60,7 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
      * @param type data type
      */
     public Validator setType(String type) {
+        Objects.requireNonNull(type, "type");
         this.type = new DataType(type);
         return this;
     }
@@ -69,7 +72,7 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
 
     @Override
     public void setCamelContext(CamelContext context) {
-        this.camelContext = context;
+        this.camelContext = Objects.requireNonNull(context, "context");
     }
 
     @Override

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -39,7 +41,7 @@ public class OAuthClientConfig {
     }
 
     public OAuthClientConfig setClientId(String clientId) {
-        this.clientId = clientId;
+        this.clientId = Objects.requireNonNull(clientId, "clientId");
         return this;
     }
 
@@ -48,7 +50,7 @@ public class OAuthClientConfig {
     }
 
     public OAuthClientConfig setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
+        this.clientSecret = Objects.requireNonNull(clientSecret, "clientSecret");
         return this;
     }
 
@@ -57,7 +59,7 @@ public class OAuthClientConfig {
     }
 
     public OAuthClientConfig setTokenEndpoint(String tokenEndpoint) {
-        this.tokenEndpoint = tokenEndpoint;
+        this.tokenEndpoint = Objects.requireNonNull(tokenEndpoint, "tokenEndpoint");
         return this;
     }
 

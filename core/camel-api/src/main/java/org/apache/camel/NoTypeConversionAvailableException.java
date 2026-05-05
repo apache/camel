@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -27,13 +29,13 @@ public class NoTypeConversionAvailableException extends CamelException {
     private final transient Class<?> type;
 
     public NoTypeConversionAvailableException(@Nullable Object value, Class<?> type) {
-        super(createMessage(value, type));
+        super(createMessage(value, Objects.requireNonNull(type, "type")));
         this.value = value;
         this.type = type;
     }
 
     public NoTypeConversionAvailableException(@Nullable Object value, Class<?> type, Throwable cause) {
-        super(createMessage(value, type, cause), cause);
+        super(createMessage(value, Objects.requireNonNull(type, "type"), Objects.requireNonNull(cause, "cause")), cause);
         this.value = value;
         this.type = type;
     }
@@ -67,6 +69,7 @@ public class NoTypeConversionAvailableException extends CamelException {
      * Returns an error message for no type converter available.
      */
     public static String createMessage(@Nullable Object value, Class<?> type) {
+        Objects.requireNonNull(type, "type");
         return "No type converter available to convert from type: "
                + (value != null ? value.getClass().getCanonicalName() : null)
                + " to the required type: " + type.getCanonicalName();
@@ -76,6 +79,8 @@ public class NoTypeConversionAvailableException extends CamelException {
      * Returns an error message for no type converter available with the cause.
      */
     public static String createMessage(@Nullable Object value, Class<?> type, Throwable cause) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(cause, "cause");
         return "Converting Exception when converting from type: "
                + (value != null ? value.getClass().getCanonicalName() : null) + " to the required type: "
                + type.getCanonicalName() + ", which is caused by " + cause;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,10 +28,10 @@ import org.jspecify.annotations.Nullable;
 public class ValidationException extends CamelExchangeException {
 
     public ValidationException(@Nullable Exchange exchange, String message) {
-        super(message, exchange);
+        super(Objects.requireNonNull(message, "message"), exchange);
     }
 
     public ValidationException(String message, @Nullable Exchange exchange, Throwable cause) {
-        super(message, exchange, cause);
+        super(Objects.requireNonNull(message, "message"), exchange, Objects.requireNonNull(cause, "cause"));
     }
 }

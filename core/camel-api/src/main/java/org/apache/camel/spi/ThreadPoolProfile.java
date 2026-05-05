@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
@@ -55,7 +56,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      * @param id id of the profile
      */
     public ThreadPoolProfile(String id) {
-        this.id = id;
+        this.id = Objects.requireNonNull(id, "id");
     }
 
     /**

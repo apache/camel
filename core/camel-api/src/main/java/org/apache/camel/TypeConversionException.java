@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -27,7 +29,7 @@ public class TypeConversionException extends RuntimeCamelException {
     private final transient Class<?> type;
 
     public TypeConversionException(@Nullable Object value, Class<?> type, Throwable cause) {
-        super(createMessage(value, type, cause), cause);
+        super(createMessage(value, Objects.requireNonNull(type, "type"), Objects.requireNonNull(cause, "cause")), cause);
         this.value = value;
         this.type = type;
     }
@@ -61,6 +63,8 @@ public class TypeConversionException extends RuntimeCamelException {
      * Returns an error message for type conversion failed.
      */
     public static String createMessage(@Nullable Object value, Class<?> type, Throwable cause) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(cause, "cause");
         return "Error during type conversion from type: " + (value != null ? value.getClass().getCanonicalName() : null)
                + " to the required type: " + type.getCanonicalName() + " with value " + value + " due to "
                + cause.getClass().getName() + ": " + cause.getMessage();

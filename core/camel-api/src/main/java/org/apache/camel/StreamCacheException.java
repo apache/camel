@@ -16,11 +16,13 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 public class StreamCacheException extends TypeConversionException {
 
     public StreamCacheException(@Nullable Object value, Throwable cause) {
-        super(value, StreamCache.class, cause);
+        super(value, StreamCache.class, Objects.requireNonNull(cause, "cause"));
     }
 }

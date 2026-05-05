@@ -16,20 +16,22 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * Thrown if an expression evaluation fails
  */
 public class RuntimeExpressionException extends RuntimeCamelException {
 
     public RuntimeExpressionException(String message) {
-        super(message);
+        super(Objects.requireNonNull(message, "message"));
     }
 
     public RuntimeExpressionException(String message, Throwable cause) {
-        super(message, cause);
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
     }
 
     public RuntimeExpressionException(Throwable cause) {
-        super(cause);
+        super(Objects.requireNonNull(cause, "cause"));
     }
 }

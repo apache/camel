@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
@@ -26,22 +28,26 @@ public class FailedToCreateConsumerException extends RuntimeCamelException {
     private final String uri;
 
     public FailedToCreateConsumerException(String endpointURI, Throwable cause) {
-        super("Failed to create Consumer for endpoint for: " + sanitizeUri(endpointURI) + ". Reason: " + cause, cause);
+        super("Failed to create Consumer for endpoint for: " + sanitizeUri(Objects.requireNonNull(endpointURI, "endpointURI"))
+              + ". Reason: " + Objects.requireNonNull(cause, "cause"), cause);
         this.uri = sanitizeUri(endpointURI);
     }
 
     public FailedToCreateConsumerException(Endpoint endpoint, Throwable cause) {
-        super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + cause, cause);
+        super("Failed to create Consumer for endpoint: " + Objects.requireNonNull(endpoint, "endpoint") + ". Reason: "
+              + Objects.requireNonNull(cause, "cause"), cause);
         this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 
     public FailedToCreateConsumerException(Endpoint endpoint, String message, Throwable cause) {
-        super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + message, cause);
+        super("Failed to create Consumer for endpoint: " + Objects.requireNonNull(endpoint, "endpoint") + ". Reason: "
+              + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
         this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 
     public FailedToCreateConsumerException(Endpoint endpoint, String message) {
-        super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + message);
+        super("Failed to create Consumer for endpoint: " + Objects.requireNonNull(endpoint, "endpoint") + ". Reason: "
+              + Objects.requireNonNull(message, "message"));
         this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 

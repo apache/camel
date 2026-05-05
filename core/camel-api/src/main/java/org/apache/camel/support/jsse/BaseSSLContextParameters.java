@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -466,6 +467,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @throws GeneralSecurityException if there is an error configuring the context
      */
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
+        Objects.requireNonNull(context, "context");
         LOG.trace("Configuring client and server side SSLContext parameters on SSLContext [{}]...", context);
 
         if (this.getSessionTimeout() != null) {
@@ -506,6 +508,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @return         the needed configurers
      */
     protected List<Configurer<SSLEngine>> getSSLEngineConfigurers(SSLContext context) {
+        Objects.requireNonNull(context, "context");
 
         final List<String> enabledCipherSuites = this.getCipherSuites() == null
                 ? null : this.parsePropertyValues(this.getCipherSuites().getCipherSuite());
@@ -662,6 +665,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @see            #getSSLSocketFactorySSLSocketConfigurers(SSLContext)
      */
     protected List<Configurer<SSLSocketFactory>> getSSLSocketFactoryConfigurers(SSLContext context) {
+        Objects.requireNonNull(context, "context");
 
         final List<Configurer<SSLSocket>> sslSocketConfigurers = this.getSSLSocketFactorySSLSocketConfigurers(context);
 
@@ -696,6 +700,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @see            #getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext)
      */
     protected List<Configurer<SSLServerSocketFactory>> getSSLServerSocketFactoryConfigurers(SSLContext context) {
+        Objects.requireNonNull(context, "context");
 
         final List<Configurer<SSLServerSocket>> sslServerSocketConfigurers
                 = this.getSSLServerSocketFactorySSLServerSocketConfigurers(context);
@@ -728,6 +733,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @return         the needed configurers
      */
     protected List<Configurer<SSLSocket>> getSSLSocketFactorySSLSocketConfigurers(SSLContext context) {
+        Objects.requireNonNull(context, "context");
         final List<String> enabledCipherSuites = this.getCipherSuites() == null
                 ? null : this.parsePropertyValues(this.getCipherSuites().getCipherSuite());
 
@@ -884,6 +890,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @return         the needed configurers
      */
     protected List<Configurer<SSLServerSocket>> getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext context) {
+        Objects.requireNonNull(context, "context");
         final List<String> enabledCipherSuites = this.getCipherSuites() == null
                 ? null : this.parsePropertyValues(this.getCipherSuites().getCipherSuite());
 
@@ -1034,6 +1041,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     protected void configureSessionContext(
             SSLSessionContext sessionContext, String sessionTimeout)
             throws GeneralSecurityException {
+        Objects.requireNonNull(sessionTimeout, "sessionTimeout");
 
         int sessionTimeoutInt = Integer.parseInt(this.parsePropertyValue(sessionTimeout));
 
@@ -1142,6 +1150,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @param patterns the patterns to try to match against
      */
     protected boolean matchesOneOf(String value, List<Pattern> patterns) {
+        Objects.requireNonNull(value, "value");
+        Objects.requireNonNull(patterns, "patterns");
         boolean matches = false;
 
         for (Pattern pattern : patterns) {
@@ -1246,7 +1256,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     protected static final class SSLContextDecorator extends SSLContext {
 
         public SSLContextDecorator(SSLContextSpiDecorator decorator) {
-            super(decorator, decorator.getDelegate().getProvider(), decorator.getDelegate().getProtocol());
+            super(Objects.requireNonNull(decorator, "decorator"), decorator.getDelegate().getProvider(),
+                  decorator.getDelegate().getProtocol());
             LOG.debug("SSLContextDecorator [{}] decorating SSLContext [{}].", this, decorator.getDelegate());
         }
 
@@ -1282,10 +1293,12 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                                       List<Configurer<SSLEngine>> sslEngineConfigurers,
                                       List<Configurer<SSLSocketFactory>> sslSocketFactoryConfigurers,
                                       List<Configurer<SSLServerSocketFactory>> sslServerSocketFactoryConfigurers) {
-            this.context = context;
-            this.sslEngineConfigurers = sslEngineConfigurers;
-            this.sslSocketFactoryConfigurers = sslSocketFactoryConfigurers;
-            this.sslServerSocketFactoryConfigurers = sslServerSocketFactoryConfigurers;
+            this.context = Objects.requireNonNull(context, "context");
+            this.sslEngineConfigurers = Objects.requireNonNull(sslEngineConfigurers, "sslEngineConfigurers");
+            this.sslSocketFactoryConfigurers
+                    = Objects.requireNonNull(sslSocketFactoryConfigurers, "sslSocketFactoryConfigurers");
+            this.sslServerSocketFactoryConfigurers
+                    = Objects.requireNonNull(sslServerSocketFactoryConfigurers, "sslServerSocketFactoryConfigurers");
         }
 
         @Override
@@ -1407,8 +1420,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         public SSLServerSocketFactoryDecorator(SSLServerSocketFactory sslServerSocketFactory,
                                                List<Configurer<SSLServerSocket>> sslServerSocketConfigurers) {
-            this.sslServerSocketFactory = sslServerSocketFactory;
-            this.sslServerSocketConfigurers = sslServerSocketConfigurers;
+            this.sslServerSocketFactory = Objects.requireNonNull(sslServerSocketFactory, "sslServerSocketFactory");
+            this.sslServerSocketConfigurers
+                    = Objects.requireNonNull(sslServerSocketConfigurers, "sslServerSocketConfigurers");
         }
 
         @Override
@@ -1469,8 +1483,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
 
         public SSLSocketFactoryDecorator(SSLSocketFactory sslSocketFactory,
                                          List<Configurer<SSLSocket>> sslSocketConfigurers) {
-            this.sslSocketFactory = sslSocketFactory;
-            this.sslSocketConfigurers = sslSocketConfigurers;
+            this.sslSocketFactory = Objects.requireNonNull(sslSocketFactory, "sslSocketFactory");
+            this.sslSocketConfigurers = Objects.requireNonNull(sslSocketConfigurers, "sslSocketConfigurers");
         }
 
         @Override

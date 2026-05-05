@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -30,7 +32,7 @@ public class ExpressionIllegalSyntaxException extends RuntimeCamelException {
     }
 
     public ExpressionIllegalSyntaxException(String expression, @Nullable Throwable cause) {
-        super("Illegal syntax: " + expression, cause);
+        super("Illegal syntax: " + Objects.requireNonNull(expression, "expression"), cause);
         this.expression = expression;
     }
 

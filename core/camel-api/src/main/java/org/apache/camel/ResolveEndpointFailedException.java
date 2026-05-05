@@ -16,6 +16,10 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
@@ -23,24 +27,26 @@ import static org.apache.camel.util.URISupport.sanitizeUri;
  */
 public class ResolveEndpointFailedException extends RuntimeCamelException {
 
-    private final String uri;
+    private final @Nullable String uri;
 
-    public ResolveEndpointFailedException(String uri, Throwable cause) {
-        super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: " + cause.getMessage(), cause);
+    public ResolveEndpointFailedException(@Nullable String uri, Throwable cause) {
+        super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: "
+              + Objects.requireNonNull(cause, "cause").getMessage(), cause);
         this.uri = sanitizeUri(uri);
     }
 
-    public ResolveEndpointFailedException(String uri, String message) {
-        super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: " + message);
+    public ResolveEndpointFailedException(@Nullable String uri, String message) {
+        super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: "
+              + Objects.requireNonNull(message, "message"));
         this.uri = sanitizeUri(uri);
     }
 
-    public ResolveEndpointFailedException(String uri) {
+    public ResolveEndpointFailedException(@Nullable String uri) {
         super("Failed to resolve endpoint: " + sanitizeUri(uri));
         this.uri = sanitizeUri(uri);
     }
 
-    public String getUri() {
+    public @Nullable String getUri() {
         return uri;
     }
 }

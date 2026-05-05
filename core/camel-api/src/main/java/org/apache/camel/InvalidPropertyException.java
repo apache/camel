@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -31,7 +33,8 @@ public class InvalidPropertyException extends RuntimeCamelException {
     }
 
     public InvalidPropertyException(Object owner, String propertyName, Class<?> type) {
-        super("No '" + propertyName + "' property available on type: " + type.getName() + " in: " + owner);
+        super("No '" + Objects.requireNonNull(propertyName, "propertyName") + "' property available on type: "
+              + Objects.requireNonNull(type, "type").getName() + " in: " + Objects.requireNonNull(owner, "owner"));
         this.owner = owner;
         this.propertyName = propertyName;
     }

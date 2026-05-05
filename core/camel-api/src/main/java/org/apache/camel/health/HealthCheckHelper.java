@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -48,6 +49,7 @@ public final class HealthCheckHelper {
      * Invokes all the checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invoke(CamelContext camelContext) {
+        Objects.requireNonNull(camelContext, "camelContext");
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false, null);
     }
 
@@ -58,6 +60,7 @@ public final class HealthCheckHelper {
      * @param exposureLevel level of exposure (full, oneline or default)
      */
     public static Collection<HealthCheck.Result> invoke(CamelContext camelContext, @Nullable String exposureLevel) {
+        Objects.requireNonNull(camelContext, "camelContext");
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.ALL), check -> false,
                 exposureLevel);
     }
@@ -66,6 +69,7 @@ public final class HealthCheckHelper {
      * Invokes the readiness checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext) {
+        Objects.requireNonNull(camelContext, "camelContext");
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.READINESS),
                 check -> !check.isReadiness(), null);
     }
@@ -77,6 +81,7 @@ public final class HealthCheckHelper {
      * @param exposureLevel level of exposure (full, oneline or default)
      */
     public static Collection<HealthCheck.Result> invokeReadiness(CamelContext camelContext, @Nullable String exposureLevel) {
+        Objects.requireNonNull(camelContext, "camelContext");
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.READINESS),
                 check -> !check.isReadiness(), exposureLevel);
     }
@@ -85,6 +90,7 @@ public final class HealthCheckHelper {
      * Invokes the liveness checks and returns a collection of results.
      */
     public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext) {
+        Objects.requireNonNull(camelContext, "camelContext");
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.LIVENESS),
                 check -> !check.isLiveness(), null);
     }
@@ -96,6 +102,7 @@ public final class HealthCheckHelper {
      * @param exposureLevel level of exposure (full, oneline or default)
      */
     public static Collection<HealthCheck.Result> invokeLiveness(CamelContext camelContext, @Nullable String exposureLevel) {
+        Objects.requireNonNull(camelContext, "camelContext");
         return invoke(camelContext, check -> Map.of(HealthCheck.CHECK_KIND, HealthCheck.Kind.LIVENESS),
                 check -> !check.isLiveness(), exposureLevel);
     }
@@ -106,7 +113,8 @@ public final class HealthCheckHelper {
     public static Collection<HealthCheck.Result> invoke(
             CamelContext camelContext,
             Function<HealthCheck, Map<String, Object>> optionsSupplier) {
-
+        Objects.requireNonNull(camelContext, "camelContext");
+        Objects.requireNonNull(optionsSupplier, "optionsSupplier");
         return invoke(camelContext, optionsSupplier, check -> false, null);
     }
 
@@ -116,7 +124,8 @@ public final class HealthCheckHelper {
     public static Collection<HealthCheck.Result> invoke(
             CamelContext camelContext,
             Predicate<HealthCheck> filter) {
-
+        Objects.requireNonNull(camelContext, "camelContext");
+        Objects.requireNonNull(filter, "filter");
         return invoke(camelContext, check -> Collections.emptyMap(), filter, null);
     }
 
@@ -133,6 +142,9 @@ public final class HealthCheckHelper {
             Function<HealthCheck, Map<String, Object>> optionsSupplier,
             Predicate<HealthCheck> filter,
             @Nullable String exposureLevel) {
+        Objects.requireNonNull(camelContext, "camelContext");
+        Objects.requireNonNull(optionsSupplier, "optionsSupplier");
+        Objects.requireNonNull(filter, "filter");
 
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
 
@@ -192,6 +204,9 @@ public final class HealthCheckHelper {
      * @return              an optional {@link HealthCheck.Result}.
      */
     public static Optional<HealthCheck.Result> invoke(CamelContext camelContext, String id, Map<String, Object> options) {
+        Objects.requireNonNull(camelContext, "camelContext");
+        Objects.requireNonNull(id, "id");
+        Objects.requireNonNull(options, "options");
         final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
 
         if (registry != null) {
@@ -208,6 +223,7 @@ public final class HealthCheckHelper {
      * @return         the health check registry, or <tt>null</tt> if health-check is not enabled.
      */
     public static @Nullable HealthCheckRegistry getHealthCheckRegistry(CamelContext context) {
+        Objects.requireNonNull(context, "context");
         return context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
     }
 
@@ -219,6 +235,8 @@ public final class HealthCheckHelper {
      * @return         the health check, or <tt>null</tt> if no health check exists with this id
      */
     public static @Nullable HealthCheck getHealthCheck(CamelContext context, String id) {
+        Objects.requireNonNull(context, "context");
+        Objects.requireNonNull(id, "id");
         HealthCheck answer = null;
 
         HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
@@ -250,6 +268,9 @@ public final class HealthCheckHelper {
      * @return         the health check, or <tt>null</tt> if no health check exists with this id
      */
     public static <T extends HealthCheck> @Nullable T getHealthCheck(CamelContext context, String id, Class<T> type) {
+        Objects.requireNonNull(context, "context");
+        Objects.requireNonNull(id, "id");
+        Objects.requireNonNull(type, "type");
         HealthCheck answer = getHealthCheck(context, id);
         if (answer != null) {
             return type.cast(answer);
@@ -265,6 +286,8 @@ public final class HealthCheckHelper {
      * @return         the health check repository, or <tt>null</tt> if no health check repository exists with this id
      */
     public static @Nullable HealthCheckRepository getHealthCheckRepository(CamelContext context, String id) {
+        Objects.requireNonNull(context, "context");
+        Objects.requireNonNull(id, "id");
         HealthCheckRepository answer = null;
 
         HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
@@ -297,6 +320,9 @@ public final class HealthCheckHelper {
      */
     public static <T extends HealthCheckRepository> @Nullable T getHealthCheckRepository(
             CamelContext context, String id, Class<T> type) {
+        Objects.requireNonNull(context, "context");
+        Objects.requireNonNull(id, "id");
+        Objects.requireNonNull(type, "type");
         HealthCheckRepository answer = getHealthCheckRepository(context, id);
         if (answer != null) {
             return type.cast(answer);
@@ -312,6 +338,7 @@ public final class HealthCheckHelper {
      * @return           true if up, or false if down
      */
     public static boolean isResultsUp(Collection<HealthCheck.Result> results, boolean readiness) {
+        Objects.requireNonNull(results, "results");
         boolean up;
         if (readiness) {
             // readiness requires that all are UP

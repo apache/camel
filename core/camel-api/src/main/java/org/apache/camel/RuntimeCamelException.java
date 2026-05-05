@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.io.Serial;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -48,6 +49,7 @@ public class RuntimeCamelException extends RuntimeException {
      * @return   the wrapper exception
      */
     public static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
+        Objects.requireNonNull(e, "e");
         if (e instanceof RuntimeCamelException re) {
             // don't double wrap
             return re;
@@ -63,6 +65,7 @@ public class RuntimeCamelException extends RuntimeException {
      * @return   the wrapper exception
      */
     public static RuntimeException wrapRuntimeException(Throwable e) {
+        Objects.requireNonNull(e, "e");
         if (e instanceof RuntimeException re) {
             // don't double wrap
             return re;

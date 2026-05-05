@@ -17,6 +17,8 @@
 
 package org.apache.camel.resume;
 
+import java.util.Objects;
+
 import org.apache.camel.resume.cache.ResumeCache;
 import org.jspecify.annotations.Nullable;
 
@@ -42,7 +44,7 @@ public abstract class ResumeStrategyConfiguration {
      * @param cacheFillPolicy the fill policy to use
      */
     public void setCacheFillPolicy(Cacheable.FillPolicy cacheFillPolicy) {
-        this.cacheFillPolicy = cacheFillPolicy;
+        this.cacheFillPolicy = Objects.requireNonNull(cacheFillPolicy, "cacheFillPolicy");
     }
 
     /**
@@ -59,6 +61,6 @@ public abstract class ResumeStrategyConfiguration {
     }
 
     public void setResumeCache(ResumeCache<?> resumeCache) {
-        this.resumeCache = resumeCache;
+        this.resumeCache = Objects.requireNonNull(resumeCache, "resumeCache");
     }
 }

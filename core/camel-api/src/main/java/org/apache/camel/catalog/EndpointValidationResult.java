@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
@@ -58,6 +59,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
     }
 
     public void addLenient(String name) {
+        Objects.requireNonNull(name, "name");
         if (lenient == null) {
             lenient = new LinkedHashSet<>();
         }
@@ -65,6 +67,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
     }
 
     public void addNotConsumerOnly(String name) {
+        Objects.requireNonNull(name, "name");
         if (notConsumerOnly == null) {
             notConsumerOnly = new LinkedHashSet<>();
         }
@@ -75,6 +78,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
     }
 
     public void addNotProducerOnly(String name) {
+        Objects.requireNonNull(name, "name");
         if (notProducerOnly == null) {
             notProducerOnly = new LinkedHashSet<>();
         }

@@ -17,6 +17,7 @@
 package org.apache.camel.catalog;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -30,7 +31,7 @@ public class LanguageValidationResult implements Serializable {
     private int index;
 
     public LanguageValidationResult(String text) {
-        this.text = text;
+        this.text = Objects.requireNonNull(text, "text");
     }
 
     public String getText() {

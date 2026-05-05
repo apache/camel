@@ -18,6 +18,7 @@ package org.apache.camel.support.jsse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -40,6 +41,7 @@ public class CipherSuitesParameters {
     }
 
     public void addCipherSuite(String cipher) {
+        Objects.requireNonNull(cipher, "cipher");
         if (this.cipherSuite == null) {
             this.cipherSuite = new ArrayList<>();
         }

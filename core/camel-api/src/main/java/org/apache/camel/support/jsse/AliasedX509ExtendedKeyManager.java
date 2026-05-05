@@ -20,6 +20,7 @@ import java.net.Socket;
 import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.Objects;
 
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.X509ExtendedKeyManager;
@@ -42,8 +43,8 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager {
      * @param keyManager Instance of KeyManager to be wrapped
      */
     public AliasedX509ExtendedKeyManager(String keyAlias, X509KeyManager keyManager) {
-        this.keyAlias = keyAlias;
-        this.keyManager = keyManager;
+        this.keyAlias = Objects.requireNonNull(keyAlias, "keyAlias");
+        this.keyManager = Objects.requireNonNull(keyManager, "keyManager");
     }
 
     @Override

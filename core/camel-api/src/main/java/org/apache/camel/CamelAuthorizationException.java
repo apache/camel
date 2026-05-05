@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -27,12 +29,13 @@ public class CamelAuthorizationException extends CamelExchangeException {
     private final @Nullable String policyId;
 
     public CamelAuthorizationException(String message, Exchange exchange) {
-        super(message, exchange);
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"));
         policyId = exchange.getIn().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, String.class);
     }
 
     public CamelAuthorizationException(String message, Exchange exchange, Throwable cause) {
-        super(message, exchange, cause);
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"),
+              Objects.requireNonNull(cause, "cause"));
         policyId = exchange.getIn().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, String.class);
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Strategy for configurers.
@@ -27,6 +28,7 @@ public abstract class ConfigurerStrategy {
     private static final List<Runnable> BOOTSTRAP_CLEARERS = new ArrayList<>();
 
     public static void addBootstrapConfigurerClearer(Runnable strategy) {
+        Objects.requireNonNull(strategy, "strategy");
         BOOTSTRAP_CLEARERS.add(strategy);
     }
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -30,7 +32,7 @@ public class PropertyBindingException extends RuntimeCamelException {
     private final @Nullable String optionKey;
 
     public PropertyBindingException(Object target, @Nullable String propertyName, @Nullable Object value) {
-        this.target = target;
+        this.target = Objects.requireNonNull(target, "target");
         this.propertyName = propertyName;
         this.value = value;
         this.optionPrefix = null;
@@ -38,8 +40,8 @@ public class PropertyBindingException extends RuntimeCamelException {
     }
 
     public PropertyBindingException(Object target, @Nullable String propertyName, @Nullable Object value, Throwable e) {
-        initCause(e);
-        this.target = target;
+        initCause(Objects.requireNonNull(e, "e"));
+        this.target = Objects.requireNonNull(target, "target");
         this.propertyName = propertyName;
         this.value = value;
         this.optionPrefix = null;
@@ -47,8 +49,8 @@ public class PropertyBindingException extends RuntimeCamelException {
     }
 
     public PropertyBindingException(Object target, Throwable e) {
-        initCause(e);
-        this.target = target;
+        initCause(Objects.requireNonNull(e, "e"));
+        this.target = Objects.requireNonNull(target, "target");
         this.propertyName = null;
         this.value = null;
         this.optionPrefix = null;
@@ -57,8 +59,8 @@ public class PropertyBindingException extends RuntimeCamelException {
 
     public PropertyBindingException(Object target, @Nullable String propertyName, @Nullable Object value,
                                     @Nullable String optionPrefix, @Nullable String optionKey, Throwable e) {
-        initCause(e);
-        this.target = target;
+        initCause(Objects.requireNonNull(e, "e"));
+        this.target = Objects.requireNonNull(target, "target");
         this.propertyName = propertyName;
         this.value = value;
         this.optionPrefix = optionPrefix;

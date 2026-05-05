@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -27,8 +29,8 @@ public class ExpectedBodyTypeException extends RuntimeCamelException {
     private final transient @Nullable Class<?> expectedBodyType;
 
     public ExpectedBodyTypeException(Exchange exchange, Class<?> expectedBodyType) {
-        super("Could not extract IN message body as type: " + expectedBodyType + " body is: "
-              + exchange.getIn().getBody());
+        super("Could not extract IN message body as type: " + Objects.requireNonNull(expectedBodyType, "expectedBodyType")
+              + " body is: " + Objects.requireNonNull(exchange, "exchange").getIn().getBody());
         this.exchange = exchange;
         this.expectedBodyType = expectedBodyType;
     }

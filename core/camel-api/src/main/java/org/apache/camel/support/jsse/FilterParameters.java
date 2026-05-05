@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -59,6 +60,7 @@ public class FilterParameters extends JsseParameters {
     }
 
     public void addInclude(String pattern) {
+        Objects.requireNonNull(pattern, "pattern");
         if (this.include == null) {
             this.include = new ArrayList<>();
         }
@@ -66,6 +68,7 @@ public class FilterParameters extends JsseParameters {
     }
 
     public void addExclude(String pattern) {
+        Objects.requireNonNull(pattern, "pattern");
         if (this.exclude == null) {
             this.exclude = new ArrayList<>();
         }
@@ -128,6 +131,8 @@ public class FilterParameters extends JsseParameters {
         private final List<Pattern> excludes;
 
         public Patterns(List<Pattern> includes, List<Pattern> excludes) {
+            Objects.requireNonNull(includes, "includes");
+            Objects.requireNonNull(excludes, "excludes");
             this.includes = Collections.unmodifiableList(new ArrayList<>(includes));
             this.excludes = Collections.unmodifiableList(new ArrayList<>(excludes));
         }

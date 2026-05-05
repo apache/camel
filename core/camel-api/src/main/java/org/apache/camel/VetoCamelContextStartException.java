@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * An exception to veto starting {@link CamelContext}.
  * <p/>
@@ -34,8 +36,8 @@ public class VetoCamelContextStartException extends Exception {
     }
 
     public VetoCamelContextStartException(String message, CamelContext context, boolean rethrowException) {
-        super(message);
-        this.context = context;
+        super(Objects.requireNonNull(message, "message"));
+        this.context = Objects.requireNonNull(context, "context");
         this.rethrowException = rethrowException;
     }
 
@@ -44,8 +46,8 @@ public class VetoCamelContextStartException extends Exception {
     }
 
     public VetoCamelContextStartException(String message, Throwable cause, CamelContext context, boolean rethrowException) {
-        super(message, cause);
-        this.context = context;
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
+        this.context = Objects.requireNonNull(context, "context");
         this.rethrowException = rethrowException;
     }
 

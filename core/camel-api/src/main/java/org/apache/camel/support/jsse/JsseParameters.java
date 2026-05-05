@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -53,7 +54,7 @@ public class JsseParameters implements CamelContextAware {
      */
     @Override
     public void setCamelContext(CamelContext context) {
-        this.context = context;
+        this.context = Objects.requireNonNull(context, "context");
     }
 
     /**
@@ -67,8 +68,8 @@ public class JsseParameters implements CamelContextAware {
      *
      * @see                          #setCamelContext(CamelContext)
      */
-    protected String parsePropertyValue(String value) throws RuntimeCamelException {
-        if (this.getCamelContext() != null) {
+    protected @Nullable String parsePropertyValue(@Nullable String value) throws RuntimeCamelException {
+        if (this.getCamelContext() != null && value != null) {
             try {
                 return this.getCamelContext().resolvePropertyPlaceholders(value);
             } catch (Exception e) {
@@ -91,6 +92,7 @@ public class JsseParameters implements CamelContextAware {
      * @see                          #parsePropertyValue(String)
      */
     protected List<String> parsePropertyValues(List<String> values) throws RuntimeCamelException {
+        Objects.requireNonNull(values, "values");
         if (this.getCamelContext() == null) {
             return values;
         } else {
@@ -113,6 +115,7 @@ public class JsseParameters implements CamelContextAware {
      * @throws IOException if the resource cannot be resolved using any of the above methods
      */
     protected InputStream resolveResource(String resource) throws IOException {
+        Objects.requireNonNull(resource, "resource");
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
         Resource res

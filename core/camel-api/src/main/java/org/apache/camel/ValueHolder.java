@@ -27,7 +27,7 @@ public class ValueHolder<V> {
     private final V value;
 
     public ValueHolder(V val) {
-        value = val;
+        value = Objects.requireNonNull(val, "val");
     }
 
     public V get() {

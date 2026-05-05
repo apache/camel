@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Represents a failure to open a Properties file at a given URL
@@ -26,7 +27,8 @@ public class LoadPropertiesException extends CamelException {
     private final URL url;
 
     public LoadPropertiesException(URL url, Exception cause) {
-        super("Failed to load URL: " + url + ". Reason: " + cause, cause);
+        super("Failed to load URL: " + Objects.requireNonNull(url, "url") + ". Reason: "
+              + Objects.requireNonNull(cause, "cause"), cause);
         this.url = url;
     }
 

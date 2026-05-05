@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -24,13 +26,14 @@ import org.jspecify.annotations.Nullable;
 public class RuntimeExchangeException extends RuntimeCamelException {
     private final transient @Nullable Exchange exchange;
 
-    public RuntimeExchangeException(String message, Exchange exchange) {
-        super(createMessage(message, exchange));
+    public RuntimeExchangeException(String message, @Nullable Exchange exchange) {
+        super(createMessage(Objects.requireNonNull(message, "message"), exchange));
         this.exchange = exchange;
     }
 
-    public RuntimeExchangeException(String message, Exchange exchange, Throwable cause) {
-        super(createMessage(message, exchange), cause);
+    public RuntimeExchangeException(String message, @Nullable Exchange exchange, Throwable cause) {
+        super(createMessage(Objects.requireNonNull(message, "message"), exchange),
+              Objects.requireNonNull(cause, "cause"));
         this.exchange = exchange;
     }
 
@@ -44,6 +47,7 @@ public class RuntimeExchangeException extends RuntimeCamelException {
     }
 
     protected static String createMessage(String message, @Nullable Exchange exchange) {
+        Objects.requireNonNull(message, "message");
         if (exchange != null) {
             return message + " on the exchange: " + exchange;
         } else {

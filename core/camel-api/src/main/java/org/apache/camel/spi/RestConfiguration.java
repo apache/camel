@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
@@ -99,7 +100,7 @@ public class RestConfiguration {
      * @param componentName the name of the component (such as netty-http, jetty, servlet, undertow, etc.)
      */
     public void setComponent(String componentName) {
-        this.component = componentName;
+        this.component = Objects.requireNonNull(componentName, "componentName");
     }
 
     /**
@@ -117,7 +118,7 @@ public class RestConfiguration {
      * @param apiComponent the name of the component (such as swagger or openapi)
      */
     public void setApiComponent(String apiComponent) {
-        this.apiComponent = apiComponent;
+        this.apiComponent = Objects.requireNonNull(apiComponent, "apiComponent");
     }
 
     /**
@@ -136,7 +137,7 @@ public class RestConfiguration {
      * @param componentName the name of the component (such as http, netty-http, undertow, etc.)
      */
     public void setProducerComponent(String componentName) {
-        this.producerComponent = componentName;
+        this.producerComponent = Objects.requireNonNull(componentName, "componentName");
     }
 
     /**
@@ -156,7 +157,7 @@ public class RestConfiguration {
      * <tt>http:</tt> to refer to resources to load from file or http url.
      */
     public void setProducerApiDoc(String producerApiDoc) {
-        this.producerApiDoc = producerApiDoc;
+        this.producerApiDoc = Objects.requireNonNull(producerApiDoc, "producerApiDoc");
     }
 
     /**
@@ -174,7 +175,7 @@ public class RestConfiguration {
      * @param host the hostname
      */
     public void setHost(String host) {
-        this.host = host;
+        this.host = Objects.requireNonNull(host, "host");
     }
 
     /**
@@ -209,7 +210,7 @@ public class RestConfiguration {
      * This can be used to override the generated host with this configured hostname
      */
     public void setApiHost(String apiHost) {
-        this.apiHost = apiHost;
+        this.apiHost = Objects.requireNonNull(apiHost, "apiHost");
     }
 
     /**
@@ -227,7 +228,7 @@ public class RestConfiguration {
      * @param scheme the scheme
      */
     public void setScheme(String scheme) {
-        this.scheme = scheme;
+        this.scheme = Objects.requireNonNull(scheme, "scheme");
     }
 
     /**
@@ -267,7 +268,7 @@ public class RestConfiguration {
      * @param contextPath the context path
      */
     public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
+        this.contextPath = Objects.requireNonNull(contextPath, "contextPath");
     }
 
     public @Nullable String getApiContextPath() {
@@ -283,7 +284,7 @@ public class RestConfiguration {
      * @param contextPath the API context path
      */
     public void setApiContextPath(String contextPath) {
-        this.apiContextPath = contextPath;
+        this.apiContextPath = Objects.requireNonNull(contextPath, "contextPath");
     }
 
     public @Nullable String getApiContextRouteId() {
@@ -298,7 +299,7 @@ public class RestConfiguration {
      * @param apiContextRouteId the route id
      */
     public void setApiContextRouteId(String apiContextRouteId) {
-        this.apiContextRouteId = apiContextRouteId;
+        this.apiContextRouteId = Objects.requireNonNull(apiContextRouteId, "apiContextRouteId");
     }
 
     public boolean isApiVendorExtension() {
@@ -329,7 +330,7 @@ public class RestConfiguration {
      * @param hostNameResolver the resolver
      */
     public void setHostNameResolver(RestHostNameResolver hostNameResolver) {
-        this.hostNameResolver = hostNameResolver;
+        this.hostNameResolver = Objects.requireNonNull(hostNameResolver, "hostNameResolver");
     }
 
     /**
@@ -338,6 +339,7 @@ public class RestConfiguration {
      * @param hostNameResolver the resolver
      */
     public void setHostNameResolver(String hostNameResolver) {
+        Objects.requireNonNull(hostNameResolver, "hostNameResolver");
         this.hostNameResolver = RestHostNameResolver.valueOf(hostNameResolver);
     }
 
@@ -356,7 +358,7 @@ public class RestConfiguration {
      * @param bindingMode the binding mode
      */
     public void setBindingMode(RestBindingMode bindingMode) {
-        this.bindingMode = bindingMode;
+        this.bindingMode = Objects.requireNonNull(bindingMode, "bindingMode");
     }
 
     /**
@@ -365,6 +367,7 @@ public class RestConfiguration {
      * @param bindingMode the binding mode
      */
     public void setBindingMode(String bindingMode) {
+        Objects.requireNonNull(bindingMode, "bindingMode");
         this.bindingMode = RestBindingMode.valueOf(bindingMode);
     }
 
@@ -377,7 +380,7 @@ public class RestConfiguration {
      * is enabled for JSon or XML. Multiple package names can be separated by comma.
      */
     public void setBindingPackageScan(String bindingPackageScan) {
-        this.bindingPackageScan = bindingPackageScan;
+        this.bindingPackageScan = Objects.requireNonNull(bindingPackageScan, "bindingPackageScan");
     }
 
     /**
@@ -511,7 +514,7 @@ public class RestConfiguration {
      * @param name name of the data format
      */
     public void setJsonDataFormat(String name) {
-        this.jsonDataFormat = name;
+        this.jsonDataFormat = Objects.requireNonNull(name, "name");
     }
 
     /**
@@ -535,7 +538,7 @@ public class RestConfiguration {
      * @param name name of the data format
      */
     public void setXmlDataFormat(String name) {
-        this.xmlDataFormat = name;
+        this.xmlDataFormat = Objects.requireNonNull(name, "name");
     }
 
     /**
@@ -553,7 +556,7 @@ public class RestConfiguration {
      * @param componentProperties the options
      */
     public void setComponentProperties(Map<String, Object> componentProperties) {
-        this.componentProperties = componentProperties;
+        this.componentProperties = Objects.requireNonNull(componentProperties, "componentProperties");
     }
 
     /**
@@ -571,7 +574,7 @@ public class RestConfiguration {
      * @param endpointProperties the options
      */
     public void setEndpointProperties(Map<String, Object> endpointProperties) {
-        this.endpointProperties = endpointProperties;
+        this.endpointProperties = Objects.requireNonNull(endpointProperties, "endpointProperties");
     }
 
     /**
@@ -589,7 +592,7 @@ public class RestConfiguration {
      * @param consumerProperties the options
      */
     public void setConsumerProperties(Map<String, Object> consumerProperties) {
-        this.consumerProperties = consumerProperties;
+        this.consumerProperties = Objects.requireNonNull(consumerProperties, "consumerProperties");
     }
 
     /**
@@ -607,7 +610,7 @@ public class RestConfiguration {
      * @param dataFormatProperties the options
      */
     public void setDataFormatProperties(Map<String, Object> dataFormatProperties) {
-        this.dataFormatProperties = dataFormatProperties;
+        this.dataFormatProperties = Objects.requireNonNull(dataFormatProperties, "dataFormatProperties");
     }
 
     public @Nullable Map<String, Object> getApiProperties() {
@@ -620,7 +623,7 @@ public class RestConfiguration {
      * @param apiProperties the options
      */
     public void setApiProperties(Map<String, Object> apiProperties) {
-        this.apiProperties = apiProperties;
+        this.apiProperties = Objects.requireNonNull(apiProperties, "apiProperties");
     }
 
     /**
@@ -638,7 +641,7 @@ public class RestConfiguration {
      * @param corsHeaders the CORS headers
      */
     public void setCorsHeaders(Map<String, String> corsHeaders) {
-        this.corsHeaders = corsHeaders;
+        this.corsHeaders = Objects.requireNonNull(corsHeaders, "corsHeaders");
     }
 
     /**
@@ -654,6 +657,6 @@ public class RestConfiguration {
      * Sets the client request validation levels when using camel-openapi-validator.
      */
     public void setValidationLevels(Map<String, String> validationLevels) {
-        this.validationLevels = validationLevels;
+        this.validationLevels = Objects.requireNonNull(validationLevels, "validationLevels");
     }
 }

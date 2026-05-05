@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * Exception when failing to start a {@link Component}.
  */
@@ -24,7 +26,8 @@ public class FailedToStartComponentException extends RuntimeCamelException {
     private final String componentName;
 
     public FailedToStartComponentException(String componentName, String message, Throwable cause) {
-        super("Failed to start component " + componentName + " because of " + message, cause);
+        super("Failed to start component " + Objects.requireNonNull(componentName, "componentName") + " because of "
+              + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
         this.componentName = componentName;
     }
 

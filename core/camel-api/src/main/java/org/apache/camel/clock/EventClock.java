@@ -32,7 +32,7 @@ public interface EventClock<T extends Enum<T>> extends Clock {
      * @param event the event to track
      * @param clock the clock associated with the event
      */
-    void add(T event, Clock clock);
+    void add(T event, @Nullable Clock clock);
 
     /**
      * Get the clock for the event

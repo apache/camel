@@ -19,6 +19,7 @@ package org.apache.camel.health;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.camel.Builder;
@@ -37,7 +38,7 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
     private HealthCheck.@Nullable State state;
 
     private HealthCheckResultBuilder(HealthCheck check) {
-        this.check = check;
+        this.check = Objects.requireNonNull(check, "check");
     }
 
     public @Nullable String message() {
@@ -59,10 +60,13 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
     }
 
     public @Nullable Object detail(String key) {
+        Objects.requireNonNull(key, "key");
         return this.details != null ? this.details.get(key) : null;
     }
 
     public HealthCheckResultBuilder detail(String key, Object value) {
+        Objects.requireNonNull(key, "key");
+        Objects.requireNonNull(value, "value");
         if (this.details == null) {
             this.details = new HashMap<>();
         }
@@ -72,6 +76,7 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
     }
 
     public HealthCheckResultBuilder details(Map<String, Object> details) {
+        Objects.requireNonNull(details, "details");
         if (ObjectHelper.isNotEmpty(details)) {
             details.forEach(this::detail);
         }
@@ -84,7 +89,7 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
     }
 
     public HealthCheckResultBuilder state(HealthCheck.State state) {
-        this.state = state;
+        this.state = Objects.requireNonNull(state, "state");
         return this;
     }
 
@@ -141,6 +146,7 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
     }
 
     public static HealthCheckResultBuilder on(HealthCheck check) {
+        Objects.requireNonNull(check, "check");
         return new HealthCheckResultBuilder(check);
     }
 
