@@ -1,8 +1,8 @@
-= Diagram
+= Diagram Component
 :doctitle: Diagram
 :shortname: diagram
 :artifactid: camel-diagram
-:description: Render route diagrams as PNG images or text trees
+:description: Camel Route Diagram rendering
 :since: 4.21
 :supportlevel: Preview
 :tabs-sync-option:
