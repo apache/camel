@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.action;
+package org.apache.camel.diagram;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-class RouteDiagramLayoutEngine {
+/**
+ * Layout engine that builds a tree from flat route node lists and computes positions for diagram rendering.
+ */
+public class RouteDiagramLayoutEngine {
 
-    static final int SCALE = 2;
-    static final int NODE_WIDTH = 180 * SCALE;
-    static final int NODE_HEIGHT = 32 * SCALE;
-    static final int H_GAP = 30 * SCALE;
-    static final int V_GAP = 40 * SCALE;
-    static final int PADDING = 30 * SCALE;
-    static final int SCOPE_BOX_PAD = 14 * SCALE;
-    static final int LABEL_OFFSET = 24 * SCALE;
+    public static final int SCALE = 2;
+    public static final int NODE_WIDTH = 180 * SCALE;
+    public static final int NODE_HEIGHT = 32 * SCALE;
+    public static final int H_GAP = 30 * SCALE;
+    public static final int V_GAP = 40 * SCALE;
+    public static final int PADDING = 30 * SCALE;
+    public static final int SCOPE_BOX_PAD = 14 * SCALE;
+    public static final int LABEL_OFFSET = 24 * SCALE;
 
     private static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
@@ -40,52 +43,52 @@ class RouteDiagramLayoutEngine {
     private static final Set<String> STRUCTURAL_TYPES = Set.of(
             "route", "from");
 
-    static class NodeInfo {
-        String type;
-        String code;
-        int level;
+    public static class NodeInfo {
+        public String type;
+        public String code;
+        public int level;
     }
 
-    static class RouteInfo {
-        String routeId;
-        String source;
-        List<NodeInfo> nodes = new ArrayList<>();
+    public static class RouteInfo {
+        public String routeId;
+        public String source;
+        public List<NodeInfo> nodes = new ArrayList<>();
     }
 
-    static class TreeNode {
-        final NodeInfo info;
-        TreeNode parent;
-        List<TreeNode> children = new ArrayList<>();
-        int subtreeWidth;
-        LayoutNode layoutNode;
+    public static class TreeNode {
+        public final NodeInfo info;
+        public TreeNode parent;
+        public List<TreeNode> children = new ArrayList<>();
+        public int subtreeWidth;
+        public LayoutNode layoutNode;
 
-        TreeNode(NodeInfo info) {
+        public TreeNode(NodeInfo info) {
             this.info = info;
         }
     }
 
-    static class LayoutNode {
-        String label;
-        String type;
-        int x;
-        int y;
-        LayoutNode parentNode;
-        TreeNode treeNode;
-        boolean connectFromMerge;
-        int mergeY;
-        int mergeCx;
+    public static class LayoutNode {
+        public String label;
+        public String type;
+        public int x;
+        public int y;
+        public LayoutNode parentNode;
+        public TreeNode treeNode;
+        public boolean connectFromMerge;
+        public int mergeY;
+        public int mergeCx;
     }
 
-    static class LayoutRoute {
-        String routeId;
-        String source;
-        int labelY;
-        int maxX;
-        int maxY;
-        List<LayoutNode> nodes = new ArrayList<>();
+    public static class LayoutRoute {
+        public String routeId;
+        public String source;
+        public int labelY;
+        public int maxX;
+        public int maxY;
+        public List<LayoutNode> nodes = new ArrayList<>();
     }
 
-    static TreeNode buildTree(List<NodeInfo> nodes) {
+    public static TreeNode buildTree(List<NodeInfo> nodes) {
         if (nodes.isEmpty()) {
             return null;
         }
@@ -126,14 +129,14 @@ class RouteDiagramLayoutEngine {
         return root;
     }
 
-    static String cleanLabel(String code) {
+    public static String cleanLabel(String code) {
         if (code == null) {
             return "";
         }
         return code.replaceFirst("^\\.", "");
     }
 
-    LayoutRoute layoutRoute(RouteInfo route, int startY) {
+    public LayoutRoute layoutRoute(RouteInfo route, int startY) {
         LayoutRoute lr = new LayoutRoute();
         lr.routeId = route.routeId;
         lr.source = route.source;
@@ -279,7 +282,7 @@ class RouteDiagramLayoutEngine {
         }
     }
 
-    static LayoutNode findLastLayoutNode(TreeNode node) {
+    public static LayoutNode findLastLayoutNode(TreeNode node) {
         if (node.children.isEmpty()) {
             return node.layoutNode;
         }
@@ -289,7 +292,7 @@ class RouteDiagramLayoutEngine {
         return findLastLayoutNode(node.children.get(node.children.size() - 1));
     }
 
-    static int findMaxY(TreeNode node) {
+    public static int findMaxY(TreeNode node) {
         int maxY = node.layoutNode != null ? node.layoutNode.y + NODE_HEIGHT : 0;
         for (TreeNode child : node.children) {
             maxY = Math.max(maxY, findMaxY(child));
@@ -297,18 +300,18 @@ class RouteDiagramLayoutEngine {
         return maxY;
     }
 
-    static boolean isBranchingEip(String type) {
+    public static boolean isBranchingEip(String type) {
         return type != null && BRANCHING_EIPS.contains(type);
     }
 
-    static boolean hasScope(TreeNode node) {
+    public static boolean hasScope(TreeNode node) {
         return node.parent != null
                 && !node.children.isEmpty()
                 && !BRANCH_CHILD_TYPES.contains(node.info.type)
                 && !STRUCTURAL_TYPES.contains(node.info.type);
     }
 
-    static void expandBoundsForBox(TreeNode node, int[] bounds) {
+    public static void expandBoundsForBox(TreeNode node, int[] bounds) {
         boolean hasOwnBox = hasScope(node);
 
         if (hasOwnBox) {
