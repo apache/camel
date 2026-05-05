@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
@@ -71,14 +72,21 @@ public class RouteDiagramRenderer {
             "transparent", TRANSPARENT_COLORS);
 
     public RouteDiagramRenderer() {
-        this(180 * SCALE, 12 * SCALE);
+        this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE,
+             RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * SCALE,
+             new RouteDiagramLayoutEngine().getNodeTextPadding());
     }
 
     public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled) {
+        this(nodeWidth, fontSizeScaled, new RouteDiagramLayoutEngine(
+                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding());
+    }
+
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding) {
         this.nodeWidth = nodeWidth;
         this.fontSizeNode = fontSizeScaled;
         this.fontSizeLabel = fontSizeScaled + 1 * SCALE;
-        this.nodeTextPadding = 16 * SCALE;
+        this.nodeTextPadding = nodeTextPadding;
     }
 
     public static class DiagramColors {
@@ -254,15 +262,17 @@ public class RouteDiagramRenderer {
 
     private void drawScopeBox(Graphics2D g, LayoutNode scopeNode, DiagramColors colors) {
         TreeNode tn = scopeNode.treeNode;
-        int[] bounds = { scopeNode.x, scopeNode.y, scopeNode.x + nodeWidth, scopeNode.y + scopeNode.height };
+        Bounds bounds = new Bounds(
+                scopeNode.x, scopeNode.y,
+                scopeNode.x + nodeWidth, scopeNode.y + scopeNode.height);
         for (TreeNode child : tn.children) {
             RouteDiagramLayoutEngine.expandBoundsForBox(child, bounds, nodeWidth);
         }
 
-        int boxX = bounds[0] - SCOPE_BOX_PAD;
-        int boxY = bounds[1] - SCOPE_BOX_PAD;
-        int boxW = bounds[2] - bounds[0] + 2 * SCOPE_BOX_PAD;
-        int boxH = bounds[3] - bounds[1] + 2 * SCOPE_BOX_PAD;
+        int boxX = bounds.minX - SCOPE_BOX_PAD;
+        int boxY = bounds.minY - SCOPE_BOX_PAD;
+        int boxW = bounds.maxX - bounds.minX + 2 * SCOPE_BOX_PAD;
+        int boxH = bounds.maxY - bounds.minY + 2 * SCOPE_BOX_PAD;
 
         Color c = colors.getArrow();
         g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 140));
@@ -270,14 +280,17 @@ public class RouteDiagramRenderer {
         g.drawRoundRect(boxX, boxY, boxW, boxH, ARC, ARC);
     }
 
+    private int getTopY(LayoutNode node) {
+        return node.treeNode != null && RouteDiagramLayoutEngine.hasScope(node.treeNode)
+                ? node.y - SCOPE_BOX_PAD : node.y;
+    }
+
     private void drawArrowFromMerge(Graphics2D g, LayoutNode to, DiagramColors colors) {
         g.setColor(colors.getArrow());
         g.setStroke(new BasicStroke(STROKE_WIDTH));
 
         int toCx = to.x + nodeWidth / 2;
-        int toTy = to.treeNode != null && RouteDiagramLayoutEngine.hasScope(to.treeNode)
-                ? to.y - SCOPE_BOX_PAD
-                : to.y;
+        int toTy = getTopY(to);
         int mergeCx = to.mergeCx;
         int mergeY = to.mergeY;
 
@@ -332,9 +345,7 @@ public class RouteDiagramRenderer {
         int fromCx = from.x + nodeWidth / 2;
         int fromBy = from.y + from.height;
         int toCx = to.x + nodeWidth / 2;
-        int toTy = to.treeNode != null && RouteDiagramLayoutEngine.hasScope(to.treeNode)
-                ? to.y - SCOPE_BOX_PAD
-                : to.y;
+        int toTy = getTopY(to);
 
         if (fromCx == toCx) {
             g.drawLine(fromCx, fromBy, toCx, toTy - ARROW_SIZE / 2);

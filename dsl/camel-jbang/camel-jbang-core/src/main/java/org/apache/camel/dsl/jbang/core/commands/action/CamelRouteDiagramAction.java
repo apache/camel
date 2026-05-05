@@ -191,7 +191,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
             NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
             RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE);
+                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding());
 
             List<LayoutRoute> layoutRoutes = new ArrayList<>();
             int currentY = RouteDiagramLayoutEngine.PADDING;

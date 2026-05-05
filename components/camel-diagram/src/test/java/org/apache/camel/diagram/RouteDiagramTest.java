@@ -707,6 +707,60 @@ class RouteDiagramTest {
         assertTrue(image.getHeight() > 0);
     }
 
+    @Test
+    void testWrapLabelWithEmoji() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("to", "Send order 📦 to warehouse processing system queue", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode n = lr.nodes.get(0);
+        String rejoined = String.join("", n.wrappedLines);
+        assertTrue(rejoined.contains("📦"), "Emoji must not be split across lines");
+        for (String line : n.wrappedLines) {
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if (Character.isHighSurrogate(c)) {
+                    assertTrue(i + 1 < line.length() && Character.isLowSurrogate(line.charAt(i + 1)),
+                            "High surrogate at " + i + " must be followed by low surrogate in: " + line);
+                } else if (Character.isLowSurrogate(c)) {
+                    assertTrue(i > 0 && Character.isHighSurrogate(line.charAt(i - 1)),
+                            "Low surrogate at " + i + " must be preceded by high surrogate in: " + line);
+                }
+            }
+        }
+    }
+
+    @Test
+    void testWrapLabelWithCombiningMarks() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("to", "Résumé café order processing endpoint", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode n = lr.nodes.get(0);
+        String rejoined = String.join("", n.wrappedLines);
+        assertTrue(rejoined.contains("é"), "Combining accent must stay attached to base character");
+    }
+
+    @Test
+    void testWrapLabelWithZwjEmoji() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("to", "Family 👨‍👩‍👧‍👦 order processing", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode n = lr.nodes.get(0);
+        String rejoined = String.join("", n.wrappedLines);
+        assertTrue(rejoined.contains("👨"), "ZWJ emoji must not be split");
+    }
+
     private static NodeInfo node(String type, String code, int level) {
         return node(type, code, level, null);
     }
