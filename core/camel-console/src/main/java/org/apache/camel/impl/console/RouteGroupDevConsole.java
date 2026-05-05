@@ -146,7 +146,7 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
         }
 
         final JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
         Function<ManagedRouteGroupMBean, Object> task = mrg -> {
             JsonObject jo = new JsonObject();
             list.add(jo);
