@@ -19,6 +19,7 @@ package org.apache.camel.coap;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -121,7 +122,7 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         super(uri, component);
         try {
             this.uri = new URI(uri);
-        } catch (java.net.URISyntaxException use) {
+        } catch (URISyntaxException use) {
             this.uri = null;
         }
         this.component = component;

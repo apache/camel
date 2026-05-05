@@ -36,6 +36,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
+import org.cometd.common.HashMapMessage;
+import org.cometd.common.JacksonJSONContextClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,8 +195,8 @@ public class StreamingApiConsumer extends DefaultConsumer {
 
         if (rawPayload) {
             // getJSON is used for raw payload
-            in.setBody(new org.cometd.common.JacksonJSONContextClient()
-                    .generate(new org.cometd.common.HashMapMessage(message)));
+            in.setBody(new JacksonJSONContextClient()
+                    .generate(new HashMapMessage(message)));
         } else {
             payload.remove("ChangeEventHeader");
             in.setBody(payload);
@@ -229,8 +231,8 @@ public class StreamingApiConsumer extends DefaultConsumer {
 
         if (rawPayload) {
             // getJSON is used for raw payload
-            in.setBody(new org.cometd.common.JacksonJSONContextClient()
-                    .generate(new org.cometd.common.HashMapMessage(message)));
+            in.setBody(new JacksonJSONContextClient()
+                    .generate(new HashMapMessage(message)));
         } else {
             in.setBody(platformEvent);
         }

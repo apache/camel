@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
+import java.io.Serializable;
+
+
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.ObjectMessage;
 
@@ -120,7 +123,7 @@ public class JmsObjectMessageEnabledTest extends AbstractJMSTest {
         return cause;
     }
 
-    public static class MyOrder implements java.io.Serializable {
+    public static class MyOrder implements Serializable {
         private static final long serialVersionUID = 1L;
         private final String item;
         private final int quantity;

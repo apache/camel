@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.mail;
 
+import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
 
 /**
  * Mail authenticator that supplies username and password
  */
-public class MailAuthenticator extends jakarta.mail.Authenticator {
+public class MailAuthenticator extends Authenticator {
 
     // makes the method public
     /** Override this method in your implementation. */

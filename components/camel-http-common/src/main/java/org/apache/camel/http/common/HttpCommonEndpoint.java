@@ -18,6 +18,7 @@ package org.apache.camel.http.common;
 
 import java.net.URI;
 
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -40,7 +41,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     URI httpUri;
     @UriParam(label = "common,advanced",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
-    HeaderFilterStrategy headerFilterStrategy = new org.apache.camel.http.base.HttpHeaderFilterStrategy();
+    HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     @UriParam(label = "common,advanced",
               description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     HttpBinding httpBinding;

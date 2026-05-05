@@ -73,7 +73,7 @@ public class BindySimpleCsvBooleanTrueMarshallTest {
         @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
-                    org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
+                    BooleanExample.class);
 
             camelDataFormat.setLocale("en");
 

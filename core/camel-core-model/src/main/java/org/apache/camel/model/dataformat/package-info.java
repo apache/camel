@@ -18,6 +18,9 @@
  * The JAXB POJOs for the <a href="http://camel.apache.org/data-format.html">Data Formats</a> used to marshal and
  * unmarshal objects to and from streams inside <a href="http://camel.apache.org/components.html">components</a>
  */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                       elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model.dataformat;
+
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.multipart;
 
+import jakarta.jws.WebService;
 import jakarta.xml.ws.Holder;
 
 import org.apache.camel.cxf.multipart.MultiPartInvoke;
@@ -23,7 +24,7 @@ import org.apache.camel.cxf.multipart.types.InE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@jakarta.jws.WebService(
+@WebService(
                         serviceName = "MultiPartInvokeService",
                         portName = "MultiPartInvokePort",
                         targetNamespace = "http://adapter.ti.tongtech.com/ws",

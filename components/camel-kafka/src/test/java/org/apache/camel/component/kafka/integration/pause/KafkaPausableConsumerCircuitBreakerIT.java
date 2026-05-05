@@ -33,6 +33,7 @@ import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListe
 import org.apache.camel.component.kafka.integration.BaseKafkaTestSupport;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.AfterEach;
@@ -59,7 +60,7 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseKafkaTestSupport 
     private static final int SIMULATED_FAILURES = 5;
     private static final LongAdder count = new LongAdder();
     private static ScheduledExecutorService executorService;
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     /*
      * This is used by pausable to determine whether to pause. If returning true, processing continues. If
@@ -93,7 +94,7 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseKafkaTestSupport 
     @BeforeEach
     public void before() {
         Properties props = KafkaTestUtil.getDefaultProperties(service);
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        producer = new KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
     }
 

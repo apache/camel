@@ -25,7 +25,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
-
+import org.apache.camel.util.ObjectHelper;
 import org.w3c.dom.Node;
 
 import org.apache.camel.component.schematron.constant.Constants;
@@ -61,7 +61,7 @@ public final class TemplatesFactory {
             for (String template : PIPELINE) {
                 String path = Constants.SCHEMATRON_TEMPLATES_ROOT_DIR
                         .concat("/").concat(template);
-                InputStream xsl = org.apache.camel.util.ObjectHelper.loadResourceAsStream(path);
+                InputStream xsl = ObjectHelper.loadResourceAsStream(path);
                 if (xsl == null) {
                     xsl = this.getClass().getClassLoader().getResourceAsStream(path);
                 }

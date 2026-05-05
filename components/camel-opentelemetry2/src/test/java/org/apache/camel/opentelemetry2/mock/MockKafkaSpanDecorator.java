@@ -16,11 +16,13 @@
  */
 package org.apache.camel.opentelemetry2.mock;
 
+import org.apache.camel.telemetry.decorators.KafkaSpanDecorator;
+
 /**
  * Span decorator for mock Kafka component used in tests. Extends the real KafkaSpanDecorator to inherit all
  * Kafka-specific behavior (partition, offset, key tags) and adds SpanKind.
  */
-public class MockKafkaSpanDecorator extends org.apache.camel.telemetry.decorators.KafkaSpanDecorator {
+public class MockKafkaSpanDecorator extends KafkaSpanDecorator {
 
     @Override
     public String getComponent() {

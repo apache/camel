@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.properties;
 
+import org.apache.camel.spi.annotations.PropertiesFunction;
+
 /**
  * Resolves String type configmap keys .
  */
-@org.apache.camel.spi.annotations.PropertiesFunction("configmap")
+@PropertiesFunction("configmap")
 public class ConfigMapPropertiesFunction extends BaseConfigMapPropertiesFunction {
 
     @Override

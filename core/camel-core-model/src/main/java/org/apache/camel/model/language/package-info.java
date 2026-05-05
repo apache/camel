@@ -19,6 +19,9 @@
  * <a href="http://camel.apache.org/predicate.html">Predicate</a> plugins for the
  * <a href="http://camel.apache.org/xml-configuration.html">XML Configuration</a>.
  */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                       elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model.language;
+
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

@@ -18,6 +18,8 @@
 package org.apache.camel.test.infra.kafka.services;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.UUID;
 
@@ -106,7 +108,7 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
     private static int findFreePort() {
         try (ServerSocket socket = new ServerSocket()) {
             socket.setReuseAddress(true);
-            socket.bind(new java.net.InetSocketAddress((java.net.InetAddress) null, 0), 1);
+            socket.bind(new InetSocketAddress((InetAddress) null, 0), 1);
             return socket.getLocalPort();
         } catch (IOException e) {
             throw new RuntimeException("Failed to find a free port", e);

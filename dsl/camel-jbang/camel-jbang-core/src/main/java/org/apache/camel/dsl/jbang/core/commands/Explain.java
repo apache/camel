@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -602,7 +603,7 @@ public class Explain extends CamelCommand {
             printer().println();
             return fullResponse.toString();
 
-        } catch (java.net.http.HttpTimeoutException e) {
+        } catch (HttpTimeoutException e) {
             printer().printErr("\nRequest timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
@@ -632,7 +633,7 @@ public class Explain extends CamelCommand {
             handleErrorStatus(response.statusCode(), response.body());
             return null;
 
-        } catch (java.net.http.HttpTimeoutException e) {
+        } catch (HttpTimeoutException e) {
             printer().printErr("Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {

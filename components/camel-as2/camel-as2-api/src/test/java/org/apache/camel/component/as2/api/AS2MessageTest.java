@@ -28,19 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
-import org.apache.camel.component.as2.api.entity.AS2DispositionType;
-import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDataEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
-import org.apache.camel.component.as2.api.entity.DispositionMode;
-import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
-import org.apache.camel.component.as2.api.entity.MimeEntity;
-import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
-import org.apache.camel.component.as2.api.entity.TextPlainEntity;
+import org.apache.camel.component.as2.api.entity.*;
 import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
@@ -93,7 +81,7 @@ public class AS2MessageTest extends AS2MessageTestBase {
             public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                     throws HttpException, IOException {
                 try {
-                    org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
+                    EntityParser.parseAS2MessageEntity(request);
                     context.setAttribute(AS2ServerManager.SUBJECT, SUBJECT);
                     context.setAttribute(AS2ServerManager.FROM, AS2_NAME);
                     LOG.debug("{}", AS2Utils.printMessage(request));

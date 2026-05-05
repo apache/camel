@@ -34,6 +34,9 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.transport.common.gzip.GZIPInInterceptor;
+import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
+
 import org.junit.jupiter.api.BeforeEach;
 
 public class JaxWSCamelTestSupport extends CamelTestSupport {
@@ -147,8 +150,8 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
 
     public Endpoint publishSampleWSWithGzipEnabled(String camelEndpoint) {
         EndpointImpl endpoint = (EndpointImpl) Endpoint.publish("camel://" + camelEndpoint, new SampleWSImpl());
-        endpoint.getInInterceptors().add(new org.apache.cxf.transport.common.gzip.GZIPInInterceptor());
-        endpoint.getOutInterceptors().add(new org.apache.cxf.transport.common.gzip.GZIPOutInterceptor(0));
+        endpoint.getInInterceptors().add(new GZIPInInterceptor());
+        endpoint.getOutInterceptors().add(new GZIPOutInterceptor(0));
         return endpoint;
 
     }

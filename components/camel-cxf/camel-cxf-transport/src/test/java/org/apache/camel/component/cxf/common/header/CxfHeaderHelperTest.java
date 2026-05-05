@@ -30,6 +30,8 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.message.MessageImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -64,7 +66,7 @@ public class CxfHeaderHelperTest {
         Map<String, Object> responseContext = Collections.singletonMap("response", "true");
         exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
         exchange.getIn().setHeader(Client.RESPONSE_CONTEXT, responseContext);
-        org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
+        Message cxfMessage = new MessageImpl();
 
         CxfHeaderHelper.propagateCamelToCxf(new DefaultHeaderFilterStrategy(),
                 exchange.getIn().getHeaders(), cxfMessage, exchange);
@@ -78,7 +80,7 @@ public class CxfHeaderHelperTest {
 
         // check the protocol headers
         Map<String, List<String>> cxfHeaders
-                = CastUtils.cast((Map<?, ?>) cxfMessage.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
+                = CastUtils.cast((Map<?, ?>) cxfMessage.get(Message.PROTOCOL_HEADERS));
         assertNotNull(cxfHeaders);
         assertEquals(7, cxfHeaders.size());
 
@@ -103,7 +105,7 @@ public class CxfHeaderHelperTest {
     @Test
     public void testPropagateCxfToCamel() {
         Exchange exchange = new DefaultExchange(context);
-        org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
+        Message cxfMessage = new MessageImpl();
         Map<String, List<String>> cxfHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         cxfHeaders.put("Content-Length", Arrays.asList("241"));
         cxfHeaders.put("soapAction", Arrays.asList("urn:hello:world"));
@@ -116,7 +118,7 @@ public class CxfHeaderHelperTest {
         cxfHeaders.put(Message.HTTP_REQUEST_METHOD, Arrays.asList("GET"));
         cxfHeaders.put(Message.PATH_INFO, Arrays.asList("/base/hello/cxf"));
         cxfHeaders.put(Message.BASE_PATH, Arrays.asList("/base"));
-        cxfMessage.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, cxfHeaders);
+        cxfMessage.put(Message.PROTOCOL_HEADERS, cxfHeaders);
 
         cxfMessage.put(Message.RESPONSE_CODE, "200");
         Map<String, Object> requestContext = Collections.singletonMap("request", "true");
@@ -154,11 +156,11 @@ public class CxfHeaderHelperTest {
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
 
-        org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
+        Message cxfMessage = new MessageImpl();
         Map<String, List<String>> cxfHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         cxfHeaders.put("myfruitheader", Arrays.asList("peach"));
         cxfHeaders.put("mybrewheader", Arrays.asList("cappuccino", "espresso"));
-        cxfMessage.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, cxfHeaders);
+        cxfMessage.put(Message.PROTOCOL_HEADERS, cxfHeaders);
 
         CxfHeaderHelper.propagateCxfToCamel(new DefaultHeaderFilterStrategy(),
                 cxfMessage, exchange.getIn(), exchange);

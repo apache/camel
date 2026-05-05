@@ -17,6 +17,7 @@
 package org.apache.camel.component.undertow.ws;
 
 import java.net.URL;
+import java.security.SecureRandom;
 
 import javax.net.ssl.SSLContext;
 
@@ -83,7 +84,7 @@ public class UndertowWssRouteTest extends BaseUndertowTest {
     @Test
     public void testWSHttpCall() throws Exception {
         SSLContext sc = SSLContext.getInstance("SSL");
-        sc.init(null, InsecureTrustManagerFactory.INSTANCE.getTrustManagers(), new java.security.SecureRandom());
+        sc.init(null, InsecureTrustManagerFactory.INSTANCE.getTrustManagers(), new SecureRandom());
 
         WebsocketTestClient testClient = new WebsocketTestClient(
                 "wss://localhost:" + getPort() + "/test",

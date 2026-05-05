@@ -16,10 +16,7 @@
  */
 package org.apache.camel.support.component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class TestProxy {
 
@@ -79,16 +76,16 @@ class TestProxy {
         return result;
     }
 
-    public final <T extends java.util.Date> T sayHiResource(java.util.Set<T> resourceType, String resourceId) {
+    public final <T extends Date> T sayHiResource(Set<T> resourceType, String resourceId) {
         return null;
     }
 
-    public final <T extends java.util.Date> T with(T theDate) {
+    public final <T extends Date> T with(T theDate) {
         return null;
     }
 
-    public final <T extends java.util.Date> String withDate(
-            T theDate, Class<? extends java.util.Date> dateClass, Class<T> parameter, T parameters) {
+    public final <T extends Date> String withDate(
+            T theDate, Class<? extends Date> dateClass, Class<T> parameter, T parameters) {
         return null;
     }
 

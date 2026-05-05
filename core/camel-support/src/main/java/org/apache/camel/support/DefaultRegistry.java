@@ -193,7 +193,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
             CamelContextAware.trySetCamelContext(bean, camelContext);
             if (isNotEmpty(initMethod)) {
                 try {
-                    org.apache.camel.support.ObjectHelper.invokeMethodSafe(initMethod, bean);
+                    ObjectHelper.invokeMethodSafe(initMethod, bean);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
@@ -261,7 +261,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
             }
             if (target != null) {
                 try {
-                    org.apache.camel.support.ObjectHelper.invokeMethodSafe(destroyMethod, target);
+                    ObjectHelper.invokeMethodSafe(destroyMethod, target);
                 } catch (Exception e) {
                     LOG.warn("Error invoking destroy method: {} on bean: {} due to: {}. This exception is ignored.",
                             destroyMethod, target, e.getMessage(), e);

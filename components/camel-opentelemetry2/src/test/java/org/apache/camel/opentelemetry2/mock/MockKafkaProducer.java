@@ -16,17 +16,21 @@
  */
 package org.apache.camel.opentelemetry2.mock;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.support.DefaultProducer;
+
 /**
  * Mock Kafka producer that simulates Kafka headers.
  */
-class MockKafkaProducer extends org.apache.camel.support.DefaultProducer {
+class MockKafkaProducer extends DefaultProducer {
 
-    public MockKafkaProducer(org.apache.camel.Endpoint endpoint) {
+    public MockKafkaProducer(Endpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    public void process(org.apache.camel.Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         // Simulate Kafka response with partition, offset, and key
         // These headers would normally be set by the real Kafka producer
         exchange.getMessage().setHeader("kafka.PARTITION", 0);

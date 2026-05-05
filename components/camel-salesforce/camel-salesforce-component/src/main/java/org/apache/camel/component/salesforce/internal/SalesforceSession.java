@@ -38,6 +38,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.security.auth.DestroyFailedException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
@@ -293,7 +295,7 @@ public class SalesforceSession extends ServiceSupport {
             // Clean the private key from memory
             try {
                 key.destroy();
-            } catch (javax.security.auth.DestroyFailedException ex) {
+            } catch (DestroyFailedException ex) {
                 LOG.debug("Error destroying private key: {}", ex.getMessage());
             }
         } catch (IOException | GeneralSecurityException e) {

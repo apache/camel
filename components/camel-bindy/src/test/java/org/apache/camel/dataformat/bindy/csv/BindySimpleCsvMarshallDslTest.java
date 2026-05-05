@@ -95,7 +95,7 @@ public class BindySimpleCsvMarshallDslTest {
         @Override
         public void configure() {
             BindyDataFormat bindy = new BindyDataFormat()
-                    .classType(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class)
+                    .classType(Order.class)
                     .locale("en")
                     .csv();
 

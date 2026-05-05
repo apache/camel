@@ -16,13 +16,18 @@
  */
 package org.apache.camel.component.iggy.client;
 
+import java.util.function.Consumer;
+
+
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.iggy.client.blocking.IggyBaseClient;
 import org.apache.iggy.client.blocking.http.IggyHttpClient;
+import org.apache.iggy.client.blocking.http.IggyHttpClientBuilder;
 import org.apache.iggy.client.blocking.tcp.IggyTcpClient;
+import org.apache.iggy.client.blocking.tcp.IggyTcpClientBuilder;
 
 public class IggyClientFactory extends BasePooledObjectFactory<IggyBaseClient> {
 
@@ -66,7 +71,7 @@ public class IggyClientFactory extends BasePooledObjectFactory<IggyBaseClient> {
     }
 
     private void configureTls(
-            org.apache.iggy.client.blocking.tcp.IggyTcpClientBuilder builder) {
+            IggyTcpClientBuilder builder) {
         if (sslContextParameters != null) {
             builder.enableTls();
             applyTlsCertificateIfPresent(builder::tlsCertificate);
@@ -79,7 +84,7 @@ public class IggyClientFactory extends BasePooledObjectFactory<IggyBaseClient> {
     }
 
     private void configureTls(
-            org.apache.iggy.client.blocking.http.IggyHttpClientBuilder builder) {
+            IggyHttpClientBuilder builder) {
         if (sslContextParameters != null) {
             builder.enableTls();
             applyTlsCertificateIfPresent(builder::tlsCertificate);
@@ -91,7 +96,7 @@ public class IggyClientFactory extends BasePooledObjectFactory<IggyBaseClient> {
         }
     }
 
-    private void applyTlsCertificateIfPresent(java.util.function.Consumer<String> certificateSetter) {
+    private void applyTlsCertificateIfPresent(Consumer<String> certificateSetter) {
         if (tlsCertificatePath != null) {
             certificateSetter.accept(tlsCertificatePath);
         }

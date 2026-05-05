@@ -21,29 +21,35 @@
  */
 package org.apache.camel.avro.generated;
 
+import java.io.IOException;
+
+
+import org.apache.avro.AvroRemoteException;
+import org.apache.avro.Protocol;
+
 @SuppressWarnings("all")
 public interface KeyValueProtocol {
-    org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse(
+    Protocol PROTOCOL = Protocol.parse(
             "{\"protocol\":\"KeyValueProtocol\",\"namespace\":\"org.apache.camel.avro.generated\",\"types\":[{\"type\":\"record\",\"name\":\"Key\",\"fields\":[{\"name\":\"key\",\"type\":\"string\"}]},{\"type\":\"record\",\"name\":\"Value\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}],\"messages\":{\"put\":{\"request\":[{\"name\":\"key\",\"type\":\"Key\"},{\"name\":\"value\",\"type\":\"Value\"}],\"response\":\"null\"},\"get\":{\"request\":[{\"name\":\"key\",\"type\":\"Key\"}],\"response\":\"Value\"}}}");
 
-    java.lang.Void put(org.apache.camel.avro.generated.Key key, org.apache.camel.avro.generated.Value value)
-            throws org.apache.avro.AvroRemoteException;
+    java.lang.Void put(Key key, Value value)
+            throws AvroRemoteException;
 
-    org.apache.camel.avro.generated.Value get(org.apache.camel.avro.generated.Key key)
-            throws org.apache.avro.AvroRemoteException;
+    Value get(Key key)
+            throws AvroRemoteException;
 
     @SuppressWarnings("all")
     public interface Callback extends KeyValueProtocol {
-        org.apache.avro.Protocol PROTOCOL = org.apache.camel.avro.generated.KeyValueProtocol.PROTOCOL;
+        Protocol PROTOCOL = KeyValueProtocol.PROTOCOL;
 
         void put(
-                org.apache.camel.avro.generated.Key key, org.apache.camel.avro.generated.Value value,
+                Key key, Value value,
                 org.apache.avro.ipc.Callback<java.lang.Void> callback)
-                throws java.io.IOException;
+                throws IOException;
 
         void get(
-                org.apache.camel.avro.generated.Key key,
-                org.apache.avro.ipc.Callback<org.apache.camel.avro.generated.Value> callback)
-                throws java.io.IOException;
+                Key key,
+                org.apache.avro.ipc.Callback<Value> callback)
+                throws IOException;
     }
 }

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.springai.chat;
 
+import java.util.List;
+
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -45,7 +48,7 @@ public class SpringAiChatComponentTest extends CamelTestSupport {
         // Mock response
         AssistantMessage assistantMessage = new AssistantMessage("Hello! I'm a mock AI assistant.");
         Generation generation = new Generation(assistantMessage);
-        ChatResponse chatResponse = new ChatResponse(java.util.List.of(generation));
+        ChatResponse chatResponse = new ChatResponse(List.of(generation));
 
         when(mockChatModel.call(any(Prompt.class))).thenReturn(chatResponse);
     }

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.kinesis;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     private KinesisConnection connection;
     private ResumeStrategy resumeStrategy;
 
-    private final Map<String, String> currentShardIterators = new java.util.HashMap<>();
+    private final Map<String, String> currentShardIterators = new HashMap<>();
     private final Set<String> warnLogged = new HashSet<>();
 
     private volatile List<Shard> currentShardList = List.of();

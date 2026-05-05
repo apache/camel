@@ -25,6 +25,7 @@ import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.integration.BaseKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.StateRepository;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.hamcrest.Matchers;
@@ -40,12 +41,12 @@ abstract class BaseManualCommitTestSupport extends BaseKafkaTestSupport {
     @EndpointInject("mock:resultBar")
     protected MockEndpoint toBar;
 
-    protected org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    protected KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void createClient() {
         Properties props = getDefaultProperties();
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        producer = new KafkaProducer<>(props);
     }
 
     public void cleanupKafka(String topic) {

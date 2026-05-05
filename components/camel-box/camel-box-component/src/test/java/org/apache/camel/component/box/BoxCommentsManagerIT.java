@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxComment;
+import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFolder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxCommentsManager;
@@ -63,7 +64,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
         // parameter type is String
         headers.put("CamelBox.message", CAMEL_TEST_FILE_COMMENT);
 
-        final com.box.sdk.BoxFile result = requestBodyAndHeaders("direct://ADDFILECOMMENT", null, headers);
+        final BoxFile result = requestBodyAndHeaders("direct://ADDFILECOMMENT", null, headers);
 
         assertNotNull(result, "addFileComment result");
         assertNotNull(result.getComments(), "addFileComment comments");
@@ -83,7 +84,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
         // parameter type is String
         headers.put("CamelBox.message", CAMEL_TEST_FILE_CHANGED_COMMENT);
 
-        final com.box.sdk.BoxComment result = requestBodyAndHeaders("direct://CHANGECOMMENTMESSAGE", null, headers);
+        final BoxComment result = requestBodyAndHeaders("direct://CHANGECOMMENTMESSAGE", null, headers);
 
         assertNotNull(result, "changeCommentMessage result");
         assertNotNull(result.getInfo().getMessage(), "changeCommentMessage message");
@@ -109,7 +110,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
         BoxComment.Info commentInfo = testFile.addComment(CAMEL_TEST_FILE_COMMENT);
 
         // using String message body for single parameter "commentId"
-        final com.box.sdk.BoxComment.Info result = requestBody("direct://GETCOMMENTINFO", commentInfo.getID());
+        final BoxComment.Info result = requestBody("direct://GETCOMMENTINFO", commentInfo.getID());
 
         assertNotNull(result, "getCommentInfo result");
         assertEquals(CAMEL_TEST_FILE_COMMENT, result.getMessage(), "getCommentInfo message");
@@ -122,7 +123,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
 
         // using String message body for single parameter "fileId"
         @SuppressWarnings("rawtypes")
-        final java.util.List result = requestBody("direct://GETFILECOMMENTS", testFile.getID());
+        final List result = requestBody("direct://GETFILECOMMENTS", testFile.getID());
 
         assertNotNull(result, "getFileComments result");
         assertEquals(1, result.size(), "getFileComments size");
@@ -140,7 +141,7 @@ public class BoxCommentsManagerIT extends AbstractBoxITSupport {
         // parameter type is String
         headers.put("CamelBox.message", CAMEL_TEST_FILE_REPLY_COMMENT);
 
-        final com.box.sdk.BoxComment result = requestBodyAndHeaders("direct://REPLYTOCOMMENT", null, headers);
+        final BoxComment result = requestBodyAndHeaders("direct://REPLYTOCOMMENT", null, headers);
 
         assertNotNull(result, "replyToComment result");
         assertEquals(CAMEL_TEST_FILE_REPLY_COMMENT, result.getInfo().getMessage(), "replyToComment result");

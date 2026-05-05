@@ -20,7 +20,9 @@ import java.util.logging.Logger;
 
 import org.apache.camel.hello_world_soap_http.Greeter;
 
-@jakarta.jws.WebService(serviceName = "GreeterService",
+import jakarta.jws.WebService;
+
+@WebService(serviceName = "GreeterService",
                         portName = "GreeterPort",
                         endpointInterface = "org.apache.camel.hello_world_soap_http.Greeter",
                         targetNamespace = "http://camel.apache.org/hello_world_soap_http")

@@ -64,8 +64,8 @@ public class PackageScanFiltersTest {
     @Test
     public void testAnnotatedWithAnyPackageScanFilter() {
         Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
-        annotations.add(org.apache.camel.spring.scan.ScannableOne.class);
-        annotations.add(org.apache.camel.spring.scan.ScannableTwo.class);
+        annotations.add(ScannableOne.class);
+        annotations.add(ScannableTwo.class);
 
         AnnotatedWithAnyPackageScanFilter filter = new AnnotatedWithAnyPackageScanFilter(annotations);
         Class<ScanTargetOne> type = ScanTargetOne.class;
@@ -80,7 +80,7 @@ public class PackageScanFiltersTest {
     @Test
     public void testAnnotatedWithPackageScanFilter() {
         AnnotatedWithPackageScanFilter filter
-                = new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
+                = new AnnotatedWithPackageScanFilter(ScannableOne.class);
         validateFilter(filter, ScanTargetOne.class);
         validateFilter(filter, ScanTargetTwo.class);
 
@@ -91,7 +91,7 @@ public class PackageScanFiltersTest {
 
     @Test
     public void testCompositePackageScanFilter() {
-        PackageScanFilter one = new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
+        PackageScanFilter one = new AnnotatedWithPackageScanFilter(ScannableOne.class);
         PackageScanFilter two = new AssignableToPackageScanFilter(ScanTargetOne.class);
         Set<PackageScanFilter> filters = CollectionHelper.createSetContaining(one, two);
 

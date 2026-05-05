@@ -32,6 +32,7 @@ import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.
 import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.TreeNode;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.jline.utils.Colors;
 
 import static org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.NODE_HEIGHT;
 import static org.apache.camel.dsl.jbang.core.commands.action.RouteDiagramLayoutEngine.NODE_WIDTH;
@@ -121,9 +122,9 @@ class RouteDiagramRenderer {
                     return null;
                 }
             }
-            Integer idx = org.jline.utils.Colors.rgbColor(value);
+            Integer idx = Colors.rgbColor(value);
             if (idx != null) {
-                return new Color(org.jline.utils.Colors.rgbColor(idx.intValue()));
+                return new Color(Colors.rgbColor(idx.intValue()));
             }
             return null;
         }

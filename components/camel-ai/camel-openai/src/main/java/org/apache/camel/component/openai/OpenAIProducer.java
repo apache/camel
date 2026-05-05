@@ -694,15 +694,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     }
 
     private ResponseFormatJsonSchema.JsonSchema.Schema buildSchemaFromJson(String jsonSchemaString) throws Exception {
-        java.util.Map<String, Object> root = OBJECT_MAPPER.readValue(jsonSchemaString, java.util.Map.class);
+        Map<String, Object> root = OBJECT_MAPPER.readValue(jsonSchemaString, Map.class);
         if (root == null) {
             throw new IllegalArgumentException("JSON schema string parsed to null");
         }
-        if (!(root instanceof java.util.Map)) {
+        if (!(root instanceof Map)) {
             throw new IllegalArgumentException("JSON schema must be a JSON object at the root");
         }
         ResponseFormatJsonSchema.JsonSchema.Schema.Builder sb = ResponseFormatJsonSchema.JsonSchema.Schema.builder();
-        for (java.util.Map.Entry<String, Object> e : root.entrySet()) {
+        for (Map.Entry<String, Object> e : root.entrySet()) {
             sb.putAdditionalProperty(e.getKey(), JsonValue.from(e.getValue()));
         }
         return sb.build();

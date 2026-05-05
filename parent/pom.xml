@@ -3912,6 +3912,7 @@
                     <artifactId>rewrite-maven-plugin</artifactId>
                     <version>${rewrite-maven-plugin-version}</version>
                     <configuration>
+                        <runPerSubmodule>true</runPerSubmodule>
                         <activeRecipes>
                             <recipe>org.openrewrite.java.ShortenFullyQualifiedTypeReferences</recipe>
                         </activeRecipes>
@@ -4209,9 +4210,9 @@
                             <execution>
                                 <id>shorten-fqcn</id>
                                 <goals>
-                                    <goal>run</goal>
+                                    <goal>runNoFork</goal>
                                 </goals>
-                                <phase>process-sources</phase>
+                                <phase>process-classes</phase>
                             </execution>
                         </executions>
                     </plugin>

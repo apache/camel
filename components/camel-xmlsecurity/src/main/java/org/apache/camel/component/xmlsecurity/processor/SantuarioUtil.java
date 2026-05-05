@@ -21,6 +21,7 @@ import java.security.Provider;
 import java.security.Security;
 
 import org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI;
+import org.apache.xml.security.Init;
 import org.apache.xml.security.utils.XMLUtils;
 
 public final class SantuarioUtil {
@@ -44,7 +45,7 @@ public final class SantuarioUtil {
             //ignore
         }
 
-        org.apache.xml.security.Init.init();
+        Init.init();
 
         if (!wasSet) {
             try {

@@ -19,6 +19,8 @@ package org.apache.camel.dataformat.ocsf;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -98,7 +100,7 @@ public class OcsfEventExampleTest extends CamelTestSupport {
 
         // Verify cloud info in additionalProperties (cloud is not a base event field)
         @SuppressWarnings("unchecked")
-        java.util.Map<String, Object> cloud = (java.util.Map<String, Object>) finding.getAdditionalProperties().get("cloud");
+        Map<String, Object> cloud = (Map<String, Object>) finding.getAdditionalProperties().get("cloud");
         assertThat(cloud.get("provider")).isEqualTo("AWS");
         assertThat(cloud.get("region")).isEqualTo("us-east-1");
     }
@@ -161,8 +163,8 @@ public class OcsfEventExampleTest extends CamelTestSupport {
         info.setAttacks(Arrays.asList(attack));
 
         // Evidence (using Map since evidences is a list of generic objects in OCSF)
-        java.util.Map<String, Object> evidence = new java.util.HashMap<>();
-        evidence.put("http_request", java.util.Map.of(
+        Map<String, Object> evidence = new HashMap<>();
+        evidence.put("http_request", Map.of(
                 "method", "GET",
                 "url", "/api/users?id=1' UNION SELECT username,password FROM users--",
                 "user_agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",

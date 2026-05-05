@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.eventgrid;
 
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.credential.TokenCredential;
+import com.azure.core.models.CloudEvent;
 import com.azure.messaging.eventgrid.EventGridPublisherClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
@@ -48,7 +49,7 @@ public class EventGridConfiguration implements Cloneable {
 
     @UriParam(label = "producer")
     @Metadata(autowired = true)
-    private EventGridPublisherClient<com.azure.core.models.CloudEvent> publisherClient;
+    private EventGridPublisherClient<CloudEvent> publisherClient;
 
     /**
      * The topic endpoint URL where events will be published.
@@ -108,11 +109,11 @@ public class EventGridConfiguration implements Cloneable {
     /**
      * The EventGrid publisher client. If provided, it will be used instead of creating a new one.
      */
-    public EventGridPublisherClient<com.azure.core.models.CloudEvent> getPublisherClient() {
+    public EventGridPublisherClient<CloudEvent> getPublisherClient() {
         return publisherClient;
     }
 
-    public void setPublisherClient(EventGridPublisherClient<com.azure.core.models.CloudEvent> publisherClient) {
+    public void setPublisherClient(EventGridPublisherClient<CloudEvent> publisherClient) {
         this.publisherClient = publisherClient;
     }
 

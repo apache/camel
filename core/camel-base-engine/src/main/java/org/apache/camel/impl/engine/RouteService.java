@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -368,7 +369,7 @@ public class RouteService extends ChildServiceSupport {
         }
     }
 
-    private void routePolicyCallback(java.util.function.BiConsumer<RoutePolicy, Route> callback) {
+    private void routePolicyCallback(BiConsumer<RoutePolicy, Route> callback) {
         if (route.getRoutePolicyList() != null) {
             for (RoutePolicy routePolicy : route.getRoutePolicyList()) {
                 callback.accept(routePolicy, route);

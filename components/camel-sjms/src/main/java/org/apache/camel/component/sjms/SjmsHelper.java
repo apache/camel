@@ -17,11 +17,13 @@
 package org.apache.camel.component.sjms;
 
 import jakarta.jms.Connection;
+import jakarta.jms.IllegalStateException;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.MessageProducer;
 import jakarta.jms.Session;
+import jakarta.jms.TransactionInProgressException;
 
 public final class SjmsHelper {
 
@@ -76,7 +78,7 @@ public final class SjmsHelper {
     public static void commitIfNecessary(Session session) throws JMSException {
         try {
             session.commit();
-        } catch (jakarta.jms.TransactionInProgressException | jakarta.jms.IllegalStateException ex) {
+        } catch (TransactionInProgressException | IllegalStateException ex) {
             // ignore
         }
     }
@@ -88,7 +90,7 @@ public final class SjmsHelper {
             } else if (message != null && session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE) {
                 message.acknowledge();
             }
-        } catch (jakarta.jms.TransactionInProgressException | jakarta.jms.IllegalStateException ex) {
+        } catch (TransactionInProgressException | IllegalStateException ex) {
             // ignore
         }
     }
@@ -97,13 +99,13 @@ public final class SjmsHelper {
         if (session.getTransacted()) {
             try {
                 session.rollback();
-            } catch (jakarta.jms.TransactionInProgressException | jakarta.jms.IllegalStateException ex) {
+            } catch (TransactionInProgressException | IllegalStateException ex) {
                 // ignore
             }
         } else if (session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE) {
             try {
                 session.recover();
-            } catch (jakarta.jms.IllegalStateException ex) {
+            } catch (IllegalStateException ex) {
                 // ignore
             }
         }

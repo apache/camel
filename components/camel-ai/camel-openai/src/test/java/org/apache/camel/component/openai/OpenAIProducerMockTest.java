@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.Iterator;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
@@ -103,7 +105,7 @@ public class OpenAIProducerMockTest extends CamelTestSupport {
 
         Object body = result.getMessage().getBody();
         assertNotNull(body);
-        assertTrue(body instanceof java.util.Iterator);
+        assertTrue(body instanceof Iterator);
     }
 
     @Test

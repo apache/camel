@@ -18,6 +18,9 @@
  * The JAXB POJOs for the <a href="http://camel.apache.org/transformer.html">Transformers</a> used to transform message
  * contents according to declared data types inside <a href="http://camel.apache.org/components.html">components</a>
  */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                       elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model.transformer;
+
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

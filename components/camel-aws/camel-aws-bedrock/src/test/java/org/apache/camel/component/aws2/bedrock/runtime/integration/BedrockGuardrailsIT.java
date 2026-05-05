@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.integration;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -29,6 +33,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest;
+import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
+import software.amazon.awssdk.services.bedrockruntime.model.ConversationRole;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentSource;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTextBlock;
+import software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace;
+import software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration;
+import software.amazon.awssdk.services.bedrockruntime.model.Message;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,18 +77,18 @@ class BedrockGuardrailsIT extends CamelTestSupport {
         result.expectedMessageCount(1);
         final Exchange exchange = template.send("direct:converse_with_guardrails_endpoint", ex -> {
             // Create a message using the Converse API
-            java.util.List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new java.util.ArrayList<>();
-            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
-                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
-                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+            List<Message> messages = new ArrayList<>();
+            messages.add(Message.builder()
+                    .role(ConversationRole.USER)
+                    .content(ContentBlock
                             .fromText("Tell me about Paris"))
                     .build());
 
             ex.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
 
             // Optional: Add inference configuration
-            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
-                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
+            InferenceConfiguration inferenceConfig
+                    = InferenceConfiguration.builder()
                             .maxTokens(200)
                             .temperature(0.7f)
                             .build();
@@ -98,10 +112,10 @@ class BedrockGuardrailsIT extends CamelTestSupport {
         result.expectedMessageCount(1);
         final Exchange exchange = template.send("direct:converse_claude", ex -> {
             // Create a message using the Converse API
-            java.util.List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new java.util.ArrayList<>();
-            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
-                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
-                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+            List<Message> messages = new ArrayList<>();
+            messages.add(Message.builder()
+                    .role(ConversationRole.USER)
+                    .content(ContentBlock
                             .fromText("What is the capital of France?"))
                     .build());
 
@@ -109,17 +123,17 @@ class BedrockGuardrailsIT extends CamelTestSupport {
 
             // Configure guardrail via header
             String guardrailId = System.getProperty("aws.manual.guardrail.id");
-            software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration guardrailConfig
-                    = software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration.builder()
+            GuardrailConfiguration guardrailConfig
+                    = GuardrailConfiguration.builder()
                             .guardrailIdentifier(guardrailId)
                             .guardrailVersion("DRAFT")
-                            .trace(software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace.ENABLED)
+                            .trace(GuardrailTrace.ENABLED)
                             .build();
             ex.getMessage().setHeader(BedrockConstants.GUARDRAIL_CONFIG, guardrailConfig);
 
             // Optional: Add inference configuration
-            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
-                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
+            InferenceConfiguration inferenceConfig
+                    = InferenceConfiguration.builder()
                             .maxTokens(100)
                             .temperature(0.7f)
                             .build();
@@ -143,10 +157,10 @@ class BedrockGuardrailsIT extends CamelTestSupport {
         result.expectedMessageCount(1);
         final Exchange exchange = template.send("direct:converse_stream_with_guardrails", ex -> {
             // Create a message using the Converse API
-            java.util.List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new java.util.ArrayList<>();
-            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
-                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
-                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+            List<Message> messages = new ArrayList<>();
+            messages.add(Message.builder()
+                    .role(ConversationRole.USER)
+                    .content(ContentBlock
                             .fromText("Tell me a short story about a robot"))
                     .build());
 
@@ -154,8 +168,8 @@ class BedrockGuardrailsIT extends CamelTestSupport {
             ex.getMessage().setHeader(BedrockConstants.STREAM_OUTPUT_MODE, "complete");
 
             // Optional: Add inference configuration
-            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
-                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
+            InferenceConfiguration inferenceConfig
+                    = InferenceConfiguration.builder()
                             .maxTokens(300)
                             .temperature(0.9f)
                             .build();
@@ -174,10 +188,10 @@ class BedrockGuardrailsIT extends CamelTestSupport {
         result.expectedMessageCount(1);
         final Exchange exchange = template.send("direct:apply_guardrail", ex -> {
             // Create content blocks to check against the guardrail
-            java.util.List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock> content
-                    = new java.util.ArrayList<>();
-            content.add(software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock.builder()
-                    .text(software.amazon.awssdk.services.bedrockruntime.model.GuardrailTextBlock.builder()
+            List<GuardrailContentBlock> content
+                    = new ArrayList<>();
+            content.add(GuardrailContentBlock.builder()
+                    .text(GuardrailTextBlock.builder()
                             .text("This is a test message to check against the guardrail.")
                             .build())
                     .build());
@@ -205,21 +219,21 @@ class BedrockGuardrailsIT extends CamelTestSupport {
         result.expectedMessageCount(1);
         final Exchange exchange = template.send("direct:apply_guardrail_pojo", ex -> {
             // Create content blocks
-            java.util.List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock> content
-                    = new java.util.ArrayList<>();
-            content.add(software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock.builder()
-                    .text(software.amazon.awssdk.services.bedrockruntime.model.GuardrailTextBlock.builder()
+            List<GuardrailContentBlock> content
+                    = new ArrayList<>();
+            content.add(GuardrailContentBlock.builder()
+                    .text(GuardrailTextBlock.builder()
                             .text("Another test message for guardrail validation.")
                             .build())
                     .build());
 
             // Build the full ApplyGuardrailRequest
             String guardrailId = System.getProperty("aws.manual.guardrail.id");
-            software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest request
-                    = software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest.builder()
+            ApplyGuardrailRequest request
+                    = ApplyGuardrailRequest.builder()
                             .guardrailIdentifier(guardrailId)
                             .guardrailVersion("DRAFT")
-                            .source(software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentSource.INPUT)
+                            .source(GuardrailContentSource.INPUT)
                             .content(content)
                             .build();
 
