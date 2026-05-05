@@ -17,6 +17,7 @@
 package org.apache.camel.processor.aggregator;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -32,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests that optimistic locking retries happen synchronously in the same thread when syncOptimisticRetry is enabled.
+ * Tests that optimistic locking retries happen synchronously in the same thread when optimisticLockingSyncRetry is
+ * enabled.
  */
 public class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
 
@@ -74,7 +76,7 @@ public class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
         assertTrue(addCounter.get() > FAIL_FIRST_N_ATTEMPTS,
                 "Expected more than " + FAIL_FIRST_N_ATTEMPTS + " attempts, got " + addCounter.get());
 
-        // Since syncOptimisticRetry is enabled, the retry should happen in a Camel thread
+        // Since optimisticLockingSyncRetry is enabled, the retry should happen in a Camel thread
         // (the route's thread), NOT in the AggregateOptimisticLockingExecutor thread pool.
         // The key assertion is that the thread name does NOT contain the async executor name.
         if (aggregateThreadName != null) {
@@ -97,6 +99,102 @@ public class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
+    public void testSyncRetryWithNonZeroDelayStaysOnCallingThread() throws Exception {
+        AtomicInteger delayedCounter = new AtomicInteger();
+        AtomicReference<String> retryThreadName = new AtomicReference<>();
+
+        MemoryAggregationRepository delayedRepo = new MemoryAggregationRepository(true) {
+            @Override
+            public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
+                int count = delayedCounter.incrementAndGet();
+                retryThreadName.set(Thread.currentThread().getName());
+                if (count <= 2) {
+                    throw new OptimisticLockingException();
+                }
+                return super.add(camelContext, key, oldExchange, newExchange);
+            }
+        };
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:delay-start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(delayedRepo)
+                        .optimisticLocking()
+                        .optimisticLockingSyncRetry()
+                        .optimisticLockRetryPolicy(
+                                new OptimisticLockRetryPolicy().maximumRetries(10).retryDelay(10))
+                        .completionSize(2)
+                        .to("mock:delay-result");
+            }
+        });
+
+        MockEndpoint mock = getMockEndpoint("mock:delay-result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:delay-start", "A", "id", 2);
+        template.sendBodyAndHeader("direct:delay-start", "B", "id", 2);
+
+        mock.assertIsSatisfied();
+
+        assertTrue(delayedCounter.get() > 2, "Expected retries to occur");
+        assertFalse(retryThreadName.get().contains("AggregateOptimisticLockingExecutor"),
+                "Expected synchronous retry thread but got: " + retryThreadName.get());
+    }
+
+    @Test
+    public void testSyncRetryInterrupted() throws Exception {
+        AtomicInteger interruptCounter = new AtomicInteger();
+
+        MemoryAggregationRepository alwaysFailRepo = new MemoryAggregationRepository(true) {
+            @Override
+            public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
+                interruptCounter.incrementAndGet();
+                throw new OptimisticLockingException();
+            }
+        };
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:interrupt-start")
+                        .aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(alwaysFailRepo)
+                        .optimisticLocking()
+                        .optimisticLockingSyncRetry()
+                        .optimisticLockRetryPolicy(
+                                new OptimisticLockRetryPolicy().maximumRetries(100).retryDelay(500))
+                        .completionSize(2)
+                        .to("mock:interrupt-result");
+            }
+        });
+
+        AtomicReference<Exchange> resultExchange = new AtomicReference<>();
+        Thread sender = new Thread(() -> {
+            Exchange exchange = template.request("direct:interrupt-start",
+                    e -> {
+                        e.getMessage().setHeader("id", "interrupt-group");
+                        e.getMessage().setBody("X");
+                    });
+            resultExchange.set(exchange);
+        });
+        sender.start();
+
+        // Let at least one retry attempt happen before interrupting
+        Thread.sleep(100);
+        sender.interrupt();
+        sender.join(5000);
+
+        // The exchange should have been completed with an InterruptedException
+        Exchange result = resultExchange.get();
+        if (result != null && result.getException() != null) {
+            assertTrue(result.getException() instanceof InterruptedException,
+                    "Expected InterruptedException but got: " + result.getException());
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -106,7 +204,7 @@ public class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
                         .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .aggregationRepository(repository)
                         .optimisticLocking()
-                        .syncOptimisticRetry()
+                        .optimisticLockingSyncRetry()
                         .optimisticLockRetryPolicy(
                                 new OptimisticLockRetryPolicy().maximumRetries(10).retryDelay(0))
                         .completionSize(2)

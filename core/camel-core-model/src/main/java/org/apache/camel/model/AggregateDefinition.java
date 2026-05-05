@@ -91,7 +91,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     private String optimisticLocking;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
-    private String syncOptimisticRetry;
+    private String optimisticLockingSyncRetry;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.util.concurrent.ExecutorService")
     private String executorService;
@@ -176,7 +176,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
                 ? source.optimisticLockRetryPolicyDefinition.copyDefinition() : null;
         this.parallelProcessing = source.parallelProcessing;
         this.optimisticLocking = source.optimisticLocking;
-        this.syncOptimisticRetry = source.syncOptimisticRetry;
+        this.optimisticLockingSyncRetry = source.optimisticLockingSyncRetry;
         this.executorService = source.executorService;
         this.timeoutCheckerExecutorService = source.timeoutCheckerExecutorService;
         this.aggregateController = source.aggregateController;
@@ -505,12 +505,12 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
         this.optimisticLocking = optimisticLocking;
     }
 
-    public String getSyncOptimisticRetry() {
-        return syncOptimisticRetry;
+    public String getOptimisticLockingSyncRetry() {
+        return optimisticLockingSyncRetry;
     }
 
-    public void setSyncOptimisticRetry(String syncOptimisticRetry) {
-        this.syncOptimisticRetry = syncOptimisticRetry;
+    public void setOptimisticLockingSyncRetry(String optimisticLockingSyncRetry) {
+        this.optimisticLockingSyncRetry = optimisticLockingSyncRetry;
     }
 
     public String getParallelProcessing() {
@@ -1019,10 +1019,10 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
     /**
      * When optimistic locking is enabled, retries happen synchronously in the same thread instead of being scheduled on
      * a background thread. This preserves transaction context for repositories that require single-thread transactional
-     * guarantees.
+     * guarantees. Only takes effect when {@link #optimisticLocking()} is also enabled.
      */
-    public AggregateDefinition syncOptimisticRetry() {
-        setSyncOptimisticRetry(Boolean.toString(true));
+    public AggregateDefinition optimisticLockingSyncRetry() {
+        setOptimisticLockingSyncRetry(Boolean.toString(true));
         return this;
     }
 

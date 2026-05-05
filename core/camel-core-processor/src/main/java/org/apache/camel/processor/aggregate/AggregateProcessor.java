@@ -231,7 +231,7 @@ public class AggregateProcessor extends BaseProcessorSupport
     private Integer closeCorrelationKeyOnCompletion;
     private boolean parallelProcessing;
     private boolean optimisticLocking;
-    private boolean syncOptimisticRetry;
+    private boolean optimisticLockingSyncRetry;
 
     // different ways to have completion triggered
     private boolean eagerCheckCompletion;
@@ -375,7 +375,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                         "On attempt {} OptimisticLockingAggregationRepository: {} threw OptimisticLockingException while trying to aggregate exchange: {}",
                         attempt, aggregationRepository, exchange, e);
                 if (optimisticLockRetryPolicy.shouldRetry(attempt)) {
-                    if (syncOptimisticRetry) {
+                    if (optimisticLockingSyncRetry) {
                         // Synchronous retry: delay in the same thread instead of
                         // scheduling on a background thread. This ensures aggregation
                         // stays within a single thread (e.g. for transactional processing).
@@ -1141,12 +1141,12 @@ public class AggregateProcessor extends BaseProcessorSupport
         this.optimisticLocking = optimisticLocking;
     }
 
-    public boolean isSyncOptimisticRetry() {
-        return syncOptimisticRetry;
+    public boolean isOptimisticLockingSyncRetry() {
+        return optimisticLockingSyncRetry;
     }
 
-    public void setSyncOptimisticRetry(boolean syncOptimisticRetry) {
-        this.syncOptimisticRetry = syncOptimisticRetry;
+    public void setOptimisticLockingSyncRetry(boolean optimisticLockingSyncRetry) {
+        this.optimisticLockingSyncRetry = optimisticLockingSyncRetry;
     }
 
     public AggregationRepository getAggregationRepository() {

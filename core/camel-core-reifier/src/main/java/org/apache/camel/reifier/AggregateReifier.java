@@ -137,9 +137,9 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         if (optimisticLocking != null) {
             answer.setOptimisticLocking(optimisticLocking);
         }
-        Boolean syncOptimisticRetry = parseBoolean(definition.getSyncOptimisticRetry());
-        if (syncOptimisticRetry != null) {
-            answer.setSyncOptimisticRetry(syncOptimisticRetry);
+        Boolean optimisticLockingSyncRetry = parseBoolean(definition.getOptimisticLockingSyncRetry());
+        if (optimisticLockingSyncRetry != null) {
+            answer.setOptimisticLockingSyncRetry(optimisticLockingSyncRetry);
         }
         if (definition.getCompletionPredicate() != null) {
             Predicate predicate = createPredicate(definition.getCompletionPredicate());
