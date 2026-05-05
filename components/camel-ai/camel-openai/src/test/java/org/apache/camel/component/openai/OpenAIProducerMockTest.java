@@ -27,6 +27,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OpenAIProducerMockTest extends CamelTestSupport {
@@ -53,6 +54,21 @@ public class OpenAIProducerMockTest extends CamelTestSupport {
             .when("json please")
             .replyWith("{\"ok\":true}")
             .end()
+            .when("reasoning-test")
+            .replyWith("The answer is 42")
+            .replyWithReasoningContent("Let me think step by step about this problem...")
+            .end()
+            .when("reasoning-empty-content")
+            .replyWith("")
+            .replyWithReasoningContent("I thought about it but content is empty")
+            .end()
+            .when("reasoning-with-think")
+            .replyWith("<think>inline thinking</think>The final answer")
+            .replyWithReasoningContent("API-level reasoning content")
+            .end()
+            .when("no-reasoning")
+            .replyWith("Plain response")
+            .end()
             .build();
 
     @Override
@@ -73,6 +89,14 @@ public class OpenAIProducerMockTest extends CamelTestSupport {
                 from("direct:chat-stream")
                         .to("openai:chat-completion?model=gpt-5&apiKey=dummy&streaming=true&baseUrl="
                             + openAIMock.getBaseUrl() + "/v1");
+
+                from("direct:chat-strip-thinking")
+                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&stripThinking=true&baseUrl="
+                            + openAIMock.getBaseUrl() + "/v1");
+
+                from("direct:chat-custom-header")
+                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl()
+                            + "/v1&additionalResponseHeader.reasoning_content=CamelCustomReasoning");
             }
         };
     }
@@ -110,6 +134,60 @@ public class OpenAIProducerMockTest extends CamelTestSupport {
     void additionalBodyPropertyIsIncludedInRequestBody() {
         Exchange result = template.request("direct:chat-extra", e -> e.getIn().setBody("hello-extra"));
         assertEquals("Hi from mock", result.getMessage().getBody(String.class));
+    }
+
+    @Test
+    void reasoningContentIsExtractedIntoHeader() {
+        Exchange result = template.request("direct:chat", e -> e.getIn().setBody("reasoning-test"));
+        assertEquals("The answer is 42", result.getMessage().getBody(String.class));
+        assertEquals("Let me think step by step about this problem...",
+                result.getMessage().getHeader(OpenAIConstants.REASONING_CONTENT, String.class));
+    }
+
+    @Test
+    void reasoningContentWithEmptyBody() {
+        Exchange result = template.request("direct:chat", e -> e.getIn().setBody("reasoning-empty-content"));
+        assertEquals("", result.getMessage().getBody(String.class));
+        assertEquals("I thought about it but content is empty",
+                result.getMessage().getHeader(OpenAIConstants.REASONING_CONTENT, String.class));
+    }
+
+    @Test
+    void noReasoningContentHeaderWhenAbsent() {
+        Exchange result = template.request("direct:chat", e -> e.getIn().setBody("no-reasoning"));
+        assertEquals("Plain response", result.getMessage().getBody(String.class));
+        assertNull(result.getMessage().getHeader(OpenAIConstants.REASONING_CONTENT));
+    }
+
+    @Test
+    void bothReasoningContentAndInlineThinkingArePopulated() {
+        Exchange result = template.request("direct:chat-strip-thinking",
+                e -> e.getIn().setBody("reasoning-with-think"));
+        assertEquals("The final answer", result.getMessage().getBody(String.class));
+        assertEquals("inline thinking",
+                result.getMessage().getHeader(OpenAIConstants.THINKING_CONTENT, String.class));
+        assertEquals("API-level reasoning content",
+                result.getMessage().getHeader(OpenAIConstants.REASONING_CONTENT, String.class));
+    }
+
+    @Test
+    void additionalResponseHeaderMapsFieldToCustomHeader() {
+        Exchange result = template.request("direct:chat-custom-header",
+                e -> e.getIn().setBody("reasoning-test"));
+        assertEquals("The answer is 42", result.getMessage().getBody(String.class));
+        assertEquals("Let me think step by step about this problem...",
+                result.getMessage().getHeader("CamelCustomReasoning", String.class));
+        // Built-in reasoning header should also be populated
+        assertEquals("Let me think step by step about this problem...",
+                result.getMessage().getHeader(OpenAIConstants.REASONING_CONTENT, String.class));
+    }
+
+    @Test
+    void additionalResponseHeaderNotSetWhenFieldAbsent() {
+        Exchange result = template.request("direct:chat-custom-header",
+                e -> e.getIn().setBody("no-reasoning"));
+        assertEquals("Plain response", result.getMessage().getBody(String.class));
+        assertNull(result.getMessage().getHeader("CamelCustomReasoning"));
     }
 
 }
