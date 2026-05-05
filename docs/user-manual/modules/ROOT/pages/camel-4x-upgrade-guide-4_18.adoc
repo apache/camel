@@ -67,6 +67,34 @@ Or, on a single endpoint:
 jms:queue:foo?objectMessageEnabled=true
 ----
 
+=== camel-sjms / camel-sjms2
+
+The same default applies to `camel-sjms` (and `camel-sjms2`, which inherits from it): JMS `ObjectMessage`
+support is now disabled by default and gated by a new `objectMessageEnabled` option (default `false`)
+on `SjmsComponent` / `SjmsEndpoint`.
+
+This affects the same endpoint/component options as `camel-jms`:
+
+* `jmsMessageType=Object` (or sending a `Serializable` body that is auto-detected as `Object`)
+* `transferException=true`
+* receiving a JMS `ObjectMessage` produced by an external sender
+
+To restore the previous behavior, enable the option at the component or endpoint level:
+
+[source,properties]
+----
+camel.component.sjms.objectMessageEnabled=true
+camel.component.sjms2.objectMessageEnabled=true
+----
+
+Or, on a single endpoint:
+
+[source,text]
+----
+sjms:queue:foo?objectMessageEnabled=true
+sjms2:queue:foo?objectMessageEnabled=true
+----
+
 == Upgrading from 4.18.1 to 4.18.2
 
 === camel-platform-http-main
