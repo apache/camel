@@ -72,8 +72,9 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 BufferedImage image = renderImage(routes, theme);
                 String base64 = imageToBase64(image, "png");
                 // For HTML embedding:
-                String html = "<html>%n<body>%n<img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\"%n</body>%n</html>>"
-                String html = "<html>\n<body>\n<img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\">\n</body>\n</html>"
+                String html = String.format(
+                        "<html>\n<body>\n<img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\">\n</body>\n</html>",
+                        base64);
                 sj.add(html);
             } catch (Exception e) {
                 // ignore
