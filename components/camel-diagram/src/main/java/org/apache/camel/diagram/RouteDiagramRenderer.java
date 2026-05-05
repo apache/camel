@@ -307,9 +307,6 @@ public class RouteDiagramRenderer {
         FontMetrics fm = g.getFontMetrics();
 
         List<String> lines = node.wrappedLines;
-        if (lines == null || lines.isEmpty()) {
-            lines = List.of(node.label);
-        }
 
         int lineHeight = fm.getHeight();
         int totalTextHeight = lines.size() * lineHeight;
@@ -379,6 +376,10 @@ public class RouteDiagramRenderer {
     }
 
     public List<String> printTextDiagram(List<RouteInfo> routes) {
+        return printTextDiagram(routes, RouteDiagramLayoutEngine.NodeLabelMode.CODE);
+    }
+
+    public List<String> printTextDiagram(List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode mode) {
         List<String> lines = new ArrayList<>();
         for (RouteInfo route : routes) {
             lines.add("");
@@ -390,14 +391,16 @@ public class RouteDiagramRenderer {
 
             TreeNode tree = RouteDiagramLayoutEngine.buildTree(route.nodes);
             if (tree != null) {
-                printTreeNode(tree, "", true, true, lines);
+                printTreeNode(tree, "", true, true, lines, mode);
             }
             lines.add("");
         }
         return lines;
     }
 
-    private void printTreeNode(TreeNode node, String prefix, boolean isLast, boolean isRoot, List<String> lines) {
+    private void printTreeNode(
+            TreeNode node, String prefix, boolean isLast, boolean isRoot, List<String> lines,
+            RouteDiagramLayoutEngine.NodeLabelMode mode) {
         String connector;
         if (isRoot) {
             connector = "  ";
@@ -408,9 +411,9 @@ public class RouteDiagramRenderer {
         }
 
         String typeTag = node.info.type != null ? "[" + node.info.type + "] " : "";
-        String code = RouteDiagramLayoutEngine.cleanLabel(node.info.code);
+        String label = String.join(" | ", RouteDiagramLayoutEngine.resolveLabel(node.info, mode));
 
-        lines.add(prefix + connector + typeTag + code);
+        lines.add(prefix + connector + typeTag + label);
 
         String childPrefix;
         if (isRoot) {
@@ -422,7 +425,7 @@ public class RouteDiagramRenderer {
         }
 
         for (int i = 0; i < node.children.size(); i++) {
-            printTreeNode(node.children.get(i), childPrefix, i == node.children.size() - 1, false, lines);
+            printTreeNode(node.children.get(i), childPrefix, i == node.children.size() - 1, false, lines, mode);
         }
     }
 }

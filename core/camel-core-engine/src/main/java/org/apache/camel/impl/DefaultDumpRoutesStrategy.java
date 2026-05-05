@@ -448,6 +448,9 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             c.put("type", line.type());
             c.put("id", line.id());
             c.put("level", line.level());
+            if (line.description() != null) {
+                c.put("description", line.description());
+            }
             c.put("code", Jsoner.escape(line.code()));
             code.add(c);
         }

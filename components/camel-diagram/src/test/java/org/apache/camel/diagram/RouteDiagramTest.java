@@ -410,7 +410,7 @@ class RouteDiagramTest {
         LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
 
         LayoutNode logAfter = lr.nodes.get(lr.nodes.size() - 1);
-        assertEquals("log[Do other processing...]", logAfter.label);
+        assertEquals("log[Do other processing...]", String.join("", logAfter.wrappedLines));
         assertTrue(logAfter.connectFromMerge, "Should connect from doTry merge point");
 
         LayoutNode choiceNode = lr.nodes.stream()
@@ -437,7 +437,7 @@ class RouteDiagramTest {
         assertEquals(5, lr.nodes.size());
 
         LayoutNode toNode = lr.nodes.get(4);
-        assertEquals("to[log:after]", toNode.label);
+        assertEquals("to[log:after]", String.join("", toNode.wrappedLines));
         assertTrue(toNode.connectFromMerge, "Node after filter should connect from merge point");
 
         LayoutNode filterNode = lr.nodes.get(2);
@@ -593,10 +593,129 @@ class RouteDiagramTest {
         assertTrue(image.getHeight() > 0);
     }
 
+    @Test
+    void testNodeLabelModeDescription() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick?period=1000", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertEquals("Poll every second", String.join("", lr.nodes.get(0).wrappedLines));
+        assertEquals("log:a", String.join("", lr.nodes.get(1).wrappedLines));
+    }
+
+    @Test
+    void testNodeLabelModeDescriptionFallsBackToCode() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0, null));
+
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertEquals("timer:tick", String.join("", lr.nodes.get(0).wrappedLines));
+    }
+
+    @Test
+    void testNodeLabelModeBoth() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick?period=1000", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, RouteDiagramLayoutEngine.NodeLabelMode.BOTH);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        List<String> fromLines = lr.nodes.get(0).wrappedLines;
+        assertTrue(fromLines.size() >= 2, "Both mode should produce at least 2 lines when description differs from code");
+        String allFromText = String.join("", fromLines);
+        assertTrue(allFromText.contains("Poll every second"));
+        assertTrue(allFromText.contains("timer:tick"));
+
+        assertEquals("log:a", String.join("", lr.nodes.get(1).wrappedLines));
+    }
+
+    @Test
+    void testNodeLabelModeCodeDefault() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0, "Poll every second"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertEquals("timer:tick", String.join("", lr.nodes.get(0).wrappedLines));
+    }
+
+    @Test
+    void testTextDiagramWithDescriptionMode() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick?period=1000", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        List<String> lines
+                = renderer.printTextDiagram(List.of(route), RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION);
+
+        String output = String.join("\n", lines);
+        assertTrue(output.contains("Poll every second"));
+        assertTrue(output.contains("log:a"));
+    }
+
+    @Test
+    void testTextDiagramWithBothMode() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        List<String> lines = renderer.printTextDiagram(List.of(route), RouteDiagramLayoutEngine.NodeLabelMode.BOTH);
+
+        String output = String.join("\n", lines);
+        assertTrue(output.contains("Poll every second"));
+        assertTrue(output.contains("timer:tick"));
+        assertTrue(output.contains("log:a"));
+    }
+
+    @Test
+    void testRenderDiagramWithDescriptionMode() {
+        System.setProperty("java.awt.headless", "true");
+
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick?period=1000", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        DiagramColors colors = DiagramColors.parse("dark");
+        BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP, colors);
+
+        assertNotNull(image);
+        assertTrue(image.getWidth() > 0);
+        assertTrue(image.getHeight() > 0);
+    }
+
     private static NodeInfo node(String type, String code, int level) {
+        return node(type, code, level, null);
+    }
+
+    private static NodeInfo node(String type, String code, int level, String description) {
         NodeInfo n = new NodeInfo();
         n.type = type;
         n.code = code;
+        n.description = description;
         n.level = level;
         return n;
     }

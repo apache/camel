@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
@@ -82,6 +83,11 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                         description = "Node box width in logical pixels", defaultValue = "180")
     int boxWidth;
 
+    @CommandLine.Option(names = { "--node-label" },
+                        description = "What text to display in diagram nodes: code, description, or both (default)",
+                        defaultValue = "both")
+    String nodeLabel;
+
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
@@ -109,7 +115,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
     public Integer renderSourceToFile(
             String sourceFile, String outputFile, String theme, String filter,
             int width, boolean ignoreLoadingError,
-            int fontSize, int boxWidth)
+            int fontSize, int boxWidth, String nodeLabel)
             throws Exception {
         this.name = sourceFile;
         this.output = outputFile;
@@ -121,6 +127,9 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
         this.ignoreLoadingError = ignoreLoadingError;
         this.fontSize = fontSize;
         this.boxWidth = boxWidth;
+        if (nodeLabel != null && !nodeLabel.isBlank()) {
+            this.nodeLabel = nodeLabel;
+        }
         return doCall();
     }
 
@@ -179,7 +188,8 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                 return 0;
             }
 
-            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize);
+            NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
+            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
                     engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE);
 
@@ -225,7 +235,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                                     "Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
                             printer().println(
                                     "Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
-                            for (String line : renderer.printTextDiagram(routes)) {
+                            for (String line : renderer.printTextDiagram(routes, labelMode)) {
                                 printer().println(line);
                             }
                         }
@@ -292,5 +302,16 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
 
     List<RouteInfo> parseRoutes(JsonObject jo) {
         return RouteDiagramHelper.parseRoutes(jo);
+    }
+
+    static NodeLabelMode parseNodeLabelMode(String value) {
+        if (value == null || value.isBlank() || "code".equalsIgnoreCase(value)) {
+            return NodeLabelMode.CODE;
+        } else if ("description".equalsIgnoreCase(value)) {
+            return NodeLabelMode.DESCRIPTION;
+        } else if ("both".equalsIgnoreCase(value)) {
+            return NodeLabelMode.BOTH;
+        }
+        return NodeLabelMode.CODE;
     }
 }
