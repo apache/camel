@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,8 +29,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.CachedOutputStream;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Unreliable on virtual machines")
 @DisabledOnOs(architectures = { "s390x" },
               disabledReason = "This test does not run reliably on s390x")
 public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSupport {
@@ -56,10 +56,12 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
 
         File f = testDirectory().toFile();
         assertTrue(f.isDirectory());
-        Thread.sleep(500L); // deletion happens asynchron
-        File[] files = f.listFiles();
-        assertNotNull(files, "There should be a list of files");
-        assertEquals(0, files.length);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    File[] files = f.listFiles();
+                    assertNotNull(files, "There should be a list of files");
+                    assertEquals(0, files.length);
+                });
     }
 
     @Test
@@ -73,14 +75,8 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        final Processor processor1 = new Processor() {
+        final Processor setStreamBody = new Processor() {
             public void process(Exchange exchange) {
-                try {
-                    // sleep for one second so that the stream cache is built after the main exchange has finished due to timeout on the multicast
-                    Thread.sleep(1000L);
-                } catch (InterruptedException e) {
-                    throw new IllegalStateException("Unexpected exception", e);
-                }
                 Message in = exchange.getIn();
                 // use FilterInputStream to trigger streamcaching
                 in.setBody(new FilterInputStream(new ByteArrayInputStream(BODY)) {
@@ -89,16 +85,16 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
             }
         };
 
-        final Processor processor2 = new Processor() {
-            public void process(Exchange exchange) throws IOException {
-                // create first the OutputStreamCache and then sleep
+        final Processor createOutputStream = new Processor() {
+            public void process(Exchange exchange) {
                 CachedOutputStream outputStream = new CachedOutputStream(exchange);
-                try {
-                    // sleep for one second so that the write to the CachedOutputStream happens after the main exchange has finished due to timeout on the multicast
-                    Thread.sleep(1000L);
-                } catch (InterruptedException e) {
-                    throw new IllegalStateException("Unexpected exception", e);
-                }
+                exchange.setProperty("cachedOutputStream", outputStream);
+            }
+        };
+
+        final Processor writeOutputStream = new Processor() {
+            public void process(Exchange exchange) throws IOException {
+                CachedOutputStream outputStream = exchange.getProperty("cachedOutputStream", CachedOutputStream.class);
                 outputStream.write(BODY);
                 Message in = exchange.getIn();
                 // use FilterInputStream to trigger streamcaching
@@ -118,13 +114,16 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
 
                 onException(IOException.class).to("mock:exception");
 
-                from("direct:a").multicast().timeout(500L).parallelProcessing().to("direct:x");
+                from("direct:a").multicast().timeout(2000).parallelProcessing().to("direct:x");
 
-                from("direct:x").process(processor1).to("mock:x");
+                // delay so the stream cache is built after the main exchange has finished due to timeout
+                from("direct:x").delay(5000).process(setStreamBody).to("mock:x");
 
-                from("direct:b").multicast().timeout(500L).parallelProcessing().to("direct:y");
+                from("direct:b").multicast().timeout(2000).parallelProcessing().to("direct:y");
 
-                from("direct:y").process(processor2).to("mock:y");
+                // create the CachedOutputStream before the delay, then write to it after
+                // the delay (which is after the multicast timeout), which should cause an IOException
+                from("direct:y").process(createOutputStream).delay(5000).process(writeOutputStream).to("mock:y");
             }
         };
     }
