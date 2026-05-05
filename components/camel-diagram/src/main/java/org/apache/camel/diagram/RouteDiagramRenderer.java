@@ -32,6 +32,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
+import org.jline.utils.Colors;
 
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.NODE_HEIGHT;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.NODE_WIDTH;
