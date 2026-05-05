@@ -27,7 +27,7 @@ class RouteDiagramToolsTest {
     void missingSourceFileThrows() {
         RouteDiagramTools tools = new RouteDiagramTools();
 
-        assertThatThrownBy(() -> tools.camel_render_route_diagram(null, null, null, null, null, null))
+        assertThatThrownBy(() -> tools.camel_render_route_diagram(null, null, null, null, null, null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("sourceFile");
     }
@@ -36,7 +36,7 @@ class RouteDiagramToolsTest {
     void blankSourceFileThrows() {
         RouteDiagramTools tools = new RouteDiagramTools();
 
-        assertThatThrownBy(() -> tools.camel_render_route_diagram("   ", null, null, null, null, null))
+        assertThatThrownBy(() -> tools.camel_render_route_diagram("   ", null, null, null, null, null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("sourceFile");
     }
@@ -46,7 +46,7 @@ class RouteDiagramToolsTest {
         RouteDiagramTools tools = new RouteDiagramTools();
 
         assertThatThrownBy(() -> tools.camel_render_route_diagram(
-                "/no/such/file.yaml", null, null, null, null, null))
+                "/no/such/file.yaml", null, null, null, null, null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("does not exist");
     }

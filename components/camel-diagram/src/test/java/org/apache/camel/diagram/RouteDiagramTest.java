@@ -480,6 +480,119 @@ class RouteDiagramTest {
                 "Filter as last child should not produce merge connection on its children");
     }
 
+    @Test
+    void testCustomBoxWidthLayout() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+        route.nodes.add(node("to", "log:a", 1));
+
+        RouteDiagramLayoutEngine defaultEngine = new RouteDiagramLayoutEngine();
+        LayoutRoute defaultLr = defaultEngine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramLayoutEngine wideEngine = new RouteDiagramLayoutEngine(250, 12);
+        LayoutRoute wideLr = wideEngine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertTrue(wideLr.maxX > defaultLr.maxX, "Wider box should produce wider layout");
+        assertEquals(250 * RouteDiagramLayoutEngine.SCALE, wideEngine.getNodeWidth());
+    }
+
+    @Test
+    void testCustomFontSizeLayout() {
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(180, 16);
+        assertTrue(engine.getBaseNodeHeight() > new RouteDiagramLayoutEngine().getBaseNodeHeight(),
+                "Larger font should produce taller base node height");
+    }
+
+    @Test
+    void testTextWrappingShortLabel() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode fromNode = lr.nodes.get(0);
+        assertEquals(1, fromNode.wrappedLines.size());
+        assertEquals(engine.getBaseNodeHeight(), fromNode.height);
+    }
+
+    @Test
+    void testTextWrappingLongLabel() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes
+                .add(node("from", "kafka:my-topic?brokers=localhost:9092&groupId=myConsumerGroup&autoOffsetReset=earliest", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode fromNode = lr.nodes.get(0);
+        assertTrue(fromNode.wrappedLines.size() > 1, "Long label should wrap to multiple lines");
+        assertTrue(fromNode.height > engine.getBaseNodeHeight(), "Wrapped node should be taller");
+    }
+
+    @Test
+    void testPerNodeHeightAffectsNextNodePosition() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes
+                .add(node("from", "kafka:my-topic?brokers=localhost:9092&groupId=myConsumerGroup&autoOffsetReset=earliest", 0));
+        route.nodes.add(node("to", "log:a", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode fromNode = lr.nodes.get(0);
+        LayoutNode toNode = lr.nodes.get(1);
+        assertEquals(fromNode.y + fromNode.height + RouteDiagramLayoutEngine.V_GAP, toNode.y,
+                "Next node Y should account for wrapped node height");
+    }
+
+    @Test
+    void testRenderDiagramWithWrappedNodes() {
+        System.setProperty("java.awt.headless", "true");
+
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes
+                .add(node("from", "kafka:my-topic?brokers=localhost:9092&groupId=myConsumerGroup&autoOffsetReset=earliest", 0));
+        route.nodes.add(node("to", "log:a", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        DiagramColors colors = DiagramColors.parse("dark");
+        BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP, colors);
+
+        assertNotNull(image);
+        assertTrue(image.getWidth() > 0);
+        assertTrue(image.getHeight() > 0);
+    }
+
+    @Test
+    void testRenderDiagramWithCustomDimensions() {
+        System.setProperty("java.awt.headless", "true");
+
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+        route.nodes.add(node("to", "log:a", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(250, 16);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer(engine.getNodeWidth(), 16 * RouteDiagramLayoutEngine.SCALE);
+        DiagramColors colors = DiagramColors.parse("dark");
+        BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP, colors);
+
+        assertNotNull(image);
+        assertTrue(image.getWidth() > 0);
+        assertTrue(image.getHeight() > 0);
+    }
+
     private static NodeInfo node(String type, String code, int level) {
         NodeInfo n = new NodeInfo();
         n.type = type;
