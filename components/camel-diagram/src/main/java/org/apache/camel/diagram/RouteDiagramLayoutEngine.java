@@ -38,9 +38,16 @@ public class RouteDiagramLayoutEngine {
     private static final int NODE_TEXT_PADDING = 16 * SCALE;
     private static final int MAX_WRAP_LINES = 3;
 
+    public enum NodeLabelMode {
+        CODE,
+        DESCRIPTION,
+        BOTH
+    }
+
     private final int nodeWidth;
     private final int baseNodeHeight;
     private final FontMetrics fontMetrics;
+    private final NodeLabelMode nodeLabelMode;
 
     private static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
@@ -60,8 +67,18 @@ public class RouteDiagramLayoutEngine {
      * @param fontSize font size in logical pixels (before SCALE)
      */
     public RouteDiagramLayoutEngine(int boxWidth, int fontSize) {
+        this(boxWidth, fontSize, NodeLabelMode.CODE);
+    }
+
+    /**
+     * @param boxWidth      logical node width in pixels (before SCALE)
+     * @param fontSize      font size in logical pixels (before SCALE)
+     * @param nodeLabelMode controls what text is displayed in node labels
+     */
+    public RouteDiagramLayoutEngine(int boxWidth, int fontSize, NodeLabelMode nodeLabelMode) {
         this.nodeWidth = boxWidth * SCALE;
         this.baseNodeHeight = Math.max(32, fontSize * 32 / 12) * SCALE;
+        this.nodeLabelMode = nodeLabelMode != null ? nodeLabelMode : NodeLabelMode.CODE;
         BufferedImage scratch = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = scratch.createGraphics();
         g.setFont(new Font("SansSerif", Font.PLAIN, fontSize * SCALE));
@@ -80,6 +97,7 @@ public class RouteDiagramLayoutEngine {
     public static class NodeInfo {
         public String type;
         public String code;
+        public String description;
         public int level;
     }
 
@@ -102,7 +120,6 @@ public class RouteDiagramLayoutEngine {
     }
 
     public static class LayoutNode {
-        public String label;
         public String type;
         public int x;
         public int y;
@@ -216,14 +233,33 @@ public class RouteDiagramLayoutEngine {
         return lines;
     }
 
-    int computeNodeHeight(String label) {
-        List<String> lines = wrapLabel(label);
+    int computeNodeHeight(List<String> lines) {
         int lineCount = Math.min(lines.size(), MAX_WRAP_LINES);
         if (lineCount <= 1) {
             return baseNodeHeight;
         }
         int lineSpacing = fontMetrics.getHeight();
         return baseNodeHeight + (lineCount - 1) * lineSpacing;
+    }
+
+    List<String> resolveLabel(NodeInfo info) {
+        return resolveLabel(info, nodeLabelMode);
+    }
+
+    public static List<String> resolveLabel(NodeInfo info, NodeLabelMode mode) {
+        String code = cleanLabel(info.code);
+        boolean hasDesc = info.description != null && !info.description.isBlank();
+        switch (mode) {
+            case DESCRIPTION:
+                return List.of(hasDesc ? info.description : code);
+            case BOTH:
+                if (hasDesc && !info.description.equals(code)) {
+                    return List.of(info.description, code);
+                }
+                return List.of(code);
+            default:
+                return List.of(code);
+        }
     }
 
     public LayoutRoute layoutRoute(RouteInfo route, int startY) {
@@ -296,12 +332,12 @@ public class RouteDiagramLayoutEngine {
         int nodeX = x + (availableWidth - nodeWidth) / 2;
 
         LayoutNode ln = new LayoutNode();
-        ln.label = cleanLabel(node.info.code);
         ln.type = node.info.type;
         ln.x = nodeX;
         ln.y = y;
-        ln.wrappedLines = wrapLabel(ln.label);
-        ln.height = computeNodeHeight(ln.label);
+        ln.wrappedLines = resolveLabel(node.info).stream()
+                .flatMap(s -> wrapLabel(s).stream()).toList();
+        ln.height = computeNodeHeight(ln.wrappedLines);
         ln.treeNode = node;
         node.layoutNode = ln;
         lr.nodes.add(ln);

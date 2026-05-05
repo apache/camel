@@ -60,6 +60,7 @@ public final class RouteDiagramHelper {
                     NodeInfo node = new NodeInfo();
                     node.type = line.getString("type");
                     node.code = Jsoner.unescape(line.getString("code"));
+                    node.description = line.getString("description");
                     Integer level = line.getInteger("level");
                     node.level = level != null ? level : 0;
                     route.nodes.add(node);
