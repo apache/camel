@@ -61,7 +61,6 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
     private static final Pattern SUBCOMMAND_PATTERN = Pattern.compile(
             "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(\\s*(?:main|this)\\s*\\)\\s*\\)");
 
-
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
 
