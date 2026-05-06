@@ -40,6 +40,11 @@ import org.apache.camel.util.json.JsonObject;
 public class DiagramDevConsole extends AbstractDevConsole {
 
     /**
+     * Filters the routes matching by route id, route uri, and source location
+     */
+    public static final String FILTER = "filter";
+
+    /**
      * Theme to use: dark, light, or text
      */
     public static final String THEME = "theme";
@@ -67,6 +72,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         final StringJoiner sj = new StringJoiner("\n");
 
+        String filter = (String) options.getOrDefault(FILTER, "*");
         String theme = (String) options.get(THEME);
         int fontSize
                 = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
@@ -77,7 +83,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
         org.apache.camel.console.DevConsole dc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                         .resolveById("route-structure");
-        JsonObject root = (JsonObject) dc.call(MediaType.JSON);
+        JsonObject root = (JsonObject) dc.call(MediaType.JSON, Map.of("filter", filter));
         // parseRoutes expect a JsonArray and not ArrayList
         JsonArray arr = new JsonArray(root.getCollection("routes"));
         root.put("routes", arr);
@@ -105,6 +111,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String filter = (String) options.getOrDefault(FILTER, "*");
         String theme = (String) options.get(THEME);
         int fontSize
                 = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
@@ -115,7 +122,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
         org.apache.camel.console.DevConsole dc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                         .resolveById("route-structure");
-        JsonObject root = (JsonObject) dc.call(MediaType.JSON);
+        JsonObject root = (JsonObject) dc.call(MediaType.JSON, Map.of("filter", filter));
         // parseRoutes expect a JsonArray and not ArrayList
         JsonArray arr = new JsonArray(root.getCollection("routes"));
         root.put("routes", arr);
