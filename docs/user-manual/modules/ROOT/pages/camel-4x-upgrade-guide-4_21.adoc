@@ -36,6 +36,11 @@ Previously these nodes were flattened to the same level as their parent `choice`
 with the tree structure exposed by `getChildren()`. This affects level values reported via JMX (`ManagedProcessor.getLevel()`)
 and dev consoles for nodes inside Choice EIP branches.
 
+=== camel-jbang
+
+The `camel wrapper` command now installs the scripts as `camel` instead of `camelw`.
+You can use the `--command-name=camelw` to use the old name.
+
 === camel-yaml-dsl
 
 A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
