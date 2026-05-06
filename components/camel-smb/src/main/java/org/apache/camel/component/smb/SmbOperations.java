@@ -19,6 +19,7 @@ package org.apache.camel.component.smb;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.EnumSet;
 
@@ -371,7 +372,7 @@ public class SmbOperations implements SmbFileOperations {
 
                 try (InputStream is = shareFile.getInputStream()) {
                     // store content as a file in the local work directory in the temp handle
-                    java.nio.file.Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
 
                 exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());

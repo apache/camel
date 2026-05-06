@@ -96,7 +96,7 @@ public class CometdProducerConsumerAuthenticatedTest extends CamelTestSupport {
         BayeuxClient client = new BayeuxClient(url, new JettyHttpClientTransport(null, httpClient));
         client.addExtension(new ClientSession.Extension() {
             @Override
-            public boolean sendMeta(ClientSession session, org.cometd.bayeux.Message.Mutable message) {
+            public boolean sendMeta(ClientSession session, Message.Mutable message) {
                 if (Channel.META_HANDSHAKE.equals(message.getChannel())) {
                     Map<String, Object> authentication = new HashMap<>();
                     authentication.put("user", user);

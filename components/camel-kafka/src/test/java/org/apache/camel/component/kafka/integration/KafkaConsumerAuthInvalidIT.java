@@ -35,6 +35,7 @@ import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -79,7 +80,7 @@ public class KafkaConsumerAuthInvalidIT {
     @RegisterExtension
     private static final CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void before() {
@@ -90,7 +91,7 @@ public class KafkaConsumerAuthInvalidIT {
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
 
         try {
-            producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+            producer = new KafkaProducer<>(props);
         } catch (Exception e) {
             fail(e.getMessage());
         }

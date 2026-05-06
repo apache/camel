@@ -46,6 +46,7 @@ import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1647,7 +1648,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             // need to normalize paths to ensure we can match using startsWith
             endpointPath = FileUtil.normalizePath(endpointPath);
             String copyOfName = FileUtil.normalizePath(name);
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(endpointPath) && copyOfName.startsWith(endpointPath)) {
+            if (ObjectHelper.isNotEmpty(endpointPath) && copyOfName.startsWith(endpointPath)) {
                 name = name.substring(endpointPath.length());
             }
 
@@ -1800,7 +1801,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         }
 
         String answer = pattern;
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(path) && org.apache.camel.util.ObjectHelper.isNotEmpty(pattern)) {
+        if (ObjectHelper.isNotEmpty(path) && ObjectHelper.isNotEmpty(pattern)) {
             // done file must always be in same directory as the real file name
             answer = path + getFileSeparator() + pattern;
         }

@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import org.apache.camel.health.HealthCheckResultBuilder;
+import org.apache.camel.spi.annotations.HealthCheck;
 import org.apache.camel.util.SecurityViolation;
 
 /**
@@ -33,7 +34,7 @@ import org.apache.camel.util.SecurityViolation;
  * This is a readiness check only — security violations don't mean the application is dead (liveness), but they indicate
  * it may not be ready for production traffic.
  */
-@org.apache.camel.spi.annotations.HealthCheck("security-policy-check")
+@HealthCheck("security-policy-check")
 public final class SecurityPolicyHealthCheck extends AbstractHealthCheck {
 
     private static final String RESULT_CLASS = "org.apache.camel.main.SecurityPolicyResult";

@@ -18,6 +18,7 @@ package org.apache.camel.component.keycloak.security;
 
 import java.io.IOException;
 import java.security.PublicKey;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -153,7 +154,7 @@ public final class KeycloakSecurityHelper {
 
         // Extract permissions from custom claims (primary approach for simple setups)
         Object permissionsClaim = token.getOtherClaims().get("permissions");
-        if (permissionsClaim instanceof java.util.Collection<?> permissionsCollection) {
+        if (permissionsClaim instanceof Collection<?> permissionsCollection) {
             for (Object perm : permissionsCollection) {
                 if (perm instanceof String s) {
                     permissions.add(s);
@@ -165,7 +166,7 @@ public final class KeycloakSecurityHelper {
         Object scopesClaim = token.getOtherClaims().get("scope");
         if (scopesClaim instanceof String scopesString) {
             if (!scopesString.isEmpty()) {
-                permissions.addAll(java.util.Arrays.asList(scopesString.split(" ")));
+                permissions.addAll(Arrays.asList(scopesString.split(" ")));
             }
         }
 
@@ -254,7 +255,7 @@ public final class KeycloakSecurityHelper {
         // Also check for scope-based permissions
         String scope = introspectionResult.getScope();
         if (scope != null && !scope.isEmpty()) {
-            permissions.addAll(java.util.Arrays.asList(scope.split(" ")));
+            permissions.addAll(Arrays.asList(scope.split(" ")));
         }
 
         return permissions;

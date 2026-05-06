@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -234,7 +235,7 @@ public class Init extends CamelCommand {
         int index = canonicalPath.indexOf(srcMainJavaPath);
         if (index != -1) {
             String packagePath = canonicalPath.substring(index + srcMainJavaPath.length() + 1);
-            String packageName = packagePath.replace(java.io.File.separatorChar, '.');
+            String packageName = packagePath.replace(File.separatorChar, '.');
             if (!packageName.isEmpty()) {
                 packageDeclaration = "package " + packageName + ";\n\n";
             }

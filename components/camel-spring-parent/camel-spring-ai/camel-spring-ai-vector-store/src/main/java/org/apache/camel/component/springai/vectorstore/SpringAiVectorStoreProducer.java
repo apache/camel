@@ -17,7 +17,9 @@
 package org.apache.camel.component.springai.vectorstore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -144,7 +146,7 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
      * special key that can be used by vector stores that support pre-computed embeddings.
      */
     private Document createDocumentWithEmbedding(String text, float[] embedding) {
-        java.util.Map<String, Object> metadata = new java.util.HashMap<>();
+        Map<String, Object> metadata = new HashMap<>();
         // Store the embedding in metadata with a standard key
         // Note: Most vector stores will ignore this and compute their own embeddings,
         // but custom implementations can use it

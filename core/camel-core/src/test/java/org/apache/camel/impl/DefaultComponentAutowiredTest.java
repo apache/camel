@@ -28,6 +28,7 @@ import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -57,8 +58,8 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
 
     private static final class MyComponent extends DefaultComponent {
 
-        private java.net.ContentHandlerFactory contentHandlerFactory;
-        private java.net.CookiePolicy cookiePolicy;
+        private ContentHandlerFactory contentHandlerFactory;
+        private CookiePolicy cookiePolicy;
 
         private MyComponent(CamelContext context) {
             super(context);
@@ -86,7 +87,7 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
         }
     }
 
-    private static class MyComponentConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport
+    private static class MyComponentConfigurer extends PropertyConfigurerSupport
             implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
         @Override
@@ -108,7 +109,7 @@ public class DefaultComponentAutowiredTest extends ContextTestSupport {
         @Override
         public Class<?> getOptionType(String name, boolean ignoreCase) {
             if ("contentHandlerFactory".equals(name)) {
-                return java.net.ContentHandlerFactory.class;
+                return ContentHandlerFactory.class;
             } else {
                 return null;
             }

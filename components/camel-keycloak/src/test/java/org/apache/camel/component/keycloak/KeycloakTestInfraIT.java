@@ -17,6 +17,7 @@
 package org.apache.camel.component.keycloak;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import jakarta.ws.rs.core.Response;
@@ -644,7 +645,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         }
 
         @SuppressWarnings("unchecked")
-        java.util.Map<String, List<String>> attributes = result.getIn().getBody(java.util.Map.class);
+        Map<String, List<String>> attributes = result.getIn().getBody(Map.class);
         assertNotNull(attributes);
 
         // Verify the department attribute exists from the previous test
@@ -1138,7 +1139,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
             } else {
                 // If it succeeds, verify the permissions-only response format
                 @SuppressWarnings("unchecked")
-                java.util.Map<String, Object> body = result.getIn().getBody(java.util.Map.class);
+                Map<String, Object> body = result.getIn().getBody(Map.class);
                 if (body != null) {
                     assertTrue(body.containsKey("permissions") || body.containsKey("granted"),
                             "Response should contain permissions or granted field");
@@ -1176,7 +1177,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
             } else {
                 // If it succeeds, verify the RPT response format
                 @SuppressWarnings("unchecked")
-                java.util.Map<String, Object> body = result.getIn().getBody(java.util.Map.class);
+                Map<String, Object> body = result.getIn().getBody(Map.class);
                 if (body != null) {
                     // RPT mode should return token-related fields
                     log.info("RPT mode result: hasToken={}, tokenType={}, expiresIn={}",

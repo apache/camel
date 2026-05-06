@@ -89,7 +89,7 @@ public class DateFormatFactory extends AbstractFormatFactory {
 
         }
 
-        protected java.text.DateFormat getDateFormat() {
+        protected DateFormat getDateFormat() {
             SimpleDateFormat result;
             if (locale != null) {
                 result = new SimpleDateFormat(pattern, locale);

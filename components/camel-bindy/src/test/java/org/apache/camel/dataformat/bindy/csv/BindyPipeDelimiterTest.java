@@ -89,12 +89,12 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:unmarshal")
-                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
+                        .unmarshal().bindy(BindyType.Csv, MyData.class)
                         .to("log:after.unmarshal")
                         .to("mock:result");
 
                 from("direct:marshal")
-                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
+                        .marshal().bindy(BindyType.Csv, MyData.class)
                         .to("log:after.marshal")
                         .to("mock:result");
             }

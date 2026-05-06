@@ -25,6 +25,8 @@ import org.apache.camel.component.cxf.common.DataFormat;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxws.CxfComponent;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
+import org.apache.camel.component.cxf.jaxws.DefaultPayloadProviderSEI;
+import org.apache.camel.component.cxf.jaxws.DefaultSEI;
 import org.apache.camel.component.cxf.jaxws.WSDLServiceFactoryBean;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -86,7 +88,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
         if (getWsdlURL() == null && cls == null) {
             // no WSDL and serviceClass specified, set our default serviceClass
-            setServiceClass(org.apache.camel.component.cxf.jaxws.DefaultSEI.class.getName());
+            setServiceClass(DefaultSEI.class.getName());
             setDefaultOperationNamespace(CxfConstants.DISPATCH_NAMESPACE);
             setDefaultOperationName(CxfConstants.DISPATCH_DEFAULT_OPERATION_NAMESPACE);
             if (getDataFormat().equals(DataFormat.PAYLOAD)) {
@@ -144,7 +146,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         if (getWsdlURL() == null && cls == null) {
             // no WSDL and serviceClass specified, set our default serviceClass
             if (getDataFormat().equals(DataFormat.PAYLOAD)) {
-                setServiceClass(org.apache.camel.component.cxf.jaxws.DefaultPayloadProviderSEI.class.getName());
+                setServiceClass(DefaultPayloadProviderSEI.class.getName());
             }
             cls = getServiceClass();
         }

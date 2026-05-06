@@ -154,7 +154,7 @@ public class ExpressionBuilderTest extends TestSupport {
     private static class SortByName implements Comparator<String> {
 
         @Override
-        public int compare(java.lang.String o1, java.lang.String o2) {
+        public int compare(String o1, String o2) {
             return o1.compareToIgnoreCase(o2);
         }
     }

@@ -375,7 +375,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         PrinterOperations printerOperations = producer.getPrinterOperations();
         PrintRequestAttributeSet attributeSet = printerOperations.getPrintRequestAttributeSet();
 
-        Attribute attribute = attributeSet.get(javax.print.attribute.standard.Media.class);
+        Attribute attribute = attributeSet.get(Media.class);
         assertNotNull(attribute);
         assertTrue(attribute instanceof MediaTray);
         MediaTray mediaTray = (MediaTray) attribute;

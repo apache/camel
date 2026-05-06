@@ -20,7 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.api.services.drive.model.Comment;
+import com.google.api.services.drive.model.CommentList;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Reply;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.DriveRepliesApiMethod;
@@ -54,7 +56,7 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is com.google.api.services.drive.model.Comment
-        com.google.api.services.drive.model.Comment comment = new com.google.api.services.drive.model.Comment();
+        Comment comment = new Comment();
         comment.setContent("Camel rocks!");
         headers.put("CamelGoogleDrive.content", comment);
 
@@ -62,7 +64,7 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
 
         // 3. get a list of comments on the file
         // using String message body for single parameter "fileId"
-        com.google.api.services.drive.model.CommentList result1 = requestBody("direct://LIST_COMMENTS", fileId);
+        CommentList result1 = requestBody("direct://LIST_COMMENTS", fileId);
 
         assertNotNull(result1.get("items"));
         LOG.debug("list: {}", result1);
@@ -77,7 +79,7 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.commentId", commentId);
         // parameter type is com.google.api.services.drive.model.CommentReply
-        com.google.api.services.drive.model.Reply reply = new com.google.api.services.drive.model.Reply();
+        Reply reply = new Reply();
         reply.setContent("I know :-)");
         headers.put("CamelGoogleDrive.content", reply);
 
@@ -91,7 +93,7 @@ public class DriveRepliesIT extends AbstractGoogleDriveTestSupport {
         // parameter type is String
         headers.put("CamelGoogleDrive.commentId", commentId);
 
-        final com.google.api.services.drive.model.Reply result
+        final Reply result
                 = requestBodyAndHeaders("direct://LIST", null, headers);
 
         assertNotNull(result, "list result");

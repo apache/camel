@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ public class AgentConfigurationTest {
         assertEquals(3, result.size());
         assertTrue(result.contains(String.class));
         assertTrue(result.contains(List.class));
-        assertTrue(result.contains(java.io.Serializable.class));
+        assertTrue(result.contains(Serializable.class));
     }
 
     @Test
@@ -99,7 +100,7 @@ public class AgentConfigurationTest {
         assertEquals(3, result.size());
         assertTrue(result.contains(String.class));
         assertTrue(result.contains(List.class));
-        assertTrue(result.contains(java.io.Serializable.class));
+        assertTrue(result.contains(Serializable.class));
     }
 
     @Test
@@ -113,7 +114,7 @@ public class AgentConfigurationTest {
         assertEquals(3, result.size());
         assertTrue(result.contains(String.class));
         assertTrue(result.contains(List.class));
-        assertTrue(result.contains(java.io.Serializable.class));
+        assertTrue(result.contains(Serializable.class));
     }
 
     @Test
@@ -151,7 +152,7 @@ public class AgentConfigurationTest {
         assertEquals(3, result.size());
         assertTrue(result.contains(String.class));
         assertTrue(result.contains(List.class));
-        assertTrue(result.contains(java.io.Serializable.class));
+        assertTrue(result.contains(Serializable.class));
     }
 
     @Test
@@ -196,7 +197,7 @@ public class AgentConfigurationTest {
         assertEquals(3, result.size());
         assertTrue(result.contains(String.class));
         assertTrue(result.contains(List.class));
-        assertTrue(result.contains(java.io.Serializable.class));
+        assertTrue(result.contains(Serializable.class));
     }
 
     // Tests for fluent methods with arrays

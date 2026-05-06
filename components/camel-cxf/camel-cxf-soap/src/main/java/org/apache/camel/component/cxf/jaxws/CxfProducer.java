@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.DataFormat;
@@ -347,7 +348,7 @@ public class CxfProducer extends DefaultAsyncProducer {
      * Get the parameters for the web service operation
      */
     private Object[] getParams(CxfEndpoint endpoint, Exchange exchange)
-            throws org.apache.camel.InvalidPayloadException {
+            throws InvalidPayloadException {
 
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {

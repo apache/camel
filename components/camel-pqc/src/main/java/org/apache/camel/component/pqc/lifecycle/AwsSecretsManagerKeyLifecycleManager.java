@@ -37,6 +37,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
+import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
+import org.bouncycastle.pqc.jcajce.spec.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -569,46 +572,46 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         try {
             switch (algorithm) {
                 case "DILITHIUM":
-                    return org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec.dilithium2;
+                    return DilithiumParameterSpec.dilithium2;
                 case "MLDSA":
                 case "SLHDSA":
                     // These use default initialization
                     return null;
                 case "FALCON":
-                    return org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec.falcon_512;
+                    return FalconParameterSpec.falcon_512;
                 case "SPHINCSPLUS":
-                    return org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec.sha2_128s;
+                    return SPHINCSPlusParameterSpec.sha2_128s;
                 case "XMSS":
-                    return new org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec(
+                    return new XMSSParameterSpec(
                             10,
-                            org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec.SHA256);
+                            XMSSParameterSpec.SHA256);
                 case "XMSSMT":
-                    return org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
+                    return XMSSMTParameterSpec.XMSSMT_SHA2_20d2_256;
                 case "LMS":
                 case "HSS":
-                    return new org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec(
-                            org.bouncycastle.pqc.crypto.lms.LMSigParameters.lms_sha256_n32_h10,
-                            org.bouncycastle.pqc.crypto.lms.LMOtsParameters.sha256_n32_w4);
+                    return new LMSKeyGenParameterSpec(
+                            LMSigParameters.lms_sha256_n32_h10,
+                            LMOtsParameters.sha256_n32_w4);
                 case "MLKEM":
                 case "KYBER":
                     // These use default initialization
                     return null;
                 case "NTRU":
-                    return org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec.ntruhps2048509;
+                    return NTRUParameterSpec.ntruhps2048509;
                 case "NTRULPRime":
-                    return org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec.ntrulpr653;
+                    return NTRULPRimeParameterSpec.ntrulpr653;
                 case "SNTRUPrime":
-                    return org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec.sntrup761;
+                    return SNTRUPrimeParameterSpec.sntrup761;
                 case "SABER":
-                    return org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec.lightsaberkem128r3;
+                    return SABERParameterSpec.lightsaberkem128r3;
                 case "FRODO":
-                    return org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec.frodokem640aes;
+                    return FrodoParameterSpec.frodokem640aes;
                 case "BIKE":
-                    return org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec.bike128;
+                    return BIKEParameterSpec.bike128;
                 case "HQC":
-                    return org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec.hqc128;
+                    return HQCParameterSpec.hqc128;
                 case "CMCE":
-                    return org.bouncycastle.pqc.jcajce.spec.CMCEParameterSpec.mceliece348864;
+                    return CMCEParameterSpec.mceliece348864;
                 default:
                     return null;
             }

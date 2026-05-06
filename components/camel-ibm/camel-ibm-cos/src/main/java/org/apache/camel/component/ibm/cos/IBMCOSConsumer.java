@@ -28,7 +28,9 @@ import com.ibm.cloud.objectstorage.services.s3.model.ListObjectsV2Request;
 import com.ibm.cloud.objectstorage.services.s3.model.ListObjectsV2Result;
 import com.ibm.cloud.objectstorage.services.s3.model.S3Object;
 import com.ibm.cloud.objectstorage.services.s3.model.S3ObjectSummary;
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
@@ -123,15 +125,15 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
             // only loop if we are started (allowed to run)
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
             // add current index and total as properties
-            exchange.setProperty(org.apache.camel.ExchangePropertyKey.BATCH_INDEX, index);
-            exchange.setProperty(org.apache.camel.ExchangePropertyKey.BATCH_SIZE, total);
-            exchange.setProperty(org.apache.camel.ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
+            exchange.setProperty(ExchangePropertyKey.BATCH_INDEX, index);
+            exchange.setProperty(ExchangePropertyKey.BATCH_SIZE, total);
+            exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
             // use default consumer callback
-            org.apache.camel.AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, cb);
         }
 

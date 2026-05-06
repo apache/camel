@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.braintree;
 
+import com.braintreegateway.PaymentMethodNonce;
+import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.PaymentMethodNonceGatewayApiMethod;
@@ -39,7 +41,7 @@ public class PaymentMethodNonceGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testCreate() {
         // using String message body for single parameter "paymentMethodToken"
-        final com.braintreegateway.Result result = requestBody("direct://CREATE", null);
+        final Result result = requestBody("direct://CREATE", null);
 
         assertNotNull(result, "create result");
         LOG.debug("create: {}", result);
@@ -50,7 +52,7 @@ public class PaymentMethodNonceGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testFind() {
         // using String message body for single parameter "paymentMethodNonce"
-        final com.braintreegateway.PaymentMethodNonce result = requestBody("direct://FIND", null);
+        final PaymentMethodNonce result = requestBody("direct://FIND", null);
 
         assertNotNull(result, "find result");
         LOG.debug("find: {}", result);

@@ -104,7 +104,7 @@ public class BindySimpleCsvMarshallTest {
         public void configure() {
 
             BindyCsvDataFormat camelDataFormat
-                    = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+                    = new BindyCsvDataFormat(Order.class);
             camelDataFormat.setLocale("en");
 
             // default should errors go to mock:error

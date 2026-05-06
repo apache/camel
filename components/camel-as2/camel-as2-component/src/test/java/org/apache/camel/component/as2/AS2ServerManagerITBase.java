@@ -165,7 +165,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
                 // test route processing exception
                 Processor failingProcessor = new Processor() {
-                    public void process(org.apache.camel.Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) throws Exception {
                         throw new Exception(PROCESSOR_EXCEPTION_MSG);
                     }
                 };

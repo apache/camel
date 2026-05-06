@@ -50,6 +50,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine.Command;
+import sun.misc.Signal;
 
 @Command(name = "catalog",
          description = "Interactive TUI catalog browser",
@@ -94,7 +95,7 @@ public class CamelCatalogTui extends CamelCommand {
         loadCatalog();
 
         try (var tui = TuiRunner.create()) {
-            sun.misc.Signal.handle(new sun.misc.Signal("INT"), sig -> tui.quit());
+            Signal.handle(new Signal("INT"), sig -> tui.quit());
             tui.run(this::handleEvent, this::render);
         }
         return 0;

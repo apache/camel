@@ -22,10 +22,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.*;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
@@ -162,7 +159,7 @@ public class SBOMGenerator extends Export {
                 }
             }
             // cleanup dir after complete
-            org.apache.camel.dsl.jbang.core.common.PathUtils.deleteDirectory(buildDir);
+            PathUtils.deleteDirectory(buildDir);
         }
         return answer;
     }

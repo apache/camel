@@ -28,6 +28,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
@@ -89,7 +90,7 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
 
             setDeserializationContext(val, dc);
 
-            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
+            key = StringHelper.dashToCamelCase(key);
             switch (key) {
                 case "id":
                     target.setId(asText(val));

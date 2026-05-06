@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.drive;
 
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.RevisionList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveRevisionsApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
@@ -44,7 +45,7 @@ public class DriveRevisionsIT extends AbstractGoogleDriveTestSupport {
         String fileId = testFile.getId();
 
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.model.RevisionList result = requestBody("direct://LIST", fileId);
+        final RevisionList result = requestBody("direct://LIST", fileId);
 
         assertNotNull(result, "list result");
         LOG.debug("list: {}", result);

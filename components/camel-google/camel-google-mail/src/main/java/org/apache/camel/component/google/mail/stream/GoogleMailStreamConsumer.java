@@ -72,7 +72,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected int poll() throws Exception {
-        com.google.api.services.gmail.Gmail.Users.Messages.List request = getClient().users().messages().list("me");
+        Gmail.Users.Messages.List request = getClient().users().messages().list("me");
         if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
             request.setQ(getConfiguration().getQuery());
         }
@@ -180,7 +180,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    public Exchange createExchange(ExchangePattern pattern, com.google.api.services.gmail.model.Message mail) {
+    public Exchange createExchange(ExchangePattern pattern, Message mail) {
         Exchange exchange = createExchange(true);
         exchange.setPattern(pattern);
         org.apache.camel.Message message = exchange.getIn();

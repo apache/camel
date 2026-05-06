@@ -18,6 +18,7 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
+import org.apache.camel.http.common.HttpMethods;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
@@ -121,7 +122,7 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
 
         exchange = producer.createExchange();
         exchange.getIn().setBody("");
-        exchange.getIn().setHeader(Exchange.HTTP_METHOD, org.apache.camel.http.common.HttpMethods.GET);
+        exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.GET);
         assertDoesNotThrow(() -> runProducer(producer));
     }
 

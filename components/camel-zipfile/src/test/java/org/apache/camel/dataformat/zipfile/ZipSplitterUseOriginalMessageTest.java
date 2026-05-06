@@ -44,7 +44,7 @@ public class ZipSplitterUseOriginalMessageTest extends CamelTestSupport {
         Arrays.deepEquals(list1.toArray(), list2.toArray());
     }
 
-    private org.apache.camel.model.dataformat.ZipFileDataFormat multiEntryZipFormat() {
+    private ZipFileDataFormat multiEntryZipFormat() {
         var zipFormat = new ZipFileDataFormat();
         zipFormat.setUsingIterator("true");
         return zipFormat;

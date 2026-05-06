@@ -18,6 +18,9 @@
  * The JAXB POJOs for the <a href="http://camel.apache.org/xml-configuration.html">XML Configuration</a> of the routing
  * rules.
  */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model;
+
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

@@ -119,7 +119,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
             @Override
             public void configure() {
                 BindyCsvDataFormat bindy
-                        = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.tab.PurchaseOrder.class);
+                        = new BindyCsvDataFormat(PurchaseOrder.class);
 
                 from("direct:marshal")
                         .marshal(bindy)
