@@ -138,4 +138,13 @@ public final class ConsoleHelper {
         return null;
     }
 
+    public static String extractSourceLocationNoLineNumber(String location) {
+        Integer line = extractSourceLocationLineNumber(location);
+        if (line != null) {
+            int pos = location.lastIndexOf(':');
+            return location.substring(0, pos);
+        }
+        return location;
+    }
+
 }

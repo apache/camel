@@ -28,14 +28,26 @@ public class ConsoleHelperTest {
 
     @Test
     public void testExtractSourceLocationLineNumber() {
-        Integer lineNumber = ConsoleHelper.extractSourceLocationLineNumber("file.java:42");
+        Integer lineNumber = ConsoleHelper.extractSourceLocationLineNumber("cheese.java:42");
+        Assertions.assertEquals(42, lineNumber);
+
+        lineNumber = ConsoleHelper.extractSourceLocationLineNumber("file:cheese.java:42");
         Assertions.assertEquals(42, lineNumber);
     }
 
     @Test
     public void testExtractSourceLocationLineNumberNoNumber() {
-        Integer lineNumber = ConsoleHelper.extractSourceLocationLineNumber("file.java");
+        Integer lineNumber = ConsoleHelper.extractSourceLocationLineNumber("cheese.java");
         Assertions.assertNull(lineNumber);
+    }
+
+    @Test
+    public void testExtractSourceLocationNoLineNumber() {
+        String source = ConsoleHelper.extractSourceLocationNoLineNumber("cheese.java:42");
+        Assertions.assertEquals("cheese.java", source);
+
+        source = ConsoleHelper.extractSourceLocationNoLineNumber("file:cheese.java:42");
+        Assertions.assertEquals("file:cheese.java", source);
     }
 
     @Test
