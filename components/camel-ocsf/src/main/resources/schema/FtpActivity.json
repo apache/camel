@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/ftp_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/ftp_activity",
   "title": "FtpActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.FtpActivity",
@@ -9,17 +9,102 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "port": {
+      "type": "integer",
+      "title": "Port",
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "tls": {
+      "$ref": "Tls.json"
+    },
     "cumulative_traffic": {
       "type": "object",
       "additionalProperties": true
     },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "packet_list": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Packet.json"
+      }
+    },
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
     "connection_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "codes": {
+      "type": "array",
+      "title": "Response Codes",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "network_observation_point": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "command": {
+      "type": "string",
+      "title": "Command"
+    },
+    "command_responses": {
+      "type": "array",
+      "title": "Command Responses",
+      "items": {
+        "type": "string"
+      }
+    },
+    "app_protocol_name": {
+      "type": "string",
+      "title": "Application Protocol Name"
+    },
+    "observation_point_id": {
+      "type": "integer",
+      "title": "Observation Point ID"
+    },
+    "proxy": {
       "type": "object",
       "additionalProperties": true
     },
     "raw_data_size": {
       "type": "integer",
       "title": "Raw Data Size"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
     },
     "file": {
       "$ref": "File.json"
@@ -30,77 +115,6 @@
       "items": {
         "$ref": "Enrichment.json"
       }
-    },
-    "traffic": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "codes": {
-      "type": "array",
-      "title": "Response Codes",
-      "items": {
-        "type": "integer"
-      }
-    },
-    "src_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "app_name": {
-      "type": "string",
-      "title": "Application Name"
-    },
-    "command_responses": {
-      "type": "array",
-      "title": "Command Responses",
-      "items": {
-        "type": "string"
-      }
-    },
-    "command": {
-      "type": "string",
-      "title": "Command"
-    },
-    "dst_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "port": {
-      "type": "integer",
-      "title": "Port",
-      "minimum": 0,
-      "maximum": 65535
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "ja4_fingerprint_list": {
-      "type": "array",
-      "title": "JA4+ Fingerprints",
-      "items": {
-        "$ref": "Ja4Fingerprint.json"
-      }
-    },
-    "name": {
-      "type": "string",
-      "title": "Name"
-    },
-    "type": {
-      "type": "string",
-      "title": "Type"
-    },
-    "observation_point_id": {
-      "type": "integer",
-      "title": "Observation Point ID"
-    },
-    "proxy": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "observation_point": {
-      "type": "string",
-      "title": "Observation Point"
-    },
-    "tls": {
-      "$ref": "Tls.json"
     }
   }
 }

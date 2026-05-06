@@ -17,7 +17,7 @@ OCSF is an open-source standard for cybersecurity event logging and data normali
 
 == Supported OCSF Event Classes
 
-This data format includes POJOs for 34 OCSF event classes and 68 reusable object types. Key event classes include:
+This data format includes POJOs for 34 OCSF event classes and 70 reusable object types (based on OCSF schema 1.8.0). Key event classes include:
 
 *Findings (Category 2):*
 
@@ -316,8 +316,8 @@ Reusable objects used within event classes:
 * `Cloud`, `Container`, `Image` - Cloud and container objects
 * `Metadata`, `Product`, `Observable`, `Enrichment` - Metadata objects
 * `Certificate`, `Tls`, `Fingerprint` - Cryptographic objects
-* `HttpRequest`, `HttpResponse`, `DnsQuery`, `Url` - Network protocol objects
-* `Location`, `Organization`, `Service` - Context objects
+* `HttpRequest`, `HttpResponse`, `DnsQuery`, `Url`, `Packet` - Network protocol objects
+* `Location`, `Organization`, `Service`, `Token` - Context objects
 * `Cve`, `Cvss`, `Cwe`, `Epss` - Vulnerability reference objects
 
 == Updating OCSF Schema Version
@@ -344,7 +344,7 @@ To update the OCSF model classes to a new version:
 [source,bash]
 ----
 cd src/main/script
-python3 generate-ocsf-schemas.py --version 1.7.0 --output ../resources/schema --clean
+python3 generate-ocsf-schemas.py --version 1.8.0 --output ../resources/schema --clean
 ----
 
 2. Build and test to verify the changes (Java classes are generated automatically during build):
@@ -356,6 +356,11 @@ mvn clean test
 
 3. Commit the updated JSON schema files.
 
+NOTE: The script first tries to load the requested OCSF version from the
+bundled `ocsf-json-schema` Python package. If the version is not bundled
+yet (typical for the most recent OCSF release), the script automatically
+downloads the schema from `https://schema.ocsf.io/\{version}/export/schema`.
+
 === Script Options
 
 The script supports the following options:
@@ -364,7 +369,7 @@ The script supports the following options:
 |===
 |Option |Default |Description
 
-|`--version`, `-v` |1.7.0 |OCSF schema version to generate
+|`--version`, `-v` |1.8.0 |OCSF schema version to generate
 |`--output`, `-o` |../resources/schema |Output directory for schema files
 |`--clean` |false |Remove existing schema files before generating
 |`--all-classes` |false |Generate all available event classes (not just the default list)
