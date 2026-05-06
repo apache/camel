@@ -451,6 +451,45 @@ WARNING: Disabling hostname verification is insecure and should only be used in 
 | `sslEndpointAlgorithm` | String | `https` | Hostname verification algorithm; set to empty or `none` to disable
 |===
 
+== Reasoning Models
+
+Some OpenAI-compatible models (e.g., Qwen3, DeepSeek-R1) return chain-of-thought reasoning in a separate `reasoning_content` field alongside the regular `content` in the API response. The component automatically extracts this field and sets it as the `CamelOpenAIReasoningContent` message header.
+
+This is independent from the inline `<think>...</think>` tag stripping controlled by `stripThinking`. A response can populate both headers simultaneously:
+
+* `CamelOpenAIReasoningContent` — from the API-level `reasoning_content` field
+* `CamelOpenAIThinkingContent` — from inline `<think>` tags in the `content` field (requires `stripThinking=true`)
+
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=qwen3&stripThinking=true")
+    .log("Answer: ${body}")
+    .log("Reasoning: ${header.CamelOpenAIReasoningContent}")
+    .log("Thinking: ${header.CamelOpenAIThinkingContent}");
+----
+
+NOTE: Reasoning content extraction is supported in non-streaming mode only (both simple and agentic/MCP tool loop paths). Streaming responses do not extract reasoning content.
+
+=== Mapping Additional Response Fields to Headers
+
+The `additionalResponseHeader` option allows mapping any extra field from the API response message into a named Camel header. This is useful for provider-specific fields that are not part of the standard OpenAI response schema.
+
+The key is the field name in the API response, and the value is the Camel header name to set:
+
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=qwen3"
+        + "&additionalResponseHeader.reasoning_content=CamelMyReasoning"
+        + "&additionalResponseHeader.custom_field=CamelMyCustomField")
+    .log("Custom reasoning: ${header.CamelMyReasoning}");
+----
+
+String-valued fields are set directly. Non-string fields (numbers, booleans, objects) are converted using `toString()`.
+
+NOTE: This maps fields from the response message's additional properties (fields not part of the standard schema). Standard response fields like `content`, `role`, and `tool_calls` are not accessible through this option.
+
 == Compatibility
 
 This component works with any OpenAI API-compatible endpoint by setting the `baseUrl` parameter. This includes:

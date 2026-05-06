@@ -739,7 +739,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void extractReasoningContent(Exchange exchange, ChatCompletionMessage message) {
         Map<String, JsonValue> additional = message._additionalProperties();
         JsonValue reasoningValue = additional.get("reasoning_content");
@@ -751,7 +750,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void extractAdditionalResponseHeaders(Exchange exchange, ChatCompletionMessage message) {
         OpenAIConfiguration config = getEndpoint().getConfiguration();
         Map<String, Object> mapping = config.getAdditionalResponseHeader();
@@ -768,6 +766,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 String strValue = (String) value.asString().orElse(null);
                 if (strValue != null) {
                     exchange.getMessage().setHeader(headerName, strValue);
+                } else {
+                    exchange.getMessage().setHeader(headerName, value.toString());
                 }
             }
         }
