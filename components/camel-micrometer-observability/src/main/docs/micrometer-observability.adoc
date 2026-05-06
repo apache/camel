@@ -158,10 +158,8 @@ When you're working at a very low level, you may need to tweak your metrics and 
 protected io.micrometer.tracing.Tracer tracer = new OtelTracer(
     otelTracer,
     currentTraceContext,
-    event -> {
-    },
-    new OtelBaggageManager(
-            currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
+    event -> {},
+    new OtelBaggageManager(currentTraceContext, List.of(), List.of()));
 ...
 public void process(Exchange exchange) throws Exception {
     exchange.getIn().setHeader("operation", "fake");

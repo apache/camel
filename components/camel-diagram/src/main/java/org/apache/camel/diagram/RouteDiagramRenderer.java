@@ -28,14 +28,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.jline.utils.Colors;
 
-import static org.apache.camel.diagram.RouteDiagramLayoutEngine.NODE_HEIGHT;
-import static org.apache.camel.diagram.RouteDiagramLayoutEngine.NODE_WIDTH;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCALE;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
@@ -47,14 +46,16 @@ import static org.apache.camel.diagram.RouteDiagramLayoutEngine.V_GAP;
 public class RouteDiagramRenderer {
 
     private static final int ARC = 14 * SCALE;
-    private static final int FONT_SIZE_LABEL = 13 * SCALE;
-    private static final int FONT_SIZE_NODE = 12 * SCALE;
     private static final int ARROW_SIZE = 6 * SCALE;
     private static final float STROKE_WIDTH = 1.5f * SCALE;
     private static final float BORDER_STROKE_WIDTH = 1.0f * SCALE;
-    private static final int NODE_TEXT_PADDING = 16 * SCALE;
     private static final int LABEL_TEXT_BASELINE = 14 * SCALE;
     public static final int MAX_IMAGE_DIMENSION = 16384;
+
+    private final int nodeWidth;
+    private final int fontSizeNode;
+    private final int fontSizeLabel;
+    private final int nodeTextPadding;
 
     private static final String DARK_COLORS
             = "bg=#0d1117:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
@@ -70,6 +71,24 @@ public class RouteDiagramRenderer {
             "dark", DARK_COLORS,
             "light", LIGHT_COLORS,
             "transparent", TRANSPARENT_COLORS);
+
+    public RouteDiagramRenderer() {
+        this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE,
+             RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * SCALE,
+             new RouteDiagramLayoutEngine().getNodeTextPadding());
+    }
+
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled) {
+        this(nodeWidth, fontSizeScaled, new RouteDiagramLayoutEngine(
+                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding());
+    }
+
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding) {
+        this.nodeWidth = nodeWidth;
+        this.fontSizeNode = fontSizeScaled;
+        this.fontSizeLabel = fontSizeScaled + 1 * SCALE;
+        this.nodeTextPadding = nodeTextPadding;
+    }
 
     public static class DiagramColors {
         private Color bg;
@@ -212,7 +231,7 @@ public class RouteDiagramRenderer {
 
     private void drawRoute(Graphics2D g, LayoutRoute lr, DiagramColors colors) {
         g.setColor(colors.getRouteLabel());
-        g.setFont(new Font("SansSerif", Font.BOLD, FONT_SIZE_LABEL));
+        g.setFont(new Font("SansSerif", Font.BOLD, fontSizeLabel));
         String label = lr.routeId;
         if (lr.source != null && !lr.source.isEmpty()) {
             label += " (" + lr.source + ")";
@@ -244,15 +263,17 @@ public class RouteDiagramRenderer {
 
     private void drawScopeBox(Graphics2D g, LayoutNode scopeNode, DiagramColors colors) {
         TreeNode tn = scopeNode.treeNode;
-        int[] bounds = { scopeNode.x, scopeNode.y, scopeNode.x + NODE_WIDTH, scopeNode.y + NODE_HEIGHT };
+        Bounds bounds = new Bounds(
+                scopeNode.x, scopeNode.y,
+                scopeNode.x + nodeWidth, scopeNode.y + scopeNode.height);
         for (TreeNode child : tn.children) {
-            RouteDiagramLayoutEngine.expandBoundsForBox(child, bounds);
+            RouteDiagramLayoutEngine.expandBoundsForBox(child, bounds, nodeWidth);
         }
 
-        int boxX = bounds[0] - SCOPE_BOX_PAD;
-        int boxY = bounds[1] - SCOPE_BOX_PAD;
-        int boxW = bounds[2] - bounds[0] + 2 * SCOPE_BOX_PAD;
-        int boxH = bounds[3] - bounds[1] + 2 * SCOPE_BOX_PAD;
+        int boxX = bounds.minX - SCOPE_BOX_PAD;
+        int boxY = bounds.minY - SCOPE_BOX_PAD;
+        int boxW = bounds.maxX - bounds.minX + 2 * SCOPE_BOX_PAD;
+        int boxH = bounds.maxY - bounds.minY + 2 * SCOPE_BOX_PAD;
 
         Color c = colors.getArrow();
         g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 140));
@@ -260,14 +281,17 @@ public class RouteDiagramRenderer {
         g.drawRoundRect(boxX, boxY, boxW, boxH, ARC, ARC);
     }
 
+    private int getTopY(LayoutNode node) {
+        return node.treeNode != null && RouteDiagramLayoutEngine.hasScope(node.treeNode)
+                ? node.y - SCOPE_BOX_PAD : node.y;
+    }
+
     private void drawArrowFromMerge(Graphics2D g, LayoutNode to, DiagramColors colors) {
         g.setColor(colors.getArrow());
         g.setStroke(new BasicStroke(STROKE_WIDTH));
 
-        int toCx = to.x + NODE_WIDTH / 2;
-        int toTy = to.treeNode != null && RouteDiagramLayoutEngine.hasScope(to.treeNode)
-                ? to.y - SCOPE_BOX_PAD
-                : to.y;
+        int toCx = to.x + nodeWidth / 2;
+        int toTy = getTopY(to);
         int mergeCx = to.mergeCx;
         int mergeY = to.mergeY;
 
@@ -286,34 +310,43 @@ public class RouteDiagramRenderer {
         Color color = getNodeColor(node.type, colors);
 
         g.setColor(color);
-        g.fillRoundRect(node.x, node.y, NODE_WIDTH, NODE_HEIGHT, ARC, ARC);
+        g.fillRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
         g.setColor(color.brighter());
         g.setStroke(new BasicStroke(BORDER_STROKE_WIDTH));
-        g.drawRoundRect(node.x, node.y, NODE_WIDTH, NODE_HEIGHT, ARC, ARC);
+        g.drawRoundRect(node.x, node.y, nodeWidth, node.height, ARC, ARC);
 
         g.setColor(colors.getText());
-        g.setFont(new Font("SansSerif", Font.PLAIN, FONT_SIZE_NODE));
+        g.setFont(new Font("SansSerif", Font.PLAIN, fontSizeNode));
         FontMetrics fm = g.getFontMetrics();
-        String text = node.label;
-        while (fm.stringWidth(text) > NODE_WIDTH - NODE_TEXT_PADDING && text.length() > 4) {
-            text = text.substring(0, text.length() - 4) + "...";
+
+        List<String> lines = node.wrappedLines;
+
+        int lineHeight = fm.getHeight();
+        int totalTextHeight = lines.size() * lineHeight;
+        int startY = node.y + (node.height - totalTextHeight) / 2 + fm.getAscent();
+
+        for (int i = 0; i < lines.size(); i++) {
+            String text = lines.get(i);
+            if (fm.stringWidth(text) > nodeWidth - nodeTextPadding) {
+                while (text.length() > 1 && fm.stringWidth(text + "…") > nodeWidth - nodeTextPadding) {
+                    text = text.substring(0, text.length() - 1);
+                }
+                text = text + "…";
+            }
+            int textX = node.x + (nodeWidth - fm.stringWidth(text)) / 2;
+            g.drawString(text, textX, startY + i * lineHeight);
         }
-        int textX = node.x + (NODE_WIDTH - fm.stringWidth(text)) / 2;
-        int textY = node.y + (NODE_HEIGHT + fm.getAscent() - fm.getDescent()) / 2;
-        g.drawString(text, textX, textY);
     }
 
     private void drawArrow(Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors) {
         g.setColor(colors.getArrow());
         g.setStroke(new BasicStroke(STROKE_WIDTH));
 
-        int fromCx = from.x + NODE_WIDTH / 2;
-        int fromBy = from.y + NODE_HEIGHT;
-        int toCx = to.x + NODE_WIDTH / 2;
-        int toTy = to.treeNode != null && RouteDiagramLayoutEngine.hasScope(to.treeNode)
-                ? to.y - SCOPE_BOX_PAD
-                : to.y;
+        int fromCx = from.x + nodeWidth / 2;
+        int fromBy = from.y + from.height;
+        int toCx = to.x + nodeWidth / 2;
+        int toTy = getTopY(to);
 
         if (fromCx == toCx) {
             g.drawLine(fromCx, fromBy, toCx, toTy - ARROW_SIZE / 2);
@@ -355,6 +388,10 @@ public class RouteDiagramRenderer {
     }
 
     public List<String> printTextDiagram(List<RouteInfo> routes) {
+        return printTextDiagram(routes, RouteDiagramLayoutEngine.NodeLabelMode.CODE);
+    }
+
+    public List<String> printTextDiagram(List<RouteInfo> routes, RouteDiagramLayoutEngine.NodeLabelMode mode) {
         List<String> lines = new ArrayList<>();
         for (RouteInfo route : routes) {
             lines.add("");
@@ -366,14 +403,16 @@ public class RouteDiagramRenderer {
 
             TreeNode tree = RouteDiagramLayoutEngine.buildTree(route.nodes);
             if (tree != null) {
-                printTreeNode(tree, "", true, true, lines);
+                printTreeNode(tree, "", true, true, lines, mode);
             }
             lines.add("");
         }
         return lines;
     }
 
-    private void printTreeNode(TreeNode node, String prefix, boolean isLast, boolean isRoot, List<String> lines) {
+    private void printTreeNode(
+            TreeNode node, String prefix, boolean isLast, boolean isRoot, List<String> lines,
+            RouteDiagramLayoutEngine.NodeLabelMode mode) {
         String connector;
         if (isRoot) {
             connector = "  ";
@@ -384,9 +423,9 @@ public class RouteDiagramRenderer {
         }
 
         String typeTag = node.info.type != null ? "[" + node.info.type + "] " : "";
-        String code = RouteDiagramLayoutEngine.cleanLabel(node.info.code);
+        String label = String.join(" | ", RouteDiagramLayoutEngine.resolveLabel(node.info, mode));
 
-        lines.add(prefix + connector + typeTag + code);
+        lines.add(prefix + connector + typeTag + label);
 
         String childPrefix;
         if (isRoot) {
@@ -398,7 +437,7 @@ public class RouteDiagramRenderer {
         }
 
         for (int i = 0; i < node.children.size(); i++) {
-            printTreeNode(node.children.get(i), childPrefix, i == node.children.size() - 1, false, lines);
+            printTreeNode(node.children.get(i), childPrefix, i == node.children.size() - 1, false, lines, mode);
         }
     }
 }

@@ -48,7 +48,11 @@ public final class RouteDiagramHelper {
         }
 
         for (int i = 0; i < arr.size(); i++) {
-            JsonObject o = (JsonObject) arr.get(i);
+            Object item = arr.get(i);
+            if (!(item instanceof JsonObject)) {
+                continue;
+            }
+            JsonObject o = (JsonObject) item;
             RouteInfo route = new RouteInfo();
             route.routeId = o.getString("routeId");
             String source = o.getString("source");
@@ -60,6 +64,7 @@ public final class RouteDiagramHelper {
                     NodeInfo node = new NodeInfo();
                     node.type = line.getString("type");
                     node.code = Jsoner.unescape(line.getString("code"));
+                    node.description = line.getString("description");
                     Integer level = line.getInteger("level");
                     node.level = level != null ? level : 0;
                     route.nodes.add(node);

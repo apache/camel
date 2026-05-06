@@ -16,6 +16,11 @@
  */
 package org.apache.camel.diagram;
 
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,13 +31,27 @@ import java.util.Set;
 public class RouteDiagramLayoutEngine {
 
     public static final int SCALE = 2;
-    public static final int NODE_WIDTH = 180 * SCALE;
-    public static final int NODE_HEIGHT = 32 * SCALE;
-    public static final int H_GAP = 30 * SCALE;
+    private static final int H_GAP = 30 * SCALE;
     public static final int V_GAP = 40 * SCALE;
     public static final int PADDING = 30 * SCALE;
     public static final int SCOPE_BOX_PAD = 14 * SCALE;
-    public static final int LABEL_OFFSET = 24 * SCALE;
+    private static final int LABEL_OFFSET = 24 * SCALE;
+    private static final int NODE_TEXT_PADDING = 16 * SCALE;
+    private static final int MAX_WRAP_LINES = 3;
+    public static final int DEFAULT_FONT_SIZE = 12;
+    public static final int DEFAULT_BOX_WIDTH = 180;
+    private static final int DEFAULT_NODE_HEIGHT = 32;
+
+    public enum NodeLabelMode {
+        CODE,
+        DESCRIPTION,
+        BOTH
+    }
+
+    private final int nodeWidth;
+    private final int baseNodeHeight;
+    private final FontMetrics fontMetrics;
+    private final NodeLabelMode nodeLabelMode;
 
     private static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
@@ -43,9 +62,71 @@ public class RouteDiagramLayoutEngine {
     private static final Set<String> STRUCTURAL_TYPES = Set.of(
             "route", "from");
 
+    static class Bounds {
+        int minX, minY, maxX, maxY;
+
+        Bounds(int minX, int minY, int maxX, int maxY) {
+            this.minX = minX;
+            this.minY = minY;
+            this.maxX = maxX;
+            this.maxY = maxY;
+        }
+
+        void expand(Bounds other) {
+            minX = Math.min(minX, other.minX);
+            minY = Math.min(minY, other.minY);
+            maxX = Math.max(maxX, other.maxX);
+            maxY = Math.max(maxY, other.maxY);
+        }
+    }
+
+    public RouteDiagramLayoutEngine() {
+        this(DEFAULT_BOX_WIDTH, DEFAULT_FONT_SIZE);
+    }
+
+    /**
+     * @param boxWidth logical node width in pixels (before SCALE)
+     * @param fontSize font size in logical pixels (before SCALE)
+     */
+    public RouteDiagramLayoutEngine(int boxWidth, int fontSize) {
+        this(boxWidth, fontSize, NodeLabelMode.CODE);
+    }
+
+    /**
+     * @param boxWidth      logical node width in pixels (before SCALE)
+     * @param fontSize      font size in logical pixels (before SCALE)
+     * @param nodeLabelMode controls what text is displayed in node labels
+     */
+    public RouteDiagramLayoutEngine(int boxWidth, int fontSize, NodeLabelMode nodeLabelMode) {
+        this.nodeWidth = boxWidth * SCALE;
+        this.baseNodeHeight = Math.max(DEFAULT_NODE_HEIGHT, fontSize * DEFAULT_NODE_HEIGHT / DEFAULT_FONT_SIZE) * SCALE;
+        this.nodeLabelMode = nodeLabelMode != null ? nodeLabelMode : NodeLabelMode.CODE;
+        BufferedImage scratch = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = scratch.createGraphics();
+        try {
+            g.setFont(new Font("SansSerif", Font.PLAIN, fontSize * SCALE));
+            this.fontMetrics = g.getFontMetrics();
+        } finally {
+            g.dispose();
+        }
+    }
+
+    public int getNodeWidth() {
+        return nodeWidth;
+    }
+
+    public int getBaseNodeHeight() {
+        return baseNodeHeight;
+    }
+
+    public int getNodeTextPadding() {
+        return NODE_TEXT_PADDING;
+    }
+
     public static class NodeInfo {
         public String type;
         public String code;
+        public String description;
         public int level;
     }
 
@@ -68,10 +149,11 @@ public class RouteDiagramLayoutEngine {
     }
 
     public static class LayoutNode {
-        public String label;
         public String type;
         public int x;
         public int y;
+        public int height;
+        public List<String> wrappedLines;
         public LayoutNode parentNode;
         public TreeNode treeNode;
         public boolean connectFromMerge;
@@ -136,6 +218,93 @@ public class RouteDiagramLayoutEngine {
         return code.replaceFirst("^\\.", "");
     }
 
+    private List<String> wrapLabel(String label) {
+        int maxTextWidth = nodeWidth - NODE_TEXT_PADDING;
+        if (fontMetrics.stringWidth(label) <= maxTextWidth) {
+            return List.of(label);
+        }
+        List<String> lines = new ArrayList<>();
+        String remaining = label;
+        while (!remaining.isEmpty() && lines.size() < MAX_WRAP_LINES) {
+            if (fontMetrics.stringWidth(remaining) <= maxTextWidth) {
+                lines.add(remaining);
+                remaining = "";
+                break;
+            }
+            int breakAt = -1;
+            BreakIterator bi = BreakIterator.getCharacterInstance();
+            bi.setText(remaining);
+            int start = bi.first();
+            int end = bi.next();
+            while (end != BreakIterator.DONE) {
+                String candidate = remaining.substring(0, end);
+                if (fontMetrics.stringWidth(candidate) > maxTextWidth) {
+                    break;
+                }
+                char c = remaining.charAt(end - 1);
+                if (c == ' ' || c == ':' || c == '/' || c == '.' || c == ',' || c == '&' || c == '?') {
+                    breakAt = end;
+                }
+                start = end;
+                end = bi.next();
+            }
+            if (breakAt <= 0) {
+                breakAt = 0;
+                bi.setText(remaining);
+                start = bi.first();
+                end = bi.next();
+                while (end != BreakIterator.DONE) {
+                    String candidate = remaining.substring(0, end);
+                    if (fontMetrics.stringWidth(candidate) > maxTextWidth) {
+                        break;
+                    }
+                    breakAt = end;
+                    start = end;
+                    end = bi.next();
+                }
+                if (breakAt <= 0) {
+                    breakAt = bi.first();
+                    end = bi.next();
+                    if (end != BreakIterator.DONE) {
+                        breakAt = end;
+                    }
+                }
+            }
+            lines.add(remaining.substring(0, breakAt));
+            remaining = remaining.substring(breakAt).stripLeading();
+        }
+        if (!remaining.isEmpty()) {
+            int lastIdx = lines.size() - 1;
+            lines.set(lastIdx, lines.get(lastIdx) + remaining);
+        }
+        return lines;
+    }
+
+    private int computeNodeHeight(List<String> lines) {
+        int lineCount = Math.min(lines.size(), MAX_WRAP_LINES);
+        if (lineCount <= 1) {
+            return baseNodeHeight;
+        }
+        int lineSpacing = fontMetrics.getHeight();
+        return baseNodeHeight + (lineCount - 1) * lineSpacing;
+    }
+
+    public static List<String> resolveLabel(NodeInfo info, NodeLabelMode mode) {
+        String code = cleanLabel(info.code);
+        boolean hasDesc = info.description != null && !info.description.isBlank();
+        switch (mode) {
+            case DESCRIPTION:
+                return List.of(hasDesc ? info.description : code);
+            case BOTH:
+                if (hasDesc && !info.description.equals(code)) {
+                    return List.of(info.description, code);
+                }
+                return List.of(code);
+            default:
+                return List.of(code);
+        }
+    }
+
     public LayoutRoute layoutRoute(RouteInfo route, int startY) {
         LayoutRoute lr = new LayoutRoute();
         lr.routeId = route.routeId;
@@ -144,7 +313,7 @@ public class RouteDiagramLayoutEngine {
 
         TreeNode tree = buildTree(route.nodes);
         if (tree == null) {
-            lr.maxX = PADDING + NODE_WIDTH;
+            lr.maxX = PADDING + nodeWidth;
             lr.maxY = startY + LABEL_OFFSET;
             return lr;
         }
@@ -152,33 +321,33 @@ public class RouteDiagramLayoutEngine {
         computeSubtreeWidth(tree);
         assignPositions(tree, PADDING, startY + LABEL_OFFSET, tree.subtreeWidth, lr);
 
-        int[] extent = {
+        Bounds extent = new Bounds(
                 tree.layoutNode.x, tree.layoutNode.y,
-                tree.layoutNode.x + NODE_WIDTH, tree.layoutNode.y + NODE_HEIGHT };
+                tree.layoutNode.x + nodeWidth, tree.layoutNode.y + tree.layoutNode.height);
         for (TreeNode child : tree.children) {
-            expandBoundsForBox(child, extent);
+            expandBoundsForBox(child, extent, nodeWidth);
         }
 
-        if (extent[0] < PADDING) {
-            int shift = PADDING - extent[0];
+        if (extent.minX < PADDING) {
+            int shift = PADDING - extent.minX;
             for (LayoutNode ln : lr.nodes) {
                 ln.x += shift;
                 if (ln.connectFromMerge) {
                     ln.mergeCx += shift;
                 }
             }
-            extent[2] += shift;
+            extent.maxX += shift;
         }
 
-        lr.maxX = extent[2];
-        lr.maxY = Math.max(lr.maxY, extent[3]);
+        lr.maxX = extent.maxX;
+        lr.maxY = Math.max(lr.maxY, extent.maxY);
 
         return lr;
     }
 
     private int computeSubtreeWidth(TreeNode node) {
         if (node.children.isEmpty()) {
-            node.subtreeWidth = NODE_WIDTH;
+            node.subtreeWidth = nodeWidth;
             return node.subtreeWidth;
         }
 
@@ -190,9 +359,9 @@ public class RouteDiagramLayoutEngine {
                 }
                 totalWidth += computeSubtreeWidth(node.children.get(i));
             }
-            node.subtreeWidth = Math.max(NODE_WIDTH, totalWidth);
+            node.subtreeWidth = Math.max(nodeWidth, totalWidth);
         } else {
-            int maxChildWidth = NODE_WIDTH;
+            int maxChildWidth = nodeWidth;
             for (TreeNode child : node.children) {
                 maxChildWidth = Math.max(maxChildWidth, computeSubtreeWidth(child));
             }
@@ -203,13 +372,15 @@ public class RouteDiagramLayoutEngine {
 
     private void assignPositions(TreeNode node, int x, int y, int parentWidth, LayoutRoute lr) {
         int availableWidth = Math.max(node.subtreeWidth, parentWidth);
-        int nodeX = x + (availableWidth - NODE_WIDTH) / 2;
+        int nodeX = x + (availableWidth - nodeWidth) / 2;
 
         LayoutNode ln = new LayoutNode();
-        ln.label = cleanLabel(node.info.code);
         ln.type = node.info.type;
         ln.x = nodeX;
         ln.y = y;
+        ln.wrappedLines = resolveLabel(node.info, nodeLabelMode).stream()
+                .flatMap(s -> wrapLabel(s).stream()).toList();
+        ln.height = computeNodeHeight(ln.wrappedLines);
         ln.treeNode = node;
         node.layoutNode = ln;
         lr.nodes.add(ln);
@@ -222,15 +393,15 @@ public class RouteDiagramLayoutEngine {
                     TreeNode prevSibling = parentNode.children.get(myIndex - 1);
                     if (hasScope(prevSibling)) {
                         ln.connectFromMerge = true;
-                        int[] boxBounds = {
+                        Bounds boxBounds = new Bounds(
                                 prevSibling.layoutNode.x, prevSibling.layoutNode.y,
-                                prevSibling.layoutNode.x + NODE_WIDTH,
-                                prevSibling.layoutNode.y + NODE_HEIGHT };
+                                prevSibling.layoutNode.x + nodeWidth,
+                                prevSibling.layoutNode.y + prevSibling.layoutNode.height);
                         for (TreeNode c : prevSibling.children) {
-                            expandBoundsForBox(c, boxBounds);
+                            expandBoundsForBox(c, boxBounds, nodeWidth);
                         }
-                        ln.mergeY = boxBounds[3] + SCOPE_BOX_PAD;
-                        ln.mergeCx = prevSibling.layoutNode.x + NODE_WIDTH / 2;
+                        ln.mergeY = boxBounds.maxY + SCOPE_BOX_PAD;
+                        ln.mergeCx = prevSibling.layoutNode.x + nodeWidth / 2;
                         ln.parentNode = prevSibling.layoutNode;
                     } else {
                         ln.parentNode = findLastLayoutNode(prevSibling);
@@ -243,13 +414,13 @@ public class RouteDiagramLayoutEngine {
             }
         }
 
-        lr.maxY = Math.max(lr.maxY, y + NODE_HEIGHT);
+        lr.maxY = Math.max(lr.maxY, y + ln.height);
 
         if (node.children.isEmpty()) {
             return;
         }
 
-        int childY = y + NODE_HEIGHT + V_GAP;
+        int childY = y + ln.height + V_GAP;
 
         if (isBranchingEip(node.info.type)) {
             int childX = x + (availableWidth - node.subtreeWidth) / 2;
@@ -268,13 +439,13 @@ public class RouteDiagramLayoutEngine {
                 int adjustedY = hasScope(child) ? curY + SCOPE_BOX_PAD : curY;
                 assignPositions(child, x, adjustedY, availableWidth, lr);
                 if (hasScope(child)) {
-                    int[] cb = {
+                    Bounds cb = new Bounds(
                             child.layoutNode.x, child.layoutNode.y,
-                            child.layoutNode.x + NODE_WIDTH, child.layoutNode.y + NODE_HEIGHT };
+                            child.layoutNode.x + nodeWidth, child.layoutNode.y + child.layoutNode.height);
                     for (TreeNode c : child.children) {
-                        expandBoundsForBox(c, cb);
+                        expandBoundsForBox(c, cb, nodeWidth);
                     }
-                    curY = cb[3] + SCOPE_BOX_PAD + V_GAP;
+                    curY = cb.maxY + SCOPE_BOX_PAD + V_GAP;
                 } else {
                     curY = findMaxY(child) + V_GAP;
                 }
@@ -282,7 +453,7 @@ public class RouteDiagramLayoutEngine {
         }
     }
 
-    public static LayoutNode findLastLayoutNode(TreeNode node) {
+    private static LayoutNode findLastLayoutNode(TreeNode node) {
         if (node.children.isEmpty()) {
             return node.layoutNode;
         }
@@ -292,8 +463,8 @@ public class RouteDiagramLayoutEngine {
         return findLastLayoutNode(node.children.get(node.children.size() - 1));
     }
 
-    public static int findMaxY(TreeNode node) {
-        int maxY = node.layoutNode != null ? node.layoutNode.y + NODE_HEIGHT : 0;
+    private static int findMaxY(TreeNode node) {
+        int maxY = node.layoutNode != null ? node.layoutNode.y + node.layoutNode.height : 0;
         for (TreeNode child : node.children) {
             maxY = Math.max(maxY, findMaxY(child));
         }
@@ -311,29 +482,29 @@ public class RouteDiagramLayoutEngine {
                 && !STRUCTURAL_TYPES.contains(node.info.type);
     }
 
-    public static void expandBoundsForBox(TreeNode node, int[] bounds) {
+    public static void expandBoundsForBox(TreeNode node, Bounds bounds, int nodeWidth) {
         boolean hasOwnBox = hasScope(node);
 
         if (hasOwnBox) {
-            int[] inner = {
+            Bounds inner = new Bounds(
                     node.layoutNode.x, node.layoutNode.y,
-                    node.layoutNode.x + NODE_WIDTH, node.layoutNode.y + NODE_HEIGHT };
+                    node.layoutNode.x + nodeWidth, node.layoutNode.y + node.layoutNode.height);
             for (TreeNode child : node.children) {
-                expandBoundsForBox(child, inner);
+                expandBoundsForBox(child, inner, nodeWidth);
             }
-            bounds[0] = Math.min(bounds[0], inner[0] - SCOPE_BOX_PAD);
-            bounds[1] = Math.min(bounds[1], inner[1] - SCOPE_BOX_PAD);
-            bounds[2] = Math.max(bounds[2], inner[2] + SCOPE_BOX_PAD);
-            bounds[3] = Math.max(bounds[3], inner[3] + SCOPE_BOX_PAD);
+            bounds.minX = Math.min(bounds.minX, inner.minX - SCOPE_BOX_PAD);
+            bounds.minY = Math.min(bounds.minY, inner.minY - SCOPE_BOX_PAD);
+            bounds.maxX = Math.max(bounds.maxX, inner.maxX + SCOPE_BOX_PAD);
+            bounds.maxY = Math.max(bounds.maxY, inner.maxY + SCOPE_BOX_PAD);
         } else {
             if (node.layoutNode != null) {
-                bounds[0] = Math.min(bounds[0], node.layoutNode.x);
-                bounds[1] = Math.min(bounds[1], node.layoutNode.y);
-                bounds[2] = Math.max(bounds[2], node.layoutNode.x + NODE_WIDTH);
-                bounds[3] = Math.max(bounds[3], node.layoutNode.y + NODE_HEIGHT);
+                bounds.minX = Math.min(bounds.minX, node.layoutNode.x);
+                bounds.minY = Math.min(bounds.minY, node.layoutNode.y);
+                bounds.maxX = Math.max(bounds.maxX, node.layoutNode.x + nodeWidth);
+                bounds.maxY = Math.max(bounds.maxY, node.layoutNode.y + node.layoutNode.height);
             }
             for (TreeNode child : node.children) {
-                expandBoundsForBox(child, bounds);
+                expandBoundsForBox(child, bounds, nodeWidth);
             }
         }
     }

@@ -239,6 +239,30 @@ public interface Sjms2ComponentBuilderFactory {
     
         
         /**
+         * Whether to enable sending and receiving JMS ObjectMessage. By default
+         * this is disabled because Java object serialization is a known source
+         * of security vulnerabilities. Enable this option only if you trust the
+         * source of the messages and need to send or receive Java serialized
+         * objects via JMS. When disabled, Camel will refuse to create or read
+         * JMS ObjectMessage instances. Options that rely on ObjectMessage
+         * internally (such as transferException) require this option to be
+         * enabled.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param objectMessageEnabled the value to set
+         * @return the dsl builder
+         */
+        default Sjms2ComponentBuilder objectMessageEnabled(boolean objectMessageEnabled) {
+            doSetProperty("objectMessageEnabled", objectMessageEnabled);
+            return this;
+        }
+    
+        
+        /**
          * Specifies the interval between recovery attempts, i.e. when a
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
@@ -361,6 +385,7 @@ public interface Sjms2ComponentBuilderFactory {
             case "exceptionListener": ((Sjms2Component) component).setExceptionListener((jakarta.jms.ExceptionListener) value); return true;
             case "jmsKeyFormatStrategy": ((Sjms2Component) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
             case "messageCreatedStrategy": ((Sjms2Component) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
+            case "objectMessageEnabled": ((Sjms2Component) component).setObjectMessageEnabled((boolean) value); return true;
             case "recoveryInterval": ((Sjms2Component) component).setRecoveryInterval((long) value); return true;
             case "replyToOnTimeoutMaxConcurrentConsumers": ((Sjms2Component) component).setReplyToOnTimeoutMaxConcurrentConsumers((int) value); return true;
             case "requestTimeoutCheckerInterval": ((Sjms2Component) component).setRequestTimeoutCheckerInterval((long) value); return true;

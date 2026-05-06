@@ -410,7 +410,7 @@ class RouteDiagramTest {
         LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
 
         LayoutNode logAfter = lr.nodes.get(lr.nodes.size() - 1);
-        assertEquals("log[Do other processing...]", logAfter.label);
+        assertEquals("log[Do other processing...]", String.join("", logAfter.wrappedLines));
         assertTrue(logAfter.connectFromMerge, "Should connect from doTry merge point");
 
         LayoutNode choiceNode = lr.nodes.stream()
@@ -437,7 +437,7 @@ class RouteDiagramTest {
         assertEquals(5, lr.nodes.size());
 
         LayoutNode toNode = lr.nodes.get(4);
-        assertEquals("to[log:after]", toNode.label);
+        assertEquals("to[log:after]", String.join("", toNode.wrappedLines));
         assertTrue(toNode.connectFromMerge, "Node after filter should connect from merge point");
 
         LayoutNode filterNode = lr.nodes.get(2);
@@ -480,10 +480,296 @@ class RouteDiagramTest {
                 "Filter as last child should not produce merge connection on its children");
     }
 
+    @Test
+    void testCustomBoxWidthLayout() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+        route.nodes.add(node("to", "log:a", 1));
+
+        RouteDiagramLayoutEngine defaultEngine = new RouteDiagramLayoutEngine();
+        LayoutRoute defaultLr = defaultEngine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramLayoutEngine wideEngine = new RouteDiagramLayoutEngine(250, 12);
+        LayoutRoute wideLr = wideEngine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertTrue(wideLr.maxX > defaultLr.maxX, "Wider box should produce wider layout");
+        assertEquals(250 * RouteDiagramLayoutEngine.SCALE, wideEngine.getNodeWidth());
+    }
+
+    @Test
+    void testCustomFontSizeLayout() {
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(180, 16);
+        assertTrue(engine.getBaseNodeHeight() > new RouteDiagramLayoutEngine().getBaseNodeHeight(),
+                "Larger font should produce taller base node height");
+    }
+
+    @Test
+    void testTextWrappingShortLabel() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode fromNode = lr.nodes.get(0);
+        assertEquals(1, fromNode.wrappedLines.size());
+        assertEquals(engine.getBaseNodeHeight(), fromNode.height);
+    }
+
+    @Test
+    void testTextWrappingLongLabel() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes
+                .add(node("from", "kafka:my-topic?brokers=localhost:9092&groupId=myConsumerGroup&autoOffsetReset=earliest", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode fromNode = lr.nodes.get(0);
+        assertTrue(fromNode.wrappedLines.size() > 1, "Long label should wrap to multiple lines");
+        assertTrue(fromNode.height > engine.getBaseNodeHeight(), "Wrapped node should be taller");
+    }
+
+    @Test
+    void testPerNodeHeightAffectsNextNodePosition() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes
+                .add(node("from", "kafka:my-topic?brokers=localhost:9092&groupId=myConsumerGroup&autoOffsetReset=earliest", 0));
+        route.nodes.add(node("to", "log:a", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode fromNode = lr.nodes.get(0);
+        LayoutNode toNode = lr.nodes.get(1);
+        assertEquals(fromNode.y + fromNode.height + RouteDiagramLayoutEngine.V_GAP, toNode.y,
+                "Next node Y should account for wrapped node height");
+    }
+
+    @Test
+    void testRenderDiagramWithWrappedNodes() {
+        System.setProperty("java.awt.headless", "true");
+
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes
+                .add(node("from", "kafka:my-topic?brokers=localhost:9092&groupId=myConsumerGroup&autoOffsetReset=earliest", 0));
+        route.nodes.add(node("to", "log:a", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        DiagramColors colors = DiagramColors.parse("dark");
+        BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP, colors);
+
+        assertNotNull(image);
+        assertTrue(image.getWidth() > 0);
+        assertTrue(image.getHeight() > 0);
+    }
+
+    @Test
+    void testRenderDiagramWithCustomDimensions() {
+        System.setProperty("java.awt.headless", "true");
+
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+        route.nodes.add(node("to", "log:a", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(250, 16);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer(engine.getNodeWidth(), 16 * RouteDiagramLayoutEngine.SCALE);
+        DiagramColors colors = DiagramColors.parse("dark");
+        BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP, colors);
+
+        assertNotNull(image);
+        assertTrue(image.getWidth() > 0);
+        assertTrue(image.getHeight() > 0);
+    }
+
+    @Test
+    void testNodeLabelModeDescription() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick?period=1000", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertEquals("Poll every second", String.join("", lr.nodes.get(0).wrappedLines));
+        assertEquals("log:a", String.join("", lr.nodes.get(1).wrappedLines));
+    }
+
+    @Test
+    void testNodeLabelModeDescriptionFallsBackToCode() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0, null));
+
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertEquals("timer:tick", String.join("", lr.nodes.get(0).wrappedLines));
+    }
+
+    @Test
+    void testNodeLabelModeBoth() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick?period=1000", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, RouteDiagramLayoutEngine.NodeLabelMode.BOTH);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        List<String> fromLines = lr.nodes.get(0).wrappedLines;
+        assertTrue(fromLines.size() >= 2, "Both mode should produce at least 2 lines when description differs from code");
+        String allFromText = String.join("", fromLines);
+        assertTrue(allFromText.contains("Poll every second"));
+        assertTrue(allFromText.contains("timer:tick"));
+
+        assertEquals("log:a", String.join("", lr.nodes.get(1).wrappedLines));
+    }
+
+    @Test
+    void testNodeLabelModeCodeDefault() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0, "Poll every second"));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        assertEquals("timer:tick", String.join("", lr.nodes.get(0).wrappedLines));
+    }
+
+    @Test
+    void testTextDiagramWithDescriptionMode() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick?period=1000", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        List<String> lines
+                = renderer.printTextDiagram(List.of(route), RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION);
+
+        String output = String.join("\n", lines);
+        assertTrue(output.contains("Poll every second"));
+        assertTrue(output.contains("log:a"));
+    }
+
+    @Test
+    void testTextDiagramWithBothMode() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        List<String> lines = renderer.printTextDiagram(List.of(route), RouteDiagramLayoutEngine.NodeLabelMode.BOTH);
+
+        String output = String.join("\n", lines);
+        assertTrue(output.contains("Poll every second"));
+        assertTrue(output.contains("timer:tick"));
+        assertTrue(output.contains("log:a"));
+    }
+
+    @Test
+    void testRenderDiagramWithDescriptionMode() {
+        System.setProperty("java.awt.headless", "true");
+
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick?period=1000", 0, "Poll every second"));
+        route.nodes.add(node("to", "log:a", 1, null));
+
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, RouteDiagramLayoutEngine.NodeLabelMode.DESCRIPTION);
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+        DiagramColors colors = DiagramColors.parse("dark");
+        BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP, colors);
+
+        assertNotNull(image);
+        assertTrue(image.getWidth() > 0);
+        assertTrue(image.getHeight() > 0);
+    }
+
+    @Test
+    void testWrapLabelWithEmoji() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("to", "Send order 📦 to warehouse processing system queue", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode n = lr.nodes.get(0);
+        String rejoined = String.join("", n.wrappedLines);
+        assertTrue(rejoined.contains("📦"), "Emoji must not be split across lines");
+        for (String line : n.wrappedLines) {
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if (Character.isHighSurrogate(c)) {
+                    assertTrue(i + 1 < line.length() && Character.isLowSurrogate(line.charAt(i + 1)),
+                            "High surrogate at " + i + " must be followed by low surrogate in: " + line);
+                } else if (Character.isLowSurrogate(c)) {
+                    assertTrue(i > 0 && Character.isHighSurrogate(line.charAt(i - 1)),
+                            "Low surrogate at " + i + " must be preceded by high surrogate in: " + line);
+                }
+            }
+        }
+    }
+
+    @Test
+    void testWrapLabelWithCombiningMarks() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("to", "Résumé café order processing endpoint", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode n = lr.nodes.get(0);
+        String rejoined = String.join("", n.wrappedLines);
+        assertTrue(rejoined.contains("é"), "Combining accent must stay attached to base character");
+    }
+
+    @Test
+    void testWrapLabelWithZwjEmoji() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("to", "Family 👨‍👩‍👧‍👦 order processing", 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode n = lr.nodes.get(0);
+        String rejoined = String.join("", n.wrappedLines);
+        assertTrue(rejoined.contains("👨"), "ZWJ emoji must not be split");
+    }
+
     private static NodeInfo node(String type, String code, int level) {
+        return node(type, code, level, null);
+    }
+
+    private static NodeInfo node(String type, String code, int level, String description) {
         NodeInfo n = new NodeInfo();
         n.type = type;
         n.code = code;
+        n.description = description;
         n.level = level;
         return n;
     }

@@ -26,6 +26,7 @@ import io.micrometer.tracing.otel.bridge.OtelTracer;
 import io.opentelemetry.api.baggage.propagation.W3CBaggagePropagator;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.sdk.trace.data.SpanData;
@@ -34,6 +35,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.telemetry.Op;
 import org.apache.camel.telemetry.TagConstants;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
+import org.junit.jupiter.api.AfterEach;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test is special as it requires a different setting to inherit the Opentelemetry propagation mechanism.
@@ -63,8 +67,7 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
                 currentTraceContext,
                 event -> {
                 },
-                new OtelBaggageManager(
-                        currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
+                new OtelBaggageManager(currentTraceContext, List.of(), List.of()));
 
         context.getRegistry().bind("MicrometerObservabilityTracer", tracer);
         context.getRegistry().bind("OpentelemetryPropagators", otelPropagator);
@@ -85,6 +88,12 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
             }
         }
         throw new IllegalArgumentException("Trying to get a non existing span!");
+    }
+
+    @AfterEach
+    public void assertCurrentIsRoot() {
+        // We must guarantee no context leaking
+        assertEquals(Context.root(), Context.current());
     }
 
 }
