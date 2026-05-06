@@ -24,8 +24,8 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
@@ -36,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport {
 
     protected Long runTestManageThrottler() throws Exception {
@@ -76,8 +75,8 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
 
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        // 10 * delay (100) + tolerance (200)
-        assertTrue(total < 1200, "Should take at most 1.2 sec: was " + total);
+        // 10 * delay (100) + tolerance (1500 for slow CI)
+        assertTrue(total < 2500, "Should take at most 2.5 sec: was " + total);
 
         // change the throttler using JMX
         mbeanServer.setAttribute(throttlerName, new Attribute("MaximumRequests", (long) 2));
@@ -120,7 +119,7 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
             template.sendBody("seda:throttleCountAsync", "Message " + i);
         }
 
-        assertTrue(notifier.matches(2, TimeUnit.SECONDS));
+        assertTrue(notifier.matches(5, TimeUnit.SECONDS));
         assertMockEndpointsSatisfied();
 
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
@@ -147,15 +146,15 @@ public abstract class AbstractManagedThrottlerTest extends ManagementTestSupport
             template.sendBody("seda:throttleCountAsyncException", "Message " + i);
         }
 
-        assertTrue(notifier.matches(2, TimeUnit.SECONDS));
+        assertTrue(notifier.matches(5, TimeUnit.SECONDS));
         assertMockEndpointsSatisfied();
 
-        // give a sec for exception handling to finish..
-        Thread.sleep(500);
-
-        // since all exchanges ended w/ exception, they are not completed
-        Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
-        assertEquals(0, completed.longValue());
+        // wait for exception handling to finish
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Long c = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
+                    assertEquals(0, c.longValue());
+                });
     }
 
     @Test

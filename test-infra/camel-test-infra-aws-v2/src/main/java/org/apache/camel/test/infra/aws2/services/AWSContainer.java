@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.aws2.services;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -84,7 +85,10 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
     protected void setupContainer(boolean fixedPort) {
         ContainerEnvironmentUtil.configurePort(this, fixedPort, SERVICE_PORT);
 
-        waitingFor(Wait.forLogMessage(".*Ready\\.\n", 1));
+        waitingFor(Wait.forHttp("/_localstack/health")
+                .forPort(SERVICE_PORT)
+                .forStatusCode(200)
+                .withStartupTimeout(Duration.ofSeconds(120)));
     }
 
     public AwsCredentialsProvider getCredentialsProvider() {

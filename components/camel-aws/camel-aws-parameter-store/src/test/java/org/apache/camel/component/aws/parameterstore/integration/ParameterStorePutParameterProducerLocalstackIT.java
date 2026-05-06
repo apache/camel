@@ -23,13 +23,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.parameterstore.ParameterStoreConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.ssm.model.PutParameterResponse;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class ParameterStorePutParameterProducerLocalstackIT extends AwsParameterStoreBaseTest {
 
     @EndpointInject("mock:result")
