@@ -60,9 +60,11 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
         setupKeysAndCertificates();
 
         testServer = new AS2ServerConnection(
-                AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT.getPort(), AS2SignatureAlgorithm.SHA256WITHRSA,
+                AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, 0, AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), null, MDN_MESSAGE_TEMPLATE,
                 null, null, null, null, null);
+        TARGET_PORT = testServer.getLocalPort();
+        RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + TARGET_PORT + "/handle-receipts";
         testServer.listen("*", new HttpRequestHandler() {
             @Override
             public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
