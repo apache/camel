@@ -4449,9 +4449,6 @@
         </profile>
         <profile>
             <id>nullcheck</id>
-            <activation>
-                <jdk>[21,)</jdk>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
