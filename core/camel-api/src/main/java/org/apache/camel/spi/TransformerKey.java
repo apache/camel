@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import org.apache.camel.ValueHolder;
 import org.apache.camel.util.StringHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Key used in {@link org.apache.camel.spi.TransformerRegistry} in
@@ -30,7 +31,7 @@ public final class TransformerKey extends ValueHolder<String> {
     private final DataType from;
     private final DataType to;
 
-    public TransformerKey(String toType) {
+    public TransformerKey(@Nullable String toType) {
         this(DataType.ANY, new DataType(Objects.requireNonNull(toType, "toType")));
         StringHelper.notEmpty(toType, "toType");
     }
@@ -63,8 +64,10 @@ public final class TransformerKey extends ValueHolder<String> {
      */
     public static TransformerKey createFrom(Transformer answer) {
         Objects.requireNonNull(answer, "answer");
-        if (!DataType.isAnyType(answer.getFrom()) && !DataType.isAnyType(answer.getTo())) {
-            return new TransformerKey(answer.getFrom(), answer.getTo());
+        DataType from = answer.getFrom();
+        DataType to = answer.getTo();
+        if (from != null && to != null && !DataType.isAnyType(from) && !DataType.isAnyType(to)) {
+            return new TransformerKey(from, to);
         }
 
         return new TransformerKey(answer.getName());

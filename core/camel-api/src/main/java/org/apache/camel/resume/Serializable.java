@@ -41,7 +41,7 @@ public interface Serializable {
      * @param  obj the object to serialize
      * @return     a ByteBuffer instance with the serialized contents of this object
      */
-    default @Nullable ByteBuffer serialize(Object obj) {
+    default @Nullable ByteBuffer serialize(@Nullable Object obj) {
         ObjectHelper.notNull(obj, "Cannot perform serialization on a null object");
 
         if (obj instanceof Long value) {
@@ -80,5 +80,6 @@ public interface Serializable {
      *
      * @return a ByteBuffer instance with the serialized contents of this object
      */
+    @Nullable
     ByteBuffer serialize();
 }

@@ -19,6 +19,7 @@ package org.apache.camel.component.extension;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.Component;
@@ -129,8 +130,8 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @param  scope the scope as string, which can be in any case
          * @return       the scope enum represented by this string
          */
-        public static Scope fromString(String scope) {
-            return Scope.valueOf(scope != null ? scope.toUpperCase() : null);
+        public static Scope fromString(@Nullable String scope) {
+            return Scope.valueOf(Objects.requireNonNull(scope, "scope").toUpperCase());
         }
     }
 

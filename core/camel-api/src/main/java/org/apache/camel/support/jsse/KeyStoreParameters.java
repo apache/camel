@@ -125,7 +125,9 @@ public class KeyStoreParameters extends JsseParameters {
 
         if (this.keyStore == null && this.resource != null && this.resource.startsWith("ref:")) {
             String ref = this.resource.substring(4);
-            this.keyStore = getCamelContext().getRegistry().lookupByNameAndType(ref, KeyStore.class);
+            if (getCamelContext() != null) {
+                this.keyStore = getCamelContext().getRegistry().lookupByNameAndType(ref, KeyStore.class);
+            }
         }
         if (keyStore != null) {
             if (LOG.isDebugEnabled()) {
@@ -146,7 +148,8 @@ public class KeyStoreParameters extends JsseParameters {
 
         char[] ksPassword = null;
         if (this.password != null) {
-            ksPassword = this.parsePropertyValue(this.password).toCharArray();
+            String resolvedPassword = this.parsePropertyValue(this.password);
+            ksPassword = resolvedPassword != null ? resolvedPassword.toCharArray() : this.password.toCharArray();
         }
 
         KeyStore ks;

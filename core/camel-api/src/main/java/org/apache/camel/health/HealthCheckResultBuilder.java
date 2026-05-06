@@ -110,7 +110,7 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
         // Validation
         ObjectHelper.notNull(this.state, "Response State");
 
-        final HealthCheck.State responseState = this.state;
+        final HealthCheck.State responseState = Objects.requireNonNull(this.state, "state");
         final Optional<String> responseMessage = Optional.ofNullable(this.message);
         final Optional<Throwable> responseError = Optional.ofNullable(this.error);
         final Map<String, Object> responseDetails = ObjectHelper.isNotEmpty(this.details)

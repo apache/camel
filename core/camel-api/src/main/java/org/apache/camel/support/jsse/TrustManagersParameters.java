@@ -50,7 +50,7 @@ public class TrustManagersParameters extends JsseParameters {
      *
      * @see                             KeyStoreParameters#createKeyStore()
      */
-    public @Nullable TrustManager[] createTrustManagers() throws GeneralSecurityException, IOException {
+    public TrustManager @Nullable [] createTrustManagers() throws GeneralSecurityException, IOException {
         if (trustManager != null) {
             // use existing trust manager
             return new TrustManager[] { trustManager };

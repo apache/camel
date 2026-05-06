@@ -180,7 +180,7 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
         if (invalidEnum != null) {
             for (Map.Entry<String, String> entry : invalidEnum.entrySet()) {
                 String name = entry.getKey();
-                String[] choices = invalidEnumChoices.get(name);
+                String[] choices = invalidEnumChoices != null ? invalidEnumChoices.get(name) : null;
                 String defaultValue = defaultValues != null ? defaultValues.get(entry.getKey()) : null;
                 String str = Arrays.asList(choices).toString();
                 String msg = "Invalid enum value: " + entry.getValue() + ". Possible values: " + str;

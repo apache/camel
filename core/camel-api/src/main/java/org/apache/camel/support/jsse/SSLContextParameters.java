@@ -282,23 +282,32 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         }
 
         KeyManager[] keyManagers = this.keyManagers == null ? null : this.keyManagers.createKeyManagers();
+        @Nullable
         TrustManager[] trustManagers = this.trustManagers == null ? null : this.trustManagers.createTrustManagers();
         SecureRandom secureRandom = this.secureRandom == null ? null : this.secureRandom.createSecureRandom();
 
+        String protocol = this.parsePropertyValue(this.getSecureSocketProtocol());
+        if (protocol == null) {
+            protocol = DEFAULT_SECURE_SOCKET_PROTOCOL;
+        }
         SSLContext context;
         if (this.getProvider() == null) {
-            context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()));
+            context = SSLContext.getInstance(protocol);
         } else {
-            context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()),
-                    this.parsePropertyValue(this.getProvider()));
+            String provider = this.parsePropertyValue(this.getProvider());
+            context = SSLContext.getInstance(protocol, provider != null ? provider : this.getProvider());
         }
 
         if (this.getCertAlias() != null && keyManagers != null) {
             for (int idx = 0; idx < keyManagers.length; idx++) {
                 if (keyManagers[idx] instanceof X509KeyManager x509KeyManager) {
                     try {
+                        String certAlias = this.parsePropertyValue(this.getCertAlias());
+                        if (certAlias == null) {
+                            certAlias = this.getCertAlias();
+                        }
                         keyManagers[idx] = new AliasedX509ExtendedKeyManager(
-                                this.parsePropertyValue(this.getCertAlias()),
+                                certAlias,
                                 x509KeyManager);
                     } catch (Exception e) {
                         throw new GeneralSecurityException(e);

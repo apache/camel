@@ -39,19 +39,19 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
      * Structure of an introspected class.
      */
     final class ClassInfo {
-        public Class<?> clazz;
-        public MethodInfo[] methods;
+        public @Nullable Class<?> clazz;
+        public MethodInfo @Nullable [] methods;
     }
 
     /**
      * Structure of an introspected method.
      */
     final class MethodInfo {
-        public Method method;
-        public Boolean isGetter;
-        public Boolean isSetter;
-        public String getterOrSetterShorthandName;
-        public Boolean hasGetterAndSetter;
+        public @Nullable Method method;
+        public @Nullable Boolean isGetter;
+        public @Nullable Boolean isSetter;
+        public @Nullable String getterOrSetterShorthandName;
+        public @Nullable Boolean hasGetterAndSetter;
     }
 
     // Statistics

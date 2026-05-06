@@ -83,8 +83,11 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
 
         if (this.getClientAuthentication() != null) {
 
-            final ClientAuthentication clientAuthValue
-                    = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
+            String clientAuthStr = this.parsePropertyValue(this.getClientAuthentication());
+            if (clientAuthStr == null) {
+                clientAuthStr = this.getClientAuthentication();
+            }
+            final ClientAuthentication clientAuthValue = ClientAuthentication.valueOf(clientAuthStr);
 
             Configurer<SSLEngine> sslEngineConfigurer = new Configurer<>() {
                 @Override
@@ -122,8 +125,11 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
 
         if (this.getClientAuthentication() != null) {
 
-            final ClientAuthentication clientAuthValue
-                    = ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
+            String clientAuthStr = this.parsePropertyValue(this.getClientAuthentication());
+            if (clientAuthStr == null) {
+                clientAuthStr = this.getClientAuthentication();
+            }
+            final ClientAuthentication clientAuthValue = ClientAuthentication.valueOf(clientAuthStr);
 
             Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<>() {
                 @Override

@@ -61,8 +61,10 @@ public interface BrowsableEndpoint extends Endpoint {
         long ts = 0;
         long ts2 = 0;
         if (!list.isEmpty()) {
-            ts = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
-            ts2 = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
+            Long v1 = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
+            Long v2 = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
+            ts = v1 != null ? v1 : 0L;
+            ts2 = v2 != null ? v2 : 0L;
         }
         return new BrowseStatus(list.size(), ts, ts2);
     }

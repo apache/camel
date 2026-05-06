@@ -277,7 +277,7 @@ abstract class PropertiesValidationResult implements Serializable {
         return invalidEnumChoices;
     }
 
-    public Map<String, String[]> getInvalidEnumSuggestions() {
+    public @Nullable Map<String, String[]> getInvalidEnumSuggestions() {
         return invalidEnumSuggestions;
     }
 

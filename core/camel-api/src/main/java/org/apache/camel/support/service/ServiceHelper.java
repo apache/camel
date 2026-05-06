@@ -591,6 +591,9 @@ public final class ServiceHelper {
         if (service instanceof Navigate nav) {
             if (nav.hasNext()) {
                 List<?> children = nav.next();
+                if (children == null) {
+                    return;
+                }
                 for (Object child : children) {
                     if (child instanceof Channel channel) {
                         if (includeErrorHandler) {

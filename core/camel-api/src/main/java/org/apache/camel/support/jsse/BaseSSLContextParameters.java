@@ -100,10 +100,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             = createSignatureSchemeLogMessage("SSLServerSocket");
 
     // Reflection handles for JDK 19/20 SSLParameters methods (not available on JDK 17)
-    private static final Method GET_NAMED_GROUPS;
-    private static final Method SET_NAMED_GROUPS;
-    private static final Method GET_SIGNATURE_SCHEMES;
-    private static final Method SET_SIGNATURE_SCHEMES;
+    private static final @Nullable Method GET_NAMED_GROUPS;
+    private static final @Nullable Method SET_NAMED_GROUPS;
+    private static final @Nullable Method GET_SIGNATURE_SCHEMES;
+    private static final @Nullable Method SET_SIGNATURE_SCHEMES;
 
     static {
         Method gng = null, sng = null, gss = null, sss = null;
@@ -1043,7 +1043,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             throws GeneralSecurityException {
         Objects.requireNonNull(sessionTimeout, "sessionTimeout");
 
-        int sessionTimeoutInt = Integer.parseInt(this.parsePropertyValue(sessionTimeout));
+        String resolvedTimeout = this.parsePropertyValue(sessionTimeout);
+        int sessionTimeoutInt = Integer.parseInt(resolvedTimeout != null ? resolvedTimeout : sessionTimeout);
 
         if (sessionContext != null) {
             sessionContext.setSessionTimeout(sessionTimeoutInt);
@@ -1080,8 +1081,8 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @see                    #filter(Collection, Collection, List, List)
      */
     protected Collection<String> filter(
-            Collection<String> explicitValues, Collection<String> availableValues,
-            Collection<String> currentValues, Patterns patterns, Patterns defaultPatterns,
+            @Nullable Collection<String> explicitValues, Collection<String> availableValues,
+            Collection<String> currentValues, @Nullable Patterns patterns, Patterns defaultPatterns,
             boolean applyDefaults) {
 
         final List<Pattern> enabledIncludePatterns;
@@ -1121,7 +1122,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * @return                 the filtered values
      */
     protected Collection<String> filter(
-            Collection<String> explicitValues, Collection<String> availableValues,
+            @Nullable Collection<String> explicitValues, Collection<String> availableValues,
             List<Pattern> includePatterns, List<Pattern> excludePatterns) {
         Collection<String> returnValues;
 
@@ -1190,10 +1191,12 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         Collection<String> filteredNamedGroups;
         if (enabledNamedGroups != null) {
             filteredNamedGroups = new ArrayList<>(enabledNamedGroups);
-        } else {
+        } else if (enabledNamedGroupsPatterns != null) {
             filteredNamedGroups = this.filter(
                     null, Arrays.asList(currentNamedGroups),
                     enabledNamedGroupsPatterns.getIncludes(), enabledNamedGroupsPatterns.getExcludes());
+        } else {
+            filteredNamedGroups = new ArrayList<>();
         }
 
         return filteredNamedGroups.toArray(new String[0]);
@@ -1225,10 +1228,12 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         Collection<String> filteredSignatureSchemes;
         if (enabledSignatureSchemes != null) {
             filteredSignatureSchemes = new ArrayList<>(enabledSignatureSchemes);
-        } else {
+        } else if (enabledSignatureSchemesPatterns != null) {
             filteredSignatureSchemes = this.filter(
                     null, Arrays.asList(currentSignatureSchemes),
                     enabledSignatureSchemesPatterns.getIncludes(), enabledSignatureSchemesPatterns.getExcludes());
+        } else {
+            filteredSignatureSchemes = new ArrayList<>();
         }
 
         return filteredSignatureSchemes.toArray(new String[0]);

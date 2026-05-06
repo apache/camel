@@ -40,6 +40,7 @@ public interface Offset<T> extends Serializable {
      *
      * @return the offset value
      */
+    @Nullable
     T getValue();
 
     /**
@@ -57,7 +58,7 @@ public interface Offset<T> extends Serializable {
     }
 
     @Override
-    default ByteBuffer serialize() {
+    default @Nullable ByteBuffer serialize() {
         return serialize(getValue());
     }
 }

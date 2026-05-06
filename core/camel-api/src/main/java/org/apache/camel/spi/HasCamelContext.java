@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A simple marker interface for an object which holds a {@link CamelContext}.
@@ -28,5 +29,6 @@ public interface HasCamelContext {
      *
      * @return the camel context.
      */
+    @Nullable
     CamelContext getCamelContext();
 }

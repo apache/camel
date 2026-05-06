@@ -32,9 +32,9 @@ public class InvalidPropertyException extends RuntimeCamelException {
         this(owner, propertyName, owner != null ? owner.getClass() : Object.class);
     }
 
-    public InvalidPropertyException(Object owner, String propertyName, Class<?> type) {
+    public InvalidPropertyException(@Nullable Object owner, String propertyName, Class<?> type) {
         super("No '" + Objects.requireNonNull(propertyName, "propertyName") + "' property available on type: "
-              + Objects.requireNonNull(type, "type").getName() + " in: " + Objects.requireNonNull(owner, "owner"));
+              + Objects.requireNonNull(type, "type").getName() + " in: " + owner);
         this.owner = owner;
         this.propertyName = propertyName;
     }

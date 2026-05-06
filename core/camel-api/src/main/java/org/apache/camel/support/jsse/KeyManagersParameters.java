@@ -74,7 +74,8 @@ public class KeyManagersParameters extends JsseParameters {
 
         char[] kmfPassword = null;
         if (this.getKeyPassword() != null) {
-            kmfPassword = this.parsePropertyValue(this.getKeyPassword()).toCharArray();
+            String resolvedPassword = this.parsePropertyValue(this.getKeyPassword());
+            kmfPassword = resolvedPassword != null ? resolvedPassword.toCharArray() : this.getKeyPassword().toCharArray();
         }
 
         KeyStore ks = this.getKeyStore() == null ? null : this.getKeyStore().createKeyStore();
