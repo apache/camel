@@ -104,7 +104,7 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
         assertEquals(0, inflight.intValue());
 
-        pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
+        Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(0, pending.intValue());
     }
 
@@ -164,8 +164,8 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         Integer inflight = (Integer) mbeanServer.getAttribute(on, "InProgressCompleteExchanges");
         assertEquals(0, inflight.intValue());
 
-        pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
-        assertEquals(1, pending.intValue());
+        Integer pending2 = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
+        assertEquals(1, pending2.intValue());
 
         // we can also use the client mbean
         ManagedAggregateProcessorMBean client = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
