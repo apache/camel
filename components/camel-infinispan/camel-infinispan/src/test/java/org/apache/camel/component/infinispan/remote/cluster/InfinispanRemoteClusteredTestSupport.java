@@ -19,7 +19,6 @@ package org.apache.camel.component.infinispan.remote.cluster;
 import java.util.Properties;
 
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
-import org.apache.commons.lang3.SystemUtils;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
@@ -34,9 +33,7 @@ public final class InfinispanRemoteClusteredTestSupport {
         properties.put("infinispan.client.hotrod.socket_timeout", 15000);
         properties.put("infinispan.client.hotrod.connection_timeout", 15000);
 
-        if (SystemUtils.IS_OS_MAC) {
-            properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
-        }
+        properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
 
         return new ConfigurationBuilder()
                 .withProperties(properties)

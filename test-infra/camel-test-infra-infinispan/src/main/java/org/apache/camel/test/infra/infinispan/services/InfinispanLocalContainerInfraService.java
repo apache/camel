@@ -29,6 +29,7 @@ import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 @InfraService(service = InfinispanInfraService.class,
@@ -84,7 +85,10 @@ public class InfinispanLocalContainerInfraService implements InfinispanInfraServ
                 } else {
                     ContainerEnvironmentUtil.configurePort(this, fixedPort, InfinispanProperties.DEFAULT_SERVICE_PORT);
                     if (!fixedPort) {
-                        waitingFor(Wait.forListeningPort());
+                        waitingFor(new HttpWaitStrategy()
+                                .forPath("/rest/v2/cache-managers/default/health/status")
+                                .forPort(InfinispanProperties.DEFAULT_SERVICE_PORT)
+                                .forResponsePredicate("HEALTHY"::equals));
                     }
                 }
             }
