@@ -412,13 +412,15 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         }
     }
 
-    private void enableSessionSupport(Server server, String connectorKey) {
+    private void enableSessionSupport(Server server, String connectorKey) throws Exception {
         ServletContextHandler context = server.getDescendant(ServletContextHandler.class);
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
             if (context.isStarted()) {
-                throw new IllegalStateException(
-                        "Server has already been started. Cannot enabled sessionSupport on " + connectorKey);
+                LOG.debug("Restarting Jetty server to enable session support on {}", connectorKey);
+                server.stop();
+                context.setSessionHandler(sessionHandler);
+                server.start();
             } else {
                 context.setSessionHandler(sessionHandler);
             }
