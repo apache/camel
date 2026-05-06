@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.ftp.services.embedded;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -136,6 +137,23 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
         sshd.start();
 
         port = ((InetSocketAddress) sshd.getBoundAddresses().iterator().next()).getPort();
+
+        waitForServerReady();
+    }
+
+    private void waitForServerReady() throws IOException {
+        long deadline = System.nanoTime() + 30_000_000_000L; // 30 seconds
+        IOException lastException = null;
+        while (System.nanoTime() < deadline) {
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress("localhost", port), 1000);
+                return;
+            } catch (IOException e) {
+                lastException = e;
+                Thread.onSpinWait();
+            }
+        }
+        throw new IOException("SFTP server not ready after 30 seconds on port " + port, lastException);
     }
 
     protected PublickeyAuthenticator getPublickeyAuthenticator() {
