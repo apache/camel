@@ -29,6 +29,8 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
 
     @Override
@@ -50,13 +52,7 @@ public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
 
         final CamelExecutionException exception = Assertions.assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("direct:start", "Hello World"));
-        // Spring AMQP may wrap ShutdownSignalException in AmqpException depending on timing
-        Throwable cause = exception.getCause();
-        while (cause != null && !(cause instanceof ShutdownSignalException)) {
-            cause = cause.getCause();
-        }
-        Assertions.assertInstanceOf(ShutdownSignalException.class, cause,
-                "Expected ShutdownSignalException in cause chain, but got: " + exception.getCause());
+        assertThat(exception).hasRootCauseInstanceOf(ShutdownSignalException.class);
     }
 
     @Override
