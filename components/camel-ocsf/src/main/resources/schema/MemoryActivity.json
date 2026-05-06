@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/memory_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/memory_activity",
   "title": "MemoryActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.MemoryActivity",
@@ -9,22 +9,37 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
+    "requested_permissions": {
+      "type": "integer",
+      "title": "Requested Permissions"
+    },
+    "base_address": {
+      "type": "string",
+      "title": "Base Address"
+    },
     "actor": {
       "$ref": "Actor.json"
+    },
+    "device": {
+      "$ref": "Device.json"
+    },
+    "actual_permissions": {
+      "type": "integer",
+      "title": "Actual Permissions"
+    },
+    "size": {
+      "type": "integer",
+      "title": "Size"
+    },
+    "process": {
+      "$ref": "Process.json"
     },
     "raw_data_size": {
       "type": "integer",
       "title": "Raw Data Size"
     },
-    "device": {
-      "$ref": "Device.json"
-    },
-    "process": {
-      "$ref": "Process.json"
-    },
-    "size": {
-      "type": "integer",
-      "title": "Size"
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
     },
     "enrichments": {
       "type": "array",
@@ -32,21 +47,6 @@
       "items": {
         "$ref": "Enrichment.json"
       }
-    },
-    "base_address": {
-      "type": "string",
-      "title": "Base Address"
-    },
-    "actual_permissions": {
-      "type": "integer",
-      "title": "Actual Permissions"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "requested_permissions": {
-      "type": "integer",
-      "title": "Requested Permissions"
     }
   }
 }

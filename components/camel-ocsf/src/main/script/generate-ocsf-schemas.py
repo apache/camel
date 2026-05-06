@@ -27,10 +27,12 @@ Key features:
 - Uses file-based $ref references (e.g., "$ref": "Attack.json")
 - Includes javaType annotations for proper class naming
 - Uses JSON Schema Draft-07 format
+- Falls back to downloading the schema from schema.ocsf.io for OCSF
+  versions not yet bundled in the ocsf-json-schema package
 
 Usage:
     pip install ocsf-json-schema
-    python generate-ocsf-schemas.py --version 1.7.0 --output ../resources/schema
+    python generate-ocsf-schemas.py --version 1.8.0 --output ../resources/schema
 
 The generated schemas are used by the jsonschema2pojo Maven plugin to generate
 Java POJOs at build time.
@@ -39,6 +41,7 @@ Java POJOs at build time.
 import argparse
 import json
 import sys
+import urllib.request
 from pathlib import Path
 
 try:
@@ -47,6 +50,13 @@ except ImportError:
     print("Error: ocsf-json-schema package not found.")
     print("Install it with: pip install ocsf-json-schema")
     sys.exit(1)
+
+
+# Public OCSF schema export endpoint used as a fallback when the requested
+# version is not bundled inside the ocsf-json-schema package.
+OCSF_SCHEMA_EXPORT_URL = (
+    "https://schema.ocsf.io/{version}/export/schema?profiles=&extensions=win,linux,macos"
+)
 
 
 # Java package for generated classes
@@ -102,7 +112,7 @@ CLASSES_TO_GENERATE = [
 ]
 
 # Objects to generate - reusable OCSF objects
-# These are objects that exist in the OCSF catalog (verified in 1.7.0)
+# These are objects that exist in the OCSF catalog (verified in 1.8.0)
 OBJECTS_TO_GENERATE = [
     'account',
     'actor',
@@ -150,6 +160,7 @@ OBJECTS_TO_GENERATE = [
     'organization',
     'os',
     'package',
+    'packet',
     'policy',
     'process',
     'product',
@@ -168,6 +179,7 @@ OBJECTS_TO_GENERATE = [
     'technique',
     'ticket',
     'tls',
+    'token',
     'url',
     'user',
     'vendor_attributes',
@@ -248,6 +260,9 @@ PROPERTY_TO_OBJECT_MAP = {
     'os': 'os',
     'package': 'package',
     'packages': 'package',  # array
+    'packet': 'packet',
+    'packets': 'packet',  # array
+    'packet_list': 'packet',  # array
     'policy': 'policy',
     'policies': 'policy',  # array
     'process': 'process',
@@ -270,6 +285,7 @@ PROPERTY_TO_OBJECT_MAP = {
     'technique': 'technique',
     'ticket': 'ticket',
     'tls': 'tls',
+    'token': 'token',
     'url': 'url',
     'user': 'user',
     'users': 'user',  # array
@@ -572,14 +588,33 @@ def generate_base_event_schema(ocsf: OcsfJsonSchemaEmbedded, output_dir: Path,
         return False
 
 
+def load_ocsf_schema(version: str) -> dict:
+    """
+    Load the OCSF schema for the given version.
+
+    First tries the bundled schemas shipped with the ocsf-json-schema package.
+    If the version is not bundled (e.g., a newer release than the package
+    knows about), falls back to downloading the schema export from
+    schema.ocsf.io.
+    """
+    try:
+        return get_ocsf_schema(version=version)
+    except FileNotFoundError:
+        url = OCSF_SCHEMA_EXPORT_URL.format(version=version)
+        print(f"  Version {version} not bundled in ocsf-json-schema package.")
+        print(f"  Downloading schema from {url} ...")
+        with urllib.request.urlopen(url) as response:
+            return json.loads(response.read().decode('utf-8'))
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Generate OCSF JSON Schema files for Apache Camel (jsonschema2pojo compatible)'
     )
     parser.add_argument(
         '--version', '-v',
-        default='1.7.0',
-        help='OCSF schema version (default: 1.7.0)'
+        default='1.8.0',
+        help='OCSF schema version (default: 1.8.0)'
     )
     parser.add_argument(
         '--output', '-o',
@@ -627,7 +662,7 @@ def main():
     # Load OCSF schema
     print(f"Loading OCSF schema version {args.version}...")
     try:
-        ocsf_schema = get_ocsf_schema(version=args.version)
+        ocsf_schema = load_ocsf_schema(args.version)
         ocsf = OcsfJsonSchemaEmbedded(ocsf_schema)
     except Exception as e:
         print(f"Error loading OCSF schema: {e}")

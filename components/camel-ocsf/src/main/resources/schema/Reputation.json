@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/objects/reputation",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/reputation",
   "title": "Reputation",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.Reputation",

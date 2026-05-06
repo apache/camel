@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/file_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/file_activity",
   "title": "FileActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.FileActivity",
@@ -9,15 +9,41 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
+    "access_mask": {
+      "type": "integer",
+      "title": "Access Mask"
+    },
+    "create_mask": {
+      "type": "string",
+      "title": "Create Mask"
+    },
     "actor": {
       "$ref": "Actor.json"
+    },
+    "file_diff": {
+      "type": "string",
+      "title": "File Diff"
+    },
+    "device": {
+      "$ref": "Device.json"
+    },
+    "connection_uid": {
+      "type": "string",
+      "title": "Connection Identifier"
+    },
+    "file_result": {
+      "$ref": "File.json"
+    },
+    "component": {
+      "type": "string",
+      "title": "Component"
     },
     "raw_data_size": {
       "type": "integer",
       "title": "Raw Data Size"
     },
-    "device": {
-      "$ref": "Device.json"
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
     },
     "file": {
       "$ref": "File.json"
@@ -28,32 +54,6 @@
       "items": {
         "$ref": "Enrichment.json"
       }
-    },
-    "file_diff": {
-      "type": "string",
-      "title": "File Diff"
-    },
-    "file_result": {
-      "$ref": "File.json"
-    },
-    "access_mask": {
-      "type": "integer",
-      "title": "Access Mask"
-    },
-    "connection_uid": {
-      "type": "string",
-      "title": "Connection Identifier"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "create_mask": {
-      "type": "string",
-      "title": "Create Mask"
-    },
-    "component": {
-      "type": "string",
-      "title": "Component"
     }
   }
 }
