@@ -86,7 +86,7 @@ public class RequestHandler {
         } else {
             LOG.debug("Tool sequence completed for expectation: {}", originalInput);
             return responseBuilder.createFinalToolResponse(context.getMessagesNode(), expectation.getExpectedResponse(),
-                    expectation.getToolContentResponse());
+                    expectation.getToolContentResponse(), expectation.getReasoningContent());
         }
     }
 
