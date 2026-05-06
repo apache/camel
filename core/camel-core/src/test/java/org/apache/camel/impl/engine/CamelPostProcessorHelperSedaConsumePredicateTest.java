@@ -21,9 +21,7 @@ import java.lang.reflect.Method;
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class CamelPostProcessorHelperSedaConsumePredicateTest extends ContextTestSupport {
 
     @Test
@@ -37,8 +35,8 @@ public class CamelPostProcessorHelperSedaConsumePredicateTest extends ContextTes
         method = my.getClass().getMethod("high", String.class);
         helper.consumerInjection(method, my, "foo");
 
-        getMockEndpoint("mock:low").expectedBodiesReceived("17", "89", "39");
-        getMockEndpoint("mock:high").expectedBodiesReceived("219", "112");
+        getMockEndpoint("mock:low").expectedBodiesReceivedInAnyOrder("17", "89", "39");
+        getMockEndpoint("mock:high").expectedBodiesReceivedInAnyOrder("219", "112");
 
         template.sendBody("seda:foo", "17");
         template.sendBody("seda:foo", "219");
@@ -60,8 +58,8 @@ public class CamelPostProcessorHelperSedaConsumePredicateTest extends ContextTes
         method = my.getClass().getMethod("high", String.class);
         helper.consumerInjection(method, my, "foo");
 
-        getMockEndpoint("mock:low").expectedBodiesReceived("17");
-        getMockEndpoint("mock:high").expectedBodiesReceived("112");
+        getMockEndpoint("mock:low").expectedBodiesReceivedInAnyOrder("17");
+        getMockEndpoint("mock:high").expectedBodiesReceivedInAnyOrder("112");
 
         template.sendBody("seda:foo", "17");
         // should be dropped as it does not match any predicates

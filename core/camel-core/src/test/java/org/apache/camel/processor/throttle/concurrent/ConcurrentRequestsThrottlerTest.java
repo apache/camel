@@ -26,15 +26,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThrottlerRejectedExecutionException;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // time-bound that does not run well in shared environments
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD },
              architectures = { "amd64", "aarch64", "ppc64le" },
              disabledReason = "This test does not run reliably multiple platforms (see CAMEL-21438)")
@@ -96,21 +95,18 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
         try {
             MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 2, MESSAGE_COUNT);
-            Thread.sleep(INTERVAL); // sleep here to ensure the
-                                   // first throttle rate does not
-                                   // influence the next one.
+            Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                    .untilAsserted(resultEndpoint::assertIsSatisfied);
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 4, MESSAGE_COUNT);
-            Thread.sleep(INTERVAL); // sleep here to ensure the
-                                   // first throttle rate does not
-                                   // influence the next one.
+            Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                    .untilAsserted(resultEndpoint::assertIsSatisfied);
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 2, MESSAGE_COUNT);
-            Thread.sleep(INTERVAL); // sleep here to ensure the
-                                   // first throttle rate does not
-                                   // influence the next one.
+            Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                    .untilAsserted(resultEndpoint::assertIsSatisfied);
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 4, MESSAGE_COUNT);
