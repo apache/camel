@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,10 +33,12 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationLineNumber;
+import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationNoLineNumber;
 
 @DevConsole(name = "route-structure", description = "Dump route structure")
 public class RouteStructureDevConsole extends AbstractDevConsole {
@@ -74,7 +75,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
 
                 sb.append(String.format("    Id: %s", mrb.getRouteId()));
                 if (mrb.getSourceLocation() != null) {
-                    sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
+                    sb.append(String.format("%n    Source: %s", extractSourceLocationNoLineNumber(mrb.getSourceLocation())));
                 }
                 sb.append("\n\n");
                 for (ModelDumpLine line : lines) {
@@ -103,7 +104,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         final String brief = (String) options.getOrDefault(BRIEF, "false");
 
         final JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
 
         Function<ManagedRouteMBean, Object> task = mrb -> {
             JsonObject jo = new JsonObject();
@@ -112,7 +113,11 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             jo.put("routeId", mrb.getRouteId());
             jo.put("from", mrb.getEndpointUri());
             if (mrb.getSourceLocation() != null) {
-                jo.put("source", mrb.getSourceLocation());
+                jo.put("source", extractSourceLocationNoLineNumber(mrb.getSourceLocation()));
+                Integer line = extractSourceLocationLineNumber(mrb.getSourceLocation());
+                if (line != null) {
+                    jo.put("line", line);
+                }
             }
             if (mrb.getDescription() != null) {
                 jo.put("description", mrb.getDescription());
@@ -122,7 +127,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
                         = dumper.dumpStructure(getCamelContext(), mrb.getRouteId(), "true".equalsIgnoreCase(brief));
-                List<JsonObject> code = dumpAsJSon(lines);
+                JsonArray code = dumpAsJSon(lines);
                 jo.put("code", code);
             } catch (Exception e) {
                 // ignore
@@ -173,8 +178,8 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         return o1.getRouteId().compareTo(o2.getRouteId());
     }
 
-    private static List<JsonObject> dumpAsJSon(List<ModelDumpLine> lines) {
-        List<JsonObject> code = new ArrayList<>();
+    private static JsonArray dumpAsJSon(List<ModelDumpLine> lines) {
+        JsonArray code = new JsonArray();
         int counter = 0;
         for (var line : lines) {
             counter++;

@@ -54,8 +54,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install requests packaging colorama
+          pip install --only-binary :all: --require-hashes -r .github/actions/check-container-upgrade/requirements.txt
 
       - name: Check container versions
         id: version_check

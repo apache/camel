@@ -279,7 +279,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return        the service if found or null if none found
      */
     @Nullable
-    Service hasService(java.util.function.Predicate<Service> filter);
+    Service hasService(Predicate<Service> filter);
 
     /**
      * Has the given service type already been added to this CamelContext?

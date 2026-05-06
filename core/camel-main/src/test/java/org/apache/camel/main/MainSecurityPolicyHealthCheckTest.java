@@ -16,11 +16,13 @@
  */
 package org.apache.camel.main;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.impl.health.SecurityPolicyHealthCheck;
+import org.apache.camel.util.SecurityViolation;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -90,8 +92,8 @@ public class MainSecurityPolicyHealthCheckTest {
 
             // create result with a fail-level violation
             SecurityPolicyResult policyResult = new SecurityPolicyResult(
-                    java.util.List.of(
-                            new org.apache.camel.util.SecurityViolation(
+                    List.of(
+                            new SecurityViolation(
                                     "insecure:ssl", "camel.ssl.trustAllCertificates",
                                     "Insecure SSL", "fail")));
             ctx.getCamelContextExtension().addContextPlugin(SecurityPolicyResult.class, policyResult);

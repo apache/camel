@@ -52,6 +52,7 @@ import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -254,7 +255,7 @@ public class FilesOperations extends NormalizedOperations {
         boolean success;
         GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange
                 .getProperty(FileComponent.FILE_EXCHANGE_FILE);
-        org.apache.camel.util.ObjectHelper.notNull(target,
+        ObjectHelper.notNull(target,
                 "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
         String path = FileUtil.onlyPath(name);
@@ -297,7 +298,7 @@ public class FilesOperations extends NormalizedOperations {
             // use relative filename in local work directory
             GenericFile<ShareFileItem> target = (GenericFile<ShareFileItem>) exchange
                     .getProperty(FileComponent.FILE_EXCHANGE_FILE);
-            org.apache.camel.util.ObjectHelper.notNull(target,
+            ObjectHelper.notNull(target,
                     "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             String relativeName = target.getRelativeFilePath();
 

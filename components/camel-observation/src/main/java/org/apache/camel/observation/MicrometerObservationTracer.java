@@ -67,7 +67,7 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
     }
 
     private Observation.Context spanKindToContextOnExtract(
-            org.apache.camel.tracing.SpanKind kind, SpanDecorator sd, Exchange exchange) {
+            SpanKind kind, SpanDecorator sd, Exchange exchange) {
         ExtractAdapter adapter = sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding);
         switch (kind) {
             case PRODUCER:
@@ -96,7 +96,7 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
     }
 
     private Observation.Context spanKindToContextOnInject(
-            org.apache.camel.tracing.SpanKind kind, InjectAdapter adapter, Exchange exchange) {
+            SpanKind kind, InjectAdapter adapter, Exchange exchange) {
         switch (kind) {
             case SPAN_KIND_CLIENT:
                 RequestReplySenderContext<Object, Message> senderContext
@@ -180,7 +180,7 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
 
     @Override
     protected SpanAdapter startExchangeBeginSpan(
-            Exchange exchange, SpanDecorator sd, String operationName, org.apache.camel.tracing.SpanKind kind,
+            Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind,
             SpanAdapter parent) {
         boolean parentPresent = parent != null;
         Observation.Context context = spanKindToContextOnExtract(kind, sd, exchange);

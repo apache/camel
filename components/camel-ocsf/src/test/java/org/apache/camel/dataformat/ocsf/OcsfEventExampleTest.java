@@ -19,6 +19,8 @@ package org.apache.camel.dataformat.ocsf;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -73,7 +75,7 @@ public class OcsfEventExampleTest extends CamelTestSupport {
         assertThat(finding.getFindingInfo().getTitle()).contains("CryptoCurrency");
         assertThat(finding.getFindingInfo().getDesc()).contains("Bitcoin-related activity");
 
-        // Verify MITRE ATT&CK mapping (attacks are in FindingInfo in OCSF 1.7.0)
+        // Verify MITRE ATT&CK mapping (attacks are in FindingInfo in OCSF 1.8.0)
         assertThat(finding.getFindingInfo().getAttacks()).hasSize(1);
         Attack attack = finding.getFindingInfo().getAttacks().get(0);
         assertThat(attack.getTactic().getName()).isEqualTo("Impact");
@@ -98,7 +100,7 @@ public class OcsfEventExampleTest extends CamelTestSupport {
 
         // Verify cloud info in additionalProperties (cloud is not a base event field)
         @SuppressWarnings("unchecked")
-        java.util.Map<String, Object> cloud = (java.util.Map<String, Object>) finding.getAdditionalProperties().get("cloud");
+        Map<String, Object> cloud = (Map<String, Object>) finding.getAdditionalProperties().get("cloud");
         assertThat(cloud.get("provider")).isEqualTo("AWS");
         assertThat(cloud.get("region")).isEqualTo("us-east-1");
     }
@@ -146,7 +148,7 @@ public class OcsfEventExampleTest extends CamelTestSupport {
         info.setLastSeenTime(1706198400000L);
         finding.setFindingInfo(info);
 
-        // MITRE ATT&CK mapping (attacks are set on FindingInfo in OCSF 1.7.0)
+        // MITRE ATT&CK mapping (attacks are set on FindingInfo in OCSF 1.8.0)
         Attack attack = new Attack();
         Tactic tactic = new Tactic();
         tactic.setName("Initial Access");
@@ -161,8 +163,8 @@ public class OcsfEventExampleTest extends CamelTestSupport {
         info.setAttacks(Arrays.asList(attack));
 
         // Evidence (using Map since evidences is a list of generic objects in OCSF)
-        java.util.Map<String, Object> evidence = new java.util.HashMap<>();
-        evidence.put("http_request", java.util.Map.of(
+        Map<String, Object> evidence = new HashMap<>();
+        evidence.put("http_request", Map.of(
                 "method", "GET",
                 "url", "/api/users?id=1' UNION SELECT username,password FROM users--",
                 "user_agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -190,7 +192,7 @@ public class OcsfEventExampleTest extends CamelTestSupport {
 
         // Metadata
         Metadata metadata = new Metadata();
-        metadata.setVersion("1.7.0");
+        metadata.setVersion("1.8.0");
         Product product = new Product();
         product.setName("Application WAF");
         product.setVendorName("MyCompany");
@@ -236,7 +238,7 @@ public class OcsfEventExampleTest extends CamelTestSupport {
                     "time": 1706198400,
                     "message": "File created: /var/log/application.log",
                     "metadata": {
-                        "version": "1.7.0",
+                        "version": "1.8.0",
                         "product": {
                             "name": "File Integrity Monitor",
                             "vendor_name": "SecurityTools"
@@ -278,7 +280,7 @@ public class OcsfEventExampleTest extends CamelTestSupport {
 
         // Metadata is a proper object
         assertThat(event.getMetadata()).isNotNull();
-        assertThat(event.getMetadata().getVersion()).isEqualTo("1.7.0");
+        assertThat(event.getMetadata().getVersion()).isEqualTo("1.8.0");
         assertThat(event.getMetadata().getProduct().getName()).isEqualTo("File Integrity Monitor");
 
         // Fields not in OcsfEvent schema go to additionalProperties

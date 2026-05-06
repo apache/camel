@@ -31,8 +31,10 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
+import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.RequestLog;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
@@ -60,7 +62,7 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
         try {
             String host = endpoint.getHttpUri().getHost();
             int port = endpoint.getPort();
-            org.eclipse.jetty.server.HttpConfiguration httpConfig = new org.eclipse.jetty.server.HttpConfiguration();
+            HttpConfiguration httpConfig = new HttpConfiguration();
             httpConfig.setSendServerVersion(endpoint.isSendServerVersion());
             httpConfig.setSendDateHeader(endpoint.isSendDateHeader());
             if (endpoint.getIdleTimeout() != -1) {
@@ -85,14 +87,14 @@ public class JettyHttpComponent12 extends JettyHttpComponent {
             if (requestLog != null) {
                 server.setRequestLog(requestLog);
             }
-            HttpConnectionFactory httpFactory = new org.eclipse.jetty.server.HttpConnectionFactory(httpConfig);
+            HttpConnectionFactory httpFactory = new HttpConnectionFactory(httpConfig);
 
             ArrayList<ConnectionFactory> connectionFactories = new ArrayList<>();
-            ServerConnector result = new org.eclipse.jetty.server.ServerConnector(server);
+            ServerConnector result = new ServerConnector(server);
             if (sslcf != null) {
                 httpConfig.addCustomizer(secureRequestCustomizer != null
-                        ? secureRequestCustomizer : new org.eclipse.jetty.server.SecureRequestCustomizer());
-                SslConnectionFactory scf = new org.eclipse.jetty.server.SslConnectionFactory(
+                        ? secureRequestCustomizer : new SecureRequestCustomizer());
+                SslConnectionFactory scf = new SslConnectionFactory(
                         sslcf,
                         httpFactory.getProtocol());
                 connectionFactories.add(scf);

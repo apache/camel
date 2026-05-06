@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import jakarta.annotation.Resource;
+import jakarta.jws.WebService;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
@@ -34,13 +35,14 @@ import org.w3c.dom.Node;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
+import org.apache.cxf.outofband.header.ObjectFactory;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@jakarta.jws.WebService(serviceName = "HeaderService",
-                        targetNamespace = "http://apache.org/camel/cxf/soap/headers",
-                        endpointInterface = "org.apache.camel.component.cxf.soap.headers.HeaderTester")
+@WebService(serviceName = "HeaderService",
+            targetNamespace = "http://apache.org/camel/cxf/soap/headers",
+            endpointInterface = "org.apache.camel.component.cxf.soap.headers.HeaderTester")
 
 public class HeaderTesterImpl implements HeaderTester {
     private static final Logger LOG = LoggerFactory.getLogger(HeaderTesterImpl.class);
@@ -200,7 +202,7 @@ public class HeaderTesterImpl implements HeaderTester {
                     Header hdr1 = (Header) hdr;
                     try {
                         JAXBElement<?> job
-                                = (JAXBElement<?>) JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
+                                = (JAXBElement<?>) JAXBContext.newInstance(ObjectFactory.class)
                                         .createUnmarshaller()
                                         .unmarshal((Node) hdr1.getObject());
                         OutofBandHeader ob = (OutofBandHeader) job.getValue();

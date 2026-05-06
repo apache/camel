@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -309,7 +310,7 @@ public class BlobOperations {
         // Then check body - only return file path if body is File/Path/String (not InputStream)
         Object body = exchange.getIn().getBody();
 
-        if (body instanceof java.nio.file.Path path) {
+        if (body instanceof Path path) {
             return path.toAbsolutePath().toString();
         }
         if (body instanceof File file) {

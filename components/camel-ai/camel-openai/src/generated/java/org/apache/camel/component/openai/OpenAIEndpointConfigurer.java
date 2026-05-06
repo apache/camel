@@ -25,6 +25,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": target.getConfiguration().setAdditionalBodyProperty(property(camelContext, java.util.Map.class, value)); return true;
+        case "additionalresponseheader":
+        case "additionalResponseHeader": target.getConfiguration().setAdditionalResponseHeader(property(camelContext, java.util.Map.class, value)); return true;
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "audiolanguage":
@@ -120,6 +122,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.util.Map.class;
+        case "additionalresponseheader":
+        case "additionalResponseHeader": return java.util.Map.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "audiolanguage":
@@ -216,6 +220,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return target.getConfiguration().getAdditionalBodyProperty();
+        case "additionalresponseheader":
+        case "additionalResponseHeader": return target.getConfiguration().getAdditionalResponseHeader();
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
         case "audiolanguage":
@@ -311,6 +317,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalbodyproperty":
         case "additionalBodyProperty": return java.lang.Object.class;
+        case "additionalresponseheader":
+        case "additionalResponseHeader": return java.lang.Object.class;
         case "mcpserver":
         case "mcpServer": return java.lang.Object.class;
         default: return null;

@@ -16,10 +16,12 @@
  */
 package org.apache.camel.opentelemetry2.mock;
 
+import org.apache.camel.telemetry.decorators.AbstractHttpSpanDecorator;
+
 /**
  * Span decorator for mock HTTP component used in tests.
  */
-public class MockHttpSpanDecorator extends org.apache.camel.telemetry.decorators.AbstractHttpSpanDecorator {
+public class MockHttpSpanDecorator extends AbstractHttpSpanDecorator {
 
     @Override
     public String getComponent() {

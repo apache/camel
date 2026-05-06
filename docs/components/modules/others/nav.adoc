@@ -20,7 +20,6 @@
 *** xref:kamelet-main-support.adoc[Kamelet Main Support]
 *** xref:java-xml-io-dsl.adoc[XML Io Dsl]
 *** xref:yaml-dsl.adoc[YAML DSL]
-** xref:elytron.adoc[Elytron]
 ** xref:headersmap.adoc[Headersmap]
 ** xref:jandex.adoc[Jandex]
 ** xref:jasypt.adoc[Jasypt]

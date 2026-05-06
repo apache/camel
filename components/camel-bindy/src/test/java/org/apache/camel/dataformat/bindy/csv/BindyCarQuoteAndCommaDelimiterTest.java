@@ -90,7 +90,7 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                Class<?> type = org.apache.camel.dataformat.bindy.model.car.Car.class;
+                Class<?> type = Car.class;
                 BindyCsvDataFormat dataFormat = new BindyCsvDataFormat();
                 dataFormat.setClassType(type);
                 dataFormat.setLocale("en");

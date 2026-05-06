@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.iggy;
 
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +62,7 @@ public class IggyConfigurationTest {
 
     @Test
     public void testTlsEndpointUri() throws Exception {
-        org.apache.camel.impl.DefaultCamelContext context = new org.apache.camel.impl.DefaultCamelContext();
+        DefaultCamelContext context = new DefaultCamelContext();
         context.start();
         try {
             IggyEndpoint endpoint = context.getEndpoint(
@@ -102,7 +103,7 @@ public class IggyConfigurationTest {
 
     @Test
     public void testSslContextParametersEndpointUri() throws Exception {
-        org.apache.camel.impl.DefaultCamelContext context = new org.apache.camel.impl.DefaultCamelContext();
+        DefaultCamelContext context = new DefaultCamelContext();
         context.start();
         try {
             SSLContextParameters sslContextParameters = new SSLContextParameters();

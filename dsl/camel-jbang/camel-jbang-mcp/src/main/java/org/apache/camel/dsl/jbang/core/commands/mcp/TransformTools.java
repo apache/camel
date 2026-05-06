@@ -43,6 +43,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.xml.in.ModelParser;
+import org.apache.camel.yaml.out.ModelWriter;
 
 /**
  * MCP Tools for validating and transforming Camel routes using Quarkus MCP Server.
@@ -228,7 +229,7 @@ public class TransformTools {
         }
 
         StringWriter sw = new StringWriter();
-        new org.apache.camel.yaml.out.ModelWriter(sw).writeRoutesDefinition(routes);
+        new ModelWriter(sw).writeRoutesDefinition(routes);
         return sw.toString();
     }
 

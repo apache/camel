@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import javax.net.ssl.SSLHandshakeException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -62,8 +64,8 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTestSupport {
         assertTrue(response.isFailed(), "should have failed");
         assertNotNull(ex);
         // Netty may wrap SSLHandshakeException in DecoderException
-        boolean isSslError = ex instanceof javax.net.ssl.SSLHandshakeException
-                || (ex.getCause() instanceof javax.net.ssl.SSLHandshakeException);
+        boolean isSslError = ex instanceof SSLHandshakeException
+                || (ex.getCause() instanceof SSLHandshakeException);
         assertTrue(isSslError,
                 "Expected SSLHandshakeException (possibly wrapped) but got: " + ex.getClass().getName());
 

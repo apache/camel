@@ -33,7 +33,7 @@ public class TuiPlugin implements Plugin {
 
     @Override
     public void customize(CommandLine commandLine, CamelJBangMain main) {
-        var cmd = new picocli.CommandLine(new TuiCommand(main, classLoader))
+        var cmd = new CommandLine(new TuiCommand(main, classLoader))
                 .addSubcommand("monitor", new CommandLine(new CamelMonitor(main, classLoader)))
                 .addSubcommand("catalog", new CommandLine(new CamelCatalogTui(main, classLoader)));
 

@@ -133,7 +133,6 @@
         <module>camel-ehcache</module>
         <module>camel-elasticsearch</module>
         <module>camel-elasticsearch-rest-client</module>
-        <module>camel-elytron</module>
         <module>camel-event</module>
         <module>camel-exec</module>
         <module>camel-fastjson</module>

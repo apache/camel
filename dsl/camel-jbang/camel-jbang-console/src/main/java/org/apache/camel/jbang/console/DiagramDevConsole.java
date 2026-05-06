@@ -40,9 +40,29 @@ import org.apache.camel.util.json.JsonObject;
 public class DiagramDevConsole extends AbstractDevConsole {
 
     /**
+     * Filters the routes matching by route id, route uri, and source location
+     */
+    public static final String FILTER = "filter";
+
+    /**
      * Theme to use: dark, light, or text
      */
     public static final String THEME = "theme";
+
+    /**
+     * The size of the font (default 12)
+     */
+    public static final String FONT_SIZE = "fontSize";
+
+    /**
+     * The node width (default 180 pixels)
+     */
+    public static final String NODE_WIDTH = "nodeWidth";
+
+    /**
+     * Node label mode (code, description, both). Is default code.
+     */
+    public static final String NODE_LABEL = "nodeLabel";
 
     public DiagramDevConsole() {
         super("camel-jbang", "route-diagram", "Route Diagram", "Visual route diagrams");
@@ -52,12 +72,18 @@ public class DiagramDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         final StringJoiner sj = new StringJoiner("\n");
 
+        String filter = (String) options.getOrDefault(FILTER, "*");
         String theme = (String) options.get(THEME);
+        int fontSize
+                = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
+        int nodeWidth = Integer
+                .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
+        String nodeLabel = (String) options.getOrDefault(NODE_LABEL, "CODE");
 
         org.apache.camel.console.DevConsole dc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                         .resolveById("route-structure");
-        JsonObject root = (JsonObject) dc.call(MediaType.JSON);
+        JsonObject root = (JsonObject) dc.call(MediaType.JSON, Map.of("filter", filter));
         // parseRoutes expect a JsonArray and not ArrayList
         JsonArray arr = new JsonArray(root.getCollection("routes"));
         root.put("routes", arr);
@@ -69,7 +95,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
             sj.add("");
         } else {
             try {
-                BufferedImage image = renderImage(routes, theme);
+                BufferedImage image = renderImage(routes, theme, fontSize, nodeWidth, nodeLabel);
                 String base64 = imageToBase64(image, "png");
                 // For HTML embedding:
                 String html = String.format(
@@ -85,12 +111,18 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
+        String filter = (String) options.getOrDefault(FILTER, "*");
         String theme = (String) options.get(THEME);
+        int fontSize
+                = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
+        int nodeWidth = Integer
+                .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
+        String nodeLabel = (String) options.getOrDefault(NODE_LABEL, "CODE");
 
         org.apache.camel.console.DevConsole dc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                         .resolveById("route-structure");
-        JsonObject root = (JsonObject) dc.call(MediaType.JSON);
+        JsonObject root = (JsonObject) dc.call(MediaType.JSON, Map.of("filter", filter));
         // parseRoutes expect a JsonArray and not ArrayList
         JsonArray arr = new JsonArray(root.getCollection("routes"));
         root.put("routes", arr);
@@ -98,7 +130,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
         root = new JsonObject();
         try {
-            BufferedImage image = renderImage(routes, theme);
+            BufferedImage image = renderImage(routes, theme, fontSize, nodeWidth, nodeLabel);
             String base64 = imageToBase64(image, "png");
             root.put("image", base64);
         } catch (Exception e) {
@@ -108,9 +140,12 @@ public class DiagramDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    private static BufferedImage renderImage(List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme) {
-        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
-        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+    private static BufferedImage renderImage(
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth, String nodeLabel) {
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                nodeWidth * RouteDiagramLayoutEngine.SCALE, fontSize * RouteDiagramLayoutEngine.SCALE);
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
+                nodeWidth, fontSize, RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
 
         List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;

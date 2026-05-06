@@ -17,6 +17,88 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
+=== camel-jms
+
+JMS `ObjectMessage` support is now disabled by default. Java object serialization is a recurring source
+of security issues, and Camel JMS routes rarely use `ObjectMessage` in practice. The component will now
+refuse to create or read `jakarta.jms.ObjectMessage` instances unless the new `objectMessageEnabled`
+option is explicitly set to `true`.
+
+This affects the following endpoint/component options that rely on `ObjectMessage` internally:
+
+* `jmsMessageType=Object` (or sending a `Serializable` body that is auto-detected as `Object`)
+* `transferExchange=true`
+* `transferException=true`
+* receiving a JMS `ObjectMessage` produced by an external sender
+
+To restore the previous behavior, enable the option at the component or endpoint level:
+
+[source,properties]
+----
+camel.component.jms.objectMessageEnabled=true
+----
+
+Or, on a single endpoint:
+
+[source,text]
+----
+jms:queue:foo?objectMessageEnabled=true
+----
+
+=== camel-sjms / camel-sjms2
+
+The same default applies to `camel-sjms` (and `camel-sjms2`, which inherits from it): JMS `ObjectMessage`
+support is now disabled by default and gated by a new `objectMessageEnabled` option (default `false`)
+on `SjmsComponent` / `SjmsEndpoint`.
+
+This affects the same endpoint/component options as `camel-jms`:
+
+* `jmsMessageType=Object` (or sending a `Serializable` body that is auto-detected as `Object`)
+* `transferException=true`
+* receiving a JMS `ObjectMessage` produced by an external sender
+
+To restore the previous behavior, enable the option at the component or endpoint level:
+
+[source,properties]
+----
+camel.component.sjms.objectMessageEnabled=true
+camel.component.sjms2.objectMessageEnabled=true
+----
+
+Or, on a single endpoint:
+
+[source,text]
+----
+sjms:queue:foo?objectMessageEnabled=true
+sjms2:queue:foo?objectMessageEnabled=true
+----
+
+=== camel-hazelcast
+
+Hazelcast instances created and managed by Camel (when no user-supplied
+`Config` or `HazelcastInstance` is provided) now apply a default
+`JavaSerializationFilterConfig` on the `SerializationConfig` of the
+`Config` built by Camel. The default whitelists the class name prefixes
+`java.`, `javax.`, `org.apache.camel.` and blacklists `java.net.`.
+
+This affects:
+
+* `camel-hazelcast` component endpoints when neither `hazelcastInstance`,
+`hazelcastConfigUri`, nor a referenced `Config` is supplied
+* `HazelcastAggregationRepository` and `HazelcastIdempotentRepository`
+when no `hazelcastInstance` is supplied
+* `HazelcastUtil#newInstance()` (no-arg)
+
+A user-supplied `JavaSerializationFilterConfig` (set on the
+`SerializationConfig` of a `Config` provided via `hazelcastConfigUri`, a
+referenced `Config` bean, or already wired into a pre-built
+`HazelcastInstance`) is respected and is not overwritten.
+
+Applications that store classes outside the default whitelist on a
+Hazelcast topic, queue, map, list, set, or in one of the repositories
+above must provide their own `Config` with a
+`JavaSerializationFilterConfig` configured for their class names.
+
 == Upgrading from 4.18.0 to 4.18.1
 
 === camel-bom

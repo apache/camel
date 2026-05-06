@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/objects/group",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/group",
   "title": "Group",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.Group",
@@ -12,7 +12,7 @@
     },
     "type": {
       "type": "string",
-      "title": "Account Type"
+      "title": "Group Type"
     },
     "domain": {
       "type": "string",
@@ -32,6 +32,10 @@
       "items": {
         "type": "string"
       }
+    },
+    "uid_alt": {
+      "type": "string",
+      "title": "Alternate ID"
     }
   },
   "description": "The Group object."

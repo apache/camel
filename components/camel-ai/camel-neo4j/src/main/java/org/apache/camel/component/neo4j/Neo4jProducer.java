@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.neo4j;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -158,7 +159,7 @@ public class Neo4jProducer extends DefaultProducer {
 
                 if (!matchMap.isEmpty()) {
                     StringBuilder whereClause = new StringBuilder();
-                    queryParams = new java.util.HashMap<>();
+                    queryParams = new HashMap<>();
                     int paramIndex = 0;
 
                     for (Map.Entry<String, Object> entry : matchMap.entrySet()) {
@@ -256,7 +257,7 @@ public class Neo4jProducer extends DefaultProducer {
 
                 if (!matchMap.isEmpty()) {
                     StringBuilder whereClause = new StringBuilder();
-                    queryParams = new java.util.HashMap<>();
+                    queryParams = new HashMap<>();
                     int paramIndex = 0;
 
                     for (Map.Entry<String, Object> entry : matchMap.entrySet()) {

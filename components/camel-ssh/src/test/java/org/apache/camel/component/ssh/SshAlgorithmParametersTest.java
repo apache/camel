@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.sshd.client.ClientBuilder;
@@ -39,15 +38,13 @@ import org.apache.sshd.common.signature.BuiltinSignatures;
 import org.apache.sshd.common.signature.Signature;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SshAlgorithmParametersTest extends CamelTestSupport {
 
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
+    private final int port = 0;
 
     private String getSshEndpointURI() {
-        return "ssh://smx:smx@localhost:" + port.getPort() + "?timeout=3000" +
+        return "ssh://smx:smx@localhost:" + port + "?timeout=3000" +
                "&ciphers=aes192-ctr" +
                "&macs=hmac-sha1-etm@openssh.com,hmac-sha2-256,hmac-sha1" +
                "&kex=ecdh-sha2-nistp521" +
@@ -56,7 +53,7 @@ public class SshAlgorithmParametersTest extends CamelTestSupport {
     }
 
     private String getCustomClientSshEndpointURI() {
-        return "ssh://smx:smx@localhost:" + port.getPort() + "?timeout=3000&clientBuilder=#myClient";
+        return "ssh://smx:smx@localhost:" + port + "?timeout=3000&clientBuilder=#myClient";
     }
 
     @Override

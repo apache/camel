@@ -33,6 +33,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
+import org.jline.utils.Colors;
 
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCALE;
@@ -143,9 +144,9 @@ public class RouteDiagramRenderer {
                     return null;
                 }
             }
-            Integer idx = org.jline.utils.Colors.rgbColor(value);
+            Integer idx = Colors.rgbColor(value);
             if (idx != null) {
-                return new Color(org.jline.utils.Colors.rgbColor(idx.intValue()));
+                return new Color(Colors.rgbColor(idx.intValue()));
             }
             return null;
         }

@@ -43,7 +43,7 @@ public class DrivePermissionsIT extends AbstractGoogleDriveTestSupport {
         String fileId = testFile.getId();
 
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.model.PermissionList result = requestBody("direct://LIST", fileId);
+        final PermissionList result = requestBody("direct://LIST", fileId);
 
         assertNotNull(result, "list result");
         LOG.debug("list: {}", result);

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -68,7 +69,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
     String output;
 
     @CommandLine.Option(names = { "--theme", "--colors" },
-                        description = "Color theme preset (dark, light, transparent) or custom colors "
+                        description = "Color theme preset (dark, light, transparent, text) or custom colors "
                                       + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
                                       + "Use bg= for transparent. Can also be set via DIAGRAM_COLORS env var.",
@@ -138,7 +139,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
         System.setProperty("java.awt.headless", "true");
 
         String colorSpec = System.getenv("DIAGRAM_COLORS");
-        DiagramColors colors = DiagramColors.parse(colorSpec != null ? colorSpec : theme);
+        DiagramColors colors = !"text".equals(theme) ? DiagramColors.parse(colorSpec != null ? colorSpec : theme) : null;
 
         Path outputFile;
         int exit = 0;
@@ -193,6 +194,13 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
                     engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding());
 
+            if ("text".equals(theme)) {
+                for (String line : renderer.printTextDiagram(routes, labelMode)) {
+                    printer().println(line);
+                }
+                return 0;
+            }
+
             List<LayoutRoute> layoutRoutes = new ArrayList<>();
             int currentY = RouteDiagramLayoutEngine.PADDING;
             for (RouteInfo route : routes) {
@@ -201,7 +209,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                 currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
             }
 
-            java.awt.image.BufferedImage image;
+            BufferedImage image;
             try {
                 image = renderer.renderDiagram(layoutRoutes, currentY, colors);
             } catch (IllegalStateException e) {
@@ -242,7 +250,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                     } catch (IOException | UnsupportedOperationException e) {
                         printer().println("Failed to display diagram in terminal: " + e.getMessage());
                         printer().println("Falling back to text diagram.");
-                        for (String line : renderer.printTextDiagram(routes)) {
+                        for (String line : renderer.printTextDiagram(routes, labelMode)) {
                             printer().println(line);
                         }
                     }

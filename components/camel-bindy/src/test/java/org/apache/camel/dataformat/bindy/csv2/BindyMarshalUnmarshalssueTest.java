@@ -56,11 +56,11 @@ public class BindyMarshalUnmarshalssueTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .marshal().bindy(BindyType.Csv, WeatherModel.class)
                         .to("direct:middle");
 
                 from("direct:middle")
-                        .unmarshal(new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.csv2.WeatherModel.class))
+                        .unmarshal(new BindyCsvDataFormat(WeatherModel.class))
                         .to("mock:result");
             }
         };

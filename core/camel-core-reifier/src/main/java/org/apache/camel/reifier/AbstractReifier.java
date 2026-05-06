@@ -39,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public abstract class AbstractReifier implements BeanRepository {
 
-    protected final org.apache.camel.Route route;
+    protected final Route route;
     protected final CamelContext camelContext;
 
     protected AbstractReifier(Route route) {

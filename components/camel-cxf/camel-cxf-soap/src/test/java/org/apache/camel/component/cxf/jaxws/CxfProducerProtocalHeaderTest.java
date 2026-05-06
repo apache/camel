@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -82,7 +83,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
         Exchange exchange = sendSimpleMessage("cxf://http://localhost:" + port.getPort()
                                               + "/CxfProducerProtocalHeaderTest/user"
                                               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService");
-        org.apache.camel.Message out = exchange.getMessage();
+        Message out = exchange.getMessage();
         String result = out.getBody(String.class);
         assertEquals("echo " + "Hello World!", result, "reply body on Camel");
     }

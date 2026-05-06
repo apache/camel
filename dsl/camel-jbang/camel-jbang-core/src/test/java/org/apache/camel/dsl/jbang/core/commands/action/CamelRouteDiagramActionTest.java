@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +32,7 @@ class CamelRouteDiagramActionTest {
 
     @Test
     void testParseRoutesEmpty() {
-        org.apache.camel.util.json.JsonObject jo = new org.apache.camel.util.json.JsonObject();
+        JsonObject jo = new JsonObject();
         CamelRouteDiagramAction action = new CamelRouteDiagramAction(null);
         List<RouteInfo> routes = action.parseRoutes(jo);
         assertTrue(routes.isEmpty());
@@ -38,28 +40,28 @@ class CamelRouteDiagramActionTest {
 
     @Test
     void testParseRoutesWithData() {
-        org.apache.camel.util.json.JsonObject line1 = new org.apache.camel.util.json.JsonObject();
+        JsonObject line1 = new JsonObject();
         line1.put("type", "from");
         line1.put("code", "timer:tick");
         line1.put("level", 0);
 
-        org.apache.camel.util.json.JsonObject line2 = new org.apache.camel.util.json.JsonObject();
+        JsonObject line2 = new JsonObject();
         line2.put("type", "to");
         line2.put("code", "log:a");
         line2.put("level", 1);
 
-        org.apache.camel.util.json.JsonArray code = new org.apache.camel.util.json.JsonArray();
+        JsonArray code = new JsonArray();
         code.add(line1);
         code.add(line2);
 
-        org.apache.camel.util.json.JsonObject routeObj = new org.apache.camel.util.json.JsonObject();
+        JsonObject routeObj = new JsonObject();
         routeObj.put("routeId", "route1");
         routeObj.put("code", code);
 
-        org.apache.camel.util.json.JsonArray routesArr = new org.apache.camel.util.json.JsonArray();
+        JsonArray routesArr = new JsonArray();
         routesArr.add(routeObj);
 
-        org.apache.camel.util.json.JsonObject jo = new org.apache.camel.util.json.JsonObject();
+        JsonObject jo = new JsonObject();
         jo.put("routes", routesArr);
 
         CamelRouteDiagramAction action = new CamelRouteDiagramAction(null);
@@ -74,29 +76,29 @@ class CamelRouteDiagramActionTest {
 
     @Test
     void testParseRoutesWithDescription() {
-        org.apache.camel.util.json.JsonObject line1 = new org.apache.camel.util.json.JsonObject();
+        JsonObject line1 = new JsonObject();
         line1.put("type", "from");
         line1.put("code", "timer:tick?period=1000");
         line1.put("description", "Poll every second");
         line1.put("level", 0);
 
-        org.apache.camel.util.json.JsonObject line2 = new org.apache.camel.util.json.JsonObject();
+        JsonObject line2 = new JsonObject();
         line2.put("type", "to");
         line2.put("code", "log:a");
         line2.put("level", 1);
 
-        org.apache.camel.util.json.JsonArray code = new org.apache.camel.util.json.JsonArray();
+        JsonArray code = new JsonArray();
         code.add(line1);
         code.add(line2);
 
-        org.apache.camel.util.json.JsonObject routeObj = new org.apache.camel.util.json.JsonObject();
+        JsonObject routeObj = new JsonObject();
         routeObj.put("routeId", "route1");
         routeObj.put("code", code);
 
-        org.apache.camel.util.json.JsonArray routesArr = new org.apache.camel.util.json.JsonArray();
+        JsonArray routesArr = new JsonArray();
         routesArr.add(routeObj);
 
-        org.apache.camel.util.json.JsonObject jo = new org.apache.camel.util.json.JsonObject();
+        JsonObject jo = new JsonObject();
         jo.put("routes", routesArr);
 
         CamelRouteDiagramAction action = new CamelRouteDiagramAction(null);

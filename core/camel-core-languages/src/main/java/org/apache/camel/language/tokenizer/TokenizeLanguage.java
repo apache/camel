@@ -21,6 +21,7 @@ import java.util.Iterator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.IteratorConvertTo;
 import org.apache.camel.support.SingleInputTypedLanguageSupport;
@@ -38,7 +39,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
  * The default mode supports the <tt>headerName</tt> and <tt>regex</tt> options. Where as the pair mode only supports
  * <tt>token</tt> and <tt>endToken</tt>. And the <tt>xml</tt> mode supports the <tt>inheritNamespaceTagName</tt> option.
  */
-@org.apache.camel.spi.annotations.Language("tokenize")
+@Language("tokenize")
 public class TokenizeLanguage extends SingleInputTypedLanguageSupport {
 
     @Override

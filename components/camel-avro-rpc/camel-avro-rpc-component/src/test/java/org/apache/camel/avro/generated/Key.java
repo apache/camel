@@ -21,14 +21,21 @@
  */
 package org.apache.camel.avro.generated;
 
+import org.apache.avro.AvroRuntimeException;
+import org.apache.avro.Schema;
+import org.apache.avro.data.RecordBuilder;
+import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.specific.SpecificRecordBase;
+import org.apache.avro.specific.SpecificRecordBuilderBase;
+
 @SuppressWarnings("all")
-public class Key extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-    public static final org.apache.avro.Schema SCHEMA$ = org.apache.avro.Schema.parse(
+public class Key extends SpecificRecordBase implements SpecificRecord {
+    public static final Schema SCHEMA$ = Schema.parse(
             "{\"type\":\"record\",\"name\":\"Key\",\"namespace\":\"org.apache.camel.avro.generated\",\"fields\":[{\"name\":\"key\",\"type\":\"string\"}]}");
     @Deprecated
     public java.lang.CharSequence key;
 
-    public org.apache.avro.Schema getSchema() {
+    public Schema getSchema() {
         return SCHEMA$;
     }
 
@@ -38,7 +45,7 @@ public class Key extends org.apache.avro.specific.SpecificRecordBase implements 
             case 0:
                 return key;
             default:
-                throw new org.apache.avro.AvroRuntimeException("Bad index");
+                throw new AvroRuntimeException("Bad index");
         }
     }
 
@@ -50,7 +57,7 @@ public class Key extends org.apache.avro.specific.SpecificRecordBase implements 
                 key = (java.lang.CharSequence) value$;
                 break;
             default:
-                throw new org.apache.avro.AvroRuntimeException("Bad index");
+                throw new AvroRuntimeException("Bad index");
         }
     }
 
@@ -71,41 +78,41 @@ public class Key extends org.apache.avro.specific.SpecificRecordBase implements 
     }
 
     /** Creates a new Key RecordBuilder */
-    public static org.apache.camel.avro.generated.Key.Builder newBuilder() {
-        return new org.apache.camel.avro.generated.Key.Builder();
+    public static Key.Builder newBuilder() {
+        return new Key.Builder();
     }
 
     /** Creates a new Key RecordBuilder by copying an existing Builder */
-    public static org.apache.camel.avro.generated.Key.Builder newBuilder(org.apache.camel.avro.generated.Key.Builder other) {
-        return new org.apache.camel.avro.generated.Key.Builder(other);
+    public static Key.Builder newBuilder(Key.Builder other) {
+        return new Key.Builder(other);
     }
 
     /** Creates a new Key RecordBuilder by copying an existing Key instance */
-    public static org.apache.camel.avro.generated.Key.Builder newBuilder(org.apache.camel.avro.generated.Key other) {
-        return new org.apache.camel.avro.generated.Key.Builder(other);
+    public static Key.Builder newBuilder(Key other) {
+        return new Key.Builder(other);
     }
 
     /**
      * RecordBuilder for Key instances.
      */
-    public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<Key>
-            implements org.apache.avro.data.RecordBuilder<Key> {
+    public static class Builder extends SpecificRecordBuilderBase<Key>
+            implements RecordBuilder<Key> {
 
         private java.lang.CharSequence key;
 
         /** Creates a new Builder */
         private Builder() {
-            super(org.apache.camel.avro.generated.Key.SCHEMA$);
+            super(Key.SCHEMA$);
         }
 
         /** Creates a Builder by copying an existing Builder */
-        private Builder(org.apache.camel.avro.generated.Key.Builder other) {
+        private Builder(Key.Builder other) {
             super(other);
         }
 
         /** Creates a Builder by copying an existing Key instance */
-        private Builder(org.apache.camel.avro.generated.Key other) {
-            super(org.apache.camel.avro.generated.Key.SCHEMA$);
+        private Builder(Key other) {
+            super(Key.SCHEMA$);
             if (isValidValue(fields()[0], other.key)) {
                 this.key = data().deepCopy(fields()[0].schema(), other.key);
                 fieldSetFlags()[0] = true;
@@ -118,7 +125,7 @@ public class Key extends org.apache.avro.specific.SpecificRecordBase implements 
         }
 
         /** Sets the value of the 'key' field */
-        public org.apache.camel.avro.generated.Key.Builder setKey(java.lang.CharSequence value) {
+        public Key.Builder setKey(java.lang.CharSequence value) {
             validate(fields()[0], value);
             this.key = value;
             fieldSetFlags()[0] = true;
@@ -131,7 +138,7 @@ public class Key extends org.apache.avro.specific.SpecificRecordBase implements 
         }
 
         /** Clears the value of the 'key' field */
-        public org.apache.camel.avro.generated.Key.Builder clearKey() {
+        public Key.Builder clearKey() {
             key = null;
             fieldSetFlags()[0] = false;
             return this;
@@ -144,7 +151,7 @@ public class Key extends org.apache.avro.specific.SpecificRecordBase implements 
                 record.key = fieldSetFlags()[0] ? this.key : (java.lang.CharSequence) defaultValue(fields()[0]);
                 return record;
             } catch (Exception e) {
-                throw new org.apache.avro.AvroRuntimeException(e);
+                throw new AvroRuntimeException(e);
             }
         }
     }

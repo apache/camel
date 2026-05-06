@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.undertow;
 
+import io.undertow.util.HttpString;
 import org.apache.camel.Exchange;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 
@@ -27,7 +28,7 @@ public class UndertowHeaderFilterStrategy extends HttpHeaderFilterStrategy {
 
     @Override
     public boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange) {
-        boolean skip = io.undertow.util.HttpString.tryFromString(headerName) == null;
+        boolean skip = HttpString.tryFromString(headerName) == null;
         if (skip) {
             // skip all not valid headers by undertow rules
             return true;

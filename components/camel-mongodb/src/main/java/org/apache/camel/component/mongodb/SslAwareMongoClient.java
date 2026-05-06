@@ -18,6 +18,7 @@ package org.apache.camel.component.mongodb;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -81,7 +82,7 @@ public class SslAwareMongoClient implements MongoClient {
                                 throw new RuntimeException("Error instantiating trust all SSL context.", e);
                             }
                             try {
-                                sc.init(null, trustAllCerts, new java.security.SecureRandom());
+                                sc.init(null, trustAllCerts, new SecureRandom());
                             } catch (KeyManagementException e) {
                                 throw new RuntimeException("Error instantiating trust all SSL context.", e);
                             }

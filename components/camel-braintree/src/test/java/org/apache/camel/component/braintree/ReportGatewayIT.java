@@ -19,6 +19,7 @@ package org.apache.camel.component.braintree;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.braintreegateway.Result;
 import com.braintreegateway.TransactionLevelFeeReport;
 import com.braintreegateway.TransactionLevelFeeReportRequest;
 import org.apache.camel.builder.RouteBuilder;
@@ -61,7 +62,7 @@ public class ReportGatewayIT extends AbstractBraintreeTestSupport {
                 .date(reportDate)
                 .merchantAccountId(merchantAccountId);
 
-        final com.braintreegateway.Result<TransactionLevelFeeReport> result = requestBody(
+        final Result<TransactionLevelFeeReport> result = requestBody(
                 "direct://TRANSACTIONLEVELFEES",
                 request);
 

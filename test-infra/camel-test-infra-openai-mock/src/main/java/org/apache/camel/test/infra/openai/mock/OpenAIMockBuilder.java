@@ -61,6 +61,13 @@ public class OpenAIMockBuilder {
         return this;
     }
 
+    public OpenAIMockBuilder replyWithReasoningContent(String reasoningContent) {
+        validateCurrentExpectation("replyWithReasoningContent()");
+        log.debug("Setting reasoning content: {}", reasoningContent);
+        currentExpectation.setReasoningContent(reasoningContent);
+        return this;
+    }
+
     public OpenAIMockBuilder replyWithToolContent(String customMessage) {
         validateCurrentExpectation("replyWithToolContent()");
         log.debug("Setting tool content response with custom message: {}", customMessage);

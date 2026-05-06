@@ -19,12 +19,13 @@ package org.apache.camel.component.camelevent;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * The Event component allows subscribing to Camel internal events such as route events and exchange events.
  */
-@org.apache.camel.spi.annotations.Component("event")
+@Component("event")
 public class CamelEventComponent extends DefaultComponent {
 
     public CamelEventComponent() {
