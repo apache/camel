@@ -28,6 +28,7 @@ import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 import org.apache.camel.spi.annotations.InfraService;
@@ -142,7 +143,7 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
     }
 
     private void waitForServerReady() throws IOException {
-        long deadline = System.nanoTime() + 30_000_000_000L; // 30 seconds
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(30);
         IOException lastException = null;
         while (System.nanoTime() < deadline) {
             try (Socket socket = new Socket()) {
