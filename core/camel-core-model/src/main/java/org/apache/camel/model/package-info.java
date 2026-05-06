@@ -19,7 +19,7 @@
  * rules.
  */
 @XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

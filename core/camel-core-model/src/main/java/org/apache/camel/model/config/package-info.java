@@ -19,7 +19,7 @@
  * Configuration</a> of the routing rules.
  */
 @XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model.config;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

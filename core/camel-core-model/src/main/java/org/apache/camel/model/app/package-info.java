@@ -21,7 +21,7 @@
  * but when Spring's {@code <beans>} concept feels appropriate.
  */
 @XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model.app;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

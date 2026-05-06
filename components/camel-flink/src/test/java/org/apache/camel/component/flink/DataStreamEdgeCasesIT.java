@@ -18,7 +18,6 @@ package org.apache.camel.component.flink;
 
 import java.util.Collections;
 
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;

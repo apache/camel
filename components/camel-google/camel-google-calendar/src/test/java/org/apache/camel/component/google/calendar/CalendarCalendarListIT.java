@@ -18,7 +18,6 @@ package org.apache.camel.component.google.calendar;
 
 import java.util.List;
 
-
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;

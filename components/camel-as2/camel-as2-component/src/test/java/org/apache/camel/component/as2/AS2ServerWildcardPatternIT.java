@@ -18,7 +18,6 @@ package org.apache.camel.component.as2;
 
 import java.security.cert.Certificate;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.*;

@@ -18,7 +18,6 @@ package org.apache.camel.openapi;
 
 import java.io.File;
 
-
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.apache.camel.BindToRegistry;

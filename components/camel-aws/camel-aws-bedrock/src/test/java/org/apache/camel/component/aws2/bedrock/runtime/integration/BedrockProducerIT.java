@@ -19,7 +19,6 @@ package org.apache.camel.component.aws2.bedrock.runtime.integration;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.*;
 import org.apache.camel.EndpointInject;

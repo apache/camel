@@ -20,7 +20,7 @@
  * <a href="http://camel.apache.org/xml-configuration.html">XML Configuration</a>.
  */
 @XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model.loadbalancer;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

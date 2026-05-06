@@ -19,7 +19,7 @@
  * The JAXB POJOs for the REST DSL
  */
 @XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model.rest;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

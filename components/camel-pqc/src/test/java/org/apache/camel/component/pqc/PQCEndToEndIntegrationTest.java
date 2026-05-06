@@ -21,9 +21,9 @@ import java.security.KeyPair;
 import java.security.Security;
 import java.security.Signature;
 
-import org.apache.camel.BindToRegistry;
-
 import javax.crypto.KeyGenerator;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;

@@ -25,11 +25,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
-import org.apache.camel.util.ObjectHelper;
+
 import org.w3c.dom.Node;
 
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Class generating Templates for a given schematron rules

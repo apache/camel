@@ -18,7 +18,7 @@
  * The JAXB POJOs for the <a href="https://camel.apache.org/manual/error-handler.html">Error Handler</a>.
  */
 @XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model.errorhandler;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

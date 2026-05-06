@@ -18,7 +18,6 @@ package org.apache.camel.component.iggy.client;
 
 import java.util.function.Consumer;
 
-
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;

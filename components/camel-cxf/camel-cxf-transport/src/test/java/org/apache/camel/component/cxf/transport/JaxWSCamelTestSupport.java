@@ -36,7 +36,6 @@ import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.transport.common.gzip.GZIPInInterceptor;
 import org.apache.cxf.transport.common.gzip.GZIPOutInterceptor;
-
 import org.junit.jupiter.api.BeforeEach;
 
 public class JaxWSCamelTestSupport extends CamelTestSupport {

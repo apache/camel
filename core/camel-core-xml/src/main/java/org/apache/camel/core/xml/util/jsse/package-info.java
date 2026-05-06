@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 @XmlSchema(
-                                       namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           namespace = "http://camel.apache.org/schema/spring",
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.core.xml.util.jsse;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

@@ -23,6 +23,7 @@
 package org.apache.camel.component.thrift.generated;
 
 import jakarta.annotation.Generated;
+
 import org.apache.thrift.TEnum;
 import org.apache.thrift.annotation.Nullable;
 

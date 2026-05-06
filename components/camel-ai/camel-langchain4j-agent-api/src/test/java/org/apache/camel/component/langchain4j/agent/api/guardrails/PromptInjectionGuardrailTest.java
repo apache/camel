@@ -18,7 +18,6 @@ package org.apache.camel.component.langchain4j.agent.api.guardrails;
 
 import java.util.regex.Pattern;
 
-
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.guardrail.InputGuardrailResult;
 import org.junit.jupiter.api.Test;

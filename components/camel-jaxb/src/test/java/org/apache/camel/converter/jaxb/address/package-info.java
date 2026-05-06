@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 @XmlSchema(namespace = "address.jaxb.converter.camel.apache.org",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.converter.jaxb.address;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

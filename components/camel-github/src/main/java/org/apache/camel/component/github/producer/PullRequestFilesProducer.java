@@ -18,7 +18,6 @@ package org.apache.camel.component.github.producer;
 
 import java.util.List;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;

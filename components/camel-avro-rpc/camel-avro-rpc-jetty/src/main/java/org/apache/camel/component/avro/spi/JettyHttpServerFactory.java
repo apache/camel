@@ -17,11 +17,11 @@
 package org.apache.camel.component.avro.spi;
 
 import java.io.IOException;
-import org.apache.camel.spi.annotations.JdkService;
 
 import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.jetty.HttpServer;
 import org.apache.avro.ipc.specific.SpecificResponder;
+import org.apache.camel.spi.annotations.JdkService;
 
 /**
  * Default implementation of Avro via http, which is based on Jetty http server. For more details see dependency

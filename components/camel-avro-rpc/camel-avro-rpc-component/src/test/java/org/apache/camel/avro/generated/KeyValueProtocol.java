@@ -23,7 +23,6 @@ package org.apache.camel.avro.generated;
 
 import java.io.IOException;
 
-
 import org.apache.avro.AvroRemoteException;
 import org.apache.avro.Protocol;
 

@@ -19,7 +19,7 @@
  * contents according to declared data types inside <a href="http://camel.apache.org/components.html">components</a>
  */
 @XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.model.validator;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

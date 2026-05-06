@@ -33,8 +33,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import jakarta.annotation.Generated;
+
 import org.apache.thrift.EncodingUtils;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TBaseHelper;

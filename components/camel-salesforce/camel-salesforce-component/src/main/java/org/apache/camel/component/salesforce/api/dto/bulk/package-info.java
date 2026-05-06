@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 @XmlSchema(namespace = "http://www.force.com/2009/06/asyncapi/dataload",
-                                       elementFormDefault = XmlNsForm.QUALIFIED)
+           elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
 import jakarta.xml.bind.annotation.XmlNsForm;

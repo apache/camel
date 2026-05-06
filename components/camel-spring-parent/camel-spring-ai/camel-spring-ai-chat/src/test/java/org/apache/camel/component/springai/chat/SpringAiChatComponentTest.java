@@ -18,7 +18,6 @@ package org.apache.camel.component.springai.chat;
 
 import java.util.List;
 
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
