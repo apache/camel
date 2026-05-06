@@ -93,7 +93,7 @@ public final class KafkaTestUtil {
     public static void createTopic(KafkaService service, String topic, int numPartitions) {
         try (AdminClient kafkaAdminClient = createAdminClient(service)) {
             NewTopic testTopic = new NewTopic(topic, numPartitions, CreateTopicsRequest.NO_REPLICATION_FACTOR);
-            kafkaAdminClient.createTopics(Collections.singleton(testTopic)).all().get(30L, TimeUnit.SECONDS);
+            kafkaAdminClient.createTopics(Collections.singleton(testTopic));
             KafkaFuture<TopicDescription> tdFuture
                     = kafkaAdminClient.describeTopics(Collections.singletonList(topic)).topicNameValues().get(topic);
 
