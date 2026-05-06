@@ -44,6 +44,16 @@ public class DiagramDevConsole extends AbstractDevConsole {
      */
     public static final String THEME = "theme";
 
+    /**
+     * The size of the font (default 12)
+     */
+    public static final String FONT_SIZE = "fontSize";
+
+    /**
+     * The node width (default 180 pixels)
+     */
+    public static final String NODE_WIDTH = "nodeWidth";
+
     public DiagramDevConsole() {
         super("camel-jbang", "route-diagram", "Route Diagram", "Visual route diagrams");
     }
@@ -53,6 +63,10 @@ public class DiagramDevConsole extends AbstractDevConsole {
         final StringJoiner sj = new StringJoiner("\n");
 
         String theme = (String) options.get(THEME);
+        int fontSize
+                = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
+        int nodeWidth = Integer
+                .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
 
         org.apache.camel.console.DevConsole dc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
@@ -69,7 +83,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
             sj.add("");
         } else {
             try {
-                BufferedImage image = renderImage(routes, theme);
+                BufferedImage image = renderImage(routes, theme, fontSize, nodeWidth);
                 String base64 = imageToBase64(image, "png");
                 // For HTML embedding:
                 String html = String.format(
@@ -86,6 +100,10 @@ public class DiagramDevConsole extends AbstractDevConsole {
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         String theme = (String) options.get(THEME);
+        int fontSize
+                = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
+        int nodeWidth = Integer
+                .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
 
         org.apache.camel.console.DevConsole dc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
@@ -98,7 +116,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
         root = new JsonObject();
         try {
-            BufferedImage image = renderImage(routes, theme);
+            BufferedImage image = renderImage(routes, theme, fontSize, nodeWidth);
             String base64 = imageToBase64(image, "png");
             root.put("image", base64);
         } catch (Exception e) {
@@ -108,8 +126,10 @@ public class DiagramDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    private static BufferedImage renderImage(List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme) {
-        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+    private static BufferedImage renderImage(
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth) {
+        RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                nodeWidth * RouteDiagramLayoutEngine.SCALE, fontSize * RouteDiagramLayoutEngine.SCALE);
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
 
         List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
