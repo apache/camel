@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.lumberjack.io;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
 
 import javax.net.ssl.SSLContext;
@@ -88,6 +89,10 @@ public final class LumberjackServer {
         channel = serverBootstrap.bind(host, port).sync().channel();
 
         LOG.info("LUMBERJACK server is started (host={}, port={}).", host, port);
+    }
+
+    public int getLocalPort() {
+        return channel != null ? ((InetSocketAddress) channel.localAddress()).getPort() : -1;
     }
 
     /**

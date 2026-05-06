@@ -19,29 +19,24 @@ package org.apache.camel.component.ssh;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.SshServer;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class SshComponentTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    AvailablePortFinder.Port portHolder = AvailablePortFinder.find();
     protected SshServer sshd;
     protected int port;
 
     @Override
     public void doPreSetup() throws Exception {
-        port = portHolder.getPort();
-
         sshd = SshServer.setUpDefaultServer();
-        sshd.setPort(port);
+        sshd.setPort(0);
         sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get(getHostKey())));
         sshd.setCommandFactory(new TestEchoCommandFactory());
         sshd.setPasswordAuthenticator((username, password, session) -> true);
         sshd.setPublickeyAuthenticator((username, key, session) -> true);
         sshd.start();
+        port = sshd.getPort();
     }
 
     protected String getHostKey() {
