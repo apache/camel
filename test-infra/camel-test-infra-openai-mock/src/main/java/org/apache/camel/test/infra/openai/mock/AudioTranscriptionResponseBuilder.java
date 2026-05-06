@@ -18,7 +18,6 @@ package org.apache.camel.test.infra.openai.mock;
 
 import java.util.List;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**

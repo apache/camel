@@ -1089,10 +1089,10 @@ public class CamelMonitor extends CamelCommand {
     // "2026-03-23 21:24:11.705  WARN 11283 --- [thread] logger : message"
     private static final Pattern LOG_PATTERN = Pattern.compile(
             "^(\\d{4}-\\d{2}-\\d{2})[T ](\\d{2}:\\d{2}:\\d{2}\\.\\d+)\\S*\\s+"
-                                                                                               + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
-                                                                                               + "\\d+\\s+---\\s+"
-                                                                                               + "\\[([^]]*)]\\s+"
-                                                                                               + "(\\S+)\\s*:\\s*(.*)$");
+                                                               + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
+                                                               + "\\d+\\s+---\\s+"
+                                                               + "\\[([^]]*)]\\s+"
+                                                               + "(\\S+)\\s*:\\s*(.*)$");
 
     private static LogEntry parseLogLine(String line) {
         LogEntry entry = new LogEntry();
