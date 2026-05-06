@@ -100,7 +100,6 @@
         <camunda-client-java-version>8.9.3</camunda-client-java-version>
         <cassandra-driver-version>4.19.2</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
-        <cglib-version>3.3.0</cglib-version>
         <chicory-version>1.7.5</chicory-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>4.10.1</citrus-version>
