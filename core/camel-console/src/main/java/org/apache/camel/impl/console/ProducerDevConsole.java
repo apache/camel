@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.mbean.ManagedProducerMBean;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "producer", displayName = "Producers", description = "Display information about Camel producers")
@@ -77,7 +76,7 @@ public class ProducerDevConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         final JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
         root.put("producers", list);
 
         MBeanServer mbeanServer = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();

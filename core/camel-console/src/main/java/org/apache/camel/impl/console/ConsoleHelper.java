@@ -28,6 +28,7 @@ import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -36,7 +37,7 @@ public final class ConsoleHelper {
     private ConsoleHelper() {
     }
 
-    public static List<JsonObject> loadSourceAsJson(CamelContext camelContext, String location) {
+    public static JsonArray loadSourceAsJson(CamelContext camelContext, String location) {
         if (location == null) {
             return null;
         }
@@ -51,11 +52,11 @@ public final class ConsoleHelper {
             // ignore
         }
 
-        return Collections.EMPTY_LIST;
+        return new JsonArray();
     }
 
-    public static List<JsonObject> loadSourceAsJson(Reader reader, Integer lineNumber) {
-        List<JsonObject> code = new ArrayList<>();
+    public static JsonArray loadSourceAsJson(Reader reader, Integer lineNumber) {
+        JsonArray code = new JsonArray();
         try {
             LineNumberReader lnr = new LineNumberReader(reader);
             int i = 0;
