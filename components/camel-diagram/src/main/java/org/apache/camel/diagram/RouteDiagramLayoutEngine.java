@@ -31,15 +31,14 @@ import java.util.Set;
 public class RouteDiagramLayoutEngine {
 
     public static final int SCALE = 2;
-    private static final int H_GAP = 30 * SCALE;
     public static final int V_GAP = 40 * SCALE;
     public static final int PADDING = 30 * SCALE;
     public static final int SCOPE_BOX_PAD = 14 * SCALE;
     private static final int LABEL_OFFSET = 24 * SCALE;
-    private static final int NODE_TEXT_PADDING = 16 * SCALE;
     private static final int MAX_WRAP_LINES = 3;
     public static final int DEFAULT_FONT_SIZE = 12;
     public static final int DEFAULT_BOX_WIDTH = 180;
+    private static final int MIN_BOX_WIDTH = 80;
     private static final int DEFAULT_NODE_HEIGHT = 32;
 
     public enum NodeLabelMode {
@@ -49,6 +48,8 @@ public class RouteDiagramLayoutEngine {
     }
 
     private final int nodeWidth;
+    private final int hGap;
+    private final int nodeTextPadding;
     private final int baseNodeHeight;
     private final FontMetrics fontMetrics;
     private final NodeLabelMode nodeLabelMode;
@@ -98,7 +99,10 @@ public class RouteDiagramLayoutEngine {
      * @param nodeLabelMode controls what text is displayed in node labels
      */
     public RouteDiagramLayoutEngine(int boxWidth, int fontSize, NodeLabelMode nodeLabelMode) {
-        this.nodeWidth = boxWidth * SCALE;
+        int clampedWidth = Math.max(boxWidth, MIN_BOX_WIDTH);
+        this.nodeWidth = clampedWidth * SCALE;
+        this.hGap = nodeWidth / 2;
+        this.nodeTextPadding = Math.max(nodeWidth * 16 / (DEFAULT_BOX_WIDTH * SCALE), 8 * SCALE);
         this.baseNodeHeight = Math.max(DEFAULT_NODE_HEIGHT, fontSize * DEFAULT_NODE_HEIGHT / DEFAULT_FONT_SIZE) * SCALE;
         this.nodeLabelMode = nodeLabelMode != null ? nodeLabelMode : NodeLabelMode.CODE;
         BufferedImage scratch = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -120,7 +124,7 @@ public class RouteDiagramLayoutEngine {
     }
 
     public int getNodeTextPadding() {
-        return NODE_TEXT_PADDING;
+        return nodeTextPadding;
     }
 
     public static class NodeInfo {
@@ -219,7 +223,7 @@ public class RouteDiagramLayoutEngine {
     }
 
     private List<String> wrapLabel(String label) {
-        int maxTextWidth = nodeWidth - NODE_TEXT_PADDING;
+        int maxTextWidth = nodeWidth - nodeTextPadding;
         if (fontMetrics.stringWidth(label) <= maxTextWidth) {
             return List.of(label);
         }
@@ -355,7 +359,7 @@ public class RouteDiagramLayoutEngine {
             int totalWidth = 0;
             for (int i = 0; i < node.children.size(); i++) {
                 if (i > 0) {
-                    totalWidth += H_GAP;
+                    totalWidth += hGap;
                 }
                 totalWidth += computeSubtreeWidth(node.children.get(i));
             }
@@ -430,7 +434,7 @@ public class RouteDiagramLayoutEngine {
                     adjustedY += SCOPE_BOX_PAD;
                 }
                 assignPositions(child, childX, adjustedY, child.subtreeWidth, lr);
-                childX += child.subtreeWidth + H_GAP;
+                childX += child.subtreeWidth + hGap;
             }
         } else {
             int curY = childY;
