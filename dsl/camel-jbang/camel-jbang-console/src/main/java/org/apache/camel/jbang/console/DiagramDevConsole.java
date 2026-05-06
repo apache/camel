@@ -54,6 +54,11 @@ public class DiagramDevConsole extends AbstractDevConsole {
      */
     public static final String NODE_WIDTH = "nodeWidth";
 
+    /**
+     * Node label mode (code, description, both). Is default code.
+     */
+    public static final String NODE_LABEL = "nodeLabel";
+
     public DiagramDevConsole() {
         super("camel-jbang", "route-diagram", "Route Diagram", "Visual route diagrams");
     }
@@ -67,6 +72,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
         int nodeWidth = Integer
                 .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
+        String nodeLabel = (String) options.getOrDefault(NODE_LABEL, "CODE");
 
         org.apache.camel.console.DevConsole dc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
@@ -83,7 +89,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
             sj.add("");
         } else {
             try {
-                BufferedImage image = renderImage(routes, theme, fontSize, nodeWidth);
+                BufferedImage image = renderImage(routes, theme, fontSize, nodeWidth, nodeLabel);
                 String base64 = imageToBase64(image, "png");
                 // For HTML embedding:
                 String html = String.format(
@@ -104,6 +110,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 = Integer.parseInt(options.getOrDefault(FONT_SIZE, "" + RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE).toString());
         int nodeWidth = Integer
                 .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
+        String nodeLabel = (String) options.getOrDefault(NODE_LABEL, "CODE");
 
         org.apache.camel.console.DevConsole dc
                 = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
@@ -116,7 +123,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
         root = new JsonObject();
         try {
-            BufferedImage image = renderImage(routes, theme, fontSize, nodeWidth);
+            BufferedImage image = renderImage(routes, theme, fontSize, nodeWidth, nodeLabel);
             String base64 = imageToBase64(image, "png");
             root.put("image", base64);
         } catch (Exception e) {
@@ -127,10 +134,11 @@ public class DiagramDevConsole extends AbstractDevConsole {
     }
 
     private static BufferedImage renderImage(
-            List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth) {
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth, String nodeLabel) {
         RouteDiagramRenderer renderer = new RouteDiagramRenderer(
                 nodeWidth * RouteDiagramLayoutEngine.SCALE, fontSize * RouteDiagramLayoutEngine.SCALE);
-        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
+                nodeWidth, fontSize, RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
 
         List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
