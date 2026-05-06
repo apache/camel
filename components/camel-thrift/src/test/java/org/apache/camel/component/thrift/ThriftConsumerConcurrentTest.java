@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
@@ -41,7 +40,6 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.layered.TFramedTransport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,15 +49,15 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class ThriftConsumerConcurrentTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumerConcurrentTest.class);
 
-    @RegisterExtension
-    AvailablePortFinder.Port thriftSyncPort = AvailablePortFinder.find();
-    @RegisterExtension
-    AvailablePortFinder.Port thriftAsyncPort = AvailablePortFinder.find();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int CONCURRENT_THREAD_COUNT = 30;
     private static final int ROUNDS_PER_THREAD_COUNT = 10;
 
     private static AtomicInteger idCounter = new AtomicInteger();
+
+    private int getPortForRoute(int index) {
+        return ((ThriftConsumer) context.getRoutes().get(index).getConsumer()).getLocalPort();
+    }
 
     public static Integer createId() {
         return idCounter.getAndIncrement();
@@ -75,7 +73,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
 
             @Override
             public void run() throws TTransportException {
-                TTransport transport = new TSocket("localhost", thriftSyncPort.getPort());
+                TTransport transport = new TSocket("localhost", getPortForRoute(0));
                 transport.open();
                 TProtocol protocol = new TBinaryProtocol(new TFramedTransport(transport));
                 Calculator.Client client = (new Calculator.Client.Factory()).getClient(protocol);
@@ -108,7 +106,7 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
             public void run() throws TTransportException, IOException, InterruptedException {
                 final CountDownLatch latch = new CountDownLatch(1);
 
-                TNonblockingTransport transport = new TNonblockingSocket("localhost", thriftAsyncPort.getPort());
+                TNonblockingTransport transport = new TNonblockingSocket("localhost", getPortForRoute(1));
                 Calculator.AsyncClient client
                         = (new Calculator.AsyncClient.Factory(new TAsyncClientManager(), new TBinaryProtocol.Factory()))
                                 .getAsyncClient(transport);
@@ -165,12 +163,10 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("thrift://localhost:" + thriftSyncPort.getPort()
-                     + "/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
+                from("thrift://localhost:0/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
                         .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
 
-                from("thrift://localhost:" + thriftAsyncPort.getPort()
-                     + "/org.apache.camel.component.thrift.generated.Calculator")
+                from("thrift://localhost:0/org.apache.camel.component.thrift.generated.Calculator")
                         .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
             }
         };
