@@ -761,6 +761,51 @@ class RouteDiagramTest {
         assertTrue(rejoined.contains("👨"), "ZWJ emoji must not be split");
     }
 
+    @Test
+    void testMinimumNodeWidthClamped() {
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(50, 12);
+        assertEquals(80 * RouteDiagramLayoutEngine.SCALE, engine.getNodeWidth(),
+                "Node width below 80 should be clamped to 80");
+    }
+
+    @Test
+    void testBranchGapScalesWithNodeWidth() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+        route.nodes.add(node("choice", "choice()", 1));
+        route.nodes.add(node("when", "when(a)", 2));
+        route.nodes.add(node("to", "log:a", 3));
+        route.nodes.add(node("otherwise", "otherwise()", 2));
+        route.nodes.add(node("to", "log:b", 3));
+
+        RouteDiagramLayoutEngine defaultEngine = new RouteDiagramLayoutEngine();
+        LayoutRoute defaultLr = defaultEngine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramLayoutEngine wideEngine = new RouteDiagramLayoutEngine(300, 12);
+        LayoutRoute wideLr = wideEngine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        LayoutNode defaultWhen = defaultLr.nodes.get(2);
+        LayoutNode defaultOtherwise = defaultLr.nodes.get(4);
+        int defaultGap = defaultOtherwise.x - (defaultWhen.x + defaultEngine.getNodeWidth());
+
+        LayoutNode wideWhen = wideLr.nodes.get(2);
+        LayoutNode wideOtherwise = wideLr.nodes.get(4);
+        int wideGap = wideOtherwise.x - (wideWhen.x + wideEngine.getNodeWidth());
+
+        assertTrue(wideGap > defaultGap,
+                "Branch gap should increase with wider nodes (default=" + defaultGap + ", wide=" + wideGap + ")");
+    }
+
+    @Test
+    void testNodeTextPaddingScalesWithNodeWidth() {
+        RouteDiagramLayoutEngine defaultEngine = new RouteDiagramLayoutEngine();
+        RouteDiagramLayoutEngine wideEngine = new RouteDiagramLayoutEngine(300, 12);
+
+        assertTrue(wideEngine.getNodeTextPadding() > defaultEngine.getNodeTextPadding(),
+                "Text padding should increase with wider nodes");
+    }
+
     private static NodeInfo node(String type, String code, int level) {
         return node(type, code, level, null);
     }
