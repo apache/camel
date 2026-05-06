@@ -347,11 +347,6 @@ cd src/main/script
 python3 generate-ocsf-schemas.py --version 1.8.0 --output ../resources/schema --clean
 ----
 
-NOTE: The script first tries to load the requested OCSF version from the
-bundled `ocsf-json-schema` Python package. If the version is not bundled
-yet (typical for the most recent OCSF release), the script automatically
-downloads the schema from `https://schema.ocsf.io/{version}/export/schema`.
-
 2. Build and test to verify the changes (Java classes are generated automatically during build):
 +
 [source,bash]
@@ -360,6 +355,11 @@ mvn clean test
 ----
 
 3. Commit the updated JSON schema files.
+
+NOTE: The script first tries to load the requested OCSF version from the
+bundled `ocsf-json-schema` Python package. If the version is not bundled
+yet (typical for the most recent OCSF release), the script automatically
+downloads the schema from `https://schema.ocsf.io/\{version}/export/schema`.
 
 === Script Options
 
