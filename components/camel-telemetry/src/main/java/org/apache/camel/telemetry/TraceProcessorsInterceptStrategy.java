@@ -57,7 +57,9 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         @Override
         public void process(Exchange exchange) throws Exception {
             String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
-            if (tracer.isTraceProcessors() && !tracer.exclude(processorName, exchange.getContext())) {
+            if ((isCoreProcessEnabled(tracer.isDisableCoreProcessors(), processorDefinition.getShortName()) ||
+                    isCustomProcessEnabled(tracer.isTraceProcessors(), processorDefinition.getShortName()))
+                    && !tracer.exclude(processorName, exchange.getContext())) {
                 tracer.beginProcessorSpan(exchange, processorName);
                 try {
                     processor.process(exchange);
@@ -73,7 +75,10 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
-            boolean isTraceProcessor = tracer.isTraceProcessors() && !tracer.exclude(processorName, exchange.getContext());
+            boolean isTraceProcessor
+                    = (isCoreProcessEnabled(tracer.isDisableCoreProcessors(), processorDefinition.getShortName()) ||
+                            isCustomProcessEnabled(tracer.isTraceProcessors(), processorDefinition.getShortName()))
+                            && !tracer.exclude(processorName, exchange.getContext());
             if (isTraceProcessor) {
                 try {
                     tracer.beginProcessorSpan(exchange, processorName);
@@ -105,4 +110,13 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         }
     }
 
+    private boolean isCoreProcessEnabled(boolean isDisableCoreProcessors, String processDefinitionShortName) {
+        // Any enabled core process which is not a "custom" processor.
+        return !isDisableCoreProcessors && !processDefinitionShortName.equals("process");
+    }
+
+    private boolean isCustomProcessEnabled(boolean isTraceProcessors, String processDefinitionShortName) {
+        // Any custom core process.
+        return isTraceProcessors && processDefinitionShortName.equals("process");
+    }
 }

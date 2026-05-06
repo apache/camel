@@ -22,20 +22,19 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.apache.camel.telemetry.mock.MockTrace;
 import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DisableEndpointTest extends ExchangeTestSupport {
+public class SpanBeanTest extends ExchangeTestSupport {
 
     MockTracer mockTracer;
 
@@ -43,9 +42,6 @@ public class DisableEndpointTest extends ExchangeTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         this.mockTracer = new MockTracer();
-        mockTracer.setTraceProcessors(true);
-        this.mockTracer.setDisableCoreProcessors(true);
-        mockTracer.setExcludePatterns("log*,to*,setVariable*");
         CamelContextAware.trySetCamelContext(mockTracer, context);
         mockTracer.init(context);
         return context;
@@ -59,36 +55,47 @@ public class DisableEndpointTest extends ExchangeTestSupport {
         checkTrace(traces.values().iterator().next());
     }
 
-    @Test
-    void testExcludedVariableIsPresent() throws InterruptedException {
-        MockEndpoint endpoint = context().getEndpoint("mock:variable", MockEndpoint.class);
-
-        endpoint.expectedMessageCount(1);
-        template.sendBody("direct:variable", "Test Message");
-        endpoint.assertIsSatisfied();
-        Exchange first = endpoint.getReceivedExchanges().get(0);
-        String myVar = first.getVariable("myVar", String.class);
-        Assertions.assertEquals("testValue", myVar);
-    }
-
     private void checkTrace(MockTrace trace) {
         List<Span> spans = trace.spans();
-        assertEquals(2, spans.size());
+        assertEquals(7, spans.size());
         // Cast to implementation object to be able to
         // inspect the status of the Span.
         MockSpanAdapter testProducer = (MockSpanAdapter) spans.get(0);
         MockSpanAdapter direct = (MockSpanAdapter) spans.get(1);
+        MockSpanAdapter innerLog = (MockSpanAdapter) spans.get(2);
+        MockSpanAdapter bean = (MockSpanAdapter) spans.get(3);
+        MockSpanAdapter beanMethod = (MockSpanAdapter) spans.get(4);
+        MockSpanAdapter log = (MockSpanAdapter) spans.get(5);
+        MockSpanAdapter innerToLog = (MockSpanAdapter) spans.get(6);
 
         // Validate span completion
         assertEquals("true", testProducer.getTag("isDone"));
         assertEquals("true", direct.getTag("isDone"));
+        assertEquals("true", innerLog.getTag("isDone"));
+        assertEquals("true", bean.getTag("isDone"));
+        assertEquals("true", beanMethod.getTag("isDone"));
+        assertEquals("true", log.getTag("isDone"));
+        assertEquals("true", innerToLog.getTag("isDone"));
 
         // Validate same trace
         assertEquals(testProducer.getTag("traceid"), direct.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), innerLog.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), log.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), bean.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), beanMethod.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), innerToLog.getTag("traceid"));
+
+        // Validate op
+        assertEquals(Op.EVENT_RECEIVED.toString(), direct.getTag("op"));
 
         // Validate hierarchy
         assertNull(testProducer.getTag("parentSpan"));
         assertEquals(testProducer.getTag("spanid"), direct.getTag("parentSpan"));
+        assertEquals(direct.getTag("spanid"), innerLog.getTag("parentSpan"));
+        assertEquals(direct.getTag("spanid"), log.getTag("parentSpan"));
+        assertEquals(direct.getTag("spanid"), bean.getTag("parentSpan"));
+        assertEquals(bean.getTag("spanid"), beanMethod.getTag("parentSpan"));
+        assertEquals(log.getTag("spanid"), innerToLog.getTag("parentSpan"));
     }
 
     @Override
@@ -96,16 +103,35 @@ public class DisableEndpointTest extends ExchangeTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                MyBean myBean = new MyBean();
+                this.getCamelContext().getRegistry().bind("myBean", myBean);
+
                 from("direct:start")
                         .routeId("start")
                         .log("A message")
+                        .bean(MyBean.class)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getIn().setHeader("operation", "fake");
+                            }
+                        })
                         .to("log:info");
-
-                from("direct:variable")
-                        .setVariable("myVar", constant("testValue"))
-                        .to("mock:variable");
             }
         };
+    }
+
+    class MyBean {
+        // We simulate the creation of a Span by hand.
+        public void helloWorld(Exchange exchange) {
+            // We just simulate the creation of a span and proper nesting. In a real implementation
+            // it is up to the telemetry technology to do so (for example, via method annotations)
+            Span parentSpan = new SpanStorageManagerExchange().peek(exchange);
+            Span span = mockTracer.slcm.create("mySpan", "bo", parentSpan, null);
+            mockTracer.slcm.activate(span);
+            mockTracer.slcm.deactivate(span);
+            mockTracer.slcm.close(span);
+        }
     }
 
 }

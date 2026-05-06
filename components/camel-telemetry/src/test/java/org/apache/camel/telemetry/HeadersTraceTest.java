@@ -41,6 +41,7 @@ public class HeadersTraceTest extends ExchangeTestSupport {
         CamelContext context = super.createCamelContext();
         this.mockTracer = new MockTracer();
         mockTracer.setTraceHeadersInclusion(true);
+        this.mockTracer.setDisableCoreProcessors(true);
         CamelContextAware.trySetCamelContext(mockTracer, context);
         mockTracer.init(context);
         return context;
