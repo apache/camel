@@ -639,6 +639,10 @@ public class AS2ServerConnection {
         consumerConfigurations.put(path, config);
     }
 
+    public int getLocalPort() {
+        return serversocket != null ? serversocket.getLocalPort() : -1;
+    }
+
     public void close() {
         if (acceptorThread != null) {
             lock.lock();
