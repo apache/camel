@@ -70,7 +70,7 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseKafkaTestSup
         MockEndpoint mock = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         mock.expectedMessageCount(10);
-        Awaitility.await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
+        Awaitility.await().atMost(25, TimeUnit.SECONDS).untilAsserted(() -> mock.assertIsSatisfied());
     }
 
     @AfterEach
