@@ -30,6 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The DigitalOcean producer for SSH Keys API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanKeysProducer extends DigitalOceanProducer {
 
     public DigitalOceanKeysProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

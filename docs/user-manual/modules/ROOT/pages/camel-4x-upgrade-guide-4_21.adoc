@@ -253,3 +253,7 @@ What it means is that, from now on, the final user or any third party dependency
 
 This is just an informative note, there is not action expected by the final user.
 
+=== Deprecation of camel-digitalocean
+
+The component camel-digitalocean is deprecated. The java library used has been unmaintained for several years and there is no replacement.
+
