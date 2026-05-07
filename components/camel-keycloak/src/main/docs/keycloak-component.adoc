@@ -3603,8 +3603,8 @@ NOTE: Token introspection requires a confidential client with client credentials
 | Feature | Local JWT Parsing | Token Introspection
 
 | **Performance** | ⚡ Very Fast (local) | 🔄 Network call required
-| **Revocation Detection** | ❌ No | ✅ Yes (real-time)
-| **Offline Support** | ✅ Yes | ❌ Requires Keycloak connectivity
+| **Revocation Detection** | �?� No | ✅ Yes (real-time)
+| **Offline Support** | ✅ Yes | �?� Requires Keycloak connectivity
 | **Caching** | N/A | ✅ Configurable TTL
 | **Security** | Good | Excellent
 | **Best For** | High-throughput, trusted environments | Security-critical operations
