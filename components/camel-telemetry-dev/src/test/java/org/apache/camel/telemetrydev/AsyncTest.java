@@ -41,6 +41,7 @@ public class AsyncTest extends TelemetryDevTracerTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         TelemetryDevTracer tst = new TelemetryDevTracer();
         tst.setTraceFormat("json");
+        tst.setDisableCoreProcessors(true);
         CamelContext context = super.createCamelContext();
         CamelContextAware.trySetCamelContext(tst, context);
         tst.init(context);
