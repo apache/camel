@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
-import java.time.ZonedDateTime;
-
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
@@ -97,41 +94,41 @@ public class Asset extends AbstractSObjectBase {
     }
 
     // InstallDate
-    private ZonedDateTime InstallDate;
+    private java.time.ZonedDateTime InstallDate;
 
     @JsonProperty("InstallDate")
-    public ZonedDateTime getInstallDate() {
+    public java.time.ZonedDateTime getInstallDate() {
         return this.InstallDate;
     }
 
     @JsonProperty("InstallDate")
-    public void setInstallDate(ZonedDateTime InstallDate) {
+    public void setInstallDate(java.time.ZonedDateTime InstallDate) {
         this.InstallDate = InstallDate;
     }
 
     // PurchaseDate
-    private ZonedDateTime PurchaseDate;
+    private java.time.ZonedDateTime PurchaseDate;
 
     @JsonProperty("PurchaseDate")
-    public ZonedDateTime getPurchaseDate() {
+    public java.time.ZonedDateTime getPurchaseDate() {
         return this.PurchaseDate;
     }
 
     @JsonProperty("PurchaseDate")
-    public void setPurchaseDate(ZonedDateTime PurchaseDate) {
+    public void setPurchaseDate(java.time.ZonedDateTime PurchaseDate) {
         this.PurchaseDate = PurchaseDate;
     }
 
     // UsageEndDate
-    private ZonedDateTime UsageEndDate;
+    private java.time.ZonedDateTime UsageEndDate;
 
     @JsonProperty("UsageEndDate")
-    public ZonedDateTime getUsageEndDate() {
+    public java.time.ZonedDateTime getUsageEndDate() {
         return this.UsageEndDate;
     }
 
     @JsonProperty("UsageEndDate")
-    public void setUsageEndDate(ZonedDateTime UsageEndDate) {
+    public void setUsageEndDate(java.time.ZonedDateTime UsageEndDate) {
         this.UsageEndDate = UsageEndDate;
     }
 

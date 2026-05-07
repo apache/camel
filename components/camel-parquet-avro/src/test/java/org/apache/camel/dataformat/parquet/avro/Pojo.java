@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dataformat.parquet.avro;
 
-import java.util.Objects;
-
 public class Pojo {
     private long id;
     private String data;
@@ -57,11 +55,11 @@ public class Pojo {
             return false;
         }
         Pojo pojo = (Pojo) o;
-        return id == pojo.id && Objects.equals(data, pojo.data);
+        return id == pojo.id && java.util.Objects.equals(data, pojo.data);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, data);
+        return java.util.Objects.hash(id, data);
     }
 }

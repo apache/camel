@@ -22,7 +22,6 @@ import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -66,7 +65,7 @@ public class ManagedTimerTest extends ManagementTestSupport {
         // Take the time to check the service is started to help avoid
         // sporadic failure on slower machines.
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
+        assertEquals(org.apache.camel.ServiceStatus.Started.name(), state, "Should be started");
 
         // start and we should be done in at most 3 second
         mock.expectedMinimumMessageCount(3);

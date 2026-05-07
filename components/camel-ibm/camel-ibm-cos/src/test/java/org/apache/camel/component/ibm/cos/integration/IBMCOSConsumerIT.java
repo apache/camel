@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
-import com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -65,8 +64,8 @@ public class IBMCOSConsumerIT extends IBMCOSTestSupport {
 
         // Upload an object
         byte[] contentBytes = testContent.getBytes();
-        ObjectMetadata metadata
-                = new ObjectMetadata();
+        com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata metadata
+                = new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
         metadata.setContentLength(contentBytes.length);
         cosClient.putObject(bucketName, testKey, new ByteArrayInputStream(contentBytes), metadata);
 
@@ -103,8 +102,8 @@ public class IBMCOSConsumerIT extends IBMCOSTestSupport {
             final String key = "multi-test-" + i + ".txt";
             final String content = "Content " + i;
             byte[] bytes = content.getBytes();
-            ObjectMetadata meta
-                    = new ObjectMetadata();
+            com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata meta
+                    = new com.ibm.cloud.objectstorage.services.s3.model.ObjectMetadata();
             meta.setContentLength(bytes.length);
             cosClient.putObject(bucketName, key, new ByteArrayInputStream(bytes), meta);
         }

@@ -188,7 +188,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
         return (IronMQEndpoint) super.getEndpoint();
     }
 
-    private Exchange createExchange(Message msg) {
+    private Exchange createExchange(io.iron.ironmq.Message msg) {
         Exchange exchange = createExchange(true);
         exchange.setPattern(getEndpoint().getExchangePattern());
         org.apache.camel.Message message = exchange.getIn();

@@ -137,7 +137,7 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
         }
 
         if (in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT) != null) {
-            text = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, TextSegment.class);
+            text = in.getHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, dev.langchain4j.data.segment.TextSegment.class);
             id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding, text);
         } else {
             id = getEndpoint().getConfiguration().getEmbeddingStore().add(embedding);

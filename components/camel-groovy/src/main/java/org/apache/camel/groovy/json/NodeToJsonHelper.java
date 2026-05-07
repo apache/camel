@@ -16,9 +16,7 @@
  */
 package org.apache.camel.groovy.json;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import groovy.util.Node;
 import groovy.util.NodeList;
@@ -57,10 +55,10 @@ class NodeToJsonHelper {
             }
             // Group children by name
             children.stream()
-                    .collect(Collectors.groupingBy(
+                    .collect(java.util.stream.Collectors.groupingBy(
                             Node::name,
-                            LinkedHashMap::new,
-                            Collectors.toList()))
+                            java.util.LinkedHashMap::new,
+                            java.util.stream.Collectors.toList()))
                     .forEach((name, nodes) -> {
                         if (nodes.size() == 1) {
                             Node child = nodes.get(0);

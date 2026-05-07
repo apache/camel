@@ -37,7 +37,6 @@ import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
-import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +175,7 @@ public final class MicUtils {
                         = HttpMessageUtils.getEntity(request, ApplicationPkcs7MimeCompressedDataEntity.class);
                 if (compressedEntity != null) {
                     MimeEntity inner = compressedEntity
-                            .getCompressedEntity(new ZlibExpanderProvider());
+                            .getCompressedEntity(new org.bouncycastle.cms.jcajce.ZlibExpanderProvider());
                     if (inner instanceof MultipartSignedEntity signedEntity) {
                         return signedEntity.getSignedDataEntity();
                     }

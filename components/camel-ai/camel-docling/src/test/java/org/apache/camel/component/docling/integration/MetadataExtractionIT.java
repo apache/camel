@@ -81,7 +81,7 @@ class MetadataExtractionIT extends DoclingITestSupport {
 
     private Path createTestPdfFile() throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("multi_page.pdf")) {
-            Path tempFile = Files.createTempFile("docling-test-multi_page", ".pdf");
+            java.nio.file.Path tempFile = Files.createTempFile("docling-test-multi_page", ".pdf");
             Files.copy(is, tempFile.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
             return tempFile;
         }

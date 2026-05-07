@@ -19,10 +19,9 @@ package org.apache.camel.component.huaweicloud.frs;
 import java.util.*;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-@Component("hwcloud-frs")
+@org.apache.camel.spi.annotations.Component("hwcloud-frs")
 public class FaceRecognitionComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

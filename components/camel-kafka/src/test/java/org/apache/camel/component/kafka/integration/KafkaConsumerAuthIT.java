@@ -33,7 +33,6 @@ import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.kafka.services.ContainerLocalAuthKafkaService;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -80,7 +79,7 @@ public class KafkaConsumerAuthIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerAuthIT.class);
 
-    private KafkaProducer<String, String> producer;
+    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void before() {
@@ -92,7 +91,7 @@ public class KafkaConsumerAuthIT {
         props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
 
         try {
-            producer = new KafkaProducer<>(props);
+            producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
         } catch (Exception e) {
             fail(e.getMessage());
         }

@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -49,7 +48,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
             public void configure() {
                 from("direct:Producer").to("mock:EndpointA").process(new Processor() {
 
-                    public void process(Exchange exchange) throws Exception {
+                    public void process(org.apache.camel.Exchange exchange) throws Exception {
 
                         if (exchange.getPattern().isOutCapable()) {
                             Object result = exchange.getIn().getBody();

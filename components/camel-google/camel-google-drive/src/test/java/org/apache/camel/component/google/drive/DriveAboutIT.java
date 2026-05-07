@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.drive;
 
-import com.google.api.services.drive.model.About;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveAboutApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
@@ -40,7 +39,7 @@ public class DriveAboutIT extends AbstractGoogleDriveTestSupport {
 
     @Test
     public void testGet() {
-        final About result = requestBody("direct://GET", null);
+        final com.google.api.services.drive.model.About result = requestBody("direct://GET", null);
 
         assertNotNull(result, "get result");
         LOG.debug("get: {}", result);

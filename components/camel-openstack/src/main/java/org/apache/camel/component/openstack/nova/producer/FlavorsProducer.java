@@ -88,7 +88,7 @@ public class FlavorsProducer extends AbstractOpenstackProducer {
         checkFailure(response, exchange, "Delete flavor");
     }
 
-    private Flavor messageToFlavor(Message message) {
+    private org.openstack4j.model.compute.Flavor messageToFlavor(Message message) {
         Flavor flavor = message.getBody(Flavor.class);
         if (flavor == null) {
             Map headers = message.getHeaders();

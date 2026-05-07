@@ -72,7 +72,7 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
         when(flavorService.create(any())).thenReturn(testOSFlavor);
         when(flavorService.get(anyString())).thenReturn(testOSFlavor);
 
-        List<Flavor> getAllList = new ArrayList<>();
+        List<org.openstack4j.model.compute.Flavor> getAllList = new ArrayList<>();
         getAllList.add(testOSFlavor);
         getAllList.add(testOSFlavor);
         doReturn(getAllList).when(flavorService).list();

@@ -35,7 +35,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.MessageHelper;
@@ -306,8 +305,8 @@ public class ReceiveDevConsole extends AbstractDevConsole {
                                 // is the endpoint able to create a consumer
                                 target = camelContext.getEndpoint(uri);
                                 // is the target able to create a consumer
-                                UriEndpoint ann
-                                        = ObjectHelper.getAnnotationDeep(target, UriEndpoint.class);
+                                org.apache.camel.spi.UriEndpoint ann
+                                        = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
                                 if (ann != null) {
                                     if (ann.producerOnly()) {
                                         // skip if the endpoint cannot consume (we need to be able to consume to receive)
@@ -331,8 +330,8 @@ public class ReceiveDevConsole extends AbstractDevConsole {
         } else {
             target = camelContext.getEndpoint(endpoint);
             // is the target able to create a consumer
-            UriEndpoint ann
-                    = ObjectHelper.getAnnotationDeep(target, UriEndpoint.class);
+            org.apache.camel.spi.UriEndpoint ann
+                    = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
             if (ann != null) {
                 if (ann.producerOnly()) {
                     // skip if the endpoint cannot consume (we need to be able to consume to receive)

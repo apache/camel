@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -209,7 +208,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                 currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
             }
 
-            BufferedImage image;
+            java.awt.image.BufferedImage image;
             try {
                 image = renderer.renderDiagram(layoutRoutes, currentY, colors);
             } catch (IllegalStateException e) {

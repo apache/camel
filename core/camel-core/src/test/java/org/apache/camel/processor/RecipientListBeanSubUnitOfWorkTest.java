@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RecipientList;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -84,7 +83,7 @@ public class RecipientListBeanSubUnitOfWorkTest extends ContextTestSupport {
 
     public static class WhereToGoBean {
 
-        @RecipientList(shareUnitOfWork = true)
+        @org.apache.camel.RecipientList(shareUnitOfWork = true)
         public String whereToGo() {
             return "direct:a,direct:b";
         }

@@ -26,9 +26,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 
-import com.google.api.services.gmail.model.ListThreadsResponse;
 import com.google.api.services.gmail.model.Message;
-import com.google.api.services.gmail.model.Profile;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersThreadsApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
@@ -53,7 +51,7 @@ public class GmailUsersThreadsIT extends AbstractGoogleMailTestSupport {
             = GoogleMailApiCollection.getCollection().getApiName(GmailUsersThreadsApiMethod.class).getName();
 
     private Message createThreadedTestEmail(String previousThreadId) throws MessagingException, IOException {
-        Profile profile
+        com.google.api.services.gmail.model.Profile profile
                 = requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
@@ -93,7 +91,7 @@ public class GmailUsersThreadsIT extends AbstractGoogleMailTestSupport {
         headers.put("CamelGoogleMail.q", "subject:\"Hello from camel-google-mail\"");
 
         // using String message body for single parameter "userId"
-        ListThreadsResponse result
+        com.google.api.services.gmail.model.ListThreadsResponse result
                 = requestBodyAndHeaders("direct://LIST", CURRENT_USERID, headers);
 
         assertNotNull(result, "list result");

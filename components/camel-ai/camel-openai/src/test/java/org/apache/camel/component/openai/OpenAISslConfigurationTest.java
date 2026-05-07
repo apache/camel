@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.openai;
 
-import java.io.FileNotFoundException;
-import java.security.KeyStoreException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -145,7 +142,7 @@ class OpenAISslConfigurationTest extends CamelTestSupport {
                                                + "&sslTruststoreLocation=/nonexistent/truststore.jks"
                                                + "&sslTruststorePassword=" + STORE_PASSWORD));
 
-        assertHasRootCause(exception, FileNotFoundException.class);
+        assertHasRootCause(exception, java.io.FileNotFoundException.class);
     }
 
     @Test
@@ -158,7 +155,7 @@ class OpenAISslConfigurationTest extends CamelTestSupport {
                                                + "&sslKeystoreLocation=/nonexistent/keystore.jks"
                                                + "&sslKeystorePassword=" + STORE_PASSWORD));
 
-        assertHasRootCause(exception, FileNotFoundException.class);
+        assertHasRootCause(exception, java.io.FileNotFoundException.class);
     }
 
     @Test
@@ -172,7 +169,7 @@ class OpenAISslConfigurationTest extends CamelTestSupport {
                                                + "&sslTruststorePassword=" + STORE_PASSWORD
                                                + "&sslTruststoreType=INVALID"));
 
-        assertHasRootCause(exception, KeyStoreException.class);
+        assertHasRootCause(exception, java.security.KeyStoreException.class);
     }
 
     private static void assertHasRootCause(Throwable throwable, Class<? extends Throwable> expectedCauseType) {

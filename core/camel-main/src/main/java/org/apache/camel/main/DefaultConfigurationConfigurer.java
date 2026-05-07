@@ -601,7 +601,7 @@ public final class DefaultConfigurationConfigurer {
         if (healthCheckRegistry != null) {
             // Health check repository
             Set<HealthCheckRepository> repositories = registry.findByType(HealthCheckRepository.class);
-            if (ObjectHelper.isNotEmpty(repositories)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(repositories)) {
                 for (HealthCheckRepository repository : repositories) {
                     healthCheckRegistry.register(repository);
                 }

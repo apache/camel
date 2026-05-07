@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.keycloak.security;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,9 +66,9 @@ public class KeycloakTokenIntrospectorTest {
     public void testExtractRolesFromIntrospection() {
         Map<String, Object> claims = Map.of(
                 "active", true,
-                "realm_access", Map.of("roles", List.of("admin", "user")),
+                "realm_access", Map.of("roles", java.util.List.of("admin", "user")),
                 "resource_access", Map.of(
-                        "test-client", Map.of("roles", List.of("client-admin"))));
+                        "test-client", Map.of("roles", java.util.List.of("client-admin"))));
 
         KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
 
@@ -87,7 +86,7 @@ public class KeycloakTokenIntrospectorTest {
         Map<String, Object> claims = Map.of(
                 "active", true,
                 "scope", "read:documents write:documents",
-                "permissions", List.of("admin:all"));
+                "permissions", java.util.List.of("admin:all"));
 
         KeycloakTokenIntrospector.IntrospectionResult result = new KeycloakTokenIntrospector.IntrospectionResult(claims);
 

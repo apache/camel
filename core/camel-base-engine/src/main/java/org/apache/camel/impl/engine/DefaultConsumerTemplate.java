@@ -263,7 +263,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return answer;
     }
 
-    private ConsumerCache getConsumerCache() {
+    private org.apache.camel.spi.ConsumerCache getConsumerCache() {
         if (!isStarted()) {
             throw new IllegalStateException("ConsumerTemplate has not been started");
         }

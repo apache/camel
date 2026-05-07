@@ -19,9 +19,6 @@
  * <a href="http://camel.apache.org/predicate.html">Predicate</a> plugins for the
  * <a href="http://camel.apache.org/xml-configuration.html">XML Configuration</a>.
  */
-@XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-           elementFormDefault = XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.tokenizer;
-
-import jakarta.xml.bind.annotation.XmlNsForm;
-import jakarta.xml.bind.annotation.XmlSchema;

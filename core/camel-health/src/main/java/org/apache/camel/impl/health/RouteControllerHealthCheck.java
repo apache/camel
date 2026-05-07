@@ -26,14 +26,13 @@ import org.apache.camel.Route;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.SupervisingRouteController;
-import org.apache.camel.spi.annotations.HealthCheck;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.backoff.BackOffTimer;
 
 /**
  * Readiness {@link org.apache.camel.health.HealthCheck} for route controller.
  */
-@HealthCheck("route-controller-check")
+@org.apache.camel.spi.annotations.HealthCheck("route-controller-check")
 public class RouteControllerHealthCheck extends AbstractHealthCheck {
 
     public RouteControllerHealthCheck() {

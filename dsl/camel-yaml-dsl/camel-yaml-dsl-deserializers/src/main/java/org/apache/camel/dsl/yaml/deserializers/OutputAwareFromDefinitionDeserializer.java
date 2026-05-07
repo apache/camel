@@ -27,7 +27,6 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
@@ -80,7 +79,7 @@ public class OutputAwareFromDefinitionDeserializer extends YamlDeserializerBase<
 
             setDeserializationContext(val, dc);
 
-            key = StringHelper.dashToCamelCase(key);
+            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
             switch (key) {
                 case "id":
                     id = asText(val);

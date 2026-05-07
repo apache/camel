@@ -31,7 +31,6 @@ import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -58,14 +57,14 @@ public class KafkaConsumerAsyncManualCommitIT extends BaseKafkaTestSupport {
 
     private final CamelContext context = contextExtension.getContext();
 
-    private KafkaProducer<String, String> producer;
+    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
     private volatile int failCount;
 
     @BeforeEach
     public void before() {
         Properties props = KafkaTestUtil.getDefaultProperties(service);
-        producer = new KafkaProducer<>(props);
+        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
     }
 
     @AfterEach

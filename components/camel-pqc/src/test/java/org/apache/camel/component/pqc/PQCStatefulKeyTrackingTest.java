@@ -34,7 +34,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pqc.stateful.StatefulKeyState;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 import org.junit.jupiter.api.Test;
@@ -159,8 +158,8 @@ public class PQCStatefulKeyTrackingTest extends CamelTestSupport {
         }
 
         // Now the key should be exhausted
-        XMSSPrivateKey xmssPriv
-                = (XMSSPrivateKey) exhaustionKeyPair.getPrivate();
+        org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey xmssPriv
+                = (org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey) exhaustionKeyPair.getPrivate();
         assertEquals(0, xmssPriv.getUsagesRemaining(), "Key should be exhausted after 4 signatures with height=2");
     }
 
@@ -174,8 +173,8 @@ public class PQCStatefulKeyTrackingTest extends CamelTestSupport {
         kpGen.initialize(new XMSSParameterSpec(2, XMSSParameterSpec.SHA256), new SecureRandom());
         KeyPair freshKeyPair = kpGen.generateKeyPair();
 
-        XMSSPrivateKey xmssPriv
-                = (XMSSPrivateKey) freshKeyPair.getPrivate();
+        org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey xmssPriv
+                = (org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey) freshKeyPair.getPrivate();
 
         StatefulKeyState state = new StatefulKeyState(
                 xmssPriv.getAlgorithm(), xmssPriv.getIndex(), xmssPriv.getUsagesRemaining());

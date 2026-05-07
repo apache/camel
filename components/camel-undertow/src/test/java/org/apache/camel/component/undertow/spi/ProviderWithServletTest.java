@@ -47,7 +47,7 @@ public class ProviderWithServletTest extends AbstractProviderServletTest {
     @BeforeAll
     public static void initProvider() throws Exception {
         createSecurtyProviderConfigurationFile(
-                ProviderWithServletTest.MockSecurityProvider.class);
+                org.apache.camel.component.undertow.spi.ProviderWithServletTest.MockSecurityProvider.class);
     }
 
     @Test

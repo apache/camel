@@ -26,7 +26,7 @@ public class GeneratePlugin implements Plugin {
 
     @Override
     public void customize(CommandLine commandLine, CamelJBangMain main) {
-        var cmd = new CommandLine(new CodeGenerator(main))
+        var cmd = new picocli.CommandLine(new CodeGenerator(main))
                 .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main)))
                 .addSubcommand("schema", new CommandLine(new CodeSchemaGenerator(main)));
 

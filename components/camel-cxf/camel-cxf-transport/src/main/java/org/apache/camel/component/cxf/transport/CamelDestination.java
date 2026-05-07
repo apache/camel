@@ -151,10 +151,10 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         this.camelContext = camelContext;
     }
 
-    protected void incoming(Exchange camelExchange) {
+    protected void incoming(org.apache.camel.Exchange camelExchange) {
         LOG.debug("server received request: {}", camelExchange);
         DefaultCxfMessageMapper beanBinding = new DefaultCxfMessageMapper();
-        Message inMessage
+        org.apache.cxf.message.Message inMessage
                 = beanBinding.createCxfMessageFromCamelExchange(camelExchange, headerFilterStrategy);
 
         inMessage.put(CamelTransportConstants.CAMEL_EXCHANGE, camelExchange);

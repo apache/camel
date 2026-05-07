@@ -30,7 +30,6 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -64,7 +63,7 @@ class ExportTest {
     @AfterEach
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
-        FileUtil.removeDir(workingDir);
+        org.apache.camel.util.FileUtil.removeDir(workingDir);
     }
 
     private static Stream<Arguments> runtimeProvider() {

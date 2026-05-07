@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -81,7 +79,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
                 from("direct:start")
                         .doTry()
                         .to("cxf://http://localhost:10000/false?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService")
-                        .doCatch(ConnectException.class)
+                        .doCatch(java.net.ConnectException.class)
                         .to("mock:error");
             }
         };
@@ -125,7 +123,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
 
         Exchange exchange = template.send("direct:EndpointA", senderExchange);
 
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         // The response message's body is an MessageContentsList which first element is the return value of the operation,
         // If there are some holder parameters, the holder parameter will be filled in the reset of List.
         // The result will be extract from the MessageContentsList with the String class type
@@ -145,7 +143,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         senderExchange.getIn().setBody(REQUEST_MESSAGE);
         Exchange exchange = template.send("direct:EndpointB", senderExchange);
 
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         String response = out.getBody(String.class);
         assertTrue(response.indexOf("echo " + TEST_MESSAGE) > 0, "It should has the echo message");
         assertTrue(response.indexOf("echoResponse") > 0, "It should has the echoResponse tag");
@@ -158,7 +156,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         senderExchange.getIn().setBody(REQUEST_MESSAGE);
         Exchange exchange = template.send("direct:EndpointB", senderExchange);
 
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         final List<String> pseudoHeaders
                 = out.getHeaders().keySet().stream().filter(key -> key.startsWith(":")).toList();
         assertTrue(pseudoHeaders.isEmpty(), "Pseudo-headers such as :status should be filtered out; found: " + pseudoHeaders);
@@ -172,7 +170,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         senderExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
         Exchange exchange = template.send("direct:EndpointC", senderExchange);
 
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         String response = out.getBody(String.class);
         assertTrue(response.indexOf("echo " + TEST_MESSAGE) > 0, "It should has the echo message");
         assertTrue(response.indexOf("echoResponse") > 0, "It should has the echoResponse tag");

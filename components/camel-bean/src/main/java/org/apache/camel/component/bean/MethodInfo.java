@@ -35,7 +35,6 @@ import java.util.concurrent.CompletionStage;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
-import org.apache.camel.DynamicRouter;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
@@ -47,8 +46,6 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.Processor;
-import org.apache.camel.RecipientList;
-import org.apache.camel.RoutingSlip;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.StreamCache;
@@ -134,8 +131,8 @@ public class MethodInfo {
             pattern = aep;
         }
 
-        RoutingSlip routingSlipAnnotation
-                = (RoutingSlip) collectedMethodAnnotation.get(RoutingSlip.class);
+        org.apache.camel.RoutingSlip routingSlipAnnotation
+                = (org.apache.camel.RoutingSlip) collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null) {
             routingSlip = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createRoutingSlip(camelContext, routingSlipAnnotation);
@@ -147,8 +144,8 @@ public class MethodInfo {
             }
         }
 
-        DynamicRouter dynamicRouterAnnotation
-                = (DynamicRouter) collectedMethodAnnotation.get(DynamicRouter.class);
+        org.apache.camel.DynamicRouter dynamicRouterAnnotation
+                = (org.apache.camel.DynamicRouter) collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null) {
             dynamicRouter = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createDynamicRouter(camelContext, dynamicRouterAnnotation);
@@ -160,8 +157,8 @@ public class MethodInfo {
             }
         }
 
-        RecipientList recipientListAnnotation
-                = (RecipientList) collectedMethodAnnotation.get(RecipientList.class);
+        org.apache.camel.RecipientList recipientListAnnotation
+                = (org.apache.camel.RecipientList) collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null) {
             recipientList = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createRecipientList(camelContext, recipientListAnnotation);

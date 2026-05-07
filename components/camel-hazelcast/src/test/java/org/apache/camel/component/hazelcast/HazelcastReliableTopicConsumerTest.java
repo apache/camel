@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -66,7 +65,7 @@ public class HazelcastReliableTopicConsumerTest extends HazelcastCamelTestSuppor
         out.expectedMessageCount(1);
 
         verify(reliableTopic).addMessageListener(argument.capture());
-        final Message<String> msg = new Message<>("foo", "foo", new Date().getTime(), null);
+        final Message<String> msg = new Message<>("foo", "foo", new java.util.Date().getTime(), null);
         argument.getValue().onMessage(msg);
 
         MockEndpoint.assertIsSatisfied(context, 2000, TimeUnit.MILLISECONDS);

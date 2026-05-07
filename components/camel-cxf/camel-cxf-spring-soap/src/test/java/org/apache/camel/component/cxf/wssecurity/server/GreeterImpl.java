@@ -18,14 +18,12 @@ package org.apache.camel.component.cxf.wssecurity.server;
 
 import java.util.logging.Logger;
 
-import jakarta.jws.WebService;
-
 import org.apache.camel.hello_world_soap_http.Greeter;
 
-@WebService(serviceName = "GreeterService",
-            portName = "GreeterPort",
-            endpointInterface = "org.apache.camel.hello_world_soap_http.Greeter",
-            targetNamespace = "http://camel.apache.org/hello_world_soap_http")
+@jakarta.jws.WebService(serviceName = "GreeterService",
+                        portName = "GreeterPort",
+                        endpointInterface = "org.apache.camel.hello_world_soap_http.Greeter",
+                        targetNamespace = "http://camel.apache.org/hello_world_soap_http")
 
 public class GreeterImpl implements Greeter {
 

@@ -26,7 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -116,7 +115,7 @@ public class MainComponentAutowiredFalseTest {
         }
     }
 
-    private static class MyComponentConfigurer extends PropertyConfigurerSupport
+    private static class MyComponentConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport
             implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
         @Override

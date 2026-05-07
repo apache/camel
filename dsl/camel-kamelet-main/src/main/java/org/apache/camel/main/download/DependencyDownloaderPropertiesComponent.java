@@ -31,7 +31,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.OrderedLocationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +104,7 @@ public class DependencyDownloaderPropertiesComponent extends ServiceSupport impl
     }
 
     protected void autoConfigure(String key) {
-        var config = new OrderedLocationProperties();
+        var config = new org.apache.camel.util.OrderedLocationProperties();
         config.putAll("camel-main", camelContext.getPropertiesComponent().loadProperties());
 
         // is there any special auto configuration scripts?

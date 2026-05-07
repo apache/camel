@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateProcessor;
 import org.apache.camel.util.ObjectHelper;
-import org.keycloak.TokenVerifier;
 import org.keycloak.common.VerificationException;
 import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
@@ -162,7 +161,7 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
             try {
                 // Parse token to extract subject (without full validation - just for binding check)
                 // Full verification happens later in validateRoles/validatePermissions
-                AccessToken accessToken = TokenVerifier.create(headerToken, AccessToken.class).getToken();
+                AccessToken accessToken = org.keycloak.TokenVerifier.create(headerToken, AccessToken.class).getToken();
                 String currentSubject = accessToken.getSubject();
 
                 if (!storedSubject.equals(currentSubject)) {

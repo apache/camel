@@ -26,7 +26,6 @@ import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.NoSuchElementException;
 
@@ -140,7 +139,7 @@ public class KeyStoreLoader {
 
         if (privateKey instanceof PrivateKey pk) {
             // Load the full certificate chain
-            final Certificate[] chain = keyStore.getCertificateChain(effectiveKeyAlias);
+            final java.security.cert.Certificate[] chain = keyStore.getCertificateChain(effectiveKeyAlias);
             if (chain == null || chain.length == 0) {
                 return null;
             }

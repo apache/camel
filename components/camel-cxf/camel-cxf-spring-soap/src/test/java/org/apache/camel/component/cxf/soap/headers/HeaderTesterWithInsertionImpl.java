@@ -27,7 +27,6 @@ import org.w3c.dom.Node;
 
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.outofband.header.ObjectFactory;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 
 public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
@@ -67,7 +66,7 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
             Header hdr1 = (Header) hdr;
             try {
                 JAXBElement<?> job
-                        = (JAXBElement<?>) JAXBContext.newInstance(ObjectFactory.class)
+                        = (JAXBElement<?>) JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
                                 .createUnmarshaller()
                                 .unmarshal((Node) hdr1.getObject());
                 OutofBandHeader ob = (OutofBandHeader) job.getValue();

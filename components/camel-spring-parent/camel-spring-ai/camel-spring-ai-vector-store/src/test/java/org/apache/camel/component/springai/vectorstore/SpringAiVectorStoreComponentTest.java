@@ -18,7 +18,6 @@ package org.apache.camel.component.springai.vectorstore;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
@@ -279,9 +278,9 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
     @Test
     public void testDeleteDocuments() {
         // Add some documents first
-        Document doc1 = new Document("doc-1", "First document", Map.of());
-        Document doc2 = new Document("doc-2", "Second document", Map.of());
-        Document doc3 = new Document("doc-3", "Third document", Map.of());
+        Document doc1 = new Document("doc-1", "First document", java.util.Map.of());
+        Document doc2 = new Document("doc-2", "Second document", java.util.Map.of());
+        Document doc3 = new Document("doc-3", "Third document", java.util.Map.of());
 
         vectorStore.add(List.of(doc1, doc2, doc3));
 
@@ -314,8 +313,8 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
     @Test
     public void testDeleteDocumentsWithBodyAsList() {
         // Add some documents first
-        Document doc1 = new Document("doc-10", "Document A", Map.of());
-        Document doc2 = new Document("doc-20", "Document B", Map.of());
+        Document doc1 = new Document("doc-10", "Document A", java.util.Map.of());
+        Document doc2 = new Document("doc-20", "Document B", java.util.Map.of());
 
         vectorStore.add(List.of(doc1, doc2));
 
@@ -332,7 +331,7 @@ public class SpringAiVectorStoreComponentTest extends CamelTestSupport {
     @Test
     public void testDeleteSingleDocumentWithBodyAsString() {
         // Add a document
-        Document doc = new Document("doc-single", "Single document to delete", Map.of());
+        Document doc = new Document("doc-single", "Single document to delete", java.util.Map.of());
         vectorStore.add(List.of(doc));
 
         // Delete using body as single string ID

@@ -19,7 +19,6 @@ package org.apache.camel.component.pqc.crypto.hybrid;
 import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
-import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
@@ -292,19 +291,19 @@ public final class HybridKEM {
      * Reconstructs a public key from encoded bytes.
      */
     private static PublicKey reconstructPublicKey(byte[] encoded, String algorithm) throws Exception {
-        KeyFactory kf;
+        java.security.KeyFactory kf;
 
         if ("EC".equals(algorithm) || "ECDH".equals(algorithm)) {
-            kf = KeyFactory.getInstance("EC");
+            kf = java.security.KeyFactory.getInstance("EC");
         } else if ("X25519".equals(algorithm) || "XDH".equals(algorithm)) {
-            kf = KeyFactory.getInstance("X25519");
+            kf = java.security.KeyFactory.getInstance("X25519");
         } else if ("X448".equals(algorithm)) {
-            kf = KeyFactory.getInstance("X448");
+            kf = java.security.KeyFactory.getInstance("X448");
         } else {
-            kf = KeyFactory.getInstance(algorithm);
+            kf = java.security.KeyFactory.getInstance(algorithm);
         }
 
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+        java.security.spec.X509EncodedKeySpec keySpec = new java.security.spec.X509EncodedKeySpec(encoded);
         return kf.generatePublic(keySpec);
     }
 

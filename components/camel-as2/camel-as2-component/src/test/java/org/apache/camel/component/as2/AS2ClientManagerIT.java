@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelException;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
@@ -953,7 +952,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         return new RouteBuilder() {
             public void configure() {
                 Processor proc = new Processor() {
-                    public void process(Exchange exchange) {
+                    public void process(org.apache.camel.Exchange exchange) {
                         HttpMessage message = exchange.getIn(HttpMessage.class);
                         @SuppressWarnings("unused")
                         String body = message.getBody(String.class);

@@ -35,7 +35,6 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.common.HashMapMessage;
-import org.cometd.common.JacksonJSONContextClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -277,8 +276,8 @@ public class StreamingApiConsumerTest {
         try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
             consumer.processMessage(mock(ClientSessionChannel.class), message);
 
-            verify(in).setBody(new JacksonJSONContextClient()
-                    .generate(new HashMapMessage(message)));
+            verify(in).setBody(new org.cometd.common.JacksonJSONContextClient()
+                    .generate(new org.cometd.common.HashMapMessage(message)));
             verify(in).setHeader("CamelSalesforceCreatedDate", ZonedDateTime.parse("2018-07-06T12:41:04Z"));
             verify(in).setHeader("CamelSalesforceReplayId", 4L);
             verify(in).setHeader("CamelSalesforceChannel", "/event/TestEvent__e");
@@ -342,8 +341,8 @@ public class StreamingApiConsumerTest {
         try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
             consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
 
-            verify(in).setBody(new JacksonJSONContextClient()
-                    .generate(new HashMapMessage(mockChangeEvent)));
+            verify(in).setBody(new org.cometd.common.JacksonJSONContextClient()
+                    .generate(new org.cometd.common.HashMapMessage(mockChangeEvent)));
         }
     }
 

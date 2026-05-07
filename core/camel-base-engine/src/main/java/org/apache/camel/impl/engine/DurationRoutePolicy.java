@@ -28,7 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,7 @@ import org.slf4j.LoggerFactory;
                         + " This can be used to stop the route after it has processed a number of messages, or has been running for N seconds.",
           annotations = { "interfaceName=org.apache.camel.spi.RoutePolicy" })
 @Configurer(metadataOnly = true)
-public class DurationRoutePolicy extends RoutePolicySupport implements CamelContextAware {
+public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySupport implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DurationRoutePolicy.class);
 

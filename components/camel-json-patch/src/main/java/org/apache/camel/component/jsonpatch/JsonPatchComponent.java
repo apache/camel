@@ -20,10 +20,9 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-@Component("json-patch")
+@org.apache.camel.spi.annotations.Component("json-patch")
 public class JsonPatchComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "true", description = "Sets whether to use resource content cache or not")

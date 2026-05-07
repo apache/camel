@@ -627,17 +627,17 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
 
         if (hasHeader && isHeader) {
-            throw new IllegalArgumentException(
+            throw new java.lang.IllegalArgumentException(
                     "Record can not be configured with both 'isHeader=true' and 'hasHeader=true'");
         }
 
         if (hasFooter && isFooter) {
-            throw new IllegalArgumentException(
+            throw new java.lang.IllegalArgumentException(
                     "Record can not be configured with both 'isFooter=true' and 'hasFooter=true'");
         }
 
         if ((isHeader || isFooter) && (skipHeader || skipFooter)) {
-            throw new IllegalArgumentException(
+            throw new java.lang.IllegalArgumentException(
                     "skipHeader and/or skipFooter can not be configured on a record where 'isHeader=true' or 'isFooter=true'");
         }
 

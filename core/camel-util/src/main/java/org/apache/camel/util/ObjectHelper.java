@@ -303,7 +303,7 @@ public final class ObjectHelper {
      * @param supplier the supplier, the supplier to be used to get a value if value is null
      */
     public static <T> T supplyIfEmpty(T value, Supplier<T> supplier) {
-        ObjectHelper.notNull(supplier, "Supplier");
+        org.apache.camel.util.ObjectHelper.notNull(supplier, "Supplier");
         if (isNotEmpty(value)) {
             return value;
         }
@@ -434,7 +434,7 @@ public final class ObjectHelper {
     public static Class<?> loadClass(String name, ClassLoader loader, boolean needToWarn) {
         // must clean the name so its pure java name, eg removing \n or whatever people can do in the Spring XML
         name = StringHelper.normalizeClassName(name);
-        if (ObjectHelper.isEmpty(name)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(name)) {
             return null;
         }
 
@@ -1087,7 +1087,7 @@ public final class ObjectHelper {
      * @param  type     the annotation
      * @return          the annotation, or <tt>null</tt> if the instance does not have the given annotation
      */
-    public static <A extends Annotation> A getAnnotation(Object instance, Class<A> type) {
+    public static <A extends java.lang.annotation.Annotation> A getAnnotation(Object instance, Class<A> type) {
         return instance.getClass().getAnnotation(type);
     }
 
@@ -1098,7 +1098,7 @@ public final class ObjectHelper {
      * @param  type     the annotation
      * @return          the annotation, or <tt>null</tt> if the instance does not have the given annotation
      */
-    public static <A extends Annotation> A getAnnotationDeep(Object instance, Class<A> type) {
+    public static <A extends java.lang.annotation.Annotation> A getAnnotationDeep(Object instance, Class<A> type) {
         Class<?> clazz = instance.getClass();
         while (clazz != Object.class) {
             A ann = clazz.getAnnotation(type);

@@ -18,7 +18,6 @@ package org.apache.camel.management;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -55,7 +54,7 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
             // a bit of ugly code to handover pre registered services that has been add to an eager/provisional JmxManagementLifecycleStrategy
             // which is now re-placed with a new JmxManagementLifecycleStrategy that is based on the end user configured settings
             // and therefore will be in use
-            List<Consumer<JmxManagementLifecycleStrategy>> preServices = null;
+            List<java.util.function.Consumer<JmxManagementLifecycleStrategy>> preServices = null;
             JmxManagementLifecycleStrategy jmx = camelContext.getLifecycleStrategies().stream()
                     .filter(s -> s instanceof JmxManagementLifecycleStrategy)
                     .map(JmxManagementLifecycleStrategy.class::cast)
@@ -65,7 +64,7 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
             }
 
             if (preServices != null && !preServices.isEmpty() && lifecycle instanceof JmxManagementLifecycleStrategy existing) {
-                for (Consumer<JmxManagementLifecycleStrategy> pre : preServices) {
+                for (java.util.function.Consumer<JmxManagementLifecycleStrategy> pre : preServices) {
                     existing.addPreService(pre);
                 }
             }

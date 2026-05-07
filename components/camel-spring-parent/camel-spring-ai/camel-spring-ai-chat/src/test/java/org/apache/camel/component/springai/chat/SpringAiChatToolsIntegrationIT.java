@@ -18,7 +18,6 @@ package org.apache.camel.component.springai.chat;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.springai.tools.spec.CamelToolExecutorCache;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
@@ -43,7 +42,7 @@ public class SpringAiChatToolsIntegrationIT extends OllamaTestSupport {
     @Test
     public void testToolsAreRegistered() throws Exception {
         // Verify that tools are registered in the cache before testing
-        var toolCache = CamelToolExecutorCache.getInstance();
+        var toolCache = org.apache.camel.component.springai.tools.spec.CamelToolExecutorCache.getInstance();
         var tools = toolCache.getTools();
 
         // Give routes time to start and register tools

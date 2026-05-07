@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.RecipientList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +85,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
             return "MyBean:" + id;
         }
 
-        @RecipientList
+        @org.apache.camel.RecipientList
         public String[] route(String body) {
             LOG.debug("Called {} with body: {}", this, body);
             return new String[] { "mock:a", "mock:b" };

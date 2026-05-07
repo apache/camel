@@ -16,7 +16,12 @@
  */
 package org.apache.camel.converter.stream;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.StringJoiner;
 
@@ -156,7 +161,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals(1, files.length, "we should have a temp file");
         assertTrue(new File(file, files[0]).length() > 10, "The content is written");
 
-        FileInputStream tmpin = new FileInputStream(new File(file, files[0]));
+        java.io.FileInputStream tmpin = new java.io.FileInputStream(new File(file, files[0]));
         String temp = toString(tmpin);
         assertTrue(!temp.isEmpty() && !temp.contains("aaa"), "The content is not encrypted");
         tmpin.close();

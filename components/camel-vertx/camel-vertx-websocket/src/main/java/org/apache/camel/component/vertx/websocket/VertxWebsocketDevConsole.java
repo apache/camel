@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -157,13 +155,13 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
     }
 
     Map<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> getConsumersByHost() {
-        Map<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> consumersByHost = new LinkedHashMap<>();
+        Map<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> consumersByHost = new java.util.LinkedHashMap<>();
         for (Route route : getCamelContext().getRoutes()) {
             if (route.getConsumer() instanceof VertxWebsocketConsumer consumer) {
                 VertxWebsocketHostKey hostKey = new VertxWebsocketHostKey(
                         consumer.getEndpoint().getConfiguration().getWebsocketURI().getHost(),
                         consumer.getEndpoint().getConfiguration().getWebsocketURI().getPort());
-                consumersByHost.computeIfAbsent(hostKey, k -> new ArrayList<>()).add(consumer);
+                consumersByHost.computeIfAbsent(hostKey, k -> new java.util.ArrayList<>()).add(consumer);
             }
         }
         return consumersByHost;

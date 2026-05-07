@@ -17,7 +17,6 @@
 package org.apache.camel.component.vertx.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -47,7 +46,7 @@ public class VertxHttpMaximumRedeliveriesTest extends VertxHttpTestSupport {
             @Override
             public void configure() {
                 errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0)
-                        .retryAttemptedLogLevel(LoggingLevel.WARN));
+                        .retryAttemptedLogLevel(org.apache.camel.LoggingLevel.WARN));
 
                 from("direct:start")
                         .to(getTestServerUri());

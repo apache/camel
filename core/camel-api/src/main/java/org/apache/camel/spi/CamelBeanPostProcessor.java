@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.function.Predicate;
-
 import org.apache.camel.BindToRegistry;
 
 /**
@@ -99,11 +97,11 @@ public interface CamelBeanPostProcessor {
     /**
      * Custom strategy for handling {@link BindToRegistry} beans and whether they are lazy or not.
      */
-    void setLazyBeanStrategy(Predicate<BindToRegistry> strategy);
+    void setLazyBeanStrategy(java.util.function.Predicate<BindToRegistry> strategy);
 
     /**
      * Custom strategy for handling {@link BindToRegistry} beans and whether they are lazy or not.
      */
-    Predicate<BindToRegistry> getLazyBeanStrategy();
+    java.util.function.Predicate<BindToRegistry> getLazyBeanStrategy();
 
 }

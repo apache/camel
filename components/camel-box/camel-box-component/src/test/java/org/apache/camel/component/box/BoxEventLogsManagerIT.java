@@ -18,7 +18,6 @@ package org.apache.camel.component.box;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -63,7 +62,7 @@ public class BoxEventLogsManagerIT extends AbstractBoxITSupport {
         headers.put("CamelBox.types", null);
 
         @SuppressWarnings("rawtypes")
-        final List result = requestBodyAndHeaders("direct://GETENTERPRISEEVENTS", null, headers);
+        final java.util.List result = requestBodyAndHeaders("direct://GETENTERPRISEEVENTS", null, headers);
 
         assertNotNull(result, "getEnterpriseEvents result");
         LOG.debug("getEnterpriseEvents: {}", result);

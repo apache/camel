@@ -40,7 +40,6 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelBeanPostProcessorInjector;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +71,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
     protected CamelContext camelContext;
     protected boolean enabled = true;
     protected boolean unbindEnabled;
-    protected Predicate<BindToRegistry> lazyBeanStrategy;
+    protected java.util.function.Predicate<BindToRegistry> lazyBeanStrategy;
 
     public DefaultCamelBeanPostProcessor() {
     }
@@ -484,7 +483,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         if (parameterTypes.length != 1) {
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
         } else {
-            String propertyName = ObjectHelper.getPropertyName(method);
+            String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
             Object value = getPostProcessorHelper().getInjectionValue(parameterTypes[0], endpointUri, endpointProperty,
                     propertyName, bean, beanName);
             invokeMethod(method, bean, value);

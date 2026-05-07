@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf;
 import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.wsdl_first.PersonImpl;
@@ -51,7 +50,7 @@ public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
     public void testInvokingServiceWithCamelProducer() {
         Exchange exchange = sendJaxWsMessage("hello");
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         String result = out.getBody(String.class);
         assertStringContains(result, "Bonjour");
 

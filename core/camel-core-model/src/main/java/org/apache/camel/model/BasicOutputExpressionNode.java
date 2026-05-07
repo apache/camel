@@ -26,7 +26,6 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 
 /**
@@ -87,8 +86,8 @@ public abstract class BasicOutputExpressionNode extends BasicExpressionNode<Basi
         if (expression != null && getExpression() != null && !outputs.isEmpty()) {
             ExpressionDefinition existing = getExpression();
             boolean isExpressionClause
-                    = existing.getExpressionValue() instanceof ExpressionClause
-                            || existing.getPredicate() instanceof ExpressionClause;
+                    = existing.getExpressionValue() instanceof org.apache.camel.builder.ExpressionClause
+                            || existing.getPredicate() instanceof org.apache.camel.builder.ExpressionClause;
             if (!isExpressionClause) {
                 String lang = expression.getLanguage() != null
                         ? expression.getLanguage() : expression.getClass().getSimpleName();

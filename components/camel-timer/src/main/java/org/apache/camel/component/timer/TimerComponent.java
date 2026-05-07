@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Endpoint;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
@@ -37,7 +36,7 @@ import org.apache.camel.support.DefaultComponent;
  * Represents the component that manages {@link TimerEndpoint}. It holds the list of {@link TimerConsumer} objects that
  * are started.
  */
-@Component("timer")
+@org.apache.camel.spi.annotations.Component("timer")
 public class TimerComponent extends DefaultComponent {
     private final Map<String, TimerHolder> timers = new ConcurrentHashMap<>();
 

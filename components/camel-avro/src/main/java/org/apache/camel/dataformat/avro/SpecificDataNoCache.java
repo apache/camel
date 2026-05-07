@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.avro;
 
-import org.apache.avro.Conversions;
 import org.apache.avro.Schema;
 import org.apache.avro.data.TimeConversions;
 import org.apache.avro.specific.SpecificData;
@@ -44,9 +43,9 @@ public class SpecificDataNoCache extends SpecificData {
         addLogicalTypeConversion(new TimeConversions.LocalTimestampMicrosConversion());
         addLogicalTypeConversion(new TimeConversions.LocalTimestampNanosConversion());
 
-        addLogicalTypeConversion(new Conversions.UUIDConversion());
+        addLogicalTypeConversion(new org.apache.avro.Conversions.UUIDConversion());
 
-        addLogicalTypeConversion(new Conversions.DecimalConversion());
+        addLogicalTypeConversion(new org.apache.avro.Conversions.DecimalConversion());
     }
 
     @Override

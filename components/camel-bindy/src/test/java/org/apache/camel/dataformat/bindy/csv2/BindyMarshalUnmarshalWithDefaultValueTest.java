@@ -63,10 +63,10 @@ public class BindyMarshalUnmarshalWithDefaultValueTest extends CamelTestSupport 
             @Override
             public void configure() {
                 from("direct:marshal")
-                        .marshal().bindy(BindyType.Csv, WeatherModel.class)
+                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
                         .to("mock:resultMarshal");
                 from("direct:unmarshal")
-                        .unmarshal().bindy(BindyType.Csv, WeatherModel.class)
+                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
                         .to("mock:resultUnmarshal");
             }
         };

@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.List;
-import java.util.Optional;
 
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.util.json.JsonArray;
@@ -40,7 +39,7 @@ class TestScaffoldToolsTest {
 
     private static CatalogService createCatalogService() {
         CatalogService service = new CatalogService();
-        service.catalogRepos = Optional.empty();
+        service.catalogRepos = java.util.Optional.empty();
         return service;
     }
 

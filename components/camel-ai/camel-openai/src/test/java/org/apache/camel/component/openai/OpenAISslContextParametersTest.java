@@ -33,7 +33,6 @@ import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -200,7 +199,7 @@ class OpenAISslContextParametersTest extends CamelTestSupport {
     @Test
     void componentImplementsSslContextParametersAware() {
         OpenAIComponent component = (OpenAIComponent) context().getComponent("openai");
-        assertTrue(component instanceof SSLContextParametersAware,
+        assertTrue(component instanceof org.apache.camel.SSLContextParametersAware,
                 "OpenAIComponent should implement SSLContextParametersAware");
     }
 

@@ -372,7 +372,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         }
 
         // Also parse options from @ArgGroup inner classes
-        for (JavaSource<?> nested : clazz.getNestedTypes()) {
+        for (org.jboss.forge.roaster.model.source.JavaSource<?> nested : clazz.getNestedTypes()) {
             if (nested instanceof JavaClassSource nestedClass) {
                 for (FieldSource<JavaClassSource> field : nestedClass.getFields()) {
                     OptionInfo option = parseOption(field);

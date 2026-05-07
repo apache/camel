@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jetty.rest;
 
-import java.util.ArrayList;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -159,9 +157,9 @@ public class RestJettyNoContentRestConfigTest extends BaseJettyTest {
                         .get("/country").to("direct:v4country")
                         .get("/address").to("direct:v3address").produces("application/xml").type(Address.class);
 
-                from("direct:v1country").transform().constant(new ArrayList<CountryPojo>());
-                from("direct:v2country").transform().constant(new ArrayList<CountryPojo>());
-                from("direct:v3country").transform().constant(new ArrayList<CountryPojo>());
+                from("direct:v1country").transform().constant(new java.util.ArrayList<CountryPojo>());
+                from("direct:v2country").transform().constant(new java.util.ArrayList<CountryPojo>());
+                from("direct:v3country").transform().constant(new java.util.ArrayList<CountryPojo>());
 
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");

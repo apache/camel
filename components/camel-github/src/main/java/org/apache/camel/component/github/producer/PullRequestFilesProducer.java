@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.github.producer;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
@@ -55,7 +53,7 @@ public class PullRequestFilesProducer extends AbstractGitHubProducer {
     public void process(Exchange exchange) throws Exception {
         Integer pullRequestNumber = exchange.getIn().getHeader(GitHubConstants.GITHUB_PULLREQUEST, Integer.class);
 
-        List<CommitFile> response = pullRequestService.getFiles(getRepository(), pullRequestNumber);
+        java.util.List<CommitFile> response = pullRequestService.getFiles(getRepository(), pullRequestNumber);
 
         // copy the header of in message to the out message
         exchange.getOut().copyFrom(exchange.getIn());

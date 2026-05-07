@@ -44,8 +44,6 @@ import org.apache.camel.util.StopWatch;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.Versioning;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
-import org.apache.maven.settings.Profile;
-import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.Settings;
 import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.ConfigurationProperties;
@@ -214,9 +212,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                     .collect(Collectors.toSet());
 
             for (String profileId : settings.getActiveProfiles()) {
-                Profile profile = settings.getProfilesAsMap().get(profileId);
+                org.apache.maven.settings.Profile profile = settings.getProfilesAsMap().get(profileId);
                 if (profile != null) {
-                    for (Repository repo : profile.getRepositories()) {
+                    for (org.apache.maven.settings.Repository repo : profile.getRepositories()) {
                         try {
                             URL url = URI.create(repo.getUrl()).toURL();
                             if (repositoryURLs.add(repo.getUrl())) {

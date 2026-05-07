@@ -66,7 +66,7 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
     private ArgumentCaptor<String> imageIdCaptor;
 
     @Captor
-    private ArgumentCaptor<Image> imageCaptor;
+    private ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor;
 
     private Image dummyImage;
 

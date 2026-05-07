@@ -37,7 +37,7 @@ public final class NamespacesHelper {
     private static void add(Namespaces namespaces, Element element) {
         // let's set the parent first in case we overload a prefix here
         Node parentNode = element.getParentNode();
-        if (parentNode instanceof Element) {
+        if (parentNode instanceof org.w3c.dom.Element) {
             add(namespaces, (Element) parentNode);
         }
         NamedNodeMap attributes = element.getAttributes();

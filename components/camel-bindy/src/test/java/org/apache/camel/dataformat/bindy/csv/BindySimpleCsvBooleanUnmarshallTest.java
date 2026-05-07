@@ -113,7 +113,7 @@ public class BindySimpleCsvBooleanUnmarshallTest {
 
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
-                BooleanExample.class);
+                org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);
 
         @Override
         public void configure() {

@@ -21,45 +21,26 @@
  */
 package org.apache.camel.dataformat.avro.example;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.nio.ByteBuffer;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Objects;
-
-import org.apache.avro.AvroMissingFieldException;
-import org.apache.avro.AvroRuntimeException;
-import org.apache.avro.Schema;
-import org.apache.avro.data.RecordBuilder;
-import org.apache.avro.data.TimeConversions;
-import org.apache.avro.io.DatumReader;
-import org.apache.avro.io.DatumWriter;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.SchemaStore;
-import org.apache.avro.specific.AvroGenerated;
 import org.apache.avro.specific.SpecificData;
-import org.apache.avro.specific.SpecificRecord;
-import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.avro.specific.SpecificRecordBuilderBase;
 
-@AvroGenerated
-public class DateRecord extends SpecificRecordBase implements SpecificRecord {
+@org.apache.avro.specific.AvroGenerated
+public class DateRecord extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
     private static final long serialVersionUID = 8653491882695437570L;
 
-    public static final Schema SCHEMA$ = new Schema.Parser().parse(
+    public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse(
             "{\"type\":\"record\",\"name\":\"DateRecord\",\"namespace\":\"org.apache.camel.dataformat.avro.example\",\"fields\":[{\"name\":\"date\",\"type\":[\"null\",{\"type\":\"int\",\"logicalType\":\"date\"}],\"default\":null},{\"name\":\"timestamp\",\"type\":[\"null\",{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}],\"default\":null}]}");
 
-    public static Schema getClassSchema() {
+    public static org.apache.avro.Schema getClassSchema() {
         return SCHEMA$;
     }
 
     private static final SpecificData MODEL$ = new SpecificData();
     static {
-        MODEL$.addLogicalTypeConversion(new TimeConversions.DateConversion());
-        MODEL$.addLogicalTypeConversion(new TimeConversions.TimestampMillisConversion());
+        MODEL$.addLogicalTypeConversion(new org.apache.avro.data.TimeConversions.DateConversion());
+        MODEL$.addLogicalTypeConversion(new org.apache.avro.data.TimeConversions.TimestampMillisConversion());
     }
 
     private static final BinaryMessageEncoder<DateRecord> ENCODER = new BinaryMessageEncoder<>(MODEL$, SCHEMA$);
@@ -100,7 +81,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
      * @return                     a buffer holding the serialized data for this instance
      * @throws java.io.IOException if this instance could not be serialized
      */
-    public ByteBuffer toByteBuffer() throws IOException {
+    public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException {
         return ENCODER.encode(this);
     }
 
@@ -112,13 +93,13 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
      * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
      */
     public static DateRecord fromByteBuffer(
-            ByteBuffer b)
-            throws IOException {
+            java.nio.ByteBuffer b)
+            throws java.io.IOException {
         return DECODER.decode(b);
     }
 
-    private LocalDate date;
-    private Instant timestamp;
+    private java.time.LocalDate date;
+    private java.time.Instant timestamp;
 
     /**
      * Default constructor. Note that this does not initialize fields to their default values from the schema. If that
@@ -133,7 +114,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
      * @param date      The new value for date
      * @param timestamp The new value for timestamp
      */
-    public DateRecord(LocalDate date, Instant timestamp) {
+    public DateRecord(java.time.LocalDate date, java.time.Instant timestamp) {
         this.date = date;
         this.timestamp = timestamp;
     }
@@ -144,7 +125,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
     }
 
     @Override
-    public Schema getSchema() {
+    public org.apache.avro.Schema getSchema() {
         return SCHEMA$;
     }
 
@@ -167,10 +148,10 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
     public void put(int field$, Object value$) {
         switch (field$) {
             case 0:
-                date = (LocalDate) value$;
+                date = (java.time.LocalDate) value$;
                 break;
             case 1:
-                timestamp = (Instant) value$;
+                timestamp = (java.time.Instant) value$;
                 break;
             default:
                 throw new IndexOutOfBoundsException("Invalid index: " + field$);
@@ -182,7 +163,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
      *
      * @return The value of the 'date' field.
      */
-    public LocalDate getDate() {
+    public java.time.LocalDate getDate() {
         return date;
     }
 
@@ -191,7 +172,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
      *
      * @param value the value to set.
      */
-    public void setDate(LocalDate value) {
+    public void setDate(java.time.LocalDate value) {
         this.date = value;
     }
 
@@ -200,7 +181,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
      *
      * @return The value of the 'timestamp' field.
      */
-    public Instant getTimestamp() {
+    public java.time.Instant getTimestamp() {
         return timestamp;
     }
 
@@ -209,7 +190,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
      *
      * @param value the value to set.
      */
-    public void setTimestamp(Instant value) {
+    public void setTimestamp(java.time.Instant value) {
         this.timestamp = value;
     }
 
@@ -246,19 +227,19 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
         if (other == null) {
             return new Builder();
         } else {
-            return new DateRecord.Builder(other);
+            return new org.apache.camel.dataformat.avro.example.DateRecord.Builder(other);
         }
     }
 
     /**
      * RecordBuilder for DateRecord instances.
      */
-    @AvroGenerated
-    public static class Builder extends SpecificRecordBuilderBase<DateRecord>
-            implements RecordBuilder<DateRecord> {
+    @org.apache.avro.specific.AvroGenerated
+    public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<DateRecord>
+            implements org.apache.avro.data.RecordBuilder<DateRecord> {
 
-        private LocalDate date;
-        private Instant timestamp;
+        private java.time.LocalDate date;
+        private java.time.Instant timestamp;
 
         /** Creates a new Builder */
         private Builder() {
@@ -270,7 +251,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
          *
          * @param other The existing Builder to copy.
          */
-        private Builder(DateRecord.Builder other) {
+        private Builder(org.apache.camel.dataformat.avro.example.DateRecord.Builder other) {
             super(other);
             if (isValidValue(fields()[0], other.date)) {
                 this.date = data().deepCopy(fields()[0].schema(), other.date);
@@ -287,7 +268,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
          *
          * @param other The existing instance to copy.
          */
-        private Builder(DateRecord other) {
+        private Builder(org.apache.camel.dataformat.avro.example.DateRecord other) {
             super(SCHEMA$, MODEL$);
             if (isValidValue(fields()[0], other.date)) {
                 this.date = data().deepCopy(fields()[0].schema(), other.date);
@@ -304,7 +285,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
          *
          * @return The value.
          */
-        public LocalDate getDate() {
+        public java.time.LocalDate getDate() {
             return date;
         }
 
@@ -314,7 +295,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
          * @param  value The value of 'date'.
          * @return       This builder.
          */
-        public DateRecord.Builder setDate(LocalDate value) {
+        public org.apache.camel.dataformat.avro.example.DateRecord.Builder setDate(java.time.LocalDate value) {
             validate(fields()[0], value);
             this.date = value;
             fieldSetFlags()[0] = true;
@@ -335,7 +316,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
          *
          * @return This builder.
          */
-        public DateRecord.Builder clearDate() {
+        public org.apache.camel.dataformat.avro.example.DateRecord.Builder clearDate() {
             date = null;
             fieldSetFlags()[0] = false;
             return this;
@@ -346,7 +327,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
          *
          * @return The value.
          */
-        public Instant getTimestamp() {
+        public java.time.Instant getTimestamp() {
             return timestamp;
         }
 
@@ -356,7 +337,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
          * @param  value The value of 'timestamp'.
          * @return       This builder.
          */
-        public DateRecord.Builder setTimestamp(Instant value) {
+        public org.apache.camel.dataformat.avro.example.DateRecord.Builder setTimestamp(java.time.Instant value) {
             validate(fields()[1], value);
             this.timestamp = value;
             fieldSetFlags()[1] = true;
@@ -377,7 +358,7 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
          *
          * @return This builder.
          */
-        public DateRecord.Builder clearTimestamp() {
+        public org.apache.camel.dataformat.avro.example.DateRecord.Builder clearTimestamp() {
             timestamp = null;
             fieldSetFlags()[1] = false;
             return this;
@@ -388,34 +369,34 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
         public DateRecord build() {
             try {
                 DateRecord record = new DateRecord();
-                record.date = fieldSetFlags()[0] ? this.date : (LocalDate) defaultValue(fields()[0]);
-                record.timestamp = fieldSetFlags()[1] ? this.timestamp : (Instant) defaultValue(fields()[1]);
+                record.date = fieldSetFlags()[0] ? this.date : (java.time.LocalDate) defaultValue(fields()[0]);
+                record.timestamp = fieldSetFlags()[1] ? this.timestamp : (java.time.Instant) defaultValue(fields()[1]);
                 return record;
-            } catch (AvroMissingFieldException e) {
+            } catch (org.apache.avro.AvroMissingFieldException e) {
                 throw e;
             } catch (java.lang.Exception e) {
-                throw new AvroRuntimeException(e);
+                throw new org.apache.avro.AvroRuntimeException(e);
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static final DatumWriter<DateRecord> WRITER$
-            = (DatumWriter<DateRecord>) MODEL$.createDatumWriter(SCHEMA$);
+    private static final org.apache.avro.io.DatumWriter<DateRecord> WRITER$
+            = (org.apache.avro.io.DatumWriter<DateRecord>) MODEL$.createDatumWriter(SCHEMA$);
 
     @Override
-    public void writeExternal(ObjectOutput out)
-            throws IOException {
+    public void writeExternal(java.io.ObjectOutput out)
+            throws java.io.IOException {
         WRITER$.write(this, SpecificData.getEncoder(out));
     }
 
     @SuppressWarnings("unchecked")
-    private static final DatumReader<DateRecord> READER$
-            = (DatumReader<DateRecord>) MODEL$.createDatumReader(SCHEMA$);
+    private static final org.apache.avro.io.DatumReader<DateRecord> READER$
+            = (org.apache.avro.io.DatumReader<DateRecord>) MODEL$.createDatumReader(SCHEMA$);
 
     @Override
-    public void readExternal(ObjectInput in)
-            throws IOException {
+    public void readExternal(java.io.ObjectInput in)
+            throws java.io.IOException {
         READER$.read(this, SpecificData.getDecoder(in));
     }
 
@@ -436,10 +417,10 @@ public class DateRecord extends SpecificRecordBase implements SpecificRecord {
             return false;
         }
         DateRecord other = (DateRecord) o;
-        if (!Objects.equals(this.date, other.date)) {
+        if (!java.util.Objects.equals(this.date, other.date)) {
             return false;
         }
-        if (!Objects.equals(this.timestamp, other.timestamp)) {
+        if (!java.util.Objects.equals(this.timestamp, other.timestamp)) {
             return false;
         }
         return true;

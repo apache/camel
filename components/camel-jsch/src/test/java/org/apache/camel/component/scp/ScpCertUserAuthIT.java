@@ -22,7 +22,6 @@ import java.nio.file.Paths;
 import java.security.PublicKey;
 import java.util.List;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,7 +33,6 @@ import org.apache.sshd.common.config.keys.OpenSshCertificate;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.apache.sshd.common.signature.BuiltinSignatures;
 import org.apache.sshd.common.signature.Signature;
-import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +78,7 @@ public class ScpCertUserAuthIT extends ScpServerTestSupport {
     /**
      * Creates a PublickeyAuthenticator that only accepts OpenSSH certificates signed by the User CA.
      */
-    private static PublickeyAuthenticator createCaAwareAuthenticator() {
+    private static org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator createCaAwareAuthenticator() {
         final PublicKey trustedCaKey;
         try {
             String caLine = Files.readString(Paths.get("src/test/resources/cert_user_ca.pub")).trim();
@@ -155,7 +153,7 @@ public class ScpCertUserAuthIT extends ScpServerTestSupport {
     // Positive test: certBytes parameter (bean reference)
     // ========================================================================
 
-    @BindToRegistry("userCertBytes")
+    @org.apache.camel.BindToRegistry("userCertBytes")
     public byte[] certBytes() throws IOException {
         return Files.readAllBytes(Paths.get("src/test/resources/cert_user_key-cert.pub"));
     }

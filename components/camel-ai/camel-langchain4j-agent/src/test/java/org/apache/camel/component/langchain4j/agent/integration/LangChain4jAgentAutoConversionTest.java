@@ -22,7 +22,6 @@ import java.nio.file.Files;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
@@ -144,7 +143,7 @@ public class LangChain4jAgentAutoConversionTest extends CamelTestSupport {
                 "application/zip");
 
         assertThrows(
-                TypeConversionException.class,
+                org.apache.camel.TypeConversionException.class,
                 () -> context.getTypeConverter()
                         .convertTo(AiAgentBody.class, exchange, "data".getBytes()));
     }

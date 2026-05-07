@@ -21,15 +21,13 @@ import java.util.Map;
 
 import io.camunda.client.CamundaClient;
 import io.camunda.client.CamundaClientBuilder;
-import io.camunda.client.impl.oauth.OAuthCredentialsProviderBuilder;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.camunda.internal.CamundaService;
 import org.apache.camel.component.camunda.internal.OperationName;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-@Component("camunda")
+@org.apache.camel.spi.annotations.Component("camunda")
 public class CamundaComponent extends DefaultComponent {
 
     @Metadata(label = "security", description = "Camunda SaaS cluster ID. When set, the client connects via the cloud builder.")
@@ -169,7 +167,7 @@ public class CamundaComponent extends DefaultComponent {
 
         if (clientId != null && oAuthAPI != null) {
             builder.credentialsProvider(
-                    new OAuthCredentialsProviderBuilder()
+                    new io.camunda.client.impl.oauth.OAuthCredentialsProviderBuilder()
                             .authorizationServerUrl(oAuthAPI)
                             .audience(grpcAddress)
                             .clientId(clientId)

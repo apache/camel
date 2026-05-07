@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.ComponentModel.ComponentOptionModel;
@@ -836,11 +835,11 @@ public final class JsonMapper {
 
     private static <G, O extends BaseOptionModel> JsonObject asGroupedOptionsJson(
             List<G> groups,
-            Function<G, String> groupName,
-            Function<G, String> groupDescription,
-            Function<G, String> groupSourceType,
+            java.util.function.Function<G, String> groupName,
+            java.util.function.Function<G, String> groupDescription,
+            java.util.function.Function<G, String> groupSourceType,
             List<O> options,
-            Function<O, String> optionSourceType) {
+            java.util.function.Function<O, String> optionSourceType) {
 
         JsonObject json = new JsonObject();
         JsonArray groupsArr = new JsonArray();

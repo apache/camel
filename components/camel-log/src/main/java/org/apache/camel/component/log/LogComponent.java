@@ -24,7 +24,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.slf4j.Logger;
@@ -36,7 +35,7 @@ import static org.apache.camel.support.LoggerHelper.getLineNumberLoggerName;
  * The <a href="http://camel.apache.org/log.html">Log Component</a> is for logging message exchanges via the underlying
  * logging mechanism.
  */
-@Component("log")
+@org.apache.camel.spi.annotations.Component("log")
 public class LogComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);

@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import org.w3c.dom.Document;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.junit.jupiter.api.Test;
@@ -51,7 +50,7 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
         Exchange exchange = sendJaxWsDispatchMessage(name, false);
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
 
-        Message response = exchange.getMessage();
+        org.apache.camel.Message response = exchange.getMessage();
         assertNotNull(response, "The response message must not be null");
 
         String value = decodeResponseFromMessage(response.getBody(InputStream.class), exchange);
@@ -64,7 +63,7 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
         Exchange exchange = sendJaxWsDispatchMessage(name, true);
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
 
-        Message response = exchange.getOut();
+        org.apache.camel.Message response = exchange.getOut();
         assertNotNull(response, "The response message must not be null");
 
         assertNull(response.getBody(), "The response body must be null");

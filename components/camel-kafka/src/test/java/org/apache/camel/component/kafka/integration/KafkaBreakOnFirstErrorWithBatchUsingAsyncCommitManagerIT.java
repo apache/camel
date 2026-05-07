@@ -29,7 +29,6 @@ import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.Uuid;
 import org.awaitility.Awaitility;
@@ -66,12 +65,12 @@ class KafkaBreakOnFirstErrorWithBatchUsingAsyncCommitManagerIT extends BaseKafka
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-    private KafkaProducer<String, String> producer;
+    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
-        producer = new KafkaProducer<>(props);
+        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
     }
 

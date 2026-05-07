@@ -17,7 +17,6 @@
 package org.apache.camel.jsonpath;
 
 import java.io.CharConversionException;
-import java.io.EOFException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -192,7 +191,7 @@ public class JsonStream extends FilterInputStream {
         }
         try {
             return in.read();
-        } catch (EOFException ex) {
+        } catch (java.io.EOFException ex) {
             return -1;
         }
     }
@@ -217,7 +216,7 @@ public class JsonStream extends FilterInputStream {
                 } else {
                     return minimum + additionalRead;
                 }
-            } catch (EOFException ex) {
+            } catch (java.io.EOFException ex) {
                 return minimum;
             }
         } else {
@@ -244,14 +243,14 @@ public class JsonStream extends FilterInputStream {
                 } else {
                     return minimum + additionalRead;
                 }
-            } catch (EOFException ex) {
+            } catch (java.io.EOFException ex) {
                 return minimum;
             }
         } else {
 
             try {
                 return in.read(b, off, len);
-            } catch (EOFException ex) {
+            } catch (java.io.EOFException ex) {
                 return -1;
             }
         }

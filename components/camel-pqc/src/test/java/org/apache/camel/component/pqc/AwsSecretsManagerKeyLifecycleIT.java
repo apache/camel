@@ -19,7 +19,6 @@ package org.apache.camel.component.pqc;
 import java.security.KeyPair;
 import java.security.Security;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -160,7 +159,7 @@ public class AwsSecretsManagerKeyLifecycleIT extends CamelTestSupport {
 
         // Simulate old key by setting next rotation time in the past
         KeyMetadata metadata = keyManager.getKeyMetadata("rotation-check-key");
-        metadata.setNextRotationAt(Instant.now().minusSeconds(1));
+        metadata.setNextRotationAt(java.time.Instant.now().minusSeconds(1));
         keyManager.updateKeyMetadata("rotation-check-key", metadata);
 
         // Now it should need rotation

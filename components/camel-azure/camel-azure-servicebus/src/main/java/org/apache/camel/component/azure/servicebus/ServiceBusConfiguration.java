@@ -396,9 +396,9 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     //
     // *************************************************
 
-    public ServiceBusConfiguration copy() {
+    public org.apache.camel.component.azure.servicebus.ServiceBusConfiguration copy() {
         try {
-            return (ServiceBusConfiguration) super.clone();
+            return (org.apache.camel.component.azure.servicebus.ServiceBusConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

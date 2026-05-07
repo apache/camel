@@ -16,9 +16,6 @@
  */
 package org.apache.camel.openapi;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +59,7 @@ public class RestModelConverters {
     }
 
     public List<? extends Schema<?>> readClass(OpenAPI oasDocument, Class<?> clazz) {
-        if (clazz.equals(File.class)) {
+        if (clazz.equals(java.io.File.class)) {
             // File is a special type in OAS2 / OAS3 (no model)
             return null;
         } else {
@@ -78,7 +75,7 @@ public class RestModelConverters {
 
         ModelConverters modelConverters = openapi31 ? MODEL31_CONVERTERS : MODEL30_CONVERTERS;
         Map<String, Schema> swaggerModel = modelConverters.readAll(clazz);
-        List<Schema<?>> modelSchemas = new ArrayList<>();
+        List<Schema<?>> modelSchemas = new java.util.ArrayList<>();
         swaggerModel.forEach((key, schema) -> {
             schema.setName(key);
             modelSchemas.add(schema);
@@ -132,7 +129,7 @@ public class RestModelConverters {
                     }
 
                     if (!type.isContainerType()) {
-                        Map<String, String> value = new HashMap<>();
+                        Map<String, String> value = new java.util.HashMap<>();
                         value.put("type", "string");
                         value.put("format", type.getRawClass().getName());
                         result.addExtension("x-className", value);

@@ -18,20 +18,17 @@ package org.apache.camel.component.cxf.mtom;
 
 import jakarta.jws.WebService;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
-import jakarta.xml.ws.BindingType;
-import jakarta.xml.ws.soap.SOAPBinding;
 
 import org.apache.camel.cxf.mtom_feature.Hello;
-import org.apache.camel.cxf.mtom_feature.types.ObjectFactory;
 
 /**
  * Hello Test Impl class for SOAP 1.2
  */
 
 @WebService(serviceName = "HelloService12")
-@XmlSeeAlso({ ObjectFactory.class })
+@XmlSeeAlso({ org.apache.camel.cxf.mtom_feature.types.ObjectFactory.class })
 
-@BindingType(value = SOAPBinding.SOAP12HTTP_MTOM_BINDING)
+@jakarta.xml.ws.BindingType(value = jakarta.xml.ws.soap.SOAPBinding.SOAP12HTTP_MTOM_BINDING)
 public class HelloImpl12 extends HelloImpl implements Hello {
 
 }

@@ -85,7 +85,7 @@ public class BindySimpleKeyValuePairTabMarshallTest extends CommonBindyTest {
 
     public static class ContextConfig extends RouteBuilder {
         BindyKeyValuePairDataFormat kvpBindyDataFormat
-                = new BindyKeyValuePairDataFormat(Order.class);
+                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.tab.Order.class);
 
         @Override
         public void configure() {

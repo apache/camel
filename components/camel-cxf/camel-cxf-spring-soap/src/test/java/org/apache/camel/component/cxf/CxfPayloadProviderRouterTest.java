@@ -22,8 +22,6 @@ import jakarta.xml.ws.Service;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
@@ -100,7 +98,7 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
                                                                             + getClass().getSimpleName()
                                                                             + "/CamelContext/RouterPort");
         Greeter greeter = service.getPort(routerPortName, Greeter.class);
-        Client client = ClientProxy.getClient(greeter);
+        org.apache.cxf.endpoint.Client client = org.apache.cxf.frontend.ClientProxy.getClient(greeter);
         VerifyInboundInterceptor icp = new VerifyInboundInterceptor();
         client.getInInterceptors().add(icp);
 

@@ -24,7 +24,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.TransactedPolicy;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ public abstract class AbstractPolicyReifier<T extends ProcessorDefinition<?>> ex
             return policy;
         }
         // explicit ref given so lookup by it
-        if (ObjectHelper.isNotEmpty(ref)) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(ref)) {
             return mandatoryLookup(ref, Policy.class);
         }
 

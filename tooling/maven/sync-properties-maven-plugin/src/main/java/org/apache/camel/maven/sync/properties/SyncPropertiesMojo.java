@@ -35,7 +35,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -149,14 +148,14 @@ public class SyncPropertiesMojo extends AbstractMojo {
 
         final Model camelParentPomXmlModel;
         try (Reader r = Files.newBufferedReader(camelParentPomXmlPath, charset)) {
-            camelParentPomXmlModel = new MavenXpp3Reader().read(r);
+            camelParentPomXmlModel = new org.apache.maven.model.io.xpp3.MavenXpp3Reader().read(r);
         } catch (XmlPullParserException | IOException e) {
             throw new RuntimeException("Could not parse " + camelParentPomXmlPath, e);
         }
 
         final Model camelPomXmlModel;
         try (Reader r = Files.newBufferedReader(camelPomXmlPath, charset)) {
-            camelPomXmlModel = new MavenXpp3Reader().read(r);
+            camelPomXmlModel = new org.apache.maven.model.io.xpp3.MavenXpp3Reader().read(r);
         } catch (XmlPullParserException | IOException e) {
             throw new RuntimeException("Could not parse " + camelPomXmlPath, e);
         }

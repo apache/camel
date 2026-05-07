@@ -93,7 +93,7 @@ public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
     public static class ContextConfig extends RouteBuilder {
 
         BindyKeyValuePairDataFormat kvpBindyDataFormat
-                = new BindyKeyValuePairDataFormat(Order.class);
+                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order.class);
 
         @Override
         public void configure() {

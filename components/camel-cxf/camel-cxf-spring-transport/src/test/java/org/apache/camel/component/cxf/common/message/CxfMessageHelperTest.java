@@ -27,7 +27,6 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.transport.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.transport.message.CxfMessageHelper;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -52,10 +51,10 @@ public class CxfMessageHelperTest {
     @Test
     public void testGetCxfInMessage() throws Exception {
         HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
-        Exchange exchange = new DefaultExchange(context);
+        org.apache.camel.Exchange exchange = new DefaultExchange(context);
         // String
         exchange.getIn().setBody("hello world");
-        Message message = CxfMessageHelper.getCxfInMessage(
+        org.apache.cxf.message.Message message = CxfMessageHelper.getCxfInMessage(
                 headerFilterStrategy, exchange, false);
         // test message
         InputStream is = message.getContent(InputStream.class);

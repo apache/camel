@@ -23,7 +23,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
-import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 @UriParams
@@ -37,7 +36,7 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
     private BedrockRuntimeClient bedrockRuntimeClient;
     @UriParam
     @Metadata(label = "advanced", autowired = true)
-    private BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient;
+    private software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient;
     @UriParam(label = "security", security = "secret")
     private String accessKey;
     @UriParam(label = "security", security = "secret")
@@ -96,7 +95,7 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
         this.bedrockRuntimeClient = bedrockRuntimeClient;
     }
 
-    public BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient() {
+    public software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient() {
         return bedrockRuntimeAsyncClient;
     }
 
@@ -104,7 +103,7 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
      * To use an existing configured AWS Bedrock Runtime Async client for streaming operations
      */
     public void setBedrockRuntimeAsyncClient(
-            BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient) {
+            software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient) {
         this.bedrockRuntimeAsyncClient = bedrockRuntimeAsyncClient;
     }
 

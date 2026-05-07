@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
+public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
     private DefaultPackageScanClassResolver resolver;
     private Set<Class<? extends Annotation>> annotations = new HashSet<>();
@@ -42,16 +42,16 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         resolver = new DefaultPackageScanClassResolver();
-        annotations.add(ScannableOne.class);
-        annotations.add(ScannableTwo.class);
+        annotations.add(org.apache.camel.spring.scan.ScannableOne.class);
+        annotations.add(org.apache.camel.spring.scan.ScannableTwo.class);
     }
 
     @Test
     public void testFindByAnnotationWithoutExtraFilters() {
-        Set<Class<?>> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class, ScanTargetTwo.class);
 
-        scanned = resolver.findAnnotated(ScannableTwo.class, scanPackage);
+        scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableTwo.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetThree.class);
     }
 
@@ -72,7 +72,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         filter.addIncludePattern(scanPackage + ".b.*");
         resolver.addFilter(filter);
 
-        Set<Class<?>> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
+        Set<Class<?>> scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetTwo.class);
 
         scanned = resolver.findAnnotated(ScannableTwo.class, scanPackage);
@@ -98,7 +98,7 @@ public class DefaultPackageScanClassResolverTest extends ScanTestSupport {
         Set<Class<?>> scanned = resolver.findAnnotated(ScannableOne.class, scanPackage);
         validateMatchingSetContains(scanned, ScanTargetOne.class);
 
-        scanned = resolver.findAnnotated(ScannableTwo.class, scanPackage);
+        scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableTwo.class, scanPackage);
         validateMatchingSetContains(scanned);
     }
 

@@ -1102,10 +1102,10 @@ public class XmlConverter {
 
         // Enable the Security feature by default
         try {
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (TransformerConfigurationException e) {
             LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.",
-                    XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage());
+                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage());
         }
         LOG.debug("Configuring TransformerFactory to not allow access to external DTD/Stylesheet");
         try {
@@ -1194,10 +1194,10 @@ public class XmlConverter {
         SAXParserFactory sfactory = SAXParserFactory.newInstance();
         // Need to setup XMLReader security feature by default
         try {
-            sfactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (Exception e) {
             LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
-                    XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage());
+                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage());
         }
         try {
             sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);

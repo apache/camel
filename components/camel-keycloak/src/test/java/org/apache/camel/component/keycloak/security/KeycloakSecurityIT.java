@@ -18,14 +18,10 @@ package org.apache.camel.component.keycloak.security;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
-import java.util.Set;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -44,7 +40,6 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -188,7 +183,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
         // Test that parseToken works correctly with public key and issuer verification
         String expectedIssuer = keycloakUrl + "/realms/" + realm;
         try {
-            AccessToken token = KeycloakSecurityHelper.parseAndVerifyAccessToken(
+            org.keycloak.representations.AccessToken token = KeycloakSecurityHelper.parseAndVerifyAccessToken(
                     adminToken, publicKey, expectedIssuer);
 
             assertNotNull(token);
@@ -196,7 +191,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
             assertTrue(KeycloakSecurityHelper.isTokenActive(token));
 
             // Verify roles can be extracted after public key verification
-            Set<String> roles = KeycloakSecurityHelper.extractRoles(token, realm, clientId);
+            java.util.Set<String> roles = KeycloakSecurityHelper.extractRoles(token, realm, clientId);
             assertNotNull(roles);
             assertFalse(roles.isEmpty());
 
@@ -250,7 +245,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
 
         // Test parseAndVerifyAccessToken with correct public key and issuer (may fail with signature verification)
         try {
-            AccessToken tokenWithKey
+            org.keycloak.representations.AccessToken tokenWithKey
                     = KeycloakSecurityHelper.parseAndVerifyAccessToken(adminToken, publicKey, expectedIssuer);
             assertNotNull(tokenWithKey);
             assertNotNull(tokenWithKey.getSubject());
@@ -372,9 +367,9 @@ public class KeycloakSecurityIT extends CamelTestSupport {
 
         try {
             // Parse and verify token, then extract permissions directly
-            AccessToken token = KeycloakSecurityHelper.parseAndVerifyAccessToken(
+            org.keycloak.representations.AccessToken token = KeycloakSecurityHelper.parseAndVerifyAccessToken(
                     adminToken, publicKey, expectedIssuer);
-            Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
+            java.util.Set<String> permissions = KeycloakSecurityHelper.extractPermissions(token);
 
             // Log the permissions found for debugging
             LOG.info("Permissions found in token: {}", permissions);
@@ -463,9 +458,9 @@ public class KeycloakSecurityIT extends CamelTestSupport {
      */
     private PublicKey getWrongPublicKey() {
         try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            java.security.KeyPairGenerator keyGen = java.security.KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(2048);
-            KeyPair keyPair = keyGen.generateKeyPair();
+            java.security.KeyPair keyPair = keyGen.generateKeyPair();
             return keyPair.getPublic();
         } catch (Exception e) {
             throw new RuntimeException("Error generating dummy public key", e);
@@ -514,7 +509,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                 keycloakPolicy.setRealm(realm);
                 keycloakPolicy.setClientId(clientId);
                 keycloakPolicy.setClientSecret(clientSecret);
-                keycloakPolicy.setRequiredRoles(Arrays.asList("admin-role")); // Add role to trigger validation
+                keycloakPolicy.setRequiredRoles(java.util.Arrays.asList("admin-role")); // Add role to trigger validation
 
                 // Configure different policies for different access levels
                 KeycloakSecurityPolicy adminPolicy = new KeycloakSecurityPolicy();
@@ -522,14 +517,14 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                 adminPolicy.setRealm(realm);
                 adminPolicy.setClientId(clientId);
                 adminPolicy.setClientSecret(clientSecret);
-                adminPolicy.setRequiredRoles(Arrays.asList("admin-role"));
+                adminPolicy.setRequiredRoles(java.util.Arrays.asList("admin-role"));
 
                 KeycloakSecurityPolicy userPolicy = new KeycloakSecurityPolicy();
                 userPolicy.setServerUrl(keycloakUrl);
                 userPolicy.setRealm(realm);
                 userPolicy.setClientId(clientId);
                 userPolicy.setClientSecret(clientSecret);
-                userPolicy.setRequiredRoles(Arrays.asList("user"));
+                userPolicy.setRequiredRoles(java.util.Arrays.asList("user"));
                 userPolicy.setAllRolesRequired(true); // Must have exact role
 
                 // Protected routes
@@ -554,7 +549,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                 publicKeyPolicy.setRealm(realm);
                 publicKeyPolicy.setClientId(clientId);
                 publicKeyPolicy.setClientSecret(clientSecret);
-                publicKeyPolicy.setRequiredRoles(Arrays.asList("admin-role")); // Add role to trigger validation
+                publicKeyPolicy.setRequiredRoles(java.util.Arrays.asList("admin-role")); // Add role to trigger validation
                 try {
                     publicKeyPolicy.setPublicKey(getPublicKeyFromKeycloak());
                 } catch (Exception e) {
@@ -568,7 +563,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                 wrongPublicKeyPolicy.setClientId(clientId);
                 wrongPublicKeyPolicy.setClientSecret(clientSecret);
                 wrongPublicKeyPolicy.setPublicKey(getWrongPublicKey());
-                wrongPublicKeyPolicy.setRequiredRoles(Arrays.asList("admin-role")); // Add role to trigger validation
+                wrongPublicKeyPolicy.setRequiredRoles(java.util.Arrays.asList("admin-role")); // Add role to trigger validation
 
                 from("direct:public-key-protected")
                         .policy(publicKeyPolicy)
@@ -586,7 +581,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                 permissionsPolicy.setRealm(realm);
                 permissionsPolicy.setClientId(clientId);
                 permissionsPolicy.setClientSecret(clientSecret);
-                permissionsPolicy.setRequiredPermissions(Arrays.asList("read:documents", "write:documents"));
+                permissionsPolicy.setRequiredPermissions(java.util.Arrays.asList("read:documents", "write:documents"));
                 permissionsPolicy.setAllPermissionsRequired(false); // ANY permission
 
                 from("direct:permissions-protected")
@@ -600,7 +595,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                 scopePermissionsPolicy.setRealm(realm);
                 scopePermissionsPolicy.setClientId(clientId);
                 scopePermissionsPolicy.setClientSecret(clientSecret);
-                scopePermissionsPolicy.setRequiredPermissions(Arrays.asList("profile", "email", "openid"));
+                scopePermissionsPolicy.setRequiredPermissions(java.util.Arrays.asList("profile", "email", "openid"));
                 scopePermissionsPolicy.setAllPermissionsRequired(false); // ANY scope
 
                 from("direct:scope-permissions-protected")
@@ -614,8 +609,8 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                 combinedPolicy.setRealm(realm);
                 combinedPolicy.setClientId(clientId);
                 combinedPolicy.setClientSecret(clientSecret);
-                combinedPolicy.setRequiredRoles(Arrays.asList("admin-role"));
-                combinedPolicy.setRequiredPermissions(Arrays.asList("read:documents", "admin:system"));
+                combinedPolicy.setRequiredRoles(java.util.Arrays.asList("admin-role"));
+                combinedPolicy.setRequiredPermissions(java.util.Arrays.asList("read:documents", "admin:system"));
                 combinedPolicy.setAllRolesRequired(true); // Must have ALL roles
                 combinedPolicy.setAllPermissionsRequired(true); // Any permission
 
@@ -631,7 +626,7 @@ public class KeycloakSecurityIT extends CamelTestSupport {
                 flexiblePermissionsPolicy.setClientId(clientId);
                 flexiblePermissionsPolicy.setClientSecret(clientSecret);
                 flexiblePermissionsPolicy
-                        .setRequiredPermissions(Arrays.asList("profile", "email", "user:basic", "read:public"));
+                        .setRequiredPermissions(java.util.Arrays.asList("profile", "email", "user:basic", "read:public"));
                 flexiblePermissionsPolicy.setAllPermissionsRequired(false); // ANY permission
 
                 from("direct:flexible-permissions-protected")

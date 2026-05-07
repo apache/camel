@@ -29,7 +29,6 @@ import jakarta.mail.internet.MimeMessage;
 
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
-import com.google.api.services.gmail.model.Profile;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersMessagesApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
@@ -67,7 +66,7 @@ public class GmailUsersMessagesIT extends AbstractGoogleMailTestSupport {
         // parameter type is com.google.api.services.gmail.model.Message
         headers.put("CamelGoogleMail.content", testEmail);
 
-        Message result = requestBodyAndHeaders("direct://SEND", null, headers);
+        com.google.api.services.gmail.model.Message result = requestBodyAndHeaders("direct://SEND", null, headers);
         assertNotNull(result, "send result");
         String testEmailId = result.getId();
 
@@ -137,7 +136,7 @@ public class GmailUsersMessagesIT extends AbstractGoogleMailTestSupport {
     }
 
     private Message createTestEmail() throws MessagingException, IOException {
-        Profile profile
+        com.google.api.services.gmail.model.Profile profile
                 = requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);

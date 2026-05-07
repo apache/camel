@@ -63,7 +63,7 @@ public class BindySingleQuotesWithDoubleQuotesInFieldCsvUnmarshallTest {
 
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat
-                = new BindyCsvDataFormat(Order.class);
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
 
         @Override
         public void configure() {

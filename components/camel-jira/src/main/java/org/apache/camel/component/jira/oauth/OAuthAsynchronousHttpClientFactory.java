@@ -33,7 +33,6 @@ import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.executor.ThreadLocalContextManager;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,7 +178,7 @@ public class OAuthAsynchronousHttpClientFactory {
         static String getVersion(String groupId, String artifactId) {
             final Properties props = new Properties();
             String pomProps = String.format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId);
-            try (InputStream resourceAsStream = ObjectHelper.loadResourceAsStream(pomProps,
+            try (InputStream resourceAsStream = org.apache.camel.util.ObjectHelper.loadResourceAsStream(pomProps,
                     OAuthAsynchronousHttpClientFactory.class.getClassLoader())) {
                 props.load(resourceAsStream);
                 return props.getProperty("version", UNKNOWN_VERSION);

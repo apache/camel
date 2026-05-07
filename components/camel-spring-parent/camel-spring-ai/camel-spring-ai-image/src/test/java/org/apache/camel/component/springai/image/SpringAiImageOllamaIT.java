@@ -20,7 +20,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -84,7 +83,7 @@ public class SpringAiImageOllamaIT extends CamelTestSupport {
         // Add a Jackson converter that supports this media type.
         MappingJackson2HttpMessageConverter ndjsonConverter = new MappingJackson2HttpMessageConverter();
         ndjsonConverter.setSupportedMediaTypes(
-                List.of(MediaType.APPLICATION_JSON, MediaType.valueOf("application/x-ndjson")));
+                java.util.List.of(MediaType.APPLICATION_JSON, MediaType.valueOf("application/x-ndjson")));
 
         RestClient.Builder restClientBuilder = RestClient.builder()
                 .messageConverters(converters -> converters.add(0, ndjsonConverter));

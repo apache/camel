@@ -20,7 +20,6 @@ import jakarta.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.wsdl_first.types.UnknownPersonFault;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.slf4j.Logger;
@@ -49,8 +48,8 @@ public class PersonProcessor implements Processor {
         if (personId.value == null || personId.value.length() == 0) {
             LOG.info("person id 123, so throwing exception");
             // Try to throw out the soap fault message
-            UnknownPersonFault personFault
-                    = new UnknownPersonFault();
+            org.apache.camel.wsdl_first.types.UnknownPersonFault personFault
+                    = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
             personFault.setPersonId("");
             org.apache.camel.wsdl_first.UnknownPersonFault fault
                     = new org.apache.camel.wsdl_first.UnknownPersonFault("Get the null value of person name", personFault);

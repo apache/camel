@@ -111,7 +111,7 @@ public class BindyCsvClassTypeAsStringTest extends CamelTestSupport {
             @Override
             public void configure() {
                 BindyDataFormat bindy = new BindyDataFormat()
-                        .classType(Order.class)
+                        .classType(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class)
                         .locale("en")
                         .csv();
 
@@ -120,7 +120,7 @@ public class BindyCsvClassTypeAsStringTest extends CamelTestSupport {
                         .to("mock:in");
 
                 from("direct:out")
-                        .unmarshal().bindy(BindyType.Csv, Order.class)
+                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class)
                         .to("mock:out");
 
             }

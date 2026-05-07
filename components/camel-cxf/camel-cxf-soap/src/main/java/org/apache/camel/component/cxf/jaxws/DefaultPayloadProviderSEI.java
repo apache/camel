@@ -18,14 +18,13 @@
 package org.apache.camel.component.cxf.jaxws;
 
 import jakarta.xml.ws.Provider;
-import jakarta.xml.ws.Service;
 import jakarta.xml.ws.ServiceMode;
 import jakarta.xml.ws.WebServiceProvider;
 
 import javax.xml.transform.Source;
 
 @WebServiceProvider(targetNamespace = "http://camel.apache.org/cxf/jaxws/provider")
-@ServiceMode(value = Service.Mode.PAYLOAD)
+@ServiceMode(value = jakarta.xml.ws.Service.Mode.PAYLOAD)
 public interface DefaultPayloadProviderSEI extends Provider<Source> {
     @Override
     Source invoke(Source request);

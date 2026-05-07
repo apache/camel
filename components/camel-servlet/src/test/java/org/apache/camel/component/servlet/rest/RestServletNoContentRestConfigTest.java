@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.servlet.rest;
 
-import java.util.ArrayList;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.converter.jaxb.JaxbConstants;
@@ -125,9 +123,9 @@ public class RestServletNoContentRestConfigTest extends ServletCamelRouterTestSu
                         .get("/country").to("direct:v4country")
                         .get("/address").to("direct:v3address").produces("application/xml").type(Address.class);
 
-                from("direct:v1country").transform().constant(new ArrayList<CountryPojo>());
-                from("direct:v2country").transform().constant(new ArrayList<CountryPojo>());
-                from("direct:v3country").transform().constant(new ArrayList<CountryPojo>());
+                from("direct:v1country").transform().constant(new java.util.ArrayList<CountryPojo>());
+                from("direct:v2country").transform().constant(new java.util.ArrayList<CountryPojo>());
+                from("direct:v3country").transform().constant(new java.util.ArrayList<CountryPojo>());
 
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");

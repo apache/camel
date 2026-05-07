@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.flink;
 
-import java.util.Collections;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
@@ -115,7 +113,7 @@ public class DataStreamEdgeCasesIT extends CamelTestSupport {
     public void testEmptyListPayload() {
         template.sendBodyAndHeader(
                 "direct:withDataStream",
-                Collections.emptyList(),
+                java.util.Collections.emptyList(),
                 FlinkConstants.FLINK_DATASTREAM_CALLBACK_HEADER,
                 new VoidDataStreamCallback() {
                     @Override

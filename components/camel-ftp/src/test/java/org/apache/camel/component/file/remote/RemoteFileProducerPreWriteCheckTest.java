@@ -22,7 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -67,7 +66,7 @@ class RemoteFileProducerPreWriteCheckTest {
         producer.preWriteCheck(exchange);
         // Reset the mock to clear the interaction count
         verify(operations, times(1)).connect(configuration, exchange);
-        Mockito.clearInvocations(operations);
+        org.mockito.Mockito.clearInvocations(operations);
     }
 
     /**

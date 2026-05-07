@@ -95,7 +95,7 @@ jobs:
       - name: maven build
         if: ${{ !inputs.skip_full_build }}
         env:
-          MAVEN_EXTRA_ARGS: ${{ matrix.maven_extra_args || '' }} -Prewrite
+          MAVEN_EXTRA_ARGS: ${{ matrix.maven_extra_args || '' }}
         run: ./etc/scripts/regen.sh
       - name: Quick dependency build
         if: ${{ inputs.skip_full_build }}

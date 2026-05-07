@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -32,7 +31,7 @@ import org.apache.camel.util.StringHelper;
  * The <a href="http://camel.apache.org/language-component.html">Language component</a> enables sending
  * {@link org.apache.camel.Exchange}s to a given language in order to have a script executed.
  */
-@Component("language")
+@org.apache.camel.spi.annotations.Component("language")
 public class LanguageComponent extends DefaultComponent {
 
     public static final String RESOURCE = "resource:";

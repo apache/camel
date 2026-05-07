@@ -17,9 +17,6 @@
 /**
  * The classes for working with Camel and XML along with the primary factory beans.
  */
-@XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-           elementFormDefault = XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.core.xml;
-
-import jakarta.xml.bind.annotation.XmlNsForm;
-import jakarta.xml.bind.annotation.XmlSchema;

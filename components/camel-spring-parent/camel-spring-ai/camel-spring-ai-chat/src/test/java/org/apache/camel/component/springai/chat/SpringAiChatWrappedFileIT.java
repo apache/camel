@@ -18,14 +18,12 @@ package org.apache.camel.component.springai.chat;
 
 import java.net.URL;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
@@ -59,7 +57,7 @@ public class SpringAiChatWrappedFileIT extends OllamaTestSupport {
     }
 
     @Override
-    protected ChatModel createModel() {
+    protected org.springframework.ai.chat.model.ChatModel createModel() {
         OllamaApi ollamaApi = OllamaApi.builder()
                 .baseUrl(OLLAMA.baseUrl())
                 .build();
@@ -164,7 +162,7 @@ public class SpringAiChatWrappedFileIT extends OllamaTestSupport {
                         .pollEnrich("file:" + testFilesPath + "?fileName=test-image.png&noop=true&idempotent=false")
                         .setHeader(SpringAiChatConstants.USER_MESSAGE, constant("Describe this image."))
                         // Simulate FILE_CONTENT_TYPE header that would be set by file component with probeContentType=true
-                        .setHeader(Exchange.FILE_CONTENT_TYPE, constant("image/png"))
+                        .setHeader(org.apache.camel.Exchange.FILE_CONTENT_TYPE, constant("image/png"))
                         .to("spring-ai-chat:wrapped-file-ct?chatModel=#chatModel");
             }
         };

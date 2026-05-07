@@ -66,7 +66,7 @@ public class ManagedRouteGroupLastErrorTest extends ManagementTestSupport {
         String group = (String) mbeanServer.getAttribute(on, "RouteGroup");
         assertEquals("myGroup", group);
 
-        RouteError re = (RouteError) mbeanServer.getAttribute(on, "LastError");
+        org.apache.camel.api.management.mbean.RouteError re = (RouteError) mbeanServer.getAttribute(on, "LastError");
 
         Assertions.assertNotNull(re);
         Assertions.assertInstanceOf(RejectedExecutionException.class, re.getException());

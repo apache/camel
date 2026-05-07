@@ -162,7 +162,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             if (optional) {
                 pos = pos - 1;
             }
-            Optional<Object> o = doPath(path.substring(0, pos));
+            java.util.Optional<Object> o = doPath(path.substring(0, pos));
             if (o.isPresent()) {
                 answer = o.get();
                 if (answer instanceof Map map) {
@@ -174,7 +174,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
             }
         } else if (path.contains("[")) {
             jo = null;
-            Optional<Object> o = doPath(path);
+            java.util.Optional<Object> o = doPath(path);
             if (o.isPresent()) {
                 answer = o.get();
                 if (answer instanceof Map map) {

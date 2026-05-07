@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.integration;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.*;
 import org.apache.camel.EndpointInject;
@@ -34,10 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
-import software.amazon.awssdk.services.bedrockruntime.model.ConversationRole;
-import software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration;
-import software.amazon.awssdk.services.bedrockruntime.model.Message;
 
 // Must be manually tested. Provide your own accessKey and secretKey using -Daws.manual.access.key and -Daws.manual.secret.key
 @EnabledIfSystemProperties({
@@ -885,18 +878,18 @@ class BedrockProducerIT extends CamelTestSupport {
         result.expectedMessageCount(1);
         final Exchange result = template.send("direct:converse_claude", exchange -> {
             // Create a message using the Converse API
-            List<Message> messages = new ArrayList<>();
-            messages.add(Message.builder()
-                    .role(ConversationRole.USER)
-                    .content(ContentBlock
+            java.util.List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new java.util.ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
                             .fromText("What is the capital of France?"))
                     .build());
 
             exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
 
             // Optional: Add inference configuration
-            InferenceConfiguration inferenceConfig
-                    = InferenceConfiguration.builder()
+            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
+                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
                             .maxTokens(100)
                             .temperature(0.7f)
                             .build();
@@ -911,10 +904,10 @@ class BedrockProducerIT extends CamelTestSupport {
         result.expectedMessageCount(1);
         final Exchange result = template.send("direct:converse_stream_claude", exchange -> {
             // Create a message using the Converse API
-            List<Message> messages = new ArrayList<>();
-            messages.add(Message.builder()
-                    .role(ConversationRole.USER)
-                    .content(ContentBlock
+            java.util.List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new java.util.ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
                             .fromText("Tell me a short joke about Java programming"))
                     .build());
 
@@ -922,8 +915,8 @@ class BedrockProducerIT extends CamelTestSupport {
             exchange.getMessage().setHeader(BedrockConstants.STREAM_OUTPUT_MODE, "complete");
 
             // Optional: Add inference configuration
-            InferenceConfiguration inferenceConfig
-                    = InferenceConfiguration.builder()
+            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
+                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
                             .maxTokens(200)
                             .temperature(0.9f)
                             .build();

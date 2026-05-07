@@ -30,7 +30,6 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.JsonMapper;
@@ -297,7 +296,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
     }
 
     private static void collectSecretOption(
-            BaseOptionModel o, Set<String> secrets) {
+            org.apache.camel.tooling.model.BaseOptionModel o, Set<String> secrets) {
         if (o.isSecret() || SECRET.equals(o.getSecurity())) {
             String key = o.getName().toLowerCase(Locale.ENGLISH);
             key = key.replace("-", "");
@@ -306,7 +305,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
     }
 
     private static void collectSecurityOption(
-            BaseOptionModel o, Map<String, String[]> securityOptions) {
+            org.apache.camel.tooling.model.BaseOptionModel o, Map<String, String[]> securityOptions) {
         String security = o.getSecurity();
         if (!Strings.isNullOrEmpty(security) && !SECRET.equals(security)) {
             // only collect insecure:* categories; secrets are handled by SensitiveUtils

@@ -44,7 +44,7 @@ class XPathNamespacesTest {
                     .hasSize(3);
 
             StringWriter sw = new StringWriter();
-            new ModelWriter(sw).writeRoutesDefinition(routesDefinition.get());
+            new org.apache.camel.yaml.out.ModelWriter(sw).writeRoutesDefinition(routesDefinition.get());
 
             assertThat(sw).hasToString(EXPECTED_YAML);
         }

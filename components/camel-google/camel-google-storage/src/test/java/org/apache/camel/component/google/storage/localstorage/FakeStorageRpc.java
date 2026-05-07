@@ -57,7 +57,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.testing.StorageRpcTestBase;
-import com.google.common.io.ByteStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +145,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
         object.setUpdated(now());
         metadata.put(key, object);
         try {
-            contents.put(key, ByteStreams.toByteArray(content));
+            contents.put(key, com.google.common.io.ByteStreams.toByteArray(content));
         } catch (IOException e) {
             throw new StorageException(e);
         }

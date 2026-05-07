@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 
 import io.fabric8.knative.eventing.v1.Trigger;
 import io.fabric8.knative.messaging.v1.Subscription;
-import io.fabric8.knative.serving.v1.Service;
 import io.fabric8.knative.sources.v1.SinkBinding;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
@@ -68,8 +67,8 @@ public class KubernetesExportKnativeTest extends KubernetesExportBaseTestSupport
         Assertions.assertFalse(hasService(rt));
         Assertions.assertTrue(hasKnativeService(rt));
 
-        Service service
-                = getResource(rt, Service.class)
+        io.fabric8.knative.serving.v1.Service service
+                = getResource(rt, io.fabric8.knative.serving.v1.Service.class)
                         .orElseThrow(() -> new RuntimeCamelException("Missing Knative service in Kubernetes manifest"));
 
         Map<String, String> labelsA = service.getMetadata().getLabels();

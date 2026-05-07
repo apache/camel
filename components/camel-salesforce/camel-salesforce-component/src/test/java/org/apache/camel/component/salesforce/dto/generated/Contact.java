@@ -16,14 +16,11 @@
  */
 package org.apache.camel.component.salesforce.dto.generated;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
-import org.apache.camel.component.salesforce.api.dto.Address;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
@@ -195,15 +192,15 @@ public class Contact extends AbstractDescribedSObjectBase {
         this.OtherLongitude = OtherLongitude;
     }
 
-    private Address OtherAddress;
+    private org.apache.camel.component.salesforce.api.dto.Address OtherAddress;
 
     @JsonProperty("OtherAddress")
-    public Address getOtherAddress() {
+    public org.apache.camel.component.salesforce.api.dto.Address getOtherAddress() {
         return this.OtherAddress;
     }
 
     @JsonProperty("OtherAddress")
-    public void setOtherAddress(Address OtherAddress) {
+    public void setOtherAddress(org.apache.camel.component.salesforce.api.dto.Address OtherAddress) {
         this.OtherAddress = OtherAddress;
     }
 
@@ -291,15 +288,15 @@ public class Contact extends AbstractDescribedSObjectBase {
         this.MailingLongitude = MailingLongitude;
     }
 
-    private Address MailingAddress;
+    private org.apache.camel.component.salesforce.api.dto.Address MailingAddress;
 
     @JsonProperty("MailingAddress")
-    public Address getMailingAddress() {
+    public org.apache.camel.component.salesforce.api.dto.Address getMailingAddress() {
         return this.MailingAddress;
     }
 
     @JsonProperty("MailingAddress")
-    public void setMailingAddress(Address MailingAddress) {
+    public void setMailingAddress(org.apache.camel.component.salesforce.api.dto.Address MailingAddress) {
         this.MailingAddress = MailingAddress;
     }
 
@@ -447,15 +444,15 @@ public class Contact extends AbstractDescribedSObjectBase {
         this.AssistantName = AssistantName;
     }
 
-    private LocalDate Birthdate;
+    private java.time.LocalDate Birthdate;
 
     @JsonProperty("Birthdate")
-    public LocalDate getBirthdate() {
+    public java.time.LocalDate getBirthdate() {
         return this.Birthdate;
     }
 
     @JsonProperty("Birthdate")
-    public void setBirthdate(LocalDate Birthdate) {
+    public void setBirthdate(java.time.LocalDate Birthdate) {
         this.Birthdate = Birthdate;
     }
 
@@ -471,27 +468,27 @@ public class Contact extends AbstractDescribedSObjectBase {
         this.Description = Description;
     }
 
-    private ZonedDateTime LastCURequestDate;
+    private java.time.ZonedDateTime LastCURequestDate;
 
     @JsonProperty("LastCURequestDate")
-    public ZonedDateTime getLastCURequestDate() {
+    public java.time.ZonedDateTime getLastCURequestDate() {
         return this.LastCURequestDate;
     }
 
     @JsonProperty("LastCURequestDate")
-    public void setLastCURequestDate(ZonedDateTime LastCURequestDate) {
+    public void setLastCURequestDate(java.time.ZonedDateTime LastCURequestDate) {
         this.LastCURequestDate = LastCURequestDate;
     }
 
-    private ZonedDateTime LastCUUpdateDate;
+    private java.time.ZonedDateTime LastCUUpdateDate;
 
     @JsonProperty("LastCUUpdateDate")
-    public ZonedDateTime getLastCUUpdateDate() {
+    public java.time.ZonedDateTime getLastCUUpdateDate() {
         return this.LastCUUpdateDate;
     }
 
     @JsonProperty("LastCUUpdateDate")
-    public void setLastCUUpdateDate(ZonedDateTime LastCUUpdateDate) {
+    public void setLastCUUpdateDate(java.time.ZonedDateTime LastCUUpdateDate) {
         this.LastCUUpdateDate = LastCUUpdateDate;
     }
 
@@ -507,15 +504,15 @@ public class Contact extends AbstractDescribedSObjectBase {
         this.EmailBouncedReason = EmailBouncedReason;
     }
 
-    private ZonedDateTime EmailBouncedDate;
+    private java.time.ZonedDateTime EmailBouncedDate;
 
     @JsonProperty("EmailBouncedDate")
-    public ZonedDateTime getEmailBouncedDate() {
+    public java.time.ZonedDateTime getEmailBouncedDate() {
         return this.EmailBouncedDate;
     }
 
     @JsonProperty("EmailBouncedDate")
-    public void setEmailBouncedDate(ZonedDateTime EmailBouncedDate) {
+    public void setEmailBouncedDate(java.time.ZonedDateTime EmailBouncedDate) {
         this.EmailBouncedDate = EmailBouncedDate;
     }
 

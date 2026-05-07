@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.mcp.client.McpClient;
@@ -272,7 +271,7 @@ public class AgentConfiguration {
                 .filter(name -> !name.isEmpty())
                 .map(AgentConfiguration::loadGuardrailClass)
                 .filter(clazz -> clazz != null)
-                .collect(Collectors.toList());
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**

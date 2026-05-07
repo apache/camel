@@ -37,8 +37,6 @@ import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.api.command.EventsCmd;
 import com.github.dockerjava.api.command.ExecCreateCmd;
 import com.github.dockerjava.api.command.ExecStartCmd;
-import com.github.dockerjava.api.command.ExportContainerCmd;
-import com.github.dockerjava.api.command.ImageHistoryCmd;
 import com.github.dockerjava.api.command.InfoCmd;
 import com.github.dockerjava.api.command.InitializeSwarmCmd;
 import com.github.dockerjava.api.command.InspectConfigCmd;
@@ -518,12 +516,12 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
     }
 
     @Override
-    public ImageHistoryCmd.Exec createImageHistoryCmdExec() {
+    public com.github.dockerjava.api.command.ImageHistoryCmd.Exec createImageHistoryCmdExec() {
         return null;
     }
 
     @Override
-    public ExportContainerCmd.Exec createExportContainerCmdExec() {
+    public com.github.dockerjava.api.command.ExportContainerCmd.Exec createExportContainerCmdExec() {
         return null;
     }
 }

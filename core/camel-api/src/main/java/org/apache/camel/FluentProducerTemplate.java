@@ -18,7 +18,6 @@ package org.apache.camel;
 
 import java.util.Map;
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.util.ObjectHelper;
@@ -276,7 +275,7 @@ public interface FluentProducerTemplate extends Service {
      *
      * @param templateCustomizer the customizer
      */
-    FluentProducerTemplate withTemplateCustomizer(Consumer<ProducerTemplate> templateCustomizer);
+    FluentProducerTemplate withTemplateCustomizer(java.util.function.Consumer<ProducerTemplate> templateCustomizer);
 
     /**
      * Set the exchange to use for send.

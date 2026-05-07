@@ -21,13 +21,12 @@ import java.io.IOException;
 import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.jetty.HttpServer;
 import org.apache.avro.ipc.specific.SpecificResponder;
-import org.apache.camel.spi.annotations.JdkService;
 
 /**
  * Default implementation of Avro via http, which is based on Jetty http server. For more details see dependency
  * org.apache.avro:avro-ipc-jetty.
  */
-@JdkService("avro-rpc-http-server-factory")
+@org.apache.camel.spi.annotations.JdkService("avro-rpc-http-server-factory")
 public class JettyHttpServerFactory implements AvroRpcHttpServerFactory {
     @Override
     public Server create(SpecificResponder responder, int port) throws IOException {

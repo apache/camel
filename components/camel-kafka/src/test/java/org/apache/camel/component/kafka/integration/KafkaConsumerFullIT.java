@@ -35,7 +35,6 @@ import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.Uuid;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -68,14 +67,14 @@ public class KafkaConsumerFullIT extends BaseKafkaTestSupport {
                                            + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                                            + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
 
-    private KafkaProducer<String, String> producer;
+    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
     @BindToRegistry("myHeaderDeserializer")
     private final MyKafkaHeaderDeserializer bean = new MyKafkaHeaderDeserializer();
 
     @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
-        producer = new KafkaProducer<>(props);
+        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
     }
 

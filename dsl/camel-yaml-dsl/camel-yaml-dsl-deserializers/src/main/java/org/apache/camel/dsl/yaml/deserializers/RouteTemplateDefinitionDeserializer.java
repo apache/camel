@@ -19,7 +19,6 @@ package org.apache.camel.dsl.yaml.deserializers;
 import java.util.List;
 
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
-import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.exception.InvalidRouteException;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -28,14 +27,13 @@ import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
-import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.nodes.Node;
 
 @YamlIn
 @YamlType(
           nodes = { "routeTemplate" },
-          types = RouteTemplateDefinition.class,
-          order = YamlDeserializerResolver.ORDER_LOWEST - 1,
+          types = org.apache.camel.model.RouteTemplateDefinition.class,
+          order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
           properties = {
                   @YamlProperty(name = "id",
                                 type = "string",
@@ -67,7 +65,7 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
     protected boolean setProperty(
             RouteTemplateDefinition target, String propertyKey, String propertyName, Node node) {
 
-        propertyKey = StringHelper.dashToCamelCase(propertyKey);
+        propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
         switch (propertyKey) {
             case "id": {
                 target.setId(asText(node));

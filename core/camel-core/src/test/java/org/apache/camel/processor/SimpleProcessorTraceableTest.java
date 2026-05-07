@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Traceable;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +44,7 @@ public class SimpleProcessorTraceableTest extends ContextTestSupport {
         };
     }
 
-    private static class MyProcessor implements Processor, Traceable {
+    private static class MyProcessor implements Processor, org.apache.camel.Traceable {
 
         @Override
         public void process(Exchange exchange) {

@@ -19,7 +19,6 @@
  */
 package org.apache.camel.component.dhis2;
 
-import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +58,7 @@ public class Dhis2PostIT extends AbstractDhis2TestSupport {
         // parameter type is java.util.Map
         headers.put("CamelDhis2.queryParams", new HashMap<>());
 
-        final InputStream result = requestBodyAndHeaders(endpointUri,
+        final java.io.InputStream result = requestBodyAndHeaders(endpointUri,
                 new OrganisationUnit().withName("Foo").withShortName("Foo").withOpeningDate(new Date()),
                 headers);
 

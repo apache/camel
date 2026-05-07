@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 public class ServerProducerTest extends NovaProducerTestSupport {
 
     @Mock(lenient = true)
-    private Server testOSServer;
+    private org.openstack4j.model.compute.Server testOSServer;
 
     @Mock
     private ServerService serverService;

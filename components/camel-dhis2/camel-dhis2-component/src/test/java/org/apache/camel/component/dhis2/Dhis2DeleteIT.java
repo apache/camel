@@ -19,7 +19,6 @@
  */
 package org.apache.camel.component.dhis2;
 
-import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +59,7 @@ public class Dhis2DeleteIT extends AbstractDhis2TestSupport {
         // parameter type is java.util.Map
         headers.put("CamelDhis2.queryParams", new HashMap<>());
 
-        final InputStream result = requestBodyAndHeaders("direct://RESOURCE", null, headers);
+        final java.io.InputStream result = requestBodyAndHeaders("direct://RESOURCE", null, headers);
         RemoteDhis2ClientException remoteDhis2ClientException = assertThrows(RemoteDhis2ClientException.class,
                 () -> Environment.DHIS2_CLIENT.get("organisationUnits/{id}", orgUnitId).transfer()
                         .returnAs(OrganisationUnit.class));

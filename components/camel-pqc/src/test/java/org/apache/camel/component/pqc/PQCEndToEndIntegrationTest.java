@@ -21,8 +21,6 @@ import java.security.KeyPair;
 import java.security.Security;
 import java.security.Signature;
 
-import javax.crypto.KeyGenerator;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -408,8 +406,8 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
     }
 
     @BindToRegistry("KeyGenerator")
-    public KeyGenerator getKeyGenerator() throws Exception {
-        return KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRU.getAlgorithm(),
+    public javax.crypto.KeyGenerator getKeyGenerator() throws Exception {
+        return javax.crypto.KeyGenerator.getInstance(PQCKeyEncapsulationAlgorithms.NTRU.getAlgorithm(),
                 PQCKeyEncapsulationAlgorithms.NTRU.getBcProvider());
     }
 }

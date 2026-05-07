@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.calendar;
 
-import com.google.api.services.calendar.model.Setting;
-import com.google.api.services.calendar.model.Settings;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarSettingsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
@@ -42,7 +40,7 @@ public class CalendarSettingsIT extends AbstractGoogleCalendarTestSupport {
     @Test
     public void testGet() {
         // using String message body for single parameter "setting"
-        final Setting result = requestBody("direct://GET", "timezone");
+        final com.google.api.services.calendar.model.Setting result = requestBody("direct://GET", "timezone");
 
         assertNotNull(result, "get result");
         LOG.debug("get: {}", result);
@@ -50,7 +48,7 @@ public class CalendarSettingsIT extends AbstractGoogleCalendarTestSupport {
 
     @Test
     public void testList() {
-        final Settings result = requestBody("direct://LIST", null);
+        final com.google.api.services.calendar.model.Settings result = requestBody("direct://LIST", null);
 
         assertNotNull(result, "list result");
         LOG.debug("list: {}", result);

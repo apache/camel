@@ -19,7 +19,6 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.PropertiesComponent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ public class PropertiesComponentResolvedValueTest extends ContextTestSupport {
 
     @Test
     public void testResolved() {
-        PropertiesComponent pc = context.getPropertiesComponent();
+        org.apache.camel.spi.PropertiesComponent pc = context.getPropertiesComponent();
 
         Assertions.assertTrue(pc.getResolvedValue("unknown").isEmpty());
         Assertions.assertTrue(pc.getResolvedValue("greeting").isPresent());

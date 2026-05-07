@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
-import java.util.Optional;
-
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +29,7 @@ class DiagnoseToolsTest {
     DiagnoseToolsTest() {
         tools = new DiagnoseTools();
         CatalogService catalogService = new CatalogService();
-        catalogService.catalogRepos = Optional.empty();
+        catalogService.catalogRepos = java.util.Optional.empty();
         tools.catalogService = catalogService;
         tools.diagnoseData = new DiagnoseData();
     }

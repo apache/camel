@@ -33,7 +33,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -137,7 +136,7 @@ public class DefaultComponentAutowiredFalseTest extends ContextTestSupport {
         }
     }
 
-    private static class MyComponentConfigurer extends PropertyConfigurerSupport
+    private static class MyComponentConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport
             implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
         @Override

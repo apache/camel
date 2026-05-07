@@ -21,13 +21,12 @@ import java.util.Map;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component("mapstruct")
+@org.apache.camel.spi.annotations.Component("mapstruct")
 public class MapstructComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(MapstructComponent.class);

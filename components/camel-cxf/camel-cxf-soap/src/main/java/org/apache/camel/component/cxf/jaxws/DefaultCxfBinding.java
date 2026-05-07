@@ -238,7 +238,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     private void addAttachmentFileCloseUoW(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
         camelExchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
             @Override
-            public void onDone(Exchange exchange) {
+            public void onDone(org.apache.camel.Exchange exchange) {
                 Collection<Attachment> atts = cxfExchange.getInMessage().getAttachments();
                 if (atts != null) {
                     for (Attachment att : atts) {
@@ -1268,7 +1268,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     @Override
     public void copyJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
         if (cxfExchange.getOutMessage() != null) {
-            Message outMessage = cxfExchange.getOutMessage();
+            org.apache.cxf.message.Message outMessage = cxfExchange.getOutMessage();
             for (Map.Entry<String, Object> entry : context.entrySet()) {
                 if (outMessage.get(entry.getKey()) == null) {
                     outMessage.put(entry.getKey(), entry.getValue());
@@ -1279,7 +1279,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
 
     @Override
     public void extractJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
-        Message inMessage = cxfExchange.getInMessage();
+        org.apache.cxf.message.Message inMessage = cxfExchange.getInMessage();
         for (Map.Entry<String, Object> entry : inMessage.entrySet()) {
             if (entry.getKey().startsWith("jakarta.xml.ws")) {
                 context.put(entry.getKey(), entry.getValue());

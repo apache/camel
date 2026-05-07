@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -297,7 +296,7 @@ class BlobOperationsIT extends Base {
         // Create a test file larger than 256KB to test chunked upload
         final Path testFile = testDir.resolve("large_upload_test.txt");
         final String content = RandomStringUtils.randomAlphanumeric(512 * 1024); // 512KB of random content
-        Files.writeString(testFile, content);
+        java.nio.file.Files.writeString(testFile, content);
 
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("large_upload_test.txt");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
@@ -327,7 +326,7 @@ class BlobOperationsIT extends Base {
         // Create a test file
         final Path testFile = testDir.resolve("file_path_upload_test.txt");
         final String content = "Test content for file-based upload";
-        Files.writeString(testFile, content);
+        java.nio.file.Files.writeString(testFile, content);
 
         final BlobClientWrapper blobClientWrapper
                 = blobContainerClientWrapper.getBlobClientWrapper("file_path_upload_test.txt");

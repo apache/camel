@@ -20,13 +20,12 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mock.MockComponent;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 
 /**
  * Component for <a href="http://camel.apache.org/dataset.html">DataSet</a>.
  */
-@Component("dataset")
+@org.apache.camel.spi.annotations.Component("dataset")
 public class DataSetComponent extends MockComponent {
 
     public DataSetComponent() {

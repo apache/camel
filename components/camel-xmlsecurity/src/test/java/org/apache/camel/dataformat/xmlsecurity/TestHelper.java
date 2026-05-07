@@ -34,7 +34,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.DomConverter;
-import org.apache.xml.security.Init;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.slf4j.Logger;
@@ -81,7 +80,7 @@ public class TestHelper {
     static {
         boolean ok = false;
         try {
-            Init.init();
+            org.apache.xml.security.Init.init();
             XMLCipher.getInstance(XMLCipher.TRIPLEDES_KeyWrap);
             ok = true;
         } catch (XMLEncryptionException e) {

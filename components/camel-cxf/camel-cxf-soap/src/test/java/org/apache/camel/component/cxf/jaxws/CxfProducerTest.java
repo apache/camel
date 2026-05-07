@@ -27,7 +27,6 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -120,7 +119,7 @@ public class CxfProducerTest {
     public void testInvokingSimpleServerWithParams() throws Exception {
         Exchange exchange = sendSimpleMessage();
 
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         String result = out.getBody(String.class);
         LOG.info("Received output text: {}", result);
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
@@ -159,7 +158,7 @@ public class CxfProducerTest {
     public void testInvokingJaxWsServerWithParams() throws Exception {
         Exchange exchange = sendJaxWsMessage();
 
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         String result = out.getBody(String.class);
         LOG.info("Received output text: {}", result);
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));

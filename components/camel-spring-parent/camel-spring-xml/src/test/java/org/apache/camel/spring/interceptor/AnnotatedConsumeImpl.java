@@ -19,10 +19,9 @@ package org.apache.camel.spring.interceptor;
 import org.apache.camel.Consume;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(propagation = Propagation.NEVER, readOnly = true)
+@Transactional(propagation = org.springframework.transaction.annotation.Propagation.NEVER, readOnly = true)
 public class AnnotatedConsumeImpl implements AnnotatedConsume {
 
     @Produce("mock:book")

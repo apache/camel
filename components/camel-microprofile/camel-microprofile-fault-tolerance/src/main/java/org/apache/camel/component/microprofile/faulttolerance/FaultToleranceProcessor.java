@@ -34,7 +34,6 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.Traceable;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.processor.BaseProcessorSupport;
@@ -61,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed FaultTolerance Processor")
 public class FaultToleranceProcessor extends BaseProcessorSupport
-        implements CamelContextAware, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FaultToleranceProcessor.class);
 

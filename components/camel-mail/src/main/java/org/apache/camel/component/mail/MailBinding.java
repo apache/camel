@@ -910,7 +910,7 @@ public class MailBinding {
 
     protected static String getAlternativeBody(MailConfiguration configuration, Exchange exchange) {
         String alternativeBodyHeader = configuration.getAlternativeBodyHeader();
-        return exchange.getIn().getHeader(alternativeBodyHeader, String.class);
+        return exchange.getIn().getHeader(alternativeBodyHeader, java.lang.String.class);
     }
 
     /**

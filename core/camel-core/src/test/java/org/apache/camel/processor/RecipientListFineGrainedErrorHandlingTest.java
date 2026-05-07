@@ -21,7 +21,6 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.RecipientList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
@@ -186,7 +185,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
 
     public static class MyRecipientBean {
 
-        @RecipientList(stopOnException = true)
+        @org.apache.camel.RecipientList(stopOnException = true)
         public String sendSomewhere(Exchange exchange) {
             return "mock:foo,mock:bar,bean:fail,mock:baz";
         }

@@ -17,7 +17,6 @@
 package org.apache.camel.component.cxf;
 
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.xml.ws.WebServiceContext;
 import jakarta.xml.ws.WebServiceException;
@@ -32,7 +31,7 @@ public class EchoServiceSessionImpl implements EchoService {
     public String echo(String text) {
         // Find the HttpSession
         MessageContext mc = context.getMessageContext();
-        HttpSession session = ((HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST)).getSession();
+        HttpSession session = ((jakarta.servlet.http.HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST)).getSession();
         if (session == null) {
             throw new WebServiceException("No HTTP Session found");
         }

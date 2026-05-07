@@ -22,14 +22,13 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiCollection;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiName;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 import org.hisp.dhis.integration.sdk.Dhis2ClientBuilder;
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
-@Component("dhis2")
+@org.apache.camel.spi.annotations.Component("dhis2")
 public class Dhis2Component extends AbstractApiComponent<Dhis2ApiName, Dhis2Configuration, Dhis2ApiCollection> {
     @Metadata(label = "advanced")
     Dhis2Configuration configuration;

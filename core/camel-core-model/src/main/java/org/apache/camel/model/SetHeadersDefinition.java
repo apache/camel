@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,7 @@ public class SetHeadersDefinition extends ProcessorDefinition<SetHeadersDefiniti
      * This is provided to support XML and YAML DSL
      */
     @XmlElementRef(name = "headers")
-    private List<SetHeaderDefinition> headers = new ArrayList<>();
+    private List<SetHeaderDefinition> headers = new java.util.ArrayList<>();
 
     public SetHeadersDefinition() {
     }

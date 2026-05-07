@@ -20,7 +20,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 
-import org.apache.camel.component.as2.api.entity.*;
+import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
+import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
+import org.apache.camel.component.as2.api.entity.MimeEntity;
+import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.hc.core5.http.ClassicHttpRequest;
@@ -65,7 +70,7 @@ public class AS2UnencryptedMessageTest extends AS2MessageTestBase {
             public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                     throws HttpException, IOException {
                 try {
-                    EntityParser.parseAS2MessageEntity(request);
+                    org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
                     context.setAttribute(AS2ServerManager.SUBJECT, SUBJECT);
                     context.setAttribute(AS2ServerManager.FROM, AS2_NAME);
                     ediEntity = HttpMessageUtils.extractEdiPayload(request, new HttpMessageUtils.DecrpytingAndSigningInfo(

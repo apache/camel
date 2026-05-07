@@ -30,7 +30,6 @@ import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.spi.annotations.YamlIn;
 import org.apache.camel.spi.annotations.YamlProperty;
 import org.apache.camel.spi.annotations.YamlType;
-import org.apache.camel.util.StringHelper;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
@@ -38,7 +37,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 @YamlIn
 @YamlType(
           inline = false,
-          types = RouteConfigurationDefinition.class,
+          types = org.apache.camel.model.RouteConfigurationDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           nodes = { "routeConfiguration" },
           properties = {
@@ -80,7 +79,7 @@ public class RouteConfigurationDefinitionDeserializer extends YamlDeserializerBa
             String key = asText(tuple.getKeyNode());
             Node val = tuple.getValueNode();
 
-            key = StringHelper.dashToCamelCase(key);
+            key = org.apache.camel.util.StringHelper.dashToCamelCase(key);
             switch (key) {
                 case "id":
                     target.setId(asText(val));

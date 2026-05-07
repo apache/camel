@@ -56,7 +56,6 @@ import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Helps to construct the transformations and the canonicalization methods for the XML Signature generator.
@@ -339,7 +338,7 @@ public final class XmlSignatureHelper {
         if (path == null) {
             throw new IllegalArgumentException("path is null");
         }
-        InputStream is = ObjectHelper.loadResourceAsStream(path);
+        InputStream is = org.apache.camel.util.ObjectHelper.loadResourceAsStream(path);
         if (is == null) {
             is = XmlSignatureHelper.class.getResourceAsStream(path);
         }

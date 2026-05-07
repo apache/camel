@@ -18,7 +18,6 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringTestSupport;
-import org.apache.camel.support.ExpressionAdapter;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -40,7 +39,7 @@ public class SpringCustomExpressionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringCustomExpressionTest.xml");
     }
 
-    public static class MyExpression extends ExpressionAdapter {
+    public static class MyExpression extends org.apache.camel.support.ExpressionAdapter {
 
         @Override
         public Object evaluate(Exchange exchange) {

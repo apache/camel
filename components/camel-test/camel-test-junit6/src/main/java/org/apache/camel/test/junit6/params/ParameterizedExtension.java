@@ -49,7 +49,7 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
     }
 
     @Override
-    public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(
+    public java.util.stream.Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(
             ExtensionContext extensionContext) {
         Class<?> testClass = extensionContext.getRequiredTestClass();
         try {
@@ -70,7 +70,7 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
     }
 
     private List<Method> getParametersMethods(Class<?> testClass) {
-        List<Method> parameters = Stream.of(testClass.getDeclaredMethods())
+        List<Method> parameters = java.util.stream.Stream.of(testClass.getDeclaredMethods())
                 .filter(m -> Modifier.isStatic(m.getModifiers()))
                 .filter(m -> m.getAnnotation(Parameters.class) != null)
                 .collect(Collectors.toList());
@@ -111,18 +111,18 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
         @Override
         public String getDisplayName(int invocationIndex) {
             return "[" + invocationIndex + "] "
-                   + Stream.of(params).map(Object::toString).collect(Collectors.joining(", "));
+                   + java.util.stream.Stream.of(params).map(Object::toString).collect(Collectors.joining(", "));
         }
 
         @Override
-        public List<Extension> getAdditionalExtensions() {
+        public java.util.List<Extension> getAdditionalExtensions() {
             return List.of(
                     (TestInstancePostProcessor) this::postProcessTestInstance);
         }
 
         protected void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
             Class<?> clazz = testInstance.getClass();
-            List<Field> fields = hierarchy(clazz)
+            java.util.List<Field> fields = hierarchy(clazz)
                     .map(Class::getDeclaredFields)
                     .flatMap(Stream::of)
                     .filter(f -> isAnnotated(f, Parameter.class))

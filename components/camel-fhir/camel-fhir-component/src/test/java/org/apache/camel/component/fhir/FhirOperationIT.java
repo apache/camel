@@ -22,8 +22,6 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirOperationApiMethod;
-import org.hl7.fhir.instance.model.api.IBaseBundle;
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Parameters;
@@ -135,7 +133,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
         // parameter type is java.util.Map
         headers.put("CamelFhir.extraParameters", null);
 
-        final IBaseResource result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
+        final org.hl7.fhir.instance.model.api.IBaseResource result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
         assertNotNull(result, "onType result");
         LOG.debug("onType: {}", result);
@@ -156,7 +154,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
         // parameter type is java.util.Map
         headers.put("CamelFhir.extraParameters", null);
 
-        final IBaseBundle result
+        final org.hl7.fhir.instance.model.api.IBaseBundle result
                 = requestBodyAndHeaders("direct://PROCESS_MESSAGE", null, headers);
 
         assertNotNull(result, "processMessage result");

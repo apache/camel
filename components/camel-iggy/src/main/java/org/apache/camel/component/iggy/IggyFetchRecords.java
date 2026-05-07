@@ -33,7 +33,6 @@ import org.apache.iggy.consumergroup.Consumer;
 import org.apache.iggy.identifier.ConsumerId;
 import org.apache.iggy.identifier.StreamId;
 import org.apache.iggy.identifier.TopicId;
-import org.apache.iggy.message.Message;
 import org.apache.iggy.message.PolledMessages;
 import org.apache.iggy.message.PollingStrategy;
 import org.slf4j.Logger;
@@ -134,7 +133,7 @@ public class IggyFetchRecords implements Runnable {
                     polledMessages.partitionId(),
                     configuration.isAutoCommit() ? polledMessages.currentOffset() : offset);
 
-            for (Message message : polledMessages.messages()) {
+            for (org.apache.iggy.message.Message message : polledMessages.messages()) {
                 Exchange exchange = createExchange(message);
                 try {
                     iggyConsumer.getProcessor().process(exchange);
@@ -158,7 +157,7 @@ public class IggyFetchRecords implements Runnable {
         }
     }
 
-    private Exchange createExchange(Message message) {
+    private Exchange createExchange(org.apache.iggy.message.Message message) {
         Exchange exchange = iggyConsumer.createExchange(true);
 
         exchange.getIn().setBody(new String(message.payload())); // TODO is it ok?

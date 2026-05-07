@@ -2108,7 +2108,7 @@ public class Run extends CamelCommand {
     protected static void removeDir(Path directory) {
         if (Files.exists(directory)) {
             try (Stream<Path> files = Files.walk(directory)) {
-                files.sorted(Comparator.reverseOrder())
+                files.sorted(java.util.Comparator.reverseOrder())
                         .forEach(path -> {
                             try {
                                 Files.deleteIfExists(path);

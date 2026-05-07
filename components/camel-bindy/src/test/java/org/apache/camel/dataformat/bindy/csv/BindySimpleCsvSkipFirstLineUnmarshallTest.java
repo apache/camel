@@ -21,7 +21,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.bindy.model.simple.oneclassandskipfirstline.Order;
 import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,7 +61,7 @@ public class BindySimpleCsvSkipFirstLineUnmarshallTest {
 
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat
-                = new BindyCsvDataFormat(Order.class);
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassandskipfirstline.Order.class);
 
         @Override
         public void configure() {

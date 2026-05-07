@@ -22,7 +22,6 @@ import com.example.customerservice.CustomerService;
 import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
 import com.example.customerservice.multipart.MultiPartCustomerService;
-import com.example.customerservice.multipart.Product;
 import com.example.duplicateerror.ExceptionA;
 import com.example.duplicateerror.ExceptionB;
 import com.example.duplicateerror.TestService;
@@ -116,7 +115,7 @@ public class ServiceInterfaceStrategyTest {
                         com.example.customerservice.multipart.GetCustomersByName.class);
         QName custTypeQName
                 = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
-                        Product.class);
+                        com.example.customerservice.multipart.Product.class);
 
         assertEquals("http://multipart.customerservice.example.com/", custNameQName.getNamespaceURI());
         assertEquals("getCustomersByName", custNameQName.getLocalPart());

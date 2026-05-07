@@ -18,7 +18,6 @@ package org.apache.camel.telemetrydev;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -129,7 +128,7 @@ public class DevTrace implements Iterable<DevSpanAdapter> {
     }
 }
 
-class SpanComparator implements Comparator<DevSpanAdapter> {
+class SpanComparator implements java.util.Comparator<DevSpanAdapter> {
     @Override
     public int compare(DevSpanAdapter a, DevSpanAdapter b) {
         DevSpanAdapter msa = (DevSpanAdapter) a;

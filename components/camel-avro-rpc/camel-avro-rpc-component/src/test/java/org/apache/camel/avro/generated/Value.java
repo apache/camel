@@ -21,21 +21,14 @@
  */
 package org.apache.camel.avro.generated;
 
-import org.apache.avro.AvroRuntimeException;
-import org.apache.avro.Schema;
-import org.apache.avro.data.RecordBuilder;
-import org.apache.avro.specific.SpecificRecord;
-import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.avro.specific.SpecificRecordBuilderBase;
-
 @SuppressWarnings("all")
-public class Value extends SpecificRecordBase implements SpecificRecord {
-    public static final Schema SCHEMA$ = Schema.parse(
+public class Value extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+    public static final org.apache.avro.Schema SCHEMA$ = org.apache.avro.Schema.parse(
             "{\"type\":\"record\",\"name\":\"Value\",\"namespace\":\"org.apache.camel.avro.generated\",\"fields\":[{\"name\":\"value\",\"type\":\"string\"}]}");
     @Deprecated
     public java.lang.CharSequence value;
 
-    public Schema getSchema() {
+    public org.apache.avro.Schema getSchema() {
         return SCHEMA$;
     }
 
@@ -45,7 +38,7 @@ public class Value extends SpecificRecordBase implements SpecificRecord {
             case 0:
                 return value;
             default:
-                throw new AvroRuntimeException("Bad index");
+                throw new org.apache.avro.AvroRuntimeException("Bad index");
         }
     }
 
@@ -57,7 +50,7 @@ public class Value extends SpecificRecordBase implements SpecificRecord {
                 value = (java.lang.CharSequence) value$;
                 break;
             default:
-                throw new AvroRuntimeException("Bad index");
+                throw new org.apache.avro.AvroRuntimeException("Bad index");
         }
     }
 
@@ -78,42 +71,42 @@ public class Value extends SpecificRecordBase implements SpecificRecord {
     }
 
     /** Creates a new Value RecordBuilder */
-    public static Value.Builder newBuilder() {
-        return new Value.Builder();
+    public static org.apache.camel.avro.generated.Value.Builder newBuilder() {
+        return new org.apache.camel.avro.generated.Value.Builder();
     }
 
     /** Creates a new Value RecordBuilder by copying an existing Builder */
-    public static Value.Builder newBuilder(
-            Value.Builder other) {
-        return new Value.Builder(other);
+    public static org.apache.camel.avro.generated.Value.Builder newBuilder(
+            org.apache.camel.avro.generated.Value.Builder other) {
+        return new org.apache.camel.avro.generated.Value.Builder(other);
     }
 
     /** Creates a new Value RecordBuilder by copying an existing Value instance */
-    public static Value.Builder newBuilder(Value other) {
-        return new Value.Builder(other);
+    public static org.apache.camel.avro.generated.Value.Builder newBuilder(org.apache.camel.avro.generated.Value other) {
+        return new org.apache.camel.avro.generated.Value.Builder(other);
     }
 
     /**
      * RecordBuilder for Value instances.
      */
-    public static class Builder extends SpecificRecordBuilderBase<Value>
-            implements RecordBuilder<Value> {
+    public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<Value>
+            implements org.apache.avro.data.RecordBuilder<Value> {
 
         private java.lang.CharSequence value;
 
         /** Creates a new Builder */
         private Builder() {
-            super(Value.SCHEMA$);
+            super(org.apache.camel.avro.generated.Value.SCHEMA$);
         }
 
         /** Creates a Builder by copying an existing Builder */
-        private Builder(Value.Builder other) {
+        private Builder(org.apache.camel.avro.generated.Value.Builder other) {
             super(other);
         }
 
         /** Creates a Builder by copying an existing Value instance */
-        private Builder(Value other) {
-            super(Value.SCHEMA$);
+        private Builder(org.apache.camel.avro.generated.Value other) {
+            super(org.apache.camel.avro.generated.Value.SCHEMA$);
             if (isValidValue(fields()[0], other.value)) {
                 this.value = data().deepCopy(fields()[0].schema(), other.value);
                 fieldSetFlags()[0] = true;
@@ -126,7 +119,7 @@ public class Value extends SpecificRecordBase implements SpecificRecord {
         }
 
         /** Sets the value of the 'value' field */
-        public Value.Builder setValue(java.lang.CharSequence value) {
+        public org.apache.camel.avro.generated.Value.Builder setValue(java.lang.CharSequence value) {
             validate(fields()[0], value);
             this.value = value;
             fieldSetFlags()[0] = true;
@@ -139,7 +132,7 @@ public class Value extends SpecificRecordBase implements SpecificRecord {
         }
 
         /** Clears the value of the 'value' field */
-        public Value.Builder clearValue() {
+        public org.apache.camel.avro.generated.Value.Builder clearValue() {
             value = null;
             fieldSetFlags()[0] = false;
             return this;
@@ -152,7 +145,7 @@ public class Value extends SpecificRecordBase implements SpecificRecord {
                 record.value = fieldSetFlags()[0] ? this.value : (java.lang.CharSequence) defaultValue(fields()[0]);
                 return record;
             } catch (Exception e) {
-                throw new AvroRuntimeException(e);
+                throw new org.apache.avro.AvroRuntimeException(e);
             }
         }
     }

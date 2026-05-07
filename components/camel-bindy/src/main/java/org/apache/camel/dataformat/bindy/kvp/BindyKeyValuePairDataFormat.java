@@ -122,7 +122,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
             // BigIntegerFormatFactory if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.isEmpty() && !isAllowEmptyStream()) {
-                throw new IllegalArgumentException("No records have been defined in the CSV");
+                throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
             } else {
                 return extractUnmarshalResult(models);
             }

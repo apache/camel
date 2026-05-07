@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.calendar;
 
-import com.google.api.services.calendar.model.Acl;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarAclApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
@@ -41,7 +40,7 @@ public class CalendarAclIT extends AbstractGoogleCalendarTestSupport {
     @Test
     public void testList() {
         // using String message body for single parameter "calendarId"
-        final Acl result = requestBody("direct://LIST", getCalendar().getId());
+        final com.google.api.services.calendar.model.Acl result = requestBody("direct://LIST", getCalendar().getId());
 
         // should have at least one rule (reader, owner, etc.) for the calendar
         // or we wouldn't be able to view it!

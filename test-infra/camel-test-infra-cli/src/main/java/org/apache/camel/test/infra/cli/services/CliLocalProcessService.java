@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -407,7 +406,7 @@ public class CliLocalProcessService implements CliService {
             ProcessBuilder pb;
             if (IS_WINDOWS) {
                 String script = "iex \"& { $(iwr -useb https://ps.jbang.dev) } app setup\"";
-                String encoded = Base64.getEncoder().encodeToString(
+                String encoded = java.util.Base64.getEncoder().encodeToString(
                         script.getBytes(StandardCharsets.UTF_16LE));
                 pb = new ProcessBuilder("powershell", "-NoProfile", "-EncodedCommand", encoded);
             } else {

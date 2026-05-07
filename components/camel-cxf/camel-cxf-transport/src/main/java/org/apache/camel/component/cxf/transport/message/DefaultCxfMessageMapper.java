@@ -41,7 +41,7 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
             Exchange camelExchange,
             HeaderFilterStrategy headerFilterStrategy) {
 
-        Message answer = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, camelExchange, false);
+        org.apache.cxf.message.Message answer = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, camelExchange, false);
 
         org.apache.camel.Message camelMessage = camelExchange.getIn();
         String requestContentType = getRequestContentType(camelMessage);
@@ -58,14 +58,14 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
         String verb = getVerb(camelMessage);
         String queryString = getQueryString(camelMessage);
 
-        answer.put(Message.REQUEST_URI, requestURI);
-        answer.put(Message.BASE_PATH, basePath);
-        answer.put(Message.HTTP_REQUEST_METHOD, verb);
-        answer.put(Message.PATH_INFO, path);
-        answer.put(Message.CONTENT_TYPE, requestContentType);
-        answer.put(Message.ACCEPT_CONTENT_TYPE, acceptContentTypes);
-        answer.put(Message.ENCODING, enc);
-        answer.put(Message.QUERY_STRING, queryString);
+        answer.put(org.apache.cxf.message.Message.REQUEST_URI, requestURI);
+        answer.put(org.apache.cxf.message.Message.BASE_PATH, basePath);
+        answer.put(org.apache.cxf.message.Message.HTTP_REQUEST_METHOD, verb);
+        answer.put(org.apache.cxf.message.Message.PATH_INFO, path);
+        answer.put(org.apache.cxf.message.Message.CONTENT_TYPE, requestContentType);
+        answer.put(org.apache.cxf.message.Message.ACCEPT_CONTENT_TYPE, acceptContentTypes);
+        answer.put(org.apache.cxf.message.Message.ENCODING, enc);
+        answer.put(org.apache.cxf.message.Message.QUERY_STRING, queryString);
 
         HttpMessage hm = camelExchange.getIn(HttpMessage.class);
         if (hm != null) {

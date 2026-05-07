@@ -78,7 +78,7 @@ public class DefaultCxfMessageMapperTest {
 
     private Exchange setupCamelExchange(String requestURI, String requestPath, HttpServletRequest request) {
         org.apache.camel.Message camelMessage = mock(org.apache.camel.Message.class);
-        HttpMessage camelHttpMessage = mock(HttpMessage.class);
+        org.apache.camel.http.common.HttpMessage camelHttpMessage = mock(org.apache.camel.http.common.HttpMessage.class);
         Exchange camelExchange = mock(Exchange.class);
         when(camelExchange.getProperty(CamelTransportConstants.CXF_EXCHANGE,
                 org.apache.cxf.message.Exchange.class)).thenReturn(new ExchangeImpl());

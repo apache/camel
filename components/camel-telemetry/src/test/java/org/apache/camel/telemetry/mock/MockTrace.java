@@ -18,7 +18,6 @@ package org.apache.camel.telemetry.mock;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.telemetry.Span;
@@ -46,7 +45,7 @@ public class MockTrace {
 
 }
 
-class SpanComparator implements Comparator<Span> {
+class SpanComparator implements java.util.Comparator<Span> {
     @Override
     public int compare(Span a, Span b) {
         // cast to get timestamp without changing the Span interface

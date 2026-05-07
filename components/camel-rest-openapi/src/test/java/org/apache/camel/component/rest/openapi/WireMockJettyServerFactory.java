@@ -25,7 +25,6 @@ import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
 import com.github.tomakehurst.wiremock.jetty11.Jetty11HttpServer;
 import com.github.tomakehurst.wiremock.jetty11.SslContexts;
-import org.eclipse.jetty.http.UriCompliance;
 import org.eclipse.jetty.io.NetworkTrafficListener;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -63,7 +62,7 @@ public final class WireMockJettyServerFactory extends JettyHttpServerFactory {
                 httpConfig.setSendXPoweredBy(false);
                 httpConfig.setSendServerVersion(false);
                 httpConfig.addCustomizer(new SecureRequestCustomizer(false));
-                httpConfig.setUriCompliance(UriCompliance.UNSAFE);
+                httpConfig.setUriCompliance(org.eclipse.jetty.http.UriCompliance.UNSAFE);
 
                 HttpConnectionFactory http = new HttpConnectionFactory(httpConfig);
 

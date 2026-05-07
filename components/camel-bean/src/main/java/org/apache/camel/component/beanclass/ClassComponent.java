@@ -25,7 +25,6 @@ import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
-import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
@@ -34,7 +33,7 @@ import org.apache.camel.util.PropertiesHelper;
  * <p/>
  * This component is an extension to the {@link org.apache.camel.component.bean.BeanComponent}.
  */
-@Component("class")
+@org.apache.camel.spi.annotations.Component("class")
 public class ClassComponent extends BeanComponent {
 
     private ParameterMappingStrategy parameterMappingStrategy;

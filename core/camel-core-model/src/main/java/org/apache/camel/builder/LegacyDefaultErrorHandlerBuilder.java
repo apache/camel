@@ -30,7 +30,6 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -263,7 +262,7 @@ public class LegacyDefaultErrorHandlerBuilder extends LegacyErrorHandlerBuilderS
      * @param  log the logger
      * @return     the builder
      */
-    public LegacyDefaultErrorHandlerBuilder log(Logger log) {
+    public LegacyDefaultErrorHandlerBuilder log(org.slf4j.Logger log) {
         getLogger().setLog(log);
         return this;
     }

@@ -21,35 +21,20 @@
  */
 package com.sforce.eventbus;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.nio.ByteBuffer;
-
-import org.apache.avro.AvroMissingFieldException;
-import org.apache.avro.AvroRuntimeException;
-import org.apache.avro.Schema;
-import org.apache.avro.io.DatumReader;
-import org.apache.avro.io.DatumWriter;
-import org.apache.avro.io.Encoder;
-import org.apache.avro.io.ResolvingDecoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.SchemaStore;
-import org.apache.avro.specific.AvroGenerated;
 import org.apache.avro.specific.SpecificData;
-import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.avro.specific.SpecificRecordBuilderBase;
 import org.apache.avro.util.Utf8;
 
-@AvroGenerated
-public class CamelEventMessage__e extends SpecificRecordBase {
+@org.apache.avro.specific.AvroGenerated
+public class CamelEventMessage__e extends org.apache.avro.specific.SpecificRecordBase {
     private static final long serialVersionUID = 4603183847267960866L;
 
-    public static final Schema SCHEMA$ = new Schema.Parser().parse(
+    public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse(
             "{\"type\":\"record\",\"name\":\"CamelEventMessage__e\",\"namespace\":\"com.sforce.eventbus\",\"fields\":[{\"name\":\"CreatedDate\",\"type\":\"long\",\"doc\":\"CreatedDate:DateTime\"},{\"name\":\"CreatedById\",\"type\":\"string\",\"doc\":\"CreatedBy:EntityId\"},{\"name\":\"Message__c\",\"type\":[\"null\",\"string\"],\"doc\":\"Data:Text:00NDS00000mES97\",\"default\":null}]}");
 
-    public static Schema getClassSchema() {
+    public static org.apache.avro.Schema getClassSchema() {
         return SCHEMA$;
     }
 
@@ -93,7 +78,7 @@ public class CamelEventMessage__e extends SpecificRecordBase {
      * @return                     a buffer holding the serialized data for this instance
      * @throws java.io.IOException if this instance could not be serialized
      */
-    public ByteBuffer toByteBuffer() throws IOException {
+    public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException {
         return ENCODER.encode(this);
     }
 
@@ -105,8 +90,8 @@ public class CamelEventMessage__e extends SpecificRecordBase {
      * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
      */
     public static CamelEventMessage__e fromByteBuffer(
-            ByteBuffer b)
-            throws IOException {
+            java.nio.ByteBuffer b)
+            throws java.io.IOException {
         return DECODER.decode(b);
     }
 
@@ -143,7 +128,7 @@ public class CamelEventMessage__e extends SpecificRecordBase {
     }
 
     @Override
-    public Schema getSchema() {
+    public org.apache.avro.Schema getSchema() {
         return SCHEMA$;
     }
 
@@ -274,8 +259,8 @@ public class CamelEventMessage__e extends SpecificRecordBase {
     /**
      * RecordBuilder for CamelEventMessage__e instances.
      */
-    @AvroGenerated
-    public static class Builder extends SpecificRecordBuilderBase<CamelEventMessage__e> {
+    @org.apache.avro.specific.AvroGenerated
+    public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<CamelEventMessage__e> {
 
         /** CreatedDate:DateTime */
         private long CreatedDate;
@@ -464,31 +449,31 @@ public class CamelEventMessage__e extends SpecificRecordBase {
                 record.CreatedById = fieldSetFlags()[1] ? this.CreatedById : (CharSequence) defaultValue(fields()[1]);
                 record.Message__c = fieldSetFlags()[2] ? this.Message__c : (CharSequence) defaultValue(fields()[2]);
                 return record;
-            } catch (AvroMissingFieldException e) {
+            } catch (org.apache.avro.AvroMissingFieldException e) {
                 throw e;
             } catch (Exception e) {
-                throw new AvroRuntimeException(e);
+                throw new org.apache.avro.AvroRuntimeException(e);
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static final DatumWriter<CamelEventMessage__e> WRITER$
-            = (DatumWriter<CamelEventMessage__e>) MODEL$.createDatumWriter(SCHEMA$);
+    private static final org.apache.avro.io.DatumWriter<CamelEventMessage__e> WRITER$
+            = (org.apache.avro.io.DatumWriter<CamelEventMessage__e>) MODEL$.createDatumWriter(SCHEMA$);
 
     @Override
-    public void writeExternal(ObjectOutput out)
-            throws IOException {
+    public void writeExternal(java.io.ObjectOutput out)
+            throws java.io.IOException {
         WRITER$.write(this, SpecificData.getEncoder(out));
     }
 
     @SuppressWarnings("unchecked")
-    private static final DatumReader<CamelEventMessage__e> READER$
-            = (DatumReader<CamelEventMessage__e>) MODEL$.createDatumReader(SCHEMA$);
+    private static final org.apache.avro.io.DatumReader<CamelEventMessage__e> READER$
+            = (org.apache.avro.io.DatumReader<CamelEventMessage__e>) MODEL$.createDatumReader(SCHEMA$);
 
     @Override
-    public void readExternal(ObjectInput in)
-            throws IOException {
+    public void readExternal(java.io.ObjectInput in)
+            throws java.io.IOException {
         READER$.read(this, SpecificData.getDecoder(in));
     }
 
@@ -498,8 +483,8 @@ public class CamelEventMessage__e extends SpecificRecordBase {
     }
 
     @Override
-    public void customEncode(Encoder out)
-            throws IOException {
+    public void customEncode(org.apache.avro.io.Encoder out)
+            throws java.io.IOException {
         out.writeLong(this.CreatedDate);
 
         out.writeString(this.CreatedById);
@@ -515,9 +500,9 @@ public class CamelEventMessage__e extends SpecificRecordBase {
     }
 
     @Override
-    public void customDecode(ResolvingDecoder in)
-            throws IOException {
-        Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
+    public void customDecode(org.apache.avro.io.ResolvingDecoder in)
+            throws java.io.IOException {
+        org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
         if (fieldOrder == null) {
             this.CreatedDate = in.readLong();
 
@@ -551,7 +536,7 @@ public class CamelEventMessage__e extends SpecificRecordBase {
                         break;
 
                     default:
-                        throw new IOException("Corrupt ResolvingDecoder.");
+                        throw new java.io.IOException("Corrupt ResolvingDecoder.");
                 }
             }
         }

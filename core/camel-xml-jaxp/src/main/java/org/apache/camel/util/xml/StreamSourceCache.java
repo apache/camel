@@ -19,7 +19,6 @@ package org.apache.camel.util.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -68,7 +67,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
             this.readCache = null;
         } else if (streamCache instanceof ReaderCache readerCache) {
             this.readCache = readerCache;
-            setReader((Reader) streamCache);
+            setReader((java.io.Reader) streamCache);
         } else {
             this.readCache = null;
         }

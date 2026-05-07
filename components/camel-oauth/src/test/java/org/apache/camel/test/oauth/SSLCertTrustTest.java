@@ -27,7 +27,6 @@ import java.security.cert.X509Certificate;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -58,7 +57,7 @@ class SSLCertTrustTest extends AbstractKeycloakTest {
 
         try {
             for (var tm : tmf.getTrustManagers()) {
-                var xtm = (X509TrustManager) tm;
+                var xtm = (javax.net.ssl.X509TrustManager) tm;
                 xtm.checkServerTrusted(new X509Certificate[] { cert }, "RSA");
             }
         } catch (CertificateException ex) {

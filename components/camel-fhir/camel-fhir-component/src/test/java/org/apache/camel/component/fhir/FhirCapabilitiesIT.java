@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.api.ExtraParameters;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCapabilitiesApiMethod;
-import org.hl7.fhir.instance.model.api.IBaseConformance;
 import org.hl7.fhir.r4.model.CapabilityStatement;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.junit.jupiter.api.Test;
@@ -45,7 +44,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
 
     @Test
     public void testOfType() {
-        IBaseConformance result = requestBody("direct://OF_TYPE", CapabilityStatement.class);
+        org.hl7.fhir.instance.model.api.IBaseConformance result = requestBody("direct://OF_TYPE", CapabilityStatement.class);
 
         LOG.debug("ofType: {}", result);
         assertNotNull(result, "ofType result");
@@ -57,7 +56,7 @@ public class FhirCapabilitiesIT extends AbstractFhirTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(ExtraParameters.ENCODE_JSON.getHeaderName(), Boolean.TRUE);
 
-        IBaseConformance result
+        org.hl7.fhir.instance.model.api.IBaseConformance result
                 = requestBodyAndHeaders("direct://OF_TYPE", CapabilityStatement.class, headers);
 
         LOG.debug("ofType: {}", result);

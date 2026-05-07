@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +29,7 @@ class SetHeadersDefinitionTest extends TestSupport {
 
     @Test
     void testSetFromMap() {
-        Map<String, Expression> headerMap = new LinkedHashMap<>(3);
+        Map<String, Expression> headerMap = new java.util.LinkedHashMap<>(3);
         headerMap.put("fromBody", body());
         headerMap.put("isCamel", ExpressionNodeHelper.toExpressionDefinition(body().contains("Camel")));
         headerMap.put("isHorse", ExpressionNodeHelper.toExpressionDefinition(body().contains("Horse")));
@@ -48,7 +46,7 @@ class SetHeadersDefinitionTest extends TestSupport {
                         "isCamel", body().contains("Camel"), "isHorse", body().contains("Horse")));
         assertNotNull(setHeadersDef.getHeaders());
         assertEquals(3, setHeadersDef.getHeaders().size());
-        Set<String> names = new HashSet<>();
+        Set<String> names = new java.util.HashSet<>();
         for (SetHeaderDefinition setHdrDef : setHeadersDef.getHeaders()) {
             names.add(setHdrDef.getName());
         }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.sjms.producer;
 
-import java.io.Serializable;
-
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
 import jakarta.jms.MessageProducer;
@@ -126,7 +124,7 @@ public class SjmsObjectMessageEnabledTest extends JmsTestSupport {
         return cause;
     }
 
-    public static class MyOrder implements Serializable {
+    public static class MyOrder implements java.io.Serializable {
         private static final long serialVersionUID = 1L;
         private final String item;
         private final int quantity;

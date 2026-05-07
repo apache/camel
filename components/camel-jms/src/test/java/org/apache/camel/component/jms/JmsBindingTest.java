@@ -177,7 +177,7 @@ public class JmsBindingTest {
     public void testObjectMessageReceivingAllowedWhenEnabled() throws JMSException {
         when(mockJmsConfiguration.isObjectMessageEnabled()).thenReturn(true);
         ObjectMessage message = mock(ObjectMessage.class);
-        when(message.getObject()).thenReturn(new HashMap<>());
+        when(message.getObject()).thenReturn(new java.util.HashMap<>());
         // when enabled, extraction proceeds (returns the deserialized payload)
         assertDoesNotThrow(() -> jmsBindingUnderTest.extractBodyFromJms(null, message));
     }

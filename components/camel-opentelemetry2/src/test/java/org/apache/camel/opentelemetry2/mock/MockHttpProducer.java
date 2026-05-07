@@ -16,21 +16,17 @@
  */
 package org.apache.camel.opentelemetry2.mock;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.support.DefaultProducer;
-
 /**
  * Mock HTTP producer that just echoes the input.
  */
-class MockHttpProducer extends DefaultProducer {
+class MockHttpProducer extends org.apache.camel.support.DefaultProducer {
 
-    public MockHttpProducer(Endpoint endpoint) {
+    public MockHttpProducer(org.apache.camel.Endpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(org.apache.camel.Exchange exchange) throws Exception {
         // Simple echo - set response body to request body
         exchange.getMessage().setBody("HTTP Response: " + exchange.getIn().getBody());
     }

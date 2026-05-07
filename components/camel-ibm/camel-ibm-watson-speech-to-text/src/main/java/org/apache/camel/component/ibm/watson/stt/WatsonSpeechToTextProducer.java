@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.ibm.watson.speech_to_text.v1.SpeechToText;
-import com.ibm.watson.speech_to_text.v1.model.GetLanguageModelOptions;
 import com.ibm.watson.speech_to_text.v1.model.GetModelOptions;
 import com.ibm.watson.speech_to_text.v1.model.LanguageModel;
 import com.ibm.watson.speech_to_text.v1.model.LanguageModels;
@@ -239,8 +238,8 @@ public class WatsonSpeechToTextProducer extends DefaultProducer {
 
         LOG.trace("Getting custom language model: {}", modelId);
 
-        GetLanguageModelOptions options
-                = new GetLanguageModelOptions.Builder()
+        com.ibm.watson.speech_to_text.v1.model.GetLanguageModelOptions options
+                = new com.ibm.watson.speech_to_text.v1.model.GetLanguageModelOptions.Builder()
                         .customizationId(modelId)
                         .build();
 

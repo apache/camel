@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class SetVariablesDefinition extends ProcessorDefinition<SetVariablesDefi
 
     /** This is provided to support XML and YAML DSL */
     @XmlElementRef(name = "variables")
-    private List<SetVariableDefinition> variables = new ArrayList<>();
+    private List<SetVariableDefinition> variables = new java.util.ArrayList<>();
 
     public SetVariablesDefinition() {
     }

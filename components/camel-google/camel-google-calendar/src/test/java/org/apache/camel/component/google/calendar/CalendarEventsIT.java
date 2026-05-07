@@ -26,7 +26,6 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
-import com.google.api.services.calendar.model.Events;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarEventsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
@@ -73,7 +72,7 @@ public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
         // parameter type is com.google.api.services.calendar.model.Event
         headers.put("CamelGoogleCalendar.content", event);
 
-        final Event result = requestBodyAndHeaders("direct://INSERT", null, headers);
+        final com.google.api.services.calendar.model.Event result = requestBodyAndHeaders("direct://INSERT", null, headers);
 
         assertEquals("Feed the Camel", result.getSummary());
         LOG.debug("insert: {}", result);
@@ -87,11 +86,11 @@ public class CalendarEventsIT extends AbstractGoogleCalendarTestSupport {
         headers.put("CamelGoogleCalendar.calendarId", getCalendar().getId());
         // parameter type is String
         headers.put("CamelGoogleCalendar.text", "Feed the Camel");
-        Event result = requestBodyAndHeaders("direct://QUICKADD", null, headers);
+        com.google.api.services.calendar.model.Event result = requestBodyAndHeaders("direct://QUICKADD", null, headers);
         assertNotNull(result, "quickAdd result");
 
         // Check if it is in the list of events for this calendar
-        Events events = requestBody("direct://LIST", getCalendar().getId());
+        com.google.api.services.calendar.model.Events events = requestBody("direct://LIST", getCalendar().getId());
         Event item = events.getItems().get(0);
         String eventId = item.getId();
         assertEquals("Feed the Camel", item.getSummary());

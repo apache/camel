@@ -36,7 +36,6 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -644,7 +643,7 @@ public class DefaultErrorHandlerDefinition extends BaseErrorHandlerDefinition {
      * @param  log the logger
      * @return     the builder
      */
-    public DefaultErrorHandlerDefinition log(Logger log) {
+    public DefaultErrorHandlerDefinition log(org.slf4j.Logger log) {
         if (loggerBean == null) {
             loggerBean = new CamelLogger(LoggerFactory.getLogger(DefaultErrorHandler.class), LoggingLevel.ERROR);
         }

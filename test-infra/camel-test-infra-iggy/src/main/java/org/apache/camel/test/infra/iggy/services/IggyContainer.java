@@ -19,7 +19,6 @@ package org.apache.camel.test.infra.iggy.services;
 
 import java.util.List;
 
-import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.Ulimit;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.iggy.common.IggyProperties;
@@ -48,8 +47,8 @@ public class IggyContainer extends GenericContainer<IggyContainer> {
                 // Required capabilities for Iggy container as per docker-compose
                 withCreateContainerCmdModifier(cmd -> {
                     cmd.getHostConfig()
-                            .withCapAdd(Capability.SYS_NICE)
-                            .withSecurityOpts(List.of("seccomp:unconfined"))
+                            .withCapAdd(com.github.dockerjava.api.model.Capability.SYS_NICE)
+                            .withSecurityOpts(java.util.List.of("seccomp:unconfined"))
                             .withUlimits(List.of(new Ulimit("memlock", -1, -1)));
                 });
 

@@ -18,16 +18,13 @@ package org.apache.camel.opentelemetry2.mock;
 
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.support.DefaultComponent;
-
 /**
  * Mock HTTP component for testing SpanKind. This component is recognized by HttpSpanDecorator based on its class name.
  */
-public class MockHttpComponent extends DefaultComponent {
+public class MockHttpComponent extends org.apache.camel.support.DefaultComponent {
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+    protected org.apache.camel.Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
         MockHttpEndpoint endpoint = new MockHttpEndpoint(uri, this);
         setProperties(endpoint, parameters);

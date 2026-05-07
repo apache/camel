@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.keycloak;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -34,10 +32,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.AdminEventRepresentation;
 import org.keycloak.representations.idm.EventRepresentation;
-import org.keycloak.representations.idm.RealmRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,8 +127,8 @@ public class KeycloakConsumerIT extends CamelTestSupport {
 
         // Enable events and admin events on the realm
         log.info("Enabling events and admin events for realm: {}", TEST_REALM_NAME);
-        Keycloak keycloakClient = keycloakService.getKeycloakAdminClient();
-        RealmRepresentation realmRep
+        org.keycloak.admin.client.Keycloak keycloakClient = keycloakService.getKeycloakAdminClient();
+        org.keycloak.representations.idm.RealmRepresentation realmRep
                 = keycloakClient.realm(TEST_REALM_NAME).toRepresentation();
 
         // Enable admin events
@@ -141,7 +137,7 @@ public class KeycloakConsumerIT extends CamelTestSupport {
 
         // Enable regular events
         realmRep.setEventsEnabled(true);
-        realmRep.setEventsListeners(Arrays.asList("jboss-logging"));
+        realmRep.setEventsListeners(java.util.Arrays.asList("jboss-logging"));
 
         keycloakClient.realm(TEST_REALM_NAME).update(realmRep);
         log.info("Events and admin events enabled successfully");
@@ -167,7 +163,7 @@ public class KeycloakConsumerIT extends CamelTestSupport {
         log.info("Creating user: {} in realm: {}", TEST_USER_NAME, TEST_REALM_NAME);
 
         template.sendBodyAndHeaders("direct:createUser", null,
-                new HashMap<>() {
+                new java.util.HashMap<>() {
                     {
                         put(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
                         put(KeycloakConstants.USERNAME, TEST_USER_NAME);

@@ -716,7 +716,7 @@ public class SpringAiChatProducer extends DefaultProducer {
 
             // Full metadata map for advanced users
             // This includes all metadata fields in a single map
-            Map<String, Object> metadataMap = new HashMap<>();
+            Map<String, Object> metadataMap = new java.util.HashMap<>();
             if (responseMetadata.getId() != null) {
                 metadataMap.put("id", responseMetadata.getId());
             }

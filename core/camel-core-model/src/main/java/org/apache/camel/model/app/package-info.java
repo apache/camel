@@ -20,9 +20,6 @@
  * model can be used to group some Camel definitions (routes, templates) without using full Spring application context,
  * but when Spring's {@code <beans>} concept feels appropriate.
  */
-@XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-           elementFormDefault = XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.app;
-
-import jakarta.xml.bind.annotation.XmlNsForm;
-import jakarta.xml.bind.annotation.XmlSchema;

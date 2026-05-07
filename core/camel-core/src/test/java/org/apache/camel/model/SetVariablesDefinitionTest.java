@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +30,7 @@ class SetVariablesDefinitionTest extends TestSupport {
 
     @Test
     void testSetFromMap() {
-        Map<String, Expression> map = new LinkedHashMap<>(3);
+        Map<String, Expression> map = new java.util.LinkedHashMap<>(3);
         map.put("fromBody", body());
         map.put("isCamel", ExpressionNodeHelper.toExpressionDefinition(body().contains("Camel")));
         map.put("isHorse", ExpressionNodeHelper.toExpressionDefinition(body().contains("Horse")));
@@ -49,7 +47,7 @@ class SetVariablesDefinitionTest extends TestSupport {
                         "isCamel", body().contains("Camel"), "isHorse", body().contains("Horse")));
         assertNotNull(def.getVariables());
         assertEquals(3, def.getVariables().size());
-        Set<String> names = new HashSet<>();
+        Set<String> names = new java.util.HashSet<>();
         for (SetVariableDefinition varDef : def.getVariables()) {
             names.add(varDef.getName());
         }

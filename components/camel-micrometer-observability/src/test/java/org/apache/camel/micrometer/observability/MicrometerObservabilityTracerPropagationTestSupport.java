@@ -18,7 +18,6 @@ package org.apache.camel.micrometer.observability;
 
 import java.util.List;
 
-import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.otel.bridge.OtelBaggageManager;
 import io.micrometer.tracing.otel.bridge.OtelCurrentTraceContext;
 import io.micrometer.tracing.otel.bridge.OtelPropagator;
@@ -46,7 +45,7 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
 
     protected CamelOpenTelemetryExtension otelExtension = CamelOpenTelemetryExtension.create();
     protected MicrometerObservabilityTracer tst = new MicrometerObservabilityTracer();
-    protected Tracer tracer;
+    protected io.micrometer.tracing.Tracer tracer;
     io.opentelemetry.api.trace.Tracer otelTracer;
 
     @Override

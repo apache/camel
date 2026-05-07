@@ -19,7 +19,6 @@ package org.apache.camel.component.plc4x;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
@@ -76,7 +75,7 @@ class Plc4XConsumerTest {
         // Avoid real connection
         doNothing().when(endpoint).setupConnection();
         doNothing().when(endpoint).reconnectIfNeeded();
-        when(endpoint.createExchange()).thenReturn(mock(Exchange.class));
+        when(endpoint.createExchange()).thenReturn(mock(org.apache.camel.Exchange.class));
         consumer.doStart();
         verify(endpoint, atLeastOnce()).getTrigger();
     }

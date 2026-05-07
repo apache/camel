@@ -18,7 +18,6 @@ package org.apache.camel.main;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 import java.util.Set;
 
 import org.apache.camel.spi.BootstrapCloseable;
@@ -186,7 +185,7 @@ public class SecurityConfigurationProperties implements BootstrapCloseable {
         if (value == null) {
             return null;
         }
-        String normalized = value.toLowerCase(Locale.ENGLISH);
+        String normalized = value.toLowerCase(java.util.Locale.ENGLISH);
         if (!VALID_POLICIES.contains(normalized)) {
             throw new IllegalArgumentException(
                     "Invalid security policy value: '" + value + "'. Must be one of: " + VALID_POLICIES);

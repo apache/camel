@@ -30,8 +30,6 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.Response;
-import org.web3j.protocol.core.methods.request.ShhFilter;
-import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.DbGetHex;
 import org.web3j.protocol.core.methods.response.DbGetString;
 import org.web3j.protocol.core.methods.response.DbPutHex;
@@ -386,8 +384,8 @@ public class Web3jProducer extends HeaderSelectorProducer {
         BigInteger value = message.getHeader(Web3jConstants.VALUE, configuration::getValue, BigInteger.class);
         String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
 
-        Transaction transaction
-                = new Transaction(
+        org.web3j.protocol.core.methods.request.Transaction transaction
+                = new org.web3j.protocol.core.methods.request.Transaction(
                         fromAddress, nonce, gasPrice, gasLimit, toAddress, value, data);
 
         Request<?, EthSendTransaction> request = web3j.ethSendTransaction(transaction);
@@ -424,8 +422,8 @@ public class Web3jProducer extends HeaderSelectorProducer {
         DefaultBlockParameter atBlock
                 = toDefaultBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, String.class));
 
-        Transaction transaction
-                = new Transaction(
+        org.web3j.protocol.core.methods.request.Transaction transaction
+                = new org.web3j.protocol.core.methods.request.Transaction(
                         fromAddress, nonce, gasPrice, gasLimit, toAddress, value, data);
 
         Request<?, EthCall> request = web3j.ethCall(transaction, atBlock);
@@ -443,8 +441,8 @@ public class Web3jProducer extends HeaderSelectorProducer {
         String toAddress = message.getHeader(Web3jConstants.TO_ADDRESS, configuration::getToAddress, String.class);
         String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
 
-        Transaction transaction
-                = new Transaction(
+        org.web3j.protocol.core.methods.request.Transaction transaction
+                = new org.web3j.protocol.core.methods.request.Transaction(
                         fromAddress, null, null, null, toAddress, null, data);
 
         Request<?, EthEstimateGas> request = web3j.ethEstimateGas(transaction);
@@ -883,7 +881,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
     void shhNewFilter(Message message) throws IOException {
         String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
         List<String> topics = message.getHeader(Web3jConstants.TOPICS, configuration::getTopics, List.class);
-        ShhFilter shhFilter = Web3jEndpoint.buildShhFilter(data, topics);
+        org.web3j.protocol.core.methods.request.ShhFilter shhFilter = Web3jEndpoint.buildShhFilter(data, topics);
 
         Request<?, ShhNewFilter> request = web3j.shhNewFilter(shhFilter);
         setRequestId(message, request);

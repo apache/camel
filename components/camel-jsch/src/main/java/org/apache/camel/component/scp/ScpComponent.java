@@ -20,7 +20,6 @@ import java.net.URI;
 import java.util.Map;
 
 import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Logger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
@@ -76,7 +75,7 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
 
     protected void initJsch() {
         JSch.setConfig("StrictHostKeyChecking", "yes");
-        JSch.setLogger(new Logger() {
+        JSch.setLogger(new com.jcraft.jsch.Logger() {
             @Override
             public boolean isEnabled(int level) {
                 return level == FATAL || level == ERROR ? ScpComponent.this.log.isErrorEnabled()

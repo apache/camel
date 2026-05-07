@@ -35,7 +35,6 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.cache.DefaultProducerCache;
 import org.apache.camel.support.cache.EmptyProducerCache;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +92,7 @@ public class RecipientList extends BaseProcessorSupport implements IdAware, Rout
 
     public RecipientList(CamelContext camelContext, Expression expression, String delimiter) {
         notNull(camelContext, "camelContext");
-        ObjectHelper.notNull(expression, "expression");
+        org.apache.camel.util.ObjectHelper.notNull(expression, "expression");
         StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.expression = expression;

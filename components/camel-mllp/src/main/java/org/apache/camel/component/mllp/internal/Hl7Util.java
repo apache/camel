@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
@@ -457,7 +456,7 @@ public final class Hl7Util {
     }
 
     private int[] caretPositionsIn(String data) {
-        return IntStream.range(0, data.length())
+        return java.util.stream.IntStream.range(0, data.length())
                 .filter(i -> data.charAt(i) == '^')
                 .toArray();
     }

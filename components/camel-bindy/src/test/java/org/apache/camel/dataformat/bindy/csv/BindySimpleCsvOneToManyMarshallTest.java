@@ -111,7 +111,7 @@ public class BindySimpleCsvOneToManyMarshallTest {
 
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat
-                = new BindyCsvDataFormat(Author.class);
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.onetomany.Author.class);
 
         @Override
         public void configure() {

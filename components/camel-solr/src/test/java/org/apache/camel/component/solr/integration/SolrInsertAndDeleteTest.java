@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -217,7 +216,7 @@ public class SolrInsertAndDeleteTest extends SolrTestSupport {
     public void caughtSolrExceptionIsHandledElegantly() {
         // empty request
         Exchange exchange = executeInsertFor(null, Map.of(), false);
-        assertInstanceOf(InvalidPayloadException.class, exchange.getException());
+        assertInstanceOf(org.apache.camel.InvalidPayloadException.class, exchange.getException());
     }
 
     @Test

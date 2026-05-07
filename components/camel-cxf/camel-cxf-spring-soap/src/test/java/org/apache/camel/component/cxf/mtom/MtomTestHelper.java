@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf.mtom;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
 import org.apache.cxf.helpers.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +81,7 @@ public final class MtomTestHelper {
         // utility class
     }
 
-    static boolean isAwtHeadless(Log log, Logger logger) {
+    static boolean isAwtHeadless(org.apache.commons.logging.Log log, org.slf4j.Logger logger) {
         assertFalse(log == null && logger == null, "Both loggers are not allowed to be null!");
         boolean headless = Boolean.getBoolean("java.awt.headless");
         if (headless) {

@@ -747,7 +747,7 @@ public class RouteCoverageMojo extends AbstractMojo {
     private static void createJacocoXmlFile(Document document, File file) throws TransformerException {
         String xmlFilePath = file.toString() + "/xmlJacoco.xml";
         TransformerFactory factory = TransformerFactory.newInstance();
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         Transformer transformer = factory.newTransformer();

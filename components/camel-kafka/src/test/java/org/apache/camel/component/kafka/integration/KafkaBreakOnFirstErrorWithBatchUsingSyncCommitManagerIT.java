@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.testutil.CamelKafkaUtil;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -62,12 +61,12 @@ class KafkaBreakOnFirstErrorWithBatchUsingSyncCommitManagerIT extends BaseKafkaT
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-    private KafkaProducer<String, String> producer;
+    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
-        producer = new KafkaProducer<>(props);
+        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
     }
 

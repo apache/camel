@@ -20,7 +20,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -28,7 +27,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 /**
  * A language for constant expressions.
  */
-@Language("constant")
+@org.apache.camel.spi.annotations.Language("constant")
 public class ConstantLanguage extends LanguageSupport {
 
     public static Expression constant(Object value) {

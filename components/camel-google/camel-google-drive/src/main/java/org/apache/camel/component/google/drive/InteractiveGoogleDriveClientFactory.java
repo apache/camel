@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.io.File;
 import java.util.Collection;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class InteractiveGoogleDriveClientFactory implements GoogleDriveClientFactory {
     private static final Logger LOG = LoggerFactory.getLogger(InteractiveGoogleDriveClientFactory.class);
-    private static final File DATA_STORE_DIR = new File(".google_drive");
+    private static final java.io.File DATA_STORE_DIR = new java.io.File(".google_drive");
     private NetHttpTransport transport;
     private JacksonFactory jsonFactory;
     private FileDataStoreFactory dataStoreFactory;

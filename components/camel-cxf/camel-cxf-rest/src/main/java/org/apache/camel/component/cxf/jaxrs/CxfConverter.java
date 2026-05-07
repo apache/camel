@@ -25,8 +25,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPMessage;
@@ -41,7 +39,6 @@ import org.apache.camel.component.cxf.common.DataFormat;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
 
 import static org.apache.camel.TypeConverter.MISS_VALUE;
@@ -148,13 +145,13 @@ public final class CxfConverter {
         // Preserve response metadata headers (e.g. Content-Type) before the Response object
         // is consumed by the conversion. Without this, headers set via Response.type() or
         // Response.header() are lost when the body becomes a StreamCache (CAMEL-23249).
-        MediaType mediaType = response.getMediaType();
+        jakarta.ws.rs.core.MediaType mediaType = response.getMediaType();
         if (mediaType != null) {
             exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
         }
         // Save other response headers (e.g. custom headers) into the PROTOCOL_HEADERS map
         // so they are propagated to the CXF outMessage by populateViaResponse.
-        MultivaluedMap<String, Object> metadata = response.getMetadata();
+        jakarta.ws.rs.core.MultivaluedMap<String, Object> metadata = response.getMetadata();
         if (metadata != null && !metadata.isEmpty()) {
             Map<String, Object> protocolHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             for (String headerName : metadata.keySet()) {
@@ -167,7 +164,7 @@ public final class CxfConverter {
                 }
             }
             if (!protocolHeaders.isEmpty()) {
-                exchange.getMessage().setHeader(Message.PROTOCOL_HEADERS, protocolHeaders);
+                exchange.getMessage().setHeader(org.apache.cxf.message.Message.PROTOCOL_HEADERS, protocolHeaders);
             }
         }
 

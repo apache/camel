@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Producer;
@@ -87,7 +86,7 @@ class CamelOutputStream extends CachedOutputStream {
             pattern = ExchangePattern.InOut;
         }
         LOG.debug("send the message to endpoint {}", this.targetCamelEndpointUri);
-        final Exchange exchange = this.producer.getEndpoint().createExchange(pattern);
+        final org.apache.camel.Exchange exchange = this.producer.getEndpoint().createExchange(pattern);
 
         exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, this.targetCamelEndpointUri);
         CachedOutputStream outputStream = (CachedOutputStream) outMessage.getContent(OutputStream.class);
@@ -107,7 +106,7 @@ class CamelOutputStream extends CachedOutputStream {
 
     }
 
-    protected void syncInvoke(Exchange exchange) throws IOException {
+    protected void syncInvoke(org.apache.camel.Exchange exchange) throws IOException {
         try {
             this.producer.process(exchange);
         } catch (Exception ex) {
@@ -125,7 +124,7 @@ class CamelOutputStream extends CachedOutputStream {
 
     }
 
-    protected void asyncInvokeFromWorkQueue(final Exchange exchange) throws IOException {
+    protected void asyncInvokeFromWorkQueue(final org.apache.camel.Exchange exchange) throws IOException {
         Runnable runnable = () -> {
             try {
                 syncInvoke(exchange);
@@ -169,8 +168,8 @@ class CamelOutputStream extends CachedOutputStream {
         }
     }
 
-    private void handleResponseInternal(Exchange exchange) {
-        Message inMessage = null;
+    private void handleResponseInternal(org.apache.camel.Exchange exchange) {
+        org.apache.cxf.message.Message inMessage = null;
         inMessage = CxfMessageHelper.getCxfInMessage(this.headerFilterStrategy, exchange, true);
         this.observer.onMessage(inMessage);
     }

@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -33,8 +32,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import dev.tamboui.layout.Constraint;
@@ -76,7 +73,6 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import sun.misc.Signal;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
@@ -177,7 +173,7 @@ public class CamelMonitor extends CamelCommand {
         try (var tui = TuiRunner.create()) {
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
-            Signal.handle(new Signal("INT"), sig -> tui.quit());
+            sun.misc.Signal.handle(new sun.misc.Signal("INT"), sig -> tui.quit());
             tui.run(
                     this::handleEvent,
                     this::render);
@@ -1087,18 +1083,18 @@ public class CamelMonitor extends CamelCommand {
     // Regex for Spring Boot / Camel log format:
     // "2026-03-23T21:24:11.705+01:00  WARN 11283 --- [thread] logger : message"
     // "2026-03-23 21:24:11.705  WARN 11283 --- [thread] logger : message"
-    private static final Pattern LOG_PATTERN = Pattern.compile(
+    private static final java.util.regex.Pattern LOG_PATTERN = java.util.regex.Pattern.compile(
             "^(\\d{4}-\\d{2}-\\d{2})[T ](\\d{2}:\\d{2}:\\d{2}\\.\\d+)\\S*\\s+"
-                                                               + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
-                                                               + "\\d+\\s+---\\s+"
-                                                               + "\\[([^]]*)]\\s+"
-                                                               + "(\\S+)\\s*:\\s*(.*)$");
+                                                                                               + "(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)\\s+"
+                                                                                               + "\\d+\\s+---\\s+"
+                                                                                               + "\\[([^]]*)]\\s+"
+                                                                                               + "(\\S+)\\s*:\\s*(.*)$");
 
     private static LogEntry parseLogLine(String line) {
         LogEntry entry = new LogEntry();
         entry.raw = line;
         try {
-            Matcher m = LOG_PATTERN.matcher(line);
+            java.util.regex.Matcher m = LOG_PATTERN.matcher(line);
             if (m.matches()) {
                 entry.time = m.group(2); // HH:mm:ss.SSS...
                 // Truncate time to 12 chars (HH:mm:ss.SSS)
@@ -1619,8 +1615,8 @@ public class CamelMonitor extends CamelCommand {
         Object tsObj = json.get("timestamp");
         if (tsObj instanceof Number n) {
             long epochMs = n.longValue();
-            entry.timestamp = Instant.ofEpochMilli(epochMs)
-                    .atZone(ZoneId.systemDefault())
+            entry.timestamp = java.time.Instant.ofEpochMilli(epochMs)
+                    .atZone(java.time.ZoneId.systemDefault())
                     .toLocalTime().toString();
             // Truncate to HH:mm:ss.SSS
             if (entry.timestamp.length() > 12) {

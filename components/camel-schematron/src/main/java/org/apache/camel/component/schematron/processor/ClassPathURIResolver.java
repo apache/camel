@@ -23,8 +23,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.camel.util.ObjectHelper;
-
 /**
  * Class path resolver for schematron templates
  */
@@ -44,7 +42,7 @@ public class ClassPathURIResolver implements URIResolver {
     @Override
     public Source resolve(String href, String base) throws TransformerException {
         InputStream stream
-                = ObjectHelper.loadResourceAsStream(rulesDir.concat("/").concat(href),
+                = org.apache.camel.util.ObjectHelper.loadResourceAsStream(rulesDir.concat("/").concat(href),
                         getClass().getClassLoader());
         if (stream != null) {
             return new StreamSource(stream);

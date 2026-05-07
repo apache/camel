@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.calendar;
 
-import java.util.List;
-
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
@@ -52,7 +50,7 @@ public class CalendarCalendarListIT extends AbstractGoogleCalendarTestSupport {
     protected boolean isCalendarInList(Calendar calendar) {
         CalendarList calendarList = requestBody("direct://LIST", null);
 
-        List<CalendarListEntry> items = calendarList.getItems();
+        java.util.List<CalendarListEntry> items = calendarList.getItems();
 
         boolean found = false;
         for (CalendarListEntry calendarListEntry : items) {

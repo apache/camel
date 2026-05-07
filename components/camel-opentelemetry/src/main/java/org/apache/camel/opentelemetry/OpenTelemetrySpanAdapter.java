@@ -23,7 +23,6 @@ import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.baggage.BaggageBuilder;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
-import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import org.apache.camel.tracing.SpanAdapter;
@@ -48,18 +47,18 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     }
 
     private Baggage baggage;
-    private Span span;
+    private io.opentelemetry.api.trace.Span span;
 
-    OpenTelemetrySpanAdapter(Span span) {
+    OpenTelemetrySpanAdapter(io.opentelemetry.api.trace.Span span) {
         this.span = span;
     }
 
-    OpenTelemetrySpanAdapter(Span span, Baggage baggage) {
+    OpenTelemetrySpanAdapter(io.opentelemetry.api.trace.Span span, Baggage baggage) {
         this.span = span;
         this.baggage = baggage;
     }
 
-    Span getOpenTelemetrySpan() {
+    io.opentelemetry.api.trace.Span getOpenTelemetrySpan() {
         return this.span;
     }
 

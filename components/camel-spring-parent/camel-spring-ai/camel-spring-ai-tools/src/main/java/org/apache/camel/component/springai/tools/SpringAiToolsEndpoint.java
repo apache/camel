@@ -20,14 +20,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.springai.tools.spec.CamelToolExecutorCache;
@@ -123,11 +121,11 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
         configureConsumer(springAiToolsConsumer);
 
         // Create a function that executes the Camel route
-        Function<Map<String, Object>, String> function = args -> {
+        java.util.function.Function<java.util.Map<String, Object>, String> function = args -> {
             try {
-                Exchange exchange = createExchange();
+                org.apache.camel.Exchange exchange = createExchange();
                 // Set arguments as headers
-                for (Map.Entry<String, Object> entry : args.entrySet()) {
+                for (java.util.Map.Entry<String, Object> entry : args.entrySet()) {
                     exchange.getMessage().setHeader(entry.getKey(), entry.getValue());
                 }
 
@@ -151,9 +149,9 @@ public class SpringAiToolsEndpoint extends DefaultEndpoint {
             // Build JSON schema from parameters map
             String inputSchema = buildJsonSchemaFromParameters(parameters);
             builder.inputSchema(inputSchema);
-            builder.inputType(Map.class);
+            builder.inputType(java.util.Map.class);
         } else {
-            builder.inputType(Map.class);
+            builder.inputType(java.util.Map.class);
         }
 
         // Configure tool metadata

@@ -19,7 +19,6 @@ package org.apache.camel.component.braintree;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.SettlementBatchSummaryGatewayApiMethod;
@@ -43,7 +42,7 @@ public class SettlementBatchSummaryGatewayIT extends AbstractBraintreeTestSuppor
     @Test
     public void testGenerate() {
         // using java.util.Calendar message body for single parameter "settlementDate"
-        final Result result = requestBody("direct://GENERATE", null);
+        final com.braintreegateway.Result result = requestBody("direct://GENERATE", null);
 
         assertNotNull(result, "generate result");
         LOG.debug("generate: {}", result);
@@ -59,7 +58,7 @@ public class SettlementBatchSummaryGatewayIT extends AbstractBraintreeTestSuppor
         // parameter type is String
         headers.put("CamelBraintree.groupByCustomField", null);
 
-        final Result result = requestBodyAndHeaders("direct://GENERATE_1", null, headers);
+        final com.braintreegateway.Result result = requestBodyAndHeaders("direct://GENERATE_1", null, headers);
 
         assertNotNull(result, "generate result");
         LOG.debug("generate: {}", result);

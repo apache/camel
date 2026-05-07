@@ -19,7 +19,6 @@
  */
 package org.apache.camel.component.dhis2;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +67,7 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
         headers.put("CamelDhis2.filter", null);
         headers.put("CamelDhis2.queryParams", null);
 
-        final InputStream result = requestBodyAndHeaders("direct://RESOURCE", null, headers);
+        final java.io.InputStream result = requestBodyAndHeaders("direct://RESOURCE", null, headers);
 
         assertNotNull(result, "resource result");
         LOG.debug("Result: {}", result);

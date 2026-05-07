@@ -26,13 +26,6 @@ import javax.xml.transform.stax.StAXSource;
 import net.sf.saxon.s9api.DOMDestination;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XPathCompiler;
-import net.sf.saxon.s9api.XPathExecutable;
-import net.sf.saxon.s9api.XPathSelector;
-import net.sf.saxon.s9api.XdmAtomicValue;
-import net.sf.saxon.s9api.XdmItem;
-import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.XdmValue;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.xslt.XmlSourceHandlerFactoryImpl;
 import org.slf4j.Logger;
@@ -52,8 +45,8 @@ public class SaxonXmlSourceHandlerFactoryImpl extends XmlSourceHandlerFactoryImp
         this.useJsonBody = useJsonBody;
     }
 
-    private Processor saxonProcessor;
-    private XPathExecutable saxonJsonToXmlExecutable;
+    private net.sf.saxon.s9api.Processor saxonProcessor;
+    private net.sf.saxon.s9api.XPathExecutable saxonJsonToXmlExecutable;
     private DocumentBuilder documentBuilder;
 
     @Override
@@ -91,13 +84,13 @@ public class SaxonXmlSourceHandlerFactoryImpl extends XmlSourceHandlerFactoryImp
 
     private Source convertJsonToXmlSource(String jsonString) {
         try {
-            XPathSelector selector = getSaxonJsonToXmlExecutable().load();
-            selector.setContextItem(new XdmAtomicValue(jsonString));
-            XdmValue result = selector.evaluate();
+            net.sf.saxon.s9api.XPathSelector selector = getSaxonJsonToXmlExecutable().load();
+            selector.setContextItem(new net.sf.saxon.s9api.XdmAtomicValue(jsonString));
+            net.sf.saxon.s9api.XdmValue result = selector.evaluate();
 
             if (!result.isEmpty()) {
-                XdmItem item = result.itemAt(0);
-                if (item instanceof XdmNode xdmNode) {
+                net.sf.saxon.s9api.XdmItem item = result.itemAt(0);
+                if (item instanceof net.sf.saxon.s9api.XdmNode xdmNode) {
                     // The most efficient way would be:
                     //     return xdmNode.getUnderlyingNode();
                     // In order to make it work however, this pre-process and the main XSLT processing later on
@@ -118,10 +111,10 @@ public class SaxonXmlSourceHandlerFactoryImpl extends XmlSourceHandlerFactoryImp
         return null;
     }
 
-    private synchronized XPathExecutable getSaxonJsonToXmlExecutable() throws SaxonApiException {
+    private synchronized net.sf.saxon.s9api.XPathExecutable getSaxonJsonToXmlExecutable() throws SaxonApiException {
         if (saxonJsonToXmlExecutable == null) {
             saxonProcessor = new Processor(false);
-            XPathCompiler xpathCompiler = saxonProcessor.newXPathCompiler();
+            net.sf.saxon.s9api.XPathCompiler xpathCompiler = saxonProcessor.newXPathCompiler();
             saxonJsonToXmlExecutable = xpathCompiler.compile("json-to-xml(.)");
             LOG.debug("Initialized reusable XPathExecutable for json-to-xml() function");
         }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class SetVariablesProcessorTest extends ContextTestSupport {
 
     public static class VarBean {
-        final Map<String, String> map = new LinkedHashMap<>();
+        final Map<String, String> map = new java.util.LinkedHashMap<>();
 
         public VarBean() {
         }
@@ -45,7 +44,7 @@ public class SetVariablesProcessorTest extends ContextTestSupport {
         }
     }
 
-    private final Map<String, Expression> varMap = new LinkedHashMap<>();
+    private final Map<String, Expression> varMap = new java.util.LinkedHashMap<>();
     protected final String body = "<person name='Jane' age='10'/>";
     protected MockEndpoint expected;
 

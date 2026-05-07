@@ -52,7 +52,6 @@ import java.util.stream.Stream;
 import ai.docling.core.DoclingDocument;
 import ai.docling.core.DoclingDocument.DocumentOrigin;
 import ai.docling.serve.api.DoclingServeApi;
-import ai.docling.serve.api.chunk.request.ChunkDocumentRequest;
 import ai.docling.serve.api.chunk.request.HierarchicalChunkDocumentRequest;
 import ai.docling.serve.api.chunk.request.HybridChunkDocumentRequest;
 import ai.docling.serve.api.chunk.request.options.HierarchicalChunkerOptions;
@@ -619,7 +618,7 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     private void addSourceToChunkRequest(
-            ChunkDocumentRequest.Builder requestBuilder, String inputSource)
+            ai.docling.serve.api.chunk.request.ChunkDocumentRequest.Builder requestBuilder, String inputSource)
             throws IOException {
         if (inputSource.startsWith("http://") || inputSource.startsWith("https://")) {
             requestBuilder.source(
@@ -732,7 +731,7 @@ public class DoclingProducer extends DefaultProducer {
             if (configuration.isIncludeRawMetadata()) {
                 JsonNode rootNode = objectMapper.readTree(jsonOutput);
                 @SuppressWarnings("unchecked")
-                Map<String, Object> rawMap = objectMapper.convertValue(rootNode, Map.class);
+                Map<String, Object> rawMap = objectMapper.convertValue(rootNode, java.util.Map.class);
                 metadata.setRawMetadata(rawMap);
             }
 

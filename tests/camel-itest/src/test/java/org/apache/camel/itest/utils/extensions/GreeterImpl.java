@@ -18,16 +18,14 @@ package org.apache.camel.itest.utils.extensions;
 
 import java.util.logging.Logger;
 
-import jakarta.jws.WebService;
-
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.types.FaultDetail;
 
-@WebService(portName = "SoapOverHttp", serviceName = "SOAPService",
-            targetNamespace = "http://apache.org/hello_world_soap_http",
-            endpointInterface = "org.apache.hello_world_soap_http.Greeter",
-            wsdlLocation = "wsdl/hello_world.wsdl")
+@jakarta.jws.WebService(portName = "SoapOverHttp", serviceName = "SOAPService",
+                        targetNamespace = "http://apache.org/hello_world_soap_http",
+                        endpointInterface = "org.apache.hello_world_soap_http.Greeter",
+                        wsdlLocation = "wsdl/hello_world.wsdl")
 
 public class GreeterImpl implements Greeter {
 

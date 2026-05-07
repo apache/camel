@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.kafka.consumer.support.batching;
 
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -214,7 +213,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
      * The flow to execute when using auto-commit
      */
     private ProcessingResult autoCommitResultProcessing(
-            KafkaConsumer camelKafkaConsumer, Exchange exchange, List<Exchange> exchanges) {
+            KafkaConsumer camelKafkaConsumer, Exchange exchange, java.util.List<Exchange> exchanges) {
         ExceptionHandler exceptionHandler = camelKafkaConsumer.getExceptionHandler();
         CommitSynchronization commitSynchronization = new CommitSynchronization(exceptionHandler, exchanges.size());
         exchange.getExchangeExtension().addOnCompletion(commitSynchronization);
@@ -250,7 +249,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
      * The flow to execute when the integrations perform manual commit on their own
      */
     private ProcessingResult manualCommitResultProcessing(
-            KafkaConsumer camelKafkaConsumer, Exchange exchange, List<Exchange> exchanges) {
+            KafkaConsumer camelKafkaConsumer, Exchange exchange, java.util.List<Exchange> exchanges) {
         try {
             processor.process(exchange);
         } catch (Exception e) {

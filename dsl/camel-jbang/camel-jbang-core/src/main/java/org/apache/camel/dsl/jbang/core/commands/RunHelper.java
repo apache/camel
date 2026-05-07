@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Field;
@@ -225,7 +224,7 @@ public final class RunHelper {
 
     // Keep for backward compatibility
     @Deprecated
-    public static String findMavenProperty(File f, String placeholder, MavenDependencyDownloader downloader) {
+    public static String findMavenProperty(java.io.File f, String placeholder, MavenDependencyDownloader downloader) {
         return findMavenProperty(f.toPath(), placeholder, downloader);
     }
 

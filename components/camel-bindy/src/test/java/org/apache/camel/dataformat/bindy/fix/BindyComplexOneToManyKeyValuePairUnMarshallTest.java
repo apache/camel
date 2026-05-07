@@ -58,7 +58,7 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
 
     public static class ContextConfig extends RouteBuilder {
         BindyKeyValuePairDataFormat kvpBindyDataFormat
-                = new BindyKeyValuePairDataFormat(Order.class);
+                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order.class);
 
         @Override
         public void configure() {

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.support.builder;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -2812,10 +2810,10 @@ public class ExpressionBuilder {
     }
 
     private static String serializeCarelessly(Object value) {
-        final StringWriter writer = new StringWriter();
+        final java.io.StringWriter writer = new java.io.StringWriter();
         try {
             Jsoner.serializeCarelessly(value, writer);
-        } catch (final IOException caught) {
+        } catch (final java.io.IOException caught) {
             /* See StringWriter. */
         }
         return writer.toString();

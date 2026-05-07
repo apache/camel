@@ -18,16 +18,13 @@ package org.apache.camel.opentelemetry2.mock;
 
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.support.DefaultComponent;
-
 /**
  * Mock Kafka component for testing SpanKind and inherited properties.
  */
-public class MockKafkaComponent extends DefaultComponent {
+public class MockKafkaComponent extends org.apache.camel.support.DefaultComponent {
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+    protected org.apache.camel.Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
             throws Exception {
         MockKafkaEndpoint endpoint = new MockKafkaEndpoint(uri, this);
         setProperties(endpoint, parameters);

@@ -40,7 +40,6 @@ import org.w3c.dom.Node;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -57,7 +56,6 @@ import org.apache.cxf.headers.Header.Direction;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.message.MessageContentsList;
-import org.apache.cxf.outofband.header.ObjectFactory;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -517,7 +515,7 @@ public class CxfMessageHeadersRelayTest {
 
         Exchange exchange = template.send(producerUri, senderExchange);
 
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         MessageContentsList result = (MessageContentsList) out.getBody();
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
@@ -540,7 +538,7 @@ public class CxfMessageHeadersRelayTest {
 
         Exchange exchange = template.send(producerUri, senderExchange);
 
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         MessageContentsList result = (MessageContentsList) out.getBody();
         assertTrue(result.get(0) != null && ((Me) result.get(0)).getFirstName().equals("pass"),
                 "Expected the out of band header to propagate but it didn't");
@@ -568,7 +566,7 @@ public class CxfMessageHeadersRelayTest {
 
         Exchange exchange = template.send(producerUri, senderExchange);
 
-        Message out = exchange.getMessage();
+        org.apache.camel.Message out = exchange.getMessage();
         MessageContentsList result = (MessageContentsList) out.getBody();
         assertTrue(result.get(0) != null && ((Me) result.get(0)).getFirstName().equals("pass"),
                 "Expected the out of band header to propagate but it didn't");
@@ -616,7 +614,7 @@ public class CxfMessageHeadersRelayTest {
             if (hdr1.getObject() instanceof Node) {
                 try {
                     JAXBElement<?> job = (JAXBElement<?>) JAXBContext
-                            .newInstance(ObjectFactory.class)
+                            .newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
                             .createUnmarshaller().unmarshal((Node) hdr1.getObject());
                     hdrToTest = (OutofBandHeader) job.getValue();
                 } catch (JAXBException ex) {
@@ -673,7 +671,7 @@ public class CxfMessageHeadersRelayTest {
             if (hdr1.getObject() instanceof Node) {
                 try {
                     JAXBElement<?> job = (JAXBElement<?>) JAXBContext
-                            .newInstance(ObjectFactory.class)
+                            .newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
                             .createUnmarshaller().unmarshal((Node) hdr1.getObject());
                     hdrToTest.add((OutofBandHeader) job.getValue());
                 } catch (JAXBException ex) {
