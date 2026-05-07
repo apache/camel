@@ -40,8 +40,11 @@ public class SpanCustomizationTest extends MicrometerObservabilityTracerPropagat
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        CamelContext ctx = super.createCamelContext();
         tst.setTraceProcessors(true);
-        return super.createCamelContext();
+        tst.setDisableCoreProcessors(false);
+
+        return ctx;
     }
 
     @Test

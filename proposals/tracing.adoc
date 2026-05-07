@@ -9,7 +9,7 @@ approvers:
   - "@zbendhiba"
   - "@davsclaus"
 creation-date: 2025-01-08
-last-updated: 2026-05-07
+last-updated: 2026-05-04
 status: implemented
 see-also: []
 replaces: []
@@ -167,9 +167,3 @@ As described in https://issues.apache.org/jira/browse/CAMEL-23380 any version be
 In order to prevent this problem we need to rethink the implementation details of `camel-opentelemetry2` and remove the explicit `Scope` management that, when asynchronous, was opening the `Scope` in a thread and closing in another (what we had called "dirty" context). We are now removing this explicit management and moving this part exclusively in the custom Camel `Processors`. Here Camel will take care to open the Opentelemetry scope and close it within the same thread.
 
 What it means is that, from now on we get rid of the leak but the final user or any third party dependency can only access the Opentelemetry context within the boundary of a Processor execution.
-
-=== Distinguish custom Processors from core Processors (2026-05-07)
-
-The custom processors must be distinguished from core processors in order to let the user disable span generation only for custom processors. This is an **important design constraint** required to ensure that the core processors spans are always generated during an execution. With this constraint we ensure that any third party instrumentation span (which generally happens at core Processor level) is correctly nested.
-
-Disabling this feature is possible and could work for simple tracing. However it is not recommended and the user should always fine tune the exclusions of processors explicitly in case he wants to reduce the number of generated spans.
