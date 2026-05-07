@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -66,7 +68,7 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
-        Awaitility.await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
                     Integer p = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
                     assertEquals(2, p.intValue());
@@ -125,7 +127,7 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
-        Awaitility.await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
                     Integer p = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
                     assertEquals(2, p.intValue());
