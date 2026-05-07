@@ -19,9 +19,10 @@ package org.apache.camel.component.huaweicloud.obs;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 
-@org.apache.camel.spi.annotations.Component("hwcloud-obs")
+@Component("hwcloud-obs")
 public class OBSComponent extends HealthCheckComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

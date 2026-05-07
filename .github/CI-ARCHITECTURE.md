@@ -90,10 +90,14 @@ PR comment: /component-test kafka http
 The core test runner. Determines which modules to test using:
 
 1. **File-path analysis**: Maps changed files to Maven modules
-2. **POM dependency analysis**: For `parent/pom.xml` changes, detects property changes and finds modules that reference the affected properties in their `pom.xml` files (uses simple grep, not Maveniverse Toolbox — see Known Limitations below)
+2. **POM dependency analysis** (dual detection):
+   - **Grep-based**: For `parent/pom.xml` changes, detects property changes and finds modules that explicitly reference the affected properties via `${property}` in their `pom.xml` files
+   - **Scalpel-based**: Uses [Maveniverse Scalpel](https://github.com/maveniverse/scalpel) (Maven extension) for effective POM model comparison — catches managed dependencies, plugin version changes, BOM imports, and transitive dependency impacts that the grep approach misses
 3. **Extra modules**: Additional modules passed via `/component-test`
 
-Results are merged, deduplicated, and tested. The script also:
+Both detection methods run in parallel. Their results are merged (union), deduplicated, and tested. If Scalpel fails (build error, runtime error), the script falls back to grep-only with no regression.
+
+The script also:
 
 - Detects tests disabled in CI (`@DisabledIfSystemProperty(named = "ci.env.name")`)
 - Applies an exclusion list for generated/meta modules
@@ -119,21 +123,40 @@ Installs system packages required for the build.
 
 The CI sets `-Dci.env.name=github.com` via `MVND_OPTS` (in `install-mvnd`). Tests can use `@DisabledIfSystemProperty(named = "ci.env.name")` to skip flaky tests in CI. The test comment warns about these skipped tests.
 
-## Known Limitations of POM Dependency Detection
+## POM Dependency Detection: Dual Approach
 
-The property-grep approach has structural limitations that can cause missed modules:
+### Grep-based detection (legacy)
 
-1. **Managed dependencies without explicit** `<version>` — Most Camel modules inherit dependency versions via `<dependencyManagement>` in the parent POM and do not declare `<version>${property}</version>` themselves. When a managed dependency version property changes, only modules that explicitly reference the property are detected — modules relying on inheritance are missed.
+The grep approach searches for `${property-name}` references in module `pom.xml` files. It has known limitations:
 
-2. **Maven plugin version changes are completely invisible** — Plugin version properties (e.g. `<maven-surefire-plugin-version>`) are both defined and consumed in `parent/pom.xml` via `<pluginManagement>`. Since the module search excludes `parent/pom.xml`, no modules are found and **no tests run at all** for plugin updates. Modules inherit plugins from the parent without any `${property}` reference in their own `pom.xml`.
+1. **Managed dependencies without explicit `<version>`** — Modules inheriting versions via `<dependencyManagement>` without declaring `<version>${property}</version>` are missed.
+2. **Maven plugin version changes** — Plugin version properties consumed in `parent/pom.xml` via `<pluginManagement>` are invisible to child modules.
+3. **BOM imports** — Modules using artifacts from a BOM are not linked to the BOM version property.
+4. **Transitive dependency changes** — Only direct property references are detected.
+5. **Non-property version changes** — Structural `<dependencyManagement>` edits without property substitution are not caught.
 
-3. **BOM imports** — When a BOM version property changes (e.g. `<spring-boot-bom-version>`), modules using artifacts from that BOM are not detected because they reference the BOM's artifacts, not the BOM property.
+### Scalpel-based detection (new)
 
-4. **Transitive dependency changes** — Modules affected only via transitive dependencies are not detected.
+[Maveniverse Scalpel](https://github.com/maveniverse/scalpel) is a Maven core extension that compares effective POM models between the base branch and the PR. It resolves all 5 grep limitations by:
 
-5. **Non-property version changes** — Direct edits to `<version>` values (not using `${property}` substitution) or structural changes to `<dependencyManagement>` sections are not caught.
+- Reading old POM files from the merge-base commit (via JGit)
+- Comparing properties, managed dependencies, and managed plugins between old and new POMs
+- Resolving the full transitive dependency graph to find all affected modules
+- Detecting plugin version changes via `project.getBuildPlugins()` comparison
 
-These limitations mean the incremental build may under-test when parent POM properties change. A future improvement could use [Maveniverse Toolbox](https://github.com/maveniverse/toolbox) `tree-find` or [Scalpel](https://github.com/maveniverse/scalpel) to resolve the full dependency graph and detect all affected modules.
+Scalpel runs in **report mode** (`-Dscalpel.mode=report`), writing a JSON report to `target/scalpel-report.json` without modifying the Maven reactor. The report includes affected modules with reasons (`SOURCE_CHANGE`, `POM_CHANGE`, `TRANSITIVE_DEPENDENCY`, `MANAGED_PLUGIN`).
+
+### Dual-detection strategy
+
+Both methods run in parallel. Results are merged (union) before testing. This lets us:
+
+1. **Validate Scalpel** — Compare what each method detects across many PRs
+2. **No regression** — If Scalpel fails, grep results are still used
+3. **Gradual migration** — Once Scalpel is validated, grep can be removed
+
+Scalpel is configured permanently in `.mvn/extensions.xml` (version `0.1.0`). On developer machines it is a no-op — without CI environment variables (`GITHUB_BASE_REF`), no base branch is detected and Scalpel returns immediately. The `mvn validate` with report mode adds ~60-90 seconds in CI.
+
+Note: the script overrides `fullBuildTriggers` to empty (`-Dscalpel.fullBuildTriggers=`) because Scalpel's default (`.mvn/**`) would trigger a full build whenever `.mvn/extensions.xml` itself changes (e.g., Dependabot bumping Scalpel).
 
 ## Manual Integration Test Advisories
 

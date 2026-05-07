@@ -16,6 +16,7 @@
  */
 package org.apache.camel.telemetry.propagation;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,6 +27,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelHeadersExtractAdapterTest {
 
@@ -68,5 +71,39 @@ public class CamelHeadersExtractAdapterTest {
         map.put("key", "value");
         SpanContextPropagationExtractor adapter = new CamelHeadersSpanContextPropagationExtractor(map);
         assertEquals("value", adapter.get("KeY"));
+    }
+
+    @Test
+    public void byteArrayProperty() {
+        map.put("traceparent", "00-abc123-def456-01".getBytes(StandardCharsets.UTF_8));
+        SpanContextPropagationExtractor adapter = new CamelHeadersSpanContextPropagationExtractor(map);
+        assertEquals("00-abc123-def456-01", adapter.get("traceparent"));
+    }
+
+    @Test
+    public void mixedStringAndByteArrayProperties() {
+        map.put("traceparent", "00-abc123-def456-01".getBytes(StandardCharsets.UTF_8));
+        map.put("custom-header", "custom-value");
+        SpanContextPropagationExtractor adapter = new CamelHeadersSpanContextPropagationExtractor(map);
+        assertEquals("00-abc123-def456-01", adapter.get("traceparent"));
+        assertEquals("custom-value", adapter.get("custom-header"));
+    }
+
+    @Test
+    public void nonStringNonByteArrayPropertyIsFiltered() {
+        map.put("integer-header", 42);
+        map.put("key", "value");
+        SpanContextPropagationExtractor adapter = new CamelHeadersSpanContextPropagationExtractor(map);
+        assertNull(adapter.get("integer-header"));
+        assertEquals("value", adapter.get("key"));
+        assertTrue(adapter.keys().contains("key"));
+        assertFalse(adapter.keys().contains("integer-header"));
+    }
+
+    @Test
+    public void byteArrayKeyWithDifferentCase() {
+        map.put("traceparent", "00-abc123-def456-01".getBytes(StandardCharsets.UTF_8));
+        SpanContextPropagationExtractor adapter = new CamelHeadersSpanContextPropagationExtractor(map);
+        assertEquals("00-abc123-def456-01", adapter.get("TraceParent"));
     }
 }

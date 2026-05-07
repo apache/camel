@@ -35,6 +35,7 @@ import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +53,7 @@ abstract class KafkaHealthCheckTestSupport implements ConfigurableRoute, Configu
     @Order(2)
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
-    protected org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    protected KafkaProducer<String, String> producer;
     @EndpointInject("mock:result")
     protected MockEndpoint to;
     protected boolean serviceShutdown = false;
@@ -76,7 +77,7 @@ abstract class KafkaHealthCheckTestSupport implements ConfigurableRoute, Configu
     public void before() {
         if (!serviceShutdown) {
             Properties props = KafkaTestUtil.getDefaultProperties(service);
-            producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+            producer = new KafkaProducer<>(props);
             MockConsumerInterceptor.recordsCaptured.clear();
         }
     }

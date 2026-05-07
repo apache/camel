@@ -27,13 +27,13 @@ import org.apache.camel.support.HealthCheckComponent;
  * Base Twitter component
  */
 public abstract class AbstractTwitterComponent extends HealthCheckComponent {
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String consumerKey;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String consumerSecret;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String accessToken;
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String accessTokenSecret;
     @Metadata(label = "proxy")
     private String httpProxyHost;

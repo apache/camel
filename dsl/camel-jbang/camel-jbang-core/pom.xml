@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -45,6 +45,10 @@
 
     <dependencies>
         <!-- camel -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-diagram</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
@@ -89,13 +93,13 @@
             <version>${picocli-version}</version>
         </dependency>
         <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli-shell-jline3</artifactId>
-            <version>${picocli-version}</version>
+            <groupId>org.jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>${jline-version}</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>
-            <artifactId>jline</artifactId>
+            <artifactId>jline-picocli</artifactId>
             <version>${jline-version}</version>
         </dependency>
         <dependency>
@@ -150,6 +154,13 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-xml</artifactId>
+        </dependency>
+
+        <!-- template engine for code generation -->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker-version}</version>
         </dependency>
 
         <!-- test dependencies -->

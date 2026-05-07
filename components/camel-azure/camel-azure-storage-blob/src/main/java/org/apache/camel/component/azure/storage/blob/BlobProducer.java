@@ -61,6 +61,9 @@ public class BlobProducer extends DefaultProducer {
             case listBlobContainers:
                 setResponse(exchange, blobServiceOperations.listBlobContainers(exchange));
                 break;
+            case findBlobsByTags:
+                setResponse(exchange, blobServiceOperations.findBlobsByTags(exchange));
+                break;
             // container operations
             case createBlobContainer:
                 setResponse(exchange, getContainerOperations(exchange).createContainer(exchange));
@@ -128,6 +131,27 @@ public class BlobProducer extends DefaultProducer {
                 break;
             case copyBlob:
                 setResponse(exchange, getBlobOperations(exchange).copyBlob(exchange));
+                break;
+            case createBlobSnapshot:
+                setResponse(exchange, getBlobOperations(exchange).createBlobSnapshot(exchange));
+                break;
+            case setBlobTags:
+                setResponse(exchange, getBlobOperations(exchange).setBlobTags(exchange));
+                break;
+            case getBlobTags:
+                setResponse(exchange, getBlobOperations(exchange).getBlobTags(exchange));
+                break;
+            case setBlobLegalHold:
+                setResponse(exchange, getBlobOperations(exchange).setBlobLegalHold(exchange));
+                break;
+            case setBlobImmutabilityPolicy:
+                setResponse(exchange, getBlobOperations(exchange).setBlobImmutabilityPolicy(exchange));
+                break;
+            case undeleteBlob:
+                setResponse(exchange, getBlobOperations(exchange).undeleteBlob(exchange));
+                break;
+            case setBlobTier:
+                setResponse(exchange, getBlobOperations(exchange).setBlobTier(exchange));
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");

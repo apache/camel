@@ -106,6 +106,8 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private boolean skipCamelInfo = false;
     @Metadata(defaultValue = "false")
     private boolean logMetricsOnShutdown = false;
+    @Metadata(defaultValue = "json", enums = "json,prometheus")
+    private String logMetricsOnShutdownFormat = "json";
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
     @Metadata
@@ -307,6 +309,18 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         this.logMetricsOnShutdownFilters = logMetricsOnShutdownFilters;
     }
 
+    public String getLogMetricsOnShutdownFormat() {
+        return logMetricsOnShutdownFormat;
+    }
+
+    /**
+     * Format of metrics to log when application is shutting down. Either `json` (default) or `prometheus` format
+     * accepted.
+     */
+    public void setLogMetricsOnShutdownFormat(String logMetricsOnShutdownFormat) {
+        this.logMetricsOnShutdownFormat = logMetricsOnShutdownFormat;
+    }
+
     @Override
     protected void doInit() throws Exception {
         super.doInit();
@@ -358,10 +372,14 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         if (isEnableExchangeEventNotifier()) {
             MicrometerExchangeEventNotifier notifier = new MicrometerExchangeEventNotifier();
             notifier.setSkipCamelInfo(isSkipCamelInfo());
-            notifier.setLogMetricsOnShutdown(isLogMetricsOnShutdown());
-            if (getLogMetricsOnShutdownFilters() != null) {
-                String[] meterFilters = getLogMetricsOnShutdownFilters().split(",");
-                notifier.setLogMetricsOnShutdownFilters(meterFilters);
+            // We delegate the print to the notifier only when the format
+            // configuration is json. If prometheus, we must take care in this component instead
+            if (getLogMetricsOnShutdownFormat().equals("json")) {
+                notifier.setLogMetricsOnShutdown(isLogMetricsOnShutdown());
+                if (getLogMetricsOnShutdownFilters() != null) {
+                    String[] meterFilters = getLogMetricsOnShutdownFilters().split(",");
+                    notifier.setLogMetricsOnShutdownFilters(meterFilters);
+                }
             }
             notifier.setBaseEndpointURI(isBaseEndpointURIExchangeEventNotifier());
             if ("legacy".equalsIgnoreCase(namingStrategy)) {
@@ -480,6 +498,45 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         if (!createdBinders.isEmpty()) {
             LOG.info("Registered {} MeterBinders: {}", createdBinders.size(), sj);
         }
+    }
+
+    @Override
+    protected void doStop() {
+        // NOTE: this components only takes care to trace when we set the "prometheus" format
+        if (logMetricsOnShutdown && logMetricsOnShutdownFormat.equals("prometheus")) {
+            LOG.warn("Micrometer service is stopping, here a list of metrics collected so far.");
+            // Default: all metrics
+            logMetricsOnShutdown(
+                    logMetricsOnShutdownFilters == null ? new String[] { "*" } : logMetricsOnShutdownFilters.split(","));
+        }
+    }
+
+    void logMetricsOnShutdown(String... filters) {
+        String[] scrapes = meterRegistry.scrape().split("\n");
+        for (String s : scrapes) {
+            if (matchesFilter(s, filters)) {
+                // We put on warn level to make sure it is printed even if the log is
+                // at higher levels. Important: we also include a start and end tag to make sure the
+                // scraper can more easily identify the metric content.
+                LOG.warn("#METRIC-START#" + s + "#METRIC-END#");
+            }
+        }
+    }
+
+    static boolean matchesFilter(String line, String... filters) {
+        for (String filter : filters) {
+            // Prometheus format does not use . but _ instead
+            filter = filter.replaceAll("\\.", "_");
+
+            if (filter.contains("*")) {
+                if (line.contains(filter.replace("*", ""))) {
+                    return true;
+                }
+            } else if (line.contains(filter)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

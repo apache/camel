@@ -28,6 +28,7 @@ camel cmd [options]
 | xref:jbang-commands/camel-jbang-cmd-reload.adoc[reload] | Trigger reloading Camel
 | xref:jbang-commands/camel-jbang-cmd-reset-stats.adoc[reset-stats] | Reset performance statistics
 | xref:jbang-commands/camel-jbang-cmd-resume-route.adoc[resume-route] | Resume Camel routes
+| xref:jbang-commands/camel-jbang-cmd-route-diagram.adoc[route-diagram] | Display Camel route diagram in the terminal
 | xref:jbang-commands/camel-jbang-cmd-route-structure.adoc[route-structure] | Dump Camel route structure
 | xref:jbang-commands/camel-jbang-cmd-send.adoc[send] | Send messages to endpoints
 | xref:jbang-commands/camel-jbang-cmd-start-group.adoc[start-group] | Start Camel route groups

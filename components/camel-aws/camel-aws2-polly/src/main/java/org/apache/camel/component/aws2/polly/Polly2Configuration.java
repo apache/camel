@@ -38,11 +38,11 @@ public class Polly2Configuration implements Cloneable, AwsCommonConfiguration {
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private PollyClient pollyClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam(defaultValue = "synthesizeSpeech")
     @Metadata(required = true)
@@ -83,7 +83,7 @@ public class Polly2Configuration implements Cloneable, AwsCommonConfiguration {
     private String snsTopicArn;
     @UriParam
     private boolean pojoRequest;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
     private boolean overrideEndpoint;

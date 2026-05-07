@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -120,6 +120,7 @@
         <module>camel-dapr</module>
         <module>camel-datasonnet</module>
         <module>camel-debug</module>
+        <module>camel-diagram</module>
         <module>camel-debezium</module>
         <module>camel-dhis2</module>
         <module>camel-digitalocean</module>
@@ -132,7 +133,6 @@
         <module>camel-ehcache</module>
         <module>camel-elasticsearch</module>
         <module>camel-elasticsearch-rest-client</module>
-        <module>camel-elytron</module>
         <module>camel-event</module>
         <module>camel-exec</module>
         <module>camel-fastjson</module>
@@ -151,12 +151,10 @@
         <module>camel-github</module>
         <module>camel-github2</module>
         <module>camel-google</module>
-        <module>camel-grape</module>
         <module>camel-graphql</module>
         <module>camel-grok</module>
         <module>camel-grpc</module>
         <module>camel-gson</module>
-        <module>camel-guava-eventbus</module>
         <module>camel-hashicorp-vault</module>
         <module>camel-hazelcast</module>
         <module>camel-headersmap</module>
@@ -204,6 +202,7 @@
         <module>camel-jsonata</module>
         <module>camel-jsonb</module>
         <module>camel-jsonpath</module>
+        <module>camel-jsoup</module>
         <module>camel-json-patch</module>
         <module>camel-jt400</module>
         <module>camel-jta</module>
@@ -309,7 +308,6 @@
         <module>camel-sql</module>
         <module>camel-ssh</module>
         <module>camel-stax</module>
-        <module>camel-stomp</module>
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
         <module>camel-stitch</module>

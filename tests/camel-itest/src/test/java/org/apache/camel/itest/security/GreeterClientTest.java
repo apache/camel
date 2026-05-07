@@ -16,10 +16,12 @@
  */
 package org.apache.camel.itest.security;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
 import jakarta.xml.ws.soap.SOAPFaultException;
 
 import javax.xml.namespace.QName;
@@ -47,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @EnabledIf(value = "org.apache.camel.itest.security.GreeterClientTest#isPortAvailable",
            disabledReason = "This test uses a fixed port that may not be available on certain hosts")
 public class GreeterClientTest {
-    private static final java.net.URL WSDL_LOC;
+    private static final URL WSDL_LOC;
     static {
         WSDL_LOC = GreeterClientTest.class.getClassLoader().getResource("wsdl/hello_world.wsdl");
     }
@@ -59,7 +61,7 @@ public class GreeterClientTest {
     protected CamelContext camelContext;
 
     protected String sendMessageWithUsernameToken(String username, String password, String message) throws Exception {
-        final jakarta.xml.ws.Service svc = jakarta.xml.ws.Service.create(WSDL_LOC, SERVICE_QNAME);
+        final Service svc = Service.create(WSDL_LOC, SERVICE_QNAME);
         final Greeter greeter = svc.getPort(PORT_QNAME, Greeter.class);
 
         Client client = ClientProxy.getClient(greeter);

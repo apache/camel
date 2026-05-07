@@ -27,6 +27,7 @@ import org.apache.camel.support.HealthCheckComponent;
  * Represents the component that manages {@link IronMQEndpoint}.
  */
 @Component("ironmq")
+@Deprecated(since = "4.21")
 public class IronMQComponent extends HealthCheckComponent {
 
     public IronMQComponent(CamelContext context) {

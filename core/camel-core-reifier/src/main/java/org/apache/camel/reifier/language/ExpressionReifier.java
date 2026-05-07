@@ -47,7 +47,6 @@ import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -70,9 +69,6 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
     public static void registerReifier(
             Class<?> processorClass,
             BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>> creator) {
-        if (EXPRESSIONS.isEmpty()) {
-            ReifierStrategy.addReifierClearer(ExpressionReifier::clearReifiers);
-        }
         EXPRESSIONS.put(processorClass, creator);
     }
 

@@ -34,11 +34,11 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private BedrockAgentRuntimeClient bedrockAgentRuntimeClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam(enums = "anthropic.claude-instant-v1,anthropic.claude-v2,anthropic.claude-v2:1")
     @Metadata(required = true)
@@ -59,7 +59,7 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
     private String region;
     @UriParam
     private boolean pojoRequest;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
     private boolean overrideEndpoint;

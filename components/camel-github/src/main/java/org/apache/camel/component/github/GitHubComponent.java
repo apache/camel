@@ -32,7 +32,7 @@ import org.apache.camel.support.HealthCheckComponent;
 @Deprecated(since = "4.18")
 public class GitHubComponent extends HealthCheckComponent {
 
-    @Metadata(label = "security", secret = true)
+    @Metadata(label = "security", security = "secret")
     private String oauthToken;
 
     @Override

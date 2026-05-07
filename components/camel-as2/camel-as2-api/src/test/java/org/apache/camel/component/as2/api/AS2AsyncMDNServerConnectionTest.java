@@ -19,7 +19,6 @@ package org.apache.camel.component.as2.api;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpException;
@@ -28,19 +27,18 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AS2AsyncMDNServerConnectionTest {
 
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
     private AS2AsyncMDNServerConnection connection;
+    private int port;
 
     @BeforeEach
     void setUp() throws Exception {
-        connection = new AS2AsyncMDNServerConnection(port.getPort(), null);
+        connection = new AS2AsyncMDNServerConnection(0, null);
+        port = connection.getLocalPort();
     }
 
     @AfterEach
@@ -69,7 +67,7 @@ class AS2AsyncMDNServerConnectionTest {
         // Send a request with a Host header that doesn't match the server's hostname
         // This previously caused HTTP 421 due to RequestValidateHost
         HttpURLConnection conn
-                = (HttpURLConnection) new URL("http://localhost:" + port.getPort() + "/test-mdn").openConnection();
+                = (HttpURLConnection) new URL("http://localhost:" + port + "/test-mdn").openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Host", "different-host.example.com");
         conn.setDoOutput(true);

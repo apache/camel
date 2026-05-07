@@ -4,7 +4,7 @@
 :artifactid: camel-github2
 :description: Interact with the GitHub API.
 :since: 4.18
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

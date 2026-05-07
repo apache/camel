@@ -48,8 +48,8 @@ public class ExecOutFileTest {
 
     private static final File FILE = new File("target/outfiletest.xml");
 
-    @Produce("direct:input")
-    private ProducerTemplate producerTemplate;
+    @Produce("direct:input2")
+    private ProducerTemplate producerTemplate2;
 
     @BeforeEach
     public void setUp() throws IOException {
@@ -106,7 +106,7 @@ public class ExecOutFileTest {
     }
 
     private Exchange sendWithMockedExecutor() {
-        Exchange e = producerTemplate.send(new Processor() {
+        Exchange e = producerTemplate2.send(new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader(EXEC_COMMAND_OUT_FILE, FILE.getPath());
                 exchange.getIn().setBody(FILE_CONTENT);

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jetty</artifactId>
@@ -160,8 +160,8 @@
         <!-- testing with ok http client -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>${squareup-okhttp-version}</version>
+            <artifactId>okhttp-jvm</artifactId>
+            <version>${squareup-okhttp5-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

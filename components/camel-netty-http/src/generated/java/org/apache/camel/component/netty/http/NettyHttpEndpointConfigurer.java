@@ -31,6 +31,8 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.netty.http.NettyHttpConfiguration.class, value)); return true;
         case "cookiehandler":
         case "cookieHandler": target.setCookieHandler(property(camelContext, org.apache.camel.http.base.cookie.CookieHandler.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.getConfiguration().setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "disablestreamcache":
         case "disableStreamCache": target.getConfiguration().setDisableStreamCache(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
@@ -88,6 +90,8 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "configuration": return org.apache.camel.component.netty.http.NettyHttpConfiguration.class;
         case "cookiehandler":
         case "cookieHandler": return org.apache.camel.http.base.cookie.CookieHandler.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "disablestreamcache":
         case "disableStreamCache": return boolean.class;
         case "headerfilterstrategy":
@@ -146,6 +150,8 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         case "configuration": return target.getConfiguration();
         case "cookiehandler":
         case "cookieHandler": return target.getCookieHandler();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getConfiguration().getDeserializationFilter();
         case "disablestreamcache":
         case "disableStreamCache": return target.getConfiguration().isDisableStreamCache();
         case "headerfilterstrategy":

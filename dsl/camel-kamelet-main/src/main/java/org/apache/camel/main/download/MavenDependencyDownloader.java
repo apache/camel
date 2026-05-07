@@ -75,6 +75,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private KnownReposResolver knownReposResolver;
     private VersionResolver versionResolver;
     private boolean download = true;
+    private boolean preferLocal;
 
     // all maven-resolver work is delegated to camel-tooling-maven
     private MavenDownloader mavenDownloader;
@@ -181,6 +182,16 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+    @Override
+    public boolean isPreferLocal() {
+        return preferLocal;
+    }
+
+    @Override
+    public void setPreferLocal(boolean preferLocal) {
+        this.preferLocal = preferLocal;
     }
 
     @Override
@@ -549,6 +560,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         mavenDownloaderImpl.setRepos(repositories);
         mavenDownloaderImpl.setFresh(fresh);
         mavenDownloaderImpl.setOffline(!download);
+        mavenDownloaderImpl.setPreferLocal(preferLocal);
         // use listener to keep track of which JARs was downloaded from a remote Maven repo (and how long time it took)
         mavenDownloaderImpl.setRemoteArtifactDownloadListener(new RemoteArtifactDownloadListener() {
             @Override

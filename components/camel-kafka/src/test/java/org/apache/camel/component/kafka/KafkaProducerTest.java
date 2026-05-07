@@ -42,6 +42,7 @@ import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -135,7 +136,7 @@ public class KafkaProducerTest {
     public void processSendsMessageWithException() {
         endpoint.getConfiguration().setTopic("sometopic");
         // set up the exception here
-        org.apache.kafka.clients.producer.Producer kp = producer.getKafkaProducer();
+        Producer kp = producer.getKafkaProducer();
         Mockito.when(kp.send(any(ProducerRecord.class))).thenThrow(new ApiException());
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
@@ -169,7 +170,7 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getMessage()).thenReturn(in);
 
         // set up the exception here
-        org.apache.kafka.clients.producer.Producer kp = producer.getKafkaProducer();
+        Producer kp = producer.getKafkaProducer();
         Mockito.when(kp.send(any(ProducerRecord.class), any(Callback.class))).thenThrow(new ApiException());
 
         in.setHeader(KafkaConstants.PARTITION_KEY, 4);

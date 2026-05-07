@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo2-parent</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-olingo2</artifactId>
@@ -88,14 +88,13 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>
-            <version>${squareup-okhttp-version}</version>
+            <version>${squareup-okhttp5-version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- forcing okhttp v3.x related to https://issues.apache.org/jira/browse/CAMEL-16336 -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>${squareup-okhttp-version}</version>
+            <artifactId>okhttp-jvm</artifactId>
+            <version>${squareup-okhttp5-version}</version>
             <scope>test</scope>
         </dependency>
 

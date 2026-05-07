@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -101,14 +102,14 @@ public class SecurityConstraintMapping implements SecurityConstraint {
 
     public void addInclusion(String constraint) {
         if (inclusions == null) {
-            inclusions = new java.util.LinkedHashMap<>();
+            inclusions = new LinkedHashMap<>();
         }
         inclusions.put(constraint, null);
     }
 
     public void addInclusion(String constraint, String roles) {
         if (inclusions == null) {
-            inclusions = new java.util.LinkedHashMap<>();
+            inclusions = new LinkedHashMap<>();
         }
         inclusions.put(constraint, roles);
     }

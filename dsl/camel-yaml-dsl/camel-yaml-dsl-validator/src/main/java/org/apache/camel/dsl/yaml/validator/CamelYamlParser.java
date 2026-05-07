@@ -67,20 +67,21 @@ public class CamelYamlParser {
 
             // when exporting we should ignore some errors and keep attempting to export as far as we can
             PropertiesComponent pc = (PropertiesComponent) camelContext.getPropertiesComponent();
-            pc.addInitialProperty("camel.component.properties.ignore-missing-property", "true");
-            pc.addInitialProperty("camel.component.properties.ignore-missing-location", "true");
+            pc.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+            pc.addInitialProperty("camel.component.properties.ignoreMissingLocation", "true");
             pc.setPropertiesParser(new DummyPropertiesParser(camelContext));
 
             // override default type converters with our export converter that is more flexible during exporting
             DummyTypeConverter ec = new DummyTypeConverter();
-            camelContext.getTypeConverterRegistry().setTypeConverterExists(TypeConverterExists.Override);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Integer.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Long.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Double.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Float.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Byte.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addTypeConverter(Boolean.class, String.class, ec);
-            camelContext.getTypeConverterRegistry().addFallbackTypeConverter(ec, false);
+            var tcr = camelContext.getTypeConverterRegistry();
+            tcr.setTypeConverterExists(TypeConverterExists.Override);
+            tcr.addTypeConverter(Integer.class, String.class, ec);
+            tcr.addTypeConverter(Long.class, String.class, ec);
+            tcr.addTypeConverter(Double.class, String.class, ec);
+            tcr.addTypeConverter(Float.class, String.class, ec);
+            tcr.addTypeConverter(Byte.class, String.class, ec);
+            tcr.addTypeConverter(Boolean.class, String.class, ec);
+            tcr.addFallbackTypeConverter(ec, false);
 
             // stub EIPs
             StubEipReifier.registerStubEipReifiers(camelContext);

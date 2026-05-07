@@ -38,11 +38,11 @@ public class AWS2S3Configuration implements Cloneable, AwsCommonConfiguration {
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
     private S3Presigner amazonS3Presigner;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam(label = "consumer")
     private String fileName;
@@ -125,7 +125,7 @@ public class AWS2S3Configuration implements Cloneable, AwsCommonConfiguration {
     private String keyName;
     @UriParam
     private boolean overrideEndpoint;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
     private String uriEndpointOverride;

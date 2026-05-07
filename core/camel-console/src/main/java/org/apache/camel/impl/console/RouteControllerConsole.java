@@ -16,10 +16,8 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -160,7 +158,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
         boolean includeStacktrace = "true".equals(options.getOrDefault(STACKTRACE, "true"));
 
         JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
 
         RouteController rc = getCamelContext().getRouteController();
         if (rc instanceof SupervisingRouteController src) {

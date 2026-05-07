@@ -39,7 +39,7 @@ public interface LevelDBSerializer {
      * @param  camelContext           the CamelContext
      * @param  buffer                 the byte buffer containing serialized exchange data
      * @param  deserializationFilter  the deserialization filter pattern to apply (e.g.,
-     *                                "java.**;org.apache.camel.**;!*")
+     *                                "!java.net.**;java.**;org.apache.camel.**;!*")
      * @return                        the deserialized Exchange
      * @throws IOException            if an I/O error occurs
      * @throws ClassNotFoundException if a class cannot be found during deserialization

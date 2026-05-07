@@ -23,12 +23,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-irc</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: IRC</name>
+    <name>Camel :: IRC (deprecated)</name>
     <description>Camel IRC support</description>
 
     <dependencies>

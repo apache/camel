@@ -19,6 +19,7 @@ package org.apache.camel.component.google.drive;
 import java.util.List;
 
 import com.google.api.services.drive.model.Change;
+import com.google.api.services.drive.model.ChangeList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveChangesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
@@ -43,7 +44,7 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
 
     @Test
     public void testGet() {
-        final com.google.api.services.drive.model.ChangeList list = requestBody("direct://LIST", null);
+        final ChangeList list = requestBody("direct://LIST", null);
         List<Change> items = list.getChanges();
         assumeFalse(items.isEmpty());
 
@@ -51,7 +52,7 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
         String id = change.getDriveId();
 
         // using String message body for single parameter "changeId"
-        final com.google.api.services.drive.model.Change result = requestBody("direct://GET", id);
+        final Change result = requestBody("direct://GET", id);
 
         assertNotNull(result, "get result");
         LOG.debug("get: {}", result);
@@ -59,7 +60,7 @@ public class DriveChangesIT extends AbstractGoogleDriveTestSupport {
 
     @Test
     public void testList() {
-        final com.google.api.services.drive.model.ChangeList result = requestBody("direct://LIST", null);
+        final ChangeList result = requestBody("direct://LIST", null);
 
         assertNotNull(result, "list result");
         LOG.debug("list: {}", result);

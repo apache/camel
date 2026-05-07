@@ -28,6 +28,7 @@ import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.kafka.services.ContainerLocalAuthKafkaService;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -64,7 +65,7 @@ public class KafkaConsumerAuthManualTest {
     @RegisterExtension
     private static final CamelContextExtension contextExtension = new DefaultCamelContextExtension();
     private static volatile int receivedMessages;
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     protected Properties getDefaultProperties() {
         Properties properties = KafkaTestUtil.getDefaultProperties(BOOTSTRAP_SERVERS);
@@ -82,7 +83,7 @@ public class KafkaConsumerAuthManualTest {
         Properties props = getDefaultProperties();
 
         try {
-            producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+            producer = new KafkaProducer<>(props);
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());

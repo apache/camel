@@ -37,8 +37,9 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         comp.setAllowNullValues(true);
         assertTrue(comp.isAllowNullValues());
 
-        comp.setLowerCase(true);
         assertTrue(comp.isLowerCase());
+        comp.setLowerCase(false);
+        assertFalse(comp.isLowerCase());
 
         assertTrue(comp.isCaseInsensitive());
         comp.setCaseInsensitive(false);
@@ -78,6 +79,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
     @Test
     public void testInFilterCaseSensitive() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
+        comp.setLowerCase(false);
         comp.setCaseInsensitive(false);
 
         Set<String> set = new HashSet<>();

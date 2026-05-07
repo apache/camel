@@ -23,6 +23,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 @UriParams
@@ -36,12 +37,12 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
     private BedrockRuntimeClient bedrockRuntimeClient;
     @UriParam
     @Metadata(label = "advanced", autowired = true)
-    private software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient;
-    @UriParam(label = "security", secret = true)
+    private BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient;
+    @UriParam(label = "security", security = "secret")
     private String accessKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String secretKey;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String sessionToken;
     @UriParam(enums = "amazon.titan-text-express-v1,amazon.titan-text-lite-v1,amazon.titan-image-generator-v1,amazon.titan-embed-text-v1,amazon.titan-embed-image-v1,amazon.titan-text-premier-v1:0,amazon.titan-embed-text-v2:0,amazon.titan-image-generator-v2:0,amazon.nova-canvas-v1:0,amazon.nova-lite-v1:0,amazon.nova-micro-v1:0,amazon.nova-premier-v1:0,amazon.nova-pro-v1:0,amazon.nova-reel-v1:0,amazon.nova-reel-v1:1,amazon.nova-sonic-v1:0,amazon.rerank-v1:0,ai21.jamba-1-5-large-v1:0,ai21.jamba-1-5-mini-v1:0,anthropic.claude-3-sonnet-20240229-v1:0,anthropic.claude-3-5-sonnet-20240620-v1:0,anthropic.claude-3-5-sonnet-20241022-v2:0,anthropic.claude-3-haiku-20240307-v1:0,anthropic.claude-3-5-haiku-20241022-v1:0,anthropic.claude-3-opus-20240229-v1:0,anthropic.claude-3-7-sonnet-20250219-v1:0,anthropic.claude-opus-4-20250514-v1:0,anthropic.claude-sonnet-4-20250514-v1:0,cohere.command-r-plus-v1:0,cohere.command-r-v1:0,cohere.embed-english-v3,cohere.embed-multilingual-v3,cohere.rerank-v3-5:0,meta.llama3-8b-instruct-v1:0,meta.llama3-70b-instruct-v1:0,meta.llama3-1-8b-instruct-v1:0,meta.llama3-1-70b-instruct-v1:0,meta.llama3-1-405b-instruct-v1:0,meta.llama3-2-1b-instruct-v1:0,meta.llama3-2-3b-instruct-v1:0,meta.llama3-2-11b-instruct-v1:0,meta.llama3-2-90b-instruct-v1:0,meta.llama3-3-70b-instruct-v1:0,meta.llama4-maverick-17b-instruct-v1:0,meta.llama4-scout-17b-instruct-v1:0,mistral.mistral-7b-instruct-v0:2,mistral.mixtral-8x7b-instruct-v0:1,mistral.mistral-large-2402-v1:0,mistral.mistral-large-2407-v1:0,mistral.mistral-small-2402-v1:0,mistral.pixtral-large-2502-v1:0,stability.sd3-5-large-v1:0,stability.stable-image-control-sketch-v1:0,stability.stable-image-control-structure-v1:0,stability.stable-image-core-v1:1")
     @Metadata(required = true)
@@ -59,7 +60,7 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
     private String region;
     @UriParam
     private boolean pojoRequest;
-    @UriParam(label = "security")
+    @UriParam(label = "security", security = "insecure:ssl")
     private boolean trustAllCertificates;
     @UriParam
     private boolean overrideEndpoint;
@@ -95,7 +96,7 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
         this.bedrockRuntimeClient = bedrockRuntimeClient;
     }
 
-    public software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient() {
+    public BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient() {
         return bedrockRuntimeAsyncClient;
     }
 
@@ -103,7 +104,7 @@ public class BedrockConfiguration implements Cloneable, AwsCommonConfiguration {
      * To use an existing configured AWS Bedrock Runtime Async client for streaming operations
      */
     public void setBedrockRuntimeAsyncClient(
-            software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient) {
+            BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient) {
         this.bedrockRuntimeAsyncClient = bedrockRuntimeAsyncClient;
     }
 

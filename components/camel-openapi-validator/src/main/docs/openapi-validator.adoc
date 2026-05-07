@@ -17,7 +17,43 @@ the default validator from `camel-core`.
 
 == Auto-detection from classpath
 
-To use this implementation all you need to do is to add the `camel-openapi-validator` dependency to the classpath.
+To use this implementation all you need to do is to add the `camel-openapi-validator` dependency to the classpath:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openapi-validator</artifactId>
+</dependency>
+----
+
+When this dependency is present, the OpenAPI validator is automatically discovered and used instead of the default validator.
+No additional configuration is required.
+
+== Usage with REST DSL
+
+To enable request validation on incoming HTTP requests, use `clientRequestValidation(true)` in the REST DSL
+and load the OpenAPI specification with `openApi()`:
+
+[source,java]
+----
+rest().clientRequestValidation(true)
+    .openApi()
+    .specification("petstore-v3.json")
+    .missingOperation("ignore");
+
+from("direct:updatePet")
+    .to("bean:petService?method=update");
+
+from("direct:findPetsByStatus")
+    .to("bean:petService?method=findByStatus");
+----
+
+With this setup, incoming requests are validated against the OpenAPI specification before reaching the route handler.
+If validation fails, a `400 Bad Request` response is returned automatically with a message describing the validation error.
+
+The validator checks request body schema (required fields, types, formats), required query parameters,
+required headers, and content types — all based on what is defined in the OpenAPI specification.
 
 === Configuring levels of errors
 
@@ -31,4 +67,14 @@ For example, you can ignore query parameters
 camel.rest.validation-levels[validation.schema.required] = INFO
 camel.rest.validation-levels[validation.request.parameter.query.missing] = IGNORE
 camel.rest.validation-levels[validation.response.body.missing] = WARN
+----
+
+Or configure them in Java DSL:
+
+[source,java]
+----
+restConfiguration()
+    .clientRequestValidation(true)
+    .validationLevelProperty("validation.request.body.schema.required", "INFO")
+    .validationLevelProperty("validation.request.parameter.query.missing", "IGNORE");
 ----

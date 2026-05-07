@@ -51,14 +51,14 @@ public class BindyComplexKeyValuePairStandaloneTest {
 
         // Set factory
         BindyKeyValuePairDataFormat dataFormat
-                = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order.class);
+                = new BindyKeyValuePairDataFormat(Order.class);
         factory = dataFormat.getFactory();
 
         // Set model class
-        models.add(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order.class);
-        models.add(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Header.class);
+        models.add(Order.class);
+        models.add(Header.class);
         // f.models.add(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Security.class);
-        models.add(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Trailer.class);
+        models.add(Trailer.class);
 
         // Init model
         model.put("org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order", new Order());

@@ -1,0 +1,15 @@
+= Jsoup Component
+:doctitle: Jsoup
+:shortname: jsoup
+:artifactid: camel-jsoup
+:description: Cleanup HTML content
+:since: 4.21
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The JSoup component provides a set of HTML functions for the simple language, which allows
+to clean up, and decode HTML content.
+
+See more details in the xref:languages:simple-language.adoc[Simple] language documentation.

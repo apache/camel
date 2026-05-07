@@ -23,6 +23,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
+@Deprecated(since = "4.21")
 public class IronMQConfiguration {
     // common properties
 
@@ -34,7 +35,7 @@ public class IronMQConfiguration {
     private String projectId;
 
     @UriParam(label = "security")
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String token;
 
     @UriParam(defaultValue = "https://mq-aws-us-east-1-1.iron.io")

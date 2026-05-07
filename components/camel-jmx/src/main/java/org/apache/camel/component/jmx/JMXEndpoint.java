@@ -188,13 +188,13 @@ public class JMXEndpoint extends DefaultEndpoint implements EndpointServiceLocat
     /**
      * Credentials for making a remote connection
      */
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String user;
 
     /**
      * Credentials for making a remote connection
      */
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
 
     /**

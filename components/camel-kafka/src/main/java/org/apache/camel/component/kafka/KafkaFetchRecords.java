@@ -51,6 +51,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -82,7 +83,7 @@ public class KafkaFetchRecords implements Runnable {
     // like from the health check thread. They are usually only read on those contexts.
 
     private final KafkaConsumer kafkaConsumer;
-    private org.apache.kafka.clients.consumer.Consumer consumer;
+    private Consumer consumer;
     private volatile String clientId;
     private final String topicName;
     private final Pattern topicPattern;

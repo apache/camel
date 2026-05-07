@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -103,6 +104,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Path exportBaseDir;
     private MavenDownloader downloader;
     private Printer quietPrinter;
+    // Map to store deferred symbolic links: target path in BUILD_DIR → original source path
+    private Map<Path, Path> deferredSymlinks = new HashMap<>();
 
     @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
                             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -209,8 +212,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--quarkus-package-type" },
                         description = "Quarkus package type (uber-jar or fast-jar)",
-                        defaultValue = "uber-jar")
-    protected String quarkusPackageType = "uber-jar";
+                        defaultValue = "fast-jar")
+    protected String quarkusPackageType = "fast-jar";
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
                         description = "Include Maven Wrapper files in exported project")
@@ -408,46 +411,144 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
     }
 
-    protected static String mavenRepositoriesAsPomXml(String repos) {
-        StringBuilder sb = new StringBuilder();
-        int i = 1;
-        sb.append("    <repositories>\n");
-        if (!repos.isEmpty()) {
+    /**
+     * Builds a list of repository data maps from a comma-separated repos string, for use with FreeMarker templates.
+     */
+    protected static List<Map<String, Object>> buildRepositoryList(String repos) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (repos != null && !repos.isEmpty()) {
+            int i = 1;
             for (String repo : repos.split(",")) {
-                sb.append("        <repository>\n");
-                sb.append("            <id>custom").append(i++).append("</id>\n");
-                sb.append("            <url>").append(repo).append("</url>\n");
-                if (repo.contains("snapshots")) {
-                    sb.append("            <releases>\n");
-                    sb.append("                <enabled>false</enabled>\n");
-                    sb.append("            </releases>\n");
-                    sb.append("            <snapshots>\n");
-                    sb.append("                <enabled>true</enabled>\n");
-                    sb.append("            </snapshots>\n");
-                }
-                sb.append("        </repository>\n");
+                Map<String, Object> r = new HashMap<>();
+                r.put("id", "custom" + i++);
+                r.put("url", repo);
+                r.put("isSnapshot", repo.contains("snapshots"));
+                result.add(r);
             }
         }
-        sb.append("    </repositories>\n");
-        sb.append("    <pluginRepositories>\n");
-        if (!repos.isEmpty()) {
-            for (String repo : repos.split(",")) {
-                sb.append("        <pluginRepository>\n");
-                sb.append("            <id>custom").append(i++).append("</id>\n");
-                sb.append("            <url>").append(repo).append("</url>\n");
-                if (repo.contains("snapshots")) {
-                    sb.append("            <releases>\n");
-                    sb.append("                <enabled>false</enabled>\n");
-                    sb.append("            </releases>\n");
-                    sb.append("            <snapshots>\n");
-                    sb.append("                <enabled>true</enabled>\n");
-                    sb.append("            </snapshots>\n");
+        return result;
+    }
+
+    /**
+     * Builds a list of dependency data maps from the deps set, for use with FreeMarker templates.
+     */
+    protected List<Map<String, Object>> buildDependencyList(Set<String> deps) {
+        List<MavenGav> gavs = new ArrayList<>();
+        for (String dep : deps) {
+            MavenGav gav = parseMavenGav(dep);
+            String gid = gav.getGroupId();
+            if ("org.apache.camel".equals(gid)) {
+                // uses BOM so version should not be included
+                gav.setVersion(null);
+            }
+            gavs.add(gav);
+        }
+
+        // sort artifacts
+        gavs.sort(mavenGavComparator());
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (MavenGav gav : gavs) {
+            Map<String, Object> dep = new HashMap<>();
+            dep.put("groupId", gav.getGroupId());
+            dep.put("artifactId", gav.getArtifactId());
+            dep.put("version", gav.getVersion());
+            dep.put("scope", gav.getScope());
+            dep.put("isLib", "lib".equals(gav.getPackaging()));
+            dep.put("isKameletsUtils", "camel-kamelets-utils".equals(gav.getArtifactId()));
+            result.add(dep);
+        }
+        return result;
+    }
+
+    public Comparator<MavenGav> mavenGavComparator() {
+        return new Comparator<MavenGav>() {
+            @Override
+            public int compare(MavenGav o1, MavenGav o2) {
+                int r1 = rankGroupId(o1);
+                int r2 = rankGroupId(o2);
+
+                if (r1 > r2) {
+                    return -1;
+                } else if (r2 > r1) {
+                    return 1;
+                } else {
+                    return o1.toString().compareTo(o2.toString());
                 }
-                sb.append("        </pluginRepository>\n");
+            }
+
+            int rankGroupId(MavenGav o1) {
+                String g1 = o1.getGroupId();
+                if (g1 == null) {
+                    return 0;
+                }
+
+                switch (g1) {
+                    case "org.springframework.boot" -> {
+                        return 30;
+                    }
+                    case "io.quarkus" -> {
+                        return 30;
+                    }
+                    case "org.apache.camel.quarkus" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-quarkus-core".equals(a1)) {
+                            return 21;
+                        }
+                        return 20;
+                    }
+                    case "org.apache.camel.springboot" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-spring-boot-starter".equals(a1)) {
+                            return 21;
+                        } else if ("camel-spring-boot-engine-starter".equals(a1)) {
+                            return 22;
+                        }
+                        return 20;
+                    }
+                    case "org.apache.camel" -> {
+                        String a1 = o1.getArtifactId();
+                        // main/core/engine first
+                        if ("camel-main".equals(a1)) {
+                            return 11;
+                        }
+                        return 10;
+                    }
+                    case "org.apache.camel.kamelets" -> {
+                        return 5;
+                    }
+                    default -> {
+                        return 0;
+                    }
+                }
+            }
+        };
+    }
+
+    /**
+     * Formats build properties as XML property lines for inclusion in POM templates.
+     */
+    protected String formatBuildProperties() {
+        Properties properties = mapBuildProperties();
+
+        if (!skipPlugins) {
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
+                    .stream()
+                    .map(Plugin::getExporter)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+
+            for (PluginExporter exporter : exporters) {
+                exporter.getBuildProperties().forEach(properties::putIfAbsent);
             }
         }
-        sb.append("    </pluginRepositories>\n");
-        return sb.toString();
+
+        return properties.entrySet().stream()
+                .map(item -> String.format("        <%s>%s</%s>", item.getKey(), item.getValue(), item.getKey()))
+                .collect(Collectors.joining(System.lineSeparator()));
     }
 
     protected abstract Integer export() throws Exception;
@@ -489,30 +590,15 @@ public abstract class ExportBaseCommand extends CamelCommand {
         dependencies.addAll(Arrays.asList(depsArray));
     }
 
+    /**
+     * @deprecated Use {@link #formatBuildProperties()} instead for FreeMarker templates.
+     */
+    @Deprecated
     protected String replaceBuildProperties(String context) {
-        Properties properties = mapBuildProperties();
-
-        if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
-                    .stream()
-                    .map(Plugin::getExporter)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toSet());
-
-            for (PluginExporter exporter : exporters) {
-                exporter.getBuildProperties().forEach(properties::putIfAbsent);
-            }
-        }
-
-        String mavenProperties = properties.entrySet().stream()
-                .map(item -> {
-                    return String.format("        <%s>%s</%s>", item.getKey(), item.getValue(), item.getKey());
-                })
-                .collect(Collectors.joining(System.lineSeparator()));
-
+        String mavenProperties = formatBuildProperties();
         if (!mavenProperties.isEmpty()) {
-            context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), Matcher.quoteReplacement(mavenProperties));
+            context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"),
+                    Matcher.quoteReplacement(mavenProperties));
         } else {
             context = context.replaceFirst(Pattern.quote("{{ .BuildProperties }}"), "");
         }
@@ -713,6 +799,11 @@ public abstract class ExportBaseCommand extends CamelCommand {
             }
         }
 
+        // automatic add hibernate as JPA provider when using camel-jpa
+        if (answer.stream().anyMatch(s -> s.contains("camel-jpa") || s.equals("camel:jpa"))) {
+            answer.add("mvn:org.hibernate.orm:hibernate-core");
+        }
+
         // remove duplicate versions (keep first)
         Map<String, String> versions = new HashMap<>();
         Set<String> toBeRemoved = new HashSet<>();
@@ -827,17 +918,26 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     }
                     if (!java) {
                         if (kamelet) {
-                            ExportHelper.safeCopy(source, out, true, symbolicLink);
+                            ExportHelper.safeCopy(source, out, true);
+                            if (symbolicLink) {
+                                deferredSymlinks.put(out, source);
+                            }
                         } else if (jkube) {
                             // file should be renamed and moved into src/main/jkube
                             f = f.replace(".jkube.yaml", ".yaml");
                             f = f.replace(".jkube.yml", ".yml");
                             out = srcCamelResourcesDir.getParent().getParent().resolve("jkube/" + f);
                             Files.createDirectories(out.getParent());
-                            ExportHelper.safeCopy(source, out, true, symbolicLink);
+                            ExportHelper.safeCopy(source, out, true);
+                            if (symbolicLink) {
+                                deferredSymlinks.put(out, source);
+                            }
                         } else {
                             Files.createDirectories(out.getParent());
-                            ExportHelper.safeCopy(getClass().getClassLoader(), scheme, source, out, true, symbolicLink);
+                            ExportHelper.safeCopy(getClass().getClassLoader(), scheme, source, out, true);
+                            if (symbolicLink) {
+                                deferredSymlinks.put(out, source);
+                            }
                         }
                     } else {
                         // need to append package name in java source file
@@ -865,7 +965,10 @@ public abstract class ExportBaseCommand extends CamelCommand {
                             }
                         }
                         if (javaLiveReload) {
-                            ExportHelper.safeCopy(source, out, true, symbolicLink);
+                            ExportHelper.safeCopy(source, out, true);
+                            if (symbolicLink) {
+                                deferredSymlinks.put(out, source);
+                            }
                         } else {
                             fos = Files.newOutputStream(out);
                             for (String line : lines) {
@@ -969,6 +1072,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // write all the properties
+        Files.createDirectories(targetDir);
         Path appPropsPath = targetDir.resolve("application.properties");
         Files.writeString(appPropsPath, content.toString(), StandardCharsets.UTF_8);
     }
@@ -1153,13 +1257,49 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     // This method is kept for backward compatibility with derived classes
     @Deprecated
-    protected void safeCopy(java.io.File source, java.io.File target, boolean override) throws Exception {
-        ExportHelper.safeCopy(source.toPath(), target.toPath(), override, symbolicLink);
+    protected void safeCopy(File source, File target, boolean override) throws Exception {
+        ExportHelper.safeCopy(source.toPath(), target.toPath(), override);
+    }
+
+    /**
+     * Creates symbolic links for files that were deferred during the copy phase. This method should be called after
+     * copying BUILD_DIR to exportDir and before deleting BUILD_DIR.
+     *
+     * @param  buildDir  the temporary build directory
+     * @param  exportDir the final export directory
+     * @throws Exception if symbolic link creation fails
+     */
+    protected void createDeferredSymlinks(Path buildDir, Path exportDir) throws Exception {
+        if (!symbolicLink || deferredSymlinks.isEmpty()) {
+            return;
+        }
+
+        for (Map.Entry<Path, Path> entry : deferredSymlinks.entrySet()) {
+            Path targetInBuildDir = entry.getKey();
+            Path originalSource = entry.getValue();
+
+            // Compute relative path from buildDir to target
+            Path relativePath = buildDir.relativize(targetInBuildDir);
+
+            // Create symlink in exportDir at same relative path
+            Path linkInExportDir = exportDir.resolve(relativePath);
+
+            // Delete the copied file and create symlink instead
+            if (Files.exists(linkInExportDir)) {
+                Files.delete(linkInExportDir);
+            }
+
+            // Create symbolic link pointing to the original source
+            Path absoluteSource = originalSource.toAbsolutePath();
+            Files.createSymbolicLink(linkInExportDir, absoluteSource);
+        }
+
+        deferredSymlinks.clear();
     }
 
     // This method is kept for backward compatibility with derived classes
     @Deprecated
-    protected void safeCopy(InputStream source, java.io.File target) throws Exception {
+    protected void safeCopy(InputStream source, File target) throws Exception {
         ExportHelper.safeCopy(source, target.toPath());
     }
 
@@ -1256,7 +1396,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 String n = d.substring(4);
                 Path sourcePath = Paths.get(n);
                 Path targetPath = libDirPath.resolve(n);
-                ExportHelper.safeCopy(sourcePath, targetPath, true, symbolicLink);
+                ExportHelper.safeCopy(sourcePath, targetPath, true);
             }
         }
     }
@@ -1315,7 +1455,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     })
                     .forEach(p -> {
                         try {
-                            ExportHelper.safeCopy(p, srcResourcesDir.resolve(p.getFileName()), true, symbolicLink);
+                            ExportHelper.safeCopy(p, srcResourcesDir.resolve(p.getFileName()), true);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -1327,7 +1467,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     // This method is kept for backward compatibility with derived classes
     @Deprecated
-    protected void copyApplicationPropertiesFiles(java.io.File srcResourcesDir) throws Exception {
+    protected void copyApplicationPropertiesFiles(File srcResourcesDir) throws Exception {
         copyApplicationPropertiesFiles(srcResourcesDir.toPath());
     }
 

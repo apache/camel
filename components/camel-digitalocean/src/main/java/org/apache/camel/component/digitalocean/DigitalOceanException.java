@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.digitalocean;
 
+@Deprecated(since = "4.21")
 public class DigitalOceanException extends Exception {
 
     private static final long serialVersionUID = 1L;

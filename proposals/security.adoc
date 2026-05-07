@@ -1,0 +1,253 @@
+---
+title: Security policy enforcement
+authors:
+  - "@gnodet"
+reviewers: []
+approvers: []
+creation-date: 2026-03-27
+last-updated: 2026-03-27
+status: implementable
+see-also: []
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+Apache Camel now includes a built-in security policy enforcement mechanism that detects insecure
+configuration at startup time. It covers four categories of security concerns: plain-text secrets,
+insecure SSL/TLS settings, insecure deserialization, and development-only features enabled in
+production. The mechanism is annotation-driven, flows through the existing build pipeline, and
+enforces configurable policies (allow/warn/fail) at startup.
+
+== Motivation
+
+Camel applications often handle sensitive data and run in production environments where
+misconfiguration can lead to security vulnerabilities. Common issues include:
+
+- Plain-text passwords in configuration files instead of using vault references or environment variables
+- Disabling SSL certificate verification (`trustAllCertificates=true`) for convenience
+- Enabling Java object deserialization on messaging endpoints, which is a known attack vector
+- Leaving development/debug features enabled in production (dev console, debug logging endpoints)
+
+These misconfigurations are easy to make and hard to catch in code review. A framework-level
+detection mechanism catches them early and consistently.
+
+== Goals
+
+- Detect insecure configuration at startup time, before the application processes any messages
+- Provide clear, actionable warnings or errors that tell users exactly which property is problematic
+  and how to fix it
+- Support per-category policy levels so users can selectively enforce or relax checks
+- Integrate with Camel's profile system so production deployments default to strict enforcement
+- Use the existing annotation and code generation pipeline — no new build plugins or metadata formats
+- Make it easy for component authors to annotate new security-sensitive parameters
+
+== Non-Goals
+
+- Runtime monitoring of configuration changes (this is startup-time only)
+- Network-level security scanning or vulnerability detection
+- Replacing external secret management solutions (Vault, AWS Secrets Manager, etc.)
+- Enforcing authentication/authorization policies on Camel routes
+
+== Context
+
+Camel already has a `secret = true` attribute on `@UriParam` and `@Metadata` annotations, used
+primarily for masking values in the dev console and logging. The security policy framework extends
+this existing annotation model with a new `security` attribute and adds a startup-time enforcement
+layer.
+
+=== Security Categories
+
+The framework defines four security violation categories:
+
+[cols="1,3,2"]
+|===
+| Category | Description | Example Properties
+
+| `secret`
+| Plain-text sensitive values that should use property placeholders, vault references, or `RAW()`
+| `*.password`, `*.apiKey`, `*.token`, `*.secretKey`
+
+| `insecure:ssl`
+| SSL/TLS settings that weaken transport security
+| `trustAllCertificates`, `hostnameVerificationEnabled=false`, `sslEnabled=false`
+
+| `insecure:serialization`
+| Enabling Java object deserialization, a known attack vector
+| `allowJavaSerializedObject=true`, `transferException=true`
+
+| `insecure:dev`
+| Development/debug features that should not be enabled in production
+| `devConsoleEnabled=true`, `debugBreakpoints`
+|===
+
+=== Policy Levels
+
+Each category can be configured to one of three enforcement levels:
+
+- **`allow`** — silently permit the configuration (no warning, no error)
+- **`warn`** — log a warning but allow startup to continue (this is the default)
+- **`fail`** — prevent application startup with a clear error message listing all violations
+
+== Proposal
+
+=== Annotation Model
+
+Component authors annotate security-sensitive parameters using existing annotations:
+
+==== Secret parameters
+
+Use `secret = true` on `@UriParam` or `@Metadata`:
+
+[source,java]
+----
+@UriParam(label = "security", secret = true,
+          description = "The password for authentication")
+private String password;
+----
+
+==== Insecure configuration flags
+
+Use the `security` attribute on `@UriParam`:
+
+[source,java]
+----
+@UriParam(label = "security", security = "insecure:ssl",
+          description = "Whether to trust all SSL certificates")
+private boolean trustAllCertificates;
+----
+
+Valid `security` values: `insecure:ssl`, `insecure:serialization`, `insecure:dev`.
+
+=== Build Pipeline
+
+The annotations flow through the existing build pipeline:
+
+1. **Component JSON generation** — `camel-package-maven-plugin` reads `@UriParam(security=...)`
+   and writes it to the component JSON metadata (e.g., `components/http.json`)
+2. **Catalog aggregation** — `camel-catalog` collects all component JSONs
+3. **SecurityUtils generation** — `UpdateSensitizeHelper` mojo scans all component JSONs and
+   generates `SecurityUtils.java` in `camel-util`, containing a static map of property patterns
+   to security categories
+4. **Runtime detection** — at startup, `SecurityUtils.detectViolations()` checks all resolved
+   properties against the generated map
+
+No new build plugins are needed. The existing `@UriParam` → JSON → code generation pipeline
+handles everything.
+
+=== Configuration Properties
+
+Users configure policies via standard Camel properties:
+
+[source,properties]
+----
+# Global default policy (applies to all categories unless overridden)
+camel.security.policy = warn
+
+# Per-category overrides
+camel.security.secretPolicy = fail
+camel.security.insecureSslPolicy = warn
+camel.security.insecureSerializationPolicy = fail
+camel.security.insecureDevPolicy = allow
+
+# Exempt specific properties from all checks
+camel.security.allowedProperties = camel.ssl.trustAllCertificates,camel.component.http.password
+----
+
+These are modeled by `SecurityConfigurationProperties` under the `camel.security.*` namespace.
+
+=== Profile-Aware Defaults
+
+When using the `prod` profile (`camel.main.profile = prod`), the global policy automatically
+defaults to `fail` — production applications refuse to start with insecure configurations unless
+the user explicitly overrides the policy.
+
+The `dev` profile keeps the default `warn` behavior.
+
+=== Detection Logic
+
+`SecurityUtils.detectViolations()` is the core detection method. It:
+
+1. Iterates over all resolved properties
+2. Skips `camel.security.*` properties (policy configuration itself)
+3. Checks each property against the generated insecure-property map (for `insecure:*` categories)
+4. Checks if the value looks like a plain-text secret (for `secret` category) using heuristics:
+   - Is the key a known secret key (matches `*.password`, `*.apiKey`, etc.)?
+   - Does the value look like a literal (not a placeholder like `${env:...}`, `{{...}}`, `RAW()`)?
+5. Applies the configured policy for each category
+6. Returns a list of `SecurityViolation` records
+
+Values that use property placeholders (`${...}`), vault references (`{{...}}`), environment
+variable references (`${env:...}`), or `RAW()` wrapping are considered safe and not flagged.
+
+=== Startup Enforcement
+
+The enforcement runs in `BaseMainSupport.enforceSecurityPolicies()` during startup,
+after property resolution but before route startup:
+
+1. Resolve the effective policy for each category (category-specific overrides > global > profile default)
+2. Call `SecurityUtils.detectViolations()` with the resolved properties
+3. For `warn` violations: log each violation at WARN level
+4. For `fail` violations: collect all violations and throw `RuntimeCamelException` with a summary
+5. Store the `SecurityPolicyResult` as a context plugin for programmatic access
+
+=== SecurityPolicyResult
+
+The result of security policy evaluation is stored as a `ContextPlugin` on the `CamelContext`,
+accessible via:
+
+[source,java]
+----
+SecurityPolicyResult result = context.getCamelContextExtension()
+    .getContextPlugin(SecurityPolicyResult.class);
+if (result.hasViolations()) {
+    // handle violations programmatically
+}
+----
+
+This allows health checks, management endpoints, and custom code to inspect security status.
+
+== Development
+
+=== For Component Authors
+
+When adding new endpoint parameters:
+
+1. **Passwords, tokens, API keys** — always add `secret = true` on `@UriParam` or `@Metadata`
+2. **SSL bypass flags** — add `security = "insecure:ssl"` on `@UriParam`
+3. **Serialization flags** — add `security = "insecure:serialization"` on `@UriParam`
+4. **Dev/debug features** — add `security = "insecure:dev"` on `@UriParam`
+
+After annotating, rebuild the component and regenerate the catalog to update `SecurityUtils.java`.
+
+=== For Core Contributors
+
+Key files in the implementation:
+
+- `core/camel-util/src/main/java/org/apache/camel/util/SecurityUtils.java` — detection logic and
+  generated property map
+- `core/camel-util/src/main/java/org/apache/camel/util/SecurityViolation.java` — violation record
+- `core/camel-main/src/main/java/org/apache/camel/main/SecurityConfigurationProperties.java` —
+  configuration model
+- `core/camel-main/src/main/java/org/apache/camel/main/SecurityPolicyResult.java` — result stored
+  as context plugin
+- `core/camel-main/src/main/java/org/apache/camel/main/BaseMainSupport.java` —
+  `enforceSecurityPolicies()` method
+- `tooling/maven/camel-package-maven-plugin/.../UpdateSensitizeHelper.java` — code generation
+  from component JSONs
+
+=== Future Work
+
+- **Broader annotation audit**: Systematically audit all 300+ components for missing `secret=true`
+  and `security` attributes
+- **Route-level URI scanning**: Detect plain-text secrets embedded in endpoint URIs
+  (e.g., `smtp://user:password@host`)
+- **Camel JBang integration**: `camel security-audit` command for offline configuration analysis
+- **Custom violation categories**: Allow users to define additional security categories and patterns
+
+=== Completed
+
+- **Health check integration**: `SecurityPolicyHealthCheck` exposes security policy status via
+  Camel's health check API. Reports DOWN only for `fail`-level violations; `warn`-level violations
+  report UP with details.

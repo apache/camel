@@ -35,7 +35,7 @@ import picocli.CommandLine.Command;
          footer = {
                  "%nExamples:",
                  "  camel wrapper",
-                 "  camel wrapper --camel-version=4.10.0" })
+                 "  camel wrapper --camel-version=4.18.2" })
 public class WrapperCommand extends CamelCommand {
 
     private static final String DEFAULT_REPO_URL = "https://repo1.maven.org/maven2";
@@ -55,6 +55,10 @@ public class WrapperCommand extends CamelCommand {
                         description = "Directory where wrapper files will be created",
                         defaultValue = ".")
     String directory = ".";
+
+    @CommandLine.Option(names = { "--command-name" },
+                        description = "The name of the command to use (camel or camelw)", defaultValue = "camel")
+    String commandName = "camel";
 
     public WrapperCommand(CamelJBangMain main) {
         super(main);
@@ -77,18 +81,18 @@ public class WrapperCommand extends CamelCommand {
         writeProperties(camelDir);
 
         // Write camelw script
-        writeScript(baseDir, "camelw");
+        writeScript(baseDir, "camelw", commandName);
 
         // Write camelw.cmd script
-        writeScript(baseDir, "camelw.cmd");
+        writeScript(baseDir, "camelw.cmd", commandName + ".cmd");
 
         printer().println("Apache Camel wrapper installed successfully.");
         printer().println("  Camel version: " + camelVersion);
         printer().println("  Properties: " + camelDir.resolve(WRAPPER_PROPERTIES_FILE));
-        printer().println("  Unix script: " + baseDir.resolve("camelw"));
-        printer().println("  Windows script: " + baseDir.resolve("camelw.cmd"));
+        printer().println("  Unix script: " + baseDir.resolve(commandName));
+        printer().println("  Windows script: " + baseDir.resolve(commandName + ".cmd"));
         printer().println();
-        printer().println("You can now use ./camelw instead of camel to run with the pinned version.");
+        printer().println("You can now use ./" + commandName + " instead of camel to run with the pinned version.");
 
         return 0;
     }
@@ -128,18 +132,18 @@ public class WrapperCommand extends CamelCommand {
                + ".jar";
     }
 
-    void writeScript(Path baseDir, String scriptName) throws IOException {
-        String resourcePath = "camel-wrapper/" + scriptName;
+    void writeScript(Path baseDir, String source, String commandName) throws IOException {
+        String resourcePath = "camel-wrapper/" + source;
         try (InputStream is = WrapperCommand.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (is == null) {
                 throw new IOException("Resource not found: " + resourcePath);
             }
             String content = IOHelper.loadText(is);
-            Path scriptPath = baseDir.resolve(scriptName);
+            Path scriptPath = baseDir.resolve(commandName);
             Files.writeString(scriptPath, content);
 
             // Make Unix script executable
-            if (!scriptName.endsWith(".cmd")) {
+            if (!commandName.endsWith(".cmd")) {
                 makeExecutable(scriptPath);
             }
         }
@@ -150,7 +154,7 @@ public class WrapperCommand extends CamelCommand {
             Set<PosixFilePermission> perms = Files.getPosixFilePermissions(path);
             perms.add(PosixFilePermission.OWNER_EXECUTE);
             perms.add(PosixFilePermission.GROUP_EXECUTE);
-            perms.add(PosixFilePermission.OTHERS_EXECUTE);
+            perms.add(PosixFilePermission.OTHERS_EXECUTE); // NOSONAR
             Files.setPosixFilePermissions(path, perms);
         } catch (UnsupportedOperationException | IOException e) {
             // Windows or other OS that doesn't support POSIX permissions

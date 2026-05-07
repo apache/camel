@@ -4,7 +4,7 @@
 :artifactid: camel-aws2-comprehend
 :description: Perform natural language processing using AWS Comprehend and AWS SDK version 2.x.
 :since: 4.18
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

@@ -87,9 +87,9 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint implements Endpoint
     private String key;
 
     // Authentication
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
 
     // Additional hosts

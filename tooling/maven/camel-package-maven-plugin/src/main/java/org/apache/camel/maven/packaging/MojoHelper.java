@@ -132,7 +132,7 @@ public final class MojoHelper {
                         dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-step-functions"),
                         dir.resolve("camel-aws2-sts"),
                         dir.resolve("camel-aws2-timestream"), dir.resolve("camel-aws2-translate"),
-                        dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"),
+                        dir.resolve("camel-aws-secrets-manager"),
                         dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"),
                         dir.resolve("camel-aws-bedrock"),
                         dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"),

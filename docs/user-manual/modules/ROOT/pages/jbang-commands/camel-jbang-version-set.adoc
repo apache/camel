@@ -22,7 +22,7 @@ camel version set [options]
 | `--global` | Use global or local configuration |  | boolean
 | `--repo,--repos` | Maven repository for downloading the dependencies (Use commas to separate multiple repositories) |  | String
 | `--reset` | Reset by removing any custom version settings |  | boolean
-| `--runtime` | Runtime () |  | RuntimeType
+| `--runtime` | Runtime (camel-main, spring-boot, quarkus) |  | RuntimeType
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

@@ -24,6 +24,7 @@ import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
 /**
  * The DigitalOcean producer for Account API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanAccountProducer extends DigitalOceanProducer {
 
     public DigitalOceanAccountProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

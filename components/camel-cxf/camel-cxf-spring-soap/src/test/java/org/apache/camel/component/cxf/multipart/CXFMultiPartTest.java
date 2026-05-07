@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.multipart;
 
 import jakarta.xml.ws.Endpoint;
+import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.Service;
 
 import javax.xml.namespace.QName;
@@ -84,8 +85,8 @@ public class CXFMultiPartTest extends CamelSpringTestSupport {
         e0.setV(in0);
         e1.setV(in1);
 
-        jakarta.xml.ws.Holder<InE> h = new jakarta.xml.ws.Holder<>();
-        jakarta.xml.ws.Holder<InE> h1 = new jakarta.xml.ws.Holder<>();
+        Holder<InE> h = new Holder<>();
+        Holder<InE> h1 = new Holder<>();
         multiPartClient.foo(e0, e1, h, h1);
         return h.value.getV() + " " + h1.value.getV();
     }

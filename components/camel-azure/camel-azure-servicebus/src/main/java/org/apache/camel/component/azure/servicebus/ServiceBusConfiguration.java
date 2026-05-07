@@ -39,12 +39,12 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     @UriParam(label = "common", defaultValue = "queue")
     @Metadata(required = true)
     private ServiceBusType serviceBusType = ServiceBusType.queue;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String connectionString;
     @UriParam(label = "security")
     private String fullyQualifiedNamespace;
     @Metadata(autowired = true)
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private TokenCredential tokenCredential;
     @UriParam(label = "common")
     private ClientOptions clientOptions;
@@ -396,9 +396,9 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     //
     // *************************************************
 
-    public org.apache.camel.component.azure.servicebus.ServiceBusConfiguration copy() {
+    public ServiceBusConfiguration copy() {
         try {
-            return (org.apache.camel.component.azure.servicebus.ServiceBusConfiguration) super.clone();
+            return (ServiceBusConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

@@ -71,7 +71,7 @@ public class MicrometerObservabilitySpanAdapter implements Span {
     }
 
     protected void deactivate() {
-
+        // NOTE: the implementation no longer depends on thread scopes
     }
 
     @Override

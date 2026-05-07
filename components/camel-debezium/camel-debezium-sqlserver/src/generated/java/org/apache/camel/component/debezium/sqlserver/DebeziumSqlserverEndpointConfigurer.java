@@ -184,6 +184,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "snapshotLockTimeoutMs": target.getConfiguration().setSnapshotLockTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": target.getConfiguration().setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": target.getConfiguration().setSnapshotMaxThreadsMultiplier(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -392,6 +394,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "snapshotLockTimeoutMs": return long.class;
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return int.class;
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "snapshotmodeconfigurationbasedsnapshotdata":
@@ -601,6 +605,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "snapshotLockTimeoutMs": return target.getConfiguration().getSnapshotLockTimeoutMs();
         case "snapshotmaxthreads":
         case "snapshotMaxThreads": return target.getConfiguration().getSnapshotMaxThreads();
+        case "snapshotmaxthreadsmultiplier":
+        case "snapshotMaxThreadsMultiplier": return target.getConfiguration().getSnapshotMaxThreadsMultiplier();
         case "snapshotmode":
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "snapshotmodeconfigurationbasedsnapshotdata":

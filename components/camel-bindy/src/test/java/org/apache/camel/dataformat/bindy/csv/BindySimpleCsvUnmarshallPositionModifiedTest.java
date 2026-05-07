@@ -23,6 +23,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.format.FormatException;
+import org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order;
 import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -89,7 +90,7 @@ public class BindySimpleCsvUnmarshallPositionModifiedTest {
     public static class ContextConfig extends RouteBuilder {
 
         BindyCsvDataFormat orderBindyDataFormat
-                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
+                = new BindyCsvDataFormat(Order.class);
 
         @Override
         public void configure() {

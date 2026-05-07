@@ -123,7 +123,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ProcessorFactory;
-import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PluginHelper;
@@ -171,9 +170,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     public static void registerReifier(
             Class<?> processorClass,
             BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
-        if (PROCESSORS.isEmpty()) {
-            ReifierStrategy.addReifierClearer(ProcessorReifier::clearReifiers);
-        }
         PROCESSORS.put(processorClass, creator);
     }
 

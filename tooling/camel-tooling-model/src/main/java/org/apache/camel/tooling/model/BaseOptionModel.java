@@ -17,9 +17,13 @@
 package org.apache.camel.tooling.model;
 
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public abstract class BaseOptionModel {
+
+    private static final Set<String> VALID_SECURITY_CATEGORIES
+            = Set.of("secret", "insecure:ssl", "insecure:serialization", "insecure:dev");
 
     protected String name;
     protected int index;
@@ -38,6 +42,8 @@ public abstract class BaseOptionModel {
     protected boolean deprecated;
     protected String deprecationNote;
     protected boolean secret;
+    protected String security;
+    protected String insecureValue;
     protected boolean autowired;
     protected Object defaultValue;
     protected String defaultValueNote;
@@ -190,6 +196,27 @@ public abstract class BaseOptionModel {
 
     public void setSecret(boolean secret) {
         this.secret = secret;
+    }
+
+    public String getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(String security) {
+        if (security != null && !security.isEmpty() && !VALID_SECURITY_CATEGORIES.contains(security)) {
+            throw new IllegalArgumentException(
+                    "Invalid security category '" + security + "' on option '" + name
+                                               + "'. Valid values are: " + VALID_SECURITY_CATEGORIES);
+        }
+        this.security = security;
+    }
+
+    public String getInsecureValue() {
+        return insecureValue;
+    }
+
+    public void setInsecureValue(String insecureValue) {
+        this.insecureValue = insecureValue;
     }
 
     public boolean isAutowired() {

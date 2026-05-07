@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.schematron.processor;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -58,7 +59,7 @@ public final class SchematronProcessorFactory {
      */
     private static XMLReader getXMLReader() throws ParserConfigurationException, SAXException {
         final SAXParserFactory fac = SAXParserFactory.newInstance();
-        fac.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        fac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         fac.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         fac.setFeature("http://xml.org/sax/features/external-general-entities", false);
         fac.setFeature("http://xml.org/sax/features/external-parameter-entities", false);

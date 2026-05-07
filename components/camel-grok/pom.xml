@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-grok</artifactId>
@@ -39,7 +39,7 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.krakens</groupId>
+            <groupId>io.github.whatap</groupId>
             <artifactId>java-grok</artifactId>
             <version>${java-grok-version}</version>
         </dependency>

@@ -73,6 +73,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     private File outputFile;
     @Parameter(defaultValue = "true")
     private boolean additionalProperties = true;
+    @Parameter(defaultValue = "false")
+    private boolean canonical;
 
     private ObjectNode items;
     private ObjectNode definitions;
@@ -191,7 +193,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
         ObjectNode objectDefinition = definition;
 
-        if (annotationValue(info, YAML_TYPE_ANNOTATION, "inline").map(AnnotationValue::asBoolean).orElse(false)) {
+        if (!canonical && annotationValue(info, YAML_TYPE_ANNOTATION, "inline").map(AnnotationValue::asBoolean).orElse(false)) {
             ArrayNode oneOf = definition.withArray("oneOf");
             oneOf.addObject().put("type", "string");
 
@@ -242,7 +244,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     .map(AnnotationValue::asBoolean)
                     .orElse(false);
 
-            boolean isInOneOf = !StringUtils.isEmpty(propertyOneOf);
+            boolean isInOneOf = !canonical && !StringUtils.isEmpty(propertyOneOf);
             if (isInOneOf) {
                 if (!oneOfGroups.containsKey(propertyOneOf)) {
                     var oneOfGroup = objectDefinition.withArray("anyOf").addObject();
@@ -254,6 +256,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             // Internal properties
             //
             if (propertyName.equals("__extends") && propertyType.startsWith("object:")) {
+                if (canonical) {
+                    // In canonical mode, skip __extends to avoid merging parent properties inline.
+                    // Users must use the explicit form (e.g., expression: { simple: "..." })
+                    continue;
+                }
                 String objectRef = StringHelper.after(propertyType, ":");
                 if (isInOneOf) {
                     var oneOf = oneOfGroups.get(propertyOneOf).withArray("oneOf");

@@ -41,6 +41,10 @@ public class Hawtio extends CamelCommand {
                         description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
     String version = HawtioVersion.HAWTIO_VERSION;
 
+    @CommandLine.Option(names = { "--host" },
+                        description = "Hostname to bind the Hawtio web console to", defaultValue = "127.0.0.1")
+    String host = "127.0.0.1";
+
     // use port 8888 as 8080 is too commonly used
     @CommandLine.Option(names = { "--port" },
                         description = "Port number to use for Hawtio web console (port 8888 by default)", defaultValue = "8888")
@@ -116,6 +120,8 @@ public class Hawtio extends CamelCommand {
                 Object hawt = clazz.getDeclaredConstructor().newInstance();
                 Method m = clazz.getMethod("setWar", String.class);
                 ObjectHelper.invokeMethod(m, hawt, war);
+                m = clazz.getMethod("setHost", String.class);
+                ObjectHelper.invokeMethod(m, hawt, host);
                 m = clazz.getMethod("setPort", Integer.class);
                 ObjectHelper.invokeMethod(m, hawt, port);
                 m = clazz.getMethod("run");
@@ -123,7 +129,7 @@ public class Hawtio extends CamelCommand {
 
                 if (openUrl) {
                     // open web browser
-                    String url = "http://localhost:" + port + "/hawtio";
+                    String url = "http://" + host + ":" + port + "/hawtio";
                     System.setProperty("hawtio.url", url);
                     if (openUrl && Desktop.isDesktopSupported()) {
                         try {

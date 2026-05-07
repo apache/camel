@@ -257,6 +257,10 @@ abstract class PropertiesValidationResult implements Serializable {
         return invalidEnumChoices;
     }
 
+    public Map<String, String[]> getInvalidEnumSuggestions() {
+        return invalidEnumSuggestions;
+    }
+
     public List<String> getEnumChoices(String optionName) {
         if (invalidEnumChoices != null) {
             String[] enums = invalidEnumChoices.get(optionName);

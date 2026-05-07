@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.Security;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager;
@@ -178,7 +179,7 @@ public class PQCKeyLifecycleTest {
         assertEquals(KeyMetadata.KeyStatus.ACTIVE, newMetadata.getStatus());
 
         // Keys should be different
-        assertFalse(java.util.Arrays.equals(oldKeyPair.getPublic().getEncoded(), newKeyPair.getPublic().getEncoded()));
+        assertFalse(Arrays.equals(oldKeyPair.getPublic().getEncoded(), newKeyPair.getPublic().getEncoded()));
     }
 
     @Test

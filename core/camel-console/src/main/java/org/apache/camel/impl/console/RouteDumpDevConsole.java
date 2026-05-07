@@ -19,7 +19,6 @@ package org.apache.camel.impl.console;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,6 +36,7 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -111,7 +111,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
         final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
 
         final JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
 
         Function<ManagedRouteMBean, Object> task = mrb -> {
             JsonObject jo = new JsonObject();
@@ -134,7 +134,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                     dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters), false, true);
                 }
                 if (dump != null) {
-                    List<JsonObject> code;
+                    JsonArray code;
                     if (format == null || "xml".equals(format)) {
                         code = xmlLoadSourceAsJson(new StringReader(dump));
                     } else {
@@ -193,8 +193,8 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
         return o1.getRouteId().compareTo(o2.getRouteId());
     }
 
-    private static List<JsonObject> xmlLoadSourceAsJson(Reader reader) {
-        List<JsonObject> code = new ArrayList<>();
+    private static JsonArray xmlLoadSourceAsJson(Reader reader) {
+        JsonArray code = new JsonArray();
         try {
             LineNumberReader lnr = new LineNumberReader(reader);
             String t;
@@ -226,8 +226,8 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
         return code.isEmpty() ? null : code;
     }
 
-    private static List<JsonObject> yamlLoadSourceAsJson(Reader reader) {
-        List<JsonObject> code = new ArrayList<>();
+    private static JsonArray yamlLoadSourceAsJson(Reader reader) {
+        JsonArray code = new JsonArray();
         try {
             LineNumberReader lnr = new LineNumberReader(reader);
             String t;
@@ -241,7 +241,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                         String idx = StringHelper.after(t, "sourceLineNumber: ").trim();
                         if (!code.isEmpty()) {
                             // assign line number to previous code line
-                            JsonObject c = code.get(code.size() - 1);
+                            JsonObject c = (JsonObject) code.get(code.size() - 1);
                             try {
                                 c.put("line", Integer.parseInt(idx));
                             } catch (NumberFormatException e) {

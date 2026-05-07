@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-management</artifactId>
@@ -134,8 +134,8 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <links>
-                        <link>http://download.oracle.com/javase/7/docs/api/</link>
-                        <link>http://download.oracle.com/javaee/7/api/</link>
+                        <link>https://docs.oracle.com/en/java/javase/${jdk.version}/docs/api/</link>
+                        <link>https://docs.oracle.com/javaee/7/api/</link>
                     </links>
                     <linksource>true</linksource>
                     <maxmemory>256m</maxmemory>
@@ -220,8 +220,8 @@
                         </executions>
                         <configuration>
                             <links>
-                                <link>http://download.oracle.com/javase/7/docs/api/</link>
-                                <link>http://download.oracle.com/javaee/7/api/</link>
+                                <link>https://docs.oracle.com/en/java/javase/${jdk.version}/docs/api/</link>
+                                <link>https://docs.oracle.com/javaee/7/api/</link>
                             </links>
                             <linksource>true</linksource>
                             <maxmemory>256m</maxmemory>
@@ -307,9 +307,9 @@
             <dependencies>
                 <!-- xmltokenizer using woodstox -->
                 <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
-                    <version>${woodstox-version}</version>
+                    <groupId>com.fasterxml.woodstox</groupId>
+                    <artifactId>woodstox-core</artifactId>
+                    <version>${woodstox-core-version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>

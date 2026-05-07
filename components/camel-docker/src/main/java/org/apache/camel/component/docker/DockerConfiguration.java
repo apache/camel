@@ -39,9 +39,9 @@ public class DockerConfiguration implements Cloneable {
     private String host = "localhost";
     @UriParam(defaultValue = "2375")
     private Integer port = 2375;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam
     private String email;

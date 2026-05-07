@@ -37,6 +37,10 @@ public class YamlValidateCommand extends CamelCommand {
 
     private static final String IGNORE_FILE = "application";
 
+    @CommandLine.Option(names = { "--canonical" }, defaultValue = "false",
+                        description = "Validate against the canonical schema (rejects shorthands and implicit expressions)")
+    boolean canonical;
+
     @CommandLine.Parameters(description = { "The Camel YAML source files to parse." },
                             arity = "1..9",
                             paramLabel = "<files>",
@@ -50,7 +54,7 @@ public class YamlValidateCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        YamlValidator validator = new YamlValidator();
+        YamlValidator validator = new YamlValidator(canonical);
         validator.init();
 
         Map<String, List<Error>> reports = new LinkedHashMap<>();

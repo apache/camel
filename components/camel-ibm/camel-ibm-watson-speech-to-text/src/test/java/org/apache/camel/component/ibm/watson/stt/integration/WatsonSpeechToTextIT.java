@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ibm.watson.stt.integration;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -202,7 +203,7 @@ public class WatsonSpeechToTextIT extends WatsonSpeechToTextTestSupport {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(audioData);
         AudioInputStream audioInputStream
-                = new AudioInputStream(new java.io.ByteArrayInputStream(audioData), format, numSamples);
+                = new AudioInputStream(new ByteArrayInputStream(audioData), format, numSamples);
 
         // Write to WAV file
         AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, outputFile);

@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.URISupport;
 
@@ -31,12 +32,33 @@ import org.apache.camel.util.URISupport;
 @Component("atom")
 public class AtomComponent extends FeedComponent {
 
+    private static final String KEY_FORMAT_IDEMPOTENT_PARAM = "idempotent";
+    private static final String KEY_FORMAT_STRATEGY_PARAM = "idempotentStrategy";
+    private static final String KEY_FORMAT_IDEMPOTENT_REPOSITORY_PARAM = "idempotentRepository";
+
     public AtomComponent() {
     }
 
     @Override
     protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return new AtomEndpoint(uri, this, null);
+        AtomEndpoint endpoint = new AtomEndpoint(uri, this, null);
+        // Setup idempotency
+        endpoint.setIdempotent(getAndRemoveParameter(parameters, KEY_FORMAT_IDEMPOTENT_PARAM, Boolean.class, true));
+        if (endpoint.isIdempotent()) {
+            endpoint.setIdempotentRepository(
+                    resolveAndRemoveReferenceParameter(parameters, KEY_FORMAT_IDEMPOTENT_REPOSITORY_PARAM,
+                            IdempotentRepository.class));
+            String idempotentStrategy = getAndRemoveParameter(parameters, KEY_FORMAT_STRATEGY_PARAM, String.class);
+            AtomIdempotentStrategy atomIdempotentStrategy
+                    = resolveEnumIdempotentStrategy(idempotentStrategy, endpoint.getIdempotentRepository());
+            if (atomIdempotentStrategy != null) {
+                parameters.put(KEY_FORMAT_STRATEGY_PARAM, atomIdempotentStrategy);
+            } else if (idempotentStrategy != null) {
+                // its not a standard, but a reference - fallback to AtomEndpointConfigurator
+                parameters.put(KEY_FORMAT_STRATEGY_PARAM, idempotentStrategy);
+            }
+        }
+        return endpoint;
     }
 
     @Override
@@ -61,4 +83,24 @@ public class AtomComponent extends FeedComponent {
         atom.setFeedUri(feedUri);
     }
 
+    /**
+     * Resolves the standard supported {@link AtomIdempotentStrategy} by a name which can be:
+     * <ul>
+     * <li>default - to use the default date strategy</li>
+     * <li>repository - to use the Guid Repository strategy</li>
+     * </ul>
+     *
+     * @param  name the name
+     * @return      the strategy, or <tt>null</tt> if not a standard name.
+     */
+    private static AtomIdempotentStrategy resolveEnumIdempotentStrategy(
+            String name, IdempotentRepository idempotentRepository) {
+        if ("default".equalsIgnoreCase(name)) {
+            return new ItemUpdatedIdempotentStrategy();
+        } else if ("repository".equalsIgnoreCase(name)) {
+            return new RepositoryGuidIdempotentStrategy(idempotentRepository);
+        } else {
+            return null;
+        }
+    }
 }

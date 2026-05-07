@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/objects/tls",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/tls",
   "title": "Tls",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.Tls",
@@ -25,16 +25,16 @@
       "type": "string",
       "title": "Cipher Suite"
     },
+    "sni": {
+      "type": "string",
+      "title": "Server Name Indication"
+    },
     "certificate_chain": {
       "type": "array",
       "title": "Certificate Chain",
       "items": {
         "type": "string"
       }
-    },
-    "sni": {
-      "type": "string",
-      "title": "Server Name Indication"
     },
     "client_ciphers": {
       "type": "array",

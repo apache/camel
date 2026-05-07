@@ -218,7 +218,7 @@ public class RouteDevConsole extends AbstractDevConsole {
 
         final boolean processors = "true".equals(options.getOrDefault(PROCESSORS, "false"));
         final JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
         Function<ManagedRouteMBean, Object> task = mrb -> {
             JsonObject jo = new JsonObject();
             list.add(jo);

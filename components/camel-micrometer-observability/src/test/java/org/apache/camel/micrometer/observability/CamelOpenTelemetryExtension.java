@@ -18,14 +18,17 @@ package org.apache.camel.micrometer.observability;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.baggage.propagation.W3CBaggagePropagator;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 //import io.opentelemetry.sdk.extension.incubator.trace.LeakDetectingSpanProcessor;
 import io.opentelemetry.sdk.logs.SdkLoggerProvider;
@@ -67,7 +70,12 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
         SdkLoggerProvider loggerProvider = SdkLoggerProvider.builder()
                 .addLogRecordProcessor(SimpleLogRecordProcessor.create(logRecordExporter))
                 .build();
-        ContextPropagators propagators = ContextPropagators.create(W3CTraceContextPropagator.getInstance());
+        // ContextPropagators propagators = ContextPropagators.create(W3CTraceContextPropagator.getInstance());
+        // NOTE: BaggagePropagator is required to detect the presence of a possible "dirty" context
+        ContextPropagators propagators = ContextPropagators.create(
+                TextMapPropagator.composite(
+                        W3CTraceContextPropagator.getInstance(),
+                        W3CBaggagePropagator.getInstance()));
         OpenTelemetrySdk openTelemetry = OpenTelemetrySdk.builder()
                 .setPropagators(propagators)
                 .setTracerProvider(tracerProvider)
@@ -206,12 +214,12 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
         }
     }
 
-    class SpanComparator implements java.util.Comparator<SpanData> {
+    class SpanComparator implements Comparator<SpanData> {
         @Override
         public int compare(SpanData a, SpanData b) {
-            Long nanosA = a.getStartEpochNanos();
-            Long nanosB = b.getStartEpochNanos();
-            return (int) (nanosA - nanosB);
+            long nanosA = a.getStartEpochNanos();
+            long nanosB = b.getStartEpochNanos();
+            return Long.compare(nanosA, nanosB);
         }
     }
 }

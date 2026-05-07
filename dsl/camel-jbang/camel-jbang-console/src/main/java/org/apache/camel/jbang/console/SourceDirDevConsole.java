@@ -154,7 +154,7 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                                 jo.put("lastModified", Files.getLastModifiedTime(f).toMillis());
                                 if ("true".equals(source)) {
                                     try (Reader fileReader = Files.newBufferedReader(f, StandardCharsets.UTF_8)) {
-                                        List<JsonObject> code = ConsoleHelper.loadSourceAsJson(fileReader, null);
+                                        JsonArray code = ConsoleHelper.loadSourceAsJson(fileReader, null);
                                         if (code != null) {
                                             jo.put("code", code);
                                         }

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/objects/cloud",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/cloud",
   "title": "Cloud",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.Cloud",
@@ -22,7 +22,7 @@
     },
     "provider": {
       "type": "string",
-      "title": "Provider"
+      "title": "Cloud Provider"
     },
     "region": {
       "type": "string",

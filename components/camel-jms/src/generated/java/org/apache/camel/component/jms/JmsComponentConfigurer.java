@@ -87,6 +87,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "deliveryMode": getOrCreateConfiguration(target).setDeliveryMode(property(camelContext, java.lang.Integer.class, value)); return true;
         case "deliverypersistent":
         case "deliveryPersistent": getOrCreateConfiguration(target).setDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": getOrCreateConfiguration(target).setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationresolver":
         case "destinationResolver": getOrCreateConfiguration(target).setDestinationResolver(property(camelContext, org.springframework.jms.support.destination.DestinationResolver.class, value)); return true;
         case "disablereplyto":
@@ -153,6 +155,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "messageListenerContainerFactory": getOrCreateConfiguration(target).setMessageListenerContainerFactory(property(camelContext, org.apache.camel.component.jms.MessageListenerContainerFactory.class, value)); return true;
         case "messagetimestampenabled":
         case "messageTimestampEnabled": getOrCreateConfiguration(target).setMessageTimestampEnabled(property(camelContext, boolean.class, value)); return true;
+        case "objectmessageenabled":
+        case "objectMessageEnabled": getOrCreateConfiguration(target).setObjectMessageEnabled(property(camelContext, boolean.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "preservemessageqos":
         case "preserveMessageQos": getOrCreateConfiguration(target).setPreserveMessageQos(property(camelContext, boolean.class, value)); return true;
@@ -301,6 +305,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "deliveryMode": return java.lang.Integer.class;
         case "deliverypersistent":
         case "deliveryPersistent": return boolean.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "destinationresolver":
         case "destinationResolver": return org.springframework.jms.support.destination.DestinationResolver.class;
         case "disablereplyto":
@@ -367,6 +373,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "messageListenerContainerFactory": return org.apache.camel.component.jms.MessageListenerContainerFactory.class;
         case "messagetimestampenabled":
         case "messageTimestampEnabled": return boolean.class;
+        case "objectmessageenabled":
+        case "objectMessageEnabled": return boolean.class;
         case "password": return java.lang.String.class;
         case "preservemessageqos":
         case "preserveMessageQos": return boolean.class;
@@ -516,6 +524,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "deliveryMode": return getOrCreateConfiguration(target).getDeliveryMode();
         case "deliverypersistent":
         case "deliveryPersistent": return getOrCreateConfiguration(target).isDeliveryPersistent();
+        case "deserializationfilter":
+        case "deserializationFilter": return getOrCreateConfiguration(target).getDeserializationFilter();
         case "destinationresolver":
         case "destinationResolver": return getOrCreateConfiguration(target).getDestinationResolver();
         case "disablereplyto":
@@ -582,6 +592,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "messageListenerContainerFactory": return getOrCreateConfiguration(target).getMessageListenerContainerFactory();
         case "messagetimestampenabled":
         case "messageTimestampEnabled": return getOrCreateConfiguration(target).isMessageTimestampEnabled();
+        case "objectmessageenabled":
+        case "objectMessageEnabled": return getOrCreateConfiguration(target).isObjectMessageEnabled();
         case "password": return getOrCreateConfiguration(target).getPassword();
         case "preservemessageqos":
         case "preserveMessageQos": return getOrCreateConfiguration(target).isPreserveMessageQos();

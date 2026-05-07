@@ -47,6 +47,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "deliveryMode": target.setDeliveryMode(property(camelContext, java.lang.Integer.class, value)); return true;
         case "deliverypersistent":
         case "deliveryPersistent": target.setDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": target.setDestinationCreationStrategy(property(camelContext, org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class, value)); return true;
         case "disablereplyto":
@@ -83,6 +85,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageCreatedStrategy": target.setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
         case "messageselector":
         case "messageSelector": target.setMessageSelector(property(camelContext, java.lang.String.class, value)); return true;
+        case "objectmessageenabled":
+        case "objectMessageEnabled": target.setObjectMessageEnabled(property(camelContext, boolean.class, value)); return true;
         case "preservemessageqos":
         case "preserveMessageQos": target.setPreserveMessageQos(property(camelContext, boolean.class, value)); return true;
         case "priority": target.setPriority(property(camelContext, int.class, value)); return true;
@@ -141,6 +145,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "deliveryMode": return java.lang.Integer.class;
         case "deliverypersistent":
         case "deliveryPersistent": return boolean.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": return org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class;
         case "disablereplyto":
@@ -177,6 +183,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
         case "messageselector":
         case "messageSelector": return java.lang.String.class;
+        case "objectmessageenabled":
+        case "objectMessageEnabled": return boolean.class;
         case "preservemessageqos":
         case "preserveMessageQos": return boolean.class;
         case "priority": return int.class;
@@ -236,6 +244,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "deliveryMode": return target.getDeliveryMode();
         case "deliverypersistent":
         case "deliveryPersistent": return target.isDeliveryPersistent();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": return target.getDestinationCreationStrategy();
         case "disablereplyto":
@@ -272,6 +282,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "messageCreatedStrategy": return target.getMessageCreatedStrategy();
         case "messageselector":
         case "messageSelector": return target.getMessageSelector();
+        case "objectmessageenabled":
+        case "objectMessageEnabled": return target.isObjectMessageEnabled();
         case "preservemessageqos":
         case "preserveMessageQos": return target.isPreserveMessageQos();
         case "priority": return target.getPriority();

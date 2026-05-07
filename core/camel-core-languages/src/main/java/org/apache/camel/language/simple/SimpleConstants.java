@@ -204,6 +204,18 @@ public final class SimpleConstants {
               label = "other")
     public static final String HOST_NAME = "hostName";
 
+    @Metadata(description = "Cleans the HTML to remove unsafe links and JavaScripts from the message body (or expression)",
+              javaType = "String", label = "html")
+    public static final String HTML_CLEAN = "htmlClean(exp)";
+
+    @Metadata(description = "Decodes the HTML as plain text (removing all HTML tags) that is also suitable as input for AI and LLMs",
+              javaType = "String", label = "html")
+    public static final String HTML_DECODE = "htmlDecode(exp)";
+
+    @Metadata(description = "Parses the HTML as a JSoup object from the message body (or expression)",
+              javaType = "org.jsoup.nodes.Document", label = "html")
+    public static final String HTML_PARSE = "htmlParse(exp)";
+
     @Metadata(description = "The message id", javaType = "String", label = "core")
     public static final String ID = "id";
 

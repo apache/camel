@@ -17,11 +17,14 @@
 package org.apache.camel.component.azure.storage.blob.operations;
 
 import java.time.Duration;
+import java.util.List;
 
 import com.azure.storage.blob.models.ListBlobContainersOptions;
+import com.azure.storage.blob.models.TaggedBlobItem;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
 import org.apache.camel.component.azure.storage.blob.BlobConfigurationOptionsProxy;
+import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.azure.storage.blob.client.BlobServiceClientWrapper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -45,5 +48,23 @@ public class BlobServiceOperations {
         final Duration timeout = configurationProxy.getTimeout(exchange);
 
         return BlobOperationResponse.create(client.listBlobContainers(listBlobContainersOptions, timeout));
+    }
+
+    public BlobOperationResponse findBlobsByTags(final Exchange exchange) {
+        String filter = configurationProxy.getBlobTagFilter(exchange);
+        if (ObjectHelper.isEmpty(filter) && exchange != null) {
+            filter = exchange.getIn().getBody(String.class);
+        }
+        if (ObjectHelper.isEmpty(filter)) {
+            throw new IllegalArgumentException(
+                    "A tag filter expression must be specified either as the message body (String) or via the "
+                                               + BlobConstants.BLOB_TAG_FILTER + " header.");
+        }
+
+        final Integer maxResultsPerPage = configurationProxy.getMaxResultsPerPage(exchange);
+        final Duration timeout = configurationProxy.getTimeout(exchange);
+
+        final List<TaggedBlobItem> result = client.findBlobsByTags(filter, maxResultsPerPage, timeout);
+        return BlobOperationResponse.create(result);
     }
 }

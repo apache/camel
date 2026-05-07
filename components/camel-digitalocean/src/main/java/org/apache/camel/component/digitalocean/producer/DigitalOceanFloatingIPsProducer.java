@@ -32,6 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The DigitalOcean producer for FloatingIps API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
 
     public DigitalOceanFloatingIPsProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

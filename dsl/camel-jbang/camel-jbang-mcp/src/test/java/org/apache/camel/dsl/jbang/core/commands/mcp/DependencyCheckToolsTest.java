@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.util.Optional;
+
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +31,7 @@ class DependencyCheckToolsTest {
     DependencyCheckToolsTest() {
         tools = new DependencyCheckTools();
         CatalogService catalogService = new CatalogService();
-        catalogService.catalogRepos = java.util.Optional.empty();
+        catalogService.catalogRepos = Optional.empty();
         tools.catalogService = catalogService;
         tools.dependencyData = new DependencyData();
     }
@@ -179,7 +181,7 @@ class DependencyCheckToolsTest {
         DependencyCheckTools.DependencyCheckResult result
                 = tools.camel_dependency_check(POM_WITH_BOM, null, null, null, null, null);
 
-        // 4.10.0 is older than the catalog version (4.19.0-SNAPSHOT)
+        // 4.10.0 is older than the catalog version (4.21.0-SNAPSHOT)
         assertThat(result.versionStatus().status()).isEqualTo("outdated");
         assertThat(result.versionStatus().outdated()).isTrue();
         assertThat(result.versionStatus().catalogVersion()).isNotEmpty();
@@ -362,11 +364,12 @@ class DependencyCheckToolsTest {
 
     @Test
     void compareVersionsCorrectly() {
-        assertThat(DependencyCheckTools.compareVersions("4.10.0", "4.19.0")).isNegative();
-        assertThat(DependencyCheckTools.compareVersions("4.19.0", "4.19.0")).isZero();
-        assertThat(DependencyCheckTools.compareVersions("4.19.0", "4.10.0")).isPositive();
-        assertThat(DependencyCheckTools.compareVersions("3.20.0", "4.0.0")).isNegative();
-        assertThat(DependencyCheckTools.compareVersions("4.19.0-SNAPSHOT", "4.19.0")).isZero();
+        // Use synthetic versions to avoid being mangled by automated version-bump scripts
+        assertThat(DependencyCheckTools.compareVersions("1.2.0", "1.10.0")).isNegative();
+        assertThat(DependencyCheckTools.compareVersions("1.10.0", "1.10.0")).isZero();
+        assertThat(DependencyCheckTools.compareVersions("1.10.0", "1.2.0")).isPositive();
+        assertThat(DependencyCheckTools.compareVersions("2.20.0", "3.0.0")).isNegative();
+        assertThat(DependencyCheckTools.compareVersions("1.5.0-SNAPSHOT", "1.5.0")).isZero();
     }
 
     // ---- POM sanitization ----

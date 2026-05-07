@@ -32,7 +32,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
 @YamlType(
           inline = true,
-          types = org.apache.camel.model.KameletDefinition.class,
+          types = KameletDefinition.class,
           order = YamlDeserializerResolver.ORDER_DEFAULT,
           nodes = "kamelet",
           properties = {

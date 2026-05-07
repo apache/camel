@@ -6,7 +6,7 @@ Guidelines for AI agents working on this codebase.
 
 Apache Camel is an integration framework supporting routing rules in Java, XML and YAML DSLs.
 
-- Version: 4.19.0-SNAPSHOT
+- Version: 4.21.0-SNAPSHOT
 - Java: 17+
 - Build: Maven 3.9.12+
 
@@ -115,7 +115,10 @@ jump straight to implementation after reading the issue description and the curr
 3. **Search for related issues**: Search JIRA for related tickets (same component, similar keywords)
    to find prior discussions, rejected approaches, or intentional design decisions.
 4. **Look for design documents**: Check the `proposals/` directory for design docs (`.adoc` files)
-   that may explain architectural decisions in the affected area.
+   that may explain architectural decisions in the affected area. Key proposals by area:
+   - **Security** (secrets, SSL/TLS, serialization, policy enforcement): [`proposals/security.adoc`](proposals/security.adoc)
+   - **Tracing / Telemetry** (OpenTelemetry, spans, context propagation): [`proposals/tracing.adoc`](proposals/tracing.adoc)
+   - **MDC / Logging** (MDC propagation, logging context): [`proposals/mdc.adoc`](proposals/mdc.adoc)
 5. **Understand the broader context**: If the issue involves a module that replaced or deprecated
    another (e.g., `camel-opentelemetry2` replacing `camel-opentelemetry`), understand *why* the
    replacement was made and what was intentionally changed vs. accidentally omitted.
@@ -147,7 +150,8 @@ When reviewing PRs, apply the same investigative rigor:
 - Check `git log` and `git blame` on modified files to see if the change conflicts with prior
   intentional decisions.
 - Verify that "fixes" don't revert deliberate behavior without justification.
-- Check for design proposals (`proposals/*.adoc`) related to the affected area.
+- Check for design proposals (`proposals/*.adoc`) related to the affected area
+  (see the area-to-proposal mapping in "Issue Investigation" above).
 - Search for related JIRA tickets that provide context on why the code was written that way.
 
 ### Documentation Conventions
@@ -242,6 +246,20 @@ Annotations:
 - `@UriPath` for path params
 - `@UriParam` for query params
 - Always add `description` for docs
+- Mark sensitive parameters with `secret = true` on `@UriParam` or `@Metadata` (passwords, tokens, API keys)
+- For insecure configuration flags (e.g., `trustAllCertificates`, `allowJavaSerializedObject`),
+  add `security = "insecure:ssl"` / `"insecure:serialization"` / `"insecure:dev"` on `@UriParam`.
+  See [`proposals/security.adoc`](proposals/security.adoc) for categories and rationale.
+
+Import Style:
+- Do NOT use fully qualified class names (FQCNs) in Java code. Always add an `import` statement
+  and use the simple class name (e.g., write `List` not `java.util.List`).
+- Exception: when two classes share the same simple name (e.g., `java.util.Date` and `java.sql.Date`),
+  import the most-used one and qualify the other.
+- This applies to all code: production, test, and test-infra.
+- Generated code (`src/generated/`) is excluded from this rule.
+- The build automatically shortens unnecessary FQCNs via OpenRewrite (`rewrite-maven-plugin`).
+  CI will fail if uncommitted FQCN changes are detected after the build.
 
 ## Adding Components
 
@@ -280,6 +298,11 @@ Parent folders needing registration:
 - `camel-test`
 
 Without this, the build won't pick up your component for catalog/docs generation.
+
+## Adding Integration tests with new container image
+
+- Avoid using Docker Hub images, prefer to use Google `mirror.gcr.io` or Red Hat `quay.io` ones.
+- Verify that the container image is available for the tested architectures (currently `amd64`, `ppc64le` and `s390x`). Sometimes the image is provided in different registries such as `icr.io`. If not available, use `skipITs.ppc64le` and `skipITs.s390x` Maven properties to disable it.
 
 ## Commits
 

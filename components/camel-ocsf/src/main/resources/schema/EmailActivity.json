@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/email_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/email_activity",
   "title": "EmailActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.EmailActivity",
@@ -9,7 +9,54 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "message_trace_uid": {
+      "type": "string",
+      "title": "Message Trace UID"
+    },
+    "smtp_hello": {
+      "type": "string",
+      "title": "SMTP Hello"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
     "email": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "direction_id": {
+      "type": "integer",
+      "title": "Direction ID"
+    },
+    "attempt": {
+      "type": "integer",
+      "title": "Attempt"
+    },
+    "command": {
+      "type": "string",
+      "title": "Command"
+    },
+    "banner": {
+      "type": "string",
+      "title": "Protocol Banner"
+    },
+    "to": {
+      "type": "array",
+      "title": "To",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+      }
+    },
+    "from": {
+      "type": "string",
+      "title": "From",
+      "pattern": "^[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+    },
+    "email_auth": {
       "type": "object",
       "additionalProperties": true
     },
@@ -21,66 +68,19 @@
       "type": "integer",
       "title": "Raw Data Size"
     },
+    "direction": {
+      "type": "string",
+      "title": "Direction"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
     "enrichments": {
       "type": "array",
       "description": "",
       "items": {
         "$ref": "Enrichment.json"
       }
-    },
-    "attempt": {
-      "type": "integer",
-      "title": "Attempt"
-    },
-    "smtp_hello": {
-      "type": "string",
-      "title": "SMTP Hello"
-    },
-    "message_trace_uid": {
-      "type": "string",
-      "title": "Message Trace UID"
-    },
-    "direction": {
-      "type": "string",
-      "title": "Direction"
-    },
-    "from": {
-      "type": "string",
-      "title": "From",
-      "pattern": "^[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
-    },
-    "src_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "command": {
-      "type": "string",
-      "title": "Command"
-    },
-    "to": {
-      "type": "array",
-      "title": "To",
-      "items": {
-        "type": "string",
-        "pattern": "^[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
-      }
-    },
-    "banner": {
-      "type": "string",
-      "title": "Protocol Banner"
-    },
-    "dst_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "direction_id": {
-      "type": "integer",
-      "title": "Direction ID"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "email_auth": {
-      "type": "object",
-      "additionalProperties": true
     }
   }
 }

@@ -92,7 +92,7 @@ public class UndertowEndpoint extends DefaultEndpoint
     private Boolean accessLog = Boolean.FALSE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer", defaultValue = "false", security = "insecure:serialization")
     private Boolean transferException = Boolean.FALSE;
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean muteException = Boolean.FALSE;

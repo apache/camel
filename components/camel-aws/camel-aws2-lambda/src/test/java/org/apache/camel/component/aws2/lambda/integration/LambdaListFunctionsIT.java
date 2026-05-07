@@ -28,13 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.lambda.Lambda2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class LambdaListFunctionsIT extends Aws2LambdaBase {
 
     @EndpointInject

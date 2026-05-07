@@ -1550,6 +1550,28 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         
         /**
+         * The factor used to scale the number of snapshot chunks per table. The
+         * default behavior is to take 'row_count/snapshot.max.threads' to
+         * compute the number of rows per chunks. This may not be ideal for
+         * larger tables, and using the multiplier, the formula is adjusted to
+         * increase the number of chunks by using
+         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: sqlserver
+         * 
+         * @param snapshotMaxThreadsMultiplier the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder snapshotMaxThreadsMultiplier(int snapshotMaxThreadsMultiplier) {
+            doSetProperty("snapshotMaxThreadsMultiplier", snapshotMaxThreadsMultiplier);
+            return this;
+        }
+    
+        
+        /**
          * The criteria for running a snapshot upon startup of the connector.
          * Select one of the following snapshot options: 'initial' (default): If
          * the connector does not detect any offsets for the logical server
@@ -2044,6 +2066,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "snapshotIsolationMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotIsolationMode((java.lang.String) value); return true;
             case "snapshotLockTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotLockTimeoutMs((long) value); return true;
             case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotMaxThreads((int) value); return true;
+            case "snapshotMaxThreadsMultiplier": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotMaxThreadsMultiplier((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotModeConfigurationBasedSnapshotData": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotModeConfigurationBasedSnapshotData((boolean) value); return true;
             case "snapshotModeConfigurationBasedSnapshotOnDataError": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotModeConfigurationBasedSnapshotOnDataError((boolean) value); return true;

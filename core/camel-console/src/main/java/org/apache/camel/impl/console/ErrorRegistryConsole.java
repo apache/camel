@@ -16,9 +16,7 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.ErrorRegistry;
@@ -112,7 +110,7 @@ public class ErrorRegistryConsole extends AbstractDevConsole {
             entries = registry.browse(max);
         }
 
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
         for (ErrorRegistryEntry entry : entries) {
             JsonObject jo = new JsonObject();
             jo.put("exchangeId", entry.exchangeId());

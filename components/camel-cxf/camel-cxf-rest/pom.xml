@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-parent</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cxf-rest</artifactId>
@@ -169,13 +169,6 @@
             <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>${cglib-version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>

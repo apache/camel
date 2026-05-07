@@ -1321,6 +1321,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default IronMQHeaderNameBuilder ironmq() {
             return IronMQHeaderNameBuilder.INSTANCE;
         }
@@ -1341,6 +1342,7 @@ public interface IronMQEndpointBuilderFactory {
          * @param path queueName
          * @return the dsl builder
          */
+        @Deprecated
         default IronMQEndpointBuilder ironmq(String path) {
             return IronMQEndpointBuilderFactory.endpointBuilder("ironmq", path);
         }
@@ -1363,6 +1365,7 @@ public interface IronMQEndpointBuilderFactory {
          * @param path queueName
          * @return the dsl builder
          */
+        @Deprecated
         default IronMQEndpointBuilder ironmq(String componentName, String path) {
             return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

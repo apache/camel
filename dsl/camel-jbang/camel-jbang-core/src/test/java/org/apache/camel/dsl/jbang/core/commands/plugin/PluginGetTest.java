@@ -70,7 +70,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
         command.doCall();
 
         List<String> output = printer.getLines();
-        Assertions.assertEquals(9, output.size());
+        Assertions.assertEquals(10, output.size());
         Assertions.assertEquals("Supported plugins:", output.get(0));
         Assertions.assertEquals("NAME          COMMAND       DEPENDENCY                                        DESCRIPTION",
                 output.get(2));
@@ -120,7 +120,7 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
         command.doCall();
 
         List<String> output = printer.getLines();
-        Assertions.assertEquals(12, output.size());
+        Assertions.assertEquals(13, output.size());
         Assertions.assertEquals("NAME        COMMAND  DEPENDENCY                         DESCRIPTION", output.get(0));
         Assertions.assertEquals(
                 "foo-plugin  foo      org.apache.camel:foo-plugin:1.0.0  Plugin foo-plugin called with command foo",

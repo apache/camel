@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -63,7 +64,7 @@ class ExportTest {
     @AfterEach
     public void end() throws IOException {
         // force removing, since deleteOnExit is not removing.
-        org.apache.camel.util.FileUtil.removeDir(workingDir);
+        FileUtil.removeDir(workingDir);
     }
 
     private static Stream<Arguments> runtimeProvider() {
@@ -186,6 +187,35 @@ class ExportTest {
         }
         command.files = Arrays.asList(files);
         return command;
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportWithJpaAndHibernate(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportWithJpaAndHibernate {}", rt);
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--dep=camel:jpa", "target/test-classes/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-jpa", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.hibernate.orm", "hibernate-core", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-jpa-starter", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.hibernate.orm", "hibernate-core", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-jpa", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "io.quarkus", "quarkus-hibernate-orm", null));
+        }
     }
 
     @ParameterizedTest

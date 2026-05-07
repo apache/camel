@@ -17,11 +17,14 @@
 package org.apache.camel.language.datasonnet;
 
 import java.math.BigDecimal;
+import java.time.DateTimeException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -282,13 +285,13 @@ public final class CML extends Library {
             throw new IllegalArgumentException("Expected String format, got: " + format.prettyName());
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(fmtStr.value()).withZone(ZoneId.of("UTC"));
-        java.time.temporal.TemporalAccessor parsed = formatter.parse(valStr.value());
+        TemporalAccessor parsed = formatter.parse(valStr.value());
         Instant instant;
         try {
             instant = Instant.from(parsed);
-        } catch (java.time.DateTimeException e) {
+        } catch (DateTimeException e) {
             // If the format has no time component, default to start of day
-            java.time.LocalDate date = java.time.LocalDate.from(parsed);
+            LocalDate date = LocalDate.from(parsed);
             instant = date.atStartOfDay(ZoneId.of("UTC")).toInstant();
         }
         return new Val.Num(instant.toEpochMilli());

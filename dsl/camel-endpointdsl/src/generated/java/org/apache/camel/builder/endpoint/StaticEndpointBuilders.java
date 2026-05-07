@@ -4272,6 +4272,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String path) {
         return digitalocean("digitalocean", path);
     }
@@ -4300,6 +4301,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String componentName, String path) {
         return DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -6510,50 +6512,6 @@ public class StaticEndpointBuilders {
         return GoogleCloudVisionEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * Syntax: <code>grape:defaultCoordinates</code>
-     * 
-     * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
-     * 
-     * @param path defaultCoordinates
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String path) {
-        return grape("grape", path);
-    }
-    /**
-     * Grape (camel-grape)
-     * Fetch, load and manage additional jars dynamically after Camel Context
-     * was started.
-     * 
-     * Category: management
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-grape
-     * 
-     * Syntax: <code>grape:defaultCoordinates</code>
-     * 
-     * Path parameter: defaultCoordinates (required)
-     * Maven coordinates to use as default to grab if the message body is empty.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path defaultCoordinates
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String componentName, String path) {
-        return GrapeEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
      * 
@@ -6648,48 +6606,6 @@ public class StaticEndpointBuilders {
      */
     public static GrpcEndpointBuilderFactory.GrpcEndpointBuilder grpc(String componentName, String path) {
         return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * Syntax: <code>guava-eventbus:eventBusRef</code>
-     * 
-     * Path parameter: eventBusRef
-     * To lookup the Guava EventBus from the registry with the given name
-     * 
-     * @param path eventBusRef
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String path) {
-        return guavaEventbus("guava-eventbus", path);
-    }
-    /**
-     * Guava EventBus (camel-guava-eventbus)
-     * Send and receive messages to/from Guava EventBus.
-     * 
-     * Category: messaging
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-guava-eventbus
-     * 
-     * Syntax: <code>guava-eventbus:eventBusRef</code>
-     * 
-     * Path parameter: eventBusRef
-     * To lookup the Guava EventBus from the registry with the given name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path eventBusRef
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String componentName, String path) {
-        return GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Hashicorp Vault (camel-hashicorp-vault)
@@ -8616,6 +8532,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String path) {
         return irc("irc", path);
     }
@@ -8641,6 +8558,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String componentName, String path) {
         return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -8661,6 +8579,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String path) {
         return ironmq("ironmq", path);
     }
@@ -8683,6 +8602,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String componentName, String path) {
         return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -12546,7 +12466,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion and embeddings.
+     * OpenAI endpoint for chat completion, embeddings, and audio transcription.
      * 
      * Category: ai
      * Since: 4.17
@@ -12555,8 +12475,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'embeddings', or
-     * 'tool-execution'
+     * The operation to perform: 'chat-completion', 'embeddings',
+     * 'tool-execution', or 'audio-transcription'
+     * There are 4 enums and the value can be one of: chat-completion,
+     * embeddings, tool-execution, audio-transcription
      * 
      * @param path operation
      * @return the dsl builder
@@ -12566,7 +12488,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion and embeddings.
+     * OpenAI endpoint for chat completion, embeddings, and audio transcription.
      * 
      * Category: ai
      * Since: 4.17
@@ -12575,8 +12497,10 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'embeddings', or
-     * 'tool-execution'
+     * The operation to perform: 'chat-completion', 'embeddings',
+     * 'tool-execution', or 'audio-transcription'
+     * There are 4 enums and the value can be one of: chat-completion,
+     * embeddings, tool-execution, audio-transcription
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -16072,50 +15996,6 @@ public class StaticEndpointBuilders {
         return StitchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Stomp (camel-stomp)
-     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * Syntax: <code>stomp:destination</code>
-     * 
-     * Path parameter: destination (required)
-     * Name of the queue
-     * 
-     * @param path destination
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String path) {
-        return stomp("stomp", path);
-    }
-    /**
-     * Stomp (camel-stomp)
-     * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * Syntax: <code>stomp:destination</code>
-     * 
-     * Path parameter: destination (required)
-     * Name of the queue
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path destination
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String componentName, String path) {
-        return StompEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
      * 
@@ -17939,7 +17819,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 380 enums and the value can be one of:
+     * There are 382 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -17957,9 +17837,10 @@ public class StaticEndpointBuilders {
      * CREATE_PERMISSION_GROUP, CREATE_REQUEST, CREATE_SATISFACTION_RATING,
      * CREATE_SATISFACTION_RATING_1, CREATE_SECTION, CREATE_SECTION_TRANSLATION,
      * CREATE_TARGET, CREATE_TICKET, CREATE_TICKET_ASYNC, CREATE_TICKET_FIELD,
-     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKETS,
-     * CREATE_TICKETS_1, CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER,
-     * CREATE_UPLOAD, CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
+     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKET_IDEMPOTENT,
+     * CREATE_TICKET_IDEMPOTENT_ASYNC, CREATE_TICKETS, CREATE_TICKETS_1,
+     * CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER, CREATE_UPLOAD,
+     * CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
      * CREATE_UPLOAD_ARTICLE_1, CREATE_USER, CREATE_USER_IDENTITY,
      * CREATE_USER_IDENTITY_1, CREATE_USER_SEGMENT, CREATE_USERS,
      * CREATE_USERS_1, CREATE_USERS_ASYNC, DELETE_ARTICLE,
@@ -18094,7 +17975,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 380 enums and the value can be one of:
+     * There are 382 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -18112,9 +17993,10 @@ public class StaticEndpointBuilders {
      * CREATE_PERMISSION_GROUP, CREATE_REQUEST, CREATE_SATISFACTION_RATING,
      * CREATE_SATISFACTION_RATING_1, CREATE_SECTION, CREATE_SECTION_TRANSLATION,
      * CREATE_TARGET, CREATE_TICKET, CREATE_TICKET_ASYNC, CREATE_TICKET_FIELD,
-     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKETS,
-     * CREATE_TICKETS_1, CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER,
-     * CREATE_UPLOAD, CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
+     * CREATE_TICKET_FORM, CREATE_TICKET_FROM_TWEET, CREATE_TICKET_IDEMPOTENT,
+     * CREATE_TICKET_IDEMPOTENT_ASYNC, CREATE_TICKETS, CREATE_TICKETS_1,
+     * CREATE_TICKETS_ASYNC, CREATE_TOPIC, CREATE_TRIGGER, CREATE_UPLOAD,
+     * CREATE_UPLOAD_1, CREATE_UPLOAD_2, CREATE_UPLOAD_ARTICLE,
      * CREATE_UPLOAD_ARTICLE_1, CREATE_USER, CREATE_USER_IDENTITY,
      * CREATE_USER_IDENTITY_1, CREATE_USER_SEGMENT, CREATE_USERS,
      * CREATE_USERS_1, CREATE_USERS_ASYNC, DELETE_ARTICLE,

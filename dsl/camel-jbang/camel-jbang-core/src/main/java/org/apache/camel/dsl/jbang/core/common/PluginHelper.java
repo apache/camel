@@ -117,14 +117,11 @@ public final class PluginHelper {
             }
         }
 
-        // Fall back to JSON configuration for additional or missing plugins
-        Map<String, Plugin> plugins = getActivePlugins(main, repos);
+        // Fall back to JSON configuration for additional or missing plugins.
+        // Pass target so only matching plugins are downloaded — avoids expensive
+        // Maven resolution for plugins unrelated to the current command.
+        Map<String, Plugin> plugins = getActivePlugins(main, repos, target);
         for (Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
-            // only load the plugin if the command-line is calling this plugin
-            if (target != null && !"shell".equals(target) && !target.equals(plugin.getKey())) {
-                continue;
-            }
-
             // Skip if this plugin was already loaded from embedded plugins
             if (foundEmbeddedPlugins && commandLine.getSubcommands().containsKey(plugin.getKey())) {
                 continue;
@@ -143,6 +140,20 @@ public final class PluginHelper {
      * @return       map of plugins where key represents the plugin command and value the plugin instance.
      */
     public static Map<String, Plugin> getActivePlugins(CamelJBangMain main, String repos) {
+        return getActivePlugins(main, repos, null);
+    }
+
+    /**
+     * Gets the active plugins according to the local plugin configuration file, optionally filtered by target command.
+     * When a target command is specified (and is not "shell"), only the plugin matching that command is downloaded and
+     * instantiated — other plugins are skipped entirely, avoiding expensive Maven resolution.
+     *
+     * @param  main   to exit the CLI process in case of error
+     * @param  repos  custom maven repositories
+     * @param  target the target command name to filter by, or null to load all plugins
+     * @return        map of plugins where key represents the plugin command and value the plugin instance.
+     */
+    public static Map<String, Plugin> getActivePlugins(CamelJBangMain main, String repos, String target) {
         Map<String, Plugin> activePlugins = new HashMap<>();
         JsonObject config = getPluginConfig();
         if (config != null) {
@@ -157,6 +168,11 @@ public final class PluginHelper {
                 final String command = properties.getOrDefault("command", name).toString();
                 final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
                 final String gav = properties.getOrDefault("dependency", "").toString();
+
+                // skip plugins that don't match the target command to avoid unnecessary downloads
+                if (target != null && !"shell".equals(target) && !target.equals(command)) {
+                    continue;
+                }
 
                 // check if plugin version can be loaded (cannot if we use an older camel version than the plugin)
                 if (!version.isBlank() && !firstVersion.isBlank()) {
@@ -219,6 +235,8 @@ public final class PluginHelper {
         if (repos != null && !repos.isBlank()) {
             downloader.setRepositories(repos);
         }
+        // prefer resolving from local Maven repository to avoid expensive remote SNAPSHOT metadata checks
+        downloader.setPreferLocal(true);
         downloader.start();
         // downloads and adds to the classpath
         downloader.downloadDependencyWithParent("org.apache.camel:camel-jbang-parent:pom:" + camelVersion, group,
@@ -236,6 +254,7 @@ public final class PluginHelper {
                 DefaultClassResolver resolver = new DefaultClassResolver();
                 Class<?> pluginClass = resolver.resolveClass(pluginClassName, ddlcl);
                 instance = Optional.of(Plugin.class.cast(ObjectHelper.newInstance(pluginClass)));
+                instance.ifPresent(plugin -> plugin.setClassLoader(ddlcl));
             } else {
                 String gav = String.join(":", group, "camel-jbang-plugin-" + command, version);
                 printer.printf(String.format("ERROR: Failed to read file %s in dependency %s%n", path, gav));

@@ -28,6 +28,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.TransactedPolicy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Enables transaction on the route
@@ -83,7 +84,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     @Override
     public String toString() {
         String desc = description();
-        if (org.apache.camel.util.ObjectHelper.isEmpty(desc)) {
+        if (ObjectHelper.isEmpty(desc)) {
             return "Transacted";
         } else {
             return "Transacted[" + desc + "]";
@@ -108,7 +109,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     @Override
     public String getLabel() {
         String desc = description();
-        if (org.apache.camel.util.ObjectHelper.isEmpty(desc)) {
+        if (ObjectHelper.isEmpty(desc)) {
             return "transacted";
         } else {
             return "transacted[" + desc + "]";

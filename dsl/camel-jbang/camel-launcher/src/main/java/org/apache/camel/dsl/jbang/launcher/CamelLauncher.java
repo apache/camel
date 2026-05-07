@@ -44,7 +44,8 @@ public class CamelLauncher {
         }
 
         CamelLauncherMain main = new CamelLauncherMain();
-        main.setDiscoverPlugins(false);
+        // allow to use 3rd-party plugins
+        main.setDiscoverPlugins(true);
         main.execute(args);
     }
 

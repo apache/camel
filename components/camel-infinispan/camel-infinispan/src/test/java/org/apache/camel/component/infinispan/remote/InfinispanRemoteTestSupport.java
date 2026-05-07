@@ -26,9 +26,9 @@ import org.apache.camel.support.task.ForegroundTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.support.task.budget.IterationBoundedBudget;
+import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
-import org.apache.commons.lang3.SystemUtils;
 import org.awaitility.Awaitility;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
@@ -121,6 +121,8 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
 
         // add security info
         clientBuilder
+                .socketTimeout(15000)
+                .connectionTimeout(15000)
                 .security()
                 .authentication()
                 .username(service.username())
@@ -129,7 +131,7 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
                 .saslMechanism("SCRAM-SHA-512")
                 .realm("default");
 
-        if (SystemUtils.IS_OS_MAC) {
+        if (!Boolean.getBoolean(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST)) {
             Properties properties = new Properties();
             properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
             clientBuilder.withProperties(properties);

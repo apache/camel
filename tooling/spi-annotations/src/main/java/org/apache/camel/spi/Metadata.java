@@ -80,8 +80,36 @@ public @interface Metadata {
 
     /**
      * Whether the option is secret/sensitive information such as a password.
+     *
+     * @deprecated use {@code security = "secret"} instead.
      */
+    @Deprecated(since = "4.19.0")
     boolean secret() default false;
+
+    /**
+     * Security category for this option.
+     * <p>
+     * Supported categories:
+     * <ul>
+     * <li>{@code secret} — the value is sensitive (password, token, etc.) and should not be stored in plain text</li>
+     * <li>{@code insecure:ssl} — disables SSL/TLS certificate validation or hostname verification</li>
+     * <li>{@code insecure:serialization} — enables dangerous deserialization of untrusted data</li>
+     * <li>{@code insecure:dev} — development-only feature not safe for production use</li>
+     * </ul>
+     * <p>
+     * When set, the Camel security policy ({@code camel.security.*}) can warn or prevent startup depending on the
+     * configured policy for that category.
+     */
+    String security() default "";
+
+    /**
+     * The value that makes this option insecure. Only used when {@link #security()} is set to an {@code insecure:*}
+     * category.
+     * <p>
+     * For boolean options, this defaults to {@code "true"} (i.e., enabling the option is insecure). Set to
+     * {@code "false"} for options where disabling the feature is insecure (e.g., {@code validateCertificates=false}).
+     */
+    String insecureValue() default "";
 
     /**
      * Whether to parameter can be configured as autowired

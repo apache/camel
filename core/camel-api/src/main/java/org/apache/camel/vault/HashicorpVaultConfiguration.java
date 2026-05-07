@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
  */
 public class HashicorpVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(secret = true)
+    @Metadata(security = "secret")
     private String token;
     @Metadata
     private String host;

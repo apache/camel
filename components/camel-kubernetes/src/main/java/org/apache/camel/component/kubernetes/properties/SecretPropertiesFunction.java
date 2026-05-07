@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.kubernetes.properties;
 
+import org.apache.camel.spi.annotations.PropertiesFunction;
+
 /**
  * Resolves String type secret keys .
  */
-@org.apache.camel.spi.annotations.PropertiesFunction("secret")
+@PropertiesFunction("secret")
 public class SecretPropertiesFunction extends BaseSecretPropertiesFunction {
 
     @Override

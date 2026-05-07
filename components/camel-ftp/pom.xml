@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
+        <version>4.21.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ftp</artifactId>
@@ -129,12 +129,6 @@
             <groupId>org.apache.mina</groupId>
             <artifactId>mina-core</artifactId>
             <version>${mina-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.i2p.crypto</groupId>
-            <artifactId>eddsa</artifactId>
-            <version>${eddsa-version}</version>
             <scope>test</scope>
         </dependency>
 

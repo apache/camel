@@ -22,6 +22,7 @@ camel get endpoint [options]
 | `--filter` | Filter endpoints by URI |  | String
 | `--filter-direction` | Filter by direction (in or out) |  | String
 | `--filter-total` | Filter endpoints that must be higher than the given usage |  | long
+| `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter endpoints by limiting to the given number of rows |  | int
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
 | `--sort` | Sort by pid, name, age or total | pid | String

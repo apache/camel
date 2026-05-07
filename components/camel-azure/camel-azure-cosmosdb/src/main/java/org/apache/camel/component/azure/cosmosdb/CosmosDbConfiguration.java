@@ -37,7 +37,7 @@ public class CosmosDbConfiguration implements Cloneable {
     private String databaseName;
     @UriPath
     private String containerName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     @Metadata(required = false)
     private String accountKey;
     @UriParam(label = "common")

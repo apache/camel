@@ -31,7 +31,7 @@ import org.apache.camel.util.CollectionHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.scan.ScanTestSupport {
+public class PatternBasedPackageScanFilterTest extends ScanTestSupport {
 
     private Set<Class<?>> allClasses;
 

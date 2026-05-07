@@ -433,13 +433,13 @@ public class KubernetesExport extends Export {
 
     protected Integer export(Path exportBaseDir, ExportBaseCommand cmd) throws Exception {
         if (runtime == RuntimeType.quarkus) {
-            cmd.pomTemplateName = "quarkus-kubernetes-pom.tmpl";
+            cmd.pomTemplateName = "quarkus-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.springBoot) {
-            cmd.pomTemplateName = "spring-boot-kubernetes-pom.tmpl";
+            cmd.pomTemplateName = "spring-boot-kubernetes-pom.ftl";
         }
         if (runtime == RuntimeType.main) {
-            cmd.pomTemplateName = "main-kubernetes-pom.tmpl";
+            cmd.pomTemplateName = "main-kubernetes-pom.ftl";
         }
         return super.export(exportBaseDir, cmd);
     }

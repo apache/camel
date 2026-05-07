@@ -33,6 +33,7 @@ import org.apache.camel.component.kafka.consumer.support.ProcessingResult;
 import org.apache.camel.component.kafka.integration.BaseKafkaTestSupport;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.AfterEach;
@@ -57,7 +58,7 @@ public class KafkaPausableConsumerIT extends BaseKafkaTestSupport {
     private static final int RETRY_COUNT = 10;
     private static final LongAdder count = new LongAdder();
     private static final TestListener testConsumerListener = new TestListener();
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
+    private KafkaProducer<String, String> producer;
 
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
@@ -81,7 +82,7 @@ public class KafkaPausableConsumerIT extends BaseKafkaTestSupport {
     @BeforeEach
     public void before() {
         Properties props = KafkaTestUtil.getDefaultProperties(service);
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        producer = new KafkaProducer<>(props);
         MockConsumerInterceptor.recordsCaptured.clear();
 
         executorService.scheduleAtFixedRate(this::increment, 5, 1, TimeUnit.SECONDS);

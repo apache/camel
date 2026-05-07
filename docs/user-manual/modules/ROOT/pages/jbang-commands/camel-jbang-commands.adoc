@@ -11,7 +11,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 [cols="2,5",options="header"]
 |===
 | Command | Description
-| xref:jbang-commands/camel-jbang-bind.adoc[camel bind] | Bind source and sink Kamelets as a new Camel integration
+| xref:jbang-commands/camel-jbang-bind.adoc[camel bind] | DEPRECATED: Bind source and sink Kamelets as a new Camel integration
 | xref:jbang-commands/camel-jbang-catalog.adoc[camel catalog] | List artifacts from Camel Catalog
 | xref:jbang-commands/camel-jbang-cmd.adoc[camel cmd] | Performs commands in the running Camel integrations, such as start/stop route, or change logging levels.
 | xref:jbang-commands/camel-jbang-completion.adoc[camel completion] | Generate completion script for bash/zsh
@@ -43,4 +43,5 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-transform.adoc[camel transform] | Transform message or Camel routes
 | xref:jbang-commands/camel-jbang-update.adoc[camel update] | Update Camel project
 | xref:jbang-commands/camel-jbang-version.adoc[camel version] | Manage Camel versions
+| xref:jbang-commands/camel-jbang-wrapper.adoc[camel wrapper] | Install Camel wrapper scripts for version pinning
 |===

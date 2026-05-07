@@ -74,47 +74,51 @@ public class PropertiesDevConsole extends AbstractDevConsole {
 
         JsonArray arr = new JsonArray();
         Properties p = pc.loadProperties();
-        OrderedLocationProperties olp = null;
-        if (p instanceof OrderedLocationProperties orderedlocationproperties) {
-            olp = orderedlocationproperties;
-        }
+        OrderedLocationProperties olp = p instanceof OrderedLocationProperties o ? o : null;
         for (var entry : p.entrySet()) {
-            String k = entry.getKey().toString();
-            Object v = entry.getValue();
-            String loc = olp != null ? olp.getLocation(k) : null;
-            String originalValue = null;
-            String defaultValue = null;
-            String source = null;
-            var m = pc.getResolvedValue(k);
-            if (m.isPresent()) {
-                originalValue = m.get().originalValue();
-                defaultValue = m.get().defaultValue();
-                source = m.get().source();
-                v = m.get().value();
-            }
-            JsonObject jo = new JsonObject();
-            jo.put("key", k);
-            jo.put("value", v);
-            if (originalValue != null) {
-                jo.put("originalValue", originalValue);
-            }
-            if (defaultValue != null) {
-                jo.put("defaultValue", defaultValue);
-            }
-            if (source != null) {
-                jo.put("source", source);
-            }
-            if (loc != null) {
-                jo.put("location", loc);
-                jo.put("internal", isInternal(loc));
-            }
-            arr.add(jo);
+            arr.add(toPropertyJson(pc, olp, entry));
         }
         if (!arr.isEmpty()) {
             root.put("properties", arr);
         }
 
         return root;
+    }
+
+    private static JsonObject toPropertyJson(
+            PropertiesComponent pc, OrderedLocationProperties olp, Map.Entry<Object, Object> entry) {
+
+        String k = entry.getKey().toString();
+        Object v = entry.getValue();
+        String loc = olp != null ? olp.getLocation(k) : null;
+        String originalValue = null;
+        String defaultValue = null;
+        String source = null;
+        var m = pc.getResolvedValue(k);
+        if (m.isPresent()) {
+            originalValue = m.get().originalValue();
+            defaultValue = m.get().defaultValue();
+            source = m.get().source();
+            v = m.get().value();
+        }
+        boolean sensitive = SensitiveUtils.containsSensitive(k);
+        JsonObject jo = new JsonObject();
+        jo.put("key", k);
+        jo.put("value", sensitive ? "xxxxxx" : v);
+        if (originalValue != null) {
+            jo.put("originalValue", sensitive ? "xxxxxx" : originalValue);
+        }
+        if (defaultValue != null) {
+            jo.put("defaultValue", defaultValue);
+        }
+        if (source != null) {
+            jo.put("source", source);
+        }
+        if (loc != null) {
+            jo.put("location", loc);
+            jo.put("internal", isInternal(loc));
+        }
+        return jo;
     }
 
     private static boolean isInternal(String loc) {

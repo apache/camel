@@ -1,10 +1,11 @@
-= DigitalOcean Component
+= DigitalOcean Component (deprecated)
 :doctitle: DigitalOcean
 :shortname: digitalocean
 :artifactid: camel-digitalocean
 :description: Manage Droplets and resources within the DigitalOcean cloud.
 :since: 2.19
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

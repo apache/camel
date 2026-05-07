@@ -44,6 +44,8 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
     private String heartbeatTopicsPrefix = "__debezium-heartbeat";
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
+    @UriParam(label = LABEL_NAME, defaultValue = "1")
+    private int snapshotMaxThreadsMultiplier = 1;
     @UriParam(label = LABEL_NAME)
     private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
@@ -361,6 +363,22 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
 
     public int getSnapshotFetchSize() {
         return snapshotFetchSize;
+    }
+
+    /**
+     * The factor used to scale the number of snapshot chunks per table. The
+     * default behavior is to take 'row_count/snapshot.max.threads' to compute
+     * the number of rows per chunks. This may not be ideal for larger tables,
+     * and using the multiplier, the formula is adjusted to increase the number
+     * of chunks by using 'row_count/(snapshot.max.threads *
+     * snapshot.max.threads.multiplier).
+     */
+    public void setSnapshotMaxThreadsMultiplier(int snapshotMaxThreadsMultiplier) {
+        this.snapshotMaxThreadsMultiplier = snapshotMaxThreadsMultiplier;
+    }
+
+    public int getSnapshotMaxThreadsMultiplier() {
+        return snapshotMaxThreadsMultiplier;
     }
 
     /**
@@ -1240,6 +1258,7 @@ public class Db2ConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "converters", converters);
         addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
+        addPropertyIfNotNull(configBuilder, "snapshot.max.threads.multiplier", snapshotMaxThreadsMultiplier);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
         addPropertyIfNotNull(configBuilder, "cdc.change.tables.schema", cdcChangeTablesSchema);

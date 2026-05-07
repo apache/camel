@@ -41,6 +41,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DataFormatClause;
@@ -130,6 +131,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorDefinition<?>> getOutputs();
+
+    @Override
+    public List<NamedNode> getChildren() {
+        return new ArrayList<>(getOutputs());
+    }
 
     /**
      * Whether this definition can only be added as top-level directly on the route itself (such as

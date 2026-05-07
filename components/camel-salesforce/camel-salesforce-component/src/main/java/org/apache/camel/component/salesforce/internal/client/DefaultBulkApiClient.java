@@ -31,6 +31,7 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
@@ -445,7 +446,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setNamespaceAware(true);
             try {
-                spf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+                spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
                 spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
                 spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
                 spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);

@@ -56,7 +56,7 @@ public class FileConverterIT extends AbstractGoogleDriveTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        File file = mock.getReceivedExchanges().get(0).getIn().getBody(com.google.api.services.drive.model.File.class);
+        File file = mock.getReceivedExchanges().get(0).getIn().getBody(File.class);
 
         assertEquals("Hello!", context.getTypeConverter().convertTo(String.class, mock.getReceivedExchanges().get(0), file));
 

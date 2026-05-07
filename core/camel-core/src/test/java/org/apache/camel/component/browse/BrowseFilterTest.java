@@ -17,6 +17,7 @@
 package org.apache.camel.component.browse;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -66,7 +67,7 @@ public class BrowseFilterTest extends ContextTestSupport {
         };
     }
 
-    private static class EvenPredicate implements java.util.function.Predicate<Exchange> {
+    private static class EvenPredicate implements Predicate<Exchange> {
 
         @Override
         public boolean test(Exchange exchange) {

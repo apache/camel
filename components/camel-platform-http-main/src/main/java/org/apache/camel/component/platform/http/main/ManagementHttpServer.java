@@ -583,6 +583,13 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     }
 
     protected void setupHealthCheckConsole() {
+        // ensure camel has health check available
+        HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
+        if (registry == null) {
+            throw new IllegalArgumentException(
+                    "Camel health-check is not available. Add camel-health or camel-observability-services JAR");
+        }
+
         final Route health = router.route(this.healthPath);
         health.method(HttpMethod.GET);
         health.produces("application/json");
@@ -1013,7 +1020,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 final boolean json = pos2 < pos1;
                 final DevConsole.MediaType mediaType = json ? DevConsole.MediaType.JSON : DevConsole.MediaType.TEXT;
 
-                ctx.response().putHeader("content-type", "text/plain");
+                ctx.response().putHeader("content-type", "text/plain;charset=utf-8");
 
                 if (!camelContext.isDevConsole()) {
                     ctx.end("Developer Console is not enabled on CamelContext. Set camel.context.dev-console=true in application.properties");
@@ -1090,7 +1097,11 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                         boolean include = "all".equals(id) || c.getId().equalsIgnoreCase(id);
                         if (include && c.supportMediaType(mediaType)) {
                             Object out = c.call(mediaType, params);
-                            if (out != null && mediaType == DevConsole.MediaType.TEXT) {
+                            // special if returning html
+                            if (out instanceof String text && text.startsWith("<html>")) {
+                                ctx.response().putHeader("content-type", "text/html");
+                                sb.append(out);
+                            } else if (out != null && mediaType == DevConsole.MediaType.TEXT) {
                                 sb.append(c.getDisplayName()).append(":");
                                 sb.append("\n\n");
                                 sb.append(out);
@@ -1285,6 +1296,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                 camelContext,
                 platformHttpComponent.getHttpManagementEndpoints(),
                 (server != null ? server.getPort() : getPort()),
+                configuration.isUseGlobalSslContextParameters(),
                 "HTTP Management endpoints summary");
     }
 

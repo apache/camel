@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.rest.openapi.validator.client;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.model.Request;
 import com.atlassian.oai.validator.model.SimpleResponse;
-import com.atlassian.oai.validator.report.JsonValidationReportFormat;
 import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.SimpleValidationReportFormat;
 import com.atlassian.oai.validator.report.ValidationReport;
@@ -42,6 +45,10 @@ public class OpenApiRestClientResponseValidator implements RestClientResponseVal
     private static final Logger LOG = LoggerFactory.getLogger(OpenApiRestClientResponseValidator.class);
 
     private final HttpHeaderFilterStrategy filter = new HttpHeaderFilterStrategy();
+
+    private volatile OpenAPI cachedOpenAPI;
+    private volatile Map<String, String> cachedLevels;
+    private volatile OpenApiInteractionValidator cachedValidator;
 
     public OpenApiRestClientResponseValidator() {
         // add extra additional HTTP request headers to skip
@@ -76,7 +83,6 @@ public class OpenApiRestClientResponseValidator implements RestClientResponseVal
             path = "/";
         }
 
-        String accept = exchange.getMessage().getHeader("Accept", String.class);
         String contentType = ExchangeHelper.getContentType(exchange);
         String body = MessageHelper.extractBodyAsString(exchange.getIn());
         int status = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, 200, int.class);
@@ -99,32 +105,18 @@ public class OpenApiRestClientResponseValidator implements RestClientResponseVal
             }
         }
 
-        LevelResolver.Builder lr = LevelResolver.create();
+        Map<String, String> effectiveLevels = new HashMap<>();
         RestConfiguration rc = exchange.getContext().getRestConfiguration();
         if (rc.getValidationLevels() != null) {
-            for (var e : rc.getValidationLevels().entrySet()) {
-                String key = e.getKey();
-                var level = ValidationReport.Level.valueOf(e.getValue());
-                if ("defaultLevel".equalsIgnoreCase(key)) {
-                    lr.withDefaultLevel(level);
-                } else {
-                    lr.withLevel(key, level);
-                }
-            }
+            effectiveLevels.putAll(rc.getValidationLevels());
         }
-        OpenApiInteractionValidator validator = OpenApiInteractionValidator.createFor(openAPI)
-                .withLevelResolver(lr.build())
-                .build();
+
+        OpenApiInteractionValidator validator = getOrCreateValidator(openAPI, effectiveLevels);
         ValidationReport report = validator.validateResponse(path, asMethod(method), builder.build());
 
-        // create report if error of DEBUG logging
+        // create report if error or DEBUG logging
         if (report.hasErrors() || LOG.isDebugEnabled()) {
-            String msg;
-            if (accept != null && accept.contains("application/json")) {
-                msg = JsonValidationReportFormat.getInstance().apply(report);
-            } else {
-                msg = SimpleValidationReportFormat.getInstance().apply(report);
-            }
+            String msg = SimpleValidationReportFormat.getInstance().apply(report);
             LOG.debug("Client Response Validation: {}", msg);
             if (report.hasErrors()) {
                 return new ValidationError(500, msg);
@@ -132,6 +124,29 @@ public class OpenApiRestClientResponseValidator implements RestClientResponseVal
         }
 
         return null;
+    }
+
+    private OpenApiInteractionValidator getOrCreateValidator(OpenAPI openAPI, Map<String, String> levels) {
+        if (cachedValidator != null && cachedOpenAPI == openAPI && Objects.equals(cachedLevels, levels)) {
+            return cachedValidator;
+        }
+        LevelResolver.Builder lr = LevelResolver.create();
+        for (var e : levels.entrySet()) {
+            String key = e.getKey();
+            var level = ValidationReport.Level.valueOf(e.getValue());
+            if ("defaultLevel".equalsIgnoreCase(key)) {
+                lr.withDefaultLevel(level);
+            } else {
+                lr.withLevel(key, level);
+            }
+        }
+        OpenApiInteractionValidator v = OpenApiInteractionValidator.createFor(openAPI)
+                .withLevelResolver(lr.build())
+                .build();
+        cachedOpenAPI = openAPI;
+        cachedLevels = new HashMap<>(levels);
+        cachedValidator = v;
+        return v;
     }
 
     private static boolean startsWithIgnoreCase(String s, String prefix) {

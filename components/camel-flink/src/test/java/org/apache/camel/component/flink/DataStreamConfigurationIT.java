@@ -22,6 +22,7 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.flink.api.common.RuntimeExecutionMode;
+import org.apache.flink.configuration.ExecutionOptions;
 import org.apache.flink.streaming.api.CheckpointingMode;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -93,7 +94,7 @@ public class DataStreamConfigurationIT extends CamelTestSupport {
 
         // Verify BATCH mode was set
         RuntimeExecutionMode mode = env.getConfiguration()
-                .get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE);
+                .get(ExecutionOptions.RUNTIME_MODE);
         Assertions.assertThat(mode).isEqualTo(RuntimeExecutionMode.BATCH);
     }
 
@@ -118,7 +119,7 @@ public class DataStreamConfigurationIT extends CamelTestSupport {
 
         // Verify STREAMING mode was set
         RuntimeExecutionMode mode = env.getConfiguration()
-                .get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE);
+                .get(ExecutionOptions.RUNTIME_MODE);
         Assertions.assertThat(mode).isEqualTo(RuntimeExecutionMode.STREAMING);
     }
 
@@ -204,7 +205,7 @@ public class DataStreamConfigurationIT extends CamelTestSupport {
 
         // Verify execution mode
         RuntimeExecutionMode mode = env.getConfiguration()
-                .get(org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE);
+                .get(ExecutionOptions.RUNTIME_MODE);
         Assertions.assertThat(mode).isEqualTo(RuntimeExecutionMode.STREAMING);
 
         // Verify parallelism

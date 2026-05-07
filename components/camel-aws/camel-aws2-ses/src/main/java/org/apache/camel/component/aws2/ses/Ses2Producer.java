@@ -115,9 +115,9 @@ public class Ses2Producer extends DefaultProducer {
         return message.build();
     }
 
-    private software.amazon.awssdk.services.ses.model.RawMessage createRawMessage(Exchange exchange) throws Exception {
-        software.amazon.awssdk.services.ses.model.RawMessage.Builder message
-                = software.amazon.awssdk.services.ses.model.RawMessage.builder();
+    private RawMessage createRawMessage(Exchange exchange) throws Exception {
+        RawMessage.Builder message
+                = RawMessage.builder();
         jakarta.mail.Message content = exchange.getIn().getBody(jakarta.mail.Message.class);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         content.writeTo(bos);

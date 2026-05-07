@@ -39,6 +39,7 @@ import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -167,7 +168,7 @@ public class TopDevConsole extends AbstractDevConsole {
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
         final JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
@@ -197,7 +198,7 @@ public class TopDevConsole extends AbstractDevConsole {
                     jo.put("routeId", mpb.getRouteId());
                     jo.put("processorId", mpb.getProcessorId());
                     String loc = mpb.getSourceLocation();
-                    List<JsonObject> code = new ArrayList<>();
+                    JsonArray code = new JsonArray();
                     if (loc != null && mpb.getSourceLineNumber() != null) {
                         int line = mpb.getSourceLineNumber();
                         try {

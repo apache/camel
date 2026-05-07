@@ -36,11 +36,11 @@ public class GoogleMailStreamConfiguration implements Cloneable, GoogleCommonCon
     private String index;
     @UriParam
     private String clientId;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String clientSecret;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String accessToken;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String refreshToken;
     @UriParam
     private boolean raw;

@@ -29,9 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.AggregateDefinition;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class AlbertoAggregatorTest extends ContextTestSupport {
     private static final String SURNAME_HEADER = "surname";
     private static final String TYPE_HEADER = "type";
@@ -166,15 +164,15 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
                         .to("direct:joinSurnames");
 
-                from("direct:joinSurnames").aggregate(header(SURNAME_HEADER), surnameAggregator).completionTimeout(100)
-                        .completionTimeoutCheckerInterval(10)
+                from("direct:joinSurnames").aggregate(header(SURNAME_HEADER), surnameAggregator).completionTimeout(2000)
+                        .completionTimeoutCheckerInterval(100)
                         .setHeader(TYPE_HEADER, constant(BROTHERS_TYPE)).to("direct:joinBrothers");
 
                 // Join all brothers lists and remove surname and type headers
                 AggregateDefinition agg = from("direct:joinBrothers").aggregate(header(TYPE_HEADER), brothersAggregator);
 
-                agg.completionTimeout(100L);
-                agg.completionTimeoutCheckerInterval(10L);
+                agg.completionTimeout(2000L);
+                agg.completionTimeoutCheckerInterval(100L);
                 agg.removeHeader(SURNAME_HEADER).removeHeader(TYPE_HEADER).to("mock:result");
             }
         };

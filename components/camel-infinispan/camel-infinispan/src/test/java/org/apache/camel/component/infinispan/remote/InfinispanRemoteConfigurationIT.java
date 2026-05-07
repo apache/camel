@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
-import org.apache.commons.lang3.SystemUtils;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.commons.api.BasicCache;
 import org.jgroups.util.UUID;
@@ -41,15 +40,13 @@ public class InfinispanRemoteConfigurationIT {
     @Test
     public void remoteCacheWithoutProperties() throws Exception {
         final InfinispanRemoteConfiguration configuration = getBaseConfiguration();
-        if (SystemUtils.IS_OS_MAC) {
-            configuration.addConfigurationProperty(
-                    "infinispan.client.hotrod.client_intelligence", "BASIC");
-        }
+        configuration.addConfigurationProperty(
+                "infinispan.client.hotrod.client_intelligence", "BASIC");
 
         try (CamelContext context = new DefaultCamelContext();
              InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
-            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 5000);
+            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 30000);
 
             BasicCache<Object, Object> cache = manager.getCache("misc_cache");
             assertNotNull(cache);
@@ -82,16 +79,12 @@ public class InfinispanRemoteConfigurationIT {
     @Test
     public void remoteCacheWithProperties() throws Exception {
         final InfinispanRemoteConfiguration configuration = getBaseConfiguration();
-        if (SystemUtils.IS_OS_MAC) {
-            configuration.setConfigurationUri("infinispan/client-mac.properties");
-        } else {
-            configuration.setConfigurationUri("infinispan/client.properties");
-        }
+        configuration.setConfigurationUri("infinispan/client.properties");
 
         try (CamelContext context = new DefaultCamelContext();
              InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
-            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 5000);
+            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 30000);
 
             BasicCache<Object, Object> cache = manager.getCache("misc_cache");
             assertNotNull(cache);

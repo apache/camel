@@ -40,11 +40,11 @@ public abstract class MainCommandLineSupport extends MainSupport {
     private volatile boolean initOptionsDone;
 
     @SafeVarargs
-    protected MainCommandLineSupport(Class<? extends CamelConfiguration>... configurationClasses) {
+    public MainCommandLineSupport(Class<? extends CamelConfiguration>... configurationClasses) {
         super(configurationClasses);
     }
 
-    protected MainCommandLineSupport() {
+    public MainCommandLineSupport() {
     }
 
     public Properties getArgumentProperties() {
@@ -304,7 +304,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
         private final String fullName;
         private final String description;
 
-        protected Option(String abbreviation, String fullName, String description) {
+        public Option(String abbreviation, String fullName, String description) {
             this.abbreviation = "-" + abbreviation;
             this.fullName = "-" + fullName;
             this.description = description;
@@ -340,7 +340,7 @@ public abstract class MainCommandLineSupport extends MainSupport {
     public abstract class ParameterOption extends Option {
         private final String parameterName;
 
-        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
+        public ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
             super(abbreviation, fullName, description);
             this.parameterName = parameterName;
         }

@@ -26,14 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.junit.jupiter.api.Disabled;
 
 @Disabled
 public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
 
     // START SNIPPET: e2
-    private Connector createSslSocketConnector(CamelContext context, int port) {
+    private ServerConnector createSslSocketConnector(CamelContext context, int port) {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("file://" + this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(pwd);
@@ -55,7 +55,7 @@ public class ExplicitHttpsSslContextParametersRouteTest extends HttpsRouteTest {
             public void configure() {
                 // START SNIPPET: e1
                 // create SSL select channel connectors for port 9080 and 9090
-                Map<Integer, Connector> connectors = new HashMap<>();
+                Map<Integer, ServerConnector> connectors = new HashMap<>();
                 connectors.put(port1.getPort(), createSslSocketConnector(getContext(), port1.getPort()));
                 connectors.put(port2.getPort(), createSslSocketConnector(getContext(), port2.getPort()));
 

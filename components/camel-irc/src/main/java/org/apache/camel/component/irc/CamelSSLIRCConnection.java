@@ -34,6 +34,7 @@ import org.schwering.irc.lib.ssl.SSLNotSupportedException;
  * Customized version of {@link SSLIRCConnection} used to support the use of an {@link SSLContextParameters} instance
  * for JSSE configuration.
  */
+@Deprecated(since = "4.21")
 public class CamelSSLIRCConnection extends SSLIRCConnection {
 
     private SSLContextParameters sslContextParameters;

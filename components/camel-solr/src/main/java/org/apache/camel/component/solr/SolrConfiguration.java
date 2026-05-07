@@ -37,9 +37,9 @@ public class SolrConfiguration {
     private int port = -1;
     @UriPath(defaultValue = SolrConstants.DEFAULT_BASE_PATH)
     private String basePath;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam
     private SolrOperation operation;

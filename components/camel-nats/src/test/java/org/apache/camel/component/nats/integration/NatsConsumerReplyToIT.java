@@ -21,9 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.nats.NatsConstants;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class NatsConsumerReplyToIT extends NatsITSupport {
 
     @EndpointInject("mock:result")
@@ -41,7 +39,9 @@ public class NatsConsumerReplyToIT extends NatsITSupport {
 
         template.sendBody("direct:send", "World");
 
+        mockResultEndpoint.setAssertPeriod(5000);
         mockResultEndpoint.assertIsSatisfied();
+        mockReplyEndpoint.setAssertPeriod(5000);
         mockReplyEndpoint.assertIsSatisfied();
     }
 

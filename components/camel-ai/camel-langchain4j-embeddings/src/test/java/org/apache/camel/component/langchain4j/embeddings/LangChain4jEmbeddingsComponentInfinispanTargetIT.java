@@ -43,7 +43,6 @@ import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
 import org.apache.camel.test.junit6.CamelTestSupport;
-import org.apache.commons.lang3.SystemUtils;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.configuration.StringConfiguration;
@@ -206,7 +205,7 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
         if (cacheContainer == null) {
             cacheContainer = getCacheContainer();
             final IterationBoundedBudget budget
-                    = Budgets.iterationBudget().withInterval(Duration.ofSeconds(1)).withMaxIterations(10).build();
+                    = Budgets.iterationBudget().withInterval(Duration.ofSeconds(1)).withMaxIterations(30).build();
             final ForegroundTask task = Tasks.foregroundTask()
                     .withBudget(budget).build();
 
@@ -226,6 +225,9 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
     private boolean createCache() {
         try {
             getOrCreateCache();
+            // Verify protobuf metadata cache is accessible to avoid
+            // IllegalLifecycleStateException during route startup (CAMEL-23307)
+            cacheContainer.getCache("___protobuf_metadata");
             return true;
         } catch (Exception e) {
             return false;
@@ -252,7 +254,10 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
                 .host(service.host())
                 .port(service.port());
 
-        clientBuilder.security()
+        clientBuilder
+                .socketTimeout(15000)
+                .connectionTimeout(15000)
+                .security()
                 .authentication()
                 .username(service.username())
                 .password(service.password())
@@ -260,11 +265,9 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
                 .saslMechanism("SCRAM-SHA-512")
                 .realm("default");
 
-        if (SystemUtils.IS_OS_MAC) {
-            Properties properties = new Properties();
-            properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
-            clientBuilder.withProperties(properties);
-        }
+        Properties properties = new Properties();
+        properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
+        clientBuilder.withProperties(properties);
         return clientBuilder;
     }
 }

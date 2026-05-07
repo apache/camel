@@ -20,6 +20,7 @@ camel get producer [options]
 |===
 | Option | Description | Default | Type
 | `--filter` | Filter producers by URI |  | String
+| `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter producers by limiting to the given number of rows |  | int
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
 | `--sort` | Sort by pid, name or age | pid | String

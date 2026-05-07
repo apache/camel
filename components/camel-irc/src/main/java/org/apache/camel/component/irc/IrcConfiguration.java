@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @UriParams
+@Deprecated(since = "4.21")
 public class IrcConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(IrcConfiguration.class);
 
@@ -47,7 +48,7 @@ public class IrcConfiguration implements Cloneable {
     @UriPath
     private int port;
     private int[] ports = { 6667, 6668, 6669 };
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String password;
     @UriParam(label = "common")
     private String nickname;
@@ -57,7 +58,7 @@ public class IrcConfiguration implements Cloneable {
     private String keys;
     @UriParam(label = "common")
     private String realname;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String username;
     @UriParam(label = "security")
     private SSLTrustManager trustManager = new SSLDefaultTrustManager();
@@ -90,7 +91,7 @@ public class IrcConfiguration implements Cloneable {
     private boolean namesOnJoin;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String nickPassword;
     @UriParam(defaultValue = "5000")
     private long commandTimeout = 5000L;

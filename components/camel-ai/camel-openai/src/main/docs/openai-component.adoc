@@ -2,7 +2,7 @@
 :doctitle: OpenAI
 :shortname: openai
 :artifactid: camel-openai
-:description: OpenAI endpoint for chat completion and embeddings.
+:description: OpenAI endpoint for chat completion, embeddings, and audio transcription.
 :since: 4.17
 :supportlevel: Stable
 :tabs-sync-option:
@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The OpenAI component provides integration with OpenAI and OpenAI-compatible APIs for chat completion and text embeddings using the official openai-java SDK.
+The OpenAI component provides integration with OpenAI and OpenAI-compatible APIs for chat completion, text embeddings, and audio transcription using the official openai-java SDK.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 
@@ -41,6 +41,7 @@ Supported operations:
 * `chat-completion` - Generate chat completions using language models
 * `embeddings` - Generate vector embeddings from text for semantic search and RAG applications
 * `tool-execution` - Execute MCP tool calls from a stored chat completion response (used in manual tool loops)
+* `audio-transcription` - Transcribe audio files to text using speech-to-text models (e.g., Whisper, GPT-4o Transcribe)
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -450,6 +451,45 @@ WARNING: Disabling hostname verification is insecure and should only be used in 
 | `sslEndpointAlgorithm` | String | `https` | Hostname verification algorithm; set to empty or `none` to disable
 |===
 
+== Reasoning Models
+
+Some OpenAI-compatible models (e.g., Qwen3, DeepSeek-R1) return chain-of-thought reasoning in a separate `reasoning_content` field alongside the regular `content` in the API response. The component automatically extracts this field and sets it as the `CamelOpenAIReasoningContent` message header.
+
+This is independent from the inline `<think>...</think>` tag stripping controlled by `stripThinking`. A response can populate both headers simultaneously:
+
+* `CamelOpenAIReasoningContent` — from the API-level `reasoning_content` field
+* `CamelOpenAIThinkingContent` — from inline `<think>` tags in the `content` field (requires `stripThinking=true`)
+
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=qwen3&stripThinking=true")
+    .log("Answer: ${body}")
+    .log("Reasoning: ${header.CamelOpenAIReasoningContent}")
+    .log("Thinking: ${header.CamelOpenAIThinkingContent}");
+----
+
+NOTE: Reasoning content extraction is supported in non-streaming mode only (both simple and agentic/MCP tool loop paths). Streaming responses do not extract reasoning content.
+
+=== Mapping Additional Response Fields to Headers
+
+The `additionalResponseHeader` option allows mapping any extra field from the API response message into a named Camel header. This is useful for provider-specific fields that are not part of the standard OpenAI response schema.
+
+The key is the field name in the API response, and the value is the Camel header name to set:
+
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=qwen3"
+        + "&additionalResponseHeader.reasoning_content=CamelMyReasoning"
+        + "&additionalResponseHeader.custom_field=CamelMyCustomField")
+    .log("Custom reasoning: ${header.CamelMyReasoning}");
+----
+
+String-valued fields are set directly. Non-string fields (numbers, booleans, objects) are converted using `toString()`.
+
+NOTE: This maps fields from the response message's additional properties (fields not part of the standard schema). Standard response fields like `content`, `role`, and `tool_calls` are not accessible through this option.
+
 == Compatibility
 
 This component works with any OpenAI API-compatible endpoint by setting the `baseUrl` parameter. This includes:
@@ -643,6 +683,104 @@ The following headers are set after an embeddings request:
 | `CamelOpenAIOriginalText` | String/List | Original input text(s)
 | `CamelOpenAISimilarityScore` | Double | Cosine similarity (if reference embedding provided)
 |===
+
+== Audio Transcription Operation
+
+The `audio-transcription` operation transcribes audio files to text using OpenAI's speech-to-text models (Whisper, GPT-4o Transcribe).
+
+=== Basic Audio Transcription
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:audio?noop=true")
+    .to("openai:audio-transcription?audioModel=whisper-1")
+    .log("Transcription: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:transcribe
+      steps:
+        - to:
+            uri: openai:audio-transcription
+            parameters:
+              audioModel: whisper-1
+        - log: "Transcription: ${body}"
+----
+====
+
+=== Input Handling
+
+The audio transcription operation accepts the following types in the message body:
+
+* `java.io.File` - Audio file reference
+* `java.nio.file.Path` - Path to an audio file
+* `java.io.InputStream` - Audio data stream
+* `byte[]` - Raw audio bytes
+
+Supported audio formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, webm.
+
+=== Audio Transcription Parameters
+
+[cols="1,1,1,3"]
+|===
+| Parameter | Type | Default | Description
+
+| `audioModel` | String | | The model to use (e.g., `whisper-1`, `gpt-4o-transcribe`). Required.
+| `audioLanguage` | String | | Input audio language in ISO-639-1 format (e.g., `en`). Improves accuracy.
+| `audioPrompt` | String | | Optional text to guide the model's style or continue a previous segment.
+| `audioResponseFormat` | String | `json` | Output format: `json`, `text`, `srt`, `verbose_json`, `vtt`.
+| `audioTemperature` | Double | | Sampling temperature (0.0 to 1.0).
+| `audioTimestampGranularities` | String | | Comma-separated: `word`, `segment`, or `word,segment`. Only with `verbose_json`.
+|===
+
+=== Audio Transcription Output Headers
+
+[cols="1,1,3"]
+|===
+| Header | Type | Description
+
+| `CamelOpenAIAudioDuration` | Double | Duration of the audio in seconds (verbose_json only)
+| `CamelOpenAIAudioDetectedLanguage` | String | Language detected in the audio (verbose_json only)
+|===
+
+=== Audio Models by Provider
+
+[cols="1,2,3"]
+|===
+| Provider | Model | Description
+
+| OpenAI | `whisper-1` | General-purpose speech recognition
+| OpenAI | `gpt-4o-transcribe` | High-accuracy transcription based on GPT-4o
+| OpenAI | `gpt-4o-mini-transcribe` | Lighter-weight GPT-4o variant
+|===
+
+=== Local Audio Transcription Servers
+
+The audio transcription operation works with any OpenAI-compatible server that implements the `POST /v1/audio/transcriptions` endpoint. It has been tested with:
+
+* https://github.com/ml-explore/mlx-audio[MLX Audio] — `python3 -m mlx_audio.server --host 127.0.0.1 --port 8003`
+
+.Example using MLX Audio for local transcription:
+[source,java]
+----
+from("direct:transcribe")
+    .to("openai:audio-transcription?audioModel=mlx-community/whisper-large-v3-turbo"
+        + "&baseUrl=http://localhost:8003/v1");
+----
+
+[NOTE]
+====
+Some local servers require the model parameter to be a path (e.g., `./models/granite-speech-4.1-2b-8bit`). Refer to your server's documentation for the expected model identifier format.
+====
 
 == MCP Tool Calling (Agentic Loop)
 
@@ -972,7 +1110,7 @@ from("direct:chat")
 The component may throw the following exceptions:
 
 * `IllegalArgumentException`:
-  ** When an invalid operation is specified (supported: `chat-completion`, `embeddings`)
+  ** When an invalid operation is specified (supported: `chat-completion`, `embeddings`, `tool-execution`, `audio-transcription`)
   ** When message body or user message is missing
   ** When image file is provided without userMessage (chat-completion)
   ** When unsupported file type is provided (only text and image files are supported)

@@ -33,11 +33,11 @@ public class KeyVaultConfiguration implements Cloneable {
     @UriParam
     @Metadata(autowired = true)
     private SecretClient secretClient;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String clientId;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String clientSecret;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", security = "secret")
     private String tenantId;
     @UriParam(label = "producer")
     private KeyVaultOperation operation = KeyVaultOperation.createSecret;

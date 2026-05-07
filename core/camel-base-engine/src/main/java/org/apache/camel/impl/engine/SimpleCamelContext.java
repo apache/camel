@@ -16,12 +16,14 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteTemplateContext;
@@ -771,6 +773,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     public void removeRouteTemplates(String pattern) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<NamedRoute> getNamedRouteDefinitions() {
         throw new UnsupportedOperationException();
     }
 

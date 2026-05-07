@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -316,5 +317,28 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
 
     public void setMaxRequestSize(Long maxRequestSize) {
         this.maxRequestSize = maxRequestSize;
+    }
+
+    @Override
+    public String getServiceUrl() {
+        if (getPort() == 0) {
+            var httpUri = getHttpUri();
+            var serverConnector = getComponent().findServerConnector(this);
+            if (httpUri != null && serverConnector != null) {
+                try {
+                    return new URI(
+                            httpUri.getScheme(),
+                            httpUri.getUserInfo(),
+                            httpUri.getHost(),
+                            serverConnector.getLocalPort(),
+                            httpUri.getPath(),
+                            httpUri.getQuery(),
+                            httpUri.getFragment()).toString();
+                } catch (URISyntaxException e) {
+                    throw new IllegalStateException("Invalid service URL", e);
+                }
+            }
+        }
+        return super.getServiceUrl();
     }
 }

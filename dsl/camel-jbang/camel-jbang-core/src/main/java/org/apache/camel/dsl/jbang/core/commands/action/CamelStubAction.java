@@ -100,6 +100,8 @@ public class CamelStubAction extends ActionWatchCommand {
 
     private volatile long pid;
     String findAnsi;
+    Pattern[] grepPatterns;
+    Pattern[] findPatterns;
     private MessageTableHelper tableHelper;
     private final Map<String, Ansi.Color> exchangeIdColors = new HashMap<>();
     private int exchangeIdColorsIndex = 1;
@@ -127,8 +129,13 @@ public class CamelStubAction extends ActionWatchCommand {
             }
             return color;
         });
-        if (find != null || grep != null) {
+        if (find != null) {
             findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+            findPatterns = quoteAndCompilePatterns(find);
+        }
+        if (grep != null) {
+            findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+            grepPatterns = quoteAndCompilePatterns(grep);
         }
 
         List<Row> rows = new ArrayList<>();
@@ -257,9 +264,8 @@ public class CamelStubAction extends ActionWatchCommand {
         if (grep == null) {
             return true;
         }
-        for (String g : grep) {
-            boolean m = Pattern.compile("(?i)" + g).matcher(line).find();
-            if (m) {
+        for (Pattern p : grepPatterns) {
+            if (p.matcher(line).find()) {
                 return true;
             }
         }
@@ -308,14 +314,14 @@ public class CamelStubAction extends ActionWatchCommand {
                                     printer().println();
                                 }
                                 for (String line : lines) {
-                                    if (find != null) {
-                                        for (String f : find) {
-                                            line = line.replaceAll("(?i)" + f, findAnsi);
+                                    if (findPatterns != null) {
+                                        for (Pattern p : findPatterns) {
+                                            line = p.matcher(line).replaceAll(findAnsi);
                                         }
                                     }
-                                    if (grep != null) {
-                                        for (String g : grep) {
-                                            line = line.replaceAll("(?i)" + g, findAnsi);
+                                    if (grepPatterns != null) {
+                                        for (Pattern p : grepPatterns) {
+                                            line = p.matcher(line).replaceAll(findAnsi);
                                         }
                                     }
                                     printer().print(" ");
