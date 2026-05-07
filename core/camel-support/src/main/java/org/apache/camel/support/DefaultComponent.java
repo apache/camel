@@ -48,6 +48,7 @@ import org.apache.camel.util.function.Suppliers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// test change for Scalpel shadow comparison validation — will be reverted
 /**
  * Default component to use for base for components implementations.
  */
