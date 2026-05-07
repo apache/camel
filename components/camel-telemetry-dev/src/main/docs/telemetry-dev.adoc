@@ -28,7 +28,8 @@ The configuration properties for the Telemetry component are:
 |Option |Default |Description
 |`enabled`| false | Turn the tracing on/off.
 |`traceFormat`| default | The format used to trace in the log (default, tree, json).
-|`traceProcessors`| false | Trace inner processors.
+|`traceProcessors`| false | Trace inner custom processors (i.e., any `process` configured in the route).
+|`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
 |`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
 |`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
