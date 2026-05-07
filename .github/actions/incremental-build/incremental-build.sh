@@ -245,7 +245,7 @@ runScalpelDetection() {
   # - skipTestsForDownstreamModules: mirrors EXCLUSION_LIST — tells Scalpel which
   #   downstream modules should not run tests in skip-tests mode (for shadow comparison)
   local skip_downstream="camel-allcomponents,camel-catalog,camel-catalog-console,camel-catalog-lucene,camel-catalog-maven,camel-catalog-suggest,camel-endpointdsl,camel-componentdsl,camel-endpointdsl-support,camel-yaml-dsl,camel-kamelet-main,camel-yaml-dsl-deserializers,camel-yaml-dsl-maven-plugin,camel-jbang-core,camel-jbang-main,camel-jbang-plugin-generate,camel-jbang-plugin-edit,camel-jbang-plugin-kubernetes,camel-jbang-plugin-test,camel-launcher,camel-jbang-it,camel-itest,docs,apache-camel,coverage,dummy-component,camel-csimple-maven-plugin,camel-report-maven-plugin,camel-route-parser"
-  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
+  local scalpel_args="-Dscalpel.enabled=true -Dscalpel.mode=report -Dscalpel.fullBuildTriggers= -Dscalpel.fetchBaseBranch=false -Dscalpel.excludePaths=.github/** -Dscalpel.skipTestsForDownstreamModules=${skip_downstream}"
   # For workflow_dispatch, GITHUB_BASE_REF may not be set
   if [ -z "${GITHUB_BASE_REF:-}" ]; then
     scalpel_args="$scalpel_args -Dscalpel.baseBranch=origin/main"
