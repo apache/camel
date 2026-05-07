@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregator;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AggregationStrategy;
@@ -237,7 +238,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.process(e2);
         ap.process(e3);
 
-        await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
+        await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(1, mock.getReceivedCounter()));
 
         ap.process(e4);
@@ -285,7 +286,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.process(e2);
         ap.process(e3);
 
-        await().atMost(5, java.util.concurrent.TimeUnit.SECONDS)
+        await().atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(1, mock.getReceivedCounter()));
 
         ap.process(e4);
