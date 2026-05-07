@@ -8532,6 +8532,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String path) {
         return irc("irc", path);
     }
@@ -8557,6 +8558,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String componentName, String path) {
         return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

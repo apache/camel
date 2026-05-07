@@ -262,3 +262,7 @@ This is just an informative note, there is not action expected by the final user
 
 The component camel-digitalocean is deprecated. The java library used has been unmaintained for several years and there is no replacement.
 
+=== Deprecation of camel-irc
+
+The component camel-irc is deprecated. The library used had no stable release since 2007. There is no Java library very active for this protocol.
+

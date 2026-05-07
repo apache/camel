@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
  */
 @Component("irc,ircs")
+@Deprecated(since = "4.21")
 public class IrcComponent extends DefaultComponent implements SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
