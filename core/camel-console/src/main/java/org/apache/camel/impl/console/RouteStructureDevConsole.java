@@ -43,6 +43,8 @@ import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationN
 @DevConsole(name = "route-structure", description = "Dump route structure")
 public class RouteStructureDevConsole extends AbstractDevConsole {
 
+    // TODO: no JMX but model only
+
     /**
      * Filters the routes matching by route id, route uri, and source location
      */

@@ -151,7 +151,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
-    @Metadata(enums = "xml,yaml,json")
+    @Metadata(enums = "xml,yaml,json,png")
     private String dumpRoutes;
     private String dumpRoutesInclude = "routes";
     private boolean dumpRoutesLog = true;

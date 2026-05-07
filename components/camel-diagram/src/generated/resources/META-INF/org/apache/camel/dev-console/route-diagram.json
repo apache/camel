@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "route-diagram",
+    "title": "Route Diagram",
+    "description": "Visual route diagrams",
+    "deprecated": false,
+    "javaType": "org.apache.camel.diagram.DiagramDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-diagram",
+    "version": "4.21.0-SNAPSHOT"
+  }
+}
+
