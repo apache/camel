@@ -96,6 +96,16 @@ public class SpanBeanTest extends ExchangeTestSupport {
         assertEquals(direct.getTag("spanid"), bean.getTag("parentSpan"));
         assertEquals(bean.getTag("spanid"), beanMethod.getTag("parentSpan"));
         assertEquals(log.getTag("spanid"), innerToLog.getTag("parentSpan"));
+
+        // Validate operations
+        assertEquals(Op.EVENT_SENT.toString(), testProducer.getTag("op"));
+        assertEquals(Op.EVENT_RECEIVED.toString(), direct.getTag("op"));
+
+        // Validate message logging
+        assertEquals("A message", innerLog.logEntries().get(0).fields().get("message"));
+        assertEquals(
+                "Exchange[ExchangePattern: InOnly, BodyType: String, Body: my-body]",
+                innerToLog.logEntries().get(0).fields().get("message"));
     }
 
     @Override
@@ -127,10 +137,10 @@ public class SpanBeanTest extends ExchangeTestSupport {
             // We just simulate the creation of a span and proper nesting. In a real implementation
             // it is up to the telemetry technology to do so (for example, via method annotations)
             Span parentSpan = new SpanStorageManagerExchange().peek(exchange);
-            Span span = mockTracer.slcm.create("mySpan", "bo", parentSpan, null);
-            mockTracer.slcm.activate(span);
-            mockTracer.slcm.deactivate(span);
-            mockTracer.slcm.close(span);
+            Span span = mockTracer.getSpanLifecycleManager().create("mySpan", "bo", parentSpan, null);
+            mockTracer.getSpanLifecycleManager().activate(span);
+            mockTracer.getSpanLifecycleManager().deactivate(span);
+            mockTracer.getSpanLifecycleManager().close(span);
         }
     }
 
