@@ -19,6 +19,10 @@ org.apache.camel.telemetry.decorators.ActiveMQ6SpanDecorator
 org.apache.camel.telemetry.decorators.ActiveMQSpanDecorator
 org.apache.camel.telemetry.decorators.AhcSpanDecorator
 org.apache.camel.telemetry.decorators.AmqpSpanDecorator
+org.apache.camel.telemetry.decorators.AwsKinesisSpanDecorator
+org.apache.camel.telemetry.decorators.AwsS3SpanDecorator
+org.apache.camel.telemetry.decorators.AwsSnsSpanDecorator
+org.apache.camel.telemetry.decorators.AwsSqsSpanDecorator
 org.apache.camel.telemetry.decorators.AzureServiceBusSpanDecorator
 org.apache.camel.telemetry.decorators.CometdSpanDecorator
 org.apache.camel.telemetry.decorators.CometdsSpanDecorator
