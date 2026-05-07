@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.opentelemetry.api.common.AttributeKey;
-import io.opentelemetry.api.trace.SpanId;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -33,22 +32,22 @@ import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagationTestSupport {
+public class SpanBeanTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext ctx = super.createCamelContext();
-        tst.setTraceProcessors(true);
         tst.setDisableCoreProcessors(false);
 
         return ctx;
     }
 
     @Test
-    void testProcessorsTraceRequest() throws IOException {
-        template.sendBody("direct:start", "my-body");
+    void testRouteSingleRequest() throws IOException {
+        template.request("direct:start", null);
         Map<String, OtelTrace> traces = otelExtension.getTraces();
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
@@ -56,41 +55,45 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagati
 
     private void checkTrace(OtelTrace trace) {
         List<SpanData> spans = trace.getSpans();
-        assertEquals(6, spans.size());
-
+        assertEquals(7, spans.size());
         SpanData testProducer = spans.get(0);
         SpanData direct = spans.get(1);
         SpanData innerLog = spans.get(2);
-        SpanData innerProcessor = spans.get(3);
-        SpanData log = spans.get(4);
-        SpanData innerToLog = spans.get(5);
+        SpanData beanProcessor = spans.get(3);
+        SpanData customSpan = spans.get(4);
+        SpanData log = spans.get(5);
+        SpanData innerToLog = spans.get(6);
 
         // Validate span completion
         assertTrue(testProducer.hasEnded());
         assertTrue(direct.hasEnded());
         assertTrue(innerLog.hasEnded());
-        assertTrue(innerProcessor.hasEnded());
+        assertTrue(beanProcessor.hasEnded());
+        assertTrue(customSpan.hasEnded());
         assertTrue(log.hasEnded());
         assertTrue(innerToLog.hasEnded());
 
         // Validate same trace
-        assertEquals(testProducer.getTraceId(), direct.getTraceId());
-        assertEquals(testProducer.getTraceId(), innerLog.getTraceId());
-        assertEquals(testProducer.getTraceId(), innerProcessor.getTraceId());
-        assertEquals(testProducer.getTraceId(), log.getTraceId());
-        assertEquals(testProducer.getTraceId(), innerToLog.getTraceId());
+        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
+        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
+        assertEquals(testProducer.getSpanContext().getTraceId(), innerLog.getSpanContext().getTraceId());
+        assertEquals(testProducer.getSpanContext().getTraceId(), beanProcessor.getSpanContext().getTraceId());
+        assertEquals(testProducer.getSpanContext().getTraceId(), customSpan.getSpanContext().getTraceId());
+        assertEquals(testProducer.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
+        assertEquals(testProducer.getSpanContext().getTraceId(), innerToLog.getSpanContext().getTraceId());
 
-        // Validate op
+        // Validate operations
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getAttributes().get(AttributeKey.stringKey("op")));
-        assertEquals(Op.EVENT_PROCESS.toString(), innerProcessor.getAttributes().get(AttributeKey.stringKey("op")));
+        assertEquals(Op.EVENT_PROCESS.toString(), beanProcessor.getAttributes().get(AttributeKey.stringKey("op")));
 
         // Validate hierarchy
-        assertEquals(SpanId.getInvalid(), testProducer.getParentSpanId());
-        assertEquals(testProducer.getSpanId(), direct.getParentSpanId());
-        assertEquals(direct.getSpanId(), innerLog.getParentSpanId());
-        assertEquals(direct.getSpanId(), innerProcessor.getParentSpanId());
-        assertEquals(direct.getSpanId(), log.getParentSpanId());
-        assertEquals(log.getSpanId(), innerToLog.getParentSpanId());
+        assertFalse(testProducer.getParentSpanContext().isValid());
+        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
+        assertEquals(direct.getSpanContext().getSpanId(), beanProcessor.getParentSpanContext().getSpanId());
+        assertEquals(beanProcessor.getSpanContext().getSpanId(), customSpan.getParentSpanContext().getSpanId());
+
+        // Validate custom span
+        assertEquals("mySpan", customSpan.getName());
     }
 
     @Override
@@ -98,13 +101,17 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagati
         return new RouteBuilder() {
             @Override
             public void configure() {
+                MyBean myBean = new MyBean();
+                this.getCamelContext().getRegistry().bind("myBean", myBean);
+
                 from("direct:start")
                         .routeId("start")
                         .log("A message")
+                        .bean(MyBean.class)
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getIn().setHeader("operation", "fake");
+                                // noop
                             }
                         })
                         .to("log:info");
@@ -112,4 +119,14 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagati
         };
     }
 
+    class MyBean {
+        // NOTE: the commented annotation below would work only when an agent or a runtime framework (quarkus or spring)
+        // is available. We simulate it creating the Span by hand instead.
+        //@WithSpan
+        public void helloWorld() {
+            io.opentelemetry.api.trace.Span mySpan = otelTracer.spanBuilder("mySpan").startSpan();
+            // Do the work here
+            mySpan.end();
+        }
+    }
 }

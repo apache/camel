@@ -56,7 +56,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
      */
     private String excludePatterns;
     private boolean traceProcessors;
-    private boolean disableCoreProcessors = false;
+    private boolean disableCoreProcessors;
     private boolean traceHeadersInclusion;
 
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
