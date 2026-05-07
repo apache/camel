@@ -65,6 +65,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+// test change for Scalpel shadow comparison validation — will be reverted
 /**
  * A useful base class which creates a {@link CamelContext} with some routes along with a {@link ProducerTemplate} for
  * use in core test cases
