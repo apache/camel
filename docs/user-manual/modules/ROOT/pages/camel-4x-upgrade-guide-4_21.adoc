@@ -13,6 +13,11 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.20 to 4.21
 
+=== camel-grok - potential breaking change
+
+The library used for Camel Grok component has been migrated from no more maintained `io.krakens:java-grok` to its fork `io.github.whatap:java-grok`.
+It implies small differences listed https://github.com/whatap/java-grok#what-is-different-from-iokrakensjava-grok[here].
+
 === camel-core
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
