@@ -241,10 +241,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
      * configured with port 0 to let the OS assign a port atomically.
      */
     public int getLocalPort() {
-        if (acceptThread != null && acceptThread.serverSocket != null && acceptThread.serverSocket.isBound()) {
-            return acceptThread.serverSocket.getLocalPort();
-        }
-        return -1;
+        return acceptThread != null ? acceptThread.getLocalPort() : -1;
     }
 
     public void startConsumer(Socket clientSocket, MllpSocketBuffer mllpBuffer) {

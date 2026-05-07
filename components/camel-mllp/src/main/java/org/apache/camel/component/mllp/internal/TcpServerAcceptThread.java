@@ -45,6 +45,10 @@ public class TcpServerAcceptThread extends Thread {
         this.serverSocket = serverSocket;
     }
 
+    public int getLocalPort() {
+        return serverSocket != null && serverSocket.isBound() ? serverSocket.getLocalPort() : -1;
+    }
+
     /**
      * Derive a thread name from the class name, the component URI and the connection information.
      * <p/>
