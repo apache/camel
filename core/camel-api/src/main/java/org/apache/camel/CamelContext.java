@@ -82,6 +82,8 @@ import org.apache.camel.vault.VaultConfiguration;
  * <p/>
  * You can use the {@link CamelContext#getCamelContextExtension()} to obtain the extension point for the
  * {@link CamelContext}. This extension point exposes internal APIs via {@link ExtendedCamelContext}.
+ *
+ * TEST: this change should NOT trigger OpenRewrite (no FQCNs).
  */
 public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 
