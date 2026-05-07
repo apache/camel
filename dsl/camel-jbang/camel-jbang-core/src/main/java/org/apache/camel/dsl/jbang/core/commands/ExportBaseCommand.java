@@ -1072,6 +1072,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // write all the properties
+        Files.createDirectories(targetDir);
         Path appPropsPath = targetDir.resolve("application.properties");
         Files.writeString(appPropsPath, content.toString(), StandardCharsets.UTF_8);
     }
