@@ -29,12 +29,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +42,6 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerAggregationTest.class);
 
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcSyncRequestTestPort = AvailablePortFinder.find();
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcAsyncRequestTestPort = AvailablePortFinder.find();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final String GRPC_TEST_PING_VALUE = "PING";
     private static final String GRPC_TEST_PONG_VALUE = "PONG";
@@ -60,10 +54,12 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
 
     @BeforeEach
     public void startGrpcChannels() {
-        syncRequestChannel
-                = ManagedChannelBuilder.forAddress("localhost", grpcSyncRequestTestPort.getPort()).usePlaintext().build();
-        asyncRequestChannel
-                = ManagedChannelBuilder.forAddress("localhost", grpcAsyncRequestTestPort.getPort()).usePlaintext().build();
+        syncRequestChannel = ManagedChannelBuilder
+                .forAddress("localhost", ((GrpcConsumer) context.getRoute("grpc-sync").getConsumer()).getLocalPort())
+                .usePlaintext().build();
+        asyncRequestChannel = ManagedChannelBuilder
+                .forAddress("localhost", ((GrpcConsumer) context.getRoute("grpc-async").getConsumer()).getLocalPort())
+                .usePlaintext().build();
         blockingStub = PingPongGrpc.newBlockingStub(syncRequestChannel);
         nonBlockingStub = PingPongGrpc.newStub(syncRequestChannel);
         asyncNonBlockingStub = PingPongGrpc.newStub(asyncRequestChannel);
@@ -189,9 +185,8 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("grpc://localhost:" + grpcSyncRequestTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION" +
-                     "&routeControlledStreamObserver=true").to("log:foo");
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION&routeControlledStreamObserver=true")
+                        .to("log:foo");
             }
         });
         assertThrows(IllegalArgumentException.class, camelContext::start);
@@ -216,12 +211,12 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("grpc://localhost:" + grpcSyncRequestTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=PROPAGATION&routeControlledStreamObserver=true")
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=PROPAGATION&routeControlledStreamObserver=true")
+                        .routeId("grpc-sync")
                         .process(this::process);
 
-                from("grpc://localhost:" + grpcAsyncRequestTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                from("grpc://localhost:0/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
+                        .routeId("grpc-async")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
             }
         };

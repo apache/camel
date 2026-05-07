@@ -34,13 +34,11 @@ import org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm;
 import org.apache.camel.component.grpc.auth.jwt.JwtCallCredentials;
 import org.apache.camel.component.grpc.auth.jwt.JwtHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,12 +50,6 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcConsumerSecurityTest.class);
 
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcTlsTestPort = AvailablePortFinder.find();
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcJwtCorrectTestPort = AvailablePortFinder.find();
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcJwtIncorrectTestPort = AvailablePortFinder.find();
     private static final int GRPC_TEST_PING_ID = 1;
     private static final String GRPC_TEST_PING_VALUE = "PING";
     private static final String GRPC_TEST_PONG_VALUE = "PONG";
@@ -85,14 +77,16 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
 
         Assumptions.assumeTrue(sslContext instanceof OpenSslClientContext || sslContext instanceof JdkSslContext);
 
-        tlsChannel = NettyChannelBuilder.forAddress("localhost", grpcTlsTestPort.getPort())
+        int tlsPort = ((GrpcConsumer) context.getRoute("grpc-tls").getConsumer()).getLocalPort();
+        int jwtCorrectPort = ((GrpcConsumer) context.getRoute("grpc-jwt-correct").getConsumer()).getLocalPort();
+        int jwtIncorrectPort = ((GrpcConsumer) context.getRoute("grpc-jwt-incorrect").getConsumer()).getLocalPort();
+
+        tlsChannel = NettyChannelBuilder.forAddress("localhost", tlsPort)
                 .sslContext(sslContext)
                 .build();
 
-        jwtCorrectChannel
-                = NettyChannelBuilder.forAddress("localhost", grpcJwtCorrectTestPort.getPort()).usePlaintext().build();
-        jwtIncorrectChannel
-                = NettyChannelBuilder.forAddress("localhost", grpcJwtIncorrectTestPort.getPort()).usePlaintext().build();
+        jwtCorrectChannel = NettyChannelBuilder.forAddress("localhost", jwtCorrectPort).usePlaintext().build();
+        jwtIncorrectChannel = NettyChannelBuilder.forAddress("localhost", jwtIncorrectPort).usePlaintext().build();
 
         tlsAsyncStub = PingPongGrpc.newStub(tlsChannel);
         jwtCorrectAsyncStub
@@ -193,22 +187,25 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("grpc://localhost:" + grpcTlsTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
+                from("grpc://localhost:0" +
+                     "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
                      + "negotiationType=TLS&keyCertChainResource=file:src/test/resources/certs/server.pem&"
                      + "keyResource=file:src/test/resources/certs/server.key&trustCertCollectionResource=file:src/test/resources/certs/ca.pem")
+                        .routeId("grpc-tls")
                         .to("mock:tls-enable")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
-                from("grpc://localhost:" + grpcJwtCorrectTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
+                from("grpc://localhost:0" +
+                     "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
                      + "authenticationType=JWT&jwtSecret=" + GRPC_JWT_CORRECT_SECRET)
+                        .routeId("grpc-jwt-correct")
                         .to("mock:jwt-correct-secret")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
-                from("grpc://localhost:" + grpcJwtIncorrectTestPort.getPort()
-                     + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
+                from("grpc://localhost:0" +
+                     "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
                      + "authenticationType=JWT&jwtSecret=" + GRPC_JWT_CORRECT_SECRET)
+                        .routeId("grpc-jwt-incorrect")
                         .to("mock:jwt-incorrect-secret")
                         .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
             }

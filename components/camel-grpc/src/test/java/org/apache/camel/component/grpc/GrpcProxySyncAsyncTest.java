@@ -29,10 +29,8 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +40,6 @@ public class GrpcProxySyncAsyncTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProxySyncAsyncTest.class);
 
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcStubPort = AvailablePortFinder.find();
-    @RegisterExtension
-    static AvailablePortFinder.Port grpcRoutePort = AvailablePortFinder.find();
-
     private static Server grpcServer;
     private ManagedChannel channel;
     private PingPongGrpc.PingPongStub stub;
@@ -54,8 +47,8 @@ public class GrpcProxySyncAsyncTest extends CamelTestSupport {
 
     @BeforeAll
     public static void beforeAll() throws Exception {
-        grpcServer = ServerBuilder.forPort(grpcStubPort.getPort()).addService(new PingPongImpl()).build().start();
-        LOG.info("gRPC server started on port {}", grpcStubPort.getPort());
+        grpcServer = ServerBuilder.forPort(0).addService(new PingPongImpl()).build().start();
+        LOG.info("gRPC server started on port {}", grpcServer.getPort());
     }
 
     @AfterAll
@@ -68,8 +61,12 @@ public class GrpcProxySyncAsyncTest extends CamelTestSupport {
 
     @BeforeEach
     public void beforeEach() {
-        channel = ManagedChannelBuilder.forAddress("localhost", grpcRoutePort.getPort()).usePlaintext().build();
+        channel = ManagedChannelBuilder.forAddress("localhost", getRoutePort()).usePlaintext().build();
         stub = PingPongGrpc.newStub(channel);
+    }
+
+    private int getRoutePort() {
+        return ((GrpcConsumer) context.getRoute("grpc-consumer").getConsumer()).getLocalPort();
     }
 
     @AfterEach
@@ -116,10 +113,10 @@ public class GrpcProxySyncAsyncTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class).process(e -> routeHasException.set(true));
-                from("grpc://localhost:" + grpcRoutePort.getPort() +
+                from("grpc://localhost:0" +
                      "/org.apache.camel.component.grpc.PingPong" +
-                     "?routeControlledStreamObserver=true")
-                        .toD("grpc://localhost:" + grpcStubPort.getPort() +
+                     "?routeControlledStreamObserver=true").routeId("grpc-consumer")
+                        .toD("grpc://localhost:" + grpcServer.getPort() +
                              "/org.apache.camel.component.grpc.PingPong" +
                              "?method=${header.CamelGrpcMethodName}" +
                              "&streamRepliesTo=direct:next" +

@@ -26,7 +26,6 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -50,10 +49,7 @@ public class MllpTcpClientProducerIdleConnectionTimeoutTest extends CamelTestSup
     Logger log = LoggerFactory.getLogger(MllpTcpClientProducerIdleConnectionTimeoutTest.class);
 
     @RegisterExtension
-    AvailablePortFinder.Port mllpServerPort = AvailablePortFinder.find();
-
-    @RegisterExtension
-    MllpServerResource mllpServer = new MllpServerResource("localhost", mllpServerPort.getPort());
+    MllpServerResource mllpServer = new MllpServerResource("localhost", 0);
 
     @EndpointInject("direct://source")
     ProducerTemplate source;
