@@ -199,7 +199,7 @@
         <google-cloud-storage-version>2.67.0</google-cloud-storage-version>
         <google-cloud-aiplatform-version>3.92.0</google-cloud-aiplatform-version>
         <google-cloud-vision-version>3.90.0</google-cloud-vision-version>
-        <google-cloud-speech-version>4.86.0</google-cloud-speech-version>
+        <google-cloud-speech-version>4.87.0</google-cloud-speech-version>
         <google-cloud-texttospeech-version>2.92.0</google-cloud-texttospeech-version>
         <google-genai-version>1.53.0</google-genai-version>
         <graaljs-version>25.0.3</graaljs-version>
