@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import mockwebserver3.Dispatcher;
+import mockwebserver3.MockResponse;
+import mockwebserver3.MockWebServer;
+import mockwebserver3.RecordedRequest;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.params.Parameter;
 import org.apache.camel.test.junit6.params.Parameterized;
@@ -53,6 +53,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
     public static String endpointUri;
 
     private static final String OAUTH2_TOKEN_PATH = "/services/oauth2/token";
+    private static final String OAUTH2_REVOKE_PATH = "/services/oauth2/revoke";
     private static final String XML_RESPONSE = "<response/>";
     private static final String JSON_RESPONSE = "{ \"response\" : \"mock\" }";
 
@@ -88,7 +89,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
     public static void shutDownServer() throws IOException {
         // shutdown mock server
         if (server != null) {
-            server.shutdown();
+            server.close();
         }
     }
 
@@ -101,16 +102,28 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
         server.setDispatcher(new Dispatcher() {
             @Override
             public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
-                if (recordedRequest.getPath().equals(OAUTH2_TOKEN_PATH)) {
-                    return new MockResponse().setResponseCode(200)
-                            .setBody(
+                if (recordedRequest.getUrl().encodedPath().equals(OAUTH2_TOKEN_PATH)) {
+                    return new MockResponse.Builder()
+                            .code(200)
+                            .body(
                                     "{ \"access_token\": \"mock_token\", \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\", \"instance_url\": \""
-                                     + loginUrl + "\"}");
+                                  + loginUrl + "\"}")
+                            .build();
+                } else if (recordedRequest.getUrl().encodedPath().equals(OAUTH2_REVOKE_PATH)) {
+                    // Handle logout/revoke request
+                    return new MockResponse.Builder()
+                            .code(200)
+                            .body("")
+                            .build();
                 } else {
-                    return new MockResponse().setResponseCode(200)
-                            .setHeader(HttpHeader.CONTENT_TYPE.toString(),
-                                    recordedRequest.getHeader(HttpHeader.CONTENT_TYPE.toString()))
-                            .setBody("XML".equals(format) ? XML_RESPONSE : JSON_RESPONSE);
+                    String contentType = recordedRequest.getHeaders().get(HttpHeader.CONTENT_TYPE.toString());
+                    MockResponse.Builder builder = new MockResponse.Builder()
+                            .code(200)
+                            .body("XML".equals(format) ? XML_RESPONSE : JSON_RESPONSE);
+                    if (contentType != null) {
+                        builder.addHeader(HttpHeader.CONTENT_TYPE.toString(), contentType);
+                    }
+                    return builder.build();
                 }
             }
         });
