@@ -4449,6 +4449,12 @@
         </profile>
         <profile>
             <id>nullcheck</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jspecify</groupId>
+                    <artifactId>jspecify</artifactId>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
