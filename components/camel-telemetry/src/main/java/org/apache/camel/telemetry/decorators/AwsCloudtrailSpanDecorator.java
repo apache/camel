@@ -24,7 +24,6 @@ public class AwsCloudtrailSpanDecorator extends AbstractMessagingSpanDecorator {
 
     static final String CLOUDTRAIL_EVENT_NAME = "eventName";
     static final String CLOUDTRAIL_EVENT_SOURCE = "eventSource";
-    static final String CLOUDTRAIL_USERNAME = "username";
 
     /**
      * Constants copied from {@link org.apache.camel.component.aws.cloudtrail.CloudtrailConstants}
@@ -32,7 +31,6 @@ public class AwsCloudtrailSpanDecorator extends AbstractMessagingSpanDecorator {
     static final String EVENT_ID = "CamelAwsCloudTrailEventId";
     static final String EVENT_NAME = "CamelAwsCloudTrailEventName";
     static final String EVENT_SOURCE = "CamelAwsCloudTrailEventSource";
-    static final String USERNAME = "CamelAwsCloudTrailEventUsername";
 
     @Override
     public String getComponent() {
@@ -56,11 +54,6 @@ public class AwsCloudtrailSpanDecorator extends AbstractMessagingSpanDecorator {
         String eventSource = exchange.getIn().getHeader(EVENT_SOURCE, String.class);
         if (eventSource != null) {
             span.setTag(CLOUDTRAIL_EVENT_SOURCE, eventSource);
-        }
-
-        String username = exchange.getIn().getHeader(USERNAME, String.class);
-        if (username != null) {
-            span.setTag(CLOUDTRAIL_USERNAME, username);
         }
     }
 

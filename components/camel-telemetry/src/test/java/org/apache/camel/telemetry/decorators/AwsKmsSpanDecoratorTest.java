@@ -30,8 +30,7 @@ public class AwsKmsSpanDecoratorTest {
     @Test
     public void testPre() {
         String operation = "createKey";
-        String keyId = "1234abcd-12ab-34cd-56ef-1234567890ab";
-        String keyArn = "arn:aws:kms:us-east-1:123456789012:key/" + keyId;
+        String keyArn = "arn:aws:kms:us-east-1:123456789012:key/1234abcd-12ab-34cd-56ef-1234567890ab";
         String keyState = "Enabled";
 
         Endpoint endpoint = Mockito.mock(Endpoint.class);
@@ -42,7 +41,6 @@ public class AwsKmsSpanDecoratorTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(exchange.getExchangeId()).thenReturn("exchange-1");
         Mockito.when(message.getHeader(AwsKmsSpanDecorator.OPERATION, String.class)).thenReturn(operation);
-        Mockito.when(message.getHeader(AwsKmsSpanDecorator.KEY_ID, String.class)).thenReturn(keyId);
         Mockito.when(message.getHeader(AwsKmsSpanDecorator.KEY_ARN, String.class)).thenReturn(keyArn);
         Mockito.when(message.getHeader(AwsKmsSpanDecorator.KEY_STATE, String.class)).thenReturn(keyState);
 
@@ -53,7 +51,6 @@ public class AwsKmsSpanDecoratorTest {
         decorator.beforeTracingEvent(span, exchange, endpoint);
 
         assertEquals(operation, span.tags().get(AwsKmsSpanDecorator.KMS_OPERATION));
-        assertEquals(keyId, span.tags().get(AwsKmsSpanDecorator.KMS_KEY_ID));
         assertEquals(keyArn, span.tags().get(AwsKmsSpanDecorator.KMS_KEY_ARN));
         assertEquals(keyState, span.tags().get(AwsKmsSpanDecorator.KMS_KEY_STATE));
     }

@@ -23,7 +23,6 @@ import org.apache.camel.telemetry.Span;
 public class AwsKmsSpanDecorator extends AbstractSpanDecorator {
 
     static final String KMS_OPERATION = "operation";
-    static final String KMS_KEY_ID = "keyId";
     static final String KMS_KEY_ARN = "keyArn";
     static final String KMS_KEY_STATE = "keyState";
 
@@ -31,7 +30,6 @@ public class AwsKmsSpanDecorator extends AbstractSpanDecorator {
      * Constants copied from {@link org.apache.camel.component.aws2.kms.KMS2Constants}
      */
     static final String OPERATION = "CamelAwsKMSOperation";
-    static final String KEY_ID = "CamelAwsKMSKeyId";
     static final String KEY_ARN = "CamelAwsKMSKeyArn";
     static final String KEY_STATE = "CamelAwsKMSKeyState";
 
@@ -52,11 +50,6 @@ public class AwsKmsSpanDecorator extends AbstractSpanDecorator {
         String operation = exchange.getIn().getHeader(OPERATION, String.class);
         if (operation != null) {
             span.setTag(KMS_OPERATION, operation);
-        }
-
-        String keyId = exchange.getIn().getHeader(KEY_ID, String.class);
-        if (keyId != null) {
-            span.setTag(KMS_KEY_ID, keyId);
         }
 
         String keyArn = exchange.getIn().getHeader(KEY_ARN, String.class);

@@ -45,7 +45,6 @@ public class AwsCloudtrailSpanDecoratorTest {
     public void testPre() {
         String eventName = "ConsoleLogin";
         String eventSource = "signin.amazonaws.com";
-        String username = "alice";
 
         Endpoint endpoint = Mockito.mock(Endpoint.class);
         Exchange exchange = Mockito.mock(Exchange.class);
@@ -55,7 +54,6 @@ public class AwsCloudtrailSpanDecoratorTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(AwsCloudtrailSpanDecorator.EVENT_NAME, String.class)).thenReturn(eventName);
         Mockito.when(message.getHeader(AwsCloudtrailSpanDecorator.EVENT_SOURCE, String.class)).thenReturn(eventSource);
-        Mockito.when(message.getHeader(AwsCloudtrailSpanDecorator.USERNAME, String.class)).thenReturn(username);
 
         AbstractMessagingSpanDecorator decorator = new AwsCloudtrailSpanDecorator();
 
@@ -65,7 +63,6 @@ public class AwsCloudtrailSpanDecoratorTest {
 
         assertEquals(eventName, span.tags().get(AwsCloudtrailSpanDecorator.CLOUDTRAIL_EVENT_NAME));
         assertEquals(eventSource, span.tags().get(AwsCloudtrailSpanDecorator.CLOUDTRAIL_EVENT_SOURCE));
-        assertEquals(username, span.tags().get(AwsCloudtrailSpanDecorator.CLOUDTRAIL_USERNAME));
     }
 
 }
