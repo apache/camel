@@ -313,7 +313,7 @@ docker exec conjur_client conjur policy load -b root -f /tmp/test-secrets.yaml
 if [ $? -eq 0 ]; then
     echo "‚úÖ Policy loaded successfully!"
 else
-    echo "‚?å Policy load failed"
+    echo "‚ùå Policy load failed"
     exit 1
 fi
 

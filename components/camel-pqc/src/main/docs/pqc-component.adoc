@@ -269,7 +269,7 @@ In this context there are three entities to consider:
 
 - A key generation algorithm which generates a public key and a private key (a keypair).
 
-- An encapsulation algorithm which takes as input a public key, and outputs a shared secret value and an â€œencapsulationâ€? (a ciphertext) of this secret value.
+- An encapsulation algorithm which takes as input a public key, and outputs a shared secret value and an â€œencapsulationâ€ (a ciphertext) of this secret value.
 
 - A decapsulation algorithm which takes as input the encapsulation and the private key, and outputs the shared secret value.
 
@@ -1314,43 +1314,43 @@ public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
 
 |Persistence
 |âœ… File system
-|â?Œ Memory only
+|âŒ Memory only
 |âœ… Vault backend
 |âœ… AWS Secrets Manager
 
 |Distributed
-|â?Œ Single node
-|â?Œ Single node
+|âŒ Single node
+|âŒ Single node
 |âœ… Multi-node
 |âœ… Multi-region
 
 |Audit Logging
-|â?Œ Manual
-|â?Œ None
+|âŒ Manual
+|âŒ None
 |âœ… Automatic (Vault)
 |âœ… Automatic (CloudTrail)
 
 |Access Control
-|â?Œ File permissions
-|â?Œ None
+|âŒ File permissions
+|âŒ None
 |âœ… Vault policies
 |âœ… IAM policies
 
 |Encryption at Rest
-|â?Œ OS-dependent
-|â?Œ N/A
+|âŒ OS-dependent
+|âŒ N/A
 |âœ… Always (Vault)
 |âœ… Always (AWS KMS)
 
 |High Availability
-|â?Œ No
-|â?Œ No
+|âŒ No
+|âŒ No
 |âœ… Yes (Vault HA)
 |âœ… Yes (AWS Multi-AZ)
 
 |External Dependencies
-|â?Œ None
-|â?Œ None
+|âŒ None
+|âŒ None
 |âœ… Vault + spring-vault
 |âœ… AWS SDK v2
 
@@ -1361,21 +1361,21 @@ public AwsSecretsManagerKeyLifecycleManager createKeyManager() {
 |âœ… Yes
 
 |Spring Integration
-|â?Œ No
-|â?Œ No
+|âŒ No
+|âŒ No
 |âœ… Yes
-|â?Œ No
+|âŒ No
 
 |Cloud Integration
-|â?Œ No
-|â?Œ No
+|âŒ No
+|âŒ No
 |âœ… HCP Vault
 |âœ… AWS Native
 
 |Multi-Region Support
-|â?Œ No
-|â?Œ No
-|â?Œ No
+|âŒ No
+|âŒ No
+|âŒ No
 |âœ… Yes
 
 |Use Case

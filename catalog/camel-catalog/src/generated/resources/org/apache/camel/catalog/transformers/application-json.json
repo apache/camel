@@ -3,11 +3,11 @@
     "kind": "transformer",
     "name": "application-json",
     "title": "Application Json",
-    "description": "Transforms from JSon to binary (byte array) using Jackson 3",
+    "description": "Transforms from JSon to binary (byte array) using Jackson",
     "deprecated": false,
-    "javaType": "org.apache.camel.component.jackson3.transform.JsonDataTypeTransformer",
+    "javaType": "org.apache.camel.component.jackson.transform.JsonDataTypeTransformer",
     "groupId": "org.apache.camel",
-    "artifactId": "camel-jackson3",
+    "artifactId": "camel-jackson",
     "version": "4.21.0-SNAPSHOT"
   }
 }
