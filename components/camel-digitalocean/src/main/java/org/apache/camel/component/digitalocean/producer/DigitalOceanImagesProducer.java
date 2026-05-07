@@ -34,6 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The DigitalOcean producer for Images API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanImagesProducer extends DigitalOceanProducer {
 
     public DigitalOceanImagesProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

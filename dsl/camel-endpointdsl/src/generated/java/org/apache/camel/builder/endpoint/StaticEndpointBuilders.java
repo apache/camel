@@ -4272,6 +4272,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String path) {
         return digitalocean("digitalocean", path);
     }
@@ -4300,6 +4301,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String componentName, String path) {
         return DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
