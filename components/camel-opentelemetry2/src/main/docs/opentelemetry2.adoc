@@ -24,8 +24,10 @@ The configuration properties for the OpenTelemetry2 tracer are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 | Option | Default | Description
+|`enabled`| false | Turn the tracing on/off.
+|`traceProcessors`| false | Trace inner custom processors (i.e., any `process` configured in the route).
+|`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
 | `excludePatterns` | | A comma-separated list of patterns (e.g., `log*,direct*,setBody*`) to exclude from tracing. Spans matching these patterns will be disabled.
-| `traceProcessors` | `false` | If set to `true`, Camel creates OpenTelemetry Spans for each processor in your routes. You can use `excludePatterns` to filter which processors are traced.
 | `traceHeadersInclusion`| `false` | If set to `true`, adds the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
 
