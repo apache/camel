@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.Resource;
+
 /**
  * Represents a node in the {@link org.apache.camel.model routes} which is identified as a route.
  */
@@ -25,6 +27,11 @@ public interface NamedRoute {
      * Gets the route id.
      */
     String getRouteId();
+
+    /**
+     * Gets the route description.
+     */
+    String getDescription();
 
     /**
      * Gets the node prefix id.
@@ -50,5 +57,10 @@ public interface NamedRoute {
      * Gets the route input
      */
     NamedNode getInput();
+
+    /**
+     * Gets the {@link Resource}.
+     */
+    Resource getResource();
 
 }

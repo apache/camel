@@ -818,12 +818,12 @@ class RouteDiagramTest {
 
     @Test
     void testExtractSourceNameWithLineNumber() {
-        assertEquals("cheese.java:9", RouteDiagramHelper.extractSourceName("cheese.java:9"));
+        assertEquals("cheese.java", RouteDiagramHelper.extractSourceName("cheese.java:9"));
     }
 
     @Test
     void testExtractSourceNameSchemeAndLineNumber() {
-        assertEquals("cheese.java:9", RouteDiagramHelper.extractSourceName("file:/path/to/cheese.java:9"));
+        assertEquals("cheese.java", RouteDiagramHelper.extractSourceName("file:/path/to/cheese.java:9"));
     }
 
     @Test

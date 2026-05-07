@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -86,21 +88,9 @@ public final class RouteDiagramHelper {
         if (source == null || source.isBlank()) {
             return null;
         }
-        // strip URI scheme prefix (e.g. "file:", "classpath:") — only if the part
-        // before the first colon is all letters (a valid scheme). This avoids
-        // stripping line numbers from sources like "cheese.java:9".
-        int colon = source.indexOf(':');
-        if (colon > 0) {
-            String scheme = source.substring(0, colon);
-            if (scheme.chars().allMatch(Character::isLetter)) {
-                source = source.substring(colon + 1);
-            }
-        }
-        // return just the filename part
-        int slash = Math.max(source.lastIndexOf('/'), source.lastIndexOf('\\'));
-        if (slash >= 0 && slash < source.length() - 1) {
-            return source.substring(slash + 1);
-        }
+        source = LoggerHelper.sourceNameOnly(source);
+        source = LoggerHelper.stripScheme(source);
+        source = FileUtil.stripPath(source);
         return source;
     }
 }

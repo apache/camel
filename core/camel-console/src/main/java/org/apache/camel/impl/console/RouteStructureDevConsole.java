@@ -18,13 +18,10 @@ package org.apache.camel.impl.console;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Route;
-import org.apache.camel.api.management.ManagedCamelContext;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -42,8 +39,6 @@ import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationN
 
 @DevConsole(name = "route-structure", description = "Dump route structure")
 public class RouteStructureDevConsole extends AbstractDevConsole {
-
-    // TODO: no JMX but model only
 
     /**
      * Filters the routes matching by route id, route uri, and source location
@@ -69,15 +64,16 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         final String brief = (String) options.getOrDefault(BRIEF, "false");
 
         final StringBuilder sb = new StringBuilder();
-        Function<ManagedRouteMBean, Object> task = mrb -> {
+        Function<NamedRoute, Object> task = def -> {
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
-                        = dumper.dumpStructure(getCamelContext(), mrb.getRouteId(), "true".equalsIgnoreCase(brief));
+                        = dumper.dumpStructure(getCamelContext(), def.getRouteId(), "true".equalsIgnoreCase(brief));
 
-                sb.append(String.format("    Id: %s", mrb.getRouteId()));
-                if (mrb.getSourceLocation() != null) {
-                    sb.append(String.format("%n    Source: %s", extractSourceLocationNoLineNumber(mrb.getSourceLocation())));
+                sb.append(String.format("    Id: %s", def.getRouteId()));
+                if (def.getResource() != null) {
+                    sb.append(String.format("%n    Source: %s",
+                            extractSourceLocationNoLineNumber(def.getResource().getLocation())));
                 }
                 sb.append("\n\n");
                 for (ModelDumpLine line : lines) {
@@ -108,27 +104,27 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         final JsonObject root = new JsonObject();
         final JsonArray list = new JsonArray();
 
-        Function<ManagedRouteMBean, Object> task = mrb -> {
+        Function<NamedRoute, Object> task = def -> {
             JsonObject jo = new JsonObject();
             list.add(jo);
 
-            jo.put("routeId", mrb.getRouteId());
-            jo.put("from", mrb.getEndpointUri());
-            if (mrb.getSourceLocation() != null) {
-                jo.put("source", extractSourceLocationNoLineNumber(mrb.getSourceLocation()));
-                Integer line = extractSourceLocationLineNumber(mrb.getSourceLocation());
+            jo.put("routeId", def.getRouteId());
+            jo.put("from", def.getEndpointUrl());
+            if (def.getResource() != null) {
+                jo.put("source", extractSourceLocationNoLineNumber(def.getResource().getLocation()));
+                Integer line = extractSourceLocationLineNumber(def.getResource().getLocation());
                 if (line != null) {
                     jo.put("line", line);
                 }
             }
-            if (mrb.getDescription() != null) {
-                jo.put("description", mrb.getDescription());
+            if (def.getDescription() != null) {
+                jo.put("description", def.getDescription());
             }
 
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
-                        = dumper.dumpStructure(getCamelContext(), mrb.getRouteId(), "true".equalsIgnoreCase(brief));
+                        = dumper.dumpStructure(getCamelContext(), def.getRouteId(), "true".equalsIgnoreCase(brief));
                 JsonArray code = dumpAsJSon(lines);
                 jo.put("code", code);
             } catch (Exception e) {
@@ -141,43 +137,34 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
+    protected void doCall(Map<String, Object> options, Function<NamedRoute, Object> task) {
         String path = (String) options.get(Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
         String filter = (String) options.get(FILTER);
         String limit = (String) options.get(LIMIT);
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
-        if (mcc != null) {
-            List<Route> routes = getCamelContext().getRoutes();
-            routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
-            routes.stream()
-                    .map(route -> mcc.getManagedRoute(route.getRouteId()))
-                    .filter(Objects::nonNull)
-                    .filter(r -> accept(r, filter))
-                    .filter(r -> accept(r, subPath))
-                    .sorted(RouteStructureDevConsole::sort)
-                    .limit(max)
-                    .forEach(task::apply);
-        }
+        var routes = getCamelContext().getNamedRouteDefinitions();
+        routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
+        routes.stream()
+                .filter(r -> accept(r, filter))
+                .filter(r -> accept(r, subPath))
+                .limit(max)
+                .forEach(task::apply);
     }
 
-    private static boolean accept(ManagedRouteMBean mrb, String filter) {
+    private static boolean accept(NamedRoute route, String filter) {
         if (filter == null || filter.isBlank()) {
             return true;
         }
 
-        String onlyName = LoggerHelper.sourceNameOnly(mrb.getSourceLocation());
-        return PatternHelper.matchPattern(mrb.getRouteId(), filter)
-                || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
-                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter)
+        String uri = route.getInput().getLabel();
+        String loc = LoggerHelper.getLineNumberLoggerName(route);
+        String onlyName = LoggerHelper.sourceNameOnly(loc);
+        return PatternHelper.matchPattern(route.getRouteId(), filter)
+                || PatternHelper.matchPattern(uri, filter)
+                || PatternHelper.matchPattern(loc, filter)
                 || PatternHelper.matchPattern(onlyName, filter);
-    }
-
-    private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
-        // sort by id
-        return o1.getRouteId().compareTo(o2.getRouteId());
     }
 
     private static JsonArray dumpAsJSon(List<ModelDumpLine> lines) {
