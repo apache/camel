@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -27,16 +28,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that optimistic locking retries happen synchronously in the same thread when optimisticLockingSyncRetry is
  * enabled.
  */
-public class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
+class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
 
     private static final int FAIL_FIRST_N_ATTEMPTS = 3;
 
@@ -60,33 +63,25 @@ public class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
     };
 
     @Test
-    public void testSyncRetryHappensInSameThread() throws Exception {
+    void testSyncRetryHappensInSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-
-        String callerThread = Thread.currentThread().getName();
 
         template.sendBodyAndHeader("direct:start", "A", "id", 1);
         template.sendBodyAndHeader("direct:start", "B", "id", 1);
 
         mock.assertIsSatisfied();
 
-        // The repository should have been called more than FAIL_FIRST_N_ATTEMPTS times
-        // (the first N fail, then succeed)
         assertTrue(addCounter.get() > FAIL_FIRST_N_ATTEMPTS,
                 "Expected more than " + FAIL_FIRST_N_ATTEMPTS + " attempts, got " + addCounter.get());
 
-        // Since optimisticLockingSyncRetry is enabled, the retry should happen in a Camel thread
-        // (the route's thread), NOT in the AggregateOptimisticLockingExecutor thread pool.
-        // The key assertion is that the thread name does NOT contain the async executor name.
-        if (aggregateThreadName != null) {
-            assertFalse(aggregateThreadName.contains("AggregateOptimisticLockingExecutor"),
-                    "Expected synchronous retry but found async executor thread: " + aggregateThreadName);
-        }
+        assertNotNull(aggregateThreadName, "Expected aggregateThreadName to be set");
+        assertFalse(aggregateThreadName.contains("AggregateOptimisticLockingExecutor"),
+                "Expected synchronous retry but found async executor thread: " + aggregateThreadName);
     }
 
     @Test
-    public void testSyncRetryCompletes() throws Exception {
+    void testSyncRetryCompletes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
 
@@ -100,7 +95,7 @@ public class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSyncRetryWithNonZeroDelayStaysOnCallingThread() throws Exception {
+    void testSyncRetryWithNonZeroDelayStaysOnCallingThread() throws Exception {
         AtomicInteger delayedCounter = new AtomicInteger();
         AtomicReference<String> retryThreadName = new AtomicReference<>();
 
@@ -145,7 +140,7 @@ public class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSyncRetryInterrupted() throws Exception {
+    void testSyncRetryInterrupted() throws Exception {
         AtomicInteger interruptCounter = new AtomicInteger();
 
         MemoryAggregationRepository alwaysFailRepo = new MemoryAggregationRepository(true) {
@@ -182,17 +177,17 @@ public class AggregateOptimisticLockSyncRetryTest extends ContextTestSupport {
         });
         sender.start();
 
-        // Let at least one retry attempt happen before interrupting
-        Thread.sleep(100);
+        // Wait until at least one retry attempt has occurred before interrupting
+        Awaitility.await().atMost(Duration.ofSeconds(5)).until(() -> interruptCounter.get() > 0);
         sender.interrupt();
         sender.join(5000);
 
         // The exchange should have been completed with an InterruptedException
         Exchange result = resultExchange.get();
-        if (result != null && result.getException() != null) {
-            assertTrue(result.getException() instanceof InterruptedException,
-                    "Expected InterruptedException but got: " + result.getException());
-        }
+        assertNotNull(result, "Expected exchange to be set after sender completed");
+        assertNotNull(result.getException(), "Expected exception on interrupted exchange");
+        assertTrue(result.getException() instanceof InterruptedException,
+                "Expected InterruptedException but got: " + result.getException());
     }
 
     @Override
