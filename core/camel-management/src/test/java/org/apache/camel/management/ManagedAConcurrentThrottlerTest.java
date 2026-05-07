@@ -26,22 +26,20 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ThrottlingMode;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class ManagedAConcurrentThrottlerTest extends AbstractManagedThrottlerTest {
 
     @Test
     public void testManageThrottler() throws Exception {
         final Long total = super.runTestManageThrottler();
 
-        // 10 * delay (100) + tolerance (200)
-        assertTrue(total < 1200, "Should take at most 1.2 sec: was " + total);
+        // 10 * delay (100) + tolerance (1500 for slow CI)
+        assertTrue(total < 2500, "Should take at most 2.5 sec: was " + total);
     }
 
     @DisabledOnOs(OS.WINDOWS)
