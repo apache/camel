@@ -38,6 +38,7 @@ public class MDCHeadersTraceTest extends TelemetryDevTracerTestSupport {
         TelemetryDevTracer tst = new TelemetryDevTracer();
         tst.setTraceFormat("json");
         tst.setTraceHeadersInclusion(true);
+        tst.setDisableCoreProcessors(true);
         CamelContextAware.trySetCamelContext(tst, context);
         tst.init(context);
         return context;

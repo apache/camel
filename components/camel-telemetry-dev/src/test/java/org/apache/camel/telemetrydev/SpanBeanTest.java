@@ -26,22 +26,25 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.telemetry.Op;
+import org.apache.camel.telemetry.Span;
+import org.apache.camel.telemetry.SpanStorageManagerExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class TelemetryDevTracerTest extends TelemetryDevTracerTestSupport {
+public class SpanBeanTest extends TelemetryDevTracerTestSupport {
+
+    TelemetryDevTracer tracer;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        TelemetryDevTracer tst = new TelemetryDevTracer();
-        tst.setTraceFormat("json");
-        tst.setDisableCoreProcessors(true);
+        tracer = new TelemetryDevTracer();
+        tracer.setTraceFormat("json");
         CamelContext context = super.createCamelContext();
-        CamelContextAware.trySetCamelContext(tst, context);
-        tst.init(context);
+        CamelContextAware.trySetCamelContext(tracer, context);
+        tracer.init(context);
         return context;
     }
 
@@ -55,59 +58,52 @@ public class TelemetryDevTracerTest extends TelemetryDevTracerTestSupport {
         checkTrace(traces.values().iterator().next(), null);
     }
 
-    @Test
-    void testRouteMultipleRequests() throws IOException {
-        for (int i = 1; i <= 10; i++) {
-            context.createProducerTemplate().sendBody("direct:start", "Hello!");
-        }
-        Map<String, DevTrace> traces = tracesFromLog();
-        // Each trace should have a unique trace id. It is enough to assert that
-        // the number of elements in the map is the same of the requests to prove
-        // all traces have been generated uniquely.
-        assertEquals(10, traces.size());
-        // Each trace should have the same structure
-        for (DevTrace trace : traces.values()) {
-            checkTrace(trace, "Hello!");
-        }
-
-    }
-
     private void checkTrace(DevTrace trace, String expectedBody) {
         List<DevSpanAdapter> spans = trace.getSpans();
-        assertEquals(3, spans.size());
+        assertEquals(7, spans.size());
         DevSpanAdapter testProducer = spans.get(0);
         DevSpanAdapter direct = spans.get(1);
-        DevSpanAdapter log = spans.get(2);
+        DevSpanAdapter logProcessor = spans.get(2);
+        DevSpanAdapter beanProcessor = spans.get(3);
+        DevSpanAdapter beanMySpan = spans.get(4);
+        DevSpanAdapter to = spans.get(5);
+        DevSpanAdapter toProcessor = spans.get(6);
 
         // Validate span completion
         assertEquals("true", testProducer.getTag("isDone"));
         assertEquals("true", direct.getTag("isDone"));
-        assertEquals("true", log.getTag("isDone"));
+        assertEquals("true", logProcessor.getTag("isDone"));
+        assertEquals("true", beanProcessor.getTag("isDone"));
+        assertEquals("true", beanMySpan.getTag("isDone"));
+        assertEquals("true", to.getTag("isDone"));
+        assertEquals("true", toProcessor.getTag("isDone"));
 
         // Validate same trace
         assertEquals(testProducer.getTag("traceid"), direct.getTag("traceid"));
-        assertEquals(direct.getTag("traceid"), log.getTag("traceid"));
+        assertEquals(direct.getTag("traceid"), to.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), logProcessor.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), toProcessor.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), beanProcessor.getTag("traceid"));
+        assertEquals(testProducer.getTag("traceid"), beanMySpan.getTag("traceid"));
 
         // Validate hierarchy
         assertNull(testProducer.getTag("parentSpan"));
         assertEquals(testProducer.getTag("spanid"), direct.getTag("parentSpan"));
-        assertEquals(direct.getTag("spanid"), log.getTag("parentSpan"));
+        assertEquals(direct.getTag("spanid"), logProcessor.getTag("parentSpan"));
+        assertEquals(direct.getTag("spanid"), beanProcessor.getTag("parentSpan"));
+        assertEquals(beanProcessor.getTag("spanid"), beanMySpan.getTag("parentSpan"));
+        assertEquals(direct.getTag("spanid"), to.getTag("parentSpan"));
+        assertEquals(to.getTag("spanid"), toProcessor.getTag("parentSpan"));
 
         // Validate operations
         assertEquals(Op.EVENT_SENT.toString(), testProducer.getTag("op"));
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getTag("op"));
 
         // Validate message logging
-        assertEquals("A message", direct.getLogEntries().get(0).getFields().get("message"));
-        if (expectedBody == null) {
-            assertEquals(
-                    "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    log.getLogEntries().get(0).getFields().get("message"));
-        } else {
-            assertEquals(
-                    "Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    log.getLogEntries().get(0).getFields().get("message"));
-        }
+        assertEquals("A message", logProcessor.getLogEntries().get(0).getFields().get("message"));
+        assertEquals(
+                "Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
+                toProcessor.getLogEntries().get(0).getFields().get("message"));
 
     }
 
@@ -116,12 +112,29 @@ public class TelemetryDevTracerTest extends TelemetryDevTracerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                MyBean myBean = new MyBean();
+                this.getCamelContext().getRegistry().bind("myBean", myBean);
+
                 from("direct:start")
                         .routeId("start")
                         .log("A message")
+                        .bean(MyBean.class)
                         .to("log:info");
             }
         };
+    }
+
+    class MyBean {
+        // We simulate the creation of a Span by hand.
+        public void helloWorld(Exchange exchange) {
+            // We just simulate the creation of a span and proper nesting. In a real implementation
+            // it is up to the telemetry technology to do so (for example, via method annotations)
+            Span parentSpan = new SpanStorageManagerExchange().peek(exchange);
+            Span span = tracer.getSpanLifecycleManager().create("mySpan", "empty", parentSpan, null);
+            tracer.getSpanLifecycleManager().activate(span);
+            tracer.getSpanLifecycleManager().deactivate(span);
+            tracer.getSpanLifecycleManager().close(span);
+        }
     }
 
 }

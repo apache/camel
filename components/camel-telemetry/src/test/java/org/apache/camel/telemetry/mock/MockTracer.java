@@ -35,7 +35,7 @@ import org.apache.camel.telemetry.Tracer;
 @ManagedResource(description = "MockTracer")
 public class MockTracer extends Tracer {
 
-    public MockSpanLifecycleManager slcm;
+    MockSpanLifecycleManager slcm;
 
     @Override
     protected void initTracer() {
@@ -47,8 +47,7 @@ public class MockTracer extends Tracer {
         return slcm.traces();
     }
 
-    // NOTE: public because we're using directly in a test case to generate a custom span
-    public class MockSpanLifecycleManager implements SpanLifecycleManager {
+    private class MockSpanLifecycleManager implements SpanLifecycleManager {
 
         // Used to collect the traces for later evaluation as traces
         Map<String, Span> inMemoryStorageMap = new HashMap<>();
