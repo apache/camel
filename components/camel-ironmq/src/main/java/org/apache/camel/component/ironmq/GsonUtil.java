@@ -21,6 +21,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import org.apache.camel.Message;
 
+@Deprecated(since = "4.21")
 public final class GsonUtil {
     private static final Gson GSON = new Gson();
 

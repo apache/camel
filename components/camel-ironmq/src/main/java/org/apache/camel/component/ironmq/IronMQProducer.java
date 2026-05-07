@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The IronMQ producer.
  */
+@Deprecated(since = "4.21")
 public class IronMQProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(IronMQProducer.class);

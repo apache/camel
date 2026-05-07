@@ -8577,6 +8577,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String path) {
         return ironmq("ironmq", path);
     }
@@ -8599,6 +8600,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String componentName, String path) {
         return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

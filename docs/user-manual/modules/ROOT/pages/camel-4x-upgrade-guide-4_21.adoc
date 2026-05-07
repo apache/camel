@@ -258,6 +258,12 @@ What it means is that, from now on, the final user or any third party dependency
 
 This is just an informative note, there is not action expected by the final user.
 
+=== Deprecation of camel-ironmq
+
+The component camel-ironmq is deprecated. The official library used has been unmaintained since 2017
+All the other client libraries (in other languages) are unmaintained since the same amount of time.
+The whole iron-io GitHub organization has almost no activity.
+
 === Deprecation of camel-digitalocean
 
 The component camel-digitalocean is deprecated. The java library used has been unmaintained for several years and there is no replacement.

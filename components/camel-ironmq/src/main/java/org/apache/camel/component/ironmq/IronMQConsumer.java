@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The IronMQ consumer.
  */
+@Deprecated(since = "4.21")
 public class IronMQConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(IronMQConsumer.class);
