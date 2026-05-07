@@ -85,6 +85,9 @@ import org.apache.camel.vault.VaultConfiguration;
  */
 public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 
+    // TEST: this line SHOULD trigger OpenRewrite FQCN detection
+    java.util.List<String> testFqcnDetection = null;
+
     /**
      * Gets the {@link ExtendedCamelContext} that contains the extension points for internal context APIs. These APIs
      * are intended for internal usage within Camel and end-users should avoid using them.
