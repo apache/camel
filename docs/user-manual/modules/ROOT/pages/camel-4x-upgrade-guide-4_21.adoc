@@ -218,7 +218,17 @@ Camel Grape was deprecated with Camel 4.0. The component is now removed.
 
 === camel-telemetry
 
-If you have custom telemetry implementations, the following interfaces have changed:
+In order to prevent some potential span leakage in `camel-opentelemetry2` (see notes below) we had to perform some changes and introduce the following parameter:
+
+```
+|`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
+```
+
+This is required in order to distinguish the older `traceProcessors` parameter which now accounts **exclusively** for custom processors. Keeping the default parameter (`false`) could increase the number of spans generated, though, this is required to guarantee consistency and memory sealing. If you need to reduce the number of spans for any reason you can explicitly provide exclusion configuration.
+
+NOTE: turn `disableCoreProcessors` to `true` and `traceProcessors` to `false` to skip entirely all processors. However it is not recommended to disable core processors in order to avoid the generation of third party dependencies orphaned spans.
+
+In this version we have also changed certain interfaces, so, if you have custom telemetry implementations, you may need to adjust to them:
 
 ==== `org.apache.camel.telemetry.SpanLifecycleManager`
 
@@ -265,4 +275,3 @@ The component camel-digitalocean is deprecated. The java library used has been u
 === Deprecation of camel-irc
 
 The component camel-irc is deprecated. The library used had no stable release since 2007. There is no Java library very active for this protocol.
-
