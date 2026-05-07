@@ -21,6 +21,31 @@ set -e
 # Move to top directory
 cd `dirname "$0"`/../..
 
+# Conditionally enable OpenRewrite FQCN shortening only when needed.
+# We diff HEAD~1 vs HEAD to check for FQCNs in the changeset.
+# For PR builds, actions/checkout creates a merge commit whose first parent (HEAD~1)
+# is the base branch tip, so the diff covers all PR changes.
+# For main builds, HEAD~1 is the previous (squash-merged) commit.
+# We only need --deepen=1 (depth 1 -> 2) since we compare adjacent commits,
+# not a merge-base (which would require deeper history).
+if ! git rev-parse HEAD~1 >/dev/null 2>&1; then
+  git fetch --deepen=1 --quiet 2>/dev/null || true
+fi
+
+if git rev-parse HEAD~1 >/dev/null 2>&1 && \
+   git diff HEAD~1 HEAD -- '*.java' ':!*/src/generated/*' \
+     | grep '^+[^+]' \
+     | grep -v '^+ *import ' \
+     | grep -v '^+ *package ' \
+     | grep -v '^+ *//' \
+     | grep -v '^+ *\*' \
+     | grep -qE '[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+\.[A-Z]'; then
+  MAVEN_EXTRA_ARGS="${MAVEN_EXTRA_ARGS} -Prewrite"
+  echo "FQCNs detected in diff, enabling OpenRewrite (-Prewrite)"
+else
+  echo "No FQCNs detected in diff, skipping OpenRewrite"
+fi
+
 # Force clean
 git clean -fdx
 rm -Rf **/src/generated/
