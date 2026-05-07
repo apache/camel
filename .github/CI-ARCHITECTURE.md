@@ -174,7 +174,7 @@ The shadow comparison section shows:
 
 The script overrides `fullBuildTriggers` to empty (`-Dscalpel.fullBuildTriggers=`) because Scalpel's default (`.mvn/**`) would trigger a full build whenever `.mvn/extensions.xml` itself changes (e.g., Dependabot bumping Scalpel).
 
-The base branch is pre-fetched by the CI workflow (`git fetch --deepen=200` + fetch of `origin/main`) rather than by Scalpel's built-in JGit fetch (`-Dscalpel.fetchBaseBranch=false`). This avoids JGit issues in shallow CI clones.
+The base branch is pre-fetched by the CI workflow (`git fetch --deepen=200` + fetch of `origin/main`). Both the grep-based script and Scalpel use this local git history to compute the merge-base and derive the changed-file diff — no GitHub API call is needed for diff fetching. Scalpel disables its built-in JGit fetch (`-Dscalpel.fetchBaseBranch=false`) to avoid JGit issues in shallow CI clones. The `--deepen=200` fetches only commit metadata (not file blobs), adding ~2-3 seconds to the job.
 
 ## Manual Integration Test Advisories
 
