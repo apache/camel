@@ -37,6 +37,7 @@ import org.apache.camel.util.StopWatch;
 @Component("direct")
 public class DirectComponent extends DefaultComponent {
 
+    // test change for Scalpel shadow comparison validation — will be reverted
     // active consumers
     private final Lock consumersLock = new ReentrantLock();
     private final Condition consumersCondition = consumersLock.newCondition();
