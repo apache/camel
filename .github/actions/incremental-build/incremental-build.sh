@@ -106,27 +106,19 @@ hasLabel() {
     "https://api.github.com/repos/${repository}/issues/${issueNumber}/labels" | jq -r '.[].name' | { grep -c "$label" || true; }
 }
 
-# Fetch the PR diff from the GitHub API.  Returns the full unified diff.
+# Compute the diff between the current HEAD and the base branch using local git.
+# Requires the base branch to be fetched (see pr-build-main.yml "Fetch base branch" step).
 fetchDiff() {
-  local prId="$1"
-  local repository="$2"
+  local base_ref="${GITHUB_BASE_REF:-main}"
+  local merge_base
+  merge_base=$(git merge-base "origin/${base_ref}" HEAD 2>/dev/null) || true
 
-  local diff_output
-  diff_output=$(curl -s -w "\n%{http_code}" \
-    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-    -H "Accept: application/vnd.github.v3.diff" \
-    "https://api.github.com/repos/${repository}/pulls/${prId}")
-
-  local http_code
-  http_code=$(echo "$diff_output" | tail -n 1)
-  local diff_body
-  diff_body=$(echo "$diff_output" | sed '$d')
-
-  if [[ "$http_code" -lt 200 || "$http_code" -ge 300 || -z "$diff_body" ]]; then
-    echo "WARNING: Failed to fetch PR diff (HTTP $http_code). Falling back to full build." >&2
+  if [ -z "$merge_base" ]; then
+    echo "WARNING: Could not find merge-base with origin/${base_ref}. Falling back to full build." >&2
     return
   fi
-  echo "$diff_body"
+
+  git diff "${merge_base}" HEAD 2>/dev/null || true
 }
 
 # ── POM dependency analysis (previously detect-dependencies) ───────────
@@ -555,11 +547,11 @@ main() {
     fi
   fi
 
-  # Fetch the diff (PR diff via API, or git diff for push builds)
+  # Compute the diff using local git history (merge-base for PRs, HEAD~1 for push builds)
   local diff_body
   if [ -n "$prId" ]; then
-    echo "Fetching PR #${prId} diff..."
-    diff_body=$(fetchDiff "$prId" "$repository")
+    echo "Computing diff against origin/${GITHUB_BASE_REF:-main}..."
+    diff_body=$(fetchDiff)
   else
     echo "No PR ID, using git diff HEAD~1..."
     diff_body=$(git diff HEAD~1 2>/dev/null || true)
