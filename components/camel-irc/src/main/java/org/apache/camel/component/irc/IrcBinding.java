@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.irc;
 
+@Deprecated(since = "4.21")
 public class IrcBinding {
     public Object extractBodyFromIrc(IrcMessage message) {
         String type = message.getMessageType();
