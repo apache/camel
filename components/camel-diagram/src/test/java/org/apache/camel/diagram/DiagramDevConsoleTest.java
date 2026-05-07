@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jbang.console;
+package org.apache.camel.diagram;
 
 import java.util.Base64;
 import java.util.Map;

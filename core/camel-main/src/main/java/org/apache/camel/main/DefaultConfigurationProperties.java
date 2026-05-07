@@ -151,7 +151,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String exchangeFactory = "default";
     private int exchangeFactoryCapacity = 100;
     private boolean exchangeFactoryStatisticsEnabled;
-    @Metadata(enums = "xml,yaml,json")
+    @Metadata(enums = "xml,yaml,json,png")
     private String dumpRoutes;
     private String dumpRoutesInclude = "routes";
     private boolean dumpRoutesLog = true;
@@ -1578,6 +1578,11 @@ public abstract class DefaultConfigurationProperties<T> {
      *
      * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
      * useful for tooling to understand the structure of the routes and how EIPs are nested together.
+     *
+     * You can also use png to save route diagrams as PNG image files either all combined in a single file (default
+     * camel-route-diagrams.png) or to a given folder, where routes are grouped by source file name(s) and saved as
+     * corresponding .png files.\ This requires to have camel-diagram on the classpath to be able to render PNG
+     * diagrams.
      */
     public void setDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
@@ -2806,6 +2811,11 @@ public abstract class DefaultConfigurationProperties<T> {
      *
      * You can also use JSon which dumps the route structure in JSon. The JSon does not represent Camel DSL but it
      * useful for tooling to understand the structure of the routes and how EIPs are nested together.
+     *
+     * You can also use png to save route diagrams as PNG image files either all combined in a single file (default
+     * camel-route-diagrams.png) or to a given folder, where routes are grouped by source file name(s) and saved as
+     * corresponding .png files.\ This requires to have camel-diagram on the classpath to be able to render PNG
+     * diagrams.
      */
     public T withDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
