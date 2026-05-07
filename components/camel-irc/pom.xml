@@ -28,7 +28,7 @@
 
     <artifactId>camel-irc</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: IRC</name>
+    <name>Camel :: IRC (deprecated)</name>
     <description>Camel IRC support</description>
 
     <dependencies>

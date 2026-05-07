@@ -4272,6 +4272,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String path) {
         return digitalocean("digitalocean", path);
     }
@@ -4300,6 +4301,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String componentName, String path) {
         return DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -8530,6 +8532,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String path) {
         return irc("irc", path);
     }
@@ -8555,6 +8558,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String componentName, String path) {
         return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -8575,6 +8579,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String path) {
         return ironmq("ironmq", path);
     }
@@ -8597,6 +8602,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String componentName, String path) {
         return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

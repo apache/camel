@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.Resource;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -27,6 +28,11 @@ public interface NamedRoute {
      * Gets the route id.
      */
     String getRouteId();
+
+    /**
+     * Gets the route description.
+     */
+    String getDescription();
 
     /**
      * Gets the node prefix id.
@@ -53,5 +59,10 @@ public interface NamedRoute {
      * Gets the route input
      */
     NamedNode getInput();
+
+    /**
+     * Gets the {@link Resource}.
+     */
+    Resource getResource();
 
 }

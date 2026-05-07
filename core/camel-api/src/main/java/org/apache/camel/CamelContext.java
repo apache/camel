@@ -806,6 +806,11 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      */
     List<RoutePolicyFactory> getRoutePolicyFactories();
 
+    /**
+     * Gets a light-weight API for the route model defunitions.
+     */
+    List<NamedRoute> getNamedRouteDefinitions();
+
     // Rest Methods
     //-----------------------------------------------------------------------
 

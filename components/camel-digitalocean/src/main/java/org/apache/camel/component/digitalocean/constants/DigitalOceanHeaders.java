@@ -18,6 +18,7 @@ package org.apache.camel.component.digitalocean.constants;
 
 import org.apache.camel.spi.Metadata;
 
+@Deprecated(since = "4.21")
 public interface DigitalOceanHeaders {
     @Metadata(description = "The operation to perform",
               javaType = "org.apache.camel.component.digitalocean.constants.DigitalOceanOperations")

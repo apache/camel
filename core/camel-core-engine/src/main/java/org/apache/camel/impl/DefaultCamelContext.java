@@ -30,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -427,6 +428,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
         if (!isLockModel()) {
             model.removeRouteTemplateDefinitions(pattern);
         }
+    }
+
+    @Override
+    public List<NamedRoute> getNamedRouteDefinitions() {
+        return new ArrayList<>(model.getRouteDefinitions());
     }
 
     @Override

@@ -54,6 +54,7 @@ import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJacksonXmlDataFormatFactory;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.SimpleFunctionRegistry;
@@ -652,6 +653,20 @@ public final class PluginHelper {
      */
     public static RestRegistry getRestRegistry(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(RestRegistry.class);
+    }
+
+    /**
+     * Gets the {@link RouteDiagramDumper} to use.
+     */
+    public static RouteDiagramDumper getRouteDiagramDumper(CamelContext camelContext) {
+        return camelContext.getCamelContextExtension().getContextPlugin(RouteDiagramDumper.class);
+    }
+
+    /**
+     * Gets the {@link RouteDiagramDumper} to use.
+     */
+    public static RouteDiagramDumper getRouteDiagramDumper(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RouteDiagramDumper.class);
     }
 
 }

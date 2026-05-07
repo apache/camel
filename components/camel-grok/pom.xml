@@ -39,7 +39,7 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.krakens</groupId>
+            <groupId>io.github.whatap</groupId>
             <artifactId>java-grok</artifactId>
             <version>${java-grok-version}</version>
         </dependency>

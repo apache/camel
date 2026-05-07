@@ -806,6 +806,46 @@ class RouteDiagramTest {
                 "Text padding should increase with wider nodes");
     }
 
+    @Test
+    void testExtractSourceNameWithScheme() {
+        assertEquals("my-route.yaml", RouteDiagramHelper.extractSourceName("file:/path/to/my-route.yaml"));
+    }
+
+    @Test
+    void testExtractSourceNameClasspath() {
+        assertEquals("my-route.yaml", RouteDiagramHelper.extractSourceName("classpath:my-route.yaml"));
+    }
+
+    @Test
+    void testExtractSourceNameWithLineNumber() {
+        assertEquals("cheese.java", RouteDiagramHelper.extractSourceName("cheese.java:9"));
+    }
+
+    @Test
+    void testExtractSourceNameSchemeAndLineNumber() {
+        assertEquals("cheese.java", RouteDiagramHelper.extractSourceName("file:/path/to/cheese.java:9"));
+    }
+
+    @Test
+    void testExtractSourceNamePlainFilename() {
+        assertEquals("my-route.yaml", RouteDiagramHelper.extractSourceName("my-route.yaml"));
+    }
+
+    @Test
+    void testExtractSourceNameWindowsPath() {
+        assertEquals("route.yaml", RouteDiagramHelper.extractSourceName("C:\\Users\\test\\route.yaml"));
+    }
+
+    @Test
+    void testExtractSourceNameNull() {
+        assertNull(RouteDiagramHelper.extractSourceName(null));
+    }
+
+    @Test
+    void testExtractSourceNameBlank() {
+        assertNull(RouteDiagramHelper.extractSourceName(""));
+    }
+
     private static NodeInfo node(String type, String code, int level) {
         return node(type, code, level, null);
     }

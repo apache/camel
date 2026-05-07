@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.digitalocean.constants;
 
+@Deprecated(since = "4.21")
 public enum DigitalOceanResources {
 
     account,
