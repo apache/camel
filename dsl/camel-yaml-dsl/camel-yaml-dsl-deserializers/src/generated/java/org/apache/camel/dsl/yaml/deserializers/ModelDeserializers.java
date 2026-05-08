@@ -361,6 +361,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
                     @YamlProperty(name = "optimisticLockRetryPolicy", type = "object:org.apache.camel.model.OptimisticLockRetryPolicyDefinition", description = "Allows to configure retry settings when using optimistic locking.", displayName = "Optimistic Lock Retry Policy"),
                     @YamlProperty(name = "optimisticLocking", type = "boolean", defaultValue = "false", description = "Turns on using optimistic locking, which requires the aggregationRepository being used, is supporting this by implementing org.apache.camel.spi.OptimisticLockingAggregationRepository .", displayName = "Optimistic Locking"),
+                    @YamlProperty(name = "optimisticLockingSyncRetry", type = "boolean", defaultValue = "false", description = "When optimistic locking is enabled, retries happen synchronously in the same thread instead of being scheduled on a background thread. This preserves transaction context for repositories that require single-thread transactional guarantees. Only takes effect when optimisticLocking() is also enabled.", displayName = "Optimistic Locking Sync Retry"),
                     @YamlProperty(name = "parallelProcessing", type = "boolean", defaultValue = "false", description = "When aggregated are completed they are being send out of the aggregator. This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency. If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.", displayName = "Parallel Processing"),
                     @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition"),
                     @YamlProperty(name = "timeoutCheckerExecutorService", type = "string", description = "If using either of the completionTimeout, completionTimeoutExpression, or completionInterval options a background thread is created to check for the completion for every aggregator. Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.", displayName = "Timeout Checker Executor Service")
@@ -509,6 +510,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "optimisticLocking": {
                     String val = asText(node);
                     target.setOptimisticLocking(val);
+                    break;
+                }
+                case "optimisticLockingSyncRetry": {
+                    String val = asText(node);
+                    target.setOptimisticLockingSyncRetry(val);
                     break;
                 }
                 case "parallelProcessing": {
