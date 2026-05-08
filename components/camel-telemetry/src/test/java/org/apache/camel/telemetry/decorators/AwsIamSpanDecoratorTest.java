@@ -29,8 +29,7 @@ public class AwsIamSpanDecoratorTest {
 
     @Test
     public void testPre() {
-        String operation = "createUser";
-        String userName = "alice";
+        String operation = "createGroup";
         String groupName = "engineers";
         String roleName = "deployer";
         String policyName = "ReadOnlyAccess";
@@ -43,7 +42,6 @@ public class AwsIamSpanDecoratorTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(exchange.getExchangeId()).thenReturn("exchange-1");
         Mockito.when(message.getHeader(AwsIamSpanDecorator.OPERATION, String.class)).thenReturn(operation);
-        Mockito.when(message.getHeader(AwsIamSpanDecorator.USERNAME, String.class)).thenReturn(userName);
         Mockito.when(message.getHeader(AwsIamSpanDecorator.GROUP_NAME, String.class)).thenReturn(groupName);
         Mockito.when(message.getHeader(AwsIamSpanDecorator.ROLE_NAME, String.class)).thenReturn(roleName);
         Mockito.when(message.getHeader(AwsIamSpanDecorator.POLICY_NAME, String.class)).thenReturn(policyName);
@@ -55,7 +53,6 @@ public class AwsIamSpanDecoratorTest {
         decorator.beforeTracingEvent(span, exchange, endpoint);
 
         assertEquals(operation, span.tags().get(AwsIamSpanDecorator.IAM_OPERATION));
-        assertEquals(userName, span.tags().get(AwsIamSpanDecorator.IAM_USER_NAME));
         assertEquals(groupName, span.tags().get(AwsIamSpanDecorator.IAM_GROUP_NAME));
         assertEquals(roleName, span.tags().get(AwsIamSpanDecorator.IAM_ROLE_NAME));
         assertEquals(policyName, span.tags().get(AwsIamSpanDecorator.IAM_POLICY_NAME));

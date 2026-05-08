@@ -23,7 +23,6 @@ import org.apache.camel.telemetry.Span;
 public class AwsIamSpanDecorator extends AbstractSpanDecorator {
 
     static final String IAM_OPERATION = "operation";
-    static final String IAM_USER_NAME = "userName";
     static final String IAM_GROUP_NAME = "groupName";
     static final String IAM_ROLE_NAME = "roleName";
     static final String IAM_POLICY_NAME = "policyName";
@@ -32,7 +31,6 @@ public class AwsIamSpanDecorator extends AbstractSpanDecorator {
      * Constants copied from {@link org.apache.camel.component.aws2.iam.IAM2Constants}
      */
     static final String OPERATION = "CamelAwsIAMOperation";
-    static final String USERNAME = "CamelAwsIAMUsername";
     static final String GROUP_NAME = "CamelAwsIAMGroupName";
     static final String ROLE_NAME = "CamelAwsIAMRoleName";
     static final String POLICY_NAME = "CamelAwsIAMPolicyName";
@@ -54,11 +52,6 @@ public class AwsIamSpanDecorator extends AbstractSpanDecorator {
         String operation = exchange.getIn().getHeader(OPERATION, String.class);
         if (operation != null) {
             span.setTag(IAM_OPERATION, operation);
-        }
-
-        String userName = exchange.getIn().getHeader(USERNAME, String.class);
-        if (userName != null) {
-            span.setTag(IAM_USER_NAME, userName);
         }
 
         String groupName = exchange.getIn().getHeader(GROUP_NAME, String.class);
