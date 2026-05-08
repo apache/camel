@@ -22,6 +22,7 @@ public class TelemetryDevConfigurationPropertiesConfigurer extends org.apache.ca
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("DisableCoreProcessors", java.lang.Boolean.class);
         map.put("Enabled", boolean.class);
         map.put("ExcludePatterns", java.lang.String.class);
         map.put("TraceFormat", java.lang.String.class);
@@ -33,6 +34,8 @@ public class TelemetryDevConfigurationPropertiesConfigurer extends org.apache.ca
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.TelemetryDevConfigurationProperties target = (org.apache.camel.main.TelemetryDevConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "disablecoreprocessors":
+        case "disableCoreProcessors": target.setDisableCoreProcessors(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
         case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
@@ -52,6 +55,8 @@ public class TelemetryDevConfigurationPropertiesConfigurer extends org.apache.ca
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "disablecoreprocessors":
+        case "disableCoreProcessors": return java.lang.Boolean.class;
         case "enabled": return boolean.class;
         case "excludepatterns":
         case "excludePatterns": return java.lang.String.class;
@@ -67,6 +72,8 @@ public class TelemetryDevConfigurationPropertiesConfigurer extends org.apache.ca
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.TelemetryDevConfigurationProperties target = (org.apache.camel.main.TelemetryDevConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "disablecoreprocessors":
+        case "disableCoreProcessors": return target.isDisableCoreProcessors();
         case "enabled": return target.isEnabled();
         case "excludepatterns":
         case "excludePatterns": return target.getExcludePatterns();

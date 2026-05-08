@@ -578,9 +578,9 @@ The camel.opentelemetry supports 10 options, which are listed below.
 | *camel.opentelemetry.traceProcessors* | Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern property to filter out Processors. | false | boolean
 | *camel.opentelemetry2.enabled* | To enable OpenTelemetry 2 | false | boolean
 | *camel.opentelemetry2.encoding* | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need for instances to be encoded for JMS property keys. | false | boolean
-| *camel.opentelemetry2.excludePatterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *camel.opentelemetry2.excludePatterns* | Sets exclude pattern(s) that will disable tracing for Camel processors that matches the pattern. Multiple patterns can be separated by comma. |  | String
 | *camel.opentelemetry2.instrumentationName* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
-| *camel.opentelemetry2.traceProcessors* | Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern property to filter out Processors. | false | boolean
+| *camel.opentelemetry2.traceProcessors* | Setting this to true will create new telemetry spans for each Camel custom Processors. Use the excludePattern property to filter out Processors. | false | boolean
 |===
 
 
@@ -592,9 +592,9 @@ The camel.opentelemetry2 supports 5 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.opentelemetry2.enabled* | To enable OpenTelemetry 2 | false | boolean
 | *camel.opentelemetry2.encoding* | Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean. Dashes need for instances to be encoded for JMS property keys. | false | boolean
-| *camel.opentelemetry2.excludePatterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *camel.opentelemetry2.excludePatterns* | Sets exclude pattern(s) that will disable tracing for Camel processors that matches the pattern. Multiple patterns can be separated by comma. |  | String
 | *camel.opentelemetry2.instrumentationName* | A name uniquely identifying the instrumentation scope, such as the instrumentation library, package, or fully qualified class name. Must not be null. | camel | String
-| *camel.opentelemetry2.traceProcessors* | Setting this to true will create new OpenTelemetry Spans for each Camel Processors. Use the excludePattern property to filter out Processors. | false | boolean
+| *camel.opentelemetry2.traceProcessors* | Setting this to true will create new telemetry spans for each Camel custom Processors. Use the excludePattern property to filter out Processors. | false | boolean
 |===
 
 
@@ -605,9 +605,9 @@ The camel.telemetryDev supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.telemetryDev.enabled* | To enable TelemetryDev | false | boolean
-| *camel.telemetryDev.excludePatterns* | Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern. Multiple patterns can be separated by comma. |  | String
+| *camel.telemetryDev.excludePatterns* | Sets exclude pattern(s) that will disable tracing for Camel processors that matches the pattern. Multiple patterns can be separated by comma. |  | String
 | *camel.telemetryDev.traceFormat* | The output format for traces. |  | String
-| *camel.telemetryDev.traceProcessors* | Setting this to true will create new TelemetrySimple Spans for each Camel Processors. Use the excludePattern property to filter out Processors. | false | boolean
+| *camel.telemetryDev.traceProcessors* | Setting this to true will create new telemetry spans for each Camel custom Processors. Use the excludePattern property to filter out Processors. | false | boolean
 |===
 
 
