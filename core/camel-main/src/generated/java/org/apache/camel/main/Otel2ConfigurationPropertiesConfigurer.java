@@ -22,6 +22,7 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("DisableCoreProcessors", java.lang.Boolean.class);
         map.put("Enabled", boolean.class);
         map.put("Encoding", boolean.class);
         map.put("ExcludePatterns", java.lang.String.class);
@@ -34,6 +35,8 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.Otel2ConfigurationProperties target = (org.apache.camel.main.Otel2ConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "disablecoreprocessors":
+        case "disableCoreProcessors": target.setDisableCoreProcessors(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
         case "encoding": target.setEncoding(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
@@ -54,6 +57,8 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "disablecoreprocessors":
+        case "disableCoreProcessors": return java.lang.Boolean.class;
         case "enabled": return boolean.class;
         case "encoding": return boolean.class;
         case "excludepatterns":
@@ -70,6 +75,8 @@ public class Otel2ConfigurationPropertiesConfigurer extends org.apache.camel.sup
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.Otel2ConfigurationProperties target = (org.apache.camel.main.Otel2ConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "disablecoreprocessors":
+        case "disableCoreProcessors": return target.isDisableCoreProcessors();
         case "enabled": return target.isEnabled();
         case "encoding": return target.isEncoding();
         case "excludepatterns":
