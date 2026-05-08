@@ -57,9 +57,9 @@ import org.jboss.forge.roaster.model.source.JavaSource;
       requiresDependencyResolution = ResolutionScope.COMPILE)
 public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
 
-    // Pattern to match .addSubcommand("name", new CommandLine(new ClassName(this/main))
+    // Pattern to match .addSubcommand("name", new CommandLine(new ClassName(main)) or (this))
     private static final Pattern SUBCOMMAND_PATTERN = Pattern.compile(
-            "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(\\s*(?:this|main)\\s*\\)\\s*\\)");
+            "\\.addSubcommand\\(\\s*\"([^\"]+)\"\\s*,\\s*new\\s+CommandLine\\(\\s*new\\s+([A-Za-z0-9_]+)\\s*\\(\\s*(?:main|this)\\s*\\)\\s*\\)");
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outFolder;
@@ -165,8 +165,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         // Find the start of the commandLine builder chain
         int startLine = -1;
         for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).contains("commandLine = new CommandLine(this)")
-                    || lines.get(i).contains("commandLine = new CommandLine(main)")) {
+            if (lines.get(i).contains("commandLine = new CommandLine(")) {
                 startLine = i;
                 break;
             }

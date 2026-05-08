@@ -208,7 +208,7 @@ const sources = {
         '../components/{*,*/*}/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../dsl/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
         '../dsl/*/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
-        '../dsl/*/*/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
+        '../dsl/*/!(target|.camel-jbang*)/src/main/docs/!(*-component|*-language|*-dataformat|*-summary).adoc',
       ],
       destination: 'components/modules/others/pages',
       keep: [
