@@ -31,7 +31,6 @@ public class AwsEksSpanDecoratorTest {
     public void testPre() {
         String operation = "createCluster";
         String clusterName = "prod-eks";
-        String roleArn = "arn:aws:iam::123456789012:role/EksClusterRole";
 
         Endpoint endpoint = Mockito.mock(Endpoint.class);
         Exchange exchange = Mockito.mock(Exchange.class);
@@ -42,7 +41,6 @@ public class AwsEksSpanDecoratorTest {
         Mockito.when(exchange.getExchangeId()).thenReturn("exchange-1");
         Mockito.when(message.getHeader(AwsEksSpanDecorator.OPERATION, String.class)).thenReturn(operation);
         Mockito.when(message.getHeader(AwsEksSpanDecorator.CLUSTER_NAME, String.class)).thenReturn(clusterName);
-        Mockito.when(message.getHeader(AwsEksSpanDecorator.ROLE_ARN, String.class)).thenReturn(roleArn);
 
         AbstractSpanDecorator decorator = new AwsEksSpanDecorator();
 
@@ -52,7 +50,6 @@ public class AwsEksSpanDecoratorTest {
 
         assertEquals(operation, span.tags().get(AwsEksSpanDecorator.EKS_OPERATION));
         assertEquals(clusterName, span.tags().get(AwsEksSpanDecorator.EKS_CLUSTER_NAME));
-        assertEquals(roleArn, span.tags().get(AwsEksSpanDecorator.EKS_ROLE_ARN));
     }
 
 }

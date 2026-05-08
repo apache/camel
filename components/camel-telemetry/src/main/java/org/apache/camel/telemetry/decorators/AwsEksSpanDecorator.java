@@ -24,14 +24,12 @@ public class AwsEksSpanDecorator extends AbstractSpanDecorator {
 
     static final String EKS_OPERATION = "operation";
     static final String EKS_CLUSTER_NAME = "clusterName";
-    static final String EKS_ROLE_ARN = "roleArn";
 
     /**
      * Constants copied from {@link org.apache.camel.component.aws2.eks.EKS2Constants}
      */
     static final String OPERATION = "CamelAwsEKSOperation";
     static final String CLUSTER_NAME = "CamelAwsEKSClusterName";
-    static final String ROLE_ARN = "CamelAwsEKSRoleARN";
 
     @Override
     public String getComponent() {
@@ -55,11 +53,6 @@ public class AwsEksSpanDecorator extends AbstractSpanDecorator {
         String clusterName = exchange.getIn().getHeader(CLUSTER_NAME, String.class);
         if (clusterName != null) {
             span.setTag(EKS_CLUSTER_NAME, clusterName);
-        }
-
-        String roleArn = exchange.getIn().getHeader(ROLE_ARN, String.class);
-        if (roleArn != null) {
-            span.setTag(EKS_ROLE_ARN, roleArn);
         }
     }
 
