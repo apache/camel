@@ -43,6 +43,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean redeliveryExhausted;
     private int redeliveryCounter = -1;
     private int redeliveryMaxCounter = -1;
+    private String sagaLongRunningAction;
     private String historyNodeId;
     private String historyNodeSource;
     private String historyNodeLabel;
@@ -159,6 +160,16 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     @Override
     public void setRedeliveryMaxCounter(int redeliveryMaxCounter) {
         this.redeliveryMaxCounter = redeliveryMaxCounter;
+    }
+
+    @Override
+    public String getSagaLongRunningAction() {
+        return this.sagaLongRunningAction;
+    }
+
+    @Override
+    public void setSagaLongRunningAction(String sagaLongRunningAction) {
+        this.sagaLongRunningAction = sagaLongRunningAction;
     }
 
     @Override
@@ -401,6 +412,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         setRedeliveryExhausted(false);
         setRedeliveryCounter(-1);
         setRedeliveryMaxCounter(-1);
+        setSagaLongRunningAction(null);
         setErrorHandlerHandled(null);
         setStreamCacheDisabled(false);
         setRollbackOnly(false);

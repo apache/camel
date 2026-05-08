@@ -149,6 +149,16 @@ public interface ExchangeExtension {
     void setRedeliveryMaxCounter(int redeliveryMaxCounter);
 
     /**
+     * Gets the internal saga long running action ID, which is resilient to header removal. Returns null if not set.
+     */
+    String getSagaLongRunningAction();
+
+    /**
+     * Sets the internal saga long running action ID, which is resilient to header removal.
+     */
+    void setSagaLongRunningAction(String sagaLongRunningAction);
+
+    /**
      * Checks if the passed {@link Synchronization} instance is already contained on this exchange.
      *
      * @param  onCompletion the callback instance that is being checked for
