@@ -812,6 +812,11 @@ class RouteDiagramTest {
     }
 
     @Test
+    void testExtractSourceCompiledJava() {
+        assertEquals("MyRouteBuilder", RouteDiagramHelper.extractSourceName("source:com.foo.MyRouteBuilder"));
+    }
+
+    @Test
     void testExtractSourceNameClasspath() {
         assertEquals("my-route.yaml", RouteDiagramHelper.extractSourceName("classpath:my-route.yaml"));
     }

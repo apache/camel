@@ -33,10 +33,16 @@ public class RouteDumperExtension {
     }
 
     public void dumpRoute(Class<?> testClass, String currentTestName, String format) throws Exception {
-        LOG.debug("Dumping Route");
+        if ("png".equals(format)) {
+            dumpRouteDiagram();
+            return;
+        }
 
         String className = testClass.getSimpleName();
-        String dir = "target/camel-route-dump";
+        String dir = CamelContextTestHelper.getRouteDumpDir();
+        if (dir == null) {
+            dir = "target/camel-route-dump";
+        }
         String name = className + "-" + StringHelper.before(currentTestName, "(") + "." + format;
 
         DumpRoutesStrategy drs = context.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
@@ -45,5 +51,18 @@ public class RouteDumperExtension {
         drs.setLog(false);
         drs.setUriAsParameters(true);
         drs.dumpRoutes(format);
+    }
+
+    private void dumpRouteDiagram() {
+        System.out.println(">>> dumping diagram <<<");
+        String dir = CamelContextTestHelper.getRouteDumpDir();
+        if (dir == null) {
+            dir = "target/camel-route-diagram";
+        }
+        DumpRoutesStrategy drs = context.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
+        drs.setOutput(dir);
+        drs.setInclude("*");
+        drs.setLog(false);
+        drs.dumpRoutes("png");
     }
 }

@@ -159,8 +159,12 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         }
 
         String uri = route.getInput().getLabel();
-        String loc = LoggerHelper.getLineNumberLoggerName(route);
-        String onlyName = LoggerHelper.sourceNameOnly(loc);
+        String loc = null;
+        if (route.getResource() != null) {
+            loc = LoggerHelper.sourceNameOnly(route.getResource().getLocation());
+            loc = LoggerHelper.stripScheme(loc);
+        }
+        String onlyName = loc != null ? LoggerHelper.sourceNameOnly(loc) : null;
         return PatternHelper.matchPattern(route.getRouteId(), filter)
                 || PatternHelper.matchPattern(uri, filter)
                 || PatternHelper.matchPattern(loc, filter)

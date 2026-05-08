@@ -89,6 +89,7 @@
 ** xref:route-group.adoc[RouteGroup]
 ** xref:context-reload.adoc[ContextReload]
 ** xref:route-reload.adoc[RouteReload]
+** xref:route-diagram.adoc[Visual Route Diagrams]
 ** xref:route-template.adoc[RouteTemplate]
 ** xref:routes.adoc[Routes]
 ** xref:startup-condition.adoc[Startup Condition]

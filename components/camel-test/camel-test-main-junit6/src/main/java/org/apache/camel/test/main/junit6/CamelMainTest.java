@@ -230,6 +230,11 @@ public @interface CamelMainTest {
     String dumpRoute() default "";
 
     /**
+     * TODO:
+     */
+    String dumpRouteDiagramFolder() default "";
+
+    /**
      * Whether JMX should be used during testing.
      *
      * @return <tt>false</tt> by default.

@@ -103,6 +103,7 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 * xref:context-reload.adoc[ContextReload]
 * xref:route-reload.adoc[RouteReload]
 * xref:route-template.adoc[RouteTemplate]
+* xref:route-diagram.adoc[Visual Route Diagrams]
 * xref:routes.adoc[Routes]
 * xref:stream-caching.adoc[Stream caching]
 * xref:threading-model.adoc[Threading Model]

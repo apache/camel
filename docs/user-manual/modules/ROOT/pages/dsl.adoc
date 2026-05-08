@@ -22,4 +22,5 @@ languages (DSL) as listed below:
 * xref:Endpoint-dsl.adoc[Endpoint DSL] for creating routes using type-safe Camel endpoints in Java.
 * xref:dataformat-dsl.adoc[DataFormat DSL] for type-safe Camel data formats in Java.
 * xref:route-template.adoc[Route Template] for creating reusable route templates.
+* xref:route-diagram.adoc[Route Diagram] for generating visual route diagrams for documentation purposes.
 * xref:route-reload.adoc[Route Reload] for hot-reloading routes in a running Camel application.
