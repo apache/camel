@@ -214,9 +214,14 @@ public class SpringAiChatProducer extends DefaultProducer {
             UserMessage multimodalMessage = createMultimodalMessage(exchange, bytes);
             applyUserMessageWithMedia(request, exchange, multimodalMessage.getText(), multimodalMessage.getMedia());
         } else {
-            throw new IllegalArgumentException(
-                    "Unsupported message type: " + messageBody.getClass().getName()
-                                               + ". Expected String, byte[], WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
+            String text = exchange.getIn().getBody(String.class);
+            if (text != null) {
+                userMessageText = text;
+            } else {
+                throw new IllegalArgumentException(
+                        "Unsupported message type: " + messageBody.getClass().getName()
+                                                   + ". Expected String, byte[], WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
+            }
         }
 
         // Apply augmented data to user message if provided

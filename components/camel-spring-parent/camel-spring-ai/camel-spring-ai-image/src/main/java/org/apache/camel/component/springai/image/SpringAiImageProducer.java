@@ -50,13 +50,16 @@ public class SpringAiImageProducer extends DefaultProducer {
 
         if (body instanceof ImagePrompt prompt) {
             imagePrompt = prompt;
-        } else if (body instanceof String text) {
-            ImageOptions options = buildImageOptions(exchange);
-            imagePrompt = new ImagePrompt(text, options);
         } else {
-            throw new IllegalArgumentException(
-                    "Message body must be a String or ImagePrompt, but was: "
-                                               + (body != null ? body.getClass().getName() : "null"));
+            String text = message.getBody(String.class);
+            if (text != null) {
+                ImageOptions options = buildImageOptions(exchange);
+                imagePrompt = new ImagePrompt(text, options);
+            } else {
+                throw new IllegalArgumentException(
+                        "Message body must be a String or ImagePrompt, but was: "
+                                                   + (body != null ? body.getClass().getName() : "null"));
+            }
         }
 
         ImageResponse response = model.call(imagePrompt);
