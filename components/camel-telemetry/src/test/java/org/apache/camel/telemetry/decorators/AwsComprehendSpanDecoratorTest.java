@@ -31,7 +31,6 @@ public class AwsComprehendSpanDecoratorTest {
     public void testPre() {
         String operation = "detectSentiment";
         String languageCode = "en";
-        String endpointArn = "arn:aws:comprehend:us-east-1:123456789012:document-classifier-endpoint/MyEndpoint";
 
         Endpoint endpoint = Mockito.mock(Endpoint.class);
         Exchange exchange = Mockito.mock(Exchange.class);
@@ -42,7 +41,6 @@ public class AwsComprehendSpanDecoratorTest {
         Mockito.when(exchange.getExchangeId()).thenReturn("exchange-1");
         Mockito.when(message.getHeader(AwsComprehendSpanDecorator.OPERATION, String.class)).thenReturn(operation);
         Mockito.when(message.getHeader(AwsComprehendSpanDecorator.LANGUAGE_CODE, String.class)).thenReturn(languageCode);
-        Mockito.when(message.getHeader(AwsComprehendSpanDecorator.ENDPOINT_ARN, String.class)).thenReturn(endpointArn);
 
         AbstractSpanDecorator decorator = new AwsComprehendSpanDecorator();
 
@@ -52,7 +50,6 @@ public class AwsComprehendSpanDecoratorTest {
 
         assertEquals(operation, span.tags().get(AwsComprehendSpanDecorator.COMPREHEND_OPERATION));
         assertEquals(languageCode, span.tags().get(AwsComprehendSpanDecorator.COMPREHEND_LANGUAGE_CODE));
-        assertEquals(endpointArn, span.tags().get(AwsComprehendSpanDecorator.COMPREHEND_ENDPOINT_ARN));
     }
 
 }

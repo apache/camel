@@ -24,14 +24,12 @@ public class AwsComprehendSpanDecorator extends AbstractSpanDecorator {
 
     static final String COMPREHEND_OPERATION = "operation";
     static final String COMPREHEND_LANGUAGE_CODE = "languageCode";
-    static final String COMPREHEND_ENDPOINT_ARN = "endpointArn";
 
     /**
      * Constants copied from {@link org.apache.camel.component.aws2.comprehend.Comprehend2Constants}
      */
     static final String OPERATION = "CamelAwsComprehendOperation";
     static final String LANGUAGE_CODE = "CamelAwsComprehendLanguageCode";
-    static final String ENDPOINT_ARN = "CamelAwsComprehendEndpointArn";
 
     @Override
     public String getComponent() {
@@ -55,11 +53,6 @@ public class AwsComprehendSpanDecorator extends AbstractSpanDecorator {
         String languageCode = exchange.getIn().getHeader(LANGUAGE_CODE, String.class);
         if (languageCode != null) {
             span.setTag(COMPREHEND_LANGUAGE_CODE, languageCode);
-        }
-
-        String endpointArn = exchange.getIn().getHeader(ENDPOINT_ARN, String.class);
-        if (endpointArn != null) {
-            span.setTag(COMPREHEND_ENDPOINT_ARN, endpointArn);
         }
     }
 
