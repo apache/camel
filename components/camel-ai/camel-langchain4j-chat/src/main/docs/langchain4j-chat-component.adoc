@@ -6,7 +6,7 @@
 :since: 4.5
 :supportlevel: Stable
 :tabs-sync-option:
-:component-header: Both producer and consumer are supported
+:component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
 :camel-spring-boot-name: langchain4j-chat
@@ -70,7 +70,7 @@ Add the dependency for LangChain4j OpenAI Spring Boot starter:
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
-    <version>1.10.0</version>
+    <version>x.x.x</version>
     <!-- use the same version as your LangChain4j version -->
 </dependency>
 ----
@@ -81,7 +81,7 @@ Configure the OpenAI Chat Model in `application.properties` or `application.yml`
 [source,properties]
 ----
 langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
-langchain4j.open-ai.chat-model.model-name=gpt-3.5-turbo
+langchain4j.open-ai.chat-model.model-name=gpt-4o-mini
 langchain4j.open-ai.chat-model.temperature=0.3
 langchain4j.open-ai.chat-model.timeout=3000s
 ----
@@ -93,7 +93,7 @@ langchain4j:
   open-ai:
     chat-model:
       api-key: ${OPENAI_API_KEY}
-      model-name: gpt-3.5-turbo
+      model-name: gpt-4o-mini
       temperature: 0.3
       timeout: 3000s
 ----
@@ -162,7 +162,7 @@ Add the dependency for LangChain4j OpenAI support:
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-open-ai</artifactId>
-    <version>1.10.0</version>
+    <version>x.x.x</version>
     <!-- use the same version as your LangChain4j version -->
 </dependency>
 ----
@@ -171,9 +171,9 @@ Initialize the OpenAI Chat Model, and add it to the Camel Registry:
 
 [source,java]
 ----
-ChatLanguageModel model = OpenAiChatModel.builder()
+ChatModel model = OpenAiChatModel.builder()
     .apiKey(openApiKey)
-    .modelName(GPT_3_5_TURBO)
+    .modelName(GPT_4_O_MINI)
     .temperature(0.3)
     .timeout(ofSeconds(3000))
     .build();
@@ -235,7 +235,7 @@ variables.put("dishType", "oven dish");
 variables.put("ingredients", "potato, tomato, feta, olive oil");
 
 String response = template.requestBodyAndHeader("direct:chat", variables,
-                LangChain4jChat.Headers.PROMPT_TEMPLATE, promptTemplate, String.class);
+                LangChain4jChatHeaders.PROMPT_TEMPLATE, promptTemplate, String.class);
 ----
 
 === Chat with history
@@ -279,7 +279,7 @@ LangChain4jRagAggregatorStrategy aggregatorStrategy = new LangChain4jRagAggregat
 
 from("direct:test")
      .enrich("direct:rag", aggregatorStrategy)
-     .to("langchain4j-chat:test1?chatOperation=CHAT_SIMPLE_MESSAGE");
+     .to("langchain4j-chat:test1?chatOperation=CHAT_SINGLE_MESSAGE");
 
   from("direct:rag")
           .process(exchange -> {
@@ -304,7 +304,7 @@ LangChain4jRagAggregatorStrategy aggregatorStrategy = new LangChain4jRagAggregat
 from("direct:test")
      .enrich("direct:rag-from-source-1", aggregatorStrategy)
      .enrich("direct:rag-from-source-2", aggregatorStrategy)
-     .to("langchain4j-chat:test1?chatOperation=CHAT_SIMPLE_MESSAGE");
+     .to("langchain4j-chat:test1?chatOperation=CHAT_SINGLE_MESSAGE");
 ----
 
 ==== Using RAG with headers
@@ -322,5 +322,5 @@ import dev.langchain4j.rag.content.Content;
 Content augmentedContent = new Content("data test");
 List<Content> contents = List.of(augmentedContent);
 
-String response = template.requestBodyAndHeader("direct:send-multiple", messages, LangChain4jChat.Headers.AUGMENTED_DATA , contents, String.class);
+String response = template.requestBodyAndHeader("direct:send-multiple", messages, LangChain4jChatHeaders.AUGMENTED_DATA, contents, String.class);
 ----
