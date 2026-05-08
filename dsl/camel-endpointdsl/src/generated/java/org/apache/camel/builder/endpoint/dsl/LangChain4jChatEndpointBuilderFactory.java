@@ -35,355 +35,11 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 public interface LangChain4jChatEndpointBuilderFactory {
 
     /**
-     * Builder for endpoint consumers for the LangChain4j Chat component.
-     */
-    public interface LangChain4jChatEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default AdvancedLangChain4jChatEndpointConsumerBuilder advanced() {
-            return (AdvancedLangChain4jChatEndpointConsumerBuilder) this;
-        }
-        /**
-         * Operation in case of Endpoint of type CHAT. The value is one of the
-         * values of
-         * org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations</code> type.
-         * 
-         * Required: true
-         * Default: CHAT_SINGLE_MESSAGE
-         * Group: common
-         * 
-         * @param chatOperation the value to set
-         * @return the dsl builder
-         */
-        default LangChain4jChatEndpointConsumerBuilder chatOperation(org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations chatOperation) {
-            doSetProperty("chatOperation", chatOperation);
-            return this;
-        }
-        /**
-         * Operation in case of Endpoint of type CHAT. The value is one of the
-         * values of
-         * org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations</code> type.
-         * 
-         * Required: true
-         * Default: CHAT_SINGLE_MESSAGE
-         * Group: common
-         * 
-         * @param chatOperation the value to set
-         * @return the dsl builder
-         */
-        default LangChain4jChatEndpointConsumerBuilder chatOperation(String chatOperation) {
-            doSetProperty("chatOperation", chatOperation);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint consumers for the LangChain4j Chat component.
-     */
-    public interface AdvancedLangChain4jChatEndpointConsumerBuilder
-            extends
-                EndpointConsumerBuilder {
-        default LangChain4jChatEndpointConsumerBuilder basic() {
-            return (LangChain4jChatEndpointConsumerBuilder) this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions (if possible) occurred while the Camel
-         * consumer is trying to pickup incoming messages, or the likes, will
-         * now be processed as a message and handled by the routing Error
-         * Handler. Important: This is only possible if the 3rd party component
-         * allows Camel to be alerted if an exception was thrown. Some
-         * components handle this internally only, and therefore
-         * bridgeErrorHandler is not possible. In other situations we may
-         * improve the Camel component to hook into the 3rd party component and
-         * make this possible for future releases. By default the consumer will
-         * use the org.apache.camel.spi.ExceptionHandler to deal with
-         * exceptions, that will be logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions (if possible) occurred while the Camel
-         * consumer is trying to pickup incoming messages, or the likes, will
-         * now be processed as a message and handled by the routing Error
-         * Handler. Important: This is only possible if the 3rd party component
-         * allows Camel to be alerted if an exception was thrown. Some
-         * components handle this internally only, and therefore
-         * bridgeErrorHandler is not possible. In other situations we may
-         * improve the Camel component to hook into the 3rd party component and
-         * make this possible for future releases. By default the consumer will
-         * use the org.apache.camel.spi.ExceptionHandler to deal with
-         * exceptions, that will be logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer (advanced)
-         * 
-         * @param bridgeErrorHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder bridgeErrorHandler(String bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder exceptionHandler(org.apache.camel.spi.ExceptionHandler exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * To let the consumer use a custom ExceptionHandler. Notice if the
-         * option bridgeErrorHandler is enabled then this option is not in use.
-         * By default the consumer will deal with exceptions, that will be
-         * logged at WARN or ERROR level and ignored.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exceptionHandler the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder exceptionHandler(String exceptionHandler) {
-            doSetProperty("exceptionHandler", exceptionHandler);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder exchangePattern(org.apache.camel.ExchangePattern exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
-         * 
-         * Group: consumer (advanced)
-         * 
-         * @param exchangePattern the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder exchangePattern(String exchangePattern) {
-            doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
-         * 
-         * The option is a: <code>dev.langchain4j.model.chat.ChatModel</code>
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatModel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
-            doSetProperty("chatModel", chatModel);
-            return this;
-        }
-        /**
-         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
-         * 
-         * The option will be converted to a
-         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatModel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointConsumerBuilder chatModel(String chatModel) {
-            doSetProperty("chatModel", chatModel);
-            return this;
-        }
-    }
-
-    /**
-     * Builder for endpoint producers for the LangChain4j Chat component.
-     */
-    public interface LangChain4jChatEndpointProducerBuilder
-            extends
-                EndpointProducerBuilder {
-        default AdvancedLangChain4jChatEndpointProducerBuilder advanced() {
-            return (AdvancedLangChain4jChatEndpointProducerBuilder) this;
-        }
-
-        /**
-         * Operation in case of Endpoint of type CHAT. The value is one of the
-         * values of
-         * org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations</code> type.
-         * 
-         * Required: true
-         * Default: CHAT_SINGLE_MESSAGE
-         * Group: common
-         * 
-         * @param chatOperation the value to set
-         * @return the dsl builder
-         */
-        default LangChain4jChatEndpointProducerBuilder chatOperation(org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations chatOperation) {
-            doSetProperty("chatOperation", chatOperation);
-            return this;
-        }
-        /**
-         * Operation in case of Endpoint of type CHAT. The value is one of the
-         * values of
-         * org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.langchain4j.chat.LangChain4jChatOperations</code> type.
-         * 
-         * Required: true
-         * Default: CHAT_SINGLE_MESSAGE
-         * Group: common
-         * 
-         * @param chatOperation the value to set
-         * @return the dsl builder
-         */
-        default LangChain4jChatEndpointProducerBuilder chatOperation(String chatOperation) {
-            doSetProperty("chatOperation", chatOperation);
-            return this;
-        }
-    }
-
-    /**
-     * Advanced builder for endpoint producers for the LangChain4j Chat component.
-     */
-    public interface AdvancedLangChain4jChatEndpointProducerBuilder extends EndpointProducerBuilder {
-        default LangChain4jChatEndpointProducerBuilder basic() {
-            return (LangChain4jChatEndpointProducerBuilder) this;
-        }
-
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointProducerBuilder lazyStartProducer(boolean lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Whether the producer should be started lazy (on the first message).
-         * By starting lazy you can use this to allow CamelContext and routes to
-         * startup in situations where a producer may otherwise fail during
-         * starting and cause the route to fail being started. By deferring this
-         * startup to be lazy then the startup failure can be handled during
-         * routing messages via Camel's routing error handlers. Beware that when
-         * the first message is processed then creating and starting the
-         * producer may take a little time and prolong the total processing time
-         * of the processing.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param lazyStartProducer the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointProducerBuilder lazyStartProducer(String lazyStartProducer) {
-            doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
-         * 
-         * The option is a: <code>dev.langchain4j.model.chat.ChatModel</code>
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatModel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointProducerBuilder chatModel(dev.langchain4j.model.chat.ChatModel chatModel) {
-            doSetProperty("chatModel", chatModel);
-            return this;
-        }
-        /**
-         * Chat Model of type dev.langchain4j.model.chat.ChatModel.
-         * 
-         * The option will be converted to a
-         * <code>dev.langchain4j.model.chat.ChatModel</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param chatModel the value to set
-         * @return the dsl builder
-         */
-        default AdvancedLangChain4jChatEndpointProducerBuilder chatModel(String chatModel) {
-            doSetProperty("chatModel", chatModel);
-            return this;
-        }
-    }
-
-    /**
      * Builder for endpoint for the LangChain4j Chat component.
      */
     public interface LangChain4jChatEndpointBuilder
             extends
-                LangChain4jChatEndpointConsumerBuilder,
-                LangChain4jChatEndpointProducerBuilder {
+                EndpointProducerBuilder {
         default AdvancedLangChain4jChatEndpointBuilder advanced() {
             return (AdvancedLangChain4jChatEndpointBuilder) this;
         }
@@ -398,7 +54,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * 
          * Required: true
          * Default: CHAT_SINGLE_MESSAGE
-         * Group: common
+         * Group: producer
          * 
          * @param chatOperation the value to set
          * @return the dsl builder
@@ -417,7 +73,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * 
          * Required: true
          * Default: CHAT_SINGLE_MESSAGE
-         * Group: common
+         * Group: producer
          * 
          * @param chatOperation the value to set
          * @return the dsl builder
@@ -433,12 +89,57 @@ public interface LangChain4jChatEndpointBuilderFactory {
      */
     public interface AdvancedLangChain4jChatEndpointBuilder
             extends
-                AdvancedLangChain4jChatEndpointConsumerBuilder,
-                AdvancedLangChain4jChatEndpointProducerBuilder {
+                EndpointProducerBuilder {
         default LangChain4jChatEndpointBuilder basic() {
             return (LangChain4jChatEndpointBuilder) this;
         }
 
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedLangChain4jChatEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
+         */
+        default AdvancedLangChain4jChatEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
         /**
          * Chat Model of type dev.langchain4j.model.chat.ChatModel.
          * 
@@ -542,7 +243,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code LangChain4jChatPromptTemplate}.
          */
@@ -554,7 +255,7 @@ public interface LangChain4jChatEndpointBuilderFactory {
          * 
          * The option is a: {@code String} type.
          * 
-         * Group: common
+         * Group: producer
          * 
          * @return the name of the header {@code LangChain4jChatAugmentedData}.
          */
