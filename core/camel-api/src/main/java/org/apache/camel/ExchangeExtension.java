@@ -129,6 +129,26 @@ public interface ExchangeExtension {
     void setRedeliveryExhausted(boolean redeliveryExhausted);
 
     /**
+     * Gets the internal redelivery counter, which is resilient to header removal. Returns -1 if not set.
+     */
+    int getRedeliveryCounter();
+
+    /**
+     * Sets the internal redelivery counter, which is resilient to header removal. Set to -1 to clear.
+     */
+    void setRedeliveryCounter(int redeliveryCounter);
+
+    /**
+     * Gets the internal maximum redelivery counter, which is resilient to header removal. Returns -1 if not set.
+     */
+    int getRedeliveryMaxCounter();
+
+    /**
+     * Sets the internal maximum redelivery counter, which is resilient to header removal. Set to -1 to clear.
+     */
+    void setRedeliveryMaxCounter(int redeliveryMaxCounter);
+
+    /**
      * Checks if the passed {@link Synchronization} instance is already contained on this exchange.
      *
      * @param  onCompletion the callback instance that is being checked for

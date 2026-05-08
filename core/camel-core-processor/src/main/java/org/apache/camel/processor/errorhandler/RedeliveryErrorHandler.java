@@ -545,6 +545,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
                 exchange.getExchangeExtension().setRedeliveryExhausted(false);
+                exchange.getExchangeExtension().setRedeliveryCounter(-1);
+                exchange.getExchangeExtension().setRedeliveryMaxCounter(-1);
 
                 // and remove traces of rollback only and uow exhausted markers
                 exchange.setRollbackOnly(false);
@@ -1288,8 +1290,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             if (redeliveryCounter > 0) {
                 exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
                 exchange.getIn().setHeader(Exchange.REDELIVERED, Boolean.TRUE);
+                exchange.getExchangeExtension().setRedeliveryCounter(redeliveryCounter);
                 if (currentRedeliveryPolicy.getMaximumRedeliveries() > 0) {
                     exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER,
+                            currentRedeliveryPolicy.getMaximumRedeliveries());
+                    exchange.getExchangeExtension().setRedeliveryMaxCounter(
                             currentRedeliveryPolicy.getMaximumRedeliveries());
                 }
             }
@@ -1453,6 +1458,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
                 exchange.getExchangeExtension().setRedeliveryExhausted(false);
+                exchange.getExchangeExtension().setRedeliveryCounter(-1);
+                exchange.getExchangeExtension().setRedeliveryMaxCounter(-1);
 
                 // and remove traces of rollback only and uow exhausted markers
                 exchange.setRollbackOnly(false);
@@ -1462,7 +1469,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             } else {
                 // must decrement the redelivery counter as we didn't process the redelivery but is
                 // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
-                decrementRedeliveryCounter(exchange);
+                decrementRedeliveryCounter();
             }
 
             // we should allow using the failure processor if we should not continue
@@ -1857,11 +1864,27 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             int next = base + 1;
             in.setHeader(Exchange.REDELIVERY_COUNTER, next);
             in.setHeader(Exchange.REDELIVERED, Boolean.TRUE);
+            exchange.getExchangeExtension().setRedeliveryCounter(next);
             // if maximum redeliveries is used, then provide that information as well
             if (currentRedeliveryPolicy.getMaximumRedeliveries() > 0) {
                 in.setHeader(Exchange.REDELIVERY_MAX_COUNTER, currentRedeliveryPolicy.getMaximumRedeliveries());
+                exchange.getExchangeExtension().setRedeliveryMaxCounter(currentRedeliveryPolicy.getMaximumRedeliveries());
             }
             return next;
+        }
+
+        /**
+         * Decrements the redelivery counter when the failure handler takes over without processing the redelivery.
+         */
+        private void decrementRedeliveryCounter() {
+            Message in = exchange.getIn();
+            // use the same Math.max(header, field) pattern as incrementRedeliveryCounter:
+            // a nested error handler may have bumped the counter in the header beyond our field
+            Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+            int base = counter != null ? Math.max(redeliveryCounter, counter) : redeliveryCounter;
+            int prev = Math.max(base - 1, 0);
+            in.setHeader(Exchange.REDELIVERY_COUNTER, prev);
+            in.setHeader(Exchange.REDELIVERED, prev > 0 ? Boolean.TRUE : Boolean.FALSE);
         }
 
         /**
@@ -1911,24 +1934,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     && ste1[0].getLineNumber() == ste2[0].getLineNumber();
         }
         return same;
-    }
-
-    /**
-     * Prepares the redelivery counter and boolean flag for the failure handle processor
-     */
-    private void decrementRedeliveryCounter(Exchange exchange) {
-        Message in = exchange.getIn();
-        Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-        if (counter != null) {
-            int prev = counter - 1;
-            in.setHeader(Exchange.REDELIVERY_COUNTER, prev);
-            // set boolean flag according to counter
-            in.setHeader(Exchange.REDELIVERED, prev > 0 ? Boolean.TRUE : Boolean.FALSE);
-        } else {
-            // not redelivered
-            in.setHeader(Exchange.REDELIVERY_COUNTER, 0);
-            in.setHeader(Exchange.REDELIVERED, Boolean.FALSE);
-        }
     }
 
     @Override

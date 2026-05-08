@@ -391,6 +391,8 @@ public final class ExchangeHelper {
         result.setRollbackOnlyLast(source.isRollbackOnlyLast());
         resultExtension.setNotifyEvent(sourceExtension.isNotifyEvent());
         resultExtension.setRedeliveryExhausted(sourceExtension.isRedeliveryExhausted());
+        resultExtension.setRedeliveryCounter(sourceExtension.getRedeliveryCounter());
+        resultExtension.setRedeliveryMaxCounter(sourceExtension.getRedeliveryMaxCounter());
         resultExtension.setErrorHandlerHandled(sourceExtension.getErrorHandlerHandled());
         resultExtension.setFailureHandled(sourceExtension.isFailureHandled());
 

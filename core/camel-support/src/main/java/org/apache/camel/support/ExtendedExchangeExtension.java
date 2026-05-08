@@ -41,6 +41,8 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private String fromRouteId;
     private boolean streamCacheDisabled;
     private boolean redeliveryExhausted;
+    private int redeliveryCounter = -1;
+    private int redeliveryMaxCounter = -1;
     private String historyNodeId;
     private String historyNodeSource;
     private String historyNodeLabel;
@@ -137,6 +139,26 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     @Override
     public void setRedeliveryExhausted(boolean redeliveryExhausted) {
         this.redeliveryExhausted = redeliveryExhausted;
+    }
+
+    @Override
+    public int getRedeliveryCounter() {
+        return this.redeliveryCounter;
+    }
+
+    @Override
+    public void setRedeliveryCounter(int redeliveryCounter) {
+        this.redeliveryCounter = redeliveryCounter;
+    }
+
+    @Override
+    public int getRedeliveryMaxCounter() {
+        return this.redeliveryMaxCounter;
+    }
+
+    @Override
+    public void setRedeliveryMaxCounter(int redeliveryMaxCounter) {
+        this.redeliveryMaxCounter = redeliveryMaxCounter;
     }
 
     @Override
@@ -377,6 +399,8 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         setInterrupted(false);
         setInterruptable(true);
         setRedeliveryExhausted(false);
+        setRedeliveryCounter(-1);
+        setRedeliveryMaxCounter(-1);
         setErrorHandlerHandled(null);
         setStreamCacheDisabled(false);
         setRollbackOnly(false);
