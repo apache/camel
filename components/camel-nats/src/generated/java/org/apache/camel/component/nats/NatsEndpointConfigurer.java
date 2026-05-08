@@ -75,6 +75,10 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pingInterval": target.getConfiguration().setPingInterval(property(camelContext, int.class, value)); return true;
         case "poolsize":
         case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
+        case "pullbatchsize":
+        case "pullBatchSize": target.getConfiguration().setPullBatchSize(property(camelContext, int.class, value)); return true;
+        case "pullfetchtimeout":
+        case "pullFetchTimeout": target.getConfiguration().setPullFetchTimeout(property(camelContext, long.class, value)); return true;
         case "pullsubscription":
         case "pullSubscription": target.getConfiguration().setPullSubscription(property(camelContext, boolean.class, value)); return true;
         case "queuename":
@@ -156,6 +160,10 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pingInterval": return int.class;
         case "poolsize":
         case "poolSize": return int.class;
+        case "pullbatchsize":
+        case "pullBatchSize": return int.class;
+        case "pullfetchtimeout":
+        case "pullFetchTimeout": return long.class;
         case "pullsubscription":
         case "pullSubscription": return boolean.class;
         case "queuename":
@@ -238,6 +246,10 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pingInterval": return target.getConfiguration().getPingInterval();
         case "poolsize":
         case "poolSize": return target.getConfiguration().getPoolSize();
+        case "pullbatchsize":
+        case "pullBatchSize": return target.getConfiguration().getPullBatchSize();
+        case "pullfetchtimeout":
+        case "pullFetchTimeout": return target.getConfiguration().getPullFetchTimeout();
         case "pullsubscription":
         case "pullSubscription": return target.getConfiguration().isPullSubscription();
         case "queuename":

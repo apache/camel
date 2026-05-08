@@ -99,6 +99,10 @@ public class NatsConfiguration implements Cloneable {
     private ConsumerConfiguration consumerConfiguration;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean pullSubscription = true;
+    @UriParam(label = "consumer", defaultValue = "10")
+    private int pullBatchSize = 10;
+    @UriParam(label = "consumer", defaultValue = "1000")
+    private long pullFetchTimeout = 1000;
     @UriParam(label = "consumer")
     private String durableName;
     @UriParam(label = "security")
@@ -566,6 +570,30 @@ public class NatsConfiguration implements Cloneable {
      */
     public void setPullSubscription(boolean pullSubscription) {
         this.pullSubscription = pullSubscription;
+    }
+
+    public int getPullBatchSize() {
+        return pullBatchSize;
+    }
+
+    /**
+     * Maximum number of messages to fetch per pull request when using a JetStream Pull Subscription. Only used when
+     * {@code pullSubscription=true}.
+     */
+    public void setPullBatchSize(int pullBatchSize) {
+        this.pullBatchSize = pullBatchSize;
+    }
+
+    public long getPullFetchTimeout() {
+        return pullFetchTimeout;
+    }
+
+    /**
+     * Maximum time (in milliseconds) to wait for a batch of messages to be available on the server during a single
+     * fetch when using a JetStream Pull Subscription. Only used when {@code pullSubscription=true}.
+     */
+    public void setPullFetchTimeout(long pullFetchTimeout) {
+        this.pullFetchTimeout = pullFetchTimeout;
     }
 
     /**

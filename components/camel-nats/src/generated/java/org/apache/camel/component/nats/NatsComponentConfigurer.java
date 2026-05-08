@@ -81,6 +81,10 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "pingInterval": getOrCreateConfiguration(target).setPingInterval(property(camelContext, int.class, value)); return true;
         case "poolsize":
         case "poolSize": getOrCreateConfiguration(target).setPoolSize(property(camelContext, int.class, value)); return true;
+        case "pullbatchsize":
+        case "pullBatchSize": getOrCreateConfiguration(target).setPullBatchSize(property(camelContext, int.class, value)); return true;
+        case "pullfetchtimeout":
+        case "pullFetchTimeout": getOrCreateConfiguration(target).setPullFetchTimeout(property(camelContext, long.class, value)); return true;
         case "pullsubscription":
         case "pullSubscription": getOrCreateConfiguration(target).setPullSubscription(property(camelContext, boolean.class, value)); return true;
         case "queuename":
@@ -163,6 +167,10 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "pingInterval": return int.class;
         case "poolsize":
         case "poolSize": return int.class;
+        case "pullbatchsize":
+        case "pullBatchSize": return int.class;
+        case "pullfetchtimeout":
+        case "pullFetchTimeout": return long.class;
         case "pullsubscription":
         case "pullSubscription": return boolean.class;
         case "queuename":
@@ -246,6 +254,10 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "pingInterval": return getOrCreateConfiguration(target).getPingInterval();
         case "poolsize":
         case "poolSize": return getOrCreateConfiguration(target).getPoolSize();
+        case "pullbatchsize":
+        case "pullBatchSize": return getOrCreateConfiguration(target).getPullBatchSize();
+        case "pullfetchtimeout":
+        case "pullFetchTimeout": return getOrCreateConfiguration(target).getPullFetchTimeout();
         case "pullsubscription":
         case "pullSubscription": return getOrCreateConfiguration(target).isPullSubscription();
         case "queuename":
