@@ -1277,29 +1277,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // clear rollback flags
             exchange.setRollbackOnly(false);
 
-            // TODO: We may want to store these as state on RedeliveryData so we keep them in case end user messes with Exchange
-            // and then put these on the exchange when doing a redelivery / fault processor
-
-            // preserve these headers
-            Integer redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-            Integer redeliveryMaxCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER, Integer.class);
-            Boolean redelivered = exchange.getIn().getHeader(Exchange.REDELIVERED, Boolean.class);
-
             // we are redelivering so copy from original back to exchange
             exchange.getIn().copyFrom(this.original.getIn());
             exchange.setOut(null);
             // reset cached streams so they can be read again
             MessageHelper.resetStreamCache(exchange.getIn());
 
-            // put back headers
-            if (redeliveryCounter != null) {
+            // restore redelivery headers from internal state (not from the exchange headers,
+            // which user routes may have removed via removeHeaders("*"))
+            if (redeliveryCounter > 0) {
                 exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
-            }
-            if (redeliveryMaxCounter != null) {
-                exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
-            }
-            if (redelivered != null) {
-                exchange.getIn().setHeader(Exchange.REDELIVERED, redelivered);
+                exchange.getIn().setHeader(Exchange.REDELIVERED, Boolean.TRUE);
+                if (currentRedeliveryPolicy.getMaximumRedeliveries() > 0) {
+                    exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER,
+                            currentRedeliveryPolicy.getMaximumRedeliveries());
+                }
             }
         }
 
@@ -1856,8 +1848,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          */
         private int incrementRedeliveryCounter(Exchange exchange) {
             Message in = exchange.getIn();
+            // use the internal field as the authoritative counter, not the header,
+            // because user routes may remove headers (e.g. removeHeaders("*"))
+            // however, if the header carries a higher value from a nested error handler
+            // (e.g. per-endpoint redelivery in routing slip), respect that accumulated count
             Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-            int next = counter != null ? counter + 1 : 1;
+            int base = counter != null ? Math.max(redeliveryCounter, counter) : redeliveryCounter;
+            int next = base + 1;
             in.setHeader(Exchange.REDELIVERY_COUNTER, next);
             in.setHeader(Exchange.REDELIVERED, Boolean.TRUE);
             // if maximum redeliveries is used, then provide that information as well
