@@ -32,7 +32,7 @@ import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CUR
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("See CAMEL-19751 before enabling")
+@Disabled("CAMEL-19751 - tests hit live Binance API during exchange init, WireMock does not cover futures endpoint")
 public class MetaDataProducerTest extends XChangeTestSupport {
 
     @Override
