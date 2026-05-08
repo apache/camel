@@ -26,6 +26,9 @@ org.apache.camel.telemetry.decorators.AwsConfigSpanDecorator
 org.apache.camel.telemetry.decorators.AwsCwSpanDecorator
 org.apache.camel.telemetry.decorators.AwsDdbSpanDecorator
 org.apache.camel.telemetry.decorators.AwsDdbStreamSpanDecorator
+org.apache.camel.telemetry.decorators.AwsEc2SpanDecorator
+org.apache.camel.telemetry.decorators.AwsEcsSpanDecorator
+org.apache.camel.telemetry.decorators.AwsEksSpanDecorator
 org.apache.camel.telemetry.decorators.AwsEventbridgeSpanDecorator
 org.apache.camel.telemetry.decorators.AwsIamSpanDecorator
 org.apache.camel.telemetry.decorators.AwsKinesisFirehoseSpanDecorator
