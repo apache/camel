@@ -39,6 +39,7 @@ If you have basic knowledge about _routes_, you can use the following guides to 
 ** xref:manual::oncompletion.adoc[On Completion]
 ** xref:manual::Endpoint-dsl.adoc[Endpoint DSL]
 ** xref:manual::route-template.adoc[Route Template]
+** xref:manual::route-diagram.adoc[Visual Route Diagrams]
 ** xref:manual::using-propertyplaceholder.adoc[Using Property Placeholder]
 ** xref:manual::variables.adoc[Using Variables]
 

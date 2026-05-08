@@ -37,9 +37,7 @@ import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -93,14 +91,14 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
 
         // render by groups
         for (String group : groups) {
-            root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", group));
+            // do not include scheme in filter
+            filter = LoggerHelper.stripScheme(group);
+            root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
             var routes = RouteDiagramHelper.parseRoutes(root);
+
             BufferedImage image = renderImage(routes, theme.name(), 12, 180, "CODE");
-            // normalize as file name
-            String name = StringHelper.after(group, ":", group);
-            name = name.replace(' ', '-');
-            name = FileUtil.stripExt(name);
             folder.mkdirs();
+            String name = RouteDiagramHelper.extractSourceName(group);
             File f = new File(folder, name + ".png");
             ImageIO.write(image, "png", f);
         }

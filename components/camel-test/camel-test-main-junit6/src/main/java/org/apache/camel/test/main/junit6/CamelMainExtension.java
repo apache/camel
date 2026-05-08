@@ -104,6 +104,7 @@ final class CamelMainExtension
         }
         dumpRouteCoverageIfNeeded(context, time, currentTestName);
         dumpRouteIfNeeded(context, currentTestName);
+        dumpRouteDiagramIfNeeded(context);
     }
 
     /**
@@ -112,8 +113,10 @@ final class CamelMainExtension
      */
     private CamelMainContext createCamelMainContextAndStart(ExtensionContext context) {
         try {
+            boolean autoStartup = getRouteDumpDiagramFolder(context) == null; // do not auto startup if we dump diagram
             final CamelMainContext camelMainContext = CamelMainContext.builder(context)
                     .useJmx(useJmx(context) || isRouteCoverageEnabled(context) || isCamelDebugPresent())
+                    .withAutoStartup(autoStartup)
                     .build();
             camelMainContext.start();
             return camelMainContext;
@@ -171,7 +174,10 @@ final class CamelMainExtension
             final Class<?> requiredTestClass = context.getRequiredTestClass();
             // In case of a {@code @Nested} test class, its name will be prefixed by the name of its outer classes
             String className = requiredTestClass.getName().substring(requiredTestClass.getPackageName().length() + 1);
-            String dir = "target/camel-route-dump";
+            String dir = CamelContextTestHelper.getRouteDumpDir();
+            if (dir == null) {
+                dir = "target/camel-route-dump";
+            }
             String ext = dump.toLowerCase();
             String name = String.format("%s-%s.%s", className, StringHelper.before(currentTestName, "("), ext);
 
@@ -183,6 +189,19 @@ final class CamelMainExtension
             drs.setLog(false);
             drs.setUriAsParameters(true);
             drs.dumpRoutes(dump);
+        }
+    }
+
+    private void dumpRouteDiagramIfNeeded(ExtensionContext context) {
+        String folder = getRouteDumpDiagramFolder(context);
+        if (folder != null) {
+            LOG.info("Dumping route diagrams to: {}", folder);
+            final ModelCamelContext camelContext = getContextStore(context).get(CONTEXT, CamelMainContext.class).context();
+            DumpRoutesStrategy drs = camelContext.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
+            drs.setOutput(folder);
+            drs.setInclude("*");
+            drs.setLog(false);
+            drs.dumpRoutes("png");
         }
     }
 
@@ -215,6 +234,16 @@ final class CamelMainExtension
                     .getAnnotation(CamelMainTest.class).dumpRoute();
         }
         return dump;
+    }
+
+    private String getRouteDumpDiagramFolder(ExtensionContext context) {
+        String dir = context.getRequiredTestInstances().getAllInstances().get(0).getClass()
+                .getAnnotation(CamelMainTest.class).dumpRouteDiagramFolder();
+        if (dir != null && !dir.isBlank()) {
+            return dir;
+        } else {
+            return null;
+        }
     }
 
     /**

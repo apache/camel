@@ -1,0 +1,122 @@
+= Route Diagram
+
+**Available as of Camel 4.21**
+
+The `camel-diagram` component provides a _route render_ functionality that can output visual diagrams
+of your Camel routes.
+
+This feature can be used to automatically generate route diagrams as part of building and testing your projects.
+
+For example as shown below:
+
+image::images/route-diagram-sample.png[Foo Camel Route Diagram]
+
+== Generating Route Diagrams with Camel JBang
+
+You can generate route diagrams with JBang such:
+
+[source,bash]
+----
+camel cmd route-diagram foo.yaml
+----
+
+It also works with Java source files:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.java
+----
+
+And you can include multiple files:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.java foo.yaml
+----
+
+TIP: See more options with `camel cmd route-diagram --help`.
+
+And if you run Camel JBang with `--console` then the developer console also comes with this functionality,
+by opening the link: http://localhost:8080/q/dev/route-diagram
+
+
+== Generating Route Diagrams with Camel Main
+
+This is done by adding `camel-diagram` as test scoped dependency, and then adding a special unit test that is responsible
+for generating the route diagrams and saving them to a specified folder.
+
+The following code shows how to do this.
+
+[source,java]
+----
+package org.apache.camel.example;
+
+import org.apache.camel.test.main.junit6.CamelMainTest;
+import org.junit.jupiter.api.Test;
+
+/**
+ * To dump route diagram only once
+ */
+@CamelMainTest(mainClass = MyApplication.class, dumpRouteDiagramFolder = "doc")
+class MainDiagramTest {
+
+    @Test
+    void empty() {
+        // empty test method
+    }
+
+}
+----
+
+So when you run `mvn test` then this unit test is executed (together with your other tests), and it's responsible
+for generating the route diagrams.
+
+The diagrams would then be stored in the `doc` folder, as specified in the `dumpRouteDiagramFolder` parameter
+on the `@CamelMainTest` annotation.
+
+
+== Generating Route Diagrams with Spring Boot
+
+This is done by adding `camel-diagram` as test scoped dependency, and then adding a special unit test that is responsible
+for generating the route diagrams and saving them to a specified folder.
+
+The following code shows how to do this.
+
+[source,java]
+----
+package sample.camel;
+
+import org.apache.camel.test.spring.junit6.CamelSpringBootTest;
+import org.apache.camel.test.spring.junit6.EnableRouteDiagramDump;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+/**
+ * To dump route diagram only once
+ */
+@CamelSpringBootTest
+@SpringBootTest(classes = MyCamelApplication.class)
+@EnableRouteDiagramDump(folder = "doc")
+public class DumpRouteDiagramTest {
+
+    @Test
+    public void empty() {
+        // noop
+    }
+
+}
+----
+
+So when you run `mvn test` then this unit test is executed (together with your other tests), and it's responsible
+for generating the route diagrams.
+
+The diagrams would then be stored in the `doc` folder, as specified in the `folder` parameter
+on the `@EnableRouteDiagramDump` annotation.
+
+
+== See Also
+
+See these examples:
+
+- https://github.com/apache/camel-examples/tree/main/main[Camel Main Standalone with route diagrams]
+- https://github.com/apache/camel-spring-boot-examples/tree/main/spring-boot[Spring Boot with route diagrams]

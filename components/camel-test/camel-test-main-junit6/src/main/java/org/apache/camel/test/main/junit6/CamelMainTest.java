@@ -230,6 +230,15 @@ public @interface CamelMainTest {
     String dumpRoute() default "";
 
     /**
+     * Whether to dump visual route diagrams (dumped into files in target/camel-route-diagram).
+     * <p/>
+     * This allows to generate diagrams of your Camel routes as part of documentation.
+     * <p/>
+     * This requires having camel-diagram JAR on the classpath.
+     */
+    String dumpRouteDiagramFolder() default "";
+
+    /**
      * Whether JMX should be used during testing.
      *
      * @return <tt>false</tt> by default.

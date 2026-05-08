@@ -252,6 +252,34 @@ public final class CamelAnnotationsHandler {
         }
     }
 
+    /**
+     * Dumps the route diagram after test is executed
+     */
+    public static void handleRouteDiagramDump(
+            ConfigurableApplicationContext context, Class<?> testClass,
+            Function<CamelSpringTestHelper.DoToSpringCamelContextsStrategy, String> testMethod)
+            throws Exception {
+
+        String folder = null;
+        if (testClass.isAnnotationPresent(EnableRouteDiagramDump.class)) {
+            folder = testClass.getAnnotation(EnableRouteDiagramDump.class).folder();
+        }
+        if (folder != null && !folder.isBlank()) {
+            final String dir = folder;
+            CamelSpringTestHelper.doToSpringCamelContexts(context, new CamelSpringTestHelper.DoToSpringCamelContextsStrategy() {
+                @Override
+                public void execute(String contextName, SpringCamelContext camelContext) throws Exception {
+                    LOGGER.info("Dumping route diagrams to: {}", dir);
+                    DumpRoutesStrategy drs = camelContext.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
+                    drs.setOutput(dir);
+                    drs.setInclude("*");
+                    drs.setLog(false);
+                    drs.dumpRoutes("png");
+                }
+            });
+        }
+    }
+
     public static void handleProvidesBreakpoint(ConfigurableApplicationContext context, Class<?> testClass) throws Exception {
         Collection<Method> methods = CamelSpringTestHelper.getAllMethods(testClass);
         final List<Breakpoint> breakpoints = new LinkedList<>();
@@ -510,8 +538,14 @@ public final class CamelAnnotationsHandler {
             }
         }
 
+        boolean dumpRouteDiagram = testClass.isAnnotationPresent(EnableRouteDiagramDump.class);
+
         if (!skip) {
             CamelSpringTestHelper.doToSpringCamelContexts(context, (contextName, camelContext) -> {
+                // when dumping route diagrams we should not auto-start the routes
+                if (dumpRouteDiagram) {
+                    camelContext.setAutoStartup(false);
+                }
                 if (!camelContext.isStarted()) {
                     LOGGER.info("Starting CamelContext with name [{}].", contextName);
                     camelContext.start();

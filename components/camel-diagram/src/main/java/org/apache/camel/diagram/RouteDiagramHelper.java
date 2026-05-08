@@ -23,6 +23,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -87,6 +88,14 @@ public final class RouteDiagramHelper {
     static String extractSourceName(String source) {
         if (source == null || source.isBlank()) {
             return null;
+        }
+        source = source.replace(' ', '-');
+        if (source.startsWith("source:")) {
+            source = source.substring(7);
+            // skip middle packages
+            if (source.contains(".")) {
+                source = StringHelper.afterLast(source, ".");
+            }
         }
         source = LoggerHelper.sourceNameOnly(source);
         source = LoggerHelper.stripScheme(source);

@@ -114,6 +114,10 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
          * The flag indicating whether JMX should be enabled.
          */
         private boolean useJmx;
+        /**
+         * The flag indicating whether CamelContext should auto start routes.
+         */
+        private boolean autoStartup = true;
 
         /**
          * Construct a {@code Builder} with the given extension context.
@@ -135,6 +139,11 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
             return this;
         }
 
+        Builder withAutoStartup(boolean autoStartup) {
+            this.autoStartup = autoStartup;
+            return this;
+        }
+
         /**
          * Build the {@code CamelMainContext} and its underlying Camel context based on the data extracted from the
          * annotation {@code CamelMainTest}.
@@ -149,6 +158,9 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
             configureShutdownTimeout(camelContext);
             configureDebuggerIfNeeded(camelContext);
             initCamelContext(camelContext);
+            if (camelContext.isAutoStartup()) {
+                camelContext.setAutoStartup(autoStartup);
+            }
             final CamelBeanPostProcessor beanPostProcessor = PluginHelper.getBeanPostProcessor(extendedCamelContext);
             for (Object instance : instances) {
                 initInstance(beanPostProcessor, instance);
