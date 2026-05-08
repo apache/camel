@@ -729,6 +729,74 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Maximum number of messages to fetch per pull request when using a
+         * JetStream Pull Subscription. Only used when {code
+         * pullSubscription=true}.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param pullBatchSize the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullBatchSize(int pullBatchSize) {
+            doSetProperty("pullBatchSize", pullBatchSize);
+            return this;
+        }
+        /**
+         * Maximum number of messages to fetch per pull request when using a
+         * JetStream Pull Subscription. Only used when {code
+         * pullSubscription=true}.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param pullBatchSize the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullBatchSize(String pullBatchSize) {
+            doSetProperty("pullBatchSize", pullBatchSize);
+            return this;
+        }
+        /**
+         * Maximum time (in milliseconds) to wait for a batch of messages to be
+         * available on the server during a single fetch when using a JetStream
+         * Pull Subscription. Only used when {code pullSubscription=true}.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param pullFetchTimeout the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullFetchTimeout(long pullFetchTimeout) {
+            doSetProperty("pullFetchTimeout", pullFetchTimeout);
+            return this;
+        }
+        /**
+         * Maximum time (in milliseconds) to wait for a batch of messages to be
+         * available on the server during a single fetch when using a JetStream
+         * Pull Subscription. Only used when {code pullSubscription=true}.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param pullFetchTimeout the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullFetchTimeout(String pullFetchTimeout) {
+            doSetProperty("pullFetchTimeout", pullFetchTimeout);
+            return this;
+        }
+        /**
          * Sets the consumer subscription type for JetStream. Set to true to use
          * a Pull Subscription (consumer explicitly requests messages). Set to
          * false to use a Push Subscription (messages are automatically

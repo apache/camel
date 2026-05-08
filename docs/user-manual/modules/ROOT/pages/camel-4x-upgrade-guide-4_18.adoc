@@ -255,3 +255,15 @@ defense-in-depth only. The primary mitigation should be configured at the messag
 
 * ActiveMQ Artemis: `deserializationAllowList` / `deserializationDenyList` (see the Artemis docs)
 * ActiveMQ Classic: the `org.apache.activemq.SERIALIZABLE_PACKAGES` system property
+
+=== camel-nats
+
+Fixed the JetStream consumer pull subscription mode (which is the default) so that messages are
+actually consumed from the server. Previously the consumer would set up a pull subscription but never
+issue any pull/fetch requests, so no messages were delivered until the user explicitly switched to
+push mode with `pullSubscription=false`.
+
+Two new endpoint options have been added to control the pull fetch loop:
+
+* `pullBatchSize` (default `10`) — maximum number of messages to fetch per pull request.
+* `pullFetchTimeout` (default `1000` ms) — maximum time to wait for a batch on each fetch.

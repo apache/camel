@@ -510,6 +510,44 @@ public interface NatsComponentBuilderFactory {
     
         
         /**
+         * Maximum number of messages to fetch per pull request when using a
+         * JetStream Pull Subscription. Only used when {code
+         * pullSubscription=true}.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param pullBatchSize the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder pullBatchSize(int pullBatchSize) {
+            doSetProperty("pullBatchSize", pullBatchSize);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum time (in milliseconds) to wait for a batch of messages to be
+         * available on the server during a single fetch when using a JetStream
+         * Pull Subscription. Only used when {code pullSubscription=true}.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param pullFetchTimeout the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder pullFetchTimeout(long pullFetchTimeout) {
+            doSetProperty("pullFetchTimeout", pullFetchTimeout);
+            return this;
+        }
+    
+        
+        /**
          * Sets the consumer subscription type for JetStream. Set to true to use
          * a Pull Subscription (consumer explicitly requests messages). Set to
          * false to use a Push Subscription (messages are automatically
@@ -841,6 +879,8 @@ public interface NatsComponentBuilderFactory {
             case "maxMessages": getOrCreateConfiguration((NatsComponent) component).setMaxMessages((java.lang.String) value); return true;
             case "nackWait": getOrCreateConfiguration((NatsComponent) component).setNackWait((long) value); return true;
             case "poolSize": getOrCreateConfiguration((NatsComponent) component).setPoolSize((int) value); return true;
+            case "pullBatchSize": getOrCreateConfiguration((NatsComponent) component).setPullBatchSize((int) value); return true;
+            case "pullFetchTimeout": getOrCreateConfiguration((NatsComponent) component).setPullFetchTimeout((long) value); return true;
             case "pullSubscription": getOrCreateConfiguration((NatsComponent) component).setPullSubscription((boolean) value); return true;
             case "queueName": getOrCreateConfiguration((NatsComponent) component).setQueueName((java.lang.String) value); return true;
             case "replyToDisabled": getOrCreateConfiguration((NatsComponent) component).setReplyToDisabled((boolean) value); return true;
