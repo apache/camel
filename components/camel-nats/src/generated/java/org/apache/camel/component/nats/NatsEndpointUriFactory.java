@@ -23,7 +23,7 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(41);
+        Set<String> props = new HashSet<>(43);
         props.add("ackPolicy");
         props.add("ackWait");
         props.add("bridgeErrorHandler");
@@ -51,6 +51,8 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("pedantic");
         props.add("pingInterval");
         props.add("poolSize");
+        props.add("pullBatchSize");
+        props.add("pullFetchTimeout");
         props.add("pullSubscription");
         props.add("queueName");
         props.add("reconnect");
