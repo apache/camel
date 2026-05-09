@@ -70,6 +70,37 @@ public final class RouteDiagramHelper {
                     node.description = line.getString("description");
                     Integer level = line.getInteger("level");
                     node.level = level != null ? level : 0;
+
+                    if (line.containsKey("statistics")) {
+                        JsonObject ls = line.getJsonObject("statistics");
+                        RouteDiagramLayoutEngine.StatInfo stat;
+                        if ("route".equals(node.type)) {
+                            // route has some special stats
+                            var s = new RouteDiagramLayoutEngine.RouteStatInfo();
+                            s.coverage = ls.getString("coverage");
+                            s.load01 = ls.getString("load01");
+                            s.load05 = ls.getString("load05");
+                            s.load15 = ls.getString("load15");
+                            s.exchangesThroughput = ls.getString("exchangesThroughput");
+                            stat = s;
+                        } else {
+                            // common stats
+                            stat = new RouteDiagramLayoutEngine.StatInfo();
+                        }
+                        node.stat = stat;
+                        stat.idleSince = ls.getLong("idleSince");
+                        stat.exchangesTotal = ls.getLong("exchangesTotal");
+                        stat.exchangesFailed = ls.getLong("exchangesFailed");
+                        stat.exchangesInflight = ls.getLong("exchangesInflight");
+                        stat.meanProcessingTime = ls.getLong("meanProcessingTime");
+                        stat.maxProcessingTime = ls.getLong("maxProcessingTime");
+                        stat.minProcessingTime = ls.getLong("minProcessingTime");
+                        stat.lastProcessingTime = ls.getLongOrDefault("lastProcessingTime", -1);
+                        stat.deltaProcessingTime = ls.getLongOrDefault("deltaProcessingTime", -1);
+                        stat.lastCreatedExchangeTimestamp = ls.getLongOrDefault("lastCreatedExchangeTimestamp", -1);
+                        stat.lastCompletedExchangeTimestamp = ls.getLongOrDefault("lastCompletedExchangeTimestamp", -1);
+                        stat.lastFailedExchangeTimestamp = ls.getLongOrDefault("lastFailedExchangeTimestamp", -1);
+                    }
                     route.nodes.add(node);
                 }
             }

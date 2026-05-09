@@ -306,7 +306,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 jo.put("uri", destination);
             }
 
-            final JsonObject stats = getStatsObject(mp);
+            final JsonObject stats = gatherProcessorStats(mp);
             jo.put("statistics", stats);
         }
     }
@@ -325,7 +325,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         return null;
     }
 
-    private static JsonObject getStatsObject(ManagedProcessorMBean mp) {
+    public static JsonObject gatherProcessorStats(ManagedProcessorMBean mp) {
         JsonObject stats = new JsonObject();
         stats.put("idleSince", mp.getIdleSince());
         stats.put("exchangesTotal", mp.getExchangesTotal());

@@ -683,9 +683,10 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         if (dc != null) {
             String filter = root.getString("filter");
             String brief = root.getString("brief");
+            String metric = root.getString("metric");
             JsonObject json
                     = (JsonObject) dc.call(DevConsole.MediaType.JSON,
-                            Map.of("filter", filter, "brief", brief));
+                            Map.of("filter", filter, "brief", brief, "metric", metric));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {
