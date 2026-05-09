@@ -205,7 +205,7 @@ public class Olingo4AppAPITest {
     }
 
     @Test
-    @Disabled("CAMEL-22271 - failing since jackson upgrade from 2.19.1 to 2.19.2")
+    @Disabled("CAMEL-22271 - olingo4 is deprecated (Apache Attic), upstream bug OLINGO-1641 will not be fixed")
     public void testReadUnparsedEntitySet() throws Exception {
         final TestOlingo4ResponseHandler<InputStream> responseHandler = new TestOlingo4ResponseHandler<>();
 
@@ -244,7 +244,7 @@ public class Olingo4AppAPITest {
     }
 
     @Test
-    @Disabled("CAMEL-22271 - failing since jackson upgrade from 2.19.1 to 2.19.2")
+    @Disabled("CAMEL-22271 - olingo4 is deprecated (Apache Attic), upstream bug OLINGO-1641 will not be fixed")
     public void testReadUnparsedEntity() throws Exception {
         final TestOlingo4ResponseHandler<InputStream> responseHandler = new TestOlingo4ResponseHandler<>();
 

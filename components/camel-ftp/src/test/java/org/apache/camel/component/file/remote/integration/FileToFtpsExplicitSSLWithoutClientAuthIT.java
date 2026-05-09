@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -31,10 +30,9 @@ public class FileToFtpsExplicitSSLWithoutClientAuthIT extends FtpsServerExplicit
     protected String getFtpUrl() {
         return "ftps://admin@localhost:{{ftp.server.port}}"
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true"
-               + "&securityProtocol=SSLv3&implicit=false";
+               + "&securityProtocol=TLSv1.2&implicit=false";
     }
 
-    @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")
     @Test
     public void testFromFileToFtp() throws Exception {
 
