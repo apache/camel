@@ -26,7 +26,6 @@ import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
@@ -34,7 +33,6 @@ import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TZlibTransport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,19 +49,19 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     @SuppressWarnings({ "rawtypes" })
     private Calculator.Processor processor;
 
-    @RegisterExtension
-    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
+    private int thriftTestPort;
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
 
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void setupResources() throws Exception {
+    public void doPreSetup() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
 
         serverTransport = new TServerSocket(
-                new InetSocketAddress(InetAddress.getByName("localhost"), thriftTestPort.getPort()), THRIFT_CLIENT_TIMEOUT);
+                new InetSocketAddress(InetAddress.getByName("localhost"), 0), THRIFT_CLIENT_TIMEOUT);
+        thriftTestPort = serverTransport.getServerSocket().getLocalPort();
         TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
         args.processor(processor);
         args.protocolFactory(new TBinaryProtocol.Factory());
@@ -72,7 +70,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
 
         Runnable simple = new Runnable() {
             public void run() {
-                LOG.info("Thrift server with zlib compression started on port: {}", thriftTestPort.getPort());
+                LOG.info("Thrift server with zlib compression started on port: {}", thriftTestPort);
                 server.serve();
             }
         };
@@ -120,10 +118,10 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:thrift-zlib-calculate")
-                        .to("thrift://localhost:" + thriftTestPort.getPort()
+                        .to("thrift://localhost:" + thriftTestPort
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=calculate&compressionType=ZLIB&synchronous=true");
                 from("direct:thrift-zlib-ping")
-                        .to("thrift://localhost:" + thriftTestPort.getPort()
+                        .to("thrift://localhost:" + thriftTestPort
                             + "/org.apache.camel.component.thrift.generated.Calculator?method=ping&compressionType=ZLIB&synchronous=true");
             }
         };
