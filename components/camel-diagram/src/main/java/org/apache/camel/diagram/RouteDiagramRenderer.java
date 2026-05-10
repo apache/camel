@@ -337,8 +337,8 @@ public class RouteDiagramRenderer {
         }
         if (failed > 0) {
             g.setColor(colors.getCounterFail());
-            // TOOD: calc width depending on length of string
-            g.drawString("" + failed, toCx - 2 - fontSizeNode - fontSizeNode, toTy - 2 - fontSizeNode);
+            int width = g.getFontMetrics().stringWidth("" + failed);
+            g.drawString("" + failed, toCx - 2 - fontSizeNode - width, toTy - 2 - fontSizeNode);
         }
     }
 
@@ -409,8 +409,8 @@ public class RouteDiagramRenderer {
         }
         if (failed > 0) {
             g.setColor(colors.getCounterFail());
-            // TOOD: calc width depending on length of string
-            g.drawString("" + failed, toCx - 2 - fontSizeNode - fontSizeNode, toTy - 2 - fontSizeNode);
+            int width = g.getFontMetrics().stringWidth("" + failed);
+            g.drawString("" + failed, toCx - 2 - fontSizeNode - width, toTy - 2 - fontSizeNode);
         }
     }
 
