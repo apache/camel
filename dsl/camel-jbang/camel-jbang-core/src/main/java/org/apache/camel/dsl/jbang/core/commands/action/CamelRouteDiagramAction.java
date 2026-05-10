@@ -90,7 +90,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
     String nodeLabel;
 
     @CommandLine.Option(names = { "--metric" }, defaultValue = "false",
-            description = "Whether to include live metrics (only possible for running Camel application)")
+                        description = "Whether to include live metrics (only possible for running Camel application)")
     boolean metric;
 
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
