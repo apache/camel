@@ -89,6 +89,10 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                         defaultValue = "both")
     String nodeLabel;
 
+    @CommandLine.Option(names = { "--metric" }, defaultValue = "false",
+                        description = "Whether to include live metrics (only possible for running Camel application)")
+    boolean metric;
+
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
@@ -270,6 +274,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
         root.put("action", "route-structure");
         root.put("filter", "*");
         root.put("brief", false);
+        root.put("metric", metric);
         Path file = getActionFile(Long.toString(pid));
         try {
             Files.writeString(file, root.toJson());

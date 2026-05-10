@@ -128,7 +128,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 }
             }
             sb.append(String.format("%n    Uptime: %s", mrb.getUptime()));
-            String coverage = calculateRouteCoverage(mrb, true);
+            String coverage = calculateRouteCoverage(getCamelContext(), mrb, true);
             if (coverage != null) {
                 sb.append(String.format("%n    Coverage: %s", coverage));
             }
@@ -259,46 +259,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 }
                 jo.put("lastError", eo);
             }
-            JsonObject stats = new JsonObject();
-            String coverage = calculateRouteCoverage(mrb, false);
-            if (coverage != null) {
-                stats.put("coverage", coverage);
-            }
-            String load1 = getLoad1(mrb);
-            String load5 = getLoad5(mrb);
-            String load15 = getLoad15(mrb);
-            if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
-                stats.put("load01", load1);
-                stats.put("load05", load5);
-                stats.put("load15", load15);
-            }
-            String thp = getThroughput(mrb);
-            if (!thp.isEmpty()) {
-                stats.put("exchangesThroughput", thp);
-            }
-            stats.put("idleSince", mrb.getIdleSince());
-            stats.put("exchangesTotal", mrb.getExchangesTotal());
-            stats.put("exchangesFailed", mrb.getExchangesFailed());
-            stats.put("exchangesInflight", mrb.getExchangesInflight());
-            stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
-            stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
-            stats.put("minProcessingTime", mrb.getMinProcessingTime());
-            if (mrb.getExchangesTotal() > 0) {
-                stats.put("lastProcessingTime", mrb.getLastProcessingTime());
-                stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
-            }
-            Date last = mrb.getLastExchangeCreatedTimestamp();
-            if (last != null) {
-                stats.put("lastCreatedExchangeTimestamp", last.getTime());
-            }
-            last = mrb.getLastExchangeCompletedTimestamp();
-            if (last != null) {
-                stats.put("lastCompletedExchangeTimestamp", last.getTime());
-            }
-            last = mrb.getLastExchangeFailureTimestamp();
-            if (last != null) {
-                stats.put("lastFailedExchangeTimestamp", last.getTime());
-            }
+            JsonObject stats = gatherRouteStats(getCamelContext(), mrb);
             jo.put("statistics", stats);
             if (processors) {
                 JsonArray arr = new JsonArray();
@@ -374,36 +335,36 @@ public class RouteDevConsole extends AbstractDevConsole {
         return o1.getRouteId().compareToIgnoreCase(o2.getRouteId());
     }
 
-    private String getLoad1(ManagedRouteMBean mrb) {
+    private static String getLoad1(ManagedRouteMBean mrb) {
         String s = mrb.getLoad01();
         // lets use dot as separator
         s = s.replace(',', '.');
         return s;
     }
 
-    private String getLoad5(ManagedRouteMBean mrb) {
+    private static String getLoad5(ManagedRouteMBean mrb) {
         String s = mrb.getLoad05();
         // lets use dot as separator
         s = s.replace(',', '.');
         return s;
     }
 
-    private String getLoad15(ManagedRouteMBean mrb) {
+    private static String getLoad15(ManagedRouteMBean mrb) {
         String s = mrb.getLoad15();
         // lets use dot as separator
         s = s.replace(',', '.');
         return s;
     }
 
-    private String getThroughput(ManagedRouteMBean mrb) {
+    private static String getThroughput(ManagedRouteMBean mrb) {
         String s = mrb.getThroughput();
         // lets use dot as separator
         s = s.replace(',', '.');
         return s;
     }
 
-    private String calculateRouteCoverage(ManagedRouteMBean mrb, boolean percent) {
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+    private static String calculateRouteCoverage(CamelContext camelContext, ManagedRouteMBean mrb, boolean percent) {
+        ManagedCamelContext mcc = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
         try {
@@ -491,6 +452,50 @@ public class RouteDevConsole extends AbstractDevConsole {
                 LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
             }
         }
+    }
+
+    public static JsonObject gatherRouteStats(CamelContext camelContext, ManagedRouteMBean mrb) {
+        JsonObject stats = new JsonObject();
+        String coverage = calculateRouteCoverage(camelContext, mrb, false);
+        if (coverage != null) {
+            stats.put("coverage", coverage);
+        }
+        String load1 = getLoad1(mrb);
+        String load5 = getLoad5(mrb);
+        String load15 = getLoad15(mrb);
+        if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
+            stats.put("load01", load1);
+            stats.put("load05", load5);
+            stats.put("load15", load15);
+        }
+        String thp = getThroughput(mrb);
+        if (!thp.isEmpty()) {
+            stats.put("exchangesThroughput", thp);
+        }
+        stats.put("idleSince", mrb.getIdleSince());
+        stats.put("exchangesTotal", mrb.getExchangesTotal());
+        stats.put("exchangesFailed", mrb.getExchangesFailed());
+        stats.put("exchangesInflight", mrb.getExchangesInflight());
+        stats.put("meanProcessingTime", mrb.getMeanProcessingTime());
+        stats.put("maxProcessingTime", mrb.getMaxProcessingTime());
+        stats.put("minProcessingTime", mrb.getMinProcessingTime());
+        if (mrb.getExchangesTotal() > 0) {
+            stats.put("lastProcessingTime", mrb.getLastProcessingTime());
+            stats.put("deltaProcessingTime", mrb.getDeltaProcessingTime());
+        }
+        Date last = mrb.getLastExchangeCreatedTimestamp();
+        if (last != null) {
+            stats.put("lastCreatedExchangeTimestamp", last.getTime());
+        }
+        last = mrb.getLastExchangeCompletedTimestamp();
+        if (last != null) {
+            stats.put("lastCompletedExchangeTimestamp", last.getTime());
+        }
+        last = mrb.getLastExchangeFailureTimestamp();
+        if (last != null) {
+            stats.put("lastFailedExchangeTimestamp", last.getTime());
+        }
+        return stats;
     }
 
 }

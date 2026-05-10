@@ -20,8 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedRoute;
+import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -54,6 +58,11 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
      * Whether to dump in brief mode (only overall structure, and no detailed options or expressions)
      */
     public static final String BRIEF = "brief";
+
+    /**
+     * Whether to include metrics such as number of messages processed (from JMX)
+     */
+    public static final String METRIC = "metric";
 
     public RouteStructureDevConsole() {
         super("camel", "route-structure", "Route Structure", "Dump route structure");
@@ -100,10 +109,12 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         final String brief = (String) options.getOrDefault(BRIEF, "false");
+        final String metric = (String) options.getOrDefault(METRIC, "false");
 
         final JsonObject root = new JsonObject();
         final JsonArray list = new JsonArray();
 
+        final boolean stats = "true".equalsIgnoreCase(metric);
         Function<NamedRoute, Object> task = def -> {
             JsonObject jo = new JsonObject();
             list.add(jo);
@@ -125,7 +136,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
                         = dumper.dumpStructure(getCamelContext(), def.getRouteId(), "true".equalsIgnoreCase(brief));
-                JsonArray code = dumpAsJSon(lines);
+                JsonArray code = dumpAsJSon(getCamelContext(), lines, stats);
                 jo.put("code", code);
             } catch (Exception e) {
                 // ignore
@@ -171,7 +182,9 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 || PatternHelper.matchPattern(onlyName, filter);
     }
 
-    private static JsonArray dumpAsJSon(List<ModelDumpLine> lines) {
+    private JsonArray dumpAsJSon(CamelContext camelContext, List<ModelDumpLine> lines, boolean metric) {
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+
         JsonArray code = new JsonArray();
         int counter = 0;
         for (var line : lines) {
@@ -189,6 +202,30 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 c.put("description", line.description());
             }
             c.put("code", Jsoner.escape(line.code()));
+
+            if (metric && mcc != null) {
+                if (counter <= 2) {
+                    ManagedRouteMBean mrb = mcc.getManagedRoute(line.id());
+                    if (mrb != null) {
+                        JsonObject stats = RouteDevConsole.gatherRouteStats(camelContext, mrb);
+                        if (counter == 2) {
+                            // from is route stats minus a few values
+                            stats.remove("coverage");
+                            stats.remove("load01");
+                            stats.remove("load05");
+                            stats.remove("load15");
+                            stats.remove("exchangesThroughput");
+                        }
+                        c.put("statistics", stats);
+                    }
+                } else {
+                    ManagedProcessorMBean mp = mcc.getManagedProcessor(line.id());
+                    if (mp != null) {
+                        JsonObject stats = ProcessorDevConsole.gatherProcessorStats(mp);
+                        c.put("statistics", stats);
+                    }
+                }
+            }
             code.add(c);
         }
         return code;

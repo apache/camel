@@ -127,16 +127,41 @@ public class RouteDiagramLayoutEngine {
         return nodeTextPadding;
     }
 
+    public static class RouteStatInfo extends StatInfo {
+        public String coverage;
+        public String load01;
+        public String load05;
+        public String load15;
+        public String exchangesThroughput;
+    }
+
+    public static class StatInfo {
+        public long idleSince;
+        public long exchangesTotal;
+        public long exchangesFailed;
+        public long exchangesInflight;
+        public long meanProcessingTime;
+        public long maxProcessingTime;
+        public long minProcessingTime;
+        public long lastProcessingTime;
+        public long deltaProcessingTime;
+        public long lastCreatedExchangeTimestamp;
+        public long lastCompletedExchangeTimestamp;
+        public long lastFailedExchangeTimestamp;
+    }
+
     public static class NodeInfo {
         public String type;
         public String code;
         public String description;
         public int level;
+        public StatInfo stat;
     }
 
     public static class RouteInfo {
         public String routeId;
         public String source;
+        public RouteStatInfo stat;
         public List<NodeInfo> nodes = new ArrayList<>();
     }
 
