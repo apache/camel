@@ -16,12 +16,7 @@
  */
 package org.apache.camel.diagram;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +46,16 @@ public class RouteDiagramRenderer {
     private static final float BORDER_STROKE_WIDTH = 1.0f * SCALE;
     private static final int LABEL_TEXT_BASELINE = 14 * SCALE;
     public static final int MAX_IMAGE_DIMENSION = 16384;
+
+    private static final float[] DASH_PATTERN = { 10f, 5f }; // 10 pixels on, 5 pixels off
+    private static final Stroke DASHED_STROKE = new BasicStroke(
+            STROKE_WIDTH,            // line width
+            BasicStroke.CAP_BUTT,    // end cap style
+            BasicStroke.JOIN_BEVEL,  // join style
+            0f,                      // miter limit (not used for bevel)
+            DASH_PATTERN,            // dash pattern array
+            0f                       // dash phase (offset)
+    );
 
     private final int nodeWidth;
     private final int fontSizeNode;
@@ -277,7 +282,7 @@ public class RouteDiagramRenderer {
 
         Color c = colors.getArrow();
         g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 140));
-        g.setStroke(new BasicStroke(STROKE_WIDTH));
+        g.setStroke(DASHED_STROKE);
         g.drawRoundRect(boxX, boxY, boxW, boxH, ARC, ARC);
     }
 
