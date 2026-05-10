@@ -54,13 +54,13 @@ public class RouteDiagramLayoutEngine {
     private final FontMetrics fontMetrics;
     private final NodeLabelMode nodeLabelMode;
 
-    private static final Set<String> BRANCHING_EIPS = Set.of(
+    static final Set<String> BRANCHING_EIPS = Set.of(
             "choice", "multicast", "doTry", "loadBalance", "recipientList", "circuitBreaker");
 
-    private static final Set<String> BRANCH_CHILD_TYPES = Set.of(
+    static final Set<String> BRANCH_CHILD_TYPES = Set.of(
             "when", "otherwise", "doCatch", "doFinally", "onFallback");
 
-    private static final Set<String> STRUCTURAL_TYPES = Set.of(
+    static final Set<String> STRUCTURAL_TYPES = Set.of(
             "route", "from");
 
     static class Bounds {
@@ -162,13 +162,13 @@ public class RouteDiagramLayoutEngine {
         public String routeId;
         public String source;
         public RouteStatInfo stat;
-        public List<NodeInfo> nodes = new ArrayList<>();
+        public final List<NodeInfo> nodes = new ArrayList<>();
     }
 
     public static class TreeNode {
         public final NodeInfo info;
         public TreeNode parent;
-        public List<TreeNode> children = new ArrayList<>();
+        public final List<TreeNode> children = new ArrayList<>();
         public int subtreeWidth;
         public LayoutNode layoutNode;
 
@@ -196,7 +196,7 @@ public class RouteDiagramLayoutEngine {
         public int labelY;
         public int maxX;
         public int maxY;
-        public List<LayoutNode> nodes = new ArrayList<>();
+        public final List<LayoutNode> nodes = new ArrayList<>();
     }
 
     public static TreeNode buildTree(List<NodeInfo> nodes) {

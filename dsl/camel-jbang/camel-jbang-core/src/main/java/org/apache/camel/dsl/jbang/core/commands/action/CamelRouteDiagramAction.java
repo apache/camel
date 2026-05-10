@@ -89,7 +89,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                         defaultValue = "both")
     String nodeLabel;
 
-    @CommandLine.Option(names = { "--metric" }, defaultValue = "false",
+    @CommandLine.Option(names = { "--metric" }, defaultValue = "true",
                         description = "Whether to include live metrics (only possible for running Camel application)")
     boolean metric;
 
@@ -101,41 +101,6 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
 
     public CamelRouteDiagramAction(CamelJBangMain main) {
         super(main);
-    }
-
-    /**
-     * Renders the routes contained in the given source file as a PNG diagram saved to {@code outputFile}. Convenience
-     * entry point for programmatic invocation (e.g. from MCP tools) that always targets a non-running source file and
-     * skips the running-PID lookup.
-     *
-     * @param  sourceFile         path to the route source file (YAML, XML, Java, ...)
-     * @param  outputFile         path to the PNG file to write
-     * @param  theme              color theme spec (e.g. "dark", "light", "transparent" or custom)
-     * @param  filter             optional route filter (route id or filename pattern)
-     * @param  width              image width in pixels (0 = auto)
-     * @param  ignoreLoadingError whether to ignore route loading and compilation errors
-     * @return                    exit code; 0 on success, non-zero otherwise
-     * @throws Exception          if the source cannot be read or the diagram cannot be rendered
-     */
-    public Integer renderSourceToFile(
-            String sourceFile, String outputFile, String theme, String filter,
-            int width, boolean ignoreLoadingError,
-            int fontSize, int boxWidth, String nodeLabel)
-            throws Exception {
-        this.name = sourceFile;
-        this.output = outputFile;
-        if (theme != null && !theme.isBlank()) {
-            this.theme = theme;
-        }
-        this.filter = filter;
-        this.width = width;
-        this.ignoreLoadingError = ignoreLoadingError;
-        this.fontSize = fontSize;
-        this.boxWidth = boxWidth;
-        if (nodeLabel != null && !nodeLabel.isBlank()) {
-            this.nodeLabel = nodeLabel;
-        }
-        return doCall();
     }
 
     @Override
@@ -196,7 +161,8 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
             NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
             RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding());
+                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(),
+                    pid > 0 && metric);
 
             if ("text".equals(theme)) {
                 for (String line : renderer.printTextDiagram(routes, labelMode)) {
@@ -327,4 +293,43 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
         }
         return NodeLabelMode.CODE;
     }
+
+    /**
+     * Used BY MCP tools
+     *
+     * Renders the routes contained in the given source file as a PNG diagram saved to {@code outputFile}. Convenience
+     * entry point for programmatic invocation (e.g. from MCP tools) that always targets a non-running source file and
+     * skips the running-PID lookup.
+     *
+     * @param  sourceFile         path to the route source file (YAML, XML, Java, ...)
+     * @param  outputFile         path to the PNG file to write
+     * @param  theme              color theme spec (e.g. "dark", "light", "transparent" or custom)
+     * @param  filter             optional route filter (route id or filename pattern)
+     * @param  width              image width in pixels (0 = auto)
+     * @param  ignoreLoadingError whether to ignore route loading and compilation errors
+     * @return                    exit code; 0 on success, non-zero otherwise
+     * @throws Exception          if the source cannot be read or the diagram cannot be rendered
+     */
+    public Integer renderSourceToFile(
+            String sourceFile, String outputFile, String theme, String filter,
+            int width, boolean ignoreLoadingError,
+            int fontSize, int boxWidth, String nodeLabel)
+            throws Exception {
+        this.name = sourceFile;
+        this.output = outputFile;
+        if (theme != null && !theme.isBlank()) {
+            this.theme = theme;
+        }
+        this.filter = filter;
+        this.width = width;
+        this.ignoreLoadingError = ignoreLoadingError;
+        this.fontSize = fontSize;
+        this.boxWidth = boxWidth;
+        if (nodeLabel != null && !nodeLabel.isBlank()) {
+            this.nodeLabel = nodeLabel;
+        }
+        this.metric = false;
+        return doCall();
+    }
+
 }

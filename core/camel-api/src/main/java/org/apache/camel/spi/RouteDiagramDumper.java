@@ -43,26 +43,46 @@ public interface RouteDiagramDumper {
     String FACTORY = "route-diagram-dumper";
 
     /**
-     * Dumps the routes into a single combined PNG file
+     * Dumps the routes as PNG files in the given file
+     *
+     * @param filter to filter routes
+     * @param theme  the coloring theme
+     * @param file   the name of the file to store
      */
     void dumpRoutesToFile(String filter, Theme theme, File file) throws IOException;
 
     /**
      * Dumps the routes as PNG files in the given folder
+     *
+     * @param filter to filter routes
+     * @param theme  the coloring theme
+     * @param folder the folder to store the files
      */
     void dumpRoutesToFolder(String filter, Theme theme, File folder) throws IOException;
 
     /**
      * Dumps the routes as a PNG image
+     *
+     * @param filter to filter routes
+     * @param theme  the coloring theme
      */
     default BufferedImage dumpRoutesAsImage(String filter, Theme theme) {
-        return dumpRoutesAsImage(filter, theme, NodeLabelMode.CODE, 180, 12);
+        return dumpRoutesAsImage(filter, theme, false, NodeLabelMode.CODE, 180, 12);
     }
 
     /**
      * Dumps the routes as a PNG image
+     *
+     * @param filter    to filter routes
+     * @param theme     the coloring theme
+     * @param metrics   whether to include live metric counters
+     * @param nodeLabel what information to display in the nodes
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param fontSize  the font size
      */
-    BufferedImage dumpRoutesAsImage(String filter, Theme theme, NodeLabelMode nodeLabel, int nodeWidth, int fontSize);
+    BufferedImage dumpRoutesAsImage(
+            String filter, Theme theme, boolean metrics,
+            NodeLabelMode nodeLabel, int nodeWidth, int fontSize);
 
     /**
      * Converts the image to base64

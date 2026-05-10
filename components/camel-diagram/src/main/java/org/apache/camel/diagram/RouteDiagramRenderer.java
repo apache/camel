@@ -30,6 +30,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.jline.utils.Colors;
 
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.BRANCH_CHILD_TYPES;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCALE;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
@@ -61,6 +62,7 @@ public class RouteDiagramRenderer {
     private final int fontSizeNode;
     private final int fontSizeLabel;
     private final int nodeTextPadding;
+    private final boolean metrics;
 
     private static final String DARK_COLORS
             = "bg=#0d1117:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
@@ -80,25 +82,30 @@ public class RouteDiagramRenderer {
     public RouteDiagramRenderer() {
         this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE,
              RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * SCALE,
-             new RouteDiagramLayoutEngine().getNodeTextPadding());
+             new RouteDiagramLayoutEngine().getNodeTextPadding(),
+             false);
     }
 
-    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled) {
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, boolean metrics) {
         this(nodeWidth, fontSizeScaled, new RouteDiagramLayoutEngine(
-                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding());
+                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding(),
+             metrics);
     }
 
-    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding) {
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding, boolean metrics) {
         this.nodeWidth = nodeWidth;
         this.fontSizeNode = fontSizeScaled;
         this.fontSizeLabel = fontSizeScaled + 1 * SCALE;
         this.nodeTextPadding = nodeTextPadding;
+        this.metrics = metrics;
     }
 
     public static class DiagramColors {
         private Color bg;
         private Color text;
         private Color arrow;
+        private Color counter;
+        private Color counterFail;
         private Color routeLabel;
         private Color nodeFrom;
         private Color nodeTo;
@@ -127,6 +134,8 @@ public class RouteDiagramRenderer {
             c.bg = parseColor(map.get("bg"));
             c.text = parseColor(map.getOrDefault("text", "#ffffff"));
             c.arrow = parseColor(map.getOrDefault("arrow", "#b4b4b4"));
+            c.counter = parseColor(map.getOrDefault("counter", "#2e7d32"));
+            c.counterFail = parseColor(map.getOrDefault("counter", "#ff0000"));
             c.routeLabel = parseColor(map.getOrDefault("label", "#c8c8c8"));
             c.nodeFrom = parseColor(map.getOrDefault("from", "#2e7d32"));
             c.nodeTo = parseColor(map.getOrDefault("to", "#1565c0"));
@@ -162,6 +171,14 @@ public class RouteDiagramRenderer {
 
         public Color getText() {
             return text;
+        }
+
+        public Color getCounter() {
+            return counter;
+        }
+
+        public Color getCounterFail() {
+            return counterFail;
         }
 
         public Color getArrow() {
@@ -292,8 +309,17 @@ public class RouteDiagramRenderer {
     }
 
     private void drawArrowFromMerge(Graphics2D g, LayoutNode to, DiagramColors colors) {
+        var stat = to.treeNode.info.stat;
+        long total = stat != null ? stat.exchangesTotal : 0;
+        long failed = stat != null ? stat.exchangesFailed : 0;
+        long ok = total - failed;
+
         g.setColor(colors.getArrow());
-        g.setStroke(new BasicStroke(STROKE_WIDTH));
+        if (!metrics || total > 0) {
+            g.setStroke(new BasicStroke(STROKE_WIDTH));
+        } else {
+            g.setStroke(DASHED_STROKE);
+        }
 
         int toCx = to.x + nodeWidth / 2;
         int toTy = getTopY(to);
@@ -309,6 +335,16 @@ public class RouteDiagramRenderer {
             g.drawLine(toCx, midY, toCx, toTy - ARROW_SIZE / 2);
         }
         drawArrowHead(g, toCx, toTy);
+
+        if (ok > 0) {
+            g.setColor(colors.getCounter());
+            g.drawString("" + ok, toCx + 2 + fontSizeNode, toTy - 2 - fontSizeNode);
+        }
+        if (failed > 0) {
+            g.setColor(colors.getCounterFail());
+            int width = g.getFontMetrics().stringWidth("" + failed);
+            g.drawString("" + failed, toCx - 2 - fontSizeNode - width, toTy - 2 - fontSizeNode);
+        }
     }
 
     private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors) {
@@ -345,8 +381,21 @@ public class RouteDiagramRenderer {
     }
 
     private void drawArrow(Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors) {
+        var stat = metrics ? to.treeNode.info.stat : null;
+        if (metrics && BRANCH_CHILD_TYPES.contains(to.type) && !to.treeNode.children.isEmpty()) {
+            // grab stat from first child (for example choice to have counters for when/otherwise)
+            stat = to.treeNode.children.get(0).info.stat;
+        }
+        long total = stat != null ? stat.exchangesTotal : 0;
+        long failed = stat != null ? stat.exchangesFailed : 0;
+        long ok = total - failed;
+
         g.setColor(colors.getArrow());
-        g.setStroke(new BasicStroke(STROKE_WIDTH));
+        if (!metrics || total > 0) {
+            g.setStroke(new BasicStroke(STROKE_WIDTH));
+        } else {
+            g.setStroke(DASHED_STROKE);
+        }
 
         int fromCx = from.x + nodeWidth / 2;
         int fromBy = from.y + from.height;
@@ -362,6 +411,16 @@ public class RouteDiagramRenderer {
             g.drawLine(toCx, midY, toCx, toTy - ARROW_SIZE / 2);
         }
         drawArrowHead(g, toCx, toTy);
+
+        if (ok > 0) {
+            g.setColor(colors.getCounter());
+            g.drawString("" + ok, toCx + 2 + fontSizeNode, toTy - 2 - fontSizeNode);
+        }
+        if (failed > 0) {
+            g.setColor(colors.getCounterFail());
+            int width = g.getFontMetrics().stringWidth("" + failed);
+            g.drawString("" + failed, toCx - 2 - fontSizeNode - width, toTy - 2 - fontSizeNode);
+        }
     }
 
     private void drawArrowHead(Graphics2D g, int x, int y) {

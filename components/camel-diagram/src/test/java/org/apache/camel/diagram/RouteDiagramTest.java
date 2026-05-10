@@ -584,7 +584,8 @@ class RouteDiagramTest {
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(250, 16);
         LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
 
-        RouteDiagramRenderer renderer = new RouteDiagramRenderer(engine.getNodeWidth(), 16 * RouteDiagramLayoutEngine.SCALE);
+        RouteDiagramRenderer renderer
+                = new RouteDiagramRenderer(engine.getNodeWidth(), 16 * RouteDiagramLayoutEngine.SCALE, false);
         DiagramColors colors = DiagramColors.parse("dark");
         BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP, colors);
 
