@@ -30,6 +30,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.jline.utils.Colors;
 
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.BRANCH_CHILD_TYPES;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCALE;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
@@ -377,6 +378,10 @@ public class RouteDiagramRenderer {
 
     private void drawArrow(Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors) {
         var stat = to.treeNode.info.stat;
+        if (BRANCH_CHILD_TYPES.contains(to.type) && !to.treeNode.children.isEmpty()) {
+            // grab stat from first child (for example choice to have counters for when/otherwise)
+            stat = to.treeNode.children.get(0).info.stat;
+        }
         long total = stat != null ? stat.exchangesTotal : 0;
         long failed = stat != null ? stat.exchangesFailed : 0;
         long ok = total - failed;
