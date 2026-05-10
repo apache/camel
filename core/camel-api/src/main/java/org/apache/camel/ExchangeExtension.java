@@ -129,6 +129,39 @@ public interface ExchangeExtension {
     void setRedeliveryExhausted(boolean redeliveryExhausted);
 
     /**
+     * Gets the redelivery counter. Returns -1 if not set. The corresponding header is set for backward compatibility.
+     */
+    int getRedeliveryCounter();
+
+    /**
+     * Sets the redelivery counter. Set to -1 to clear. The corresponding header is set for backward compatibility.
+     */
+    void setRedeliveryCounter(int redeliveryCounter);
+
+    /**
+     * Gets the maximum redelivery counter. Returns -1 if not set. The corresponding header is set for backward
+     * compatibility.
+     */
+    int getRedeliveryMaxCounter();
+
+    /**
+     * Sets the maximum redelivery counter. Set to -1 to clear. The corresponding header is set for backward
+     * compatibility.
+     */
+    void setRedeliveryMaxCounter(int redeliveryMaxCounter);
+
+    /**
+     * Gets the saga long running action ID. Returns null if not set. The corresponding header is set for backward
+     * compatibility.
+     */
+    String getSagaLongRunningAction();
+
+    /**
+     * Sets the saga long running action ID. The corresponding header is set for backward compatibility.
+     */
+    void setSagaLongRunningAction(String sagaLongRunningAction);
+
+    /**
      * Checks if the passed {@link Synchronization} instance is already contained on this exchange.
      *
      * @param  onCompletion the callback instance that is being checked for
