@@ -129,32 +129,35 @@ public interface ExchangeExtension {
     void setRedeliveryExhausted(boolean redeliveryExhausted);
 
     /**
-     * Gets the internal redelivery counter, which is resilient to header removal. Returns -1 if not set.
+     * Gets the redelivery counter. Returns -1 if not set. The corresponding header is set for backward compatibility.
      */
     int getRedeliveryCounter();
 
     /**
-     * Sets the internal redelivery counter, which is resilient to header removal. Set to -1 to clear.
+     * Sets the redelivery counter. Set to -1 to clear. The corresponding header is set for backward compatibility.
      */
     void setRedeliveryCounter(int redeliveryCounter);
 
     /**
-     * Gets the internal maximum redelivery counter, which is resilient to header removal. Returns -1 if not set.
+     * Gets the maximum redelivery counter. Returns -1 if not set. The corresponding header is set for backward
+     * compatibility.
      */
     int getRedeliveryMaxCounter();
 
     /**
-     * Sets the internal maximum redelivery counter, which is resilient to header removal. Set to -1 to clear.
+     * Sets the maximum redelivery counter. Set to -1 to clear. The corresponding header is set for backward
+     * compatibility.
      */
     void setRedeliveryMaxCounter(int redeliveryMaxCounter);
 
     /**
-     * Gets the internal saga long running action ID, which is resilient to header removal. Returns null if not set.
+     * Gets the saga long running action ID. Returns null if not set. The corresponding header is set for backward
+     * compatibility.
      */
     String getSagaLongRunningAction();
 
     /**
-     * Sets the internal saga long running action ID, which is resilient to header removal.
+     * Sets the saga long running action ID. The corresponding header is set for backward compatibility.
      */
     void setSagaLongRunningAction(String sagaLongRunningAction);
 
