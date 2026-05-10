@@ -55,6 +55,11 @@ public class DiagramDevConsole extends AbstractDevConsole {
      */
     public static final String NODE_LABEL = "nodeLabel";
 
+    /**
+     * Whether to include live metric counters. Is default true.
+     */
+    public static final String METRIC = "metric";
+
     public DiagramDevConsole() {
         super("camel", "route-diagram", "Route Diagram", "Visual route diagrams");
     }
@@ -70,6 +75,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
         int nodeWidth = Integer
                 .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
         String nodeLabel = (String) options.getOrDefault(NODE_LABEL, RouteDiagramDumper.NodeLabelMode.CODE.name());
+        boolean metric = "true".equalsIgnoreCase((String) options.getOrDefault(METRIC, "true"));
 
         // special for text
         if ("text".equalsIgnoreCase(theme)) {
@@ -78,7 +84,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
             try {
                 RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
                 BufferedImage image = dumper.dumpRoutesAsImage(filter, RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
-                        RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
+                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
                 String base64 = dumper.imageToBase64(image);
                 // For HTML embedding:
                 String html = String.format(
@@ -102,12 +108,13 @@ public class DiagramDevConsole extends AbstractDevConsole {
         int nodeWidth = Integer
                 .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
         String nodeLabel = (String) options.getOrDefault(NODE_LABEL, RouteDiagramDumper.NodeLabelMode.CODE.name());
+        boolean metric = "true".equalsIgnoreCase((String) options.getOrDefault(METRIC, "true"));
 
         JsonObject root = new JsonObject();
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
             BufferedImage image = dumper.dumpRoutesAsImage(filter, RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
-                    RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
+                    metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
             String base64 = dumper.imageToBase64(image);
             root.put("image", base64);
         } catch (Exception e) {

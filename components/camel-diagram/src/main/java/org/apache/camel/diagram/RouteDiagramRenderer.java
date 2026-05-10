@@ -62,6 +62,7 @@ public class RouteDiagramRenderer {
     private final int fontSizeNode;
     private final int fontSizeLabel;
     private final int nodeTextPadding;
+    private final boolean metrics;
 
     private static final String DARK_COLORS
             = "bg=#0d1117:text=#f0f6fc:arrow=#656c76:label=#d1d7e0:from=#238636:to=#1f6feb:eip=#8957e5"
@@ -81,19 +82,22 @@ public class RouteDiagramRenderer {
     public RouteDiagramRenderer() {
         this(RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * SCALE,
              RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * SCALE,
-             new RouteDiagramLayoutEngine().getNodeTextPadding());
+             new RouteDiagramLayoutEngine().getNodeTextPadding(),
+             false);
     }
 
-    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled) {
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, boolean metrics) {
         this(nodeWidth, fontSizeScaled, new RouteDiagramLayoutEngine(
-                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding());
+                nodeWidth / SCALE, fontSizeScaled / SCALE).getNodeTextPadding(),
+             metrics);
     }
 
-    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding) {
+    public RouteDiagramRenderer(int nodeWidth, int fontSizeScaled, int nodeTextPadding, boolean metrics) {
         this.nodeWidth = nodeWidth;
         this.fontSizeNode = fontSizeScaled;
         this.fontSizeLabel = fontSizeScaled + 1 * SCALE;
         this.nodeTextPadding = nodeTextPadding;
+        this.metrics = metrics;
     }
 
     public static class DiagramColors {
@@ -311,7 +315,7 @@ public class RouteDiagramRenderer {
         long ok = total - failed;
 
         g.setColor(colors.getArrow());
-        if (total > 0) {
+        if (!metrics || total > 0) {
             g.setStroke(new BasicStroke(STROKE_WIDTH));
         } else {
             g.setStroke(DASHED_STROKE);
@@ -377,8 +381,8 @@ public class RouteDiagramRenderer {
     }
 
     private void drawArrow(Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors) {
-        var stat = to.treeNode.info.stat;
-        if (BRANCH_CHILD_TYPES.contains(to.type) && !to.treeNode.children.isEmpty()) {
+        var stat = metrics ? to.treeNode.info.stat : null;
+        if (metrics && BRANCH_CHILD_TYPES.contains(to.type) && !to.treeNode.children.isEmpty()) {
             // grab stat from first child (for example choice to have counters for when/otherwise)
             stat = to.treeNode.children.get(0).info.stat;
         }
@@ -387,7 +391,7 @@ public class RouteDiagramRenderer {
         long ok = total - failed;
 
         g.setColor(colors.getArrow());
-        if (total > 0) {
+        if (!metrics || total > 0) {
             g.setStroke(new BasicStroke(STROKE_WIDTH));
         } else {
             g.setStroke(DASHED_STROKE);

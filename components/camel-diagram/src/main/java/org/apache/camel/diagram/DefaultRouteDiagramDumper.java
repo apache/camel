@@ -96,7 +96,7 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
             root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
             var routes = RouteDiagramHelper.parseRoutes(root);
 
-            BufferedImage image = renderImage(routes, theme.name(), 12, 180, "CODE");
+            BufferedImage image = renderImage(routes, theme.name(), 12, 180, "CODE", false);
             folder.mkdirs();
             String name = RouteDiagramHelper.extractSourceName(group);
             File f = new File(folder, name + ".png");
@@ -105,13 +105,15 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
     }
 
     @Override
-    public BufferedImage dumpRoutesAsImage(String filter, Theme theme, NodeLabelMode nodeLabel, int nodeWidth, int fontSize) {
+    public BufferedImage dumpRoutesAsImage(
+            String filter, Theme theme, boolean metrics, NodeLabelMode nodeLabel, int nodeWidth, int fontSize) {
         // use dev-console to render the route structure in json format which the diagram render expects
         DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-structure");
-        JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "metric", "true"));
+        JsonObject root
+                = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "metric", String.valueOf(metrics)));
         var routes = RouteDiagramHelper.parseRoutes(root);
-        return renderImage(routes, theme.name(), fontSize, nodeWidth, nodeLabel.name());
+        return renderImage(routes, theme.name(), fontSize, nodeWidth, nodeLabel.name(), metrics);
     }
 
     @Override
@@ -128,9 +130,10 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
     }
 
     private static BufferedImage renderImage(
-            List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth, String nodeLabel) {
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth,
+            String nodeLabel, boolean metrics) {
         RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                nodeWidth * RouteDiagramLayoutEngine.SCALE, fontSize * RouteDiagramLayoutEngine.SCALE);
+                nodeWidth * RouteDiagramLayoutEngine.SCALE, fontSize * RouteDiagramLayoutEngine.SCALE, metrics);
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                 nodeWidth, fontSize, RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
 

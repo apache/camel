@@ -89,7 +89,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                         defaultValue = "both")
     String nodeLabel;
 
-    @CommandLine.Option(names = { "--metric" }, defaultValue = "false",
+    @CommandLine.Option(names = { "--metric" }, defaultValue = "true",
                         description = "Whether to include live metrics (only possible for running Camel application)")
     boolean metric;
 
@@ -196,7 +196,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
             NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
             RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding());
+                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(), pid > 0 && metric);
 
             if ("text".equals(theme)) {
                 for (String line : renderer.printTextDiagram(routes, labelMode)) {
