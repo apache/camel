@@ -99,6 +99,8 @@ public class RouteDiagramRenderer {
         private Color bg;
         private Color text;
         private Color arrow;
+        private Color counter;
+        private Color counterFail;
         private Color routeLabel;
         private Color nodeFrom;
         private Color nodeTo;
@@ -127,6 +129,8 @@ public class RouteDiagramRenderer {
             c.bg = parseColor(map.get("bg"));
             c.text = parseColor(map.getOrDefault("text", "#ffffff"));
             c.arrow = parseColor(map.getOrDefault("arrow", "#b4b4b4"));
+            c.counter = parseColor(map.getOrDefault("counter", "#2e7d32"));
+            c.counterFail = parseColor(map.getOrDefault("counter", "#ff0000"));
             c.routeLabel = parseColor(map.getOrDefault("label", "#c8c8c8"));
             c.nodeFrom = parseColor(map.getOrDefault("from", "#2e7d32"));
             c.nodeTo = parseColor(map.getOrDefault("to", "#1565c0"));
@@ -162,6 +166,14 @@ public class RouteDiagramRenderer {
 
         public Color getText() {
             return text;
+        }
+
+        public Color getCounter() {
+            return counter;
+        }
+
+        public Color getCounterFail() {
+            return counterFail;
         }
 
         public Color getArrow() {
@@ -292,8 +304,17 @@ public class RouteDiagramRenderer {
     }
 
     private void drawArrowFromMerge(Graphics2D g, LayoutNode to, DiagramColors colors) {
+        var stat = to.treeNode.info.stat;
+        long total = stat != null ? stat.exchangesTotal : 0;
+        long failed = stat != null ? stat.exchangesFailed : 0;
+        long ok = total - failed;
+
         g.setColor(colors.getArrow());
-        g.setStroke(new BasicStroke(STROKE_WIDTH));
+        if (total > 0) {
+            g.setStroke(new BasicStroke(STROKE_WIDTH));
+        } else {
+            g.setStroke(DASHED_STROKE);
+        }
 
         int toCx = to.x + nodeWidth / 2;
         int toTy = getTopY(to);
@@ -309,6 +330,16 @@ public class RouteDiagramRenderer {
             g.drawLine(toCx, midY, toCx, toTy - ARROW_SIZE / 2);
         }
         drawArrowHead(g, toCx, toTy);
+
+        if (ok > 0) {
+            g.setColor(colors.getCounter());
+            g.drawString("" + ok, toCx + 2 + fontSizeNode, toTy - 2 - fontSizeNode);
+        }
+        if (failed > 0) {
+            g.setColor(colors.getCounterFail());
+            // TOOD: calc width depending on length of string
+            g.drawString("" + failed, toCx - 2 - fontSizeNode - fontSizeNode, toTy - 2 - fontSizeNode);
+        }
     }
 
     private void drawNode(Graphics2D g, LayoutNode node, DiagramColors colors) {
@@ -345,8 +376,17 @@ public class RouteDiagramRenderer {
     }
 
     private void drawArrow(Graphics2D g, LayoutNode from, LayoutNode to, DiagramColors colors) {
+        var stat = to.treeNode.info.stat;
+        long total = stat != null ? stat.exchangesTotal : 0;
+        long failed = stat != null ? stat.exchangesFailed : 0;
+        long ok = total - failed;
+
         g.setColor(colors.getArrow());
-        g.setStroke(new BasicStroke(STROKE_WIDTH));
+        if (total > 0) {
+            g.setStroke(new BasicStroke(STROKE_WIDTH));
+        } else {
+            g.setStroke(DASHED_STROKE);
+        }
 
         int fromCx = from.x + nodeWidth / 2;
         int fromBy = from.y + from.height;
@@ -362,6 +402,16 @@ public class RouteDiagramRenderer {
             g.drawLine(toCx, midY, toCx, toTy - ARROW_SIZE / 2);
         }
         drawArrowHead(g, toCx, toTy);
+
+        if (ok > 0) {
+            g.setColor(colors.getCounter());
+            g.drawString("" + ok, toCx + 2 + fontSizeNode, toTy - 2 - fontSizeNode);
+        }
+        if (failed > 0) {
+            g.setColor(colors.getCounterFail());
+            // TOOD: calc width depending on length of string
+            g.drawString("" + failed, toCx - 2 - fontSizeNode - fontSizeNode, toTy - 2 - fontSizeNode);
+        }
     }
 
     private void drawArrowHead(Graphics2D g, int x, int y) {

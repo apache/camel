@@ -109,7 +109,7 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         // use dev-console to render the route structure in json format which the diagram render expects
         DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-structure");
-        JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
+        JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "metric", "true"));
         var routes = RouteDiagramHelper.parseRoutes(root);
         return renderImage(routes, theme.name(), fontSize, nodeWidth, nodeLabel.name());
     }
