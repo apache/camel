@@ -10,13 +10,11 @@
 *Since Camel {since}*
 
 The Diagram module provides route diagram rendering capabilities for Apache Camel routes.
-It can generate visual route diagrams as PNG images or text-based tree representations
-from route structure data.
+It can generate visual route diagrams as PNG images representations from route structure data.
 
 == Features
 
 * Render route diagrams as PNG images with colored nodes and scope boxes
-* Generate text-based tree diagrams for terminal output
 * Support for all Camel EIPs: choice, doTry/doCatch, filter, split, loop, multicast, and more
 * Scope boxes visually group branching and scoping EIPs
 * Multiple color themes: dark, light, transparent, or custom
@@ -70,16 +68,6 @@ BufferedImage image = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagram
 ImageIO.write(image, "PNG", new File("diagram.png"));
 ----
 
-=== Text diagram
-
-For terminal or log output, generate a text-based tree:
-
-[source,java]
-----
-List<String> lines = renderer.printTextDiagram(routes);
-lines.forEach(System.out::println);
-----
-
 === With Camel JBang
 
 The diagram rendering is used by the `camel cmd route-diagram` command in Camel JBang:
@@ -96,11 +84,10 @@ The following built-in themes are available:
 * `dark` - dark background (default)
 * `light` - light background
 * `transparent` - transparent background
-* `text` - to use tree diagram instead of visual diagram
 
 Custom colors can be specified using the format:
 
-[source,text]
+[source,properties]
 ----
 bg=#1e1e1e:from=#2e7d32:to=#1565c0:eip=#8957e5:choice=#d29922
 ----
@@ -113,12 +100,3 @@ To use dark theme
 ----
 camel cmd route-diagram MyRoute.java --theme=dark
 ----
-
-To print textual tree diagram instead of visual
-
-[source,bash]
-----
-camel cmd route-diagram MyRoute.java --theme=tree
-----
-
-TIP: You can also show diagrams for an existing running integration by executing `camel cmd diagram`.

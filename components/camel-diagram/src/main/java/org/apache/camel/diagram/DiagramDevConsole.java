@@ -20,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
@@ -36,7 +35,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
     public static final String FILTER = "filter";
 
     /**
-     * Theme to use: dark, light, or text
+     * Theme to use: dark or light
      */
     public static final String THEME = "theme";
 
@@ -60,6 +59,11 @@ public class DiagramDevConsole extends AbstractDevConsole {
      */
     public static final String METRIC = "metric";
 
+    /**
+     * Whether to auto-refresh page every 5 seconds
+     */
+    public static final String AUTO_REFRESH = "autoRefresh";
+
     public DiagramDevConsole() {
         super("camel", "route-diagram", "Route Diagram", "Visual route diagrams");
     }
@@ -76,24 +80,24 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 .parseInt(options.getOrDefault(NODE_WIDTH, "" + RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH).toString());
         String nodeLabel = (String) options.getOrDefault(NODE_LABEL, RouteDiagramDumper.NodeLabelMode.CODE.name());
         boolean metric = "true".equalsIgnoreCase((String) options.getOrDefault(METRIC, "true"));
+        boolean refresh = "true".equalsIgnoreCase((String) options.getOrDefault(AUTO_REFRESH, "true"));
 
-        // special for text
-        if ("text".equalsIgnoreCase(theme)) {
-            sj.add(renderTextTheme(filter));
-        } else {
-            try {
-                RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
-                BufferedImage image = dumper.dumpRoutesAsImage(filter, RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
-                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
-                String base64 = dumper.imageToBase64(image);
-                // For HTML embedding:
-                String html = String.format(
-                        "<html>\n<body>\n<img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\">\n</body>\n</html>",
-                        base64);
-                sj.add(html);
-            } catch (Exception e) {
-                // ignore
+        try {
+            RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
+            BufferedImage image = dumper.dumpRoutesAsImage(filter, RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
+                    metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
+            String base64 = dumper.imageToBase64(image);
+            // For HTML embedding:
+            String html = String.format(
+                    "  <body>\n    <img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\">\n  </body>\n",
+                    base64);
+            if (refresh) {
+                html = "<head><meta http-equiv=\"refresh\" content=\"5\"></head>\n" + html;
             }
+            html = "<html>\n" + html + "</html>\n";
+            sj.add(html);
+        } catch (Exception e) {
+            // ignore
         }
 
         return sj.toString();
@@ -124,18 +128,4 @@ public class DiagramDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    private String renderTextTheme(String filter) {
-        final StringJoiner sj = new StringJoiner("\n");
-
-        org.apache.camel.console.DevConsole dc
-                = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                        .resolveById("route-structure");
-        JsonObject root = (JsonObject) dc.call(MediaType.JSON, Map.of("filter", filter));
-        var routes = RouteDiagramHelper.parseRoutes(root);
-        RouteDiagramRenderer renderer = new RouteDiagramRenderer();
-        var lines = renderer.printTextDiagram(routes);
-        lines.forEach(sj::add);
-        sj.add("");
-        return sj.toString();
-    }
 }

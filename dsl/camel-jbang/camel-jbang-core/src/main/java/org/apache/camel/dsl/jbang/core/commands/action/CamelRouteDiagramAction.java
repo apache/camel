@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
@@ -41,17 +40,21 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.terminal.impl.TerminalGraphics;
 import org.jline.terminal.impl.TerminalGraphicsManager;
+import org.jline.utils.InfoCmp;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route-diagram", description = "Display Camel route diagram in the terminal", sortOptions = false,
          showDefaultValues = true)
-public class CamelRouteDiagramAction extends ActionBaseCommand {
+public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Source file name, or name/pid of a running Camel integration", arity = "0..1")
     String name = "*";
@@ -68,12 +71,12 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                         description = "Save diagram to a PNG file instead of displaying in terminal")
     String output;
 
-    @CommandLine.Option(names = { "--theme", "--colors" },
-                        description = "Color theme preset (dark, light, transparent, text) or custom colors "
+    @CommandLine.Option(names = { "--theme" },
+                        description = "Color theme preset (dark, light, transparent) or custom colors "
                                       + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
                                       + "Use bg= for transparent. Can also be set via DIAGRAM_COLORS env var.",
-                        defaultValue = "dark")
+                        defaultValue = "transparent")
     String theme;
 
     @CommandLine.Option(names = { "--font-size" },
@@ -99,6 +102,11 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
 
     private volatile long pid;
 
+    private DiagramColors colors;
+    private Terminal terminal;
+    private TerminalGraphics terminalGraphics;
+    private LineReader lineReader;
+
     public CamelRouteDiagramAction(CamelJBangMain main) {
         super(main);
     }
@@ -107,9 +115,25 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
 
-        String colorSpec = System.getenv("DIAGRAM_COLORS");
-        DiagramColors colors = !"text".equals(theme) ? DiagramColors.parse(colorSpec != null ? colorSpec : theme) : null;
+        // if output in terminal then ensure terminal supports this
+        if (output == null) {
+            String colorSpec = System.getenv("DIAGRAM_COLORS");
+            colors = DiagramColors.parse(colorSpec != null ? colorSpec : theme);
+            terminal = TerminalBuilder.builder().system(true).build();
+            terminalGraphics = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
+            if (terminalGraphics == null) {
+                printer().println("Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
+                printer().println("Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
+                return 1;
+            }
+            lineReader = LineReaderBuilder.builder().terminal(terminal).build();
+        }
 
+        return super.doCall();
+    }
+
+    @Override
+    protected Integer doWatchCall() throws Exception {
         Path outputFile;
         int exit = 0;
         List<Long> pids = findPids(name);
@@ -143,7 +167,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
             List<RouteInfo> routes = parseRoutes(jo);
             if (routes.isEmpty()) {
                 printer().println("No routes found");
-                return 0;
+                return 1;
             }
 
             if (filter != null) {
@@ -155,7 +179,7 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
 
             if (routes.isEmpty()) {
                 printer().println("No routes match filter: " + filter);
-                return 0;
+                return 1;
             }
 
             NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
@@ -163,13 +187,6 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
             RouteDiagramRenderer renderer = new RouteDiagramRenderer(
                     engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(),
                     pid > 0 && metric);
-
-            if ("text".equals(theme)) {
-                for (String line : renderer.printTextDiagram(routes, labelMode)) {
-                    printer().println(line);
-                }
-                return 0;
-            }
 
             List<LayoutRoute> layoutRoutes = new ArrayList<>();
             int currentY = RouteDiagramLayoutEngine.PADDING;
@@ -196,41 +213,53 @@ public class CamelRouteDiagramAction extends ActionBaseCommand {
                 ImageIO.write(image, "PNG", file);
                 printer().println("Diagram saved to: " + file.getAbsolutePath());
             } else {
-                try (Terminal terminal = TerminalBuilder.builder().system(true).build()) {
-                    try {
-                        Optional<TerminalGraphics> protocol = TerminalGraphicsManager.getBestProtocol(terminal);
-                        if (protocol.isPresent()) {
-                            TerminalGraphics.ImageOptions opts = new TerminalGraphics.ImageOptions()
-                                    .preserveAspectRatio(true);
-                            if (width > 0) {
-                                opts.width(width);
-                            }
-                            protocol.get().displayImage(terminal, image, opts);
-                            terminal.writer().println();
-                            terminal.flush();
-                        } else {
-                            printer().println(
-                                    "Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
-                            printer().println(
-                                    "Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
-                            for (String line : renderer.printTextDiagram(routes, labelMode)) {
-                                printer().println(line);
-                            }
-                        }
-                    } catch (IOException | UnsupportedOperationException e) {
-                        printer().println("Failed to display diagram in terminal: " + e.getMessage());
-                        printer().println("Falling back to text diagram.");
-                        for (String line : renderer.printTextDiagram(routes, labelMode)) {
-                            printer().println(line);
-                        }
-                    }
+                if (watch) {
+                    clearScreen();
                 }
+                doDisplayDiagram(image);
             }
 
             return 0;
         } finally {
             PathUtils.deleteFile(outputFile);
         }
+    }
+
+    @Override
+    protected boolean watchWait(StopWatch watch) {
+        return watch.taken() < 5000;
+    }
+
+    @Override
+    protected void clearScreen() {
+        if (terminal != null) {
+            terminal.puts(InfoCmp.Capability.clear_screen);
+            terminal.flush();
+        }
+    }
+
+    @Override
+    protected Runnable waitForUserEnter() {
+        return () -> {
+            if (lineReader != null) {
+                try {
+                    lineReader.readLine();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        };
+    }
+
+    private void doDisplayDiagram(BufferedImage image) throws IOException {
+        TerminalGraphics.ImageOptions opts = new TerminalGraphics.ImageOptions()
+                .preserveAspectRatio(true);
+        if (width > 0) {
+            opts.width(width);
+        }
+        terminalGraphics.displayImage(terminal, image, opts);
+        terminal.writer().println();
+        terminal.flush();
     }
 
     private void doCallPid(Long pid) {
