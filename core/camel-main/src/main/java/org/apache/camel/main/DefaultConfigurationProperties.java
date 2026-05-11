@@ -1581,8 +1581,7 @@ public abstract class DefaultConfigurationProperties<T> {
      *
      * You can also use png to save route diagrams as PNG image files either all combined in a single file (default
      * camel-route-diagrams.png) or to a given folder, where routes are grouped by source file name(s) and saved as
-     * corresponding .png files. This requires to have camel-diagram on the classpath to be able to render PNG
-     * diagrams.
+     * corresponding .png files. This requires to have camel-diagram on the classpath to be able to render PNG diagrams.
      */
     public void setDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
@@ -2814,8 +2813,7 @@ public abstract class DefaultConfigurationProperties<T> {
      *
      * You can also use png to save route diagrams as PNG image files either all combined in a single file (default
      * camel-route-diagrams.png) or to a given folder, where routes are grouped by source file name(s) and saved as
-     * corresponding .png files. This requires to have camel-diagram on the classpath to be able to render PNG
-     * diagrams.
+     * corresponding .png files. This requires to have camel-diagram on the classpath to be able to render PNG diagrams.
      */
     public T withDumpRoutes(String dumpRoutes) {
         this.dumpRoutes = dumpRoutes;
