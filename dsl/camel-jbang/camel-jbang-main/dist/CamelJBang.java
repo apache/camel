@@ -22,7 +22,7 @@
 //JAVA_OPTIONS -Dcamel.jbang.quarkusVersion=3.33.1.1
 //DEPS org.apache.camel:camel-bom:${camel.jbang.version:4.18.2}@pom
 //DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:4.18.2}
-//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:4.18.1}
+//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:4.18.2}
 
 package main;
 
