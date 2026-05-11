@@ -45,7 +45,7 @@ public class VersionTools {
           description = "List available Camel versions for a specific runtime (main, spring-boot, quarkus). " +
                         "Returns version information including release date, JDK requirements, and LTS status.")
     public VersionListResult camel_version_list(
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
             @ToolArg(description = "Only show LTS (Long Term Support) releases (default: false)") Boolean lts,
             @ToolArg(description = "Minimum Camel version to include (e.g., 4.0)") String fromVersion,
             @ToolArg(description = "Maximum number of versions to return (default: 10)") Integer limit) {
