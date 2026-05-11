@@ -2315,6 +2315,106 @@ public interface BedrockAgentEndpointBuilderFactory {
         public String awsBedrockAgentRuntimeSessionId() {
             return "CamelAwsBedrockAgentRuntimeSessionId";
         }
+        /**
+         * The unique identifier of the flow to invoke. Overrides the
+         * flowIdentifier configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeFlowIdentifier}.
+         */
+        public String awsBedrockAgentRuntimeFlowIdentifier() {
+            return "CamelAwsBedrockAgentRuntimeFlowIdentifier";
+        }
+        /**
+         * The unique identifier of the flow alias to invoke. Overrides the
+         * flowAliasIdentifier configured on the endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeFlowAliasIdentifier}.
+         */
+        public String awsBedrockAgentRuntimeFlowAliasIdentifier() {
+            return "CamelAwsBedrockAgentRuntimeFlowAliasIdentifier";
+        }
+        /**
+         * Enables tracing for the flow invocation. When set, overrides the
+         * enableTrace option on the endpoint.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeFlowEnableTrace}.
+         */
+        public String awsBedrockAgentRuntimeFlowEnableTrace() {
+            return "CamelAwsBedrockAgentRuntimeFlowEnableTrace";
+        }
+        /**
+         * The unique identifier of an in-progress flow execution to continue.
+         * Used for multi-turn flow conversations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeFlowExecutionId}.
+         */
+        public String awsBedrockAgentRuntimeFlowExecutionId() {
+            return "CamelAwsBedrockAgentRuntimeFlowExecutionId";
+        }
+        /**
+         * When invoking a flow, this header will contain the list of
+         * FlowOutputEvent emitted by the flow.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.FlowOutputEvent>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeFlowOutputs}.
+         */
+        public String awsBedrockAgentRuntimeFlowOutputs() {
+            return "CamelAwsBedrockAgentRuntimeFlowOutputs";
+        }
+        /**
+         * When invoking a flow with tracing enabled, this header will contain
+         * the list of FlowTraceEvent emitted during execution.
+         * 
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.FlowTraceEvent>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeFlowTraces}.
+         */
+        public String awsBedrockAgentRuntimeFlowTraces() {
+            return "CamelAwsBedrockAgentRuntimeFlowTraces";
+        }
+        /**
+         * When invoking a flow, this header will contain the reason the flow
+         * completed (set when a FlowCompletionEvent is received).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockAgentRuntimeFlowCompletionReason}.
+         */
+        public String awsBedrockAgentRuntimeFlowCompletionReason() {
+            return "CamelAwsBedrockAgentRuntimeFlowCompletionReason";
+        }
     }
     static BedrockAgentEndpointBuilder endpointBuilder(String componentName, String path) {
         class BedrockAgentEndpointBuilderImpl extends AbstractEndpointBuilder implements BedrockAgentEndpointBuilder, AdvancedBedrockAgentEndpointBuilder {

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -26,8 +30,24 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.document.Document;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
-import software.amazon.awssdk.services.bedrockagentruntime.model.*;
+import software.amazon.awssdk.services.bedrockagentruntime.model.FlowCompletionEvent;
+import software.amazon.awssdk.services.bedrockagentruntime.model.FlowInput;
+import software.amazon.awssdk.services.bedrockagentruntime.model.FlowInputContent;
+import software.amazon.awssdk.services.bedrockagentruntime.model.FlowOutputEvent;
+import software.amazon.awssdk.services.bedrockagentruntime.model.FlowTraceEvent;
+import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeFlowRequest;
+import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeFlowResponseHandler;
+import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalConfiguration;
+import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrieveAndGenerateConfiguration;
+import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseVectorSearchConfiguration;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateConfiguration;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateInput;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateRequest;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateResponse;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateType;
 
 /**
  * A Producer which sends messages to the Amazon Bedrock Agent Runtime Service
@@ -47,6 +67,9 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
         switch (determineOperation(exchange)) {
             case retrieveAndGenerate:
                 retrieveAndGenerate(getEndpoint().getBedrockAgentRuntimeClient(), exchange);
+                break;
+            case invokeFlow:
+                invokeFlow(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -141,6 +164,162 @@ public class BedrockAgentRuntimeProducer extends DefaultProducer {
             message.setHeader(BedrockAgentRuntimeConstants.SESSION_ID, result.sessionId());
         }
         message.setBody(result.output().text());
+    }
+
+    private void invokeFlow(Exchange exchange) throws InvalidPayloadException {
+        BedrockAgentRuntimeAsyncClient asyncClient = getEndpoint().getBedrockAgentRuntimeAsyncClient();
+        if (asyncClient == null) {
+            throw new IllegalStateException(
+                    "BedrockAgentRuntimeAsyncClient is not available. The invokeFlow operation requires an async client; "
+                                            + "set operation=invokeFlow on the endpoint or autowire a BedrockAgentRuntimeAsyncClient.");
+        }
+
+        InvokeFlowRequest request;
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getMessage().getMandatoryBody();
+            if (payload instanceof InvokeFlowRequest flowRequest) {
+                request = flowRequest;
+            } else {
+                throw new IllegalArgumentException(
+                        "invokeFlow operation requires an InvokeFlowRequest body when pojoRequest=true");
+            }
+        } else {
+            request = buildInvokeFlowRequest(exchange);
+        }
+
+        List<FlowOutputEvent> outputs = Collections.synchronizedList(new ArrayList<>());
+        List<FlowTraceEvent> traces = Collections.synchronizedList(new ArrayList<>());
+        String[] completionReason = new String[1];
+
+        InvokeFlowResponseHandler handler = InvokeFlowResponseHandler.builder()
+                .subscriber(InvokeFlowResponseHandler.Visitor.builder()
+                        .onFlowOutputEvent(outputs::add)
+                        .onFlowTraceEvent(traces::add)
+                        .onFlowCompletionEvent((FlowCompletionEvent event) -> {
+                            if (ObjectHelper.isNotEmpty(event.completionReasonAsString())) {
+                                completionReason[0] = event.completionReasonAsString();
+                            }
+                        })
+                        .build())
+                .build();
+
+        try {
+            asyncClient.invokeFlow(request, handler).join();
+        } catch (AwsServiceException ase) {
+            LOG.trace("InvokeFlow command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        } catch (RuntimeException re) {
+            // CompletableFuture.join() wraps checked exceptions in CompletionException; rethrow root cause when it is
+            // an AWS service exception so callers see the same behavior as synchronous AWS calls.
+            Throwable cause = re.getCause();
+            if (cause instanceof AwsServiceException awsCause) {
+                throw awsCause;
+            }
+            throw re;
+        }
+
+        Message message = getMessageForResponse(exchange);
+        prepareFlowResponse(outputs, traces, completionReason[0], message);
+    }
+
+    private InvokeFlowRequest buildInvokeFlowRequest(Exchange exchange) throws InvalidPayloadException {
+        String flowIdentifier = exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.FLOW_IDENTIFIER, String.class);
+        if (ObjectHelper.isEmpty(flowIdentifier)) {
+            flowIdentifier = getConfiguration().getFlowIdentifier();
+        }
+        if (ObjectHelper.isEmpty(flowIdentifier)) {
+            throw new IllegalArgumentException(
+                    "invokeFlow operation requires flowIdentifier in configuration or header "
+                                               + BedrockAgentRuntimeConstants.FLOW_IDENTIFIER);
+        }
+
+        String flowAliasIdentifier
+                = exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.FLOW_ALIAS_IDENTIFIER, String.class);
+        if (ObjectHelper.isEmpty(flowAliasIdentifier)) {
+            flowAliasIdentifier = getConfiguration().getFlowAliasIdentifier();
+        }
+        if (ObjectHelper.isEmpty(flowAliasIdentifier)) {
+            throw new IllegalArgumentException(
+                    "invokeFlow operation requires flowAliasIdentifier in configuration or header "
+                                               + BedrockAgentRuntimeConstants.FLOW_ALIAS_IDENTIFIER);
+        }
+
+        Boolean enableTrace
+                = exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.FLOW_ENABLE_TRACE, Boolean.class);
+        if (enableTrace == null) {
+            enableTrace = getConfiguration().isEnableTrace();
+        }
+
+        InvokeFlowRequest.Builder builder = InvokeFlowRequest.builder()
+                .flowIdentifier(flowIdentifier)
+                .flowAliasIdentifier(flowAliasIdentifier)
+                .enableTrace(enableTrace)
+                .inputs(buildFlowInputs(exchange));
+
+        String executionId = exchange.getMessage().getHeader(BedrockAgentRuntimeConstants.FLOW_EXECUTION_ID, String.class);
+        if (ObjectHelper.isNotEmpty(executionId)) {
+            builder.executionId(executionId);
+        }
+
+        return builder.build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<FlowInput> buildFlowInputs(Exchange exchange) throws InvalidPayloadException {
+        Object body = exchange.getMessage().getMandatoryBody();
+
+        if (body instanceof List<?> listBody) {
+            if (!listBody.isEmpty() && listBody.get(0) instanceof FlowInput) {
+                return (List<FlowInput>) listBody;
+            }
+            throw new IllegalArgumentException(
+                    "invokeFlow expects the body to be a List<FlowInput>, a single FlowInput or a String when pojoRequest=false");
+        }
+
+        if (body instanceof FlowInput singleInput) {
+            return Collections.singletonList(singleInput);
+        }
+
+        if (body instanceof String text) {
+            FlowInput input = FlowInput.builder()
+                    .nodeName("FlowInputNode")
+                    .nodeOutputName("document")
+                    .content(FlowInputContent.builder().document(Document.fromString(text)).build())
+                    .build();
+            return Collections.singletonList(input);
+        }
+
+        throw new IllegalArgumentException(
+                "invokeFlow expects the body to be a List<FlowInput>, a single FlowInput or a String when pojoRequest=false. "
+                                           + "Got: " + body.getClass().getName());
+    }
+
+    private void prepareFlowResponse(
+            List<FlowOutputEvent> outputs, List<FlowTraceEvent> traces, String completionReason, Message message) {
+        message.setHeader(BedrockAgentRuntimeConstants.FLOW_OUTPUTS, new ArrayList<>(outputs));
+        if (!traces.isEmpty()) {
+            message.setHeader(BedrockAgentRuntimeConstants.FLOW_TRACES, new ArrayList<>(traces));
+        }
+        if (ObjectHelper.isNotEmpty(completionReason)) {
+            message.setHeader(BedrockAgentRuntimeConstants.FLOW_COMPLETION_REASON, completionReason);
+        }
+
+        // Surface the document payload of the last FlowOutputEvent as the body. This matches the user-facing
+        // contract: "what did the flow return at the end?". When no outputs were produced the body is left untouched
+        // so callers can still inspect headers to understand why the flow stopped.
+        if (!outputs.isEmpty()) {
+            FlowOutputEvent last = outputs.get(outputs.size() - 1);
+            if (last.content() != null && last.content().document() != null) {
+                Document doc = last.content().document();
+                if (doc.isString()) {
+                    message.setBody(doc.asString());
+                } else {
+                    message.setBody(doc);
+                }
+            } else {
+                message.setBody(last);
+            }
+        }
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
