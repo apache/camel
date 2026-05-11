@@ -293,6 +293,8 @@ The component provides automatic conversation memory management via Spring AI's 
 
 IMPORTANT: Do not configure both `chatMemory` and `chatMemoryVectorStore` on the same endpoint. If both are provided, `chatMemory` (MessageChatMemoryAdvisor) will take precedence.
 
+NOTE: Chat memory is only activated when the `CamelSpringAiChatConversationId` header is set on the exchange. Without this header, the memory advisor is not applied, even if `chatMemory` or `chatMemoryVectorStore` is configured. This allows you to selectively enable memory on a per-request basis.
+
 ==== Message-based Memory (ChatMemory)
 
 Configure a `ChatMemory` on the endpoint for automatic conversation tracking using traditional message window approach. This strategy keeps a configurable number of recent messages in memory.
