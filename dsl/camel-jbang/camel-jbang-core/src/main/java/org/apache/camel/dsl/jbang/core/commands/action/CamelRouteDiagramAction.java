@@ -71,12 +71,12 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                         description = "Save diagram to a PNG file instead of displaying in terminal")
     String output;
 
-    @CommandLine.Option(names = { "--theme", "--colors" },
+    @CommandLine.Option(names = { "--theme" },
                         description = "Color theme preset (dark, light, transparent) or custom colors "
                                       + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
                                       + "Use bg= for transparent. Can also be set via DIAGRAM_COLORS env var.",
-                        defaultValue = "dark")
+                        defaultValue = "transparent")
     String theme;
 
     @CommandLine.Option(names = { "--font-size" },
