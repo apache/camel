@@ -40,6 +40,7 @@ import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
 import org.keycloak.representations.idm.MemberRepresentation;
 import org.keycloak.representations.idm.OrganizationRepresentation;
+import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.PolicyRepresentation;
@@ -264,6 +265,11 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
                         .to(keycloakEndpoint + "?operation=evaluatePermission");
 
                 // Organization operations (Keycloak 26+)
+                // Organizations is a per-realm feature in Keycloak 26 and must be enabled
+                // on the realm before any organization API call can succeed.
+                from("direct:updateRealm")
+                        .to(keycloakEndpoint + "?operation=updateRealm&pojoRequest=true");
+
                 from("direct:createOrganization")
                         .to(keycloakEndpoint + "?operation=createOrganization");
 
@@ -1230,6 +1236,27 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     }
 
     // Organization operation tests (Keycloak 26+)
+    // The Organizations API is a per-realm feature in Keycloak 26 — it must be enabled
+    // on the realm via organizationsEnabled=true, otherwise the /organizations endpoint
+    // returns 404. Run this update step before any organization API call.
+    @Test
+    @Order(49)
+    void testEnableOrganizationsOnRealm() {
+        RealmRepresentation realm = new RealmRepresentation();
+        realm.setRealm(TEST_REALM_NAME);
+        realm.setEnabled(true);
+        realm.setOrganizationsEnabled(Boolean.TRUE);
+
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, realm);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+
+        Exchange result = template.send("direct:updateRealm", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        log.info("Enabled Organizations feature on realm: {}", TEST_REALM_NAME);
+    }
+
     @Test
     @Order(50)
     void testCreateOrganization() {
