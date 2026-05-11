@@ -284,6 +284,23 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
         }
     
         /**
+         * To use an existing configured AWS Bedrock Agent Runtime async client
+         * (required for invokeFlow which streams events back).
+         * 
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param bedrockAgentRuntimeAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder bedrockAgentRuntimeAsyncClient(software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient bedrockAgentRuntimeAsyncClient) {
+            doSetProperty("bedrockAgentRuntimeAsyncClient", bedrockAgentRuntimeAsyncClient);
+            return this;
+        }
+    
+        /**
          * To use an existing configured AWS Bedrock Agent Runtime client.
          * 
          * The option is a:
@@ -296,6 +313,59 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
          */
         default AwsBedrockAgentRuntimeComponentBuilder bedrockAgentRuntimeClient(software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient bedrockAgentRuntimeClient) {
             doSetProperty("bedrockAgentRuntimeClient", bedrockAgentRuntimeClient);
+            return this;
+        }
+    
+        
+        /**
+         * Enables tracing for the invokeFlow operation. When enabled, the
+         * producer collects FlowTraceEvent entries and publishes them in the
+         * CamelAwsBedrockAgentRuntimeFlowTraces header.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: flow
+         * 
+         * @param enableTrace the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder enableTrace(boolean enableTrace) {
+            doSetProperty("enableTrace", enableTrace);
+            return this;
+        }
+    
+        /**
+         * The unique identifier of the Bedrock flow alias to invoke (used by
+         * the invokeFlow operation). Can be overridden per exchange via the
+         * CamelAwsBedrockAgentRuntimeFlowAliasIdentifier header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: flow
+         * 
+         * @param flowAliasIdentifier the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder flowAliasIdentifier(java.lang.String flowAliasIdentifier) {
+            doSetProperty("flowAliasIdentifier", flowAliasIdentifier);
+            return this;
+        }
+    
+        /**
+         * The unique identifier of the Bedrock flow to invoke (used by the
+         * invokeFlow operation). Can be overridden per exchange via the
+         * CamelAwsBedrockAgentRuntimeFlowIdentifier header.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: flow
+         * 
+         * @param flowIdentifier the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockAgentRuntimeComponentBuilder flowIdentifier(java.lang.String flowIdentifier) {
+            doSetProperty("flowIdentifier", flowIdentifier);
             return this;
         }
     
@@ -504,7 +574,11 @@ public interface AwsBedrockAgentRuntimeComponentBuilderFactory {
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "autowiredEnabled": ((BedrockAgentRuntimeComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "bedrockAgentRuntimeAsyncClient": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setBedrockAgentRuntimeAsyncClient((software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient) value); return true;
             case "bedrockAgentRuntimeClient": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setBedrockAgentRuntimeClient((software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient) value); return true;
+            case "enableTrace": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setEnableTrace((boolean) value); return true;
+            case "flowAliasIdentifier": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setFlowAliasIdentifier((java.lang.String) value); return true;
+            case "flowIdentifier": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setFlowIdentifier((java.lang.String) value); return true;
             case "healthCheckConsumerEnabled": ((BedrockAgentRuntimeComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((BedrockAgentRuntimeComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((BedrockAgentRuntimeComponent) component).setProxyHost((java.lang.String) value); return true;

@@ -34,4 +34,32 @@ public interface BedrockAgentRuntimeConstants {
                             "Reuse the same value to continue the same session with the knowledge base.",
               javaType = "String")
     String SESSION_ID = "CamelAwsBedrockAgentRuntimeSessionId";
+
+    @Metadata(description = "The unique identifier of the flow to invoke. Overrides the flowIdentifier configured on the endpoint.",
+              javaType = "String")
+    String FLOW_IDENTIFIER = "CamelAwsBedrockAgentRuntimeFlowIdentifier";
+
+    @Metadata(description = "The unique identifier of the flow alias to invoke. Overrides the flowAliasIdentifier configured on the endpoint.",
+              javaType = "String")
+    String FLOW_ALIAS_IDENTIFIER = "CamelAwsBedrockAgentRuntimeFlowAliasIdentifier";
+
+    @Metadata(description = "Enables tracing for the flow invocation. When set, overrides the enableTrace option on the endpoint.",
+              javaType = "Boolean")
+    String FLOW_ENABLE_TRACE = "CamelAwsBedrockAgentRuntimeFlowEnableTrace";
+
+    @Metadata(description = "The unique identifier of an in-progress flow execution to continue. Used for multi-turn flow conversations.",
+              javaType = "String")
+    String FLOW_EXECUTION_ID = "CamelAwsBedrockAgentRuntimeFlowExecutionId";
+
+    @Metadata(description = "When invoking a flow, this header will contain the list of FlowOutputEvent emitted by the flow.",
+              javaType = "java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.FlowOutputEvent>")
+    String FLOW_OUTPUTS = "CamelAwsBedrockAgentRuntimeFlowOutputs";
+
+    @Metadata(description = "When invoking a flow with tracing enabled, this header will contain the list of FlowTraceEvent emitted during execution.",
+              javaType = "java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.FlowTraceEvent>")
+    String FLOW_TRACES = "CamelAwsBedrockAgentRuntimeFlowTraces";
+
+    @Metadata(description = "When invoking a flow, this header will contain the reason the flow completed (set when a FlowCompletionEvent is received).",
+              javaType = "String")
+    String FLOW_COMPLETION_REASON = "CamelAwsBedrockAgentRuntimeFlowCompletionReason";
 }
