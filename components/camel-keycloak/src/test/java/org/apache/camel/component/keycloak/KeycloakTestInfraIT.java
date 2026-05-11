@@ -38,6 +38,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
+import org.keycloak.representations.idm.MemberRepresentation;
+import org.keycloak.representations.idm.OrganizationRepresentation;
+import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.PolicyRepresentation;
@@ -71,6 +74,9 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     private static final String TEST_IDP_ALIAS = "testinfra-idp-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String TEST_RESOURCE_NAME = "testinfra-resource-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String TEST_POLICY_NAME = "testinfra-policy-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_ORG_NAME = "testinfra-org-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_ORG_ALIAS = "testinfra-org-alias-" + UUID.randomUUID().toString().substring(0, 8);
+    private static final String TEST_ORG_DOMAIN = TEST_ORG_ALIAS + ".example.com";
     // NOTE: not yet used
     // private static final String TEST_AUTHZ_CLIENT_ID = "testinfra-authz-client-" + UUID.randomUUID().toString().substring(0, 8);
 
@@ -79,6 +85,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     private static String testClientUuid;
     private static String testResourceId;
     private static String testPolicyId;
+    private static String testOrgId;
     // NOTE: not yet used
     // private static String testAuthzClientUuid;
     // private static String testAuthzClientSecret;
@@ -256,6 +263,45 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
                 // Permission evaluation operation
                 from("direct:evaluatePermission")
                         .to(keycloakEndpoint + "?operation=evaluatePermission");
+
+                // Organization operations (Keycloak 26+)
+                // Organizations is a per-realm feature in Keycloak 26 and must be enabled
+                // on the realm before any organization API call can succeed.
+                from("direct:updateRealm")
+                        .to(keycloakEndpoint + "?operation=updateRealm&pojoRequest=true");
+
+                from("direct:createOrganization")
+                        .to(keycloakEndpoint + "?operation=createOrganization");
+
+                from("direct:getOrganization")
+                        .to(keycloakEndpoint + "?operation=getOrganization");
+
+                from("direct:listOrganizations")
+                        .to(keycloakEndpoint + "?operation=listOrganizations");
+
+                from("direct:searchOrganizations")
+                        .to(keycloakEndpoint + "?operation=searchOrganizations");
+
+                from("direct:addOrganizationMember")
+                        .to(keycloakEndpoint + "?operation=addOrganizationMember");
+
+                from("direct:listOrganizationMembers")
+                        .to(keycloakEndpoint + "?operation=listOrganizationMembers");
+
+                from("direct:removeOrganizationMember")
+                        .to(keycloakEndpoint + "?operation=removeOrganizationMember");
+
+                from("direct:linkOrganizationIdentityProvider")
+                        .to(keycloakEndpoint + "?operation=linkOrganizationIdentityProvider");
+
+                from("direct:listOrganizationIdentityProviders")
+                        .to(keycloakEndpoint + "?operation=listOrganizationIdentityProviders");
+
+                from("direct:unlinkOrganizationIdentityProvider")
+                        .to(keycloakEndpoint + "?operation=unlinkOrganizationIdentityProvider");
+
+                from("direct:deleteOrganization")
+                        .to(keycloakEndpoint + "?operation=deleteOrganization");
             }
         };
     }
@@ -1189,6 +1235,238 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         }
     }
 
+    // Organization operation tests (Keycloak 26+)
+    // The Organizations API is a per-realm feature in Keycloak 26 — it must be enabled
+    // on the realm via organizationsEnabled=true, otherwise the /organizations endpoint
+    // returns 404. Run this update step before any organization API call.
+    @Test
+    @Order(49)
+    void testEnableOrganizationsOnRealm() {
+        RealmRepresentation realm = new RealmRepresentation();
+        realm.setRealm(TEST_REALM_NAME);
+        realm.setEnabled(true);
+        realm.setOrganizationsEnabled(Boolean.TRUE);
+
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, realm);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+
+        Exchange result = template.send("direct:updateRealm", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        log.info("Enabled Organizations feature on realm: {}", TEST_REALM_NAME);
+    }
+
+    @Test
+    @Order(50)
+    void testCreateOrganization() {
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_NAME, TEST_ORG_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_ALIAS, TEST_ORG_ALIAS);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_DESCRIPTION,
+                "Test organization for test-infra demonstration");
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_DOMAIN, TEST_ORG_DOMAIN);
+
+        Exchange result = template.send("direct:createOrganization", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        Response response = result.getIn().getBody(Response.class);
+        assertNotNull(response);
+
+        String location = response.getHeaderString("Location");
+        if (location != null) {
+            testOrgId = location.substring(location.lastIndexOf('/') + 1);
+            log.info("Created organization: {} with ID: {}", TEST_ORG_NAME, testOrgId);
+        }
+    }
+
+    @Test
+    @Order(51)
+    void testListOrganizations() {
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+
+        Exchange result = template.send("direct:listOrganizations", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        @SuppressWarnings("unchecked")
+        List<OrganizationRepresentation> organizations = result.getIn().getBody(List.class);
+        assertNotNull(organizations);
+        assertTrue(organizations.size() >= 1);
+
+        log.info("Found {} organizations in realm: {}", organizations.size(), TEST_REALM_NAME);
+    }
+
+    @Test
+    @Order(52)
+    void testGetOrganization() {
+        assertNotNull(testOrgId, "testOrgId should be set");
+
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_ID, testOrgId);
+
+        Exchange result = template.send("direct:getOrganization", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        OrganizationRepresentation org = result.getIn().getBody(OrganizationRepresentation.class);
+        assertNotNull(org);
+        assertEquals(TEST_ORG_NAME, org.getName());
+
+        log.info("Retrieved organization: {}", TEST_ORG_NAME);
+    }
+
+    @Test
+    @Order(53)
+    void testSearchOrganizations() {
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_SEARCH, TEST_ORG_NAME);
+
+        Exchange result = template.send("direct:searchOrganizations", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        @SuppressWarnings("unchecked")
+        List<OrganizationRepresentation> organizations = result.getIn().getBody(List.class);
+        assertNotNull(organizations);
+        assertTrue(organizations.size() >= 1);
+
+        log.info("Search for '{}' found {} organizations", TEST_ORG_NAME, organizations.size());
+    }
+
+    @Test
+    @Order(54)
+    void testAddOrganizationMember() {
+        assertNotNull(testOrgId, "testOrgId should be set");
+        assertNotNull(testUserId, "testUserId should be set");
+
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_ID, testOrgId);
+        exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
+
+        Exchange result = template.send("direct:addOrganizationMember", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        log.info("Added user {} to organization {}", testUserId, testOrgId);
+    }
+
+    @Test
+    @Order(55)
+    void testListOrganizationMembers() {
+        assertNotNull(testOrgId, "testOrgId should be set");
+
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_ID, testOrgId);
+
+        Exchange result = template.send("direct:listOrganizationMembers", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        @SuppressWarnings("unchecked")
+        List<MemberRepresentation> members = result.getIn().getBody(List.class);
+        assertNotNull(members);
+
+        log.info("Found {} members in organization: {}", members.size(), testOrgId);
+    }
+
+    @Test
+    @Order(56)
+    void testRemoveOrganizationMember() {
+        assertNotNull(testOrgId, "testOrgId should be set");
+        assertNotNull(testUserId, "testUserId should be set");
+
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_ID, testOrgId);
+        exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
+
+        Exchange result = template.send("direct:removeOrganizationMember", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        String body = result.getIn().getBody(String.class);
+        assertEquals("Organization member removed successfully", body);
+
+        log.info("Removed user {} from organization {}", testUserId, testOrgId);
+    }
+
+    @Test
+    @Order(57)
+    void testLinkOrganizationIdentityProvider() {
+        assertNotNull(testOrgId, "testOrgId should be set");
+
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_ID, testOrgId);
+        exchange.getIn().setHeader(KeycloakConstants.IDP_ALIAS, TEST_IDP_ALIAS);
+
+        try {
+            Exchange result = template.send("direct:linkOrganizationIdentityProvider", exchange);
+            if (result.getException() == null) {
+                log.info("Linked identity provider {} to organization {}", TEST_IDP_ALIAS, testOrgId);
+            } else {
+                log.warn("Link organization identity provider failed: {}", result.getException().getMessage());
+            }
+        } catch (Exception e) {
+            log.warn("Skipping link organization identity provider test: {}", e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(58)
+    void testListOrganizationIdentityProviders() {
+        assertNotNull(testOrgId, "testOrgId should be set");
+
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_ID, testOrgId);
+
+        Exchange result = template.send("direct:listOrganizationIdentityProviders", exchange);
+        assertNotNull(result);
+        assertNull(result.getException());
+
+        @SuppressWarnings("unchecked")
+        List<IdentityProviderRepresentation> idps = result.getIn().getBody(List.class);
+        assertNotNull(idps);
+
+        log.info("Found {} identity providers linked to organization: {}", idps.size(), testOrgId);
+    }
+
+    @Test
+    @Order(59)
+    void testUnlinkOrganizationIdentityProvider() {
+        if (testOrgId == null) {
+            log.info("Skipping testUnlinkOrganizationIdentityProvider - testOrgId not set");
+            return;
+        }
+
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+        exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+        exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_ID, testOrgId);
+        exchange.getIn().setHeader(KeycloakConstants.IDP_ALIAS, TEST_IDP_ALIAS);
+
+        try {
+            Exchange result = template.send("direct:unlinkOrganizationIdentityProvider", exchange);
+            if (result.getException() == null) {
+                String body = result.getIn().getBody(String.class);
+                assertEquals("Organization identity provider unlinked successfully", body);
+                log.info("Unlinked identity provider {} from organization {}", TEST_IDP_ALIAS, testOrgId);
+            } else {
+                log.warn("Unlink organization identity provider failed: {}", result.getException().getMessage());
+            }
+        } catch (Exception e) {
+            log.warn("Skipping unlink organization identity provider test: {}", e.getMessage());
+        }
+    }
+
     @Test
     @Order(90)
     void testCleanupAuthorizationResources() {
@@ -1218,6 +1496,27 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
                 log.info("Deleted policy: {}", TEST_POLICY_NAME);
             } catch (Exception e) {
                 log.warn("Failed to delete policy {}: {}", TEST_POLICY_NAME, e.getMessage());
+            }
+        }
+    }
+
+    @Test
+    @Order(94)
+    void testCleanupOrganization() {
+        if (testOrgId != null) {
+            try {
+                Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
+                exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
+                exchange.getIn().setHeader(KeycloakConstants.ORGANIZATION_ID, testOrgId);
+
+                Exchange result = template.send("direct:deleteOrganization", exchange);
+                if (result.getException() == null) {
+                    String body = result.getIn().getBody(String.class);
+                    assertEquals("Organization deleted successfully", body);
+                    log.info("Deleted organization: {}", TEST_ORG_NAME);
+                }
+            } catch (Exception e) {
+                log.warn("Failed to delete organization {}: {}", TEST_ORG_NAME, e.getMessage());
             }
         }
     }
