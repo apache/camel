@@ -26,7 +26,8 @@ camel cmd route-diagram [options]
 | `--metric` | Whether to include live metrics (only possible for running Camel application) | true | boolean
 | `--node-label` | What text to display in diagram nodes: code, description, or both (default) | both | String
 | `--output` | Save diagram to a PNG file instead of displaying in terminal |  | String
-| `--theme,--colors` | Color theme preset (dark, light, transparent, text) or custom colors (e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or ANSI color names (e.g. from=seagreen:to=steelblue). Use bg= for transparent. Can also be set via DIAGRAM_COLORS env var. | dark | String
+| `--theme,--colors` | Color theme preset (dark, light, transparent) or custom colors (e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or ANSI color names (e.g. from=seagreen:to=steelblue). Use bg= for transparent. Can also be set via DIAGRAM_COLORS env var. | dark | String
+| `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `--width` | Image width in pixels (0 = auto) | 0 | int
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
