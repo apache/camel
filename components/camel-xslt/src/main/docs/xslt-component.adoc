@@ -185,6 +185,14 @@ TIP: You can set `contentCache=false` and refer to a non-existing template, such
 as this will tell Camel to not load `dummy.xsl` on startup but to load the stylesheet on demand. And because you
 provide the stylesheet via headers, then it is fully dynamic.
 
+== Live reload in dev mode
+
+When routes-reload is enabled (`camel.main.routesReloadEnabled=true`, automatically set by `camel run --dev`),
+Camel disables `contentCache` on the XSLT component (via the `org.apache.camel.spi.ContentCacheAware` SPI)
+so that edits to resource files are picked up on the next message without having to restart the route.
+Explicit user settings (on the component, endpoint, or URI) are always respected: set `contentCache=true`
+to keep caching even in dev mode.
+
 == Accessing warnings, errors and fatalErrors from XSLT ErrorListener
 
 Any warning/error or fatalError is stored on

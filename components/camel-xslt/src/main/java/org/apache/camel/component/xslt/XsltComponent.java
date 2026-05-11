@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.ContentCacheAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * The <a href="http://camel.apache.org/xslt.html">XSLT Component</a> is for performing XSLT transformations of messages
  */
 @Component("xslt")
-public class XsltComponent extends DefaultComponent {
+public class XsltComponent extends DefaultComponent implements ContentCacheAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
 
@@ -45,7 +46,7 @@ public class XsltComponent extends DefaultComponent {
     @Metadata
     private boolean allowTemplateFromHeader;
     @Metadata(defaultValue = "true")
-    private boolean contentCache = true;
+    private Boolean contentCache;
     @Metadata(label = "advanced")
     private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
     @Metadata(label = "advanced")
@@ -94,6 +95,11 @@ public class XsltComponent extends DefaultComponent {
     }
 
     public boolean isContentCache() {
+        return contentCache != null ? contentCache : true;
+    }
+
+    @Override
+    public Boolean getContentCache() {
         return contentCache;
     }
 
@@ -102,7 +108,8 @@ public class XsltComponent extends DefaultComponent {
      * stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to
      * reload at runtime via JMX using the clearCachedStylesheet operation.
      */
-    public void setContentCache(boolean contentCache) {
+    @Override
+    public void setContentCache(Boolean contentCache) {
         this.contentCache = contentCache;
     }
 

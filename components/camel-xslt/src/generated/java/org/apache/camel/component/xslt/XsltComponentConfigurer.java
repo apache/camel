@@ -28,7 +28,7 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
-        case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
+        case "contentCache": target.setContentCache(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "transformerfactoryclass":
@@ -53,7 +53,7 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "contentcache":
-        case "contentCache": return boolean.class;
+        case "contentCache": return java.lang.Boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "transformerfactoryclass":
@@ -79,7 +79,7 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "contentcache":
-        case "contentCache": return target.isContentCache();
+        case "contentCache": return target.getContentCache();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "transformerfactoryclass":
