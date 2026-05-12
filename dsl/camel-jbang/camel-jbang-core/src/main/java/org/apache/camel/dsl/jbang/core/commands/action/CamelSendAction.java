@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -131,6 +132,9 @@ public class CamelSendAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--infra" },
                         description = "Send to infrastructure service (e.g., nats, kafka)")
     String infra;
+
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     private volatile long pid;
 
@@ -295,6 +299,7 @@ public class CamelSendAction extends ActionBaseCommand {
         run.empty = true;
         run.propertiesFiles = propertiesFiles;
         run.property = property;
+        run.mavenResolver = mavenResolver;
 
         // spawn thread that waits for response file
         final CountDownLatch latch = new CountDownLatch(1);

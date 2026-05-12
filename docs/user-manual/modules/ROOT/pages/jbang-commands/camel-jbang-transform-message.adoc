@@ -29,7 +29,6 @@ camel transform message [options]
 | `--option` | Option for additional configuration of the used language, component or dataformat (key=value) |  | List
 | `--output` | File to store output. If none provide then output is printed to console. |  | String
 | `--pretty` | Pretty print message body when using JSon or XML format |  | boolean
-| `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
 | `--show-body` | Show message body from the output message | true | boolean
 | `--show-exception` | Show exception and stacktrace for failed transformation | true | boolean
 | `--show-exchange-properties` | Show exchange properties from the output message | false | boolean

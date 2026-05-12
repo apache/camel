@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -25,9 +26,7 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldPrintExampleForConsumerComponent() throws Exception {
-        CatalogDoc command = new CatalogDoc(new CamelJBangMain().withPrinter(printer));
-        command.name = "timer";
-        command.example = true;
+        CatalogDoc command = createCommand("timer", true);
 
         int exit = command.doCall();
 
@@ -40,9 +39,7 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldPrintExampleForProducerOnlyComponent() throws Exception {
-        CatalogDoc command = new CatalogDoc(new CamelJBangMain().withPrinter(printer));
-        command.name = "log";
-        command.example = true;
+        CatalogDoc command = createCommand("log", true);
 
         int exit = command.doCall();
 
@@ -54,9 +51,7 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldPrintExampleForKafka() throws Exception {
-        CatalogDoc command = new CatalogDoc(new CamelJBangMain().withPrinter(printer));
-        command.name = "kafka";
-        command.example = true;
+        CatalogDoc command = createCommand("kafka", true);
 
         int exit = command.doCall();
 
@@ -69,8 +64,7 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldPrintStandardDocWithoutExampleFlag() throws Exception {
-        CatalogDoc command = new CatalogDoc(new CamelJBangMain().withPrinter(printer));
-        command.name = "timer";
+        CatalogDoc command = createCommand("timer", false);
 
         int exit = command.doCall();
 
@@ -78,5 +72,13 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
         String output = printer.getOutput();
         Assertions.assertTrue(output.contains("Component Name: timer"), "Should show standard doc");
         Assertions.assertFalse(output.contains("camel run my-route.yaml"), "Should not show example run hint");
+    }
+
+    private CatalogDoc createCommand(String name, boolean example) {
+        CatalogDoc command = new CatalogDoc(new CamelJBangMain().withPrinter(printer));
+        command.name = name;
+        command.example = example;
+        command.mavenResolver = new MavenResolverMixin();
+        return command;
     }
 }

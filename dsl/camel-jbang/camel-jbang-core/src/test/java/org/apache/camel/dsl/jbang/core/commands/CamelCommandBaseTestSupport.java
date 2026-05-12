@@ -17,6 +17,8 @@
 
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.nio.file.Path;
+
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -27,6 +29,11 @@ public class CamelCommandBaseTestSupport {
     @BeforeEach
     public void setup() throws Exception {
         printer = new StringPrinter();
+    }
+
+    public static String quarkusExtRegistry() {
+        return "--quarkus-ext-registry="
+               + Path.of("target/test-classes/registry.quarkus.io").toAbsolutePath().normalize().toUri().toString();
     }
 
 }

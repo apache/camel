@@ -33,7 +33,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.group-id>[=QuarkusGroupId]</quarkus.platform.group-id>
-        <quarkus.platform.artifact-id>[=QuarkusArtifactId]</quarkus.platform.artifact-id>
         <quarkus.platform.version>[=QuarkusVersion]</quarkus.platform.version>
 [#if BuildProperties?has_content]
 [=BuildProperties]
@@ -47,7 +46,7 @@
         <dependencies>
             <dependency>
                 <groupId>${quarkus.platform.group-id}</groupId>
-                <artifactId>${quarkus.platform.artifact-id}</artifactId>
+                <artifactId>quarkus-bom</artifactId>
                 <version>${quarkus.platform.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

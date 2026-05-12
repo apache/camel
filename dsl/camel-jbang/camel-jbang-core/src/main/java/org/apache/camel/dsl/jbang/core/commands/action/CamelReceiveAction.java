@@ -45,6 +45,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
@@ -210,6 +211,9 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Output format (${COMPLETION-CANDIDATES})")
     private String output;
 
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
+
     private volatile long pid;
 
     String findAnsi;
@@ -306,6 +310,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
         run.empty = true;
         run.propertiesFiles = propertiesFiles;
         run.property = property;
+        run.mavenResolver = mavenResolver;
 
         // spawn thread that waits for response file
         final CountDownLatch latch = new CountDownLatch(1);

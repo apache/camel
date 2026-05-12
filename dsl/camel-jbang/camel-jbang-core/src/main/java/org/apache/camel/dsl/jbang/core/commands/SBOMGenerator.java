@@ -181,9 +181,7 @@ public class SBOMGenerator extends Export {
             this.camelVersion = prop.getProperty(CAMEL_VERSION, this.camelVersion);
             this.kameletsVersion = prop.getProperty(KAMELETS_VERSION, this.kameletsVersion);
             this.localKameletDir = prop.getProperty(LOCAL_KAMELET_DIR, this.localKameletDir);
-            this.quarkusGroupId = prop.getProperty(QUARKUS_GROUP_ID, this.quarkusGroupId);
-            this.quarkusArtifactId = prop.getProperty(QUARKUS_ARTIFACT_ID, this.quarkusArtifactId);
-            this.quarkusVersion = prop.getProperty(QUARKUS_VERSION, this.quarkusVersion);
+            this.quarkusPlatform = QuarkusPlatformMixin.of(prop, quarkusPlatform);
             this.springBootVersion = prop.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
         }
 
