@@ -72,17 +72,35 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String KAMELETS_VERSION = "camel.jbang.kameletsVersion";
 
-    @Metadata(description = "Quarkus Platform Maven groupId",
+    @Metadata(description = "groupId of Quarkus Platform BOM",
               javaType = "String", label = "quarkus")
     public static final String QUARKUS_GROUP_ID = "camel.jbang.quarkusGroupId";
 
-    @Metadata(description = "Quarkus Platform Maven artifactId",
+    @Metadata(description = "artifactId of Quarkus Platform BOM",
               javaType = "String", label = "quarkus")
+    @Deprecated(forRemoval = true, since = "4.21.0")
+    /* See also org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin.quarkusArtifactId */
     public static final String QUARKUS_ARTIFACT_ID = "camel.jbang.quarkusArtifactId";
 
-    @Metadata(description = "Quarkus Platform version",
+    @Metadata(description = "version of Quarkus Platform BOM",
               javaType = "String", label = "quarkus")
     public static final String QUARKUS_VERSION = "camel.jbang.quarkusVersion";
+
+    @Metadata(description = "The base URI of Quarkus Extension Registry",
+              javaType = "String", label = "quarkus")
+    public static final String QUARKUS_EXTENSION_REGISTRY_BASE_URI = "camel.jbang.quarkusExtensioRegistryBaseUri";
+
+    @Metadata(description = "groupId of Camel Quarkus Platform BOM",
+              javaType = "String", label = "quarkus")
+    public static final String CAMEL_QUARKUS_GROUP_ID = "camel.jbang.quarkusGroupId";
+
+    @Metadata(description = "artifactId of Camel Quarkus Platform BOM",
+              javaType = "String", label = "quarkus")
+    public static final String CAMEL_QUARKUS_ARTIFACT_ID = "camel.jbang.quarkusArtifactId";
+
+    @Metadata(description = "version of Camel Quarkus Platform BOM",
+              javaType = "String", label = "quarkus")
+    public static final String CAMEL_QUARKUS_VERSION = "camel.jbang.quarkusVersion";
 
     @Metadata(description = "Spring Boot version",
               javaType = "String", label = "spring-boot")

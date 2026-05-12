@@ -22,10 +22,12 @@ import java.util.Arrays;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.Capability;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
-import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.SourceHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.tooling.maven.MavenDownloaderImpl;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -41,27 +43,32 @@ public class MetadataHelperTest {
 
     @Test
     public void testInspectHttpService() throws Exception {
-        CamelCatalog catalog = CatalogHelper.loadCatalog(RuntimeType.quarkus, RuntimeType.quarkus.version(), true);
-        Source source = SourceHelper.resolveSource("classpath:PlatformHttpServer.java");
-        SourceMetadata metadata = MetadataHelper.readFromSource(catalog, source);
+        MavenGav camelQuarkusBom = MavenGav.fromCoordinates("io.quarkus.platform", "quarkus-camel-bom", "3.5.2", "pom", null);
+        try (MavenDownloaderImpl d = new MavenDownloaderImpl()) {
+            d.build();
+            CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(camelQuarkusBom, d::resolveArtifact);
 
-        Assertions.assertTrue(MetadataHelper.exposesHttpServices(catalog, metadata));
-        Assertions.assertTrue(metadata.capabilities.contains(Capability.PlatformHttp));
-        Assertions.assertEquals(1, metadata.resources.components.size());
-        Assertions.assertTrue(metadata.resources.components.contains("platform-http"));
-        Assertions.assertEquals(1, metadata.endpoints.from.size());
-        Assertions.assertTrue(metadata.endpoints.from.contains("platform-http:///hello?httpMethodRestrict=GET"));
-        Assertions.assertEquals(0, metadata.endpoints.to.size());
+            Source source = SourceHelper.resolveSource("classpath:PlatformHttpServer.java");
+            SourceMetadata metadata = MetadataHelper.readFromSource(catalog, source);
 
-        source = SourceHelper.resolveSource("classpath:route.yaml");
-        metadata = MetadataHelper.readFromSource(catalog, source);
+            Assertions.assertTrue(MetadataHelper.exposesHttpServices(catalog, metadata));
+            Assertions.assertTrue(metadata.capabilities.contains(Capability.PlatformHttp));
+            Assertions.assertEquals(1, metadata.resources.components.size());
+            Assertions.assertTrue(metadata.resources.components.contains("platform-http"));
+            Assertions.assertEquals(1, metadata.endpoints.from.size());
+            Assertions.assertTrue(metadata.endpoints.from.contains("platform-http:///hello?httpMethodRestrict=GET"));
+            Assertions.assertEquals(0, metadata.endpoints.to.size());
 
-        Assertions.assertFalse(MetadataHelper.exposesHttpServices(catalog, metadata));
-        Assertions.assertEquals(2, metadata.resources.components.size());
-        Assertions.assertTrue(metadata.resources.components.containsAll(Arrays.asList("timer", "log")));
-        Assertions.assertEquals(1, metadata.endpoints.from.size());
-        Assertions.assertTrue(metadata.endpoints.from.contains("timer://tick"));
-        Assertions.assertEquals(1, metadata.endpoints.to.size());
-        Assertions.assertTrue(metadata.endpoints.to.contains("log://info"));
+            source = SourceHelper.resolveSource("classpath:route.yaml");
+            metadata = MetadataHelper.readFromSource(catalog, source);
+
+            Assertions.assertFalse(MetadataHelper.exposesHttpServices(catalog, metadata));
+            Assertions.assertEquals(2, metadata.resources.components.size());
+            Assertions.assertTrue(metadata.resources.components.containsAll(Arrays.asList("timer", "log")));
+            Assertions.assertEquals(1, metadata.endpoints.from.size());
+            Assertions.assertTrue(metadata.endpoints.from.contains("timer://tick"));
+            Assertions.assertEquals(1, metadata.endpoints.to.size());
+            Assertions.assertTrue(metadata.endpoints.to.contains("log://info"));
+        }
     }
 }

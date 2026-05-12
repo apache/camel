@@ -429,12 +429,12 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         return answer;
     }
 
-    private void resolveQuarkus(String minimumVersion, String v, Set<String> extraRepos, List<String[]> answer)
+    private void resolveQuarkus(String minimumVersion, String camelVersion, Set<String> extraRepos, List<String[]> answer)
             throws Exception {
-        if (VersionHelper.isGE(v, MINIMUM_QUARKUS_VERSION)) {
-            String cv = resolveCamelVersionByQuarkusVersion(v, extraRepos);
+        if (VersionHelper.isGE(camelVersion, MINIMUM_QUARKUS_VERSION)) {
+            String cv = resolveCamelVersionByQuarkusVersion(camelVersion, extraRepos);
             if (cv != null && VersionHelper.isGE(cv, minimumVersion)) {
-                answer.add(new String[] { cv, v });
+                answer.add(new String[] { cv, camelVersion });
             }
         }
     }

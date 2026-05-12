@@ -35,6 +35,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -182,10 +183,11 @@ class ExportSpringBoot extends Export {
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String sbVersion = camelSpringBootVersion != null ? camelSpringBootVersion : camelVersion;
+        String sbVersion = camelSpringBootVersion != null
+                ? camelSpringBootVersion : (camelVersion == null ? RuntimeType.main.version() : camelVersion);
         String repos = getMavenRepositories(settings, prop, sbVersion);
 
-        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, sbVersion, download);
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, sbVersion, mavenResolver.download());
         if (ObjectHelper.isEmpty(camelVersion)) {
             camelVersion = catalog.getLoadedVersion();
         }

@@ -32,6 +32,8 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
+import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
@@ -75,21 +77,11 @@ public class CatalogDoc extends CamelCommand {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime;
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
-    boolean download = true;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
-    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
-    String quarkusVersion;
-
-    @CommandLine.Option(names = { "--quarkus-group-id" }, description = "Quarkus Platform Maven groupId",
-                        defaultValue = "io.quarkus.platform")
-    String quarkusGroupId = "io.quarkus.platform";
-
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
-    String repos;
+    @CommandLine.Mixin
+    QuarkusPlatformMixin quarkusPlatform;
 
     @CommandLine.Option(names = { "--url" },
                         description = "Prints the link to the online documentation on the Camel website",
@@ -122,14 +114,18 @@ public class CatalogDoc extends CamelCommand {
 
     CamelCatalog loadCatalog() throws Exception {
         if (RuntimeType.springBoot == runtime) {
-            return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, download);
+            return CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         } else if (RuntimeType.quarkus == runtime) {
-            return CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId, download);
+            final MavenGav quarkusCamelBom
+                    = quarkusPlatform
+                            .resolve(camelVersion, mavenResolver.downloader()::resolveArtifact)
+                            .quarkusCamelBom();
+            return CatalogLoader.loadQuarkusCatalog(quarkusCamelBom, mavenResolver.downloader()::resolveArtifact);
         }
         if (camelVersion == null) {
             return new DefaultCamelCatalog(true);
         } else {
-            return CatalogLoader.loadCatalog(repos, camelVersion, download);
+            return CatalogLoader.loadCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         }
     }
 
@@ -152,7 +148,7 @@ public class CatalogDoc extends CamelCommand {
         }
 
         if (prefix == null || "kamelet".equals(prefix)) {
-            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, repos);
+            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
             if (km != null) {
                 docKamelet(km);
                 return 0;
@@ -194,7 +190,8 @@ public class CatalogDoc extends CamelCommand {
             if (kamelet) {
                 // kamelet names
                 suggestions
-                        = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion, repos), name);
+                        = SuggestSimilarHelper.didYouMean(
+                                KameletCatalogHelper.findKameletNames(kameletsVersion, mavenResolver.repos()), name);
             } else {
                 // assume its a component
                 suggestions = SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
@@ -209,7 +206,8 @@ public class CatalogDoc extends CamelCommand {
         } else {
             List<String> suggestions = switch (prefix) {
                 case "kamelet" ->
-                    SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion, repos), name);
+                    SuggestSimilarHelper
+                            .didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion, mavenResolver.repos()), name);
                 case "component" -> SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
                 case "dataformat" -> SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
                 case "language" -> SuggestSimilarHelper.didYouMean(catalog.findLanguageNames(), name);

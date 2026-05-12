@@ -25,35 +25,32 @@ public class DependencyRuntimeDTO {
     private String runtime;
     private String camelVersion;
     private String camelSpringBootVersion;
-    private String camelQuarkusVersion;
     private String springBootVersion;
     private String quarkusVersion;
     private String camelSpringBootBomGroupId;
     private String camelSpringBootBomArtifactId;
     private String quarkusBomGroupId;
-    private String quarkusBomArtifactId;
-    private String camelQuarkusBomGroupId;
-    private String camelQuarkusBomArtifactId;
 
     public DependencyRuntimeDTO() {
     }
 
-    public DependencyRuntimeDTO(String runtime, String camelVersion, String camelSpringBootVersion, String camelQuarkusVersion,
-                                String springBootVersion, String quarkusVersion, String camelSpringBootBomGroupId,
-                                String camelSpringBootBomArtifactId, String quarkusBomGroupId, String quarkusBomArtifactId,
-                                String camelQuarkusBomGroupId, String camelQuarkusBomArtifactId) {
+    public DependencyRuntimeDTO(
+                                String runtime,
+                                String camelVersion,
+                                String camelSpringBootVersion,
+                                String springBootVersion,
+                                String quarkusVersion,
+                                String camelSpringBootBomGroupId,
+                                String camelSpringBootBomArtifactId,
+                                String quarkusBomGroupId) {
         this.runtime = runtime;
         this.camelVersion = camelVersion;
         this.camelSpringBootVersion = camelSpringBootVersion;
-        this.camelQuarkusVersion = camelQuarkusVersion;
         this.springBootVersion = springBootVersion;
         this.quarkusVersion = quarkusVersion;
         this.camelSpringBootBomGroupId = camelSpringBootBomGroupId;
         this.camelSpringBootBomArtifactId = camelSpringBootBomArtifactId;
         this.quarkusBomGroupId = quarkusBomGroupId;
-        this.quarkusBomArtifactId = quarkusBomArtifactId;
-        this.camelQuarkusBomGroupId = camelQuarkusBomGroupId;
-        this.camelQuarkusBomArtifactId = camelQuarkusBomArtifactId;
     }
 
     public String getRuntime() {
@@ -78,14 +75,6 @@ public class DependencyRuntimeDTO {
 
     public void setCamelSpringBootVersion(String camelSpringBootVersion) {
         this.camelSpringBootVersion = camelSpringBootVersion;
-    }
-
-    public String getCamelQuarkusVersion() {
-        return camelQuarkusVersion;
-    }
-
-    public void setCamelQuarkusVersion(String camelQuarkusVersion) {
-        this.camelQuarkusVersion = camelQuarkusVersion;
     }
 
     public String getSpringBootVersion() {
@@ -128,39 +117,12 @@ public class DependencyRuntimeDTO {
         this.quarkusBomGroupId = quarkusBomGroupId;
     }
 
-    public String getQuarkusBomArtifactId() {
-        return quarkusBomArtifactId;
-    }
-
-    public void setQuarkusBomArtifactId(String quarkusBomArtifactId) {
-        this.quarkusBomArtifactId = quarkusBomArtifactId;
-    }
-
-    public String getCamelQuarkusBomGroupId() {
-        return camelQuarkusBomGroupId;
-    }
-
-    public void setCamelQuarkusBomGroupId(String camelQuarkusBomGroupId) {
-        this.camelQuarkusBomGroupId = camelQuarkusBomGroupId;
-    }
-
-    public String getCamelQuarkusBomArtifactId() {
-        return camelQuarkusBomArtifactId;
-    }
-
-    public void setCamelQuarkusBomArtifactId(String camelQuarkusBomArtifactId) {
-        this.camelQuarkusBomArtifactId = camelQuarkusBomArtifactId;
-    }
-
     public Map<String, Object> toMap() {
         JsonObject jo = new JsonObject();
         jo.put("runtime", runtime);
         jo.put("camelVersion", camelVersion);
         if (camelSpringBootVersion != null) {
             jo.put("camelSpringBootVersion", camelSpringBootVersion);
-        }
-        if (camelQuarkusVersion != null) {
-            jo.put("camelQuarkusVersion", camelQuarkusVersion);
         }
         if (springBootVersion != null) {
             jo.put("springBootVersion", springBootVersion);
@@ -176,15 +138,6 @@ public class DependencyRuntimeDTO {
         }
         if (quarkusBomGroupId != null) {
             jo.put("quarkusBomGroupId", quarkusBomGroupId);
-        }
-        if (quarkusBomArtifactId != null) {
-            jo.put("quarkusBomArtifactId", quarkusBomArtifactId);
-        }
-        if (camelQuarkusBomGroupId != null) {
-            jo.put("camelQuarkusBomGroupId", camelQuarkusBomGroupId);
-        }
-        if (camelQuarkusBomArtifactId != null) {
-            jo.put("camelQuarkusBomArtifactId", camelQuarkusBomArtifactId);
         }
         return jo;
     }

@@ -25,7 +25,7 @@ public class VersionListDTO {
     private String camelVersion;
     private String runtime;
     private String runtimeVersion;
-    private String quarkusVersion;
+    private String camelQuarkusVersion;
     private String vendor;
     private String jdkVersion;
     private String kind;
@@ -35,13 +35,12 @@ public class VersionListDTO {
     public VersionListDTO() {
     }
 
-    public VersionListDTO(String camelVersion, String runtime, String runtimeVersion, String quarkusVersion,
+    public VersionListDTO(String camelVersion, String runtime, String runtimeVersion,
                           String vendor, String jdkVersion, String kind,
                           String releaseDate, String eolDate) {
         this.camelVersion = camelVersion;
         this.runtime = runtime;
         this.runtimeVersion = runtimeVersion;
-        this.quarkusVersion = quarkusVersion;
         this.vendor = vendor;
         this.jdkVersion = jdkVersion;
         this.kind = kind;
@@ -73,12 +72,12 @@ public class VersionListDTO {
         this.runtimeVersion = runtimeVersion;
     }
 
-    public String getQuarkusVersion() {
-        return quarkusVersion;
+    public String getCamelQuarkusVersion() {
+        return camelQuarkusVersion;
     }
 
-    public void setQuarkusVersion(String quarkusVersion) {
-        this.quarkusVersion = quarkusVersion;
+    public void setCamelQuarkusVersion(String camelQuarkusVersion) {
+        this.camelQuarkusVersion = camelQuarkusVersion;
     }
 
     public String getVendor() {
@@ -128,8 +127,8 @@ public class VersionListDTO {
         if (runtimeVersion != null) {
             jo.put("runtimeVersion", runtimeVersion);
         }
-        if (quarkusVersion != null) {
-            jo.put("quarkusVersion", quarkusVersion);
+        if (camelQuarkusVersion != null) {
+            jo.put("camelQuarkusVersion", camelQuarkusVersion);
         }
         if (vendor != null) {
             jo.put("vendor", vendor);

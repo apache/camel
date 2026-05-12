@@ -4207,7 +4207,7 @@ The follow options related to _exporting_ or _running_, can be configured in `ap
 
 // jbang options: START
 === Camel JBang configurations
-The camel.jbang supports 45 options, which are listed below.
+The camel.jbang supports 49 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -4246,9 +4246,13 @@ The camel.jbang supports 45 options, which are listed below.
 | *camel.jbang.openApi* | File name of open-api spec file (JSON or YAML) to generate routes from the swagger/openapi API spec file. |  | String
 | *camel.jbang.packageScanJars* | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
 | *camel.jbang.prompt* | Allow user to type in required parameters in prompt if not present in application | false | boolean
-| *camel.jbang.quarkusArtifactId* | Quarkus Platform Maven artifactId |  | String
-| *camel.jbang.quarkusGroupId* | Quarkus Platform Maven groupId |  | String
-| *camel.jbang.quarkusVersion* | Quarkus Platform version |  | String
+| *camel.jbang.quarkusArtifactId* | artifactId of Quarkus Platform BOM |  | String
+| *camel.jbang.quarkusArtifactId* | artifactId of Camel Quarkus Platform BOM |  | String
+| *camel.jbang.quarkusExtensioRegistryBaseUri* | The base URI of Quarkus Extension Registry |  | String
+| *camel.jbang.quarkusGroupId* | groupId of Quarkus Platform BOM |  | String
+| *camel.jbang.quarkusGroupId* | groupId of Camel Quarkus Platform BOM |  | String
+| *camel.jbang.quarkusVersion* | version of Quarkus Platform BOM |  | String
+| *camel.jbang.quarkusVersion* | version of Camel Quarkus Platform BOM |  | String
 | *camel.jbang.repos* | Additional Maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | *camel.jbang.runtime* | Which runtime to use (camel-main, spring-boot, quarkus) |  | String
 | *camel.jbang.scriptFiles* | Additional shell script files to export to src/main/scripts directory |  | String

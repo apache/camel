@@ -18,9 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands.update;
 
 import java.util.List;
 
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
+import org.apache.camel.dsl.jbang.core.commands.QuarkusExtensionRegistryMixin;
+import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
+import org.apache.camel.tooling.maven.MavenGav;
 import picocli.CommandLine;
 
 public class CamelUpdateMixin {
@@ -49,13 +54,12 @@ public class CamelUpdateMixin {
     boolean debug;
 
     @CommandLine.Option(names = { "--quarkusMavenPluginVersion" },
-                        description = "The version of the Quarkus Maven plugin to use.",
-                        defaultValue = RuntimeType.QUARKUS_VERSION)
+                        description = "The version of the Quarkus Maven plugin to use; the default value is looked up in Quarkus Extensio Registry")
     String quarkusMavenPluginVersion;
 
     @CommandLine.Option(names = { "--quarkusMavenPluginGroupId" },
                         description = "The group ID of the Quarkus Maven plugin.",
-                        defaultValue = "io.quarkus")
+                        defaultValue = "io.quarkus.platform")
     String quarkusMavenPluginGroupId;
 
     @CommandLine.Option(names = { "--dryRun" },
@@ -70,9 +74,8 @@ public class CamelUpdateMixin {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime = RuntimeType.main;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
-    String repos;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     @CommandLine.Option(names = { "--extraActiveRecipes" },
                         description = "Comma separated list of recipes to be executed after the Camel one, " +
@@ -88,4 +91,22 @@ public class CamelUpdateMixin {
                         description = "Time to wait, in seconds, before shutting down the upgrade process",
                         defaultValue = "240")
     int upgradeTimeout;
+
+    @CommandLine.Mixin
+    QuarkusExtensionRegistryMixin quarkusExtensionRegistry;
+
+    public MavenGav resolveQuarkusMavenPlugin() {
+        if (quarkusMavenPluginVersion != null) {
+            return MavenGav.fromCoordinates(quarkusMavenPluginGroupId, "quarkus-maven-plugin", quarkusMavenPluginVersion, "jar",
+                    null);
+        } else if (!mavenResolver.download()) {
+            throw new IllegalStateException(
+                    "Could not find default Quarkus Platform Maven BOM coordinates without --download true. You may want to either pass --download true or set --quarkus-version");
+        } else {
+            QuarkusPlatformBom result
+                    = QuarkusHelper.findQuarkusPlatformBom(version, mavenResolver.downloader()::resolveArtifact,
+                            quarkusExtensionRegistry.quarkusExtensioRegistryBaseUri());
+            return result.quarkusMavenPlugin();
+        }
+    }
 }

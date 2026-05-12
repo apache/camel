@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,10 +38,10 @@ import org.apache.camel.main.download.DownloadException;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenGav;
 
 public final class CatalogLoader {
 
-    public static final String QUARKUS_GROUP_ID = "io.quarkus.platform";
     private static final String DEFAULT_CAMEL_CATALOG = "org.apache.camel.catalog.DefaultCamelCatalog";
 
     private static final String SPRING_BOOT_CATALOG_PROVIDER = "org.apache.camel.springboot.catalog.SpringBootRuntimeProvider";
@@ -183,92 +184,58 @@ public final class CatalogLoader {
         return answer;
     }
 
-    public static CamelCatalog loadQuarkusCatalog(String repos, String quarkusVersion, String quarkusGroupId, boolean download)
-            throws Exception {
-        return loadQuarkusCatalog(repos, quarkusVersion, quarkusGroupId, null, download);
-    }
-
-    public static CamelCatalog loadQuarkusCatalog(
-            String repos, String quarkusVersion, String quarkusGroupId, String quarkusBomArtifactId, boolean download)
+    public static CamelCatalog loadQuarkusCatalog(MavenGav quarkusCamelBom, Function<MavenGav, MavenArtifact> downloader)
             throws Exception {
         String camelQuarkusVersion = null;
         CamelCatalog answer = new DefaultCamelCatalog();
 
-        if (quarkusVersion == null) {
-            return answer;
-        }
-        // quarkus 3.2.x and older must have .Final
-        boolean finalSuffix = VersionHelper.isLE(quarkusVersion, "3.2.0");
-        if (finalSuffix && !quarkusVersion.endsWith(".Final")) {
-            quarkusVersion += ".Final";
-        }
+        // shrinkwrap does not return POM file as result (they are hardcoded to be filtered out)
+        // so after this we download a JAR and then use its File location to compute the file for the downloaded POM
+        MavenArtifact ma = downloader.apply(quarkusCamelBom);
+        if (ma != null && ma.getFile() != null) {
+            String name = ma.getFile().getAbsolutePath();
+            File file = new File(name);
+            if (file.exists()) {
+                DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                Document dom = db.parse(file);
 
-        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
-        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-        downloader.setRepositories(repos);
-        downloader.setClassLoader(cl);
-        downloader.setDownload(download);
-        try {
-            downloader.start();
-
-            // shrinkwrap does not return POM file as result (they are hardcoded to be filtered out)
-            // so after this we download a JAR and then use its File location to compute the file for the downloaded POM
-            if (quarkusGroupId == null) {
-                quarkusGroupId = QUARKUS_GROUP_ID;
-            }
-            if (quarkusBomArtifactId == null) {
-                quarkusBomArtifactId = "quarkus-camel-bom";
-            }
-            MavenArtifact ma = downloader.downloadArtifact(quarkusGroupId, quarkusBomArtifactId + ":pom", quarkusVersion);
-            if (ma != null && ma.getFile() != null) {
-                String name = ma.getFile().getAbsolutePath();
-                File file = new File(name);
-                if (file.exists()) {
-                    DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-                    Document dom = db.parse(file);
-
-                    // grab what exact camelVersion and camelQuarkusVersion we are using
-                    NodeList nl = dom.getElementsByTagName("dependency");
-                    for (int i = 0; i < nl.getLength(); i++) {
-                        Element node = (Element) nl.item(i);
-                        String g = node.getElementsByTagName("groupId").item(0).getTextContent();
-                        String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
-                        if ("org.apache.camel.quarkus".equals(g) && "camel-quarkus-catalog".equals(a)) {
-                            camelQuarkusVersion = node.getElementsByTagName("version").item(0).getTextContent();
-                        }
+                // grab what exact camelVersion and camelQuarkusVersion we are using
+                NodeList nl = dom.getElementsByTagName("dependency");
+                for (int i = 0; i < nl.getLength(); i++) {
+                    Element node = (Element) nl.item(i);
+                    String g = node.getElementsByTagName("groupId").item(0).getTextContent();
+                    String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
+                    if ("org.apache.camel.quarkus".equals(g) && "camel-quarkus-catalog".equals(a)) {
+                        camelQuarkusVersion = node.getElementsByTagName("version").item(0).getTextContent();
+                        break;
                     }
                 }
             }
-
-            if (camelQuarkusVersion != null) {
-                // download camel-quarkus-catalog we use to know if we have an extension or not
-                List<MavenArtifact> artifacts = downloader.downloadArtifacts("org.apache.camel.quarkus",
-                        "camel-quarkus-catalog", camelQuarkusVersion, true);
-                if (artifacts != null) {
-                    // this will add to classpath
-                    downloader.downloadDependency("org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion);
-
-                    Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(QUARKUS_CATALOG_PROVIDER);
-                    if (clazz != null) {
-                        Class<CamelCatalog> clazz2 = (Class<CamelCatalog>) cl.loadClass(DEFAULT_CAMEL_CATALOG);
-                        if (clazz2 != null) {
-                            answer = ObjectHelper.newInstance(clazz2);
-                        }
-                        RuntimeProvider provider = ObjectHelper.newInstance(clazz);
-                        if (provider != null) {
-                            answer.setRuntimeProvider(provider);
-                        }
-                        // use classloader that loaded quarkus provider to ensure we can load its resources
-                        answer.getVersionManager().setClassLoader(cl);
-                    }
-                }
-            }
-            answer.enableCache();
-        } finally {
-            downloader.stop();
-            downloader.close();
         }
+
+        if (camelQuarkusVersion != null) {
+            // download camel-quarkus-catalog we use to know if we have an extension or not
+            MavenArtifact artifact = downloader.apply(MavenGav.fromCoordinates("org.apache.camel.quarkus",
+                    "camel-quarkus-catalog", camelQuarkusVersion, "jar", null));
+            DependencyDownloaderClassLoader cl
+                    = new DependencyDownloaderClassLoader(Thread.currentThread().getContextClassLoader());
+            cl.addFile(artifact.getFile());
+            Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(QUARKUS_CATALOG_PROVIDER);
+            if (clazz != null) {
+                Class<CamelCatalog> clazz2 = (Class<CamelCatalog>) cl.loadClass(DEFAULT_CAMEL_CATALOG);
+                if (clazz2 != null) {
+                    answer = ObjectHelper.newInstance(clazz2);
+                }
+                RuntimeProvider provider = ObjectHelper.newInstance(clazz);
+                if (provider != null) {
+                    answer.setRuntimeProvider(provider);
+                }
+                // use classloader that loaded quarkus provider to ensure we can load its resources
+                answer.getVersionManager().setClassLoader(cl);
+            }
+        }
+        answer.enableCache();
 
         return answer;
     }
@@ -319,33 +286,6 @@ public final class CatalogLoader {
                 String g = ma.getGav().getGroupId();
                 String a = ma.getGav().getArtifactId();
                 if ("org.springframework.boot".equals(g) && "spring-boot-starter".equals(a)) {
-                    return ma.getGav().getVersion();
-                }
-            }
-        } finally {
-            downloader.stop();
-            downloader.close();
-        }
-
-        return null;
-    }
-
-    public static String resolveCamelVersionFromQuarkus(String repos, String camelQuarkusVersion, boolean download)
-            throws Exception {
-        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(CatalogLoader.class.getClassLoader());
-        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-        downloader.setRepositories(repos);
-        downloader.setClassLoader(cl);
-        downloader.setDownload(download);
-        try {
-            downloader.start();
-
-            List<MavenArtifact> artifacts = downloader.downloadArtifacts("org.apache.camel.quarkus", "camel-quarkus-catalog",
-                    camelQuarkusVersion, true);
-            for (MavenArtifact ma : artifacts) {
-                String g = ma.getGav().getGroupId();
-                String a = ma.getGav().getArtifactId();
-                if ("org.apache.camel".equals(g) && "camel-catalog".equals(a)) {
                     return ma.getGav().getVersion();
                 }
             }

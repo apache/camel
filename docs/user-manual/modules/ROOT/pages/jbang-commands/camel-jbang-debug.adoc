@@ -29,7 +29,6 @@ camel debug [options]
 | `--code` | Run the given text or file as Java DSL routes |  | String
 | `--console` | Developer console at /q/dev on local HTTP server (port 8080 by default) | false | boolean
 | `--dep,--dependency` | Add additional dependencies |  | List
-| `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--empty` | Run an empty Camel without loading source files | false | boolean
 | `--example` | Run a built-in example by name (e.g., timer-log, rest-api). Use --example --list to show available examples. |  | String
 | `--example-list` | List available built-in examples |  | boolean
@@ -74,12 +73,8 @@ camel debug [options]
 | `--prompt` | Allow user to type in required parameters in prompt if not present in application | false | boolean
 | `--prop,--property` | Additional properties (override existing) |  | String
 | `--properties` | comma separated list of properties file (ex. /path/to/file.properties,/path/to/other.properties |  | String
-| `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
-| `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
-| `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
 | `--reload,--dev` | Enables dev mode (live reload when source files are updated and saved) |  | boolean
 | `--remote-attach` | Attaches debugger remotely to an existing running Camel integration. (Add camel-cli-debug JAR to the existing Camel application and run before attaching this debugger) |  | boolean
-| `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
 | `--show-body` | Show message body in debug messages | true | boolean
 | `--show-exception` | Show exception and stacktrace for failed messages | true | boolean

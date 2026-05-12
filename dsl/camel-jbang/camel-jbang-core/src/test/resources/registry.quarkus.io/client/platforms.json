@@ -1,0 +1,32 @@
+{
+  "platforms" : [ {
+    "platform-key" : "io.quarkus.platform",
+    "name" : "Quarkus Community Platform",
+    "streams" : [ {
+      "id" : "3.35",
+      "releases" : [ {
+        "version" : "3.35.3",
+        "member-boms" : [ "io.quarkus.platform:quarkus-bom::pom:3.35.3", "io.quarkus.platform:quarkus-qpid-jms-bom::pom:3.35.3", "io.quarkus.platform:quarkus-cassandra-bom::pom:3.35.3", "io.quarkus.platform:quarkus-amazon-services-bom::pom:3.35.3", "io.quarkus.platform:quarkus-cxf-bom::pom:3.35.3", "io.quarkus.platform:quarkus-camel-bom::pom:3.35.3", "io.quarkus.platform:quarkus-hazelcast-client::pom:3.35.3", "io.quarkus.platform:quarkus-debezium-bom::pom:3.35.3", "io.quarkus.platform:quarkus-blaze-persistence-bom::pom:3.35.3", "io.quarkus.platform:quarkus-google-cloud-services-bom::pom:3.35.3", "io.quarkus.platform:quarkus-operator-sdk-bom::pom:3.35.3", "io.quarkus.platform:quarkus-langchain4j-bom::pom:3.35.3", "io.quarkus.platform:quarkus-mcp-server-bom::pom:3.35.3", "io.quarkus.platform:quarkus-flow-bom::pom:3.35.3" ],
+        "quarkus-core-version" : "3.35.3"
+      } ],
+      "lts" : false
+    }, {
+      "id" : "3.33",
+      "releases" : [ {
+        "version" : "3.33.1.1",
+        "member-boms" : [ "io.quarkus.platform:quarkus-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-qpid-jms-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-cassandra-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-amazon-services-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-cxf-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-camel-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-hazelcast-client::pom:3.33.1.1", "io.quarkus.platform:quarkus-debezium-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-blaze-persistence-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-google-cloud-services-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-operator-sdk-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-langchain4j-bom::pom:3.33.1.1", "io.quarkus.platform:quarkus-mcp-server-bom::pom:3.33.1.1" ],
+        "quarkus-core-version" : "3.33.1.1"
+      } ],
+      "lts" : true
+    }, {
+      "id" : "3.27",
+      "releases" : [ {
+        "version" : "3.27.3.1",
+        "member-boms" : [ "io.quarkus.platform:quarkus-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-qpid-jms-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-cassandra-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-amazon-services-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-cxf-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-camel-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-hazelcast-client::pom:3.27.3.1", "io.quarkus.platform:quarkus-debezium-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-blaze-persistence-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-google-cloud-services-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-operator-sdk-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-langchain4j-bom::pom:3.27.3.1", "io.quarkus.platform:quarkus-mcp-server-bom::pom:3.27.3.1" ],
+        "quarkus-core-version" : "3.27.3.1"
+      } ],
+      "lts" : true
+    } ],
+    "current-stream-id" : "3.35"
+  } ]
+}

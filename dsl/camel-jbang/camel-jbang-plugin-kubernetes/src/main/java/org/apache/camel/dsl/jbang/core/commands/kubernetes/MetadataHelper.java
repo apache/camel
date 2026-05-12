@@ -40,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubComponent
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubDataFormatResolver;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubLanguageResolver;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubTransformerResolver;
+import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.Source;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -71,6 +72,7 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.TransformerResolver;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.LanguageModel;
@@ -244,8 +246,18 @@ public class MetadataHelper {
         PluginHelper.getPackageScanClassResolver(context).addClassLoader(cl);
         PluginHelper.getPackageScanResourceResolver(context).addClassLoader(cl);
 
+        String quarkusVersion = null;
+        try (MavenDownloaderImpl d = new MavenDownloaderImpl()) {
+            d.build();
+            quarkusVersion = QuarkusHelper
+                    .findQuarkusPlatformBom(
+                            RuntimeType.main.version(),
+                            d::resolveArtifact,
+                            RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL)
+                    .version();
+        }
         ClassResolver classResolver = new DependencyDownloaderClassResolver(
-                context, new KnownDependenciesResolver(context, RuntimeType.SPRING_BOOT_VERSION, RuntimeType.QUARKUS_VERSION),
+                context, new KnownDependenciesResolver(context, RuntimeType.SPRING_BOOT_VERSION, quarkusVersion),
                 true);
         context.setClassResolver(classResolver);
         // re-create factory finder with download class-resolver

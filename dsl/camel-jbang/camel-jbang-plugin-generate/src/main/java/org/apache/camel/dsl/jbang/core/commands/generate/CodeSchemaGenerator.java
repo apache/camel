@@ -31,6 +31,7 @@ import com.github.victools.jsonschema.module.jackson.JacksonModule;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
@@ -73,13 +74,8 @@ public class CodeSchemaGenerator extends CamelCommand {
                         description = "Enable verbose logging")
     private boolean verbose;
 
-    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
-    boolean download = true;
-
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
-    String repositories;
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver;
 
     public CodeSchemaGenerator(CamelJBangMain main) {
         super(main);
@@ -197,8 +193,8 @@ public class CodeSchemaGenerator extends CamelCommand {
 
             try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
                 downloader.setClassLoader(cl);
-                downloader.setDownload(download);
-                downloader.setRepositories(repositories);
+                downloader.setDownload(mavenResolver.download());
+                downloader.setRepositories(mavenResolver.repos());
                 downloader.start();
 
                 if (verbose) {

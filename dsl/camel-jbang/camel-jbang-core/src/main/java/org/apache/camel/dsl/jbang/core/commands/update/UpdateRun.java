@@ -70,7 +70,7 @@ public class UpdateRun extends CamelCommand {
 
         List<String> command = new ArrayList<>();
         try (MavenDependencyDownloader downloader = new MavenDependencyDownloader();) {
-            downloader.setRepositories(updateMixin.repos);
+            downloader.setRepositories(updateMixin.mavenResolver.repos());
             downloader.start();
 
             Update update = null;
