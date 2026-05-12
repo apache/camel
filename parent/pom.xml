@@ -389,7 +389,7 @@
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
-        <narayana-version>5.13.1.Final</narayana-version>
+        <narayana-version>7.3.4.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>6.1.0</neo4j-version>
         <netty-version>4.2.12.Final</netty-version>
