@@ -117,6 +117,16 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
     }
 
     @Override
+    public String dumpRoutesAsAsciiArt(
+            String filter, RouteDiagramDumper.NodeLabelMode nodeLabel, int nodeWidth) {
+        DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("route-structure");
+        JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
+        var routes = RouteDiagramHelper.parseRoutes(root);
+        return renderAscii(routes, nodeWidth, nodeLabel.name());
+    }
+
+    @Override
     public String imageToBase64(BufferedImage image) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "PNG", baos);
@@ -150,6 +160,25 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         theme = theme.toLowerCase();
         RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse(theme);
         return renderer.renderDiagram(layoutRoutes, currentY, colors);
+    }
+
+    private static String renderAscii(
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel) {
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
+                nodeWidth, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
+                RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
+
+        List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
+        int currentY = RouteDiagramLayoutEngine.PADDING;
+        for (RouteDiagramLayoutEngine.RouteInfo route : routes) {
+            RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(route, currentY);
+            layoutRoutes.add(lr);
+            currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+        }
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(
+                nodeWidth * RouteDiagramLayoutEngine.SCALE);
+        return renderer.renderDiagram(layoutRoutes, currentY);
     }
 
 }

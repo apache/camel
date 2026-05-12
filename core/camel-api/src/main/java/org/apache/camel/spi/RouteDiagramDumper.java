@@ -89,4 +89,24 @@ public interface RouteDiagramDumper {
      */
     String imageToBase64(BufferedImage image) throws IOException;
 
+    /**
+     * Dumps the routes as ASCII art text
+     *
+     * @param filter to filter routes
+     */
+    default String dumpRoutesAsAsciiArt(String filter) {
+        return dumpRoutesAsAsciiArt(filter, NodeLabelMode.CODE, 180);
+    }
+
+    /**
+     * Dumps the routes as ASCII art text
+     *
+     * @param filter    to filter routes
+     * @param nodeLabel what information to display in the nodes
+     * @param nodeWidth the width in pixels of the node boxes
+     */
+    default String dumpRoutesAsAsciiArt(String filter, NodeLabelMode nodeLabel, int nodeWidth) {
+        throw new UnsupportedOperationException();
+    }
+
 }
