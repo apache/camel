@@ -140,6 +140,7 @@ Long labels are automatically wrapped to fit within the box width.
 
 Example output for a simple route:
 
+[source,text]
 ----
 route1
     +----------------------+
@@ -156,6 +157,7 @@ route1
 
 Example output for a branching route with choice:
 
+[source,text]
 ----
 route1
                   +----------------------+
