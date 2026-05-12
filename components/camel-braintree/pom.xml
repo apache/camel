@@ -255,6 +255,13 @@
                                             <replacement>cloneRequest</replacement>
                                             <replaceWithType>false</replaceWithType>
                                         </substitution>
+                                        <substitution>
+                                            <method>^.+$</method>
+                                            <argName>^.+$</argName>
+                                            <argType>com.braintreegateway.TransactionVoidRequest</argType>
+                                            <replacement>voidRequest</replacement>
+                                            <replaceWithType>false</replaceWithType>
+                                        </substitution>
                                     </substitutions>
                                 </api>
                                 <api>
