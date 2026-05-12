@@ -38,6 +38,10 @@ public interface NatsConstants {
               description = "Number of times this message has been delivered (1 = first, > 1 then message has been redelivered)",
               javaType = "long", important = true)
     String NATS_DELIVERY_COUNTER = "CamelNatsDeliveryCounter";
+    @Metadata(label = "consumer",
+              description = "The manual acknowledgment handle for JetStream messages (only set when manualAck=true).",
+              javaType = "org.apache.camel.component.nats.NatsManualAck")
+    String NATS_MANUAL_ACK = "CamelNatsManualAck";
 
     String NATS_REQUEST_TIMEOUT_THREAD_PROFILE_NAME = "CamelNatsRequestTimeoutExecutor";
 }

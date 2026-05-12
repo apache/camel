@@ -125,5 +125,28 @@ from("nats:mytopic?maxMessages=5&queueName=myqueue")
   .to("mock:result");
 ----
 
+=== Manual Acknowledgment (JetStream)
+
+When consuming from JetStream, by default messages are automatically acknowledged
+after successful route processing, or negatively acknowledged (redelivered) on failure.
+
+To take full control of acknowledgment, set `manualAck=true` on the consumer endpoint.
+This disables automatic acknowledgment and exposes a `NatsManualAck` object as the
+`CamelNatsManualAck` message header.
+
+[source,java]
+----
+from("nats:mytopic?jetstreamEnabled=true&jetstreamName=mystream&durableName=myconsumer&pullSubscription=false&manualAck=true")
+    .process(exchange -> {
+        // do work ...
+
+        NatsManualAck manualAck = exchange.getIn().getHeader("CamelNatsManualAck", NatsManualAck.class);
+        manualAck.ack();
+    });
+----
+
+If the route completes without calling any NatsManualAck method, the message remains unacknowledged
+and NATS will redeliver it after `ackWait` expires (default 30 seconds).
+
 
 include::spring-boot:partial$starter.adoc[]
