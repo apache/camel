@@ -327,7 +327,7 @@
         <juniversalchardet-version>1.0.3</juniversalchardet-version>
         <jxmpp-version>1.1.0</jxmpp-version>
         <jython-version>2.7.4</jython-version>
-        <kafka-version>4.2.0</kafka-version>
+        <kafka-version>4.1.2</kafka-version>
         <keycloak-client-version>26.0.8</keycloak-client-version>
         <kubernetes-client-version>7.6.1</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
