@@ -72,17 +72,23 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String KAMELETS_VERSION = "camel.jbang.kameletsVersion";
 
-    @Metadata(description = "Quarkus Platform Maven groupId",
+    @Metadata(description = "groupId of Quarkus Platform BOM",
               javaType = "String", label = "quarkus")
     public static final String QUARKUS_GROUP_ID = "camel.jbang.quarkusGroupId";
 
-    @Metadata(description = "Quarkus Platform Maven artifactId",
+    @Metadata(description = "artifactId of Quarkus Platform BOM",
               javaType = "String", label = "quarkus")
+    @Deprecated(forRemoval = true, since = "4.21.0")
+    /* See also org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin.quarkusArtifactId */
     public static final String QUARKUS_ARTIFACT_ID = "camel.jbang.quarkusArtifactId";
 
-    @Metadata(description = "Quarkus Platform version",
+    @Metadata(description = "version of Quarkus Platform BOM",
               javaType = "String", label = "quarkus")
     public static final String QUARKUS_VERSION = "camel.jbang.quarkusVersion";
+
+    @Metadata(description = "The base URI of Quarkus Extension Registry",
+              javaType = "String", label = "quarkus")
+    public static final String QUARKUS_EXTENSION_REGISTRY_BASE_URI = "camel.jbang.quarkusExtensionRegistryBaseUri";
 
     @Metadata(description = "Spring Boot version",
               javaType = "String", label = "spring-boot")
@@ -202,6 +208,10 @@ public final class CamelJBangConstants {
     @Metadata(description = "Whether to allow automatic downloading JAR dependencies (over the internet)",
               javaType = "boolean", defaultValue = "true")
     public static final String DOWNLOAD = "camel.jbang.download";
+
+    @Metadata(description = "Whether to force using fresh (i.e. non-cached) resources",
+              javaType = "boolean", defaultValue = "false")
+    public static final String FRESH = "camel.jbang.fresh";
 
     @Metadata(description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang",
               javaType = "boolean", label = "advanced")

@@ -61,7 +61,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
     @MethodSource("exportRuntimeProvider")
     void shouldDependencyUpdate(RuntimeType rt) throws Exception {
         prepareMavenProject(rt);
-        checkNoUpdateOnFreshlyGeneratedproject();
+        checkNoUpdateOnFreshlyGeneratedproject(rt);
         addArangodbToCamelFile();
         checkOneDependencyAddedForArangoDb(rt);
     }
@@ -71,6 +71,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(secondUpdateCommandPrinter));
         CommandLine.populateCommand(command,
                 "--dir=" + workingDir,
+                CamelCommandBaseTestSupport.quarkusExtRegistry(),
                 new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();
         Assertions.assertEquals(0, exit, secondUpdateCommandPrinter.getLines().toString());
@@ -96,10 +97,12 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         }
     }
 
-    private void checkNoUpdateOnFreshlyGeneratedproject() throws Exception {
+    private void checkNoUpdateOnFreshlyGeneratedproject(RuntimeType rt) throws Exception {
         DependencyUpdate command = new DependencyUpdate(new CamelJBangMain().withPrinter(printer));
         CommandLine.populateCommand(command,
                 "--dir=" + workingDir,
+                "--camel-version=4.13.0",
+                CamelCommandBaseTestSupport.quarkusExtRegistry(),
                 new File(workingDir, "pom.xml").getAbsolutePath());
         int exit = command.doCall();
         Assertions.assertEquals(0, exit, printer.getLines().toString());
@@ -123,6 +126,7 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
                 "--dir=" + workingDir,
                 "--camel-version=4.13.0",
                 "--runtime=" + rt.runtime(),
+                CamelCommandBaseTestSupport.quarkusExtRegistry(),
                 camelFilePath);
         Assertions.assertEquals(0, exportCommand.doCall(), exportCommandPrinter.getLines().toString());
     }

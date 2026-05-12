@@ -104,7 +104,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private String repos;
     private boolean fresh;
     private boolean offline;
-    private boolean preferLocal;
+    private boolean preferLocal = true;
     private RemoteArtifactDownloadListener remoteArtifactDownloadListener;
     private RepositoryResolver repositoryResolver;
 

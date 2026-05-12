@@ -63,6 +63,29 @@ auto-disables `contentCache` on resource-based components (such as `xslt`) whose
 the route. Set `camel.component.<name>.contentCache=true` (or pass `?contentCache=true` on the
 URI) to opt back in to caching during dev mode.
 
+==== Improved default `--quarkus-version`
+
+The default behavior of commands requiring Quarkus Platform version has improved.
+Before Camel 4.21.0, when the version was not set via `--quarkus-version`, a default hardcoded value was used.
+We were not especially good at upgrading that version and also, the version of Quarkus Platform that delivers
+a specific version of Camel was always released several weeks after Camel, so it could never be up to date.
+
+Since Camel 4.21.0, the default version of Quarkus Platform is determined at Camel JBang runtime by querying
+Quarkus Extension Registry (https://registry.quarkus.io/), especially its
+`https://registry.quarkus.io/client/platforms/all[/client/platforms/all]` endpoint.
+The version chosen is the newest Quarkus Platform compatible with either the Camel version specified via `--camel-version`,
+if available, or the version of the currently running `camel-jbang`.
+
+Unless you pass `--fresh`, the content from Quarkus Extension Registry is fetched at most once a day
+and cached under `~/.camel/quarkus-extension-registries`.
+You may force using the cached resource by passing `--download=false`.
+
+Finally, the default base URI `https://registry.quarkus.io` of Quarkus Extension Registry
+can be overridden via `--quarkus-ext-registry`.
+In addition to `http://` and `https://`, it also accepts `file://` URIs.
+Those may come in handy when cannot access the internet.
+Append `.json` to the resource path when you store it locally.
+
 ==== camel-jbang-mcp
 
 The `camel_catalog_component_doc` tool no longer returns every component option by default. Two new

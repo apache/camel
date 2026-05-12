@@ -67,7 +67,10 @@ public class KubernetesExportBaseTestSupport extends KubernetesBaseTestSupport {
             throw new RuntimeCamelException(e);
         }
 
-        defaultArgs = new String[] { "--dir=" + workingDir, "--quiet" };
+        defaultArgs = new String[] {
+                "--dir=" + workingDir, "--quiet", "--quarkus-ext-registry="
+                                                  + Path.of("../camel-jbang-core/src/test/resources/registry.quarkus.io")
+                                                          .toAbsolutePath().normalize().toUri().toString() };
     }
 
     protected KubernetesExport createCommand(String[] files, String... args) {

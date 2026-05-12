@@ -340,7 +340,7 @@ public final class TraitHelper {
     public static boolean exposesHttpService(TraitContext context, boolean download) {
         try {
             boolean exposesHttpServices = false;
-            CamelCatalog catalog = context.getCatalog(download);
+            CamelCatalog catalog = context.getCatalog();
             if (context.getSources() != null) {
                 for (Source source : context.getSources()) {
                     SourceMetadata metadata = context.inspectMetaData(source);

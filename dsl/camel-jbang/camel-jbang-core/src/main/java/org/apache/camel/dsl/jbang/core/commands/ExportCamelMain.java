@@ -59,7 +59,7 @@ class ExportCamelMain extends Export {
 
         // the settings file has information what to export
         Path settings = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
-        if (fresh || !files.isEmpty() || !Files.exists(settings)) {
+        if (mavenResolver.fresh() || !files.isEmpty() || !Files.exists(settings)) {
             // allow to automatic build
             printer().println("Generating fresh run data");
             int silent = runSilently(ignoreLoadingError, lazyBean, verbose);
