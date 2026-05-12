@@ -57,7 +57,14 @@ public class Doctor extends CamelCommand {
         String version = System.getProperty("java.version");
         String vendor = System.getProperty("java.vendor", "");
         int major = Runtime.version().feature();
-        String status = major >= 21 ? "OK" : "WARN (21+ required)";
+        String status;
+        if (major >= 21) {
+            status = "OK";
+        } else if (major >= 17) {
+            status = "OK (consider upgrading to 21 or 25 for better performance)";
+        } else {
+            status = "UNSUPPORTED (17+ required)";
+        }
         printer().printf("  Java:        %s (%s) [%s]%n", version, vendor, status);
     }
 
