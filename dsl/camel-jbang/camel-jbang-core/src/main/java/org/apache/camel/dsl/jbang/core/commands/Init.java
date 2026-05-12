@@ -58,8 +58,7 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrl
                  "  camel init hello.java",
                  "  camel init hello.yaml",
                  "  camel init hello.xml",
-                 "  camel init --list",
-                 "%nTip: For AI-assisted project scaffolding, try: camel plugin add kit" })
+                 "  camel init --list" })
 public class Init extends CamelCommand {
 
     @Parameters(description = "Name of integration file (or a github link)", arity = "0..1",
