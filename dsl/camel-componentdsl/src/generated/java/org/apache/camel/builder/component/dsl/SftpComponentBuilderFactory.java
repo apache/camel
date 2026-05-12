@@ -162,6 +162,111 @@ public interface SftpComponentBuilderFactory {
             doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
             return this;
         }
+    
+        
+        /**
+         * If knownHostFile does not exist, then attempt to auto-create the path
+         * and file (beware that the file will be created by the current user of
+         * the running Java process, which may not have file permission).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param autoCreateKnownHostsFile the value to set
+         * @return the dsl builder
+         */
+        default SftpComponentBuilder autoCreateKnownHostsFile(boolean autoCreateKnownHostsFile) {
+            doSetProperty("autoCreateKnownHostsFile", autoCreateKnownHostsFile);
+            return this;
+        }
+    
+        /**
+         * Sets the known_hosts from the byte array globally, so that the SFTP
+         * endpoints can do host key verification.
+         * 
+         * The option is a: &lt;code&gt;byte[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param knownHosts the value to set
+         * @return the dsl builder
+         */
+        default SftpComponentBuilder knownHosts(byte[] knownHosts) {
+            doSetProperty("knownHosts", knownHosts);
+            return this;
+        }
+    
+        /**
+         * Sets the known_hosts file globally, so that the SFTP endpoints can do
+         * host key verification.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param knownHostsFile the value to set
+         * @return the dsl builder
+         */
+        default SftpComponentBuilder knownHostsFile(java.lang.String knownHostsFile) {
+            doSetProperty("knownHostsFile", knownHostsFile);
+            return this;
+        }
+    
+        /**
+         * Sets the known_hosts file (loaded from classpath by default)
+         * globally, so that the SFTP endpoints can do host key verification.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param knownHostsUri the value to set
+         * @return the dsl builder
+         */
+        default SftpComponentBuilder knownHostsUri(java.lang.String knownHostsUri) {
+            doSetProperty("knownHostsUri", knownHostsUri);
+            return this;
+        }
+    
+        
+        /**
+         * Sets whether to use strict host key checking globally for all
+         * endpoints. Setting this to 'no' (the default) disables host key
+         * verification and makes SFTP connections vulnerable to
+         * man-in-the-middle attacks. Use 'yes' in production environments.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: no
+         * Group: security
+         * 
+         * @param strictHostKeyChecking the value to set
+         * @return the dsl builder
+         */
+        default SftpComponentBuilder strictHostKeyChecking(java.lang.String strictHostKeyChecking) {
+            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
+            return this;
+        }
+    
+        
+        /**
+         * If knownHostFile has not been explicit configured then use the host
+         * file from System.getProperty(user.home)/.ssh/known_hosts.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param useUserKnownHostsFile the value to set
+         * @return the dsl builder
+         */
+        default SftpComponentBuilder useUserKnownHostsFile(boolean useUserKnownHostsFile) {
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            return this;
+        }
     }
 
     class SftpComponentBuilderImpl
@@ -182,6 +287,12 @@ public interface SftpComponentBuilderFactory {
             case "autowiredEnabled": ((SftpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((SftpComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((SftpComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "autoCreateKnownHostsFile": ((SftpComponent) component).setAutoCreateKnownHostsFile((boolean) value); return true;
+            case "knownHosts": ((SftpComponent) component).setKnownHosts((byte[]) value); return true;
+            case "knownHostsFile": ((SftpComponent) component).setKnownHostsFile((java.lang.String) value); return true;
+            case "knownHostsUri": ((SftpComponent) component).setKnownHostsUri((java.lang.String) value); return true;
+            case "strictHostKeyChecking": ((SftpComponent) component).setStrictHostKeyChecking((java.lang.String) value); return true;
+            case "useUserKnownHostsFile": ((SftpComponent) component).setUseUserKnownHostsFile((boolean) value); return true;
             default: return false;
             }
         }

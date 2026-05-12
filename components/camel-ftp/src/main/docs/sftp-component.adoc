@@ -42,11 +42,40 @@ include::partial$component-endpoint-headers.adoc[]
 
 WARNING: By default, the SFTP component has `strictHostKeyChecking=no`, which disables host key verification and makes connections vulnerable to man-in-the-middle (MITM) attacks. For production environments, you should enable strict host key checking to ensure you are connecting to the expected server.
 
+==== Global Configuration (Component Level)
+
+You can configure host key verification settings globally on the SFTP component, which will apply to all SFTP endpoints unless overridden at the endpoint level:
+
+[source,java]
+----
+// Configure component for all SFTP endpoints
+SftpComponent sftp = context.getComponent("sftp", SftpComponent.class);
+sftp.setStrictHostKeyChecking("yes");
+sftp.setKnownHostsFile("/path/to/known_hosts");
+
+// All endpoints will inherit these settings
+from("sftp://host1/path1?username=user1&password=secret1")
+    .to("direct:result");
+
+from("sftp://host2/path2?username=user2&password=secret2")
+    .to("direct:result");
+----
+
+Or with application.properties configuration:
+
+[source,properties]
+----
+camel.component.sftp.strict-host-key-checking=yes
+camel.component.sftp.known-hosts-file=/path/to/known_hosts
+----
+
+==== Per-Endpoint Configuration
+
 Host key verification prevents MITM attacks by verifying the server's host key against a known list of trusted keys. When `strictHostKeyChecking=yes` is enabled, the SFTP client will reject connections to servers whose host key is not in the known hosts file.
 
-==== Recommended Secure Configuration
+Endpoint-level configurations will override component-level settings. This allows you to set secure defaults globally while making exceptions for specific endpoints if needed.
 
-To enable strict host key checking, set `strictHostKeyChecking=yes` and provide a known hosts file:
+To enable strict host key checking at the endpoint level, set `strictHostKeyChecking=yes` and provide a known hosts file:
 
 [source,java]
 ----
