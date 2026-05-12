@@ -47,8 +47,10 @@ public abstract class BaseSftpConfiguration extends RemoteFileConfiguration {
     @UriParam(label = "security", security = "secret",
               description = "Sets the known_hosts from the byte array, so that the SFTP endpoint can do host key verification.")
     private byte[] knownHosts;
-    @UriParam(defaultValue = "no", enums = "no,yes", label = "security",
-              description = "Sets whether to use strict host key checking.")
+    @UriParam(defaultValue = "no", enums = "no,yes", label = "security", security = "insecure:ssl",
+              description = "Sets whether to use strict host key checking. "
+                            + "Setting this to 'no' (the default) disables host key verification and makes SFTP connections "
+                            + "vulnerable to man-in-the-middle attacks. Use 'yes' in production environments.")
     private String strictHostKeyChecking = "no";
     @UriParam(label = "security", security = "secret",
               description = "Set the private key file so that the SFTP endpoint can do private key verification.")

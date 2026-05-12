@@ -66,6 +66,7 @@ public final class SecurityUtils {
         map.put("ignoresslverification", new SecurityOption(INSECURE_SSL, "true"));
         map.put("objectmessageenabled", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("sendenabled", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("stricthostkeychecking", new SecurityOption(INSECURE_SSL, ""));
         map.put("transferexception", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("transferexchange", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("trustallcertificates", new SecurityOption(INSECURE_SSL, "true"));
