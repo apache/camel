@@ -330,7 +330,7 @@
         <jython-version>2.7.4</jython-version>
         <kafka-version>4.2.0</kafka-version>
         <keycloak-client-version>26.0.8</keycloak-client-version>
-        <kubernetes-client-version>7.6.1</kubernetes-client-version>
+        <kubernetes-client-version>7.7.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
         <langchain4j-version>1.14.1</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
