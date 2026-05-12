@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
 
 /**
  * Renders route diagrams as plain ASCII art text.
@@ -72,6 +75,12 @@ public class RouteDiagramAsciiRenderer {
             label += " (" + lr.source + ")";
         }
         drawText(grid, labelRow, toCol(PADDING), label);
+
+        for (LayoutNode ln : lr.nodes) {
+            if (ln.treeNode != null && RouteDiagramLayoutEngine.hasScope(ln.treeNode)) {
+                drawScopeBox(grid, ln);
+            }
+        }
 
         for (LayoutNode ln : lr.nodes) {
             if (ln.parentNode != null) {
@@ -132,7 +141,7 @@ public class RouteDiagramAsciiRenderer {
         int fromCx = centerCol(from);
         int fromBottom = toRow(from.y) + boxHeight(from);
         int toCx = centerCol(to);
-        int toTop = toRow(to.y);
+        int toTop = getTopRow(to);
 
         drawArrowPath(grid, fromCx, fromBottom, toCx, toTop);
     }
@@ -141,7 +150,7 @@ public class RouteDiagramAsciiRenderer {
         int fromCx = toCol(to.mergeCx);
         int fromRow = toRow(to.mergeY);
         int toCx = centerCol(to);
-        int toTop = toRow(to.y);
+        int toTop = getTopRow(to);
 
         drawArrowPath(grid, fromCx, fromRow, toCx, toTop);
     }
@@ -176,6 +185,45 @@ public class RouteDiagramAsciiRenderer {
             }
             setChar(grid, toRow - 1, toCx, 'v');
         }
+    }
+
+    private void drawScopeBox(char[][] grid, LayoutNode scopeNode) {
+        TreeNode tn = scopeNode.treeNode;
+        Bounds bounds = new Bounds(
+                scopeNode.x, scopeNode.y,
+                scopeNode.x + nodeWidth, scopeNode.y + scopeNode.height);
+        for (TreeNode child : tn.children) {
+            RouteDiagramLayoutEngine.expandBoundsForBox(child, bounds, nodeWidth);
+        }
+
+        int col1 = toCol(bounds.minX - SCOPE_BOX_PAD);
+        int row1 = toRow(bounds.minY - SCOPE_BOX_PAD);
+        int col2 = toCol(bounds.maxX + SCOPE_BOX_PAD);
+        int row2 = toRow(bounds.maxY + SCOPE_BOX_PAD);
+
+        drawDashedHLine(grid, row1, col1, col2);
+        drawDashedHLine(grid, row2, col1, col2);
+        for (int r = row1 + 1; r < row2; r++) {
+            setChar(grid, r, col1, ':');
+            setChar(grid, r, col2, ':');
+        }
+    }
+
+    private void drawDashedHLine(char[][] grid, int row, int col1, int col2) {
+        for (int c = col1; c <= col2; c++) {
+            if (c == col1 || c == col2) {
+                setChar(grid, row, c, '+');
+            } else if ((c - col1) % 2 == 0) {
+                setChar(grid, row, c, '-');
+            }
+        }
+    }
+
+    private int getTopRow(LayoutNode node) {
+        if (node.treeNode != null && RouteDiagramLayoutEngine.hasScope(node.treeNode)) {
+            return toRow(node.y - SCOPE_BOX_PAD);
+        }
+        return toRow(node.y);
     }
 
     private int centerCol(LayoutNode node) {

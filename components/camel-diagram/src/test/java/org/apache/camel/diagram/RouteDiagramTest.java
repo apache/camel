@@ -950,6 +950,28 @@ class RouteDiagramTest {
     }
 
     @Test
+    void testAsciiDiagramWithScopeBox() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "direct:start", 0));
+        route.nodes.add(node("filter", "filter[header(x)]", 1));
+        route.nodes.add(node("log", "log[filtered]", 2));
+        route.nodes.add(node("to", "to[mock:end]", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth());
+        String result = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+
+        assertTrue(result.contains("filter[header(x)]"));
+        assertTrue(result.contains("log[filtered]"));
+        assertTrue(result.contains("to[mock:end]"));
+        assertTrue(result.contains(":"), "Scope box should have dashed vertical borders");
+        assertTrue(result.contains("+ -"), "Scope box should have dashed horizontal borders");
+    }
+
+    @Test
     void testAsciiWrapTextShort() {
         List<String> lines = RouteDiagramAsciiRenderer.wrapText("timer:tick", 20);
         assertEquals(1, lines.size());

@@ -181,4 +181,5 @@ route1
   +----------------------+        +----------------------+
 ----
 
-NOTE: Scope boxes (dotted boundaries for filter, split, etc.) are not included in ASCII art rendering.
+Scope boxes (for filter, split, doTry, etc.) are rendered with dashed borders using `:` for vertical
+and `- - -` for horizontal lines.
