@@ -30,6 +30,7 @@ import org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions;
 
 import static java.util.Objects.requireNonNull;
 
+@Deprecated(since = "4.21")
 public abstract class AbstractIecEndpoint<T extends AbstractConnectionMultiplexor> extends DefaultEndpoint {
 
     /**

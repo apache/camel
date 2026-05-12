@@ -28,7 +28,7 @@
 
     <artifactId>camel-iec60870</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: IEC 60870</name>
+    <name>Camel :: IEC 60870 (deprecated)</name>
     <description>Camel IEC 60870-5-104 support</description>
 
     <properties>

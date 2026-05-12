@@ -1777,6 +1777,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default ServerHeaderNameBuilder iec60870Server() {
             return ServerHeaderNameBuilder.INSTANCE;
         }
@@ -1797,6 +1798,7 @@ public interface ServerEndpointBuilderFactory {
          * @param path uriPath
          * @return the dsl builder
          */
+        @Deprecated
         default ServerEndpointBuilder iec60870Server(String path) {
             return ServerEndpointBuilderFactory.endpointBuilder("iec60870-server", path);
         }
@@ -1819,6 +1821,7 @@ public interface ServerEndpointBuilderFactory {
          * @param path uriPath
          * @return the dsl builder
          */
+        @Deprecated
         default ServerEndpointBuilder iec60870Server(String componentName, String path) {
             return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

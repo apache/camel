@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
 
+@Deprecated(since = "4.21")
 public class ServerInstance {
     private static final Logger LOG = LoggerFactory.getLogger(ServerInstance.class);
 
