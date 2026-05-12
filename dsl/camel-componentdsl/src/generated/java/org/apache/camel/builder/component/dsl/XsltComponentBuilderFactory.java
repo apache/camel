@@ -79,7 +79,7 @@ public interface XsltComponentBuilderFactory {
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
@@ -87,7 +87,7 @@ public interface XsltComponentBuilderFactory {
          * @param contentCache the value to set
          * @return the dsl builder
          */
-        default XsltComponentBuilder contentCache(java.lang.Boolean contentCache) {
+        default XsltComponentBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
             return this;
         }
@@ -241,7 +241,7 @@ public interface XsltComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "allowTemplateFromHeader": ((XsltComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
-            case "contentCache": ((XsltComponent) component).setContentCache((java.lang.Boolean) value); return true;
+            case "contentCache": ((XsltComponent) component).setContentCache((boolean) value); return true;
             case "lazyStartProducer": ((XsltComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((XsltComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "transformerFactoryClass": ((XsltComponent) component).setTransformerFactoryClass((java.lang.String) value); return true;

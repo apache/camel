@@ -531,13 +531,13 @@ The following is not allowed: `camel run abc.java --source-dir=mycode`.
 
 ==== Live reload of resource files
 
-When `--dev` is used, Camel also disables `contentCache` on resource-based components that
-implement the `org.apache.camel.spi.ContentCacheAware` interface, so that edits to resource files
-are picked up on the next message without having to restart the route.
+When `--dev` is used, Camel also disables `contentCache` on resource-based components (such as
+`xslt`) whose default is `true`, so that edits to resource files are picked up on the next message
+without having to restart the route.
 
-This is driven by `camel.main.routesReloadEnabled` (set automatically by `--dev`). Explicit user
-settings on the component, endpoint or URI are always respected: set `contentCache=true` to keep
-caching even in dev mode.
+This is driven by `camel.main.routesReloadEnabled` (set automatically by `--dev`). User properties
+(e.g. `camel.component.xslt.contentCache=true`) and explicit endpoint/URI settings are always
+respected: set `contentCache=true` to keep caching even in dev mode.
 
 ==== Loading new routes into existing Camel
 

@@ -17,27 +17,35 @@
 package org.apache.camel.main;
 
 import org.apache.camel.Component;
-import org.apache.camel.spi.ContentCacheAware;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Lifecycle strategy that disables content caching on resource-based components when routes-reload is enabled. Lets
- * users edit a resource file (e.g. an XSLT stylesheet) and see the change applied live, without having to set
- * {@code contentCache=false} on every endpoint.
+ * Lifecycle strategy that disables {@code contentCache} on resource-based components when routes-reload is enabled, so
+ * users can edit a resource file (e.g. an XSLT stylesheet, FreeMarker template) and see the change applied live.
  *
- * Only flips components that have not been explicitly configured by the user (i.e.
- * {@link ContentCacheAware#getContentCache()} returns {@code null}); explicit user settings are preserved.
+ * Components are detected via their generated {@link PropertyConfigurer}: any component whose configurer exposes a
+ * {@code contentCache} option currently evaluating to {@link Boolean#TRUE} is flipped to {@code false}. User properties
+ * applied later (e.g. {@code camel.component.<name>.contentCache=true}) will override this default.
  */
 class DevModeContentCacheStrategy extends LifecycleStrategySupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DevModeContentCacheStrategy.class);
 
+    private static final String CONTENT_CACHE = "contentCache";
+
     @Override
     public void onComponentAdd(String name, Component component) {
-        if (component instanceof ContentCacheAware aware && aware.getContentCache() == null) {
-            aware.setContentCache(Boolean.FALSE);
+        PropertyConfigurer configurer = component.getComponentPropertyConfigurer();
+        if (!(configurer instanceof PropertyConfigurerGetter getter)) {
+            return;
+        }
+        Object value = getter.getOptionValue(component, CONTENT_CACHE, true);
+        if (Boolean.TRUE.equals(value)
+                && configurer.configure(component.getCamelContext(), component, CONTENT_CACHE, Boolean.FALSE, true)) {
             LOG.debug("Routes-reload is enabled: disabling contentCache on component '{}' for live resource reload",
                     name);
         }

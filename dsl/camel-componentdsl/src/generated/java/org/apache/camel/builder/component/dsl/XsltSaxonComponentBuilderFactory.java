@@ -79,7 +79,7 @@ public interface XsltSaxonComponentBuilderFactory {
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
          * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
@@ -87,7 +87,7 @@ public interface XsltSaxonComponentBuilderFactory {
          * @param contentCache the value to set
          * @return the dsl builder
          */
-        default XsltSaxonComponentBuilder contentCache(java.lang.Boolean contentCache) {
+        default XsltSaxonComponentBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
             return this;
         }
@@ -312,7 +312,7 @@ public interface XsltSaxonComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "allowTemplateFromHeader": ((XsltSaxonComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
-            case "contentCache": ((XsltSaxonComponent) component).setContentCache((java.lang.Boolean) value); return true;
+            case "contentCache": ((XsltSaxonComponent) component).setContentCache((boolean) value); return true;
             case "lazyStartProducer": ((XsltSaxonComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((XsltSaxonComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "saxonConfiguration": ((XsltSaxonComponent) component).setSaxonConfiguration((net.sf.saxon.Configuration) value); return true;
