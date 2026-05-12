@@ -17,7 +17,7 @@ It can generate visual route diagrams as PNG images or plain ASCII art text repr
 * Render route diagrams as PNG images with colored nodes and scope boxes
 * Render route diagrams as plain ASCII art text for terminal output
 * Support for all Camel EIPs: choice, doTry/doCatch, filter, split, loop, multicast, and more
-* Scope boxes visually group branching and scoping EIPs (PNG only)
+* Scope boxes visually group branching and scoping EIPs
 * Multiple color themes: dark, light, transparent, or custom (PNG only)
 
 == Usage

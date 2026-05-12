@@ -47,8 +47,6 @@ public class RouteDiagramAsciiRenderer {
     private static final char UNI_BR = '┘';    // ┘
     private static final char UNI_T_DOWN = '┬'; // ┬
     private static final char UNI_T_UP = '┴';  // ┴
-    private static final char UNI_T_RIGHT = '├'; // ├
-    private static final char UNI_T_LEFT = '┤'; // ┤
     private static final char UNI_CROSS = '┼'; // ┼
     private static final char UNI_ARROW = '▼'; // ▼
     private static final char UNI_DASH_H = '╌'; // ╌
@@ -363,7 +361,7 @@ public class RouteDiagramAsciiRenderer {
 
     private void plotLine(char[][] grid, int row, int col, char ch) {
         char current = getChar(grid, row, col);
-        if (isVertical(current) && isHorizontal(ch) || isHorizontal(current) && isVertical(ch)) {
+        if ((isVertical(current) && isHorizontal(ch)) || (isHorizontal(current) && isVertical(ch))) {
             setChar(grid, row, col, unicode ? UNI_CROSS : '+');
         } else {
             setChar(grid, row, col, ch);
