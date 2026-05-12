@@ -24,24 +24,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformEventNotifierTest {
-
-    @RegisterExtension
-    AvailablePortFinder.Port port = AvailablePortFinder.find();
-
     private final List<String> events = new ArrayList<>();
 
     @Test
     void testEventNotifierOk() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
         context.getManagementStrategy().addEventNotifier(new MyEventListener());
         events.clear();
 
@@ -54,7 +48,7 @@ public class VertxPlatformEventNotifierTest {
                 }
             });
 
-            context.start();
+            VertxPlatformHttpEngineTest.startCamelContext(context);
 
             given()
                     .body("Hello World")
@@ -73,7 +67,7 @@ public class VertxPlatformEventNotifierTest {
 
     @Test
     void testEventNotifierError() throws Exception {
-        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext(port.getPort());
+        final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
         context.getManagementStrategy().addEventNotifier(new MyEventListener());
         events.clear();
 
@@ -86,7 +80,7 @@ public class VertxPlatformEventNotifierTest {
                 }
             });
 
-            context.start();
+            VertxPlatformHttpEngineTest.startCamelContext(context);
 
             given()
                     .body("Hello World")

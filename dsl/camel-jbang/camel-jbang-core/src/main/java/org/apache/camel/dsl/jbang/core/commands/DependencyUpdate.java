@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -529,7 +531,7 @@ public class DependencyUpdate extends DependencyList {
             if (removed > 0) {
                 lines = content.split("\n");
                 Document updatedDom = XmlLineNumberParser.parseXml(
-                        new java.io.ByteArrayInputStream(content.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+                        new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
                 int insertLine = findLastCamelDependencyLine(updatedDom);
                 if (insertLine > 0) {
                     content = insertMavenDeps(lines, toAdd, insertLine);
