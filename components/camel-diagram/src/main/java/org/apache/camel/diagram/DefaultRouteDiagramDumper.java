@@ -118,12 +118,12 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
 
     @Override
     public String dumpRoutesAsAsciiArt(
-            String filter, RouteDiagramDumper.NodeLabelMode nodeLabel, int nodeWidth) {
+            String filter, RouteDiagramDumper.NodeLabelMode nodeLabel, int nodeWidth, boolean unicode) {
         DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-structure");
         JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
         var routes = RouteDiagramHelper.parseRoutes(root);
-        return renderAscii(routes, nodeWidth, nodeLabel.name());
+        return renderAscii(routes, nodeWidth, nodeLabel.name(), unicode);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
     }
 
     private static String renderAscii(
-            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel) {
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode) {
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                 nodeWidth, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                 RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
@@ -177,7 +177,7 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         }
 
         RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(
-                nodeWidth * RouteDiagramLayoutEngine.SCALE);
+                nodeWidth * RouteDiagramLayoutEngine.SCALE, unicode);
         return renderer.renderDiagram(layoutRoutes, currentY);
     }
 

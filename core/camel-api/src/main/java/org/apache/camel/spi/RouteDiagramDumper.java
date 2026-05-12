@@ -95,7 +95,7 @@ public interface RouteDiagramDumper {
      * @param filter to filter routes
      */
     default String dumpRoutesAsAsciiArt(String filter) {
-        return dumpRoutesAsAsciiArt(filter, NodeLabelMode.CODE, 180);
+        return dumpRoutesAsAsciiArt(filter, NodeLabelMode.CODE, 180, false);
     }
 
     /**
@@ -106,6 +106,18 @@ public interface RouteDiagramDumper {
      * @param nodeWidth the width in pixels of the node boxes
      */
     default String dumpRoutesAsAsciiArt(String filter, NodeLabelMode nodeLabel, int nodeWidth) {
+        return dumpRoutesAsAsciiArt(filter, nodeLabel, nodeWidth, false);
+    }
+
+    /**
+     * Dumps the routes as ASCII art or Unicode box-drawing text
+     *
+     * @param filter    to filter routes
+     * @param nodeLabel what information to display in the nodes
+     * @param nodeWidth the width in pixels of the node boxes
+     * @param unicode   whether to use Unicode box-drawing characters
+     */
+    default String dumpRoutesAsAsciiArt(String filter, NodeLabelMode nodeLabel, int nodeWidth, boolean unicode) {
         throw new UnsupportedOperationException();
     }
 

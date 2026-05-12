@@ -204,6 +204,7 @@ camel cmd route-diagram MyRoute.java --theme=unicode
 
 Example output:
 
+[source,text]
 ----
 route1
 ┌──────────────────────┐
