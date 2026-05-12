@@ -3454,7 +3454,7 @@
 
             <dependency>
                 <groupId>com.google.api.grpc</groupId>
-                <artifactId>proto-google-2common-protos</artifactId>
+                <artifactId>proto-google-common-protos</artifactId>
                 <version>${proto-google-common-protos-version}</version>
             </dependency>
             <dependency>
