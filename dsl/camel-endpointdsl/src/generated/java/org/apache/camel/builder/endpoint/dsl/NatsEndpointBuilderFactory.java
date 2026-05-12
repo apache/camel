@@ -606,6 +606,56 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow doing manual acknowledgment via NatsManualAck. If
+         * this option is enabled then an instance of NatsManualAck is stored on
+         * the org.apache.camel.Exchange message header, which allows end users
+         * to access this API and perform manual ack/nak/term operations via the
+         * JetStream consumer. When enabled, the automatic acknowledgment on
+         * exchange completion is disabled. If the user does not call any ack
+         * method, the message remains unacknowledged and NATS will redeliver it
+         * after the ackWait timeout expires. This option is only applicable
+         * when JetStream is enabled (jetstreamEnabled=true). It has no effect
+         * when ackPolicy=None since the server acknowledges messages
+         * automatically on delivery.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAck the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder manualAck(boolean manualAck) {
+            doSetProperty("manualAck", manualAck);
+            return this;
+        }
+        /**
+         * Whether to allow doing manual acknowledgment via NatsManualAck. If
+         * this option is enabled then an instance of NatsManualAck is stored on
+         * the org.apache.camel.Exchange message header, which allows end users
+         * to access this API and perform manual ack/nak/term operations via the
+         * JetStream consumer. When enabled, the automatic acknowledgment on
+         * exchange completion is disabled. If the user does not call any ack
+         * method, the message remains unacknowledged and NATS will redeliver it
+         * after the ackWait timeout expires. This option is only applicable
+         * when JetStream is enabled (jetstreamEnabled=true). It has no effect
+         * when ackPolicy=None since the server acknowledges messages
+         * automatically on delivery.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAck the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder manualAck(String manualAck) {
+            doSetProperty("manualAck", manualAck);
+            return this;
+        }
+        /**
          * Maximum number of attempts to deliver a message from Nats to a
          * consumer. Once MaxDeliver is reached, the NATS server stops
          * attempting to deliver that specific message. The message is not
@@ -2860,6 +2910,20 @@ public interface NatsEndpointBuilderFactory {
          */
         public String natsDeliveryCounter() {
             return "CamelNatsDeliveryCounter";
+        }
+        /**
+         * The manual acknowledgment handle for JetStream messages (only set
+         * when manualAck=true).
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.nats.NatsManualAck} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code NatsManualAck}.
+         */
+        public String natsManualAck() {
+            return "CamelNatsManualAck";
         }
     }
     static NatsEndpointBuilder endpointBuilder(String componentName, String path) {
