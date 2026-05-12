@@ -38,6 +38,52 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Security Best Practices: Host Key Verification
+
+WARNING: By default, the SFTP component has `strictHostKeyChecking=no`, which disables host key verification and makes connections vulnerable to man-in-the-middle (MITM) attacks. For production environments, you should enable strict host key checking to ensure you are connecting to the expected server.
+
+Host key verification prevents MITM attacks by verifying the server's host key against a known list of trusted keys. When `strictHostKeyChecking=yes` is enabled, the SFTP client will reject connections to servers whose host key is not in the known hosts file.
+
+==== Recommended Secure Configuration
+
+To enable strict host key checking, set `strictHostKeyChecking=yes` and provide a known hosts file:
+
+[source,java]
+----
+from("sftp://host:22/path"
+     + "?username=myuser"
+     + "&password=secret"
+     + "&knownHostsFile=/path/to/known_hosts"
+     + "&strictHostKeyChecking=yes")
+    .to("direct:result");
+----
+
+Alternatively, load the known hosts from the classpath:
+
+[source,java]
+----
+from("sftp://host:22/path"
+     + "?username=myuser"
+     + "&privateKeyFile=/path/to/id_rsa"
+     + "&knownHostsUri=classpath:known_hosts"
+     + "&strictHostKeyChecking=yes")
+    .to("direct:result");
+----
+
+If you do not have a known hosts file, you can create one by connecting to the server using the `ssh` command, which will add the host key to `~/.ssh/known_hosts`. By default, the SFTP component will use this file if `useUserKnownHostsFile=true` (which is the default).
+
+[source,java]
+----
+// Uses ~/.ssh/known_hosts by default
+from("sftp://host:22/path"
+     + "?username=myuser"
+     + "&privateKeyFile=/path/to/id_rsa"
+     + "&strictHostKeyChecking=yes")
+    .to("direct:result");
+----
+
+NOTE: When `strictHostKeyChecking=yes` is enabled, Camel's security policy enforcement framework will not flag this as a security violation. The default `strictHostKeyChecking=no` may trigger warnings or failures depending on your configured security policy.
+
 === OpenSSH Certificate Authentication
 
 Camel supports OpenSSH certificate-based authentication for SFTP connections, where a user's public key is signed by a Certificate Authority (CA) rather than being individually authorized on the server. This is common in enterprise environments using tools like HashiCorp Vault or custom CA infrastructure.
