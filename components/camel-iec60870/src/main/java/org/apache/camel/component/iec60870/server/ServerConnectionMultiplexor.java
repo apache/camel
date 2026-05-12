@@ -18,6 +18,7 @@ package org.apache.camel.component.iec60870.server;
 
 import org.apache.camel.component.iec60870.AbstractConnectionMultiplexor;
 
+@Deprecated(since = "4.21")
 public class ServerConnectionMultiplexor extends AbstractConnectionMultiplexor {
 
     private final ServerInstance server;

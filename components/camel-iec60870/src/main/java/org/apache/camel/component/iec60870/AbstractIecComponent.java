@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.requireNonNull;
 
+@Deprecated(since = "4.21")
 public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractIecComponent.class);

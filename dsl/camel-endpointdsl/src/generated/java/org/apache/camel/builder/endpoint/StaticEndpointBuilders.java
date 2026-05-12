@@ -7881,6 +7881,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String path) {
         return iec60870Client("iec60870-client", path);
     }
@@ -7903,6 +7904,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String componentName, String path) {
         return ClientEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -7923,6 +7925,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String path) {
         return iec60870Server("iec60870-server", path);
     }
@@ -7945,6 +7948,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String componentName, String path) {
         return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
