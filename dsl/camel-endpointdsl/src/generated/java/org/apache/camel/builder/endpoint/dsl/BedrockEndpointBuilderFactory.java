@@ -945,6 +945,18 @@ public interface BedrockEndpointBuilderFactory {
             return "CamelAwsBedrockGuardrailConfig";
         }
         /**
+         * The guardrail identifier to use for the ApplyGuardrail operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockGuardrailIdentifier}.
+         */
+        public String awsBedrockGuardrailIdentifier() {
+            return "CamelAwsBedrockGuardrailIdentifier";
+        }
+        /**
          * The content blocks for ApplyGuardrail operation.
          * 
          * The option is a: {@code List<GuardrailContentBlock>} type.
