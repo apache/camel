@@ -174,9 +174,9 @@ public class Shell extends CamelCommand {
             return (int) files.filter(Files::isRegularFile)
                     .filter(p -> {
                         String name = p.getFileName().toString();
-                        return name.endsWith(".yaml") && !name.endsWith(".kamelet.yaml")
-                                && !name.equals("application.yaml")
-                                || name.endsWith(".xml") && !name.equals("pom.xml")
+                        return (name.endsWith(".yaml") && !name.endsWith(".kamelet.yaml")
+                                && !name.equals("application.yaml"))
+                                || (name.endsWith(".xml") && !name.equals("pom.xml"))
                                 || name.endsWith(".java");
                     })
                     .count();

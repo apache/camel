@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.Set;
@@ -108,7 +109,7 @@ public class Doctor extends CamelCommand {
                         .redirectErrorStream(true)
                         .start();
                 // drain output to prevent blocking
-                p.getInputStream().transferTo(java.io.OutputStream.nullOutputStream());
+                p.getInputStream().transferTo(OutputStream.nullOutputStream());
                 int exit = p.waitFor();
                 if (exit == 0) {
                     printer().printf("  Container:   %s running (OK, optional)%n", cmd);

@@ -64,6 +64,7 @@ import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.AntPathMatcher;
@@ -398,7 +399,7 @@ public class Run extends CamelCommand {
         InputStream is = Run.class.getClassLoader().getResourceAsStream(resourcePath);
         if (is == null) {
             List<String> suggestions
-                    = org.apache.camel.main.util.SuggestSimilarHelper.didYouMean(EXAMPLE_NAMES, example);
+                    = SuggestSimilarHelper.didYouMean(EXAMPLE_NAMES, example);
             if (!suggestions.isEmpty()) {
                 printer().printErr("Unknown example: " + example + ". Did you mean? " + String.join(", ", suggestions));
             } else {
