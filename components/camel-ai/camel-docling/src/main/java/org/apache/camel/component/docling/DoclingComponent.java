@@ -64,7 +64,9 @@ public class DoclingComponent extends DefaultComponent {
 
         // Start scheduled cleanup task for expired async tasks
         long ttl = configuration.getAsyncTaskTtl();
-        long cleanupInterval = Math.max(ttl / 10, 60000); // Run cleanup every 10% of TTL, minimum 1 minute
+        // Run cleanup every 10% of TTL, with a 1 second minimum to bound the polling rate.
+        // The cleanup is cheap when no tasks have expired (early return), so a low minimum is safe.
+        long cleanupInterval = Math.max(ttl / 10, 1000);
 
         cleanupExecutor = getCamelContext().getExecutorServiceManager()
                 .newScheduledThreadPool(this, "DoclingAsyncTaskCleanup", 1);
@@ -75,7 +77,7 @@ public class DoclingComponent extends DefaultComponent {
                 cleanupInterval,
                 TimeUnit.MILLISECONDS);
 
-        LOG.info("Started async task cleanup with TTL={}ms, cleanup interval={}ms", ttl, cleanupInterval);
+        LOG.debug("Started async task cleanup with TTL={}ms, cleanup interval={}ms", ttl, cleanupInterval);
     }
 
     @Override
@@ -139,7 +141,7 @@ public class DoclingComponent extends DefaultComponent {
         }
 
         if (!expiredTaskIds.isEmpty()) {
-            LOG.info("Cleaned up {} expired async tasks (current map size: {})",
+            LOG.debug("Cleaned up {} expired async tasks (current map size: {})",
                     expiredTaskIds.size(), pendingAsyncTasks.size());
         }
     }
@@ -150,7 +152,7 @@ public class DoclingComponent extends DefaultComponent {
         if (cleanupExecutor != null) {
             getCamelContext().getExecutorServiceManager().shutdownGraceful(cleanupExecutor);
             cleanupExecutor = null;
-            LOG.info("Stopped async task cleanup executor");
+            LOG.debug("Stopped async task cleanup executor");
         }
 
         // Cancel and clear all pending tasks

@@ -31,6 +31,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class DoclingAsyncTaskTtlTest extends CamelTestSupport {
 
+    @Override
+    public boolean isUseAdviceWith() {
+        // Defer context start so each test can set the TTL on the component before doStart runs.
+        return true;
+    }
+
     @Test
     public void testAsyncTaskTtlEviction() throws Exception {
         // Get the component to access pending tasks map
@@ -53,10 +59,10 @@ public class DoclingAsyncTaskTtlTest extends CamelTestSupport {
         // Verify task is present
         assertEquals(1, component.getPendingAsyncTasks().size());
 
-        // Wait for TTL to expire and cleanup to run
-        // Cleanup runs every 10% of TTL (minimum 1 minute), but for 2s TTL that's 200ms
-        // Add buffer for cleanup execution
-        await().atMost(5, TimeUnit.SECONDS)
+        // Wait for TTL to expire and cleanup to run.
+        // Cleanup runs every 10% of TTL with a 1 second minimum, so for a 2s TTL the interval is 1s.
+        // Allow extra headroom for scheduler jitter and the TTL expiry itself (2s).
+        await().atMost(8, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(0, component.getPendingAsyncTasks().size()));
     }
 
@@ -78,14 +84,10 @@ public class DoclingAsyncTaskTtlTest extends CamelTestSupport {
         AsyncTaskEntry entry = new AsyncTaskEntry(taskId, new java.util.concurrent.CompletableFuture<>());
         component.getPendingAsyncTasks().put(taskId, entry);
 
-        // Verify task is present
-        assertEquals(1, component.getPendingAsyncTasks().size());
-
-        // Wait a short time (less than TTL)
-        Thread.sleep(1000);
-
-        // Task should still be present
-        assertEquals(1, component.getPendingAsyncTasks().size());
+        // Verify task remains present during the wait period (well below TTL of 10s)
+        await().during(1, TimeUnit.SECONDS)
+                .atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, component.getPendingAsyncTasks().size()));
     }
 
     @Test
@@ -111,8 +113,8 @@ public class DoclingAsyncTaskTtlTest extends CamelTestSupport {
         // Verify all tasks are present
         assertEquals(5, component.getPendingAsyncTasks().size());
 
-        // Wait for TTL to expire and cleanup to run
-        await().atMost(5, TimeUnit.SECONDS)
+        // Wait for TTL to expire and cleanup to run (TTL 2s + cleanup interval 1s + headroom).
+        await().atMost(8, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(0, component.getPendingAsyncTasks().size()));
     }
 
