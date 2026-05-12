@@ -129,7 +129,13 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             lineReader = LineReaderBuilder.builder().terminal(terminal).build();
         }
 
-        return super.doCall();
+        try {
+            return super.doCall();
+        } finally {
+            if (terminal != null) {
+                terminal.close();
+            }
+        }
     }
 
     @Override
@@ -248,6 +254,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                     // ignore
                 }
             }
+            running.set(false);
         };
     }
 
