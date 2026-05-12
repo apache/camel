@@ -213,7 +213,7 @@ public class CamelJBangMain implements Callable<Integer> {
 
         postAddCommands(commandLine, args);
 
-        if (discoverPlugins) {
+        if (discoverPlugins && PluginHelper.shouldDiscoverPlugins(commandLine, args)) {
             PluginHelper.addPlugins(commandLine, this, args);
         }
 

@@ -46,6 +46,23 @@ and dev consoles for nodes inside Choice EIP branches.
 The `camel wrapper` command now installs the scripts as `camel` instead of `camelw`.
 You can use the `--command-name=camelw` to use the old name.
 
+Plugins are now loaded lazily. Built-in commands that do not consume plugins
+(for example `camel get`, `camel version`, `camel ps`, `camel stop`) skip plugin
+discovery entirely, avoiding classpath scans and Maven resolution on every
+invocation. Plugin-consuming commands (`run`, `export`, `cmd`, `shell`) and
+plugin-provided commands (such as `kubernetes`, `generate`, `test`) continue
+to work unchanged.
+
+When an external plugin is resolved through Maven, its resolved classpath is
+cached in `~/.camel-jbang-plugins.json` under a new `resolved` block. Subsequent
+invocations load the plugin directly from the cached jars without going through
+the Maven downloader. The cache is validated by file size and modification time
+on both the cached jars and the plugin's POM, so SNAPSHOT plugins rebuilt
+locally are picked up automatically. The cache is also invalidated when the
+Camel version, the plugin GAV, or the effective `--repos`/`--repo` value
+changes. No user action is required; existing plugin entries are populated on
+first use after upgrade.
+
 === camel-yaml-dsl
 
 A new canonical JSON Schema variant (`camelYamlDsl-canonical.json`) has been added alongside the existing classic
