@@ -29,7 +29,7 @@ import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
 
 /**
- * Renders route diagrams as plain ASCII art text.
+ * Renders route diagrams as plain ASCII art or Unicode box-drawing text.
  */
 public class RouteDiagramAsciiRenderer {
 
@@ -38,12 +38,34 @@ public class RouteDiagramAsciiRenderer {
     private static final int MIN_BOX_WIDTH = 16;
     private static final int X_DIVISOR = 15;
 
+    // Unicode box-drawing characters
+    private static final char UNI_H = '─';     // ─
+    private static final char UNI_V = '│';     // │
+    private static final char UNI_TL = '┌';    // ┌
+    private static final char UNI_TR = '┐';    // ┐
+    private static final char UNI_BL = '└';    // └
+    private static final char UNI_BR = '┘';    // ┘
+    private static final char UNI_T_DOWN = '┬'; // ┬
+    private static final char UNI_T_UP = '┴';  // ┴
+    private static final char UNI_T_RIGHT = '├'; // ├
+    private static final char UNI_T_LEFT = '┤'; // ┤
+    private static final char UNI_CROSS = '┼'; // ┼
+    private static final char UNI_ARROW = '▼'; // ▼
+    private static final char UNI_DASH_H = '╌'; // ╌
+    private static final char UNI_DASH_V = '╎'; // ╎
+
     private final int nodeWidth;
     private final int boxWidth;
+    private final boolean unicode;
 
     public RouteDiagramAsciiRenderer(int nodeWidth) {
+        this(nodeWidth, false);
+    }
+
+    public RouteDiagramAsciiRenderer(int nodeWidth, boolean unicode) {
         this.nodeWidth = nodeWidth;
         this.boxWidth = Math.max(MIN_BOX_WIDTH, nodeWidth / X_DIVISOR);
+        this.unicode = unicode;
     }
 
     public int getBoxWidth() {
@@ -108,23 +130,26 @@ public class RouteDiagramAsciiRenderer {
             return;
         }
 
-        setChar(grid, row, col, '+');
+        char h = unicode ? UNI_H : '-';
+        char v = unicode ? UNI_V : '|';
+
+        setChar(grid, row, col, unicode ? UNI_TL : '+');
         for (int c = col + 1; c < col + boxWidth - 1; c++) {
-            setChar(grid, row, c, '-');
+            setChar(grid, row, c, h);
         }
-        setChar(grid, row, col + boxWidth - 1, '+');
+        setChar(grid, row, col + boxWidth - 1, unicode ? UNI_TR : '+');
 
         int bottom = row + height - 1;
-        setChar(grid, bottom, col, '+');
+        setChar(grid, bottom, col, unicode ? UNI_BL : '+');
         for (int c = col + 1; c < col + boxWidth - 1; c++) {
-            setChar(grid, bottom, c, '-');
+            setChar(grid, bottom, c, h);
         }
-        setChar(grid, bottom, col + boxWidth - 1, '+');
+        setChar(grid, bottom, col + boxWidth - 1, unicode ? UNI_BR : '+');
 
         for (int i = 0; i < lines.size(); i++) {
             int r = row + 1 + i;
-            setChar(grid, r, col, '|');
-            setChar(grid, r, col + boxWidth - 1, '|');
+            setChar(grid, r, col, v);
+            setChar(grid, r, col + boxWidth - 1, v);
             for (int c = col + 1; c < col + boxWidth - 1; c++) {
                 setChar(grid, r, c, ' ');
             }
@@ -160,30 +185,40 @@ public class RouteDiagramAsciiRenderer {
             return;
         }
 
+        char v = unicode ? UNI_V : '|';
+        char h = unicode ? UNI_H : '-';
+        char arrow = unicode ? UNI_ARROW : 'v';
+
         if (fromCx == toCx) {
             for (int r = fromRow; r < toRow - 1; r++) {
-                plotLine(grid, r, fromCx, '|');
+                plotLine(grid, r, fromCx, v);
             }
-            setChar(grid, toRow - 1, toCx, 'v');
+            setChar(grid, toRow - 1, toCx, arrow);
         } else {
             int midRow = fromRow + (toRow - fromRow) / 2;
 
             for (int r = fromRow; r < midRow; r++) {
-                plotLine(grid, r, fromCx, '|');
+                plotLine(grid, r, fromCx, v);
             }
 
             int minC = Math.min(fromCx, toCx);
             int maxC = Math.max(fromCx, toCx);
             for (int c = minC; c <= maxC; c++) {
-                plotLine(grid, midRow, c, '-');
+                plotLine(grid, midRow, c, h);
             }
-            setChar(grid, midRow, fromCx, '+');
-            setChar(grid, midRow, toCx, '+');
+
+            if (unicode) {
+                setChar(grid, midRow, fromCx, UNI_T_UP);
+                setChar(grid, midRow, toCx, UNI_T_DOWN);
+            } else {
+                setChar(grid, midRow, fromCx, '+');
+                setChar(grid, midRow, toCx, '+');
+            }
 
             for (int r = midRow + 1; r < toRow - 1; r++) {
-                plotLine(grid, r, toCx, '|');
+                plotLine(grid, r, toCx, v);
             }
-            setChar(grid, toRow - 1, toCx, 'v');
+            setChar(grid, toRow - 1, toCx, arrow);
         }
     }
 
@@ -201,11 +236,22 @@ public class RouteDiagramAsciiRenderer {
         int col2 = toCol(bounds.maxX + SCOPE_BOX_PAD);
         int row2 = toRow(bounds.maxY + SCOPE_BOX_PAD);
 
-        drawDashedHLine(grid, row1, col1, col2);
-        drawDashedHLine(grid, row2, col1, col2);
-        for (int r = row1 + 1; r < row2; r++) {
-            setChar(grid, r, col1, ':');
-            setChar(grid, r, col2, ':');
+        if (unicode) {
+            for (int c = col1; c <= col2; c++) {
+                setChar(grid, row1, c, UNI_DASH_H);
+                setChar(grid, row2, c, UNI_DASH_H);
+            }
+            for (int r = row1 + 1; r < row2; r++) {
+                setChar(grid, r, col1, UNI_DASH_V);
+                setChar(grid, r, col2, UNI_DASH_V);
+            }
+        } else {
+            drawDashedHLine(grid, row1, col1, col2);
+            drawDashedHLine(grid, row2, col1, col2);
+            for (int r = row1 + 1; r < row2; r++) {
+                setChar(grid, r, col1, ':');
+                setChar(grid, r, col2, ':');
+            }
         }
     }
 
@@ -307,10 +353,18 @@ public class RouteDiagramAsciiRenderer {
         return ' ';
     }
 
+    private boolean isVertical(char ch) {
+        return ch == '|' || ch == UNI_V;
+    }
+
+    private boolean isHorizontal(char ch) {
+        return ch == '-' || ch == UNI_H;
+    }
+
     private void plotLine(char[][] grid, int row, int col, char ch) {
         char current = getChar(grid, row, col);
-        if ((current == '|' && ch == '-') || (current == '-' && ch == '|')) {
-            setChar(grid, row, col, '+');
+        if (isVertical(current) && isHorizontal(ch) || isHorizontal(current) && isVertical(ch)) {
+            setChar(grid, row, col, unicode ? UNI_CROSS : '+');
         } else {
             setChar(grid, row, col, ch);
         }

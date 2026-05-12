@@ -972,6 +972,69 @@ class RouteDiagramTest {
     }
 
     @Test
+    void testUnicodeDiagramSequential() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+        route.nodes.add(node("to", "log:a", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), true);
+        String result = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+
+        assertTrue(result.contains("timer:tick"));
+        assertTrue(result.contains("log:a"));
+        assertTrue(result.contains("┌"), "Should contain Unicode top-left corner");
+        assertTrue(result.contains("─"), "Should contain Unicode horizontal line");
+        assertTrue(result.contains("│"), "Should contain Unicode vertical line");
+        assertTrue(result.contains("▼"), "Should contain Unicode arrow head");
+    }
+
+    @Test
+    void testUnicodeDiagramBranching() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "timer:tick", 0));
+        route.nodes.add(node("choice", "choice()", 1));
+        route.nodes.add(node("when", "when(...)", 2));
+        route.nodes.add(node("to", "log:a", 3));
+        route.nodes.add(node("otherwise", "otherwise()", 2));
+        route.nodes.add(node("to", "log:b", 3));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), true);
+        String result = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+
+        assertTrue(result.contains("choice()"));
+        assertTrue(result.contains("when(...)"));
+        assertTrue(result.contains("┴"), "Should contain Unicode T-up junction for branch split");
+    }
+
+    @Test
+    void testUnicodeDiagramWithScopeBox() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(node("from", "direct:start", 0));
+        route.nodes.add(node("filter", "filter[header(x)]", 1));
+        route.nodes.add(node("log", "log[filtered]", 2));
+        route.nodes.add(node("to", "to[mock:end]", 1));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), true);
+        String result = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+
+        assertTrue(result.contains("filter[header(x)]"));
+        assertTrue(result.contains("╌"), "Scope box should have Unicode dashed horizontal");
+        assertTrue(result.contains("╎"), "Scope box should have Unicode dashed vertical");
+    }
+
+    @Test
     void testAsciiWrapTextShort() {
         List<String> lines = RouteDiagramAsciiRenderer.wrapText("timer:tick", 20);
         assertEquals(1, lines.size());

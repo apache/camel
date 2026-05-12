@@ -183,3 +183,36 @@ route1
 
 Scope boxes (for filter, split, doTry, etc.) are rendered with dashed borders using `:` for vertical
 and `- - -` for horizontal lines.
+
+Use `--theme=ascii` for plain ASCII art:
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.java --theme=ascii
+----
+
+== Unicode Rendering
+
+The `unicode` theme uses Unicode box-drawing characters for a cleaner look.
+Node boxes use `┌──┐ │ └──┘`, arrows use `│` and `▼`, and branch junctions use `┴`.
+Scope boxes use `╌` (dashed horizontal) and `╎` (dashed vertical) with no corners.
+
+[source,bash]
+----
+camel cmd route-diagram MyRoute.java --theme=unicode
+----
+
+Example output:
+
+----
+route1
+┌──────────────────────┐
+│      timer:tick      │
+└──────────────────────┘
+           │
+           │
+           ▼
+┌──────────────────────┐
+│        log:a         │
+└──────────────────────┘
+----

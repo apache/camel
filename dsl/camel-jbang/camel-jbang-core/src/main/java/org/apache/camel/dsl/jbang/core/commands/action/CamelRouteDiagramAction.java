@@ -73,10 +73,10 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     String output;
 
     @CommandLine.Option(names = { "--theme" },
-                        description = "Color theme preset (dark, light, transparent, ascii) or custom colors "
+                        description = "Color theme preset (dark, light, transparent, ascii, unicode) or custom colors "
                                       + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
-                                      + "Use bg= for transparent. Use ascii for plain text output. "
+                                      + "Use bg= for transparent. Use ascii/unicode for plain text output. "
                                       + "Can also be set via DIAGRAM_COLORS env var.",
                         defaultValue = "transparent")
     String theme;
@@ -117,8 +117,8 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
 
-        boolean ascii = isAsciiTheme();
-        if (!ascii) {
+        boolean textMode = isTextTheme();
+        if (!textMode) {
             String colorSpec = System.getenv("DIAGRAM_COLORS");
             colors = DiagramColors.parse(colorSpec != null ? colorSpec : theme);
         }
@@ -127,13 +127,13 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         if (output == null) {
             terminal = TerminalBuilder.builder().system(true).build();
             lineReader = LineReaderBuilder.builder().terminal(terminal).build();
-            if (!ascii) {
+            if (!textMode) {
                 terminalGraphics = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
                 if (terminalGraphics == null) {
                     printer().println("Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
                     printer().println(
                             "Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
-                    printer().println("Or use --theme=ascii for plain text output.");
+                    printer().println("Or use --theme=ascii or --theme=unicode for plain text output.");
                     return 1;
                 }
             }
@@ -209,8 +209,9 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                 currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
             }
 
-            if (isAsciiTheme()) {
-                RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth());
+            if (isTextTheme()) {
+                RouteDiagramAsciiRenderer asciiRenderer
+                        = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme());
                 String ascii = asciiRenderer.renderDiagram(layoutRoutes, currentY);
 
                 if (output != null) {
@@ -352,8 +353,12 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         return RouteDiagramHelper.parseRoutes(jo);
     }
 
-    private boolean isAsciiTheme() {
-        return "ascii".equalsIgnoreCase(theme);
+    private boolean isTextTheme() {
+        return "ascii".equalsIgnoreCase(theme) || "unicode".equalsIgnoreCase(theme);
+    }
+
+    private boolean isUnicodeTheme() {
+        return "unicode".equalsIgnoreCase(theme);
     }
 
     static NodeLabelMode parseNodeLabelMode(String value) {
