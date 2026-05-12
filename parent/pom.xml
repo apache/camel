@@ -4261,41 +4261,6 @@
             </build>
         </profile>
         <profile>
-            <id>tia</id>
-            <properties>
-                <mvntia.propertyName>camel.surefire.fork.vmargs</mvntia.propertyName>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jboss.fuse.mvntia</groupId>
-                        <artifactId>mvntia-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>@{camel.surefire.fork.vmargs} @{argLine}</argLine>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <argLine>@{camel.failsafe.fork.vmargs} @{argLine}</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>full</id>
             <activation>
                 <property>
