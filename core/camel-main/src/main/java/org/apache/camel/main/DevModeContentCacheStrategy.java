@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * Only flips components that have not been explicitly configured by the user (i.e.
  * {@link ContentCacheAware#getContentCache()} returns {@code null}); explicit user settings are preserved.
  */
-public class DevModeContentCacheStrategy extends LifecycleStrategySupport {
+class DevModeContentCacheStrategy extends LifecycleStrategySupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DevModeContentCacheStrategy.class);
 
@@ -38,7 +38,7 @@ public class DevModeContentCacheStrategy extends LifecycleStrategySupport {
     public void onComponentAdd(String name, Component component) {
         if (component instanceof ContentCacheAware aware && aware.getContentCache() == null) {
             aware.setContentCache(Boolean.FALSE);
-            LOG.info("Routes-reload is enabled: disabling contentCache on component '{}' for live resource reload",
+            LOG.debug("Routes-reload is enabled: disabling contentCache on component '{}' for live resource reload",
                     name);
         }
     }
