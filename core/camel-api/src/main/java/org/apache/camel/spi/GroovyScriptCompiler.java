@@ -71,6 +71,9 @@ public interface GroovyScriptCompiler {
         boolean exists = false;
         PackageScanResourceResolver resolver
                 = context.getCamelContextExtension().getContextPlugin(PackageScanResourceResolver.class);
+        if (resolver == null) {
+            return false;
+        }
         for (String pattern : scriptPattern.split(",")) {
             // include all kind of resources
             for (Resource resource : resolver.findResources(pattern, n -> true)) {

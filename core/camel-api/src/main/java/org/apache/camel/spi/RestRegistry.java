@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A registry of all REST services running within the {@link org.apache.camel.CamelContext} which have been defined and
@@ -70,6 +71,7 @@ public interface RestRegistry extends StaticService {
         /**
          * Gets the uri template
          */
+        @Nullable
         String getUriTemplate();
 
         /**
@@ -80,11 +82,13 @@ public interface RestRegistry extends StaticService {
         /**
          * Optional details about what media-types the REST service accepts
          */
+        @Nullable
         String getConsumes();
 
         /**
          * Optional details about what media-types the REST service returns
          */
+        @Nullable
         String getProduces();
 
         /**
@@ -92,6 +96,7 @@ public interface RestRegistry extends StaticService {
          * <p/>
          * If the input accepts a list, then <tt>List&lt;class name&gt;</tt> is enclosed the name.
          */
+        @Nullable
         String getInType();
 
         /**
@@ -99,11 +104,13 @@ public interface RestRegistry extends StaticService {
          * <p/>
          * If the output accepts a list, then <tt>List&lt;class name&gt;</tt> is enclosed the name.
          */
+        @Nullable
         String getOutType();
 
         /**
          * Optional description about this rest service.
          */
+        @Nullable
         String getDescription();
 
     }
@@ -126,9 +133,10 @@ public interface RestRegistry extends StaticService {
      * @param description   optional description about the service
      */
     void addRestService(
-            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String uriTemplate,
-            String method,
-            String consumes, String produces, String inType, String outType, String routeId, String description);
+            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath,
+            @Nullable String uriTemplate, String method,
+            @Nullable String consumes, @Nullable String produces, @Nullable String inType, @Nullable String outType,
+            String routeId, @Nullable String description);
 
     /**
      * Removes the REST service from the registry
@@ -158,7 +166,7 @@ public interface RestRegistry extends StaticService {
      */
     void addRestSpecification(
             Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String method,
-            String produces, String description);
+            @Nullable String produces, @Nullable String description);
 
     /**
      * List all REST API specification (ie api-doc)
@@ -179,6 +187,7 @@ public interface RestRegistry extends StaticService {
      *
      * @return the API docs in JSon, or <tt>null</tt> if camel-openapi-java is not on classpath
      */
+    @Nullable
     String apiDocAsJson();
 
 }

@@ -55,6 +55,8 @@ public interface BedrockConstants {
     String CONVERSE_OUTPUT_MESSAGE = "CamelAwsBedrockConverseOutputMessage";
     @Metadata(description = "The guardrail configuration to apply to the request", javaType = "GuardrailConfiguration")
     String GUARDRAIL_CONFIG = "CamelAwsBedrockGuardrailConfig";
+    @Metadata(description = "The guardrail identifier to use for the ApplyGuardrail operation", javaType = "String")
+    String GUARDRAIL_IDENTIFIER = "CamelAwsBedrockGuardrailIdentifier";
     @Metadata(description = "The content blocks for ApplyGuardrail operation", javaType = "List<GuardrailContentBlock>")
     String GUARDRAIL_CONTENT = "CamelAwsBedrockGuardrailContent";
     @Metadata(description = "The source type for ApplyGuardrail operation (INPUT or OUTPUT)", javaType = "String")

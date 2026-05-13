@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Strategy for lifecycle notifications.
@@ -144,7 +145,7 @@ public interface LifecycleStrategy {
      * @param service the added service
      * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceAdd(CamelContext context, Service service, Route route);
+    void onServiceAdd(CamelContext context, Service service, @Nullable Route route);
 
     /**
      * Notification on removing a {@link Service}.
@@ -153,7 +154,7 @@ public interface LifecycleStrategy {
      * @param service the removed service
      * @param route   the route the service belongs to if any possible to determine
      */
-    void onServiceRemove(CamelContext context, Service service, Route route);
+    void onServiceRemove(CamelContext context, Service service, @Nullable Route route);
 
     /**
      * Notification on removing a {@link Service}.
@@ -163,7 +164,7 @@ public interface LifecycleStrategy {
      * @param route    the route the service belongs to if any possible to determine
      * @param shutdown whether camel is being shutdown
      */
-    default void onServiceRemove(CamelContext context, Service service, Route route, boolean shutdown) {
+    default void onServiceRemove(CamelContext context, Service service, @Nullable Route route, boolean shutdown) {
         onServiceRemove(context, service, route);
     }
 
@@ -199,8 +200,8 @@ public interface LifecycleStrategy {
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
     void onThreadPoolAdd(
-            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-            String sourceId, String routeId, String threadPoolProfileId);
+            CamelContext camelContext, ThreadPoolExecutor threadPool, @Nullable String id,
+            @Nullable String sourceId, @Nullable String routeId, @Nullable String threadPoolProfileId);
 
     /**
      * Notification on removing a thread pool.
@@ -222,8 +223,8 @@ public interface LifecycleStrategy {
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
     default void onThreadPoolAdd(
-            CamelContext camelContext, ExecutorService executorService, String id,
-            String sourceId, String routeId, String threadPoolProfileId) {
+            CamelContext camelContext, ExecutorService executorService, @Nullable String id,
+            @Nullable String sourceId, @Nullable String routeId, @Nullable String threadPoolProfileId) {
     }
 
     /**

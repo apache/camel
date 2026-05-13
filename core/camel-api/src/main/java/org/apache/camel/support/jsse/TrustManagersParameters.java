@@ -24,6 +24,7 @@ import java.security.Security;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +32,10 @@ public class TrustManagersParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrustManagersParameters.class);
 
-    protected KeyStoreParameters keyStore;
-    protected String provider;
-    protected String algorithm;
-    protected TrustManager trustManager;
+    protected @Nullable KeyStoreParameters keyStore;
+    protected @Nullable String provider;
+    protected @Nullable String algorithm;
+    protected @Nullable TrustManager trustManager;
 
     /**
      * Creates {@link TrustManager}s based on this instance's configuration and the {@code KeyStore} produced by the
@@ -49,7 +50,7 @@ public class TrustManagersParameters extends JsseParameters {
      *
      * @see                             KeyStoreParameters#createKeyStore()
      */
-    public TrustManager[] createTrustManagers() throws GeneralSecurityException, IOException {
+    public TrustManager @Nullable [] createTrustManagers() throws GeneralSecurityException, IOException {
         if (trustManager != null) {
             // use existing trust manager
             return new TrustManager[] { trustManager };
@@ -85,7 +86,7 @@ public class TrustManagersParameters extends JsseParameters {
         return trustManagers;
     }
 
-    public KeyStoreParameters getKeyStore() {
+    public @Nullable KeyStoreParameters getKeyStore() {
         return keyStore;
     }
 
@@ -95,11 +96,11 @@ public class TrustManagersParameters extends JsseParameters {
      *
      * @param value the configuration to use
      */
-    public void setKeyStore(KeyStoreParameters value) {
+    public void setKeyStore(@Nullable KeyStoreParameters value) {
         this.keyStore = value;
     }
 
-    public String getProvider() {
+    public @Nullable String getProvider() {
         return provider;
     }
 
@@ -112,11 +113,11 @@ public class TrustManagersParameters extends JsseParameters {
      *
      * @see         Security#getProviders()
      */
-    public void setProvider(String value) {
+    public void setProvider(@Nullable String value) {
         this.provider = value;
     }
 
-    public String getAlgorithm() {
+    public @Nullable String getAlgorithm() {
         return algorithm;
     }
 
@@ -129,11 +130,11 @@ public class TrustManagersParameters extends JsseParameters {
      * @param value the desired algorithm or {@code null} to use default
      * @see         TrustManagerFactory#getDefaultAlgorithm()
      */
-    public void setAlgorithm(String value) {
+    public void setAlgorithm(@Nullable String value) {
         this.algorithm = value;
     }
 
-    public TrustManager getTrustManager() {
+    public @Nullable TrustManager getTrustManager() {
         return trustManager;
     }
 
@@ -141,7 +142,7 @@ public class TrustManagersParameters extends JsseParameters {
      * To use an existing configured trust manager instead of using {@link TrustManagerFactory} to get the
      * {@link TrustManager}.
      */
-    public void setTrustManager(TrustManager trustManager) {
+    public void setTrustManager(@Nullable TrustManager trustManager) {
         this.trustManager = trustManager;
     }
 

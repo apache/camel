@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
 import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
@@ -68,14 +69,15 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     int width;
 
     @CommandLine.Option(names = { "--output" },
-                        description = "Save diagram to a PNG file instead of displaying in terminal")
+                        description = "Save diagram to a file (PNG for image themes, text for ascii theme)")
     String output;
 
     @CommandLine.Option(names = { "--theme" },
-                        description = "Color theme preset (dark, light, transparent) or custom colors "
+                        description = "Color theme preset (dark, light, transparent, ascii, unicode) or custom colors "
                                       + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
                                       + "ANSI color names (e.g. from=seagreen:to=steelblue). "
-                                      + "Use bg= for transparent. Can also be set via DIAGRAM_COLORS env var.",
+                                      + "Use bg= for transparent. Use ascii/unicode for plain text output. "
+                                      + "Can also be set via DIAGRAM_COLORS env var.",
                         defaultValue = "transparent")
     String theme;
 
@@ -115,21 +117,35 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
 
-        // if output in terminal then ensure terminal supports this
-        if (output == null) {
+        boolean textMode = isTextTheme();
+        if (!textMode) {
             String colorSpec = System.getenv("DIAGRAM_COLORS");
             colors = DiagramColors.parse(colorSpec != null ? colorSpec : theme);
-            terminal = TerminalBuilder.builder().system(true).build();
-            terminalGraphics = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
-            if (terminalGraphics == null) {
-                printer().println("Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
-                printer().println("Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
-                return 1;
-            }
-            lineReader = LineReaderBuilder.builder().terminal(terminal).build();
         }
 
-        return super.doCall();
+        // if output in terminal then set up terminal
+        if (output == null) {
+            terminal = TerminalBuilder.builder().system(true).build();
+            lineReader = LineReaderBuilder.builder().terminal(terminal).build();
+            if (!textMode) {
+                terminalGraphics = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
+                if (terminalGraphics == null) {
+                    printer().println("Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
+                    printer().println(
+                            "Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
+                    printer().println("Or use --theme=ascii or --theme=unicode for plain text output.");
+                    return 1;
+                }
+            }
+        }
+
+        try {
+            return super.doCall();
+        } finally {
+            if (terminal != null) {
+                terminal.close();
+            }
+        }
     }
 
     @Override
@@ -184,9 +200,6 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
             NodeLabelMode labelMode = parseNodeLabelMode(nodeLabel);
             RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(boxWidth, fontSize, labelMode);
-            RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                    engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(),
-                    pid > 0 && metric);
 
             List<LayoutRoute> layoutRoutes = new ArrayList<>();
             int currentY = RouteDiagramLayoutEngine.PADDING;
@@ -196,27 +209,54 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                 currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
             }
 
-            BufferedImage image;
-            try {
-                image = renderer.renderDiagram(layoutRoutes, currentY, colors);
-            } catch (IllegalStateException e) {
-                printer().println(e.getMessage());
-                return 1;
-            }
+            if (isTextTheme()) {
+                RouteDiagramAsciiRenderer asciiRenderer
+                        = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme());
+                String ascii = asciiRenderer.renderDiagram(layoutRoutes, currentY);
 
-            if (output != null) {
-                File file = new File(output);
-                File parentDir = file.getParentFile();
-                if (parentDir != null) {
-                    parentDir.mkdirs();
+                if (output != null) {
+                    String fileName = output.endsWith(".png")
+                            ? output.substring(0, output.length() - 4) + ".txt" : output;
+                    File file = new File(fileName);
+                    File parentDir = file.getParentFile();
+                    if (parentDir != null) {
+                        parentDir.mkdirs();
+                    }
+                    Files.writeString(file.toPath(), ascii);
+                    printer().println("Diagram saved to: " + file.getAbsolutePath());
+                } else {
+                    if (watch) {
+                        clearScreen();
+                    }
+                    printer().println(ascii);
                 }
-                ImageIO.write(image, "PNG", file);
-                printer().println("Diagram saved to: " + file.getAbsolutePath());
             } else {
-                if (watch) {
-                    clearScreen();
+                RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                        engine.getNodeWidth(), fontSize * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(),
+                        pid > 0 && metric);
+
+                BufferedImage image;
+                try {
+                    image = renderer.renderDiagram(layoutRoutes, currentY, colors);
+                } catch (IllegalStateException e) {
+                    printer().println(e.getMessage());
+                    return 1;
                 }
-                doDisplayDiagram(image);
+
+                if (output != null) {
+                    File file = new File(output);
+                    File parentDir = file.getParentFile();
+                    if (parentDir != null) {
+                        parentDir.mkdirs();
+                    }
+                    ImageIO.write(image, "PNG", file);
+                    printer().println("Diagram saved to: " + file.getAbsolutePath());
+                } else {
+                    if (watch) {
+                        clearScreen();
+                    }
+                    doDisplayDiagram(image);
+                }
             }
 
             return 0;
@@ -248,6 +288,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                     // ignore
                 }
             }
+            running.set(false);
         };
     }
 
@@ -310,6 +351,14 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     List<RouteInfo> parseRoutes(JsonObject jo) {
         return RouteDiagramHelper.parseRoutes(jo);
+    }
+
+    private boolean isTextTheme() {
+        return "ascii".equalsIgnoreCase(theme) || "unicode".equalsIgnoreCase(theme);
+    }
+
+    private boolean isUnicodeTheme() {
+        return "unicode".equalsIgnoreCase(theme);
     }
 
     static NodeLabelMode parseNodeLabelMode(String value) {

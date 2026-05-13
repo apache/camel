@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This interface is implemented by all events.
@@ -285,6 +286,7 @@ public interface CamelEvent {
 
         boolean isDeadLetterChannel();
 
+        @Nullable
         String getDeadLetterUri();
 
     }

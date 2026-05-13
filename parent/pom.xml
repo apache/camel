@@ -86,7 +86,7 @@
         <beanio-version>3.2.1</beanio-version>
         <bouncycastle-version>1.84</bouncycastle-version>
         <box-java-sdk-version>4.16.4</box-java-sdk-version>
-        <braintree-gateway-version>3.48.0</braintree-gateway-version>
+        <braintree-gateway-version>3.49.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.6.1</build-helper-maven-plugin-version>
         <bytebuddy-version>1.18.8</bytebuddy-version>
         <c3p0-version>0.13.0</c3p0-version>
@@ -296,6 +296,7 @@
         <jgroups-version>5.5.5.Final</jgroups-version>
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
         <jira-rest-client-api-version>6.0.2</jira-rest-client-api-version>
+        <jira-sal-api-version>7.2.1</jira-sal-api-version>
         <jline-version>4.1.0</jline-version>
         <libthrift-version>0.23.0</libthrift-version>
         <jodatime2-version>2.14.2</jodatime2-version>
@@ -318,6 +319,11 @@
         <jsonata-version>0.9.10</jsonata-version>
         <json-unit-version>5.1.1</json-unit-version>
         <jsoup-version>1.22.2</jsoup-version>
+        <jspecify-version>1.0.0</jspecify-version>
+
+        <!-- NullAway / Error Prone (used by -Pnullcheck profile, requires JDK 21+) -->
+        <error-prone-version>2.49.0</error-prone-version>
+        <nullaway-version>0.13.4</nullaway-version>
         <jt400-version>21.0.6</jt400-version>
         <jte-version>3.2.4</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
@@ -329,7 +335,7 @@
         <jython-version>2.7.4</jython-version>
         <kafka-version>4.2.0</kafka-version>
         <keycloak-client-version>26.0.8</keycloak-client-version>
-        <kubernetes-client-version>7.6.1</kubernetes-client-version>
+        <kubernetes-client-version>7.7.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
         <langchain4j-version>1.14.1</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
@@ -389,7 +395,7 @@
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
-        <narayana-version>5.13.1.Final</narayana-version>
+        <narayana-version>7.3.4.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>6.1.0</neo4j-version>
         <netty-version>4.2.12.Final</netty-version>
@@ -413,8 +419,8 @@
         <opentelemetry-semconv-version>1.30.1-alpha</opentelemetry-semconv-version>
         <optaplanner-version>10.2.0</optaplanner-version>
         <paho-version>1.2.5</paho-version>
-        <parquet-common-version>1.17.0</parquet-common-version>
-        <parquet-avro-version>1.17.0</parquet-avro-version>
+        <parquet-common-version>1.17.1</parquet-common-version>
+        <parquet-avro-version>1.17.1</parquet-avro-version>
         <pdfbox-version>3.0.7</pdfbox-version>
         <pgjdbc-driver-version>42.7.11</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
@@ -429,13 +435,13 @@
         <plexus-xml-version>3.0.1</plexus-xml-version>
         <pooled-jms-version>3.2.2</pooled-jms-version>
         <properties-maven-plugin-version>1.3.0</properties-maven-plugin-version>
-        <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
+        <proto-google-common-protos-version>2.71.0</proto-google-common-protos-version>
         <protobuf-version>4.33.2</protobuf-version>
         <protobuf-maven-plugin-version>4.1.3</protobuf-maven-plugin-version>
         <prowide-version>SRU2025-10.3.8</prowide-version>
-        <pubnub-version>13.1.1</pubnub-version>
+        <pubnub-version>13.2.1</pubnub-version>
         <pulsar-version>4.2.1</pulsar-version>
-        <qdrant-client-version>1.17.0</qdrant-client-version>
+        <qdrant-client-version>1.18.1</qdrant-client-version>
         <qpid-broker-version>10.0.1</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.10.0</qpid-jms-client-version>
@@ -447,7 +453,7 @@
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.8.5</reactor-version>
         <reactor-netty-version>1.3.5</reactor-netty-version>
-        <redisson-version>4.3.1</redisson-version>
+        <redisson-version>4.4.0</redisson-version>
         <resilience4j-version>2.4.0</resilience4j-version>
         <rest-assured-version>6.0.0</rest-assured-version>
         <roaster-version>2.31.0.Final</roaster-version>
@@ -462,7 +468,7 @@
         <shiro-version>2.1.0</shiro-version>
         <sisu-maven-plugin-version>1.0.0</sisu-maven-plugin-version>
         <slack-api-model-version>1.48.1</slack-api-model-version>
-        <slf4j-api-version>2.0.17</slf4j-api-version>
+        <slf4j-api-version>2.0.18</slf4j-api-version>
         <slf4j-version>2.0.17</slf4j-version>
         <smack-version>4.3.5</smack-version>
         <smallrye-config-version>3.17.2</smallrye-config-version>
@@ -496,11 +502,11 @@
         <swagger-java-version>1.6.10</swagger-java-version>
         <swagger-openapi3-version>2.2.36</swagger-openapi3-version>
         <swagger-java-parser-version>1.0.65</swagger-java-parser-version>
-        <swagger-openapi3-java-parser-version>2.1.41</swagger-openapi3-java-parser-version>
+        <swagger-openapi3-java-parser-version>2.1.42</swagger-openapi3-java-parser-version>
         <swagger-request-validator-version>2.46.1</swagger-request-validator-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <tahu-version>1.0.19</tahu-version>
-        <tamboui-version>0.2.0</tamboui-version>
+        <tamboui-version>0.3.0</tamboui-version>
         <testcontainers-version>2.0.3</testcontainers-version>
         <thymeleaf-version>3.1.5.RELEASE</thymeleaf-version>
         <tika-version>3.3.0</tika-version>
@@ -3205,6 +3211,13 @@
                 <type>test-jar</type>
             </dependency>
 
+            <!-- null safety annotations -->
+            <dependency>
+                <groupId>org.jspecify</groupId>
+                <artifactId>jspecify</artifactId>
+                <version>${jspecify-version}</version>
+            </dependency>
+
             <!-- logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -3453,7 +3466,7 @@
 
             <dependency>
                 <groupId>com.google.api.grpc</groupId>
-                <artifactId>proto-google-2common-protos</artifactId>
+                <artifactId>proto-google-common-protos</artifactId>
                 <version>${proto-google-common-protos-version}</version>
             </dependency>
             <dependency>
@@ -4260,41 +4273,6 @@
             </build>
         </profile>
         <profile>
-            <id>tia</id>
-            <properties>
-                <mvntia.propertyName>camel.surefire.fork.vmargs</mvntia.propertyName>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jboss.fuse.mvntia</groupId>
-                        <artifactId>mvntia-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>@{camel.surefire.fork.vmargs} @{argLine}</argLine>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <argLine>@{camel.failsafe.fork.vmargs} @{argLine}</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>full</id>
             <activation>
                 <property>
@@ -4428,6 +4406,54 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <argLine>${camel.failsafe.fork.vmargs} ${jacocoAgent} @{argLine}</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>nullcheck</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jspecify</groupId>
+                    <artifactId>jspecify</artifactId>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <fork>true</fork>
+                            <compilerArgs combine.children="append">
+                                <arg>-XDcompilePolicy=simple</arg>
+                                <arg>--should-stop=ifError=FLOW</arg>
+                                <arg>-XDaddTypeAnnotationsToSymbol=true</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:WARN -XepOpt:NullAway:OnlyNullMarked=true -XepOpt:NullAway:JSpecifyMode=true</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                            </compilerArgs>
+                            <annotationProcessorPaths combine.children="append">
+                                <path>
+                                    <groupId>com.google.errorprone</groupId>
+                                    <artifactId>error_prone_core</artifactId>
+                                    <version>${error-prone-version}</version>
+                                </path>
+                                <path>
+                                    <groupId>com.uber.nullaway</groupId>
+                                    <artifactId>nullaway</artifactId>
+                                    <version>${nullaway-version}</version>
+                                </path>
+                            </annotationProcessorPaths>
                         </configuration>
                     </plugin>
                 </plugins>

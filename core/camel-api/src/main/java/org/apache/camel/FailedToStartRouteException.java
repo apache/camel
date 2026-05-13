@@ -16,30 +16,37 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * Exception when failing to start a {@link Route}.
  */
 public class FailedToStartRouteException extends RuntimeCamelException {
 
     private final String routeId;
-    private final String location;
+    private final @Nullable String location;
 
     public FailedToStartRouteException(String routeId, String message) {
-        super("Failed to start route: " + routeId + " because: " + message);
+        super("Failed to start route: " + Objects.requireNonNull(routeId, "routeId") + " because: "
+              + Objects.requireNonNull(message, "message"));
         this.routeId = routeId;
         this.location = null;
     }
 
     public FailedToStartRouteException(String routeId, String message, Throwable cause) {
-        super("Failed to start route: " + routeId + " because: " + message, cause);
+        super("Failed to start route: " + Objects.requireNonNull(routeId, "routeId") + " because: "
+              + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
         this.routeId = routeId;
         this.location = null;
     }
 
-    public FailedToStartRouteException(String routeId, String location, String message, Throwable cause) {
-        super("Failed to start route: " + routeId + (location != null ? " (source: " + location + ")" : "") + " because: "
-              + message,
-              cause);
+    public FailedToStartRouteException(String routeId, @Nullable String location, String message, Throwable cause) {
+        super("Failed to start route: " + Objects.requireNonNull(routeId, "routeId")
+              + (location != null ? " (source: " + location + ")" : "") + " because: "
+              + Objects.requireNonNull(message, "message"),
+              Objects.requireNonNull(cause, "cause"));
         this.routeId = routeId;
         this.location = location;
     }
@@ -48,7 +55,7 @@ public class FailedToStartRouteException extends RuntimeCamelException {
         return routeId;
     }
 
-    public String getLocation() {
+    public @Nullable String getLocation() {
         return location;
     }
 }

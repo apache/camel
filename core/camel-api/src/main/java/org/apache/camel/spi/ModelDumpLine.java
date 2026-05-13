@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents a line in a model dumper of the route structure (not with full details such as XML or YAML dump).
  *
@@ -26,6 +28,6 @@ package org.apache.camel.spi;
  * @param code        EIP code such as label or short name that is human-readable or pseudocode
  * @param description optional description of the EIP node
  */
-public record ModelDumpLine(String location, String type, String id, int level, String code, String description) {
-
+public record ModelDumpLine(@Nullable String location, String type, String id, int level, String code,
+        @Nullable String description) {
 }

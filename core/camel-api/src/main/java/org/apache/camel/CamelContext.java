@@ -57,6 +57,7 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.vault.VaultConfiguration;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface used to represent the CamelContext used to configure routes and the policies to use during message
@@ -110,6 +111,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the description, or null if no description has been set.
      */
+    @Nullable
     String getDescription();
 
     /**
@@ -149,12 +151,13 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the management name
      */
+    @Nullable
     String getManagementName();
 
     /**
      * Sets the name this {@link CamelContext} will be registered in JMX.
      */
-    void setManagementName(String name);
+    void setManagementName(@Nullable String name);
 
     /**
      * Gets the version of this CamelContext.
@@ -275,6 +278,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  filter the filter
      * @return        the service if found or null if none found
      */
+    @Nullable
     Service hasService(Predicate<Service> filter);
 
     /**
@@ -283,7 +287,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  type the class type
      * @return      the service instance or <tt>null</tt> if not already added.
      */
-    <T> T hasService(Class<T> type);
+    <T> @Nullable T hasService(Class<T> type);
 
     /**
      * Has the given service type already been added to this CamelContext?
@@ -343,6 +347,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  componentName the name of the component
      * @return               the registered Component or <tt>null</tt> if not registered
      */
+    @Nullable
     Component hasComponent(String componentName);
 
     /**
@@ -352,8 +357,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * {@link #getComponent(String, boolean, boolean)}.
      *
      * @param  componentName the name of the component
-     * @return               the component
+     * @return               the component, or <tt>null</tt> if not found and could not be auto created
      */
+    @Nullable
     Component getComponent(String componentName);
 
     /**
@@ -364,8 +370,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @param  name                 the name of the component
      * @param  autoCreateComponents whether or not the component should be lazily created if it does not already exist
-     * @return                      the component
+     * @return                      the component, or <tt>null</tt> if not found
      */
+    @Nullable
     Component getComponent(String name, boolean autoCreateComponents);
 
     /**
@@ -374,8 +381,9 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  name                 the name of the component
      * @param  autoCreateComponents whether or not the component should be lazily created if it does not already exist
      * @param  autoStart            whether to auto start the component if {@link CamelContext} is already started.
-     * @return                      the component
+     * @return                      the component, or <tt>null</tt> if not found
      */
+    @Nullable
     Component getComponent(String name, boolean autoCreateComponents, boolean autoStart);
 
     /**
@@ -402,6 +410,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  componentName the component name to remove
      * @return               the previously added component or null if it had not been previously added.
      */
+    @Nullable
     Component removeComponent(String componentName);
 
     // Endpoint Management Methods
@@ -458,6 +467,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  uri the URI of the endpoint
      * @return     the registered endpoint or <tt>null</tt> if not registered
      */
+    @Nullable
     Endpoint hasEndpoint(String uri);
 
     /**
@@ -468,6 +478,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return           the old endpoint that was previously registered or <tt>null</tt> if none was registered
      * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
      */
+    @Nullable
     Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception;
 
     /**
@@ -563,6 +574,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  id id of the route
      * @return    the route or <tt>null</tt> if not found
      */
+    @Nullable
     Route getRoute(String id);
 
     /**
@@ -571,6 +583,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  id id of the processor
      * @return    the processor or <tt>null</tt> if not found
      */
+    @Nullable
     Processor getProcessor(String id);
 
     /**
@@ -581,7 +594,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return                              the processor or <tt>null</tt> if not found
      * @throws java.lang.ClassCastException is thrown if the type is not correct type
      */
-    <T extends Processor> T getProcessor(String id, Class<T> type);
+    <T extends Processor> @Nullable T getProcessor(String id, Class<T> type);
 
     /**
      * Adds a collection of routes to this CamelContext using the given builder to build them.
@@ -654,7 +667,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @return                 the id of the route added (for example when an id was auto assigned)
      * @throws Exception       is thrown if error creating and adding the new route
      */
-    String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
+    String addRouteFromTemplate(@Nullable String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception;
 
     /**
      * Adds a new route from a given route template.
@@ -671,7 +685,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      */
     @Deprecated(since = "4.14.0")
     String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId,
+            @Nullable String routeId, String routeTemplateId, @Nullable String prefixId,
             Map<String, Object> parameters)
             throws Exception;
 
@@ -690,7 +704,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws Exception       is thrown if error creating and adding the new route
      */
     String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId, String group,
+            @Nullable String routeId, String routeTemplateId, @Nullable String prefixId, @Nullable String group,
             Map<String, Object> parameters)
             throws Exception;
 
@@ -709,7 +723,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      */
     @Deprecated(since = "4.14.0")
     String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
+            @Nullable String routeId, String routeTemplateId, @Nullable String prefixId,
+            RouteTemplateContext routeTemplateContext)
             throws Exception;
 
     /**
@@ -727,7 +742,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws Exception            is thrown if error creating and adding the new route
      */
     String addRouteFromTemplate(
-            String routeId, String routeTemplateId, String prefixId, String group, RouteTemplateContext routeTemplateContext)
+            @Nullable String routeId, String routeTemplateId, @Nullable String prefixId, @Nullable String group,
+            RouteTemplateContext routeTemplateContext)
             throws Exception;
 
     /**
@@ -744,7 +760,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      */
     @Deprecated(since = "4.14.0")
     String addRouteFromKamelet(
-            String routeId, String routeTemplateId, String prefixId,
+            @Nullable String routeId, String routeTemplateId, @Nullable String prefixId,
             String parentRouteId, String parentProcessorId,
             Map<String, Object> parameters)
             throws Exception;
@@ -763,7 +779,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @throws Exception         is thrown if error creating and adding the new route
      */
     String addRouteFromKamelet(
-            String routeId, String routeTemplateId, String prefixId, String group,
+            @Nullable String routeId, String routeTemplateId, @Nullable String prefixId, @Nullable String group,
             String parentRouteId, String parentProcessorId,
             Map<String, Object> parameters)
             throws Exception;
@@ -810,6 +826,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the configuration, or <tt>null</tt> if none has been configured.
      */
+    @Nullable
     RestConfiguration getRestConfiguration();
 
     /**
@@ -824,6 +841,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the configuration, or <tt>null</tt> if none has been configured.
      */
+    @Nullable
     VaultConfiguration getVaultConfiguration();
 
     /**
@@ -880,7 +898,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  type the registry type such as org.apache.camel.impl.JndiRegistry
      * @return      the registry, or <tt>null</tt> if the given type was not found as a registry implementation
      */
-    <T> T getRegistry(Class<T> type);
+    <T> @Nullable T getRegistry(Class<T> type);
 
     /**
      * Returns the injector used to instantiate objects by type
@@ -937,6 +955,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *              repository. If no repo-id is provided, then global repository will be used.
      * @return      the variable, or <tt>null</tt> if not found.
      */
+    @Nullable
     Object getVariable(String name);
 
     /**
@@ -947,7 +966,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  type the type to convert the variable to
      * @return      the variable, or <tt>null</tt> if not found.
      */
-    <T> T getVariable(String name, Class<T> type);
+    <T> @Nullable T getVariable(String name, Class<T> type);
 
     /**
      * Sets a variable
@@ -1091,6 +1110,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  name the data format name or a reference to it in the {@link Registry}
      * @return      the resolved data format, or <tt>null</tt> if not found
      */
+    @Nullable
     DataFormat resolveDataFormat(String name);
 
     /**
@@ -1099,6 +1119,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  name the data format name or a reference to a data format factory in the {@link Registry}
      * @return      the created data format, or <tt>null</tt> if not found
      */
+    @Nullable
     DataFormat createDataFormat(String name);
 
     /**
@@ -1114,6 +1135,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  name the transformer name, usually a combination of some scheme and name.
      * @return      the resolved transformer, or <tt>null</tt> if not found
      */
+    @Nullable
     Transformer resolveTransformer(String name);
 
     /**
@@ -1123,6 +1145,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  to   to data type
      * @return      the resolved transformer, or <tt>null</tt> if not found
      */
+    @Nullable
     Transformer resolveTransformer(DataType from, DataType to);
 
     /**
@@ -1138,6 +1161,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  type the data type
      * @return      the resolved validator, or <tt>null</tt> if not found
      */
+    @Nullable
     Validator resolveValidator(DataType type);
 
     /**
@@ -1181,6 +1205,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return the string value of the global option
      */
+    @Nullable
     String getGlobalOption(String key);
 
     /**
@@ -1440,7 +1465,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
      * or jms use: kafka,jms.
      */
-    void setAutoStartupExcludePattern(String autoStartupExcludePattern);
+    void setAutoStartupExcludePattern(@Nullable String autoStartupExcludePattern);
 
     /**
      * Used for exclusive filtering of routes to not automatically start with Camel starts.
@@ -1450,6 +1475,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Multiple patterns can be specified separated by comma, as example, to exclude all the routes starting from kafka
      * or jms use: kafka,jms.
      */
+    @Nullable
     String getAutoStartupExcludePattern();
 
     /**
@@ -1550,6 +1576,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * </ul>
      */
     @Deprecated(since = "4.19.0")
+    @Nullable
     String getMDCLoggingKeysPattern();
 
     /**
@@ -1570,7 +1597,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param pattern the pattern
      */
     @Deprecated(since = "4.19.0")
-    void setMDCLoggingKeysPattern(String pattern);
+    void setMDCLoggingKeysPattern(@Nullable String pattern);
 
     /**
      * To use a custom tracing logging format.
@@ -1623,6 +1650,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return <tt>xml</tt>, <tt>yaml</tt>, or <tt>json</tt> if dumping is enabled
      */
+    @Nullable
     String getDumpRoutes();
 
     /**
@@ -1639,7 +1667,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param format xml, yaml or json (additional configuration can be specified using query parameters, eg
      *               ?include=all&uriAsParameters=true)
      */
-    void setDumpRoutes(String format);
+    void setDumpRoutes(@Nullable String format);
 
     /**
      * Whether to enable using data type on Camel messages.
@@ -1688,6 +1716,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Gets the {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use, or <tt>null</tt> if none is in use.
      */
+    @Nullable
     RuntimeEndpointRegistry getRuntimeEndpointRegistry();
 
     /**
@@ -1703,6 +1732,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Gets the global SSL context parameters if configured.
      */
+    @Nullable
     SSLContextParameters getSSLContextParameters();
 
     /**

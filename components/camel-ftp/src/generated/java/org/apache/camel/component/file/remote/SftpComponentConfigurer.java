@@ -23,6 +23,8 @@ public class SftpComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SftpComponent target = (SftpComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autocreateknownhostsfile":
+        case "autoCreateKnownHostsFile": target.setAutoCreateKnownHostsFile(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -31,8 +33,18 @@ public class SftpComponentConfigurer extends PropertyConfigurerSupport implement
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "knownhosts":
+        case "knownHosts": target.setKnownHosts(property(camelContext, byte[].class, value)); return true;
+        case "knownhostsfile":
+        case "knownHostsFile": target.setKnownHostsFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "knownhostsuri":
+        case "knownHostsUri": target.setKnownHostsUri(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "stricthostkeychecking":
+        case "strictHostKeyChecking": target.setStrictHostKeyChecking(property(camelContext, java.lang.String.class, value)); return true;
+        case "useuserknownhostsfile":
+        case "useUserKnownHostsFile": target.setUseUserKnownHostsFile(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -40,6 +52,8 @@ public class SftpComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autocreateknownhostsfile":
+        case "autoCreateKnownHostsFile": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -48,8 +62,18 @@ public class SftpComponentConfigurer extends PropertyConfigurerSupport implement
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "knownhosts":
+        case "knownHosts": return byte[].class;
+        case "knownhostsfile":
+        case "knownHostsFile": return java.lang.String.class;
+        case "knownhostsuri":
+        case "knownHostsUri": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "stricthostkeychecking":
+        case "strictHostKeyChecking": return java.lang.String.class;
+        case "useuserknownhostsfile":
+        case "useUserKnownHostsFile": return boolean.class;
         default: return null;
         }
     }
@@ -58,6 +82,8 @@ public class SftpComponentConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SftpComponent target = (SftpComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autocreateknownhostsfile":
+        case "autoCreateKnownHostsFile": return target.isAutoCreateKnownHostsFile();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
@@ -66,8 +92,18 @@ public class SftpComponentConfigurer extends PropertyConfigurerSupport implement
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "knownhosts":
+        case "knownHosts": return target.getKnownHosts();
+        case "knownhostsfile":
+        case "knownHostsFile": return target.getKnownHostsFile();
+        case "knownhostsuri":
+        case "knownHostsUri": return target.getKnownHostsUri();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "stricthostkeychecking":
+        case "strictHostKeyChecking": return target.getStrictHostKeyChecking();
+        case "useuserknownhostsfile":
+        case "useUserKnownHostsFile": return target.isUseUserKnownHostsFile();
         default: return null;
         }
     }

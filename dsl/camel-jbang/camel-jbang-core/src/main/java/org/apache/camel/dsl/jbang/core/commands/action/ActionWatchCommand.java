@@ -41,7 +41,6 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
     @Override
     public Integer doCall() throws Exception {
         int exit;
-        final AtomicBoolean running = new AtomicBoolean(true);
         if (watch) {
             Thread t = new Thread(() -> {
                 waitUserTask = waitForUserEnter();

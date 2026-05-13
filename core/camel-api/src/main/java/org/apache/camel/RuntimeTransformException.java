@@ -16,20 +16,22 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * Thrown if a message transformation fails
  */
 public class RuntimeTransformException extends RuntimeCamelException {
 
     public RuntimeTransformException(String message) {
-        super(message);
+        super(Objects.requireNonNull(message, "message"));
     }
 
     public RuntimeTransformException(String message, Throwable cause) {
-        super(message, cause);
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
     }
 
     public RuntimeTransformException(Throwable cause) {
-        super(cause);
+        super(Objects.requireNonNull(cause, "cause"));
     }
 }

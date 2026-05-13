@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.StaticService;
 import org.apache.camel.VariableAware;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Repository for storing and accessing variables.
@@ -35,6 +36,7 @@ public interface VariableRepository extends StaticService, VariableAware {
      * @param  name of the variable
      * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
      */
+    @Nullable
     Object removeVariable(String name);
 
 }

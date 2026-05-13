@@ -101,7 +101,9 @@ public class PromptDefinitions {
                           + "get OpenRewrite recipes, search migration guides, "
                           + "and produce a migration summary.")
     public List<PromptMessage> migrateProject(
-            @PromptArg(name = "pomContent", description = "The project's pom.xml file content") String pomContent,
+            @PromptArg(name = "pomContent",
+                       description = "Optional: project's pom.xml content. If omitted, the LLM uses the pom.xml already in its conversation context.",
+                       required = false) String pomContent,
             @PromptArg(name = "targetVersion", description = "Target Camel version to migrate to (e.g., 4.18.0)",
                        required = false) String targetVersion) {
 
@@ -109,54 +111,35 @@ public class PromptDefinitions {
                 ? "Target version: " + targetVersion
                 : "Target version: latest stable (determine from camel_version_list)";
 
-        String instructions = """
-                You are migrating a Camel project to a newer version.
+        String pomNote = pomContent != null && !pomContent.isBlank()
+                ? "A pom.xml has been supplied as the `pomContent` argument to this prompt."
+                : "Use the project's pom.xml from your conversation context.";
 
-                ## %s
+        String instructions
+                = """
+                        You are migrating a Camel project to a newer version.
 
-                ## Project pom.xml
-                ```xml
-                %s
-                ```
+                        %s
+                        %s
 
-                ## Workflow
+                        ## Workflow
 
-                Follow these steps in order:
-
-                ### Step 1: Analyze the project
-                Call `camel_migration_analyze` with the pom.xml content above.
-                This detects the current runtime, Camel version, Java version, and component dependencies.
-
-                ### Step 2: Determine target version
-                If no target version was specified, call `camel_version_list` with the detected runtime \
-                to find the latest stable version. For LTS releases, filter with lts=true.
-
-                ### Step 3: Check compatibility
-                Based on the detected runtime from Step 1:
-                - For **wildfly** or **karaf** runtimes: call `camel_migration_wildfly_karaf` with the pom.xml \
-                content, target runtime, and target version.
-                - For **main**, **spring-boot**, or **quarkus** runtimes: call `camel_migration_compatibility` \
-                with the detected components, current version, target version, runtime, and Java version.
-
-                Review any blockers (e.g., Java version too old) and warnings.
-
-                ### Step 4: Get migration recipes
-                Call `camel_migration_recipes` with the runtime, current version, target version, \
-                Java version, and dryRun=true to get the OpenRewrite Maven commands.
-
-                ### Step 5: Search for breaking changes
-                For each component detected in Step 1, call `camel_migration_guide_search` \
-                with the component name to find relevant breaking changes and rename mappings.
-
-                ### Step 6: Produce migration summary
-                Present a structured summary:
-                - **Current state**: runtime, Camel version, Java version, component count
-                - **Target state**: target version, required Java version
-                - **Blockers**: issues that must be resolved before migration
-                - **Breaking changes**: component renames, API changes found in guides
-                - **Migration commands**: the OpenRewrite commands from Step 4
-                - **Manual steps**: any changes that OpenRewrite cannot automate
-                """.formatted(versionNote, pomContent);
+                        1. **Analyze**: call `camel_migration_analyze` with the pom.xml to detect runtime, \
+                        Camel version, Java version, and component dependencies.
+                        2. **Target version**: if not specified, call `camel_version_list` with the detected runtime \
+                        (use `lts=true` for LTS releases).
+                        3. **Compatibility** (based on detected runtime):
+                           - **wildfly** or **karaf**: call `camel_migration_wildfly_karaf` with the pom, target runtime, and target version.
+                           - **main**, **spring-boot**, or **quarkus**: call `camel_migration_compatibility` \
+                        with components, current/target version, runtime, and Java version.
+                        4. **Recipes**: call `camel_migration_recipes` with runtime, versions, Java version, and `dryRun=true` \
+                        to get the OpenRewrite Maven commands.
+                        5. **Breaking changes**: for each detected component, call `camel_migration_guide_search` \
+                        to find renames and API changes.
+                        6. **Summary**: report current state, target state, blockers, breaking changes, \
+                        migration commands, and manual steps that OpenRewrite cannot automate.
+                        """
+                        .formatted(versionNote, pomNote);
 
         return List.of(PromptMessage.withUserRole(instructions));
     }

@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a {@link BeanRepository} which may also be capable of binding beans to its repository.
@@ -52,7 +53,8 @@ public interface Registry extends BeanRepository {
      * @param  destroyMethod         optional destroy method (invoked at unbind or stopping Camel)
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
-    default void bind(String id, Object bean, String initMethod, String destroyMethod) throws RuntimeCamelException {
+    default void bind(String id, Object bean, @Nullable String initMethod, @Nullable String destroyMethod)
+            throws RuntimeCamelException {
         if (bean != null) {
             bind(id, bean.getClass(), bean, initMethod, destroyMethod);
         }
@@ -86,7 +88,8 @@ public interface Registry extends BeanRepository {
      * @param  destroyMethod         optional destroy method (invoked at unbind or stopping Camel)
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
-    void bind(String id, Class<?> type, Object bean, String initMethod, String destroyMethod) throws RuntimeCamelException;
+    void bind(String id, Class<?> type, Object bean, @Nullable String initMethod, @Nullable String destroyMethod)
+            throws RuntimeCamelException;
 
     /**
      * Binds the bean (via a supplier) to the repository (if possible).
@@ -120,7 +123,9 @@ public interface Registry extends BeanRepository {
      * @param  destroyMethod         optional destroy method (invoked at unbind or stopping Camel)
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
-    void bind(String id, Class<?> type, Supplier<Object> bean, String initMethod, String destroyMethod)
+    void bind(
+            String id, Class<?> type, Supplier<Object> bean, @Nullable String initMethod,
+            @Nullable String destroyMethod)
             throws RuntimeCamelException;
 
     /**

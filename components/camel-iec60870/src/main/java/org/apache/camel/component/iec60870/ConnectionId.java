@@ -18,6 +18,7 @@ package org.apache.camel.component.iec60870;
 
 import java.util.Objects;
 
+@Deprecated(since = "4.21")
 public class ConnectionId {
     private final String host;
 

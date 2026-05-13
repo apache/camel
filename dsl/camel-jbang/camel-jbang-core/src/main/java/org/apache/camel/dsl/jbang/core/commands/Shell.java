@@ -16,9 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -151,8 +153,35 @@ public class Shell extends CamelCommand {
             }
             writer.println(banner);
         }
-        writer.println("Type 'help' for available commands, 'exit' to quit.");
+        int routeCount = countRouteFiles();
+        if (routeCount == 0) {
+            writer.println("No routes found in current directory.");
+            writer.println("  Quick start:  init MyRoute.yaml && run *");
+            writer.println("  Templates:    init --list");
+            writer.println("  Docs:         doc <component>");
+            writer.println("  Need help?    help");
+        } else {
+            writer.printf("Found %d route file(s) in current directory.%n", routeCount);
+            writer.println("  Run:   run *");
+            writer.println("  Watch: run * --dev");
+        }
         writer.println();
         writer.flush();
+    }
+
+    private static int countRouteFiles() {
+        try (Stream<Path> files = Files.list(Paths.get("."))) {
+            return (int) files.filter(Files::isRegularFile)
+                    .filter(p -> {
+                        String name = p.getFileName().toString();
+                        return (name.endsWith(".yaml") && !name.endsWith(".kamelet.yaml")
+                                && !name.equals("application.yaml"))
+                                || (name.endsWith(".xml") && !name.equals("pom.xml"))
+                                || name.endsWith(".java");
+                    })
+                    .count();
+        } catch (IOException e) {
+            return 0;
+        }
     }
 }

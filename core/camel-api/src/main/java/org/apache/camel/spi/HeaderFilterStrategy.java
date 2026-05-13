@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to allow plug-able implementation to filter header to and from Camel message.
@@ -43,7 +44,7 @@ public interface HeaderFilterStrategy {
      * @param  exchange    the context to perform filtering
      * @return             <tt>true</tt> if this header should be filtered (skipped).
      */
-    boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange);
+    boolean applyFilterToCamelHeaders(String headerName, @Nullable Object headerValue, Exchange exchange);
 
     /**
      * Applies filtering logic to an external message header such as CXF and JMS message that is going to be copied to
@@ -57,6 +58,6 @@ public interface HeaderFilterStrategy {
      * @param  exchange    the context to perform filtering
      * @return             <tt>true</tt> if this header should be filtered (skipped).
      */
-    boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange);
+    boolean applyFilterToExternalHeaders(String headerName, @Nullable Object headerValue, Exchange exchange);
 
 }

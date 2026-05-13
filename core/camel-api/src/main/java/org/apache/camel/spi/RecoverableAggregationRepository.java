@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A specialized {@link org.apache.camel.spi.AggregationRepository} which also supports recovery. This usually requires
@@ -43,6 +44,7 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      * @param  exchangeId   exchange id
      * @return              the recovered exchange or <tt>null</tt> if not found
      */
+    @Nullable
     Exchange recover(CamelContext camelContext, String exchangeId);
 
     /**
@@ -101,13 +103,14 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      *
      * @param deadLetterUri the uri of the dead letter channel
      */
-    void setDeadLetterUri(String deadLetterUri);
+    void setDeadLetterUri(@Nullable String deadLetterUri);
 
     /**
      * Gets the dead letter channel
      *
      * @return the uri of the dead letter channel
      */
+    @Nullable
     String getDeadLetterUri();
 
     /**

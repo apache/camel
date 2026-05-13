@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents an {@link org.apache.camel.Expression} or {@link org.apache.camel.Predicate} that supports a result type.
  */
@@ -29,6 +31,7 @@ public interface ExpressionResultTypeAware {
     /**
      * Gets the result type
      */
+    @Nullable
     Class<?> getResultType();
 
 }

@@ -30,6 +30,7 @@ import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Reque
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated(since = "4.21")
 public class ServerConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServerConsumer.class);

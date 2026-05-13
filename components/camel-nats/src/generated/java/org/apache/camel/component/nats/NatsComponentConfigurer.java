@@ -62,6 +62,8 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "jetstreamName": getOrCreateConfiguration(target).setJetstreamName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "manualack":
+        case "manualAck": getOrCreateConfiguration(target).setManualAck(property(camelContext, boolean.class, value)); return true;
         case "maxdeliver":
         case "maxDeliver": getOrCreateConfiguration(target).setMaxDeliver(property(camelContext, long.class, value)); return true;
         case "maxmessages":
@@ -148,6 +150,8 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "jetstreamName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "manualack":
+        case "manualAck": return boolean.class;
         case "maxdeliver":
         case "maxDeliver": return long.class;
         case "maxmessages":
@@ -235,6 +239,8 @@ public class NatsComponentConfigurer extends PropertyConfigurerSupport implement
         case "jetstreamName": return getOrCreateConfiguration(target).getJetstreamName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "manualack":
+        case "manualAck": return getOrCreateConfiguration(target).isManualAck();
         case "maxdeliver":
         case "maxDeliver": return getOrCreateConfiguration(target).getMaxDeliver();
         case "maxmessages":

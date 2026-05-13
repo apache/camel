@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Represents a <a href="http://camel.apache.org/polling-consumer.html">Polling Consumer</a> where the caller polls for
  * messages when it is ready.
@@ -43,6 +45,7 @@ public interface PollingConsumer extends Consumer {
      *
      * @return the message exchange received.
      */
+    @Nullable
     Exchange receive();
 
     /**
@@ -54,6 +57,7 @@ public interface PollingConsumer extends Consumer {
      *
      * @return the message exchange if one is immediately available otherwise <tt>null</tt>
      */
+    @Nullable
     Exchange receiveNoWait();
 
     /**
@@ -69,5 +73,6 @@ public interface PollingConsumer extends Consumer {
      * @return         the message exchange if one was available within the timeout period, or <tt>null</tt> if the
      *                 timeout expired
      */
+    @Nullable
     Exchange receive(long timeout);
 }

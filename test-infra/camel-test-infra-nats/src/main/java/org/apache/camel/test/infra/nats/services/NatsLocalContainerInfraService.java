@@ -55,6 +55,7 @@ public class NatsLocalContainerInfraService implements NatsInfraService, Contain
 
                 withNetworkAliases(containerName)
                         .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
+                        .waitingFor(Wait.forListeningPort())
                         .withCommand("--jetstream");
 
                 ContainerEnvironmentUtil.configurePort(this, fixedPort, PORT);

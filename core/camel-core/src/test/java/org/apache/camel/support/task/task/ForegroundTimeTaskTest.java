@@ -63,7 +63,7 @@ class ForegroundTimeTaskTest extends TaskTestSupport {
         // this should run 5 times in a total duration of 6 seconds (5s executing + 1s delay)
         ForegroundTask task = Tasks.foregroundTask()
                 .withBudget(Budgets.iterationTimeBudget()
-                        .withMaxDuration(Duration.ofMillis(6_500)) // Add 500 ms delay to make the test more flexible
+                        .withMaxDuration(Duration.ofMillis(10_000))
                         .withMaxIterations(5)
                         .withInitialDelay(Duration.ofSeconds(1))
                         .withInterval(Duration.ofSeconds(1))

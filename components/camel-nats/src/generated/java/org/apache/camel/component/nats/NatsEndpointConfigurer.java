@@ -56,6 +56,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jetstreamName": target.getConfiguration().setJetstreamName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "manualack":
+        case "manualAck": target.getConfiguration().setManualAck(property(camelContext, boolean.class, value)); return true;
         case "maxdeliver":
         case "maxDeliver": target.getConfiguration().setMaxDeliver(property(camelContext, long.class, value)); return true;
         case "maxmessages":
@@ -141,6 +143,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jetstreamName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "manualack":
+        case "manualAck": return boolean.class;
         case "maxdeliver":
         case "maxDeliver": return long.class;
         case "maxmessages":
@@ -227,6 +231,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "jetstreamName": return target.getConfiguration().getJetstreamName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "manualack":
+        case "manualAck": return target.getConfiguration().isManualAck();
         case "maxdeliver":
         case "maxDeliver": return target.getConfiguration().getMaxDeliver();
         case "maxmessages":

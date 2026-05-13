@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.function.Predicate;
 
 import org.apache.camel.BindToRegistry;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Bean post processor.
@@ -36,7 +37,7 @@ public interface CamelBeanPostProcessor {
      *                   subsequent BeanPostProcessors will be invoked
      * @throws Exception is thrown if error post processing bean
      */
-    default Object postProcessBeforeInitialization(Object bean, String beanName) throws Exception {
+    default @Nullable Object postProcessBeforeInitialization(Object bean, @Nullable String beanName) throws Exception {
         return bean;
     }
 
@@ -51,7 +52,7 @@ public interface CamelBeanPostProcessor {
      *                   subsequent BeanPostProcessors will be invoked
      * @throws Exception is thrown if error post processing bean
      */
-    default Object postProcessAfterInitialization(Object bean, String beanName) throws Exception {
+    default @Nullable Object postProcessAfterInitialization(Object bean, @Nullable String beanName) throws Exception {
         return bean;
     }
 

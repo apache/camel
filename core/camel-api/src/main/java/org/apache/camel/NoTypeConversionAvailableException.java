@@ -16,22 +16,26 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception thrown if a value could not be converted to the required type
  */
 public class NoTypeConversionAvailableException extends CamelException {
 
-    private final transient Object value;
+    private final transient @Nullable Object value;
     private final transient Class<?> type;
 
-    public NoTypeConversionAvailableException(Object value, Class<?> type) {
-        super(createMessage(value, type));
+    public NoTypeConversionAvailableException(@Nullable Object value, Class<?> type) {
+        super(createMessage(value, Objects.requireNonNull(type, "type")));
         this.value = value;
         this.type = type;
     }
 
-    public NoTypeConversionAvailableException(Object value, Class<?> type, Throwable cause) {
-        super(createMessage(value, type, cause), cause);
+    public NoTypeConversionAvailableException(@Nullable Object value, Class<?> type, Throwable cause) {
+        super(createMessage(value, Objects.requireNonNull(type, "type"), Objects.requireNonNull(cause, "cause")), cause);
         this.value = value;
         this.type = type;
     }
@@ -39,7 +43,7 @@ public class NoTypeConversionAvailableException extends CamelException {
     /**
      * Returns the value which could not be converted
      */
-    public Object getValue() {
+    public @Nullable Object getValue() {
         return value;
     }
 
@@ -53,7 +57,7 @@ public class NoTypeConversionAvailableException extends CamelException {
     /**
      * Returns the required <tt>from</tt> type. Returns <tt>null</tt> if the provided value was null.
      */
-    public Class<?> getFromType() {
+    public @Nullable Class<?> getFromType() {
         if (value != null) {
             return value.getClass();
         } else {
@@ -64,7 +68,8 @@ public class NoTypeConversionAvailableException extends CamelException {
     /**
      * Returns an error message for no type converter available.
      */
-    public static String createMessage(Object value, Class<?> type) {
+    public static String createMessage(@Nullable Object value, Class<?> type) {
+        Objects.requireNonNull(type, "type");
         return "No type converter available to convert from type: "
                + (value != null ? value.getClass().getCanonicalName() : null)
                + " to the required type: " + type.getCanonicalName();
@@ -73,7 +78,9 @@ public class NoTypeConversionAvailableException extends CamelException {
     /**
      * Returns an error message for no type converter available with the cause.
      */
-    public static String createMessage(Object value, Class<?> type, Throwable cause) {
+    public static String createMessage(@Nullable Object value, Class<?> type, Throwable cause) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(cause, "cause");
         return "Converting Exception when converting from type: "
                + (value != null ? value.getClass().getCanonicalName() : null) + " to the required type: "
                + type.getCanonicalName() + ", which is caused by " + cause;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ValueHolder;
 
@@ -28,7 +30,7 @@ public final class ValidatorKey extends ValueHolder<String> {
 
     public ValidatorKey(DataType type) {
         super(type.toString());
-        this.type = type;
+        this.type = Objects.requireNonNull(type, "type");
     }
 
     public DataType getType() {

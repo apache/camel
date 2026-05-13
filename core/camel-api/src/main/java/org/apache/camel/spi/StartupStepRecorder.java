@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.StartupStep;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * To record {@link StartupStep} during startup to allow to capture diagnostic information to help troubleshoot Camel
@@ -58,6 +59,7 @@ public interface StartupStepRecorder extends StaticService {
      */
     void setStartupRecorderDuration(long startupRecorderDuration);
 
+    @Nullable
     String getRecordingDir();
 
     /**
@@ -65,6 +67,7 @@ public interface StartupStepRecorder extends StaticService {
      */
     void setRecordingDir(String recordingDir);
 
+    @Nullable
     String getRecordingProfile();
 
     /**

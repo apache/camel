@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StaticService;
 import org.apache.camel.StreamCache;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Strategy for using <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
@@ -174,6 +175,7 @@ public interface StreamCachingStrategy extends StaticService {
      */
     void setSpoolDirectory(File path);
 
+    @Nullable
     File getSpoolDirectory();
 
     void setSpoolDirectory(String path);
@@ -204,6 +206,7 @@ public interface StreamCachingStrategy extends StaticService {
      */
     void setSpoolUsedHeapMemoryLimit(SpoolUsedHeapMemoryLimit bounds);
 
+    @Nullable
     SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit();
 
     /**
@@ -222,6 +225,7 @@ public interface StreamCachingStrategy extends StaticService {
      */
     void setSpoolCipher(String cipher);
 
+    @Nullable
     String getSpoolCipher();
 
     /**
@@ -271,6 +275,7 @@ public interface StreamCachingStrategy extends StaticService {
      * @return          the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
      *                  the body
      */
+    @Nullable
     StreamCache cache(Exchange exchange);
 
     /**
@@ -280,6 +285,7 @@ public interface StreamCachingStrategy extends StaticService {
      * @return         the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
      *                 the body
      */
+    @Nullable
     StreamCache cache(Message message);
 
     /**
@@ -288,6 +294,7 @@ public interface StreamCachingStrategy extends StaticService {
      * @param  value the value
      * @return       the value cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
      */
+    @Nullable
     StreamCache cache(Object value);
 
 }

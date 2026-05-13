@@ -17,9 +17,11 @@
 /**
  * The core Camel API.
  */
+@NullMarked
 @XmlSchema(namespace = "http://camel.apache.org/schema/spring",
            elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel;
 
 import jakarta.xml.bind.annotation.XmlNsForm;
 import jakarta.xml.bind.annotation.XmlSchema;
+import org.jspecify.annotations.NullMarked;

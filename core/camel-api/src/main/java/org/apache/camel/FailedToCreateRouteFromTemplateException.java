@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * Exception when failing to create a {@link Route} from a RouteTemplateDefinition.
  */
@@ -24,13 +26,17 @@ public class FailedToCreateRouteFromTemplateException extends RuntimeCamelExcept
     private final String routeId;
 
     public FailedToCreateRouteFromTemplateException(String routeId, String templateId, String message) {
-        super("Failed to create route " + routeId + " from template " + templateId + " because of " + message);
+        super("Failed to create route " + Objects.requireNonNull(routeId, "routeId") + " from template "
+              + Objects.requireNonNull(templateId, "templateId") + " because of "
+              + Objects.requireNonNull(message, "message"));
         this.routeId = routeId;
         this.templateId = templateId;
     }
 
     public FailedToCreateRouteFromTemplateException(String routeId, String templateId, String message, Throwable cause) {
-        super("Failed to create route " + routeId + " from template " + templateId + " because of " + message, cause);
+        super("Failed to create route " + Objects.requireNonNull(routeId, "routeId") + " from template "
+              + Objects.requireNonNull(templateId, "templateId") + " because of "
+              + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
         this.routeId = routeId;
         this.templateId = templateId;
     }

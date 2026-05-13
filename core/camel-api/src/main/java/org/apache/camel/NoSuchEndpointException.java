@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
@@ -27,14 +29,14 @@ public class NoSuchEndpointException extends RuntimeCamelException {
     private final String uri;
 
     public NoSuchEndpointException(String uri) {
-        super("No endpoint could be found for: " + sanitizeUri(uri)
+        super("No endpoint could be found for: " + sanitizeUri(Objects.requireNonNull(uri, "uri"))
               + ", please check your classpath contains the needed Camel component jar.");
         this.uri = sanitizeUri(uri);
     }
 
     public NoSuchEndpointException(String uri, String resolveMethod) {
-        super("No endpoint could be found for: " + sanitizeUri(uri)
-              + ", please " + resolveMethod);
+        super("No endpoint could be found for: " + sanitizeUri(Objects.requireNonNull(uri, "uri"))
+              + ", please " + Objects.requireNonNull(resolveMethod, "resolveMethod"));
         this.uri = sanitizeUri(uri);
     }
 

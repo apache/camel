@@ -206,6 +206,38 @@ public void process(Exchange exchange) throws Exception {
 }
 ----
 
+==== Custom spans or third party spans hierarchy
+
+In complex integrations it is advisable to have third party dependencies or add custom spans at a Processor level in order to get advanced telemetry information. When these spans are added at Processor level, then, you can expect the span to be nested under the specific core Processor. For example:
+
+[source,java]
+----
+    from("direct:start")
+            .bean(MyBean.class)
+...
+    class MyBean {
+        @WithSpan
+        public void myLogic() {
+            // custom logic
+        }
+    }
+----
+
+You should expect your custom span "myLogic" to be nested under the Bean processor span.
+
+If you instead call it with an endpoint producer, the process is converted to an event, and as we cannot capture the scope, then it would nest the custom span under the endpoint instead. For example:
+
+[source,java]
+----
+    from("direct:start")
+            .to("bean:myBean")
+...
+----
+
+The spans produced are slightly different because now they include an additional span for the endpoint ("to" node). And, more important, as highlighted above, the custom span is going to be nested directly under the endpoint span "to" instead of the processor span ("bean").
+
+For this reason, whenever you need to provide custom telemetry information, it is highly advisable to call directly the processors instead of the endpoints DSL. Otherwise you just have to expect the custom span to be nested under the endpoint.
+
 === Baggage customization
 
 `Baggage` is a way to attach key-value metadata to a request and carry it across service boundaries. In the context of OpenTelemetry, baggage travels along with the context (like trace/span), but it's meant for custom data you define, not telemetry internals. Camel allows you to programmatically provide any `Baggage` information via header settings. Whenever the component finds an header defined as `OTEL_BAGGAGE_xyz` it will consider it as a baggage variable named `xyz`. For example, in Java DSL:

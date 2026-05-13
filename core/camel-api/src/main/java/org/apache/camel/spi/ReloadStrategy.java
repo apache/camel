@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * SPI strategy for reloading.
@@ -52,5 +53,6 @@ public interface ReloadStrategy extends StaticService, CamelContextAware {
     /**
      * Gets the last error if reloading failed
      */
+    @Nullable
     Exception getLastError();
 }

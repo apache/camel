@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Template for working with Camel and sending {@link Message} instances in an {@link Exchange} to an {@link Endpoint}
@@ -129,6 +130,7 @@ public interface FluentProducerTemplate extends Service {
      *
      * @return the default endpoint instance
      */
+    @Nullable
     Endpoint getDefaultEndpoint();
 
     /**
@@ -190,7 +192,7 @@ public interface FluentProducerTemplate extends Service {
      * @param key   the key of the header
      * @param value the value of the header
      */
-    FluentProducerTemplate withHeader(String key, Object value);
+    FluentProducerTemplate withHeader(String key, @Nullable Object value);
 
     /**
      * Set the exchange properties
@@ -211,7 +213,7 @@ public interface FluentProducerTemplate extends Service {
      * @param key   the key of the exchange property
      * @param value the value of the exchange property
      */
-    FluentProducerTemplate withExchangeProperty(String key, Object value);
+    FluentProducerTemplate withExchangeProperty(String key, @Nullable Object value);
 
     /**
      * Set the variables
@@ -232,7 +234,7 @@ public interface FluentProducerTemplate extends Service {
      * @param key   the key of the variable
      * @param value the value of the variable
      */
-    FluentProducerTemplate withVariable(String key, Object value);
+    FluentProducerTemplate withVariable(String key, @Nullable Object value);
 
     /**
      * Set the message body
@@ -242,7 +244,7 @@ public interface FluentProducerTemplate extends Service {
      *
      * @param body the body
      */
-    FluentProducerTemplate withBody(Object body);
+    FluentProducerTemplate withBody(@Nullable Object body);
 
     /**
      * Set the message body after converting it to the given type
@@ -253,7 +255,7 @@ public interface FluentProducerTemplate extends Service {
      * @param body the body
      * @param type the type which the body should be converted to
      */
-    FluentProducerTemplate withBodyAs(Object body, Class<?> type);
+    FluentProducerTemplate withBodyAs(@Nullable Object body, Class<?> type);
 
     /**
      * To customize the producer template for advanced usage like to set the executor service to use.
@@ -403,6 +405,7 @@ public interface FluentProducerTemplate extends Service {
      * @return                         the result
      * @throws CamelExecutionException is thrown if error occurred
      */
+    @Nullable
     Object request() throws CamelExecutionException;
 
     /**
@@ -412,7 +415,7 @@ public interface FluentProducerTemplate extends Service {
      * @return                         the result
      * @throws CamelExecutionException is thrown if error occurred
      */
-    <T> T request(Class<T> type) throws CamelExecutionException;
+    <T> @Nullable T request(Class<T> type) throws CamelExecutionException;
 
     /**
      * Sends asynchronously to the given endpoint (InOut).

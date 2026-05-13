@@ -21,6 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -434,7 +435,7 @@ public abstract class BaseService {
     /**
      * Implementations may return an object that will be closed when the lifecycle action is completed.
      */
-    protected AutoCloseable doLifecycleChange() {
+    protected @Nullable AutoCloseable doLifecycleChange() {
         return null;
     }
 

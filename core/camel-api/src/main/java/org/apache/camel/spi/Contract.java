@@ -16,21 +16,24 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A Contract which represents the input type and/or output type of the {@link Endpoint} or {@link Processor}.
  */
 public class Contract {
 
-    private DataType inputType;
-    private DataType outputType;
+    private @Nullable DataType inputType;
+    private @Nullable DataType outputType;
     private boolean validateInput;
     private boolean validateOutput;
-    private String contractString;
+    private @Nullable String contractString;
 
-    public DataType getInputType() {
+    public @Nullable DataType getInputType() {
         return inputType;
     }
 
@@ -40,6 +43,7 @@ public class Contract {
      * @param inputType input data type
      */
     public void setInputType(String inputType) {
+        Objects.requireNonNull(inputType, "inputType");
         this.inputType = new DataType(inputType);
         this.contractString = null;
     }
@@ -50,11 +54,12 @@ public class Contract {
      * @param clazz Java class which represents input data type
      */
     public void setInputType(Class<?> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
         this.inputType = new DataType(clazz);
         this.contractString = null;
     }
 
-    public DataType getOutputType() {
+    public @Nullable DataType getOutputType() {
         return outputType;
     }
 
@@ -64,6 +69,7 @@ public class Contract {
      * @param outputType output data type
      */
     public void setOutputType(String outputType) {
+        Objects.requireNonNull(outputType, "outputType");
         this.outputType = new DataType(outputType);
         this.contractString = null;
     }
@@ -74,6 +80,7 @@ public class Contract {
      * @param clazz Java class which represents output data type
      */
     public void setOutputType(Class<?> clazz) {
+        Objects.requireNonNull(clazz, "clazz");
         this.outputType = new DataType(clazz);
         this.contractString = null;
     }
@@ -113,7 +120,7 @@ public class Contract {
     }
 
     @Override
-    public boolean equals(Object target) {
+    public boolean equals(@Nullable Object target) {
         if (!(target instanceof Contract)) {
             return false;
         }

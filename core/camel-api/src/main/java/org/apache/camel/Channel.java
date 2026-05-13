@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.spi.InterceptStrategy;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Channel acts as a channel between {@link Processor}s in the route graph.
@@ -35,10 +36,10 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
     void initChannel(
             Route route,
             NamedNode definition,
-            NamedNode childDefinition,
+            @Nullable NamedNode childDefinition,
             List<InterceptStrategy> interceptors,
             Processor nextProcessor,
-            NamedRoute routeDefinition,
+            @Nullable NamedRoute routeDefinition,
             boolean first)
             throws Exception;
 
@@ -54,6 +55,7 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
      *
      * @return the error handler, or <tt>null</tt> if no error handler is used.
      */
+    @Nullable
     Processor getErrorHandler();
 
     /**

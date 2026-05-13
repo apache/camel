@@ -19,8 +19,10 @@ package org.apache.camel.clock;
 
 import java.util.Date;
 import java.util.EnumMap;
+import java.util.Objects;
 
 import org.apache.camel.ContextEvents;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An event clock that tracks the pass of time for different types of context-related events (see {@link ContextEvents})
@@ -39,12 +41,14 @@ public final class ContextClock implements EventClock<ContextEvents> {
     }
 
     @Override
-    public void add(ContextEvents event, Clock clock) {
+    public void add(ContextEvents event, @Nullable Clock clock) {
+        Objects.requireNonNull(event, "event");
         events.put(event, clock);
     }
 
     @Override
-    public Clock get(ContextEvents event) {
+    public @Nullable Clock get(ContextEvents event) {
+        Objects.requireNonNull(event, "event");
         return events.get(event);
     }
 
@@ -56,6 +60,7 @@ public final class ContextClock implements EventClock<ContextEvents> {
      * @return              The elapsed time or the default value if the event is not being tracked
      */
     public long elapsed(ContextEvents event, long defaultValue) {
+        Objects.requireNonNull(event, "event");
         Clock clock = events.get(event);
         if (clock == null) {
             return defaultValue;
@@ -73,6 +78,8 @@ public final class ContextClock implements EventClock<ContextEvents> {
      *                      being tracked
      */
     public Date asDate(ContextEvents event, Date defaultValue) {
+        Objects.requireNonNull(event, "event");
+        Objects.requireNonNull(defaultValue, "defaultValue");
         Clock clock = events.get(event);
         if (clock == null) {
             return defaultValue;
