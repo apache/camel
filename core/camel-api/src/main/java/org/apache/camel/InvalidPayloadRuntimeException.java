@@ -27,14 +27,28 @@ public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
 
     private final transient @Nullable Class<?> type;
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     */
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type) {
         this(exchange, type, exchange.getIn());
     }
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     * @param cause    the cause of the failure
+     */
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Throwable cause) {
         this(exchange, type, exchange.getIn(), cause);
     }
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     * @param message  the message whose body could not be converted
+     */
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Message message) {
         super("No body available of type: " + Objects.requireNonNull(type, "type").getName()
               + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())
@@ -42,6 +56,12 @@ public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
         this.type = type;
     }
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     * @param message  the message whose body could not be converted
+     * @param cause    the cause of the failure
+     */
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Message message, Throwable cause) {
         super("No body available of type: " + Objects.requireNonNull(type, "type").getName()
               + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())

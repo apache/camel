@@ -1000,7 +1000,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Creates a new {@link ProducerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
      * See this FAQ before use:
-     * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
+     * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
      * use too many threads with ProducerTemplate?</a>
      * <p/>
      * <b>Important:</b> Make sure to call {@link org.apache.camel.ProducerTemplate#stop()} when you are done using the
@@ -1020,7 +1020,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Creates a new {@link ProducerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
      * See this FAQ before use:
-     * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
+     * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
      * use too many threads with ProducerTemplate?</a>
      * <p/>
      * <b>Important:</b> Make sure to call {@link ProducerTemplate#stop()} when you are done using the template, to
@@ -1036,7 +1036,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Creates a new {@link FluentProducerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
      * See this FAQ before use:
-     * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
+     * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
      * use too many threads with ProducerTemplate?</a>
      * <p/>
      * <b>Important:</b> Make sure to call {@link org.apache.camel.FluentProducerTemplate#stop()} when you are done
@@ -1056,7 +1056,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Creates a new {@link FluentProducerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
      * See this FAQ before use:
-     * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
+     * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
      * use too many threads with ProducerTemplate?</a>
      * <p/>
      * <b>Important:</b> Make sure to call {@link FluentProducerTemplate#stop()} when you are done using the template,
@@ -1072,7 +1072,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Creates a new {@link ConsumerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
      * See this FAQ before use:
-     * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
+     * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
      * use too many threads with ProducerTemplate?</a> as it also applies for ConsumerTemplate.
      * <p/>
      * <b>Important:</b> Make sure to call {@link ConsumerTemplate#stop()} when you are done using the template, to
@@ -1092,7 +1092,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Creates a new {@link ConsumerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
      * See this FAQ before use:
-     * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
+     * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html"> Why does Camel
      * use too many threads with ProducerTemplate?</a> as it also applies for ConsumerTemplate.
      * <p/>
      * <b>Important:</b> Make sure to call {@link ConsumerTemplate#stop()} when you are done using the template, to
@@ -1177,7 +1177,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
      * which are used to configure global options on CamelContext, such as a maximum debug logging length etc. For
      * property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details at the
-     * <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
+     * <a href="https://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
      * @param globalOptions global options that can be referenced in the camel context
      */
@@ -1189,7 +1189,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
      * which are used to configure global options on CamelContext, such as a maximum debug logging length etc. For
      * property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details at the
-     * <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
+     * <a href="https://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
      * @return global options for this context
      */
@@ -1201,7 +1201,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
      * which are used to configure global options on CamelContext, such as a maximum debug logging length etc. For
      * property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details at the
-     * <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
+     * <a href="https://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
      * @return the string value of the global option
      */

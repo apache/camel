@@ -21,7 +21,7 @@ import org.apache.camel.Service;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Access to a repository of keys to implement the <a href="http://camel.apache.org/claim-check.html">Claim Check</a>
+ * Access to a repository of keys to implement the <a href="https://camel.apache.org/claim-check.html">Claim Check</a>
  * pattern.
  * <p/>
  * The <tt>add</tt> and <tt>contains</tt> methods is operating according to the {@link java.util.Map} contract, and the

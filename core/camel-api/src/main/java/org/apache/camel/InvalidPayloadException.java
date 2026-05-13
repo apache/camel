@@ -27,10 +27,19 @@ public class InvalidPayloadException extends CamelExchangeException {
 
     private final transient @Nullable Class<?> type;
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     */
     public InvalidPayloadException(Exchange exchange, Class<?> type) {
         this(exchange, type, exchange.getIn());
     }
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     * @param message  the message whose body could not be converted
+     */
     public InvalidPayloadException(Exchange exchange, Class<?> type, Message message) {
         super("No body available of type: " + Objects.requireNonNull(type, "type").getCanonicalName()
               + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())
@@ -38,6 +47,12 @@ public class InvalidPayloadException extends CamelExchangeException {
         this.type = type;
     }
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param type     the expected body type
+     * @param message  the message whose body could not be converted
+     * @param cause    the cause of the failure
+     */
     public InvalidPayloadException(Exchange exchange, Class<?> type, Message message, Throwable cause) {
         super("No body available of type: " + Objects.requireNonNull(type, "type").getCanonicalName()
               + NoSuchPropertyException.valueDescription(Objects.requireNonNull(message, "message").getBody())

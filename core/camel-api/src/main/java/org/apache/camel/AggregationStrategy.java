@@ -44,13 +44,13 @@ import org.slf4j.LoggerFactory;
  * market data prices; where old values are of little use.
  * <p/>
  * If an implementation also implements {@link org.apache.camel.Service} then any
- * <a href="http://camel.apache.org/eip">EIP</a> that allowing configuring a {@link AggregationStrategy} will invoke the
- * {@link org.apache.camel.Service#start()} and {@link org.apache.camel.Service#stop()} to control the lifecycle aligned
- * with the EIP itself.
+ * <a href="https://camel.apache.org/eip">EIP</a> that allowing configuring a {@link AggregationStrategy} will invoke
+ * the {@link org.apache.camel.Service#start()} and {@link org.apache.camel.Service#stop()} to control the lifecycle
+ * aligned with the EIP itself.
  * <p/>
  * If an implementation also implements {@link org.apache.camel.CamelContextAware} then any
- * <a href="http://camel.apache.org/eip">EIP</a> that allowing configuring a {@link AggregationStrategy} will inject the
- * {@link org.apache.camel.CamelContext} prior to using the aggregation strategy.
+ * <a href="https://camel.apache.org/eip">EIP</a> that allowing configuring a {@link AggregationStrategy} will inject
+ * the {@link org.apache.camel.CamelContext} prior to using the aggregation strategy.
  */
 public interface AggregationStrategy {
 

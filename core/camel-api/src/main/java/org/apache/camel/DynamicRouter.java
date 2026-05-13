@@ -23,11 +23,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that this method is to be used as a <a href="http://camel.apache.org/dynamic-router.html">Dynamic
+ * Indicates that this method is to be used as a <a href="https://camel.apache.org/dynamic-router.html">Dynamic
  * Router</a> routing the incoming message through a series of processing steps.
  *
  * When a message {@link Exchange} is received from an {@link Endpoint} then the
- * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a> mechanism is used to map the incoming
+ * <a href="https://camel.apache.org/bean-integration.html">Bean Integration</a> mechanism is used to map the incoming
  * {@link Message} to the method parameters.
  *
  * The return value of the method is then converted to either a {@link java.util.Collection} or array of objects where

@@ -19,8 +19,9 @@ package org.apache.camel;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A pluggable strategy to be able to convert objects <a href="http://camel.apache.org/type-converter.html">to different
- * types</a> such as to and from String, InputStream/OutputStream, Reader/Writer, Document, byte[], ByteBuffer etc
+ * A pluggable strategy to be able to convert objects <a href="https://camel.apache.org/type-converter.html">to
+ * different types</a> such as to and from String, InputStream/OutputStream, Reader/Writer, Document, byte[], ByteBuffer
+ * etc
  */
 public interface TypeConverter {
 

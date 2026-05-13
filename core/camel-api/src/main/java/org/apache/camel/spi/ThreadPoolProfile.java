@@ -28,7 +28,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * A profile which defines thread pool settings.
  * <p/>
- * See more details at <a href="http://camel.apache.org/threading-model.html">threading model</a>
+ * See more details at <a href="https://camel.apache.org/threading-model.html">threading model</a>
  */
 public class ThreadPoolProfile implements Serializable, Cloneable {
 

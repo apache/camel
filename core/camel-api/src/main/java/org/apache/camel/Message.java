@@ -24,7 +24,7 @@ import org.apache.camel.trait.message.MessageTrait;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Implements the <a href="http://camel.apache.org/message.html">Message</a> pattern and represents an inbound or
+ * Implements the <a href="https://camel.apache.org/message.html">Message</a> pattern and represents an inbound or
  * outbound message as part of an {@link Exchange}.
  * <p/>
  * Headers are represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}. The
@@ -232,7 +232,7 @@ public interface Message {
      * Notice if the message body is stream based then calling this method multiple times may lead to the stream not
      * being able to be re-read again. You can enable stream caching and call the {@link StreamCache#reset()} method to
      * reset the stream to be able to re-read again (if possible). See more details about
-     * <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
+     * <a href="https://camel.apache.org/stream-caching.html">stream caching</a>.
      *
      * @return the body, can be <tt>null</tt>
      */
@@ -244,7 +244,7 @@ public interface Message {
      * <p/>
      * Notice if the message body is stream based then calling this method multiple times may lead to the stream not
      * being able to be re-read again. See more details about
-     * <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
+     * <a href="https://camel.apache.org/stream-caching.html">stream caching</a>.
      *
      * @return                         the body, is never <tt>null</tt>
      * @throws InvalidPayloadException Is thrown if the body being <tt>null</tt> or wrong class type
@@ -257,7 +257,7 @@ public interface Message {
      * Notice if the message body is stream based then calling this method multiple times may lead to the stream not
      * being able to be re-read again. You can enable stream caching and call the {@link StreamCache#reset()} method to
      * reset the stream to be able to re-read again (if possible). See more details about
-     * <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
+     * <a href="https://camel.apache.org/stream-caching.html">stream caching</a>.
      * <p/>
      * The helper method {@link org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange, Class)} can
      * be used instead that gets the body, convert to the given type, and ensures to reset the body if its stream based.
@@ -277,7 +277,7 @@ public interface Message {
      * Notice if the message body is stream based then calling this method multiple times may lead to the stream not
      * being able to be re-read again. You can enable stream caching and call the {@link StreamCache#reset()} method to
      * reset the stream to be able to re-read again (if possible). See more details about
-     * <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
+     * <a href="https://camel.apache.org/stream-caching.html">stream caching</a>.
      * <p/>
      * The helper method {@link org.apache.camel.support.ExchangeHelper#getBodyAndResetStreamCache(Exchange, Class)} can
      * be used instead that gets the body, convert to the given type, and ensures to reset the body if its stream based.

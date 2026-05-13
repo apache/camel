@@ -25,6 +25,11 @@ public class FailedToStartComponentException extends RuntimeCamelException {
 
     private final String componentName;
 
+    /**
+     * @param componentName the name of the component that failed to start
+     * @param message       the detail message describing the failure
+     * @param cause         the cause of the failure
+     */
     public FailedToStartComponentException(String componentName, String message, Throwable cause) {
         super("Failed to start component " + Objects.requireNonNull(componentName, "componentName") + " because of "
               + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));

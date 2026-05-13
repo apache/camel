@@ -22,8 +22,8 @@ import org.jspecify.annotations.Nullable;
  * Template for working with Camel and consuming {@link Message} instances in an {@link Exchange} from an
  * {@link Endpoint}. <br/>
  * <p/>
- * This template is an implementation of the <a href="http://camel.apache.org/polling-consumer.html">Polling Consumer
- * EIP</a>. This is <b>not</b> the <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer
+ * This template is an implementation of the <a href="https://camel.apache.org/polling-consumer.html">Polling Consumer
+ * EIP</a>. This is <b>not</b> the <a href="https://camel.apache.org/event-driven-consumer.html">Event Driven Consumer
  * EIP</a>. <br/>
  * <p/>
  * The {@link ConsumerTemplate} is <b>thread safe</b>. <br/>
@@ -36,8 +36,8 @@ import org.jspecify.annotations.Nullable;
  * the template.
  * <p/>
  * <b>Important note on usage:</b> See this
- * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a> before
- * using, it applies to this {@link ConsumerTemplate} as well.
+ * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
+ * before using, it applies to this {@link ConsumerTemplate} as well.
  *
  * @see ProducerTemplate
  * @see FluentProducerTemplate
