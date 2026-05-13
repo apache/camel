@@ -60,7 +60,7 @@ permissions:
 
 jobs:
   build:
-    if: github.repository == 'apache/camel'
+    if: github.repository == 'apache/camel' || github.repository == 'gnodet/camel'
     permissions:
       contents: read
     runs-on: ubuntu-latest
