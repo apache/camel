@@ -73,6 +73,16 @@ sjms:queue:foo?objectMessageEnabled=true
 sjms2:queue:foo?objectMessageEnabled=true
 ----
 
+=== camel-aws-bedrock
+
+The `applyGuardrail` producer operation now reads the guardrail identifier from a new dedicated header
+`CamelAwsBedrockGuardrailIdentifier` (constant `BedrockConstants.GUARDRAIL_IDENTIFIER`, typed `String`)
+instead of `CamelAwsBedrockGuardrailConfig`. The `CamelAwsBedrockGuardrailConfig` header is typed
+`GuardrailConfiguration` and is reserved for the `converse` and `converseStream` operations; the
+previous code path silently produced `null` whenever a route mixed `converse` and `applyGuardrail`
+calls. If you were not setting the guardrail identifier via header, the endpoint-level
+`guardrailIdentifier` option continues to work without changes.
+
 === camel-hazelcast
 
 Hazelcast instances created and managed by Camel (when no user-supplied
