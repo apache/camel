@@ -20,7 +20,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.net.ftp.FTPSClient;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -31,10 +30,10 @@ import org.junit.jupiter.api.condition.EnabledIf;
 public class FileToFtpsWithFtpClientConfigRefIT extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
 
     @BindToRegistry("ftpsClient")
-    private final FTPSClient client = new FTPSClient("SSLv3");
+    private final FTPSClient client = new FTPSClient("TLSv1.2");
 
     @BindToRegistry("ftpsClientIn")
-    private final FTPSClient client1 = new FTPSClient("SSLv3");
+    private final FTPSClient client1 = new FTPSClient("TLSv1.2");
 
     private String getFtpUrl(boolean in) {
         return "ftps://admin@localhost:{{ftp.server.port}}/tmp2/camel?password=admin&initialDelay=2000&ftpClient=#ftpsClient"
@@ -42,7 +41,6 @@ public class FileToFtpsWithFtpClientConfigRefIT extends FtpsServerExplicitSSLWit
                + "&disableSecureDataChannelDefaults=true&delete=true";
     }
 
-    @Disabled("CAMEL-16784:Disable testFromFileToFtp tests")
     @Test
     public void testFromFileToFtp() throws Exception {
 

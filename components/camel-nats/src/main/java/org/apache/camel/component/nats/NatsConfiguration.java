@@ -83,6 +83,8 @@ public class NatsConfiguration implements Cloneable {
     private long nackWait = 5000;
     @UriParam(label = "consumer")
     private long maxDeliver;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean manualAck;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
     @UriParam(label = "common", defaultValue = "true")
@@ -99,6 +101,10 @@ public class NatsConfiguration implements Cloneable {
     private ConsumerConfiguration consumerConfiguration;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean pullSubscription = true;
+    @UriParam(label = "consumer", defaultValue = "10")
+    private int pullBatchSize = 10;
+    @UriParam(label = "consumer", defaultValue = "1000")
+    private long pullFetchTimeout = 1000;
     @UriParam(label = "consumer")
     private String durableName;
     @UriParam(label = "security")
@@ -568,6 +574,30 @@ public class NatsConfiguration implements Cloneable {
         this.pullSubscription = pullSubscription;
     }
 
+    public int getPullBatchSize() {
+        return pullBatchSize;
+    }
+
+    /**
+     * Maximum number of messages to fetch per pull request when using a JetStream Pull Subscription. Only used when
+     * {@code pullSubscription=true}.
+     */
+    public void setPullBatchSize(int pullBatchSize) {
+        this.pullBatchSize = pullBatchSize;
+    }
+
+    public long getPullFetchTimeout() {
+        return pullFetchTimeout;
+    }
+
+    /**
+     * Maximum time (in milliseconds) to wait for a batch of messages to be available on the server during a single
+     * fetch when using a JetStream Pull Subscription. Only used when {@code pullSubscription=true}.
+     */
+    public void setPullFetchTimeout(long pullFetchTimeout) {
+        this.pullFetchTimeout = pullFetchTimeout;
+    }
+
     /**
      * The name to assign to the JetStream durable consumer.
      * <p>
@@ -650,5 +680,26 @@ public class NatsConfiguration implements Cloneable {
      */
     public void setMaxDeliver(long maxDeliver) {
         this.maxDeliver = maxDeliver;
+    }
+
+    public boolean isManualAck() {
+        return manualAck;
+    }
+
+    /**
+     * Whether to allow doing manual acknowledgment via {@link NatsManualAck}.
+     * <p/>
+     * If this option is enabled then an instance of {@link NatsManualAck} is stored on the
+     * {@link org.apache.camel.Exchange} message header, which allows end users to access this API and perform manual
+     * ack/nak/term operations via the JetStream consumer.
+     * <p/>
+     * When enabled, the automatic acknowledgment on exchange completion is disabled. If the user does not call any ack
+     * method, the message remains unacknowledged and NATS will redeliver it after the ackWait timeout expires.
+     * <p/>
+     * This option is only applicable when JetStream is enabled (jetstreamEnabled=true). It has no effect when
+     * ackPolicy=None since the server acknowledges messages automatically on delivery.
+     */
+    public void setManualAck(boolean manualAck) {
+        this.manualAck = manualAck;
     }
 }

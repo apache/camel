@@ -45,6 +45,7 @@ public class SpanKindTest extends OpenTelemetryTracerTestSupport {
         OpenTelemetryTracer tst = new OpenTelemetryTracer();
         tst.setTracer(otelExtension.getOpenTelemetry().getTracer("spanKindTest"));
         tst.setContextPropagators(otelExtension.getOpenTelemetry().getPropagators());
+        tst.setDisableCoreProcessors(true);
         CamelContext context = super.createCamelContext();
 
         // Register mock HTTP component for testing

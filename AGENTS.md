@@ -251,6 +251,16 @@ Annotations:
   add `security = "insecure:ssl"` / `"insecure:serialization"` / `"insecure:dev"` on `@UriParam`.
   See [`proposals/security.adoc`](proposals/security.adoc) for categories and rationale.
 
+Import Style:
+- Do NOT use fully qualified class names (FQCNs) in Java code. Always add an `import` statement
+  and use the simple class name (e.g., write `List` not `java.util.List`).
+- Exception: when two classes share the same simple name (e.g., `java.util.Date` and `java.sql.Date`),
+  import the most-used one and qualify the other.
+- This applies to all code: production, test, and test-infra.
+- Generated code (`src/generated/`) is excluded from this rule.
+- The build automatically shortens unnecessary FQCNs via OpenRewrite (`rewrite-maven-plugin`).
+  CI will fail if uncommitted FQCN changes are detected after the build.
+
 ## Adding Components
 
 ### Direct child of components/

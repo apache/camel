@@ -41,6 +41,9 @@ import org.keycloak.representations.idm.ClientScopeRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.IdentityProviderRepresentation;
+import org.keycloak.representations.idm.MemberRepresentation;
+import org.keycloak.representations.idm.OrganizationDomainRepresentation;
+import org.keycloak.representations.idm.OrganizationRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -67,6 +70,10 @@ public class KeycloakProducer extends DefaultProducer {
     public static final String MISSING_CLIENT_ID = "Client ID must be specified";
     public static final String MISSING_CLIENT_UUID = "Client UUID must be specified";
     public static final String MISSING_PASSWORD = "Password must be specified";
+    public static final String MISSING_ORGANIZATION_ID = "Organization ID must be specified";
+    public static final String MISSING_ORGANIZATION_NAME = "Organization name must be specified";
+    public static final String MISSING_ORGANIZATION_MEMBER_ID = "Organization member (user) ID must be specified";
+    public static final String MISSING_ORGANIZATION_IDP_ALIAS = "Organization identity provider alias must be specified";
 
     private transient String keycloakProducerToString;
 
@@ -333,6 +340,42 @@ public class KeycloakProducer extends DefaultProducer {
                 break;
             case bulkUpdateUsers:
                 bulkUpdateUsers(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case createOrganization:
+                createOrganization(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case updateOrganization:
+                updateOrganization(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case deleteOrganization:
+                deleteOrganization(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case getOrganization:
+                getOrganization(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case listOrganizations:
+                listOrganizations(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case searchOrganizations:
+                searchOrganizations(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case addOrganizationMember:
+                addOrganizationMember(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case removeOrganizationMember:
+                removeOrganizationMember(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case listOrganizationMembers:
+                listOrganizationMembers(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case linkOrganizationIdentityProvider:
+                linkOrganizationIdentityProvider(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case unlinkOrganizationIdentityProvider:
+                unlinkOrganizationIdentityProvider(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case listOrganizationIdentityProviders:
+                listOrganizationIdentityProviders(getEndpoint().getKeycloakClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
@@ -2448,6 +2491,279 @@ public class KeycloakProducer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(summary);
+    }
+
+    // Organization operations (Keycloak 26+)
+    private void createOrganization(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof OrganizationRepresentation orgRepresentation) {
+                Response response = keycloakClient.realm(realmName).organizations().create(orgRepresentation);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(response);
+            }
+        } else {
+            String orgName = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_NAME, String.class);
+            if (ObjectHelper.isEmpty(orgName)) {
+                throw new IllegalArgumentException(MISSING_ORGANIZATION_NAME);
+            }
+            OrganizationRepresentation org = new OrganizationRepresentation();
+            org.setName(orgName);
+            org.setEnabled(true);
+
+            String alias = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ALIAS, String.class);
+            if (ObjectHelper.isNotEmpty(alias)) {
+                org.setAlias(alias);
+            }
+            String description = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_DESCRIPTION, String.class);
+            if (ObjectHelper.isNotEmpty(description)) {
+                org.setDescription(description);
+            }
+            String redirectUrl = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_REDIRECT_URL, String.class);
+            if (ObjectHelper.isNotEmpty(redirectUrl)) {
+                org.setRedirectUrl(redirectUrl);
+            }
+            String domainName = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_DOMAIN, String.class);
+            if (ObjectHelper.isNotEmpty(domainName)) {
+                OrganizationDomainRepresentation domain = new OrganizationDomainRepresentation();
+                domain.setName(domainName);
+                org.addDomain(domain);
+            }
+
+            Response response = keycloakClient.realm(realmName).organizations().create(org);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(response);
+        }
+    }
+
+    private void updateOrganization(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String orgId = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ID, String.class);
+        if (ObjectHelper.isEmpty(orgId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof OrganizationRepresentation orgRepresentation) {
+                Response response = keycloakClient.realm(realmName).organizations().get(orgId).update(orgRepresentation);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(response);
+            }
+        } else {
+            throw new IllegalArgumentException("Update organization requires POJO request with OrganizationRepresentation");
+        }
+    }
+
+    private void deleteOrganization(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String orgId = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ID, String.class);
+        if (ObjectHelper.isEmpty(orgId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
+        }
+
+        keycloakClient.realm(realmName).organizations().get(orgId).delete();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Organization deleted successfully");
+    }
+
+    private void getOrganization(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String orgId = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ID, String.class);
+        if (ObjectHelper.isEmpty(orgId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
+        }
+
+        OrganizationRepresentation org = keycloakClient.realm(realmName).organizations().get(orgId).toRepresentation();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(org);
+    }
+
+    private void listOrganizations(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        Integer firstResult = exchange.getIn().getHeader(KeycloakConstants.FIRST_RESULT, Integer.class);
+        Integer maxResults = exchange.getIn().getHeader(KeycloakConstants.MAX_RESULTS, Integer.class);
+
+        List<OrganizationRepresentation> organizations;
+        if (firstResult != null || maxResults != null) {
+            organizations = keycloakClient.realm(realmName).organizations().list(firstResult, maxResults);
+        } else {
+            organizations = keycloakClient.realm(realmName).organizations().getAll();
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(organizations);
+    }
+
+    private void searchOrganizations(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String search = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_SEARCH, String.class);
+        if (ObjectHelper.isEmpty(search)) {
+            throw new IllegalArgumentException("Organization search query must be specified");
+        }
+
+        Integer firstResult = exchange.getIn().getHeader(KeycloakConstants.FIRST_RESULT, Integer.class);
+        Integer maxResults = exchange.getIn().getHeader(KeycloakConstants.MAX_RESULTS, Integer.class);
+
+        List<OrganizationRepresentation> organizations;
+        if (firstResult != null || maxResults != null) {
+            organizations = keycloakClient.realm(realmName).organizations().search(search, Boolean.FALSE, firstResult,
+                    maxResults);
+        } else {
+            organizations = keycloakClient.realm(realmName).organizations().search(search);
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(organizations);
+    }
+
+    private void addOrganizationMember(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String orgId = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ID, String.class);
+        if (ObjectHelper.isEmpty(orgId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_MEMBER_ID);
+        }
+
+        Response response = keycloakClient.realm(realmName).organizations().get(orgId).members().addMember(userId);
+        Message message = getMessageForResponse(exchange);
+        message.setBody(response);
+    }
+
+    private void removeOrganizationMember(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String orgId = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ID, String.class);
+        if (ObjectHelper.isEmpty(orgId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_MEMBER_ID);
+        }
+
+        keycloakClient.realm(realmName).organizations().get(orgId).members().member(userId).delete();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Organization member removed successfully");
+    }
+
+    private void listOrganizationMembers(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String orgId = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ID, String.class);
+        if (ObjectHelper.isEmpty(orgId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
+        }
+
+        Integer firstResult = exchange.getIn().getHeader(KeycloakConstants.FIRST_RESULT, Integer.class);
+        Integer maxResults = exchange.getIn().getHeader(KeycloakConstants.MAX_RESULTS, Integer.class);
+
+        List<MemberRepresentation> members;
+        if (firstResult != null || maxResults != null) {
+            members = keycloakClient.realm(realmName).organizations().get(orgId).members().list(firstResult, maxResults);
+        } else {
+            members = keycloakClient.realm(realmName).organizations().get(orgId).members().getAll();
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(members);
+    }
+
+    private void linkOrganizationIdentityProvider(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String orgId = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ID, String.class);
+        if (ObjectHelper.isEmpty(orgId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
+        }
+
+        String idpAlias = exchange.getIn().getHeader(KeycloakConstants.IDP_ALIAS, String.class);
+        if (ObjectHelper.isEmpty(idpAlias)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_IDP_ALIAS);
+        }
+
+        Response response
+                = keycloakClient.realm(realmName).organizations().get(orgId).identityProviders().addIdentityProvider(idpAlias);
+        Message message = getMessageForResponse(exchange);
+        message.setBody(response);
+    }
+
+    private void unlinkOrganizationIdentityProvider(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String orgId = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ID, String.class);
+        if (ObjectHelper.isEmpty(orgId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
+        }
+
+        String idpAlias = exchange.getIn().getHeader(KeycloakConstants.IDP_ALIAS, String.class);
+        if (ObjectHelper.isEmpty(idpAlias)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_IDP_ALIAS);
+        }
+
+        keycloakClient.realm(realmName).organizations().get(orgId).identityProviders().get(idpAlias).delete();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Organization identity provider unlinked successfully");
+    }
+
+    private void listOrganizationIdentityProviders(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String orgId = exchange.getIn().getHeader(KeycloakConstants.ORGANIZATION_ID, String.class);
+        if (ObjectHelper.isEmpty(orgId)) {
+            throw new IllegalArgumentException(MISSING_ORGANIZATION_ID);
+        }
+
+        List<IdentityProviderRepresentation> idps
+                = keycloakClient.realm(realmName).organizations().get(orgId).identityProviders().getIdentityProviders();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(idps);
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

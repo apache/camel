@@ -23,6 +23,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
 
 @UriParams
@@ -34,6 +35,9 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private BedrockAgentRuntimeClient bedrockAgentRuntimeClient;
+    @UriParam
+    @Metadata(label = "advanced", autowired = true)
+    private BedrockAgentRuntimeAsyncClient bedrockAgentRuntimeAsyncClient;
     @UriParam(label = "security", security = "secret")
     private String accessKey;
     @UriParam(label = "security", security = "secret")
@@ -49,6 +53,12 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
     @UriParam
     @Metadata(required = true)
     private BedrockAgentRuntimeOperations operation;
+    @UriParam(label = "flow")
+    private String flowIdentifier;
+    @UriParam(label = "flow")
+    private String flowAliasIdentifier;
+    @UriParam(label = "flow", defaultValue = "false")
+    private boolean enableTrace;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "proxy")
@@ -83,6 +93,18 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
      */
     public void setBedrockAgentRuntimeClient(BedrockAgentRuntimeClient bedrockRuntimeClient) {
         this.bedrockAgentRuntimeClient = bedrockRuntimeClient;
+    }
+
+    public BedrockAgentRuntimeAsyncClient getBedrockAgentRuntimeAsyncClient() {
+        return bedrockAgentRuntimeAsyncClient;
+    }
+
+    /**
+     * To use an existing configured AWS Bedrock Agent Runtime async client (required for invokeFlow which streams
+     * events back).
+     */
+    public void setBedrockAgentRuntimeAsyncClient(BedrockAgentRuntimeAsyncClient bedrockAgentRuntimeAsyncClient) {
+        this.bedrockAgentRuntimeAsyncClient = bedrockAgentRuntimeAsyncClient;
     }
 
     public String getAccessKey() {
@@ -287,6 +309,42 @@ public class BedrockAgentRuntimeConfiguration implements Cloneable, AwsCommonCon
      */
     public void setKnowledgeBaseId(String knowledgeBaseId) {
         this.knowledgeBaseId = knowledgeBaseId;
+    }
+
+    public String getFlowIdentifier() {
+        return flowIdentifier;
+    }
+
+    /**
+     * The unique identifier of the Bedrock flow to invoke (used by the invokeFlow operation). Can be overridden per
+     * exchange via the CamelAwsBedrockAgentRuntimeFlowIdentifier header.
+     */
+    public void setFlowIdentifier(String flowIdentifier) {
+        this.flowIdentifier = flowIdentifier;
+    }
+
+    public String getFlowAliasIdentifier() {
+        return flowAliasIdentifier;
+    }
+
+    /**
+     * The unique identifier of the Bedrock flow alias to invoke (used by the invokeFlow operation). Can be overridden
+     * per exchange via the CamelAwsBedrockAgentRuntimeFlowAliasIdentifier header.
+     */
+    public void setFlowAliasIdentifier(String flowAliasIdentifier) {
+        this.flowAliasIdentifier = flowAliasIdentifier;
+    }
+
+    public boolean isEnableTrace() {
+        return enableTrace;
+    }
+
+    /**
+     * Enables tracing for the invokeFlow operation. When enabled, the producer collects FlowTraceEvent entries and
+     * publishes them in the CamelAwsBedrockAgentRuntimeFlowTraces header.
+     */
+    public void setEnableTrace(boolean enableTrace) {
+        this.enableTrace = enableTrace;
     }
 
     // *************************************************

@@ -24,6 +24,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.StatefulService;
 import org.apache.camel.util.StopWatch;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which can be used from JMX with
@@ -61,6 +62,7 @@ public interface BacklogDebugger extends StatefulService {
      * comma. Use special value _all_routes_ to add a breakpoint for the first node for every route, in other words this
      * makes it easy to debug from the beginning of every route without knowing the exact node ids.
      */
+    @Nullable
     String getInitialBreakpoints();
 
     /**
@@ -312,6 +314,7 @@ public interface BacklogDebugger extends StatefulService {
      * @param  id node id for the breakpoint
      * @return    the suspended exchange or null if there isn't one suspended at the given breakpoint.
      */
+    @Nullable
     Exchange getSuspendedExchange(String id);
 
     /**
@@ -320,6 +323,7 @@ public interface BacklogDebugger extends StatefulService {
      * @param  id node id for the breakpoint
      * @return    the trace event or null if there isn't one suspended at the given breakpoint.
      */
+    @Nullable
     BacklogTracerEventMessage getSuspendedBreakpointMessage(String id);
 
     /**
@@ -433,6 +437,7 @@ public interface BacklogDebugger extends StatefulService {
     /**
      * Callback invoked before hitting a breakpoint
      */
+    @Nullable
     StopWatch beforeProcess(Exchange exchange, Processor processor, NamedNode definition);
 
     /**

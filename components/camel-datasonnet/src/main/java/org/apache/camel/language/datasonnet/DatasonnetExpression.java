@@ -141,7 +141,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                     .withLibrary(CML.getInstance())
                     .withDefaultOutput(MediaTypes.APPLICATION_JAVA);
 
-            Set<Library> additionalLibraries = exchange.getContext().getRegistry().findByType(com.datasonnet.spi.Library.class);
+            Set<Library> additionalLibraries = exchange.getContext().getRegistry().findByType(Library.class);
             for (Library lib : additionalLibraries) {
                 builder = builder.withLibrary(lib);
             }
@@ -214,7 +214,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                     .withLibrary(CML.getInstance())
                     .withDefaultOutput(MediaTypes.APPLICATION_JAVA);
 
-            Set<Library> additionalLibraries = context.getRegistry().findByType(com.datasonnet.spi.Library.class);
+            Set<Library> additionalLibraries = context.getRegistry().findByType(Library.class);
             for (Library lib : additionalLibraries) {
                 builder = builder.withLibrary(lib);
             }

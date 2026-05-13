@@ -41,6 +41,8 @@ updates:
         patterns: ["io.opentelemetry:*"]
       LangChain4j:
         patterns: ["dev.langchain4j:*"]
+      Parquet:
+        patterns: ["org.apache.parquet:*"]
     open-pull-requests-limit: 20
   - package-ecosystem: "npm"
     directory: "docs"

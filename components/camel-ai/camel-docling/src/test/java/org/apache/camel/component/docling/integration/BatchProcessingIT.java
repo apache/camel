@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docling.BatchConversionResult;
 import org.apache.camel.component.docling.BatchProcessingResults;
@@ -232,11 +233,11 @@ class BatchProcessingIT extends DoclingITestSupport {
         getMockEndpoint("mock:individual-result").assertIsSatisfied();
 
         // Verify each exchange contains a BatchConversionResult
-        List<org.apache.camel.Exchange> exchanges = getMockEndpoint("mock:individual-result").getReceivedExchanges();
+        List<Exchange> exchanges = getMockEndpoint("mock:individual-result").getReceivedExchanges();
         assertEquals(3, exchanges.size());
 
         for (int i = 0; i < exchanges.size(); i++) {
-            org.apache.camel.Exchange exchange = exchanges.get(i);
+            Exchange exchange = exchanges.get(i);
             BatchConversionResult result = exchange.getIn().getBody(BatchConversionResult.class);
 
             assertNotNull(result, "Exchange " + i + " should contain a BatchConversionResult");

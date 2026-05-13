@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/objects/dns_query",
+  "$id": "https://schema.ocsf.io/1.8.0/objects/dns_query",
   "title": "DnsQuery",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.DnsQuery",
@@ -10,10 +10,6 @@
       "type": "string",
       "title": "Resource Record Type"
     },
-    "hostname": {
-      "type": "string",
-      "title": "Hostname"
-    },
     "class": {
       "type": "string",
       "title": "Resource Record Class"
@@ -21,6 +17,10 @@
     "opcode": {
       "type": "string",
       "title": "DNS Opcode"
+    },
+    "hostname": {
+      "type": "string",
+      "title": "Hostname"
     },
     "opcode_id": {
       "type": "integer",

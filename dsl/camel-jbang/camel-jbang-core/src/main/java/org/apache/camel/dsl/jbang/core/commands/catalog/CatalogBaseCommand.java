@@ -37,6 +37,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.dsl.jbang.core.model.CatalogBaseDTO;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.json.Jsoner;
@@ -180,6 +181,16 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                                 .maxWidth(descWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(this::shortDescription))));
             }
+        } else if (filterName != null) {
+            // suggest similar names when filter returns no results
+            List<String> allNames = collectRows().stream().map(r -> r.name).collect(Collectors.toList());
+            List<String> suggestions = SuggestSimilarHelper.didYouMean(allNames, filterName);
+            if (!suggestions.isEmpty()) {
+                printer().println("No results for filter: " + filterName + ". Did you mean? " + String.join(", ", suggestions));
+            } else {
+                printer().println("No results for filter: " + filterName);
+            }
+            printer().println("Tip: use 'camel doc " + filterName + "' for detailed documentation.");
         }
 
         return 0;

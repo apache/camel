@@ -76,6 +76,7 @@ public class SpringAiChatProducer extends DefaultProducer {
 
     private ChatClient chatClient;
     private SpringAiChatMcpManager mcpManager;
+    private Advisor chatMemoryAdvisor;
 
     public SpringAiChatProducer(SpringAiChatEndpoint endpoint) {
         super(endpoint);
@@ -118,6 +119,23 @@ public class SpringAiChatProducer extends DefaultProducer {
             }
 
             this.chatClient = builder.build();
+        }
+
+        // Build chat memory advisor (added per-request only when conversationId is set)
+        ChatMemory chatMemory = getEndpoint().getConfiguration().getChatMemory();
+        VectorStore chatMemoryVectorStore = getEndpoint().getConfiguration().getChatMemoryVectorStore();
+        if (chatMemory != null && chatMemoryVectorStore != null) {
+            LOG.warn("Both chatMemory and chatMemoryVectorStore are configured. Using MessageChatMemoryAdvisor (chatMemory). "
+                     + "Configure only one memory type.");
+        }
+        if (chatMemory != null) {
+            this.chatMemoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
+            LOG.debug("MessageChatMemoryAdvisor available (activated per-request via conversationId header)");
+        } else if (chatMemoryVectorStore != null) {
+            this.chatMemoryAdvisor = VectorStoreChatMemoryAdvisor.builder(chatMemoryVectorStore)
+                    .defaultTopK(getEndpoint().getConfiguration().getTopK())
+                    .build();
+            LOG.debug("VectorStoreChatMemoryAdvisor available with topK={}", getEndpoint().getConfiguration().getTopK());
         }
 
         // Initialize MCP clients if configured
@@ -214,9 +232,14 @@ public class SpringAiChatProducer extends DefaultProducer {
             UserMessage multimodalMessage = createMultimodalMessage(exchange, bytes);
             applyUserMessageWithMedia(request, exchange, multimodalMessage.getText(), multimodalMessage.getMedia());
         } else {
-            throw new IllegalArgumentException(
-                    "Unsupported message type: " + messageBody.getClass().getName()
-                                               + ". Expected String, byte[], WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
+            String text = exchange.getIn().getBody(String.class);
+            if (text != null) {
+                userMessageText = text;
+            } else {
+                throw new IllegalArgumentException(
+                        "Unsupported message type: " + messageBody.getClass().getName()
+                                                   + ". Expected String, byte[], WrappedFile, List<WrappedFile>, or org.springframework.ai.chat.messages.Message");
+            }
         }
 
         // Apply augmented data to user message if provided
@@ -608,10 +631,12 @@ public class SpringAiChatProducer extends DefaultProducer {
             LOG.debug("Added tool context with {} entries", toolContext.size());
         }
 
-        // Apply conversation ID for chat memory if provided
+        // Add chat memory advisor per-request only when conversationId header is set
         String conversationId = exchange.getIn().getHeader(SpringAiChatConstants.CONVERSATION_ID, String.class);
-        if (conversationId != null) {
-            request.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
+        if (conversationId != null && chatMemoryAdvisor != null) {
+            final String convId = conversationId;
+            request.advisors(chatMemoryAdvisor);
+            request.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, convId));
         }
 
         // Apply SafeGuard advisor overrides if provided via headers
@@ -716,7 +741,7 @@ public class SpringAiChatProducer extends DefaultProducer {
 
             // Full metadata map for advanced users
             // This includes all metadata fields in a single map
-            Map<String, Object> metadataMap = new java.util.HashMap<>();
+            Map<String, Object> metadataMap = new HashMap<>();
             if (responseMetadata.getId() != null) {
                 metadataMap.put("id", responseMetadata.getId());
             }
@@ -1174,28 +1199,8 @@ public class SpringAiChatProducer extends DefaultProducer {
             advisors.add(safeguardAdvisor);
         }
 
-        // Add ChatMemory advisor if configured
-        ChatMemory chatMemory = getEndpoint().getConfiguration().getChatMemory();
-        VectorStore chatMemoryVectorStore = getEndpoint().getConfiguration().getChatMemoryVectorStore();
-
-        if (chatMemory != null && chatMemoryVectorStore != null) {
-            LOG.warn("Both chatMemory and chatMemoryVectorStore are configured. Using MessageChatMemoryAdvisor (chatMemory). " +
-                     "Configure only one memory type.");
-        }
-
-        if (chatMemory != null) {
-            advisors.add(MessageChatMemoryAdvisor.builder(chatMemory).build());
-            LOG.debug("MessageChatMemoryAdvisor enabled");
-        } else if (chatMemoryVectorStore != null) {
-            // Configure VectorStoreChatMemoryAdvisor with conversation isolation
-            // The conversationId parameter enables automatic filtering by conversation ID
-            advisors.add(VectorStoreChatMemoryAdvisor.builder(chatMemoryVectorStore)
-                    .conversationId(ChatMemory.CONVERSATION_ID)
-                    .defaultTopK(getEndpoint().getConfiguration().getTopK())
-                    .build());
-            LOG.debug("VectorStoreChatMemoryAdvisor enabled with conversation isolation and topK={}",
-                    getEndpoint().getConfiguration().getTopK());
-        }
+        // Chat memory advisors are NOT added to defaults — they are added per-request
+        // only when a conversationId header is present (see applyRequestOptions)
 
         // Add QuestionAnswerAdvisor if VectorStore is configured
         VectorStore vectorStore = getEndpoint().getConfiguration().getVectorStore();

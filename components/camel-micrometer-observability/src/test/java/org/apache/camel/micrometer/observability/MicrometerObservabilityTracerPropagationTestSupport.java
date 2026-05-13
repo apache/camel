@@ -18,6 +18,7 @@ package org.apache.camel.micrometer.observability;
 
 import java.util.List;
 
+import io.micrometer.tracing.Tracer;
 import io.micrometer.tracing.otel.bridge.OtelBaggageManager;
 import io.micrometer.tracing.otel.bridge.OtelCurrentTraceContext;
 import io.micrometer.tracing.otel.bridge.OtelPropagator;
@@ -25,6 +26,7 @@ import io.micrometer.tracing.otel.bridge.OtelTracer;
 import io.opentelemetry.api.baggage.propagation.W3CBaggagePropagator;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.sdk.trace.data.SpanData;
@@ -33,6 +35,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.telemetry.Op;
 import org.apache.camel.telemetry.TagConstants;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
+import org.junit.jupiter.api.AfterEach;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test is special as it requires a different setting to inherit the Opentelemetry propagation mechanism.
@@ -41,7 +46,7 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
 
     protected CamelOpenTelemetryExtension otelExtension = CamelOpenTelemetryExtension.create();
     protected MicrometerObservabilityTracer tst = new MicrometerObservabilityTracer();
-    protected io.micrometer.tracing.Tracer tracer;
+    protected Tracer tracer;
     io.opentelemetry.api.trace.Tracer otelTracer;
 
     @Override
@@ -62,14 +67,14 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
                 currentTraceContext,
                 event -> {
                 },
-                new OtelBaggageManager(
-                        currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
+                new OtelBaggageManager(currentTraceContext, List.of(), List.of()));
 
         context.getRegistry().bind("MicrometerObservabilityTracer", tracer);
         context.getRegistry().bind("OpentelemetryPropagators", otelPropagator);
 
         CamelContextAware.trySetCamelContext(tst, context);
         tst.init(context);
+        tst.setDisableCoreProcessors(true);
         return context;
     }
 
@@ -84,6 +89,12 @@ public class MicrometerObservabilityTracerPropagationTestSupport extends Exchang
             }
         }
         throw new IllegalArgumentException("Trying to get a non existing span!");
+    }
+
+    @AfterEach
+    public void assertCurrentIsRoot() {
+        // We must guarantee no context leaking
+        assertEquals(Context.root(), Context.current());
     }
 
 }

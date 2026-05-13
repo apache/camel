@@ -17,18 +17,21 @@
 package org.apache.camel.catalog;
 
 import java.io.Serializable;
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * Validation result of parsing a language expression or predicate
  */
 public class LanguageValidationResult implements Serializable {
     private final String text;
-    private String error;
-    private String shortError;
+    private @Nullable String error;
+    private @Nullable String shortError;
     private int index;
 
     public LanguageValidationResult(String text) {
-        this.text = text;
+        this.text = Objects.requireNonNull(text, "text");
     }
 
     public String getText() {
@@ -39,19 +42,19 @@ public class LanguageValidationResult implements Serializable {
         return error == null;
     }
 
-    public void setError(String error) {
+    public void setError(@Nullable String error) {
         this.error = error;
     }
 
-    public String getError() {
+    public @Nullable String getError() {
         return error;
     }
 
-    public String getShortError() {
+    public @Nullable String getShortError() {
         return shortError;
     }
 
-    public void setShortError(String shortError) {
+    public void setShortError(@Nullable String shortError) {
         this.shortError = shortError;
     }
 

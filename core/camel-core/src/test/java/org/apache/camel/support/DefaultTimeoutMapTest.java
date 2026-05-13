@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TimeoutMap;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,6 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Isolated("Depends on precise timing that may be hard to achieve if the system is under pressure")
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
 public class DefaultTimeoutMapTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTimeoutMapTest.class);
@@ -70,22 +68,22 @@ public class DefaultTimeoutMapTest {
     }
 
     @Test
-    public void testDefaultTimeoutMapForcePurge() throws Exception {
+    public void testDefaultTimeoutMapForcePurge() {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
         // map.start(); // Do not start background purge
         assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
 
-        map.put("A", 123, 10);
+        map.put("A", 123, 50);
         assertEquals(1, map.size());
 
-        Thread.sleep(50);
-
-        // will purge and remove old entries
-        map.purge();
-
-        assertEquals(0, map.size());
+        await().atMost(Duration.ofSeconds(2))
+                .pollInterval(Duration.ofMillis(10))
+                .untilAsserted(() -> {
+                    map.purge();
+                    assertEquals(0, map.size());
+                });
     }
 
     @Test

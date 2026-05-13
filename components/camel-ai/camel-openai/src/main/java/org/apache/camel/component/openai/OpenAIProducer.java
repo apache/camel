@@ -388,6 +388,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             String content = response.choices().get(0).message().content().orElse("");
             content = processThinkingContent(exchange, content, config);
             exchange.getMessage().setBody(content);
+            extractReasoningContent(exchange, response.choices().get(0).message());
+            extractAdditionalResponseHeaders(exchange, response.choices().get(0).message());
         }
         setResponseHeaders(exchange.getMessage(), response);
         updateConversationHistory(exchange, params, response);
@@ -421,6 +423,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 String content = choice.message().content().orElse("");
                 content = processThinkingContent(exchange, content, config);
                 exchange.getMessage().setBody(content);
+                extractReasoningContent(exchange, choice.message());
+                extractAdditionalResponseHeaders(exchange, choice.message());
                 setResponseHeaders(exchange.getMessage(), response);
                 exchange.getMessage().setHeader(OpenAIConstants.TOOL_ITERATIONS, iteration);
                 exchange.getMessage().setHeader(OpenAIConstants.MCP_TOOL_CALLS, toolCallsLog);
@@ -694,15 +698,15 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     }
 
     private ResponseFormatJsonSchema.JsonSchema.Schema buildSchemaFromJson(String jsonSchemaString) throws Exception {
-        java.util.Map<String, Object> root = OBJECT_MAPPER.readValue(jsonSchemaString, java.util.Map.class);
+        Map<String, Object> root = OBJECT_MAPPER.readValue(jsonSchemaString, Map.class);
         if (root == null) {
             throw new IllegalArgumentException("JSON schema string parsed to null");
         }
-        if (!(root instanceof java.util.Map)) {
+        if (!(root instanceof Map)) {
             throw new IllegalArgumentException("JSON schema must be a JSON object at the root");
         }
         ResponseFormatJsonSchema.JsonSchema.Schema.Builder sb = ResponseFormatJsonSchema.JsonSchema.Schema.builder();
-        for (java.util.Map.Entry<String, Object> e : root.entrySet()) {
+        for (Map.Entry<String, Object> e : root.entrySet()) {
             sb.putAdditionalProperty(e.getKey(), JsonValue.from(e.getValue()));
         }
         return sb.build();
@@ -732,6 +736,40 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         } catch (Exception e) {
             // treat as literal string
             return value;
+        }
+    }
+
+    private void extractReasoningContent(Exchange exchange, ChatCompletionMessage message) {
+        Map<String, JsonValue> additional = message._additionalProperties();
+        JsonValue reasoningValue = additional.get("reasoning_content");
+        if (reasoningValue != null) {
+            String reasoning = (String) reasoningValue.asString().orElse(null);
+            if (reasoning != null && !reasoning.isEmpty()) {
+                exchange.getMessage().setHeader(OpenAIConstants.REASONING_CONTENT, reasoning);
+            }
+        }
+    }
+
+    private void extractAdditionalResponseHeaders(Exchange exchange, ChatCompletionMessage message) {
+        OpenAIConfiguration config = getEndpoint().getConfiguration();
+        Map<String, Object> mapping = config.getAdditionalResponseHeader();
+        if (mapping == null || mapping.isEmpty()) {
+            return;
+        }
+
+        Map<String, JsonValue> additional = message._additionalProperties();
+        for (Map.Entry<String, Object> entry : mapping.entrySet()) {
+            String responseField = entry.getKey();
+            String headerName = String.valueOf(entry.getValue());
+            JsonValue value = additional.get(responseField);
+            if (value != null) {
+                String strValue = (String) value.asString().orElse(null);
+                if (strValue != null) {
+                    exchange.getMessage().setHeader(headerName, strValue);
+                } else {
+                    exchange.getMessage().setHeader(headerName, value.toString());
+                }
+            }
         }
     }
 

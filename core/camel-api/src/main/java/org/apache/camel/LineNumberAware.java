@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An entity that can point to a given line number from a source {@link org.apache.camel.spi.Resource} such as YAML and
  * XML DSL parsers.
@@ -39,17 +41,18 @@ public interface LineNumberAware {
     /**
      * The location of the entity.
      */
+    @Nullable
     String getLocation();
 
     /**
      * Sets the location of the entity (source file name, i.e. foo.java, bar.xml, etc.)
      */
-    void setLocation(String location);
+    void setLocation(@Nullable String location);
 
     /**
      * Set the {@link LineNumberAware} if the object is an instance of {@link LineNumberAware}.
      */
-    static <T> T trySetLineNumberAware(T object, LineNumberAware source) {
+    static <T> T trySetLineNumberAware(T object, @Nullable LineNumberAware source) {
         if (source != null && object instanceof LineNumberAware lineNumberAware) {
             lineNumberAware.setLineNumber(source.getLineNumber());
             lineNumberAware.setLocation(source.getLocation());

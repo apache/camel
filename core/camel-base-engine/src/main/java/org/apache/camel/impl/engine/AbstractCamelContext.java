@@ -161,6 +161,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.RouteError.Phase;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -410,6 +411,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(GroovyScriptCompiler.class, this::createGroovyScriptCompiler);
         camelContextExtension.lazyAddContextPlugin(SimpleFunctionRegistry.class, this::createSimpleFunctionRegistry);
         camelContextExtension.lazyAddContextPlugin(RestRegistry.class, this::createRestRegistry);
+        camelContextExtension.lazyAddContextPlugin(RouteDiagramDumper.class, this::createRouteDiagramDumper);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -4347,6 +4349,13 @@ public abstract class AbstractCamelContext extends BaseService
     protected RestRegistry createRestRegistry() {
         RestRegistryFactory factory = camelContextExtension.getRestRegistryFactory();
         return factory.createRegistry();
+    }
+
+    protected RouteDiagramDumper createRouteDiagramDumper() {
+        return ResolverHelper.resolveMandatoryService(getCamelContextReference(),
+                RouteDiagramDumper.FACTORY,
+                RouteDiagramDumper.class,
+                "camel-diagram");
     }
 
     @Override

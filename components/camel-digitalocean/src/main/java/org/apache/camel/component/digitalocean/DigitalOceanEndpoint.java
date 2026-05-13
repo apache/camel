@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:operation",
              producerOnly = true, category = { Category.CLOUD, Category.MANAGEMENT }, headersClass = DigitalOceanHeaders.class)
+@Deprecated(since = "4.21")
 public class DigitalOceanEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanEndpoint.class);

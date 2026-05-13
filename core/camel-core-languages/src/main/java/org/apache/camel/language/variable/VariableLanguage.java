@@ -18,6 +18,7 @@ package org.apache.camel.language.variable;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -25,7 +26,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 /**
  * A language for variable expressions.
  */
-@org.apache.camel.spi.annotations.Language("variable")
+@Language("variable")
 public class VariableLanguage extends LanguageSupport {
 
     public static Expression variable(String name) {

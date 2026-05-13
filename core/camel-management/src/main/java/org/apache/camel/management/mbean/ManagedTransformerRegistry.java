@@ -94,7 +94,9 @@ public class ManagedTransformerRegistry extends ManagedService implements Manage
 
                 CompositeData data = new CompositeDataSupport(
                         ct, new String[] { "name", "from", "to", "static", "dynamic", "description" },
-                        new Object[] { name, from.toString(), to.toString(), fromStatic, fromDynamic, desc });
+                        new Object[] {
+                                name, from != null ? from.toString() : "", to != null ? to.toString() : "",
+                                fromStatic, fromDynamic, desc });
                 answer.put(data);
             }
             return answer;

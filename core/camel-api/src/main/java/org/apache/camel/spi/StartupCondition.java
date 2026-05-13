@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Pluggable condition that must be accepted before Camel can continue starting up.
@@ -36,14 +37,14 @@ public interface StartupCondition {
     /**
      * Optional logging message to log before waiting for the condition
      */
-    default String getWaitMessage() {
+    default @Nullable String getWaitMessage() {
         return null;
     }
 
     /**
      * Optional logging message to log if condition was not meet.
      */
-    default String getFailureMessage() {
+    default @Nullable String getFailureMessage() {
         return null;
     }
 

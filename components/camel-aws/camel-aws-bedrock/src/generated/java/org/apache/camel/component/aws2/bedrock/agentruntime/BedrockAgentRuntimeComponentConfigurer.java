@@ -34,9 +34,17 @@ public class BedrockAgentRuntimeComponentConfigurer extends PropertyConfigurerSu
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bedrockagentruntimeasyncclient":
+        case "bedrockAgentRuntimeAsyncClient": getOrCreateConfiguration(target).setBedrockAgentRuntimeAsyncClient(property(camelContext, software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient.class, value)); return true;
         case "bedrockagentruntimeclient":
         case "bedrockAgentRuntimeClient": getOrCreateConfiguration(target).setBedrockAgentRuntimeClient(property(camelContext, software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.bedrock.agentruntime.BedrockAgentRuntimeConfiguration.class, value)); return true;
+        case "enabletrace":
+        case "enableTrace": getOrCreateConfiguration(target).setEnableTrace(property(camelContext, boolean.class, value)); return true;
+        case "flowaliasidentifier":
+        case "flowAliasIdentifier": getOrCreateConfiguration(target).setFlowAliasIdentifier(property(camelContext, java.lang.String.class, value)); return true;
+        case "flowidentifier":
+        case "flowIdentifier": getOrCreateConfiguration(target).setFlowIdentifier(property(camelContext, java.lang.String.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
@@ -81,7 +89,7 @@ public class BedrockAgentRuntimeComponentConfigurer extends PropertyConfigurerSu
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"bedrockAgentRuntimeClient"};
+        return new String[]{"bedrockAgentRuntimeAsyncClient", "bedrockAgentRuntimeClient"};
     }
 
     @Override
@@ -91,9 +99,17 @@ public class BedrockAgentRuntimeComponentConfigurer extends PropertyConfigurerSu
         case "accessKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "bedrockagentruntimeasyncclient":
+        case "bedrockAgentRuntimeAsyncClient": return software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAsyncClient.class;
         case "bedrockagentruntimeclient":
         case "bedrockAgentRuntimeClient": return software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient.class;
         case "configuration": return org.apache.camel.component.aws2.bedrock.agentruntime.BedrockAgentRuntimeConfiguration.class;
+        case "enabletrace":
+        case "enableTrace": return boolean.class;
+        case "flowaliasidentifier":
+        case "flowAliasIdentifier": return java.lang.String.class;
+        case "flowidentifier":
+        case "flowIdentifier": return java.lang.String.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
@@ -144,9 +160,17 @@ public class BedrockAgentRuntimeComponentConfigurer extends PropertyConfigurerSu
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "bedrockagentruntimeasyncclient":
+        case "bedrockAgentRuntimeAsyncClient": return getOrCreateConfiguration(target).getBedrockAgentRuntimeAsyncClient();
         case "bedrockagentruntimeclient":
         case "bedrockAgentRuntimeClient": return getOrCreateConfiguration(target).getBedrockAgentRuntimeClient();
         case "configuration": return target.getConfiguration();
+        case "enabletrace":
+        case "enableTrace": return getOrCreateConfiguration(target).isEnableTrace();
+        case "flowaliasidentifier":
+        case "flowAliasIdentifier": return getOrCreateConfiguration(target).getFlowAliasIdentifier();
+        case "flowidentifier":
+        case "flowIdentifier": return getOrCreateConfiguration(target).getFlowIdentifier();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":

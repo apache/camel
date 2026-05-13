@@ -19,12 +19,8 @@ package org.apache.camel.test.junit6.util;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RouteDumperExtension {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RouteDumperExtension.class);
 
     private final ModelCamelContext context;
 
@@ -33,17 +29,36 @@ public class RouteDumperExtension {
     }
 
     public void dumpRoute(Class<?> testClass, String currentTestName, String format) throws Exception {
-        LOG.debug("Dumping Route");
+        if ("png".equals(format)) {
+            // png is route diagrams
+            dumpRouteDiagram();
+        } else {
+            // anything else is regular route dump as text
+            String className = testClass.getSimpleName();
+            String dir = CamelContextTestHelper.getRouteDumpDir();
+            if (dir == null) {
+                dir = "target/camel-route-dump";
+            }
+            String name = className + "-" + StringHelper.before(currentTestName, "(") + "." + format;
 
-        String className = testClass.getSimpleName();
-        String dir = "target/camel-route-dump";
-        String name = className + "-" + StringHelper.before(currentTestName, "(") + "." + format;
+            DumpRoutesStrategy drs = context.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
+            drs.setOutput(dir + "/" + name);
+            drs.setInclude("*");
+            drs.setLog(false);
+            drs.setUriAsParameters(true);
+            drs.dumpRoutes(format);
+        }
+    }
 
+    private void dumpRouteDiagram() {
+        String dir = CamelContextTestHelper.getRouteDumpDir();
+        if (dir == null) {
+            dir = "target/camel-route-diagram";
+        }
         DumpRoutesStrategy drs = context.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
-        drs.setOutput(dir + "/" + name);
+        drs.setOutput(dir);
         drs.setInclude("*");
         drs.setLog(false);
-        drs.setUriAsParameters(true);
-        drs.dumpRoutes(format);
+        drs.dumpRoutes("png");
     }
 }

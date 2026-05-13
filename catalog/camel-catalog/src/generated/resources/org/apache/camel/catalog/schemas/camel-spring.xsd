@@ -3697,6 +3697,17 @@ implementing org.apache.camel.spi.OptimisticLockingAggregationRepository . Defau
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="optimisticLockingSyncRetry" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+When optimistic locking is enabled, retries happen synchronously in the same thread instead of being scheduled on a
+background thread. This preserves transaction context for repositories that require single-thread transactional
+guarantees. Only takes effect when optimisticLocking() is also enabled. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="executorService" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

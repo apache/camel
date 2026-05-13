@@ -32,12 +32,14 @@ import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.cluster.CamelClusterService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Strategy for computing {@link ObjectName} names for the various beans that Camel register for management.
  */
 public interface ManagementObjectNameStrategy {
 
+    @Nullable
     ObjectName getObjectName(Object managedObject) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForCamelContext(String managementName, String name) throws MalformedObjectNameException;
@@ -79,7 +81,7 @@ public interface ManagementObjectNameStrategy {
     ObjectName getObjectNameForThreadPool(CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId)
             throws MalformedObjectNameException;
 
-    default ObjectName getObjectNameForThreadPool(
+    default @Nullable ObjectName getObjectNameForThreadPool(
             CamelContext context, ExecutorService executorService, String id, String sourceId)
             throws MalformedObjectNameException {
         return null;

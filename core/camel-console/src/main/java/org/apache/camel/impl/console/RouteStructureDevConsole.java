@@ -16,15 +16,15 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Route;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
@@ -34,10 +34,12 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationLineNumber;
+import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationNoLineNumber;
 
 @DevConsole(name = "route-structure", description = "Dump route structure")
 public class RouteStructureDevConsole extends AbstractDevConsole {
@@ -57,6 +59,11 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
      */
     public static final String BRIEF = "brief";
 
+    /**
+     * Whether to include metrics such as number of messages processed (from JMX)
+     */
+    public static final String METRIC = "metric";
+
     public RouteStructureDevConsole() {
         super("camel", "route-structure", "Route Structure", "Dump route structure");
     }
@@ -66,15 +73,16 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         final String brief = (String) options.getOrDefault(BRIEF, "false");
 
         final StringBuilder sb = new StringBuilder();
-        Function<ManagedRouteMBean, Object> task = mrb -> {
+        Function<NamedRoute, Object> task = def -> {
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
-                        = dumper.dumpStructure(getCamelContext(), mrb.getRouteId(), "true".equalsIgnoreCase(brief));
+                        = dumper.dumpStructure(getCamelContext(), def.getRouteId(), "true".equalsIgnoreCase(brief));
 
-                sb.append(String.format("    Id: %s", mrb.getRouteId()));
-                if (mrb.getSourceLocation() != null) {
-                    sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
+                sb.append(String.format("    Id: %s", def.getRouteId()));
+                if (def.getResource() != null) {
+                    sb.append(String.format("%n    Source: %s",
+                            extractSourceLocationNoLineNumber(def.getResource().getLocation())));
                 }
                 sb.append("\n\n");
                 for (ModelDumpLine line : lines) {
@@ -101,28 +109,34 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         final String brief = (String) options.getOrDefault(BRIEF, "false");
+        final String metric = (String) options.getOrDefault(METRIC, "false");
 
         final JsonObject root = new JsonObject();
-        final List<JsonObject> list = new ArrayList<>();
+        final JsonArray list = new JsonArray();
 
-        Function<ManagedRouteMBean, Object> task = mrb -> {
+        final boolean stats = "true".equalsIgnoreCase(metric);
+        Function<NamedRoute, Object> task = def -> {
             JsonObject jo = new JsonObject();
             list.add(jo);
 
-            jo.put("routeId", mrb.getRouteId());
-            jo.put("from", mrb.getEndpointUri());
-            if (mrb.getSourceLocation() != null) {
-                jo.put("source", mrb.getSourceLocation());
+            jo.put("routeId", def.getRouteId());
+            jo.put("from", def.getEndpointUrl());
+            if (def.getResource() != null) {
+                jo.put("source", extractSourceLocationNoLineNumber(def.getResource().getLocation()));
+                Integer line = extractSourceLocationLineNumber(def.getResource().getLocation());
+                if (line != null) {
+                    jo.put("line", line);
+                }
             }
-            if (mrb.getDescription() != null) {
-                jo.put("description", mrb.getDescription());
+            if (def.getDescription() != null) {
+                jo.put("description", def.getDescription());
             }
 
             try {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
-                        = dumper.dumpStructure(getCamelContext(), mrb.getRouteId(), "true".equalsIgnoreCase(brief));
-                List<JsonObject> code = dumpAsJSon(lines);
+                        = dumper.dumpStructure(getCamelContext(), def.getRouteId(), "true".equalsIgnoreCase(brief));
+                JsonArray code = dumpAsJSon(getCamelContext(), lines, stats);
                 jo.put("code", code);
             } catch (Exception e) {
                 // ignore
@@ -134,47 +148,44 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
         return root;
     }
 
-    protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
+    protected void doCall(Map<String, Object> options, Function<NamedRoute, Object> task) {
         String path = (String) options.get(Exchange.HTTP_PATH);
         String subPath = path != null ? StringHelper.after(path, "/") : null;
         String filter = (String) options.get(FILTER);
         String limit = (String) options.get(LIMIT);
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
-        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
-        if (mcc != null) {
-            List<Route> routes = getCamelContext().getRoutes();
-            routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
-            routes.stream()
-                    .map(route -> mcc.getManagedRoute(route.getRouteId()))
-                    .filter(Objects::nonNull)
-                    .filter(r -> accept(r, filter))
-                    .filter(r -> accept(r, subPath))
-                    .sorted(RouteStructureDevConsole::sort)
-                    .limit(max)
-                    .forEach(task::apply);
-        }
+        var routes = getCamelContext().getNamedRouteDefinitions();
+        routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
+        routes.stream()
+                .filter(r -> accept(r, filter))
+                .filter(r -> accept(r, subPath))
+                .limit(max)
+                .forEach(task::apply);
     }
 
-    private static boolean accept(ManagedRouteMBean mrb, String filter) {
+    private static boolean accept(NamedRoute route, String filter) {
         if (filter == null || filter.isBlank()) {
             return true;
         }
 
-        String onlyName = LoggerHelper.sourceNameOnly(mrb.getSourceLocation());
-        return PatternHelper.matchPattern(mrb.getRouteId(), filter)
-                || PatternHelper.matchPattern(mrb.getEndpointUri(), filter)
-                || PatternHelper.matchPattern(mrb.getSourceLocationShort(), filter)
+        String uri = route.getInput().getLabel();
+        String loc = null;
+        if (route.getResource() != null) {
+            loc = LoggerHelper.sourceNameOnly(route.getResource().getLocation());
+            loc = LoggerHelper.stripScheme(loc);
+        }
+        String onlyName = loc != null ? LoggerHelper.sourceNameOnly(loc) : null;
+        return PatternHelper.matchPattern(route.getRouteId(), filter)
+                || PatternHelper.matchPattern(uri, filter)
+                || PatternHelper.matchPattern(loc, filter)
                 || PatternHelper.matchPattern(onlyName, filter);
     }
 
-    private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
-        // sort by id
-        return o1.getRouteId().compareTo(o2.getRouteId());
-    }
+    private JsonArray dumpAsJSon(CamelContext camelContext, List<ModelDumpLine> lines, boolean metric) {
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
-    private static List<JsonObject> dumpAsJSon(List<ModelDumpLine> lines) {
-        List<JsonObject> code = new ArrayList<>();
+        JsonArray code = new JsonArray();
         int counter = 0;
         for (var line : lines) {
             counter++;
@@ -191,6 +202,30 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 c.put("description", line.description());
             }
             c.put("code", Jsoner.escape(line.code()));
+
+            if (metric && mcc != null) {
+                if (counter <= 2) {
+                    ManagedRouteMBean mrb = mcc.getManagedRoute(line.id());
+                    if (mrb != null) {
+                        JsonObject stats = RouteDevConsole.gatherRouteStats(camelContext, mrb);
+                        if (counter == 2) {
+                            // from is route stats minus a few values
+                            stats.remove("coverage");
+                            stats.remove("load01");
+                            stats.remove("load05");
+                            stats.remove("load15");
+                            stats.remove("exchangesThroughput");
+                        }
+                        c.put("statistics", stats);
+                    }
+                } else {
+                    ManagedProcessorMBean mp = mcc.getManagedProcessor(line.id());
+                    if (mp != null) {
+                        JsonObject stats = ProcessorDevConsole.gatherProcessorStats(mp);
+                        c.put("statistics", stats);
+                    }
+                }
+            }
             code.add(c);
         }
         return code;

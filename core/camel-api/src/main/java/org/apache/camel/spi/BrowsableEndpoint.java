@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An optional interface an {@link Endpoint} may choose to implement which allows it to expose a way of browsing the
@@ -60,8 +61,10 @@ public interface BrowsableEndpoint extends Endpoint {
         long ts = 0;
         long ts2 = 0;
         if (!list.isEmpty()) {
-            ts = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
-            ts2 = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
+            Long v1 = list.get(0).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
+            Long v2 = list.get(list.size() - 1).getMessage().getHeader(Exchange.MESSAGE_TIMESTAMP, 0L, long.class);
+            ts = v1 != null ? v1 : 0L;
+            ts2 = v2 != null ? v2 : 0L;
         }
         return new BrowseStatus(list.size(), ts, ts2);
     }
@@ -80,7 +83,7 @@ public interface BrowsableEndpoint extends Endpoint {
      * @param  filter filter to filter among the messages to include.
      * @return        the exchanges on this endpoint
      */
-    default List<Exchange> getExchanges(int limit, Predicate filter) {
+    default List<Exchange> getExchanges(int limit, @Nullable Predicate filter) {
         List<Exchange> answer = getExchanges();
         if (filter != null) {
             answer = (List<Exchange>) answer.stream().filter(filter).collect(Collectors.toList());

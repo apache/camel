@@ -86,6 +86,51 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
+         * Map additional fields from the response message to Camel headers. The
+         * key is the field name in the API response, the value is the Camel
+         * header name (e.g.
+         * additionalResponseHeader.reasoning_content=CamelMyReasoningHeader).
+         * This is a multi-value option with prefix: additionalResponseHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalResponseHeader(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: producer
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder additionalResponseHeader(String key, Object value) {
+            doSetMultiValueProperty("additionalResponseHeader", "additionalResponseHeader." + key, value);
+            return this;
+        }
+        /**
+         * Map additional fields from the response message to Camel headers. The
+         * key is the field name in the API response, the value is the Camel
+         * header name (e.g.
+         * additionalResponseHeader.reasoning_content=CamelMyReasoningHeader).
+         * This is a multi-value option with prefix: additionalResponseHeader.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalResponseHeader(String, Object) method to add a value (call
+         * the method multiple times to set more values).
+         * 
+         * Group: producer
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder additionalResponseHeader(Map values) {
+            doSetMultiValueProperties("additionalResponseHeader", "additionalResponseHeader.", values);
+            return this;
+        }
+        /**
          * OpenAI API key. Can also be set via OPENAI_API_KEY environment
          * variable.
          * 
@@ -1295,6 +1340,19 @@ public interface OpenAIEndpointBuilderFactory {
          */
         public String openAIThinkingContent() {
             return "CamelOpenAIThinkingContent";
+        }
+        /**
+         * The reasoning content from the model response reasoning_content
+         * field, used by thinking models like Qwen3 and DeepSeek-R1.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIReasoningContent}.
+         */
+        public String openAIReasoningContent() {
+            return "CamelOpenAIReasoningContent";
         }
         /**
          * The model used for the completion response.

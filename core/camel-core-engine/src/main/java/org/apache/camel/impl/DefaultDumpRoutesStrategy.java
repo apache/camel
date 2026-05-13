@@ -48,6 +48,7 @@ import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
@@ -159,6 +160,38 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             doDumpRoutesAsXml(camelContext);
         } else if ("json".equals(format)) {
             doDumpRoutesStructureAsJSon(camelContext);
+        } else if ("png".equals(format)) {
+            doDumpRoutesDiagram(camelContext);
+        }
+    }
+
+    private void doDumpRoutesDiagram(CamelContext camelContext) {
+        String name = outputFileName;
+        String folder = output;
+        if (name == null && folder == null) {
+            name = "camel-route-diagrams.png";
+        }
+
+        RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(camelContext);
+        try {
+            // use include option as filter
+            String filter = "*";
+            if (!"routes".equals(include)) {
+                filter = include;
+            }
+            if (name != null) {
+                if (log) {
+                    LOG.info("Dumping route diagrams as PNG to file: {}", name);
+                }
+                dumper.dumpRoutesToFile(filter, RouteDiagramDumper.Theme.LIGHT, new File(name));
+            } else {
+                if (log) {
+                    LOG.info("Dumping route diagrams as PNG files to folder: {}", folder);
+                }
+                dumper.dumpRoutesToFolder(filter, RouteDiagramDumper.Theme.LIGHT, new File(folder));
+            }
+        } catch (IOException e) {
+            LOG.warn("Error dumping routes diagrams. This exception is ignored.", e);
         }
     }
 
@@ -448,6 +481,9 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             c.put("type", line.type());
             c.put("id", line.id());
             c.put("level", line.level());
+            if (line.description() != null) {
+                c.put("description", line.description());
+            }
             c.put("code", Jsoner.escape(line.code()));
             code.add(c);
         }

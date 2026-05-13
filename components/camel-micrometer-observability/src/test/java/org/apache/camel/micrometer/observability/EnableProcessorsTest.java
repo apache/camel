@@ -39,8 +39,11 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagati
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        CamelContext ctx = super.createCamelContext();
         tst.setTraceProcessors(true);
-        return super.createCamelContext();
+        tst.setDisableCoreProcessors(false);
+
+        return ctx;
     }
 
     @Test

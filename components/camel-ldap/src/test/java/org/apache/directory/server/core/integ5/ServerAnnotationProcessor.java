@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.directory.api.ldap.model.constants.SupportedSaslMechanisms;
 import org.apache.directory.api.util.Network;
 import org.apache.directory.api.util.Strings;
@@ -56,7 +57,7 @@ import org.slf4j.LoggerFactory;
 public final class ServerAnnotationProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ServerAnnotationProcessor.class);
     // Keep Port references alive to prevent port reuse (TOCTOU prevention)
-    private static final List<org.apache.camel.test.AvailablePortFinder.Port> RESERVED_PORTS = new ArrayList<>();
+    private static final List<AvailablePortFinder.Port> RESERVED_PORTS = new ArrayList<>();
 
     private ServerAnnotationProcessor() {
     }
@@ -338,7 +339,7 @@ public final class ServerAnnotationProcessor {
     }
 
     private static int getFreePort() {
-        org.apache.camel.test.AvailablePortFinder.Port port = org.apache.camel.test.AvailablePortFinder.find();
+        AvailablePortFinder.Port port = AvailablePortFinder.find();
         RESERVED_PORTS.add(port);
         return port.getPort();
     }

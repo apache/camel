@@ -16,14 +16,13 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "rest", displayName = "Rest", description = "Rest DSL Registry information")
@@ -84,7 +83,7 @@ public class RestDevConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
 
         if (rr != null) {
-            List<JsonObject> list = new ArrayList<>();
+            JsonArray list = new JsonArray();
             root.put("rests", list);
 
             for (RestRegistry.RestService rs : rr.listAllRestServices()) {

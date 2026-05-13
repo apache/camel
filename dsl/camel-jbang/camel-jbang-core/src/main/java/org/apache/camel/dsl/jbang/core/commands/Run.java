@@ -64,6 +64,7 @@ import org.apache.camel.dsl.jbang.core.common.TemplateHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.AntPathMatcher;
@@ -336,6 +337,15 @@ public class Run extends CamelCommand {
             description = "Skip resolving plugin dependencies")
     boolean skipPlugins;
 
+    @Option(names = { "--example" },
+            description = "Run a built-in example by name (e.g., timer-log, rest-api). Use --example --list to show available examples.",
+            arity = "0..1", fallbackValue = "")
+    String example;
+
+    @Option(names = { "--example-list" },
+            description = "List available built-in examples")
+    boolean exampleList;
+
     public Run(CamelJBangMain main) {
         super(main);
     }
@@ -355,11 +365,73 @@ public class Run extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // handle --example
+        if (exampleList || (example != null && example.isEmpty())) {
+            return listExamples();
+        }
+        if (example != null) {
+            return runExample();
+        }
+
         if (!exportRun) {
             printConfigurationValues("Running integration with the following configuration:");
         }
         // run
         return run();
+    }
+
+    private int listExamples() {
+        printer().println("Available built-in examples:");
+        printer().println();
+        printer().printf("  %-20s %s%n", "timer-log", "Simple timer that logs messages every second");
+        printer().printf("  %-20s %s%n", "rest-api", "REST API with hello endpoints");
+        printer().printf("  %-20s %s%n", "cron-log", "Scheduled task that logs every 5 seconds");
+        printer().println();
+        printer().println("Usage: camel run --example <name>");
+        printer().println("       camel run --example <name> --dev");
+        return 0;
+    }
+
+    private static final List<String> EXAMPLE_NAMES = List.of("timer-log", "rest-api", "cron-log");
+
+    private int runExample() throws Exception {
+        String resourcePath = "examples/" + example + ".yaml";
+        InputStream is = Run.class.getClassLoader().getResourceAsStream(resourcePath);
+        if (is == null) {
+            List<String> suggestions
+                    = SuggestSimilarHelper.didYouMean(EXAMPLE_NAMES, example);
+            if (!suggestions.isEmpty()) {
+                printer().printErr("Unknown example: " + example + ". Did you mean? " + String.join(", ", suggestions));
+            } else {
+                printer().printErr("Unknown example: " + example);
+            }
+            printer().printErr("Run 'camel run --example-list' to see available examples.");
+            return 1;
+        }
+
+        // extract example to a temp file and run it
+        Path tempDir = Files.createTempDirectory("camel-example-");
+        Path exampleFile = tempDir.resolve(example + ".yaml");
+        try {
+            String content = IOHelper.loadText(is);
+            IOHelper.close(is);
+            Files.writeString(exampleFile, content);
+
+            printer().println("Running example: " + example);
+            files.add(exampleFile.toString());
+            if ("CamelJBang".equals(name)) {
+                name = example;
+            }
+
+            if (!exportRun) {
+                printConfigurationValues("Running integration with the following configuration:");
+            }
+            return run();
+        } finally {
+            // clean up temp files on JVM exit
+            exampleFile.toFile().deleteOnExit();
+            tempDir.toFile().deleteOnExit();
+        }
     }
 
     public Integer runExport() throws Exception {
@@ -2108,7 +2180,7 @@ public class Run extends CamelCommand {
     protected static void removeDir(Path directory) {
         if (Files.exists(directory)) {
             try (Stream<Path> files = Files.walk(directory)) {
-                files.sorted(java.util.Comparator.reverseOrder())
+                files.sorted(Comparator.reverseOrder())
                         .forEach(path -> {
                             try {
                                 Files.deleteIfExists(path);

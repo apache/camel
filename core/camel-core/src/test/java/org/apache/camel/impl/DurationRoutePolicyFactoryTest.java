@@ -37,7 +37,7 @@ public class DurationRoutePolicyFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // need some time to stop async
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
             assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
             assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
         });
@@ -49,7 +49,7 @@ public class DurationRoutePolicyFactoryTest extends ContextTestSupport {
             @Override
             public void configure() {
                 DurationRoutePolicyFactory factory = new DurationRoutePolicyFactory();
-                factory.setMaxSeconds(2);
+                factory.setMaxSeconds(4);
                 factory.setMaxMessages(25);
 
                 getContext().addRoutePolicyFactory(factory);

@@ -57,6 +57,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.OAuthHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -394,7 +395,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     private void configureSslFromContextParameters(
             OpenAIOkHttpClient.Builder builder,
-            org.apache.camel.support.jsse.SSLContextParameters sslContextParameters)
+            SSLContextParameters sslContextParameters)
             throws Exception {
         SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
 

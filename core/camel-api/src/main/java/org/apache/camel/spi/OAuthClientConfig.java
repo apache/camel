@@ -16,6 +16,10 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * Configuration for OAuth 2.0 Client Credentials grant.
  * <p/>
@@ -24,46 +28,46 @@ package org.apache.camel.spi;
  */
 public class OAuthClientConfig {
 
-    private String clientId;
-    private String clientSecret;
-    private String tokenEndpoint;
-    private String scope;
+    private @Nullable String clientId;
+    private @Nullable String clientSecret;
+    private @Nullable String tokenEndpoint;
+    private @Nullable String scope;
     private boolean cacheTokens = true;
     private long cachedTokensDefaultExpirySeconds = 3600;
     private long cachedTokensExpirationMarginSeconds = 5;
 
-    public String getClientId() {
+    public @Nullable String getClientId() {
         return clientId;
     }
 
     public OAuthClientConfig setClientId(String clientId) {
-        this.clientId = clientId;
+        this.clientId = Objects.requireNonNull(clientId, "clientId");
         return this;
     }
 
-    public String getClientSecret() {
+    public @Nullable String getClientSecret() {
         return clientSecret;
     }
 
     public OAuthClientConfig setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
+        this.clientSecret = Objects.requireNonNull(clientSecret, "clientSecret");
         return this;
     }
 
-    public String getTokenEndpoint() {
+    public @Nullable String getTokenEndpoint() {
         return tokenEndpoint;
     }
 
     public OAuthClientConfig setTokenEndpoint(String tokenEndpoint) {
-        this.tokenEndpoint = tokenEndpoint;
+        this.tokenEndpoint = Objects.requireNonNull(tokenEndpoint, "tokenEndpoint");
         return this;
     }
 
-    public String getScope() {
+    public @Nullable String getScope() {
         return scope;
     }
 
-    public OAuthClientConfig setScope(String scope) {
+    public OAuthClientConfig setScope(@Nullable String scope) {
         this.scope = scope;
         return this;
     }

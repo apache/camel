@@ -37,7 +37,7 @@ public class FileToFtpsImplicitSSLWithClientAuthAndSSLContextParametersIT extend
         tmp.setKeyStore(ksp);
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setSecureSocketProtocol("SSLv3");
+        sslContextParameters.setSecureSocketProtocol("TLSv1.2");
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
 

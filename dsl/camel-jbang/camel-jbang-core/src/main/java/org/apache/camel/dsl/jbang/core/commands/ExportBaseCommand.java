@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -1071,6 +1072,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         // write all the properties
+        Files.createDirectories(targetDir);
         Path appPropsPath = targetDir.resolve("application.properties");
         Files.writeString(appPropsPath, content.toString(), StandardCharsets.UTF_8);
     }
@@ -1255,7 +1257,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     // This method is kept for backward compatibility with derived classes
     @Deprecated
-    protected void safeCopy(java.io.File source, java.io.File target, boolean override) throws Exception {
+    protected void safeCopy(File source, File target, boolean override) throws Exception {
         ExportHelper.safeCopy(source.toPath(), target.toPath(), override);
     }
 
@@ -1297,7 +1299,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     // This method is kept for backward compatibility with derived classes
     @Deprecated
-    protected void safeCopy(InputStream source, java.io.File target) throws Exception {
+    protected void safeCopy(InputStream source, File target) throws Exception {
         ExportHelper.safeCopy(source, target.toPath());
     }
 
@@ -1465,7 +1467,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     // This method is kept for backward compatibility with derived classes
     @Deprecated
-    protected void copyApplicationPropertiesFiles(java.io.File srcResourcesDir) throws Exception {
+    protected void copyApplicationPropertiesFiles(File srcResourcesDir) throws Exception {
         copyApplicationPropertiesFiles(srcResourcesDir.toPath());
     }
 

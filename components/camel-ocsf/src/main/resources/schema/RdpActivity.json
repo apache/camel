@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/rdp_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/rdp_activity",
   "title": "RdpActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.RdpActivity",
@@ -9,43 +9,66 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
-    "cumulative_traffic": {
-      "type": "object",
-      "additionalProperties": true
+    "remote_display": {
+      "$ref": "Display.json"
     },
-    "connection_info": {
-      "type": "object",
-      "additionalProperties": true
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
     },
-    "keyboard_info": {
-      "type": "object",
-      "additionalProperties": true
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
     },
-    "raw_data_size": {
-      "type": "integer",
-      "title": "Raw Data Size"
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "identifier_cookie": {
+      "type": "string",
+      "title": "Identifier Cookie"
+    },
+    "user": {
+      "$ref": "User.json"
+    },
+    "tls": {
+      "$ref": "Tls.json"
     },
     "protocol_ver": {
       "type": "string",
       "title": "RDP Version"
     },
-    "device": {
-      "$ref": "Device.json"
+    "cumulative_traffic": {
+      "type": "object",
+      "additionalProperties": true
     },
-    "remote_display": {
-      "$ref": "Display.json"
+    "response": {
+      "$ref": "Response.json"
     },
-    "file": {
-      "$ref": "File.json"
+    "certificate_chain": {
+      "type": "array",
+      "title": "Certificate Chain",
+      "items": {
+        "type": "string"
+      }
     },
-    "enrichments": {
+    "keyboard_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "packet_list": {
       "type": "array",
       "description": "",
       "items": {
-        "$ref": "Enrichment.json"
+        "$ref": "Packet.json"
       }
     },
-    "traffic": {
+    "connection_info": {
       "type": "object",
       "additionalProperties": true
     },
@@ -56,45 +79,26 @@
         "type": "string"
       }
     },
-    "src_endpoint": {
-      "$ref": "NetworkEndpoint.json"
+    "device": {
+      "$ref": "Device.json"
     },
     "app_name": {
       "type": "string",
       "title": "Application Name"
     },
-    "identifier_cookie": {
-      "type": "string",
-      "title": "Identifier Cookie"
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
     },
-    "user": {
-      "$ref": "User.json"
-    },
-    "certificate_chain": {
-      "type": "array",
-      "title": "Certificate Chain",
-      "items": {
-        "type": "string"
-      }
-    },
-    "dst_endpoint": {
+    "network_observation_point": {
       "$ref": "NetworkEndpoint.json"
-    },
-    "response": {
-      "$ref": "Response.json"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
-    },
-    "ja4_fingerprint_list": {
-      "type": "array",
-      "title": "JA4+ Fingerprints",
-      "items": {
-        "$ref": "Ja4Fingerprint.json"
-      }
     },
     "request": {
       "$ref": "Request.json"
+    },
+    "app_protocol_name": {
+      "type": "string",
+      "title": "Application Protocol Name"
     },
     "observation_point_id": {
       "type": "integer",
@@ -104,12 +108,22 @@
       "type": "object",
       "additionalProperties": true
     },
-    "observation_point": {
-      "type": "string",
-      "title": "Observation Point"
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
     },
-    "tls": {
-      "$ref": "Tls.json"
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "file": {
+      "$ref": "File.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
     }
   }
 }

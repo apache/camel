@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Component for property placeholders and loading properties from sources (such as .properties file from classpath or
@@ -197,6 +198,7 @@ public interface PropertiesComponent extends StaticService {
      * @param  name the name of the source
      * @return      the source, or null if no source exists
      */
+    @Nullable
     PropertiesSource getPropertiesSource(String name);
 
     /**
@@ -215,6 +217,7 @@ public interface PropertiesComponent extends StaticService {
      * @param  name the function name
      * @return      the function or null if no function exists
      */
+    @Nullable
     PropertiesFunction getPropertiesFunction(String name);
 
     /**
@@ -269,12 +272,13 @@ public interface PropertiesComponent extends StaticService {
      * Sets a special list of local properties (ie thread local) that take precedence and will use first, if a property
      * exist.
      */
-    void setLocalProperties(Properties localProperties);
+    void setLocalProperties(@Nullable Properties localProperties);
 
     /**
      * Gets a list of properties that are local for the current thread only (ie thread local), or <tt>null</tt> if not
      * currently in use.
      */
+    @Nullable
     Properties getLocalProperties();
 
     /**
@@ -284,7 +288,7 @@ public interface PropertiesComponent extends StaticService {
      * @return a {@link Map} representing the local properties, or <tt>null</tt> if not currently in use.
      */
     @SuppressWarnings("unchecked")
-    default Map<String, Object> getLocalPropertiesAsMap() {
+    default @Nullable Map<String, Object> getLocalPropertiesAsMap() {
         return (Map) getLocalProperties();
     }
 
@@ -304,7 +308,7 @@ public interface PropertiesComponent extends StaticService {
      * @param  pattern patterns, or null to reload from all known locations
      * @return         true if some properties was reloaded
      */
-    boolean reloadProperties(String pattern);
+    boolean reloadProperties(@Nullable String pattern);
 
     /**
      * Filters the given list of properties, by removing properties that are already loaded and have same key and value.

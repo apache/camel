@@ -53,7 +53,6 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpVersion;
@@ -68,7 +67,6 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -84,8 +82,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
     protected static final String METHOD = "POST";
     protected static final String TARGET_HOST = "localhost";
-    @RegisterExtension
-    protected AvailablePortFinder.Port targetPort = AvailablePortFinder.find();
+    protected int targetPort;
     protected static final Duration HTTP_SOCKET_TIMEOUT = Duration.ofSeconds(5);
     protected static final Duration HTTP_CONNECTION_TIMEOUT = Duration.ofSeconds(5);
     protected static final Integer HTTP_CONNECTION_POOL_SIZE = 5;
@@ -144,7 +141,18 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
     @Override
     protected void customizeConfiguration(AS2Configuration configuration) {
-        configuration.setServerPortNumber(targetPort.getPort());
+        configuration.setServerPortNumber(0);
+    }
+
+    @Override
+    protected void doPostSetup() throws Exception {
+        super.doPostSetup();
+        for (var e : context.getEndpoints()) {
+            if (e instanceof AS2Endpoint as2e && as2e.getAS2ServerConnection() != null) {
+                targetPort = as2e.getAS2ServerConnection().getLocalPort();
+                break;
+            }
+        }
     }
 
     @Override
@@ -157,7 +165,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
                 // test route processing exception
                 Processor failingProcessor = new Processor() {
-                    public void process(org.apache.camel.Exchange exchange) throws Exception {
+                    public void process(Exchange exchange) throws Exception {
                         throw new Exception(PROCESSOR_EXCEPTION_MSG);
                     }
                 };
@@ -291,7 +299,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
         assertEquals(AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue(), "Unexpected AS2 to value");
         assertTrue(request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"),
                 "Unexpected message id value");
-        assertEquals(TARGET_HOST + ":" + targetPort.getPort(), request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
+        assertEquals(TARGET_HOST + ":" + targetPort, request.getFirstHeader(AS2Header.TARGET_HOST).getValue(),
                 "Unexpected target host value");
         assertEquals(USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue(), "Unexpected user agent value");
         assertNotNull(request.getFirstHeader(AS2Header.DATE), "Date value missing");

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://schema.ocsf.io/1.7.0/classes/dhcp_activity",
+  "$id": "https://schema.ocsf.io/1.8.0/classes/dhcp_activity",
   "title": "DhcpActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.DhcpActivity",
@@ -9,56 +9,9 @@
     "$ref": "OcsfEvent.json"
   },
   "properties": {
-    "cumulative_traffic": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "connection_info": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "raw_data_size": {
-      "type": "integer",
-      "title": "Raw Data Size"
-    },
-    "relay": {
-      "$ref": "NetworkInterface.json"
-    },
-    "enrichments": {
-      "type": "array",
-      "description": "",
-      "items": {
-        "$ref": "Enrichment.json"
-      }
-    },
-    "traffic": {
-      "type": "object",
-      "additionalProperties": true
-    },
-    "src_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "app_name": {
-      "type": "string",
-      "title": "Application Name"
-    },
     "transaction_uid": {
       "type": "string",
       "title": "Transaction UID"
-    },
-    "is_renewal": {
-      "type": "boolean",
-      "title": "Renewal"
-    },
-    "lease_dur": {
-      "type": "integer",
-      "title": "Lease Duration"
-    },
-    "dst_endpoint": {
-      "$ref": "NetworkEndpoint.json"
-    },
-    "raw_data_hash": {
-      "$ref": "Fingerprint.json"
     },
     "ja4_fingerprint_list": {
       "type": "array",
@@ -66,6 +19,60 @@
       "items": {
         "$ref": "Ja4Fingerprint.json"
       }
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "lease_dur": {
+      "type": "integer",
+      "title": "Lease Duration"
+    },
+    "tls": {
+      "$ref": "Tls.json"
+    },
+    "cumulative_traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "packet_list": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Packet.json"
+      }
+    },
+    "connection_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "is_renewal": {
+      "type": "boolean",
+      "title": "Renewal"
+    },
+    "network_observation_point": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "relay": {
+      "$ref": "NetworkInterface.json"
+    },
+    "app_protocol_name": {
+      "type": "string",
+      "title": "Application Protocol Name"
     },
     "observation_point_id": {
       "type": "integer",
@@ -75,12 +82,19 @@
       "type": "object",
       "additionalProperties": true
     },
-    "observation_point": {
-      "type": "string",
-      "title": "Observation Point"
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
     },
-    "tls": {
-      "$ref": "Tls.json"
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
     }
   }
 }

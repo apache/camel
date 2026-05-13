@@ -28,6 +28,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Cache containing created {@link Producer}.
@@ -64,7 +65,7 @@ public interface ProducerCache extends Service {
      * @param  exchange                   the exchange to send
      * @throws RejectedExecutionException is thrown if CamelContext is stopped
      */
-    Exchange send(Endpoint endpoint, Exchange exchange, Processor resultProcessor);
+    Exchange send(Endpoint endpoint, Exchange exchange, @Nullable Processor resultProcessor);
 
     /**
      * Asynchronously sends an exchange to an endpoint using a supplied {@link Processor} to populate the exchange
@@ -84,7 +85,8 @@ public interface ProducerCache extends Service {
      */
     CompletableFuture<Exchange> asyncSendExchange(
             Endpoint endpoint, ExchangePattern pattern,
-            Processor processor, Processor resultProcessor, Exchange exchange, CompletableFuture<Exchange> future);
+            Processor processor, @Nullable Processor resultProcessor, @Nullable Exchange exchange,
+            @Nullable CompletableFuture<Exchange> future);
 
     /**
      * Gets the source which uses this cache

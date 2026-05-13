@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -587,7 +588,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         // what we consume is what the API defined by OpenApi specification
         // produces
         List<String> specificationLevelConsumers = new ArrayList<>();
-        Set<String> operationLevelConsumers = new java.util.HashSet<>();
+        Set<String> operationLevelConsumers = new HashSet<>();
         if (operation.getResponses() != null) {
             for (ApiResponse response : operation.getResponses().values()) {
                 if (response.getContent() != null) {
@@ -605,7 +606,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         // what we produce is what the API defined by OpenApi specification consumes
         List<String> specificationLevelProducers = new ArrayList<>();
-        Set<String> operationLevelProducers = new java.util.HashSet<>();
+        Set<String> operationLevelProducers = new HashSet<>();
         if (operation.getRequestBody() != null && operation.getRequestBody().getContent() != null) {
             operationLevelProducers.addAll(operation.getRequestBody().getContent().keySet());
         }
@@ -747,7 +748,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     private Set<URI> getURIs(List<Server> servers) {
-        Set<URI> uris = new java.util.HashSet<>();
+        Set<URI> uris = new HashSet<>();
         if (servers != null) {
             for (Server server : servers) {
                 try {

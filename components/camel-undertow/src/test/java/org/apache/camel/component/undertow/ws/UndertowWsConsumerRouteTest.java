@@ -43,7 +43,6 @@ import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,7 +162,6 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         testClient2.close();
     }
 
-    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
     @Test
     public void echo() throws Exception {
         WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + getPort() + "/app3", 2);

@@ -21,6 +21,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * IRC Constants
  */
+@Deprecated(since = "4.21")
 public final class IrcConstants {
     @Metadata(description = "The type of message", javaType = "String")
     public static final String IRC_MESSAGE_TYPE = "irc.messageType";

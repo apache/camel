@@ -25,7 +25,6 @@ import org.apache.camel.test.infra.common.SharedNameGenerator;
 import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Integration test for CAMEL-22429: Verify that subjects longer than 100 characters are properly truncated when sending
  * to AWS SNS, preventing InvalidParameterException.
  */
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 public class SnsTopicProducerSubjectTruncationIT extends Aws2SNSBase {
 
     @RegisterExtension

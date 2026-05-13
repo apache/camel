@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.jms;
 
+import jakarta.jms.BytesMessage;
+import jakarta.jms.Message;
+import jakarta.jms.TextMessage;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
@@ -52,9 +56,9 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        jakarta.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
+        Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
-        assertIsInstanceOf(jakarta.jms.BytesMessage.class, msg);
+        assertIsInstanceOf(BytesMessage.class, msg);
     }
 
     @Test
@@ -66,9 +70,9 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        jakarta.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
+        Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
-        assertIsInstanceOf(jakarta.jms.BytesMessage.class, msg);
+        assertIsInstanceOf(BytesMessage.class, msg);
     }
 
     @Test
@@ -80,9 +84,9 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        jakarta.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
+        Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
-        assertIsInstanceOf(jakarta.jms.TextMessage.class, msg);
+        assertIsInstanceOf(TextMessage.class, msg);
     }
 
     @Override

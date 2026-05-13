@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Allows SPI to plugin a {@link RestProducerFactory} that creates the Camel {@link Producer} responsible for performing
@@ -46,7 +47,8 @@ public interface RestProducerFactory {
      */
     Producer createProducer(
             CamelContext camelContext, String host,
-            String verb, String basePath, String uriTemplate, String queryParameters,
-            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            String verb, String basePath, @Nullable String uriTemplate, @Nullable String queryParameters,
+            @Nullable String consumes, @Nullable String produces, RestConfiguration configuration,
+            Map<String, Object> parameters)
             throws Exception;
 }

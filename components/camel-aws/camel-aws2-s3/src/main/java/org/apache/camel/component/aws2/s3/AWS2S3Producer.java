@@ -55,6 +55,8 @@ import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Storage Service
@@ -690,8 +692,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListObjectsRequest req) {
-                ListObjectsResponse objectList = s3Client.listObjects(req);
+            if (payload instanceof ListObjectsV2Request req) {
+                ListObjectsV2Response objectList = s3Client.listObjectsV2(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(objectList.contents());
                 populateHttpResponseCode(objectList, message);
@@ -702,13 +704,13 @@ public class AWS2S3Producer extends DefaultProducer {
             final String prefix
                     = exchange.getIn().getHeader(AWS2S3Constants.PREFIX, getConfiguration().getPrefix(), String.class);
 
-            final ListObjectsRequest listObjectsRequest = ListObjectsRequest
+            final ListObjectsV2Request listObjectsRequest = ListObjectsV2Request
                     .builder()
                     .bucket(bucketName)
                     .delimiter(delimiter)
                     .prefix(prefix)
                     .build();
-            ListObjectsResponse objectList = s3Client.listObjects(listObjectsRequest);
+            ListObjectsV2Response objectList = s3Client.listObjectsV2(listObjectsRequest);
 
             Message message = getMessageForResponse(exchange);
             message.setBody(objectList.contents());
@@ -1051,13 +1053,13 @@ public class AWS2S3Producer extends DefaultProducer {
                 .key(keyName)
                 .build();
 
-        software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest putObjectPresignRequest
-                = software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest.builder()
+        PutObjectPresignRequest putObjectPresignRequest
+                = PutObjectPresignRequest.builder()
                         .signatureDuration(Duration.ofMillis(milliSeconds))
                         .putObjectRequest(putObjectRequest)
                         .build();
 
-        software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest presignedPutObjectRequest
+        PresignedPutObjectRequest presignedPutObjectRequest
                 = presigner.presignPutObject(putObjectPresignRequest);
 
         Message message = getMessageForResponse(exchange);

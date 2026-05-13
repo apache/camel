@@ -43,6 +43,7 @@ public class EnableProcessorsTest extends ExchangeTestSupport {
         CamelContext context = super.createCamelContext();
         this.mockTracer = new MockTracer();
         mockTracer.setTraceProcessors(true);
+        this.mockTracer.setDisableCoreProcessors(true);
         CamelContextAware.trySetCamelContext(mockTracer, context);
         mockTracer.init(context);
         return context;
@@ -58,30 +59,24 @@ public class EnableProcessorsTest extends ExchangeTestSupport {
 
     private void checkTrace(MockTrace trace) {
         List<Span> spans = trace.spans();
-        assertEquals(6, spans.size());
+        assertEquals(4, spans.size());
         // Cast to implementation object to be able to
         // inspect the status of the Span.
         MockSpanAdapter testProducer = (MockSpanAdapter) spans.get(0);
         MockSpanAdapter direct = (MockSpanAdapter) spans.get(1);
-        MockSpanAdapter innerLog = (MockSpanAdapter) spans.get(2);
-        MockSpanAdapter innerProcessor = (MockSpanAdapter) spans.get(3);
-        MockSpanAdapter log = (MockSpanAdapter) spans.get(4);
-        MockSpanAdapter innerToLog = (MockSpanAdapter) spans.get(5);
+        MockSpanAdapter innerProcessor = (MockSpanAdapter) spans.get(2);
+        MockSpanAdapter log = (MockSpanAdapter) spans.get(3);
 
         // Validate span completion
         assertEquals("true", testProducer.getTag("isDone"));
         assertEquals("true", direct.getTag("isDone"));
-        assertEquals("true", innerLog.getTag("isDone"));
         assertEquals("true", innerProcessor.getTag("isDone"));
         assertEquals("true", log.getTag("isDone"));
-        assertEquals("true", innerToLog.getTag("isDone"));
 
         // Validate same trace
         assertEquals(testProducer.getTag("traceid"), direct.getTag("traceid"));
-        assertEquals(testProducer.getTag("traceid"), innerLog.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), innerProcessor.getTag("traceid"));
         assertEquals(testProducer.getTag("traceid"), log.getTag("traceid"));
-        assertEquals(testProducer.getTag("traceid"), innerToLog.getTag("traceid"));
 
         // Validate op
         assertEquals(Op.EVENT_RECEIVED.toString(), direct.getTag("op"));
@@ -90,10 +85,8 @@ public class EnableProcessorsTest extends ExchangeTestSupport {
         // Validate hierarchy
         assertNull(testProducer.getTag("parentSpan"));
         assertEquals(testProducer.getTag("spanid"), direct.getTag("parentSpan"));
-        assertEquals(direct.getTag("spanid"), innerLog.getTag("parentSpan"));
         assertEquals(direct.getTag("spanid"), innerProcessor.getTag("parentSpan"));
         assertEquals(direct.getTag("spanid"), log.getTag("parentSpan"));
-        assertEquals(log.getTag("spanid"), innerToLog.getTag("parentSpan"));
     }
 
     @Override

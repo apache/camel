@@ -25,6 +25,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 @Component("digitalocean")
+@Deprecated(since = "4.21")
 public class DigitalOceanComponent extends DefaultComponent {
     public DigitalOceanComponent() {
     }

@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mock.MockComponent;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.URISupport;
 
@@ -30,7 +31,7 @@ import org.apache.camel.util.URISupport;
  * Component for testing by polling test messages from another endpoint on startup as the expected message bodies to
  * receive during testing.
  */
-@org.apache.camel.spi.annotations.Component("dataset-test")
+@Component("dataset-test")
 public class DataSetTestComponent extends MockComponent {
 
     public DataSetTestComponent() {

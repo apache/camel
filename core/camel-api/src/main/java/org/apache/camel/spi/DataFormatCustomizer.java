@@ -23,6 +23,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.ThrowingBiConsumer;
 import org.apache.camel.util.function.ThrowingConsumer;
+import org.jspecify.annotations.Nullable;
 
 /**
  * To apply custom configurations to {@link DataFormat} instances.
@@ -139,7 +140,7 @@ public interface DataFormatCustomizer extends Ordered {
      */
     class Builder<T extends DataFormat> {
         private final Class<T> type;
-        private BiPredicate<String, DataFormat> condition;
+        private @Nullable BiPredicate<String, DataFormat> condition;
         private int order;
 
         public Builder(Class<T> type) {
@@ -221,10 +222,11 @@ public interface DataFormatCustomizer extends Ordered {
                 };
             }
 
+            final BiPredicate<String, DataFormat> cond = condition;
             return new BiPredicate<>() {
                 @Override
                 public boolean test(String name, DataFormat target) {
-                    return type.isAssignableFrom(target.getClass()) && condition.test(name, target);
+                    return type.isAssignableFrom(target.getClass()) && cond != null && cond.test(name, target);
                 }
             };
         }

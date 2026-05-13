@@ -17,6 +17,7 @@
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to GCP Secret Manager.
@@ -24,39 +25,39 @@ import org.apache.camel.spi.Metadata;
 public class GcpVaultConfiguration extends VaultConfiguration {
 
     @Metadata(security = "secret")
-    private String serviceAccountKey;
+    private @Nullable String serviceAccountKey;
     @Metadata
-    private String projectId;
+    private @Nullable String projectId;
     @Metadata
     private boolean useDefaultInstance;
     @Metadata
-    private String subscriptionName;
+    private @Nullable String subscriptionName;
     @Metadata
     private boolean refreshEnabled;
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
     @Metadata
-    private String secrets;
+    private @Nullable String secrets;
 
-    public String getServiceAccountKey() {
+    public @Nullable String getServiceAccountKey() {
         return serviceAccountKey;
     }
 
     /**
      * The Service Account Key location
      */
-    public void setServiceAccountKey(String serviceAccountKey) {
+    public void setServiceAccountKey(@Nullable String serviceAccountKey) {
         this.serviceAccountKey = serviceAccountKey;
     }
 
-    public String getProjectId() {
+    public @Nullable String getProjectId() {
         return projectId;
     }
 
     /**
      * The GCP Project ID
      */
-    public void setProjectId(String projectId) {
+    public void setProjectId(@Nullable String projectId) {
         this.projectId = projectId;
     }
 
@@ -71,14 +72,14 @@ public class GcpVaultConfiguration extends VaultConfiguration {
         this.useDefaultInstance = useDefaultInstance;
     }
 
-    public String getSubscriptionName() {
+    public @Nullable String getSubscriptionName() {
         return subscriptionName;
     }
 
     /**
      * Define the Google Pubsub subscription Name to be used when checking for updates
      */
-    public void setSubscriptionName(String subscriptionName) {
+    public void setSubscriptionName(@Nullable String subscriptionName) {
         this.subscriptionName = subscriptionName;
     }
 
@@ -104,14 +105,14 @@ public class GcpVaultConfiguration extends VaultConfiguration {
         this.refreshPeriod = refreshPeriod;
     }
 
-    public String getSecrets() {
+    public @Nullable String getSecrets() {
         return secrets;
     }
 
     /**
      * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
      */
-    public void setSecrets(String secrets) {
+    public void setSecrets(@Nullable String secrets) {
         this.secrets = secrets;
     }
 }

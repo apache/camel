@@ -34,8 +34,8 @@ import software.amazon.awssdk.services.s3.model.DeleteBucketResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -126,8 +126,8 @@ public class AWS2S3ProducerHttpResponseCodeTest {
     @Test
     public void listObjectsShouldSetHttpResponseCode() throws Exception {
         when(configuration.getOperation()).thenReturn(AWS2S3Operations.listObjects);
-        when(s3Client.listObjects(any(ListObjectsRequest.class)))
-                .thenReturn((ListObjectsResponse) ListObjectsResponse.builder()
+        when(s3Client.listObjectsV2(any(ListObjectsV2Request.class)))
+                .thenReturn((ListObjectsV2Response) ListObjectsV2Response.builder()
                         .sdkHttpResponse(httpStatus(200))
                         .build());
 

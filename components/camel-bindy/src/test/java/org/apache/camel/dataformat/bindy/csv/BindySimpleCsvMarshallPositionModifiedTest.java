@@ -80,7 +80,7 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
         public void configure() {
 
             BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat(
-                    org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
+                    Order.class);
             csvBindyDataFormat.setLocale("en");
 
             // default should errors go to mock:error

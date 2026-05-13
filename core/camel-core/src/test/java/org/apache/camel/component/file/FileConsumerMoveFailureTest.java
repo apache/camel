@@ -16,15 +16,20 @@
  */
 package org.apache.camel.component.file;
 
+import java.nio.file.Files;
+import java.time.Duration;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class FileConsumerMoveFailureTest extends ContextTestSupport {
 
     @Test
@@ -32,13 +37,18 @@ public class FileConsumerMoveFailureTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        mock.expectedFileExists(testFile(".camel/hello.txt"), "Hello World");
-        mock.expectedFileExists(testFile("error/bye-error.txt"), "Kaboom");
-
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(fileUri(), "Kaboom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
+
+        Awaitility.await().atMost(Duration.ofSeconds(10))
+                .untilAsserted(() -> {
+                    assertTrue(Files.exists(testFile(".camel/hello.txt")), "hello.txt should have been moved to .camel/");
+                    assertEquals("Hello World", Files.readString(testFile(".camel/hello.txt")));
+                    assertTrue(Files.exists(testFile("error/bye-error.txt")), "bye.txt should have been moved to error/");
+                    assertEquals("Kaboom", Files.readString(testFile("error/bye-error.txt")));
+                });
     }
 
     @Override
@@ -46,7 +56,7 @@ public class FileConsumerMoveFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt"))
+                from(fileUri("?initialDelay=100&delay=100&moveFailed=error/${file:name.noext}-error.txt"))
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);

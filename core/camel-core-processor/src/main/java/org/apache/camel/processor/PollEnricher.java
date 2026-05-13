@@ -357,10 +357,10 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
             }
         }
 
-        // remember current redelivery stats
-        Object redelivered = exchange.getIn().getHeader(Exchange.REDELIVERED);
-        Object redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER);
-        Object redeliveryMaxCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER);
+        // remember current redelivery stats from internal state
+        // (headers may have been stripped by removeHeaders("*"))
+        int savedRedeliveryCounter = exchange.getExchangeExtension().getRedeliveryCounter();
+        int savedRedeliveryMaxCounter = exchange.getExchangeExtension().getRedeliveryMaxCounter();
 
         // if we are bridging error handler and failed then remember the caused exception
         Throwable cause = null;
@@ -420,15 +420,15 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 // remove the exhausted marker as we want to be able to perform redeliveries with the error handler
                 exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
-                // preserve the redelivery stats
-                if (redelivered != null) {
-                    exchange.getMessage().setHeader(Exchange.REDELIVERED, redelivered);
+                // preserve the redelivery stats from internal state
+                if (savedRedeliveryCounter >= 0) {
+                    exchange.getMessage().setHeader(Exchange.REDELIVERY_COUNTER, savedRedeliveryCounter);
+                    exchange.getMessage().setHeader(Exchange.REDELIVERED, savedRedeliveryCounter > 0);
+                    exchange.getExchangeExtension().setRedeliveryCounter(savedRedeliveryCounter);
                 }
-                if (redeliveryCounter != null) {
-                    exchange.getMessage().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
-                }
-                if (redeliveryMaxCounter != null) {
-                    exchange.getMessage().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
+                if (savedRedeliveryMaxCounter >= 0) {
+                    exchange.getMessage().setHeader(Exchange.REDELIVERY_MAX_COUNTER, savedRedeliveryMaxCounter);
+                    exchange.getExchangeExtension().setRedeliveryMaxCounter(savedRedeliveryMaxCounter);
                 }
             }
 

@@ -23,6 +23,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.ThrowingBiConsumer;
 import org.apache.camel.util.function.ThrowingConsumer;
+import org.jspecify.annotations.Nullable;
 
 /**
  * To apply custom configurations to {@link Language} instances.
@@ -139,7 +140,7 @@ public interface LanguageCustomizer extends Ordered {
      */
     class Builder<T extends Language> {
         private final Class<T> type;
-        private BiPredicate<String, Language> condition;
+        private @Nullable BiPredicate<String, Language> condition;
         private int order;
 
         public Builder(Class<T> type) {

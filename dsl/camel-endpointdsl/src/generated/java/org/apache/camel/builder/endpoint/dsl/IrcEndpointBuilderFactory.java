@@ -2066,6 +2066,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default IrcHeaderNameBuilder irc() {
             return IrcHeaderNameBuilder.INSTANCE;
         }
@@ -2089,6 +2090,7 @@ public interface IrcEndpointBuilderFactory {
          * @param path hostname:port
          * @return the dsl builder
          */
+        @Deprecated
         default IrcEndpointBuilder irc(String path) {
             return IrcEndpointBuilderFactory.endpointBuilder("irc", path);
         }
@@ -2114,6 +2116,7 @@ public interface IrcEndpointBuilderFactory {
          * @param path hostname:port
          * @return the dsl builder
          */
+        @Deprecated
         default IrcEndpointBuilder irc(String componentName, String path) {
             return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

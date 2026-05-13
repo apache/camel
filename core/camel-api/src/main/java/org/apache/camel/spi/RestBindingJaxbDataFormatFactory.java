@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * SPI for setting up XML data format (JAXB) for rest-dsl.
@@ -33,7 +34,8 @@ public interface RestBindingJaxbDataFormatFactory {
      */
     void setupJaxb(
             CamelContext camelContext, RestConfiguration config,
-            String type, Class<?> typeClass, String outType, Class<?> outTypeClass,
+            @Nullable String type, @Nullable Class<?> typeClass, @Nullable String outType,
+            @Nullable Class<?> outTypeClass,
             DataFormat jaxb, DataFormat outJaxb)
             throws Exception;
 

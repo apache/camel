@@ -52,7 +52,12 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport impleme
     }
 
     protected CompletableFuture<CamelSagaCoordinator> getCurrentSagaCoordinator(Exchange exchange) {
-        String currentSaga = exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class);
+        // try internal state first (survives removeHeaders("*"))
+        String currentSaga = exchange.getExchangeExtension().getSagaLongRunningAction();
+        if (currentSaga == null) {
+            // fall back to header for interoperability (e.g., LRA protocol)
+            currentSaga = exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION, String.class);
+        }
         if (currentSaga != null) {
             return sagaService.getSaga(currentSaga);
         }
@@ -62,10 +67,13 @@ public abstract class SagaProcessor extends BaseDelegateProcessorSupport impleme
 
     protected void setCurrentSagaCoordinator(Exchange exchange, CamelSagaCoordinator coordinator) {
         if (coordinator != null) {
-            exchange.getIn().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, coordinator.getId());
+            String id = coordinator.getId();
+            exchange.getIn().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, id);
+            exchange.getExchangeExtension().setSagaLongRunningAction(id);
         } else {
             exchange.getIn().removeHeader(Exchange.SAGA_LONG_RUNNING_ACTION);
             exchange.getMessage().removeHeader(Exchange.SAGA_LONG_RUNNING_ACTION);
+            exchange.getExchangeExtension().setSagaLongRunningAction(null);
         }
     }
 

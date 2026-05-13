@@ -52,15 +52,9 @@ public class CatalogTools {
             @ToolArg(description = "Filter components by name (case-insensitive substring match)") String filter,
             @ToolArg(description = "Filter by category label (e.g., cloud, messaging, database, file)") String label,
             @ToolArg(description = "Maximum number of results to return (default: 50)") Integer limit,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Version to query. For Main or Spring Boot: the Camel version (e.g., 4.17.0). "
-                                   + "For quarkus: the Quarkus Platform version (e.g., 3.31.3) as returned by "
-                                   + "camel_version_list quarkusVersion field. "
-                                   + "If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion. For quarkus runtime, all three coordinates "
-                                   + "are used for BOM resolution. For main and spring-boot, the version is extracted "
-                                   + "and used as the catalog version.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         int maxResults = limit != null ? limit : 50;
 
@@ -98,15 +92,9 @@ public class CatalogTools {
                         "endpoint parameters, and usage examples.")
     public ComponentDetailResult camel_catalog_component_doc(
             @ToolArg(description = "Component name (e.g., kafka, http, file, timer)") String component,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Version to query. For Main or Spring Boot: the Camel version (e.g., 4.17.0). "
-                                   + "For quarkus: the Quarkus Platform version (e.g., 3.31.3) as returned by "
-                                   + "camel_version_list quarkusVersion field. "
-                                   + "If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion. For quarkus runtime, all three coordinates "
-                                   + "are used for BOM resolution. For main and spring-boot, the version is extracted "
-                                   + "and used as the catalog version.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.VERSION_QUERY) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         if (component == null || component.isBlank()) {
             throw new ToolCallException("Component name is required", null);
@@ -162,10 +150,9 @@ public class CatalogTools {
     public DataFormatListResult camel_catalog_dataformats(
             @ToolArg(description = "Filter by name") String filter,
             @ToolArg(description = "Maximum results (default: 50)") Integer limit,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         int maxResults = limit != null ? limit : 50;
 
@@ -195,10 +182,9 @@ public class CatalogTools {
                         "(e.g., simple, jsonpath, xpath, groovy, jq).")
     public LanguageListResult camel_catalog_languages(
             @ToolArg(description = "Filter by name") String filter,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         try {
             CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
@@ -225,10 +211,9 @@ public class CatalogTools {
                         + "Maven coordinates, and configuration parameters.")
     public DataFormatDetailResult camel_catalog_dataformat_doc(
             @ToolArg(description = "Data format name (e.g., json-jackson, avro, csv, protobuf, jaxb)") String dataformat,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         if (dataformat == null || dataformat.isBlank()) {
             throw new ToolCallException("Data format name is required", null);
@@ -260,10 +245,9 @@ public class CatalogTools {
                         + "Maven coordinates, and configuration parameters.")
     public LanguageDetailResult camel_catalog_language_doc(
             @ToolArg(description = "Language name (e.g., simple, jsonpath, xpath, jq, groovy)") String language,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         if (language == null || language.isBlank()) {
             throw new ToolCallException("Language name is required", null);
@@ -295,10 +279,9 @@ public class CatalogTools {
     public EipListResult camel_catalog_eips(
             @ToolArg(description = "Filter by name") String filter,
             @ToolArg(description = "Filter by category (e.g., routing, transformation, error handling)") String label,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         try {
             CamelCatalog cat = catalogService.loadCatalog(runtime, camelVersion, platformBom);
@@ -325,10 +308,9 @@ public class CatalogTools {
           description = "Get detailed documentation for a Camel EIP (Enterprise Integration Pattern).")
     public EipDetailResult camel_catalog_eip_doc(
             @ToolArg(description = "EIP name (e.g., split, aggregate, choice, filter)") String eip,
-            @ToolArg(description = "Runtime type: main, spring-boot, or quarkus (default: main)") String runtime,
-            @ToolArg(description = "Camel version to use (e.g., 4.17.0). If not specified, uses the default catalog version.") String camelVersion,
-            @ToolArg(description = "Platform BOM coordinates in GAV format (groupId:artifactId:version). "
-                                   + "When provided, overrides camelVersion.") String platformBom) {
+            @ToolArg(description = ToolArgDocs.RUNTIME) String runtime,
+            @ToolArg(description = ToolArgDocs.CAMEL_VERSION) String camelVersion,
+            @ToolArg(description = ToolArgDocs.PLATFORM_BOM) String platformBom) {
 
         if (eip == null || eip.isBlank()) {
             throw new ToolCallException("EIP name is required", null);

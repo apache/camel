@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * SPI for loading resources.
@@ -47,5 +48,6 @@ public interface ResourceResolver extends StaticService, CamelContextAware {
      * @param  location the location of the resource to resolve.
      * @return          an {@link Resource}, null if was not possible to resolve the resource.
      */
+    @Nullable
     Resource resolve(String location);
 }

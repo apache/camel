@@ -265,6 +265,24 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Time-to-live for pending async conversion tasks in milliseconds.
+         * Tasks older than this will be evicted from memory to prevent leaks.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 86400000
+         * Group: advanced
+         * 
+         * @param asyncTaskTtl the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder asyncTaskTtl(long asyncTaskTtl) {
+            doSetProperty("asyncTaskTtl", asyncTaskTtl);
+            return this;
+        }
+    
+        
+        /**
          * Maximum time to wait for async conversion completion in milliseconds.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -965,6 +983,7 @@ public interface DoclingComponentBuilderFactory {
             case "useDoclingServe": getOrCreateConfiguration((DoclingComponent) component).setUseDoclingServe((boolean) value); return true;
             case "abortOnError": getOrCreateConfiguration((DoclingComponent) component).setAbortOnError((java.lang.Boolean) value); return true;
             case "asyncPollInterval": getOrCreateConfiguration((DoclingComponent) component).setAsyncPollInterval((long) value); return true;
+            case "asyncTaskTtl": getOrCreateConfiguration((DoclingComponent) component).setAsyncTaskTtl((long) value); return true;
             case "asyncTimeout": getOrCreateConfiguration((DoclingComponent) component).setAsyncTimeout((long) value); return true;
             case "autowiredEnabled": ((DoclingComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "doclingCommand": getOrCreateConfiguration((DoclingComponent) component).setDoclingCommand((java.lang.String) value); return true;

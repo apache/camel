@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import org.apache.camel.spi.CircuitBreakerConstants;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An enum of common and known keys for exchange properties used by camel-core.
@@ -100,7 +101,7 @@ public enum ExchangePropertyKey {
         return name;
     }
 
-    public static ExchangePropertyKey asExchangePropertyKey(String name) {
+    public static @Nullable ExchangePropertyKey asExchangePropertyKey(String name) {
         switch (name) {
             case Exchange.AGGREGATED_COMPLETED_BY:
                 return AGGREGATED_COMPLETED_BY;

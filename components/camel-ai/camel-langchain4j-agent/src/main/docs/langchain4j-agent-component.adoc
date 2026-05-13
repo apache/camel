@@ -566,13 +566,14 @@ Supported properties:
 |===
 | Property | Default | Description
 
-| `transportType` | `stdio` | Transport type: `stdio`, `http` (Streamable HTTP), or `sse` (legacy SSE)
+| `transportType` | `stdio` | Transport type: `stdio`, `http` or `streamableHttp` (Streamable HTTP), or `sse` (legacy SSE)
 | `command` | | Comma-separated command for stdio transport (e.g., `docker,run,-i,--rm,mcp/time`)
 | `url` | | Server URL for `http` or `sse` transport
 | `environment.<key>` | | Environment variables for stdio transport
 | `timeout` | `60` | Timeout in seconds
 | `logRequests` | `false` | Log requests sent to the MCP server
 | `logResponses` | `false` | Log responses from the MCP server
+| `oauthProfile` | | OAuth profile name for HTTP transport auth (Client Credentials grant, requires `camel-oauth`)
 |===
 
 Example with two MCP servers configured inline:
@@ -1133,7 +1134,7 @@ public class SecureAgentRoute extends RouteBuilder {
 
         // Secure chat route with error handling
         from("direct:chat")
-            .setHeader("CamelLangChain4jMemoryId", simple("${header.userId}"))
+            .setHeader("CamelLangChain4jAgentMemoryId", simple("${header.userId}"))
             .doTry()
                 .to("langchain4j-agent:chat?agent=#secureAgent")
             .doCatch(dev.langchain4j.service.guardrail.GuardrailException.class)
@@ -1183,7 +1184,7 @@ import dev.langchain4j.model.chat.ChatLanguageModel;
 import org.apache.camel.component.langchain4j.agent.api.Agent;
 import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
-import org.apache.camel.component.langchain4j.agent.api.Guardrails;
+import org.apache.camel.component.langchain4j.agent.api.guardrails.Guardrails;
 
 @Configuration
 public class AgentConfig {

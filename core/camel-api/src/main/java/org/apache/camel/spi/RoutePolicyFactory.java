@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A factory to create {@link org.apache.camel.spi.RoutePolicy} and assign to routes automatic.
@@ -33,5 +34,6 @@ public interface RoutePolicyFactory {
      * @return              the created {@link org.apache.camel.spi.RoutePolicy}, or <tt>null</tt> to not use a policy
      *                      for this route
      */
+    @Nullable
     RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route);
 }

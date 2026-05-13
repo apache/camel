@@ -21,6 +21,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Ordered;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Bulk type converters that often comes out of the box with Apache Camel. Camel does a build phase where the Camel
@@ -37,6 +38,7 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
      * @param  fromType the type to convert from
      * @return          the type converter or <tt>null</tt> if not found.
      */
+    @Nullable
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
 
     /**
@@ -53,7 +55,8 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
      *                                 return null.
      * @throws TypeConversionException is thrown if error during type conversion
      */
-    <T> T convertTo(Class<?> from, Class<T> to, Exchange exchange, Object value) throws TypeConversionException;
+    <T> @Nullable T convertTo(Class<?> from, Class<T> to, @Nullable Exchange exchange, @Nullable Object value)
+            throws TypeConversionException;
 
     /**
      * Tries to convert the value to the specified type, returning <tt>null</tt> if not possible to convert.
@@ -65,7 +68,8 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
      * @param  value the value to be converted
      * @return       the converted value, or <tt>null</tt> if not possible to convert
      */
-    default <T> T tryConvertTo(Class<?> from, Class<T> to, Exchange exchange, Object value) throws TypeConversionException {
+    default <T> @Nullable T tryConvertTo(Class<?> from, Class<T> to, @Nullable Exchange exchange, @Nullable Object value)
+            throws TypeConversionException {
         try {
             Object t = convertTo(from, to, exchange, value);
             if (t == Void.class) {
@@ -91,7 +95,8 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
      * @throws TypeConversionException            is thrown if error during type conversion
      * @throws NoTypeConversionAvailableException if no type converters exists to convert to the given type
      */
-    default <T> T mandatoryConvertTo(Class<?> from, Class<T> to, Exchange exchange, Object value)
+    @SuppressWarnings("NullAway")
+    default <T> T mandatoryConvertTo(Class<?> from, Class<T> to, @Nullable Exchange exchange, @Nullable Object value)
             throws TypeConversionException, NoTypeConversionAvailableException {
         Object t = convertTo(from, to, exchange, value);
         if (t == Void.class) {
@@ -119,34 +124,47 @@ public interface BulkTypeConverters extends Ordered, TypeConverter {
     }
 
     @Override
-    default <T> T convertTo(Class<T> type, Object value) throws TypeConversionException {
+    default <T> @Nullable T convertTo(Class<T> type, @Nullable Object value) throws TypeConversionException {
+        if (value == null) {
+            return null;
+        }
         return convertTo(value.getClass(), type, null, value);
     }
 
     @Override
-    default <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+    default <T> @Nullable T convertTo(Class<T> type, @Nullable Exchange exchange, @Nullable Object value)
+            throws TypeConversionException {
+        if (value == null) {
+            return null;
+        }
         return convertTo(value.getClass(), type, exchange, value);
     }
 
     @Override
-    default <T> T mandatoryConvertTo(Class<T> type, Object value)
+    default <T> T mandatoryConvertTo(Class<T> type, @Nullable Object value)
             throws TypeConversionException, NoTypeConversionAvailableException {
-        return mandatoryConvertTo(value.getClass(), type, null, value);
+        return mandatoryConvertTo(value != null ? value.getClass() : type, type, null, value);
     }
 
     @Override
-    default <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value)
+    default <T> T mandatoryConvertTo(Class<T> type, @Nullable Exchange exchange, @Nullable Object value)
             throws TypeConversionException, NoTypeConversionAvailableException {
-        return mandatoryConvertTo(value.getClass(), type, exchange, value);
+        return mandatoryConvertTo(value != null ? value.getClass() : type, type, exchange, value);
     }
 
     @Override
-    default <T> T tryConvertTo(Class<T> type, Object value) {
+    default <T> @Nullable T tryConvertTo(Class<T> type, @Nullable Object value) {
+        if (value == null) {
+            return null;
+        }
         return tryConvertTo(value.getClass(), type, null, value);
     }
 
     @Override
-    default <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
+    default <T> @Nullable T tryConvertTo(Class<T> type, @Nullable Exchange exchange, @Nullable Object value) {
+        if (value == null) {
+            return null;
+        }
         return tryConvertTo(value.getClass(), type, exchange, value);
     }
 }

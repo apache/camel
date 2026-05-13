@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import javax.management.modelmbean.ModelMBean;
 
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean} which can be used to register the
@@ -39,6 +40,7 @@ public interface ManagementMBeanAssembler extends StaticService {
      *                     possible to assemble an MBean
      * @throws JMException is thrown if error assembling the mbean
      */
+    @Nullable
     ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException;
 
 }

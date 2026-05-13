@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.braintreegateway.BraintreeGateway;
+import com.braintreegateway.ResourceCollection;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionCloneRequest;
@@ -390,7 +391,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testCancelRelease() {
         // using String message body for single parameter "id"
-        final com.braintreegateway.Result result = requestBody("direct://CANCELRELEASE", null);
+        final Result result = requestBody("direct://CANCELRELEASE", null);
 
         assertNotNull(result, "cancelRelease result");
         LOG.debug("cancelRelease: {}", result);
@@ -401,7 +402,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testCredit() {
         // using com.braintreegateway.TransactionRequest message body for single parameter "request"
-        final com.braintreegateway.Result result = requestBody("direct://CREDIT", null);
+        final Result result = requestBody("direct://CREDIT", null);
 
         assertNotNull(result, "credit result");
         LOG.debug("credit: {}", result);
@@ -412,7 +413,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testHoldInEscrow() {
         // using String message body for single parameter "id"
-        final com.braintreegateway.Result result = requestBody("direct://HOLDINESCROW", null);
+        final Result result = requestBody("direct://HOLDINESCROW", null);
 
         assertNotNull(result, "holdInEscrow result");
         LOG.debug("holdInEscrow: {}", result);
@@ -423,7 +424,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testReleaseFromEscrow() {
         // using String message body for single parameter "id"
-        final com.braintreegateway.Result result = requestBody("direct://RELEASEFROMESCROW", null);
+        final Result result = requestBody("direct://RELEASEFROMESCROW", null);
 
         assertNotNull(result, "releaseFromEscrow result");
         LOG.debug("releaseFromEscrow: {}", result);
@@ -434,7 +435,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testSearch() {
         // using com.braintreegateway.TransactionSearchRequest message body for single parameter "query"
-        final com.braintreegateway.ResourceCollection result = requestBody("direct://SEARCH", null);
+        final ResourceCollection result = requestBody("direct://SEARCH", null);
 
         assertNotNull(result, "search result");
         LOG.debug("search: {}", result);
@@ -450,7 +451,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
         // parameter type is java.math.BigDecimal
         headers.put("CamelBraintree.amount", null);
 
-        final com.braintreegateway.Result result = requestBodyAndHeaders("direct://SUBMITFORPARTIALSETTLEMENT", null, headers);
+        final Result result = requestBodyAndHeaders("direct://SUBMITFORPARTIALSETTLEMENT", null, headers);
 
         assertNotNull(result, "submitForPartialSettlement result");
         LOG.debug("submitForPartialSettlement: {}", result);
@@ -461,7 +462,7 @@ public class TransactionGatewayIT extends AbstractBraintreeTestSupport {
     @Test
     public void testVoidTransaction() {
         // using String message body for single parameter "id"
-        final com.braintreegateway.Result result = requestBody("direct://VOIDTRANSACTION", null);
+        final Result result = requestBody("direct://VOIDTRANSACTION", null);
 
         assertNotNull(result, "voidTransaction result");
         LOG.debug("voidTransaction: {}", result);

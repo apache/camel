@@ -28,9 +28,10 @@ The configuration properties for the component are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Default |Description
+|`enabled`| false | Turn the tracing on/off.
+|`traceProcessors`| false | Trace inner custom processors (i.e., any `process` configured in the route).
+|`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
 |`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
-|`traceProcessors` | `false` | Setting this to true will create new spans for each Camel Processors.
-Use the excludePattern property to filter out Processors
 |`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
 
@@ -158,10 +159,8 @@ When you're working at a very low level, you may need to tweak your metrics and 
 protected io.micrometer.tracing.Tracer tracer = new OtelTracer(
     otelTracer,
     currentTraceContext,
-    event -> {
-    },
-    new OtelBaggageManager(
-            currentTraceContext, List.of(MicrometerObservabilitySpanAdapter.BAGGAGE_CAMEL_FLAG), List.of()));
+    event -> {},
+    new OtelBaggageManager(currentTraceContext, List.of(), List.of()));
 ...
 public void process(Exchange exchange) throws Exception {
     exchange.getIn().setHeader("operation", "fake");

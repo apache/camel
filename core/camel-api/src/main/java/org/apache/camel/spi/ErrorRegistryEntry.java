@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 import java.time.Instant;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A snapshot of an error that occurred during message routing.
  * <p/>
@@ -38,6 +40,7 @@ public interface ErrorRegistryEntry {
     /**
      * The endpoint URI where the error occurred (if available)
      */
+    @Nullable
     String endpointUri();
 
     /**
@@ -58,6 +61,7 @@ public interface ErrorRegistryEntry {
     /**
      * The exception message
      */
+    @Nullable
     String exceptionMessage();
 
     /**
@@ -65,12 +69,12 @@ public interface ErrorRegistryEntry {
      * <p/>
      * Each element represents one line of the stack trace.
      */
-    String[] stackTrace();
+    String @Nullable [] stackTrace();
 
     /**
      * The message history trace, or {@code null} if message history is not enabled.
      * <p/>
      * Each element represents one step in the routing history (e.g. "routeId[nodeId]").
      */
-    String[] messageHistory();
+    String @Nullable [] messageHistory();
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An interface to represent an object which can make use of injected {@link HeaderFilterStrategy}.
  */
@@ -26,6 +28,7 @@ public interface HeaderFilterStrategyAware {
      *
      * @return the strategy
      */
+    @Nullable
     HeaderFilterStrategy getHeaderFilterStrategy();
 
     /**

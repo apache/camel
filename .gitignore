@@ -32,3 +32,5 @@ mvnd.zip*
 .mvn/.develocity/develocity-workspace-id
 backlog
 .claude
+.omc
+.oss-ai-helper-rules

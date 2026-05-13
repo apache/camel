@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import org.apache.camel.spi.UnitOfWork;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A consumer of message exchanges from an {@link Endpoint}.
@@ -62,7 +63,7 @@ public interface Consumer extends Service, EndpointAware {
      * @param  autoRelease whether the exchange was created with auto release
      * @return             the default callback
      */
-    default AsyncCallback defaultConsumerCallback(Exchange exchange, boolean autoRelease) {
+    default @Nullable AsyncCallback defaultConsumerCallback(Exchange exchange, boolean autoRelease) {
         return null;
     }
 

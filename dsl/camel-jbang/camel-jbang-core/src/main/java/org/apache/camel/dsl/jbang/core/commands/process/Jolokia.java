@@ -16,7 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.jolokia.jvmagent.client.command.CommandDispatcher;
@@ -67,12 +75,26 @@ public class Jolokia extends ProcessBaseCommand {
             } else {
                 long p = port;
                 if (p <= 0) {
-                    // find a new free port to use when starting a new connection
                     p = AvailablePortFinder.getNextAvailable(8778, 10000);
                 }
                 options = new OptionsAndArgs(
                         null, "--port", Long.toString(p), "--discoveryEnabled", "true", "start", Long.toString(pid));
             }
+
+            // When running from a Spring Boot nested JAR (e.g. camel-launcher),
+            // OptionsAndArgs resolves the fat JAR instead of the Jolokia agent JAR.
+            // The camel-launcher distribution ships the Jolokia agent JAR alongside
+            // the launcher in the same directory, so look for it there.
+            File resolvedJar = OptionsAndArgs.lookupJarFile();
+            if (!isJolokiaAgentJar(resolvedJar)) {
+                File agentJar = findJolokiaAgentJar(resolvedJar);
+                if (agentJar != null) {
+                    Field jarFileField = OptionsAndArgs.class.getDeclaredField("jarFile");
+                    jarFileField.setAccessible(true);
+                    jarFileField.set(options, agentJar);
+                }
+            }
+
             VirtualMachineHandlerOperations vmHandler = PlatformUtils.createVMAccess(options);
             CommandDispatcher dispatcher = new CommandDispatcher(options);
 
@@ -93,8 +115,47 @@ public class Jolokia extends ProcessBaseCommand {
     }
 
     /**
-     * The pid of the running Camel integration that was discovered and used
+     * Checks whether the given JAR file is a Jolokia agent JAR by inspecting its manifest for the Agent-Class
+     * attribute.
      */
+    private boolean isJolokiaAgentJar(File jar) {
+        if (jar == null || !jar.isFile()) {
+            return false;
+        }
+        try (JarFile jf = new JarFile(jar)) {
+            Manifest manifest = jf.getManifest();
+            if (manifest != null) {
+                String agentClass = manifest.getMainAttributes().getValue("Agent-Class");
+                return agentClass != null && agentClass.contains("jolokia");
+            }
+        } catch (IOException e) {
+            // not a valid JAR or unreadable
+        }
+        return false;
+    }
+
+    /**
+     * Finds the Jolokia agent JAR in the same directory as the given JAR file. The camel-launcher distribution ships
+     * the Jolokia agent JAR alongside the launcher JAR in the bin/ directory.
+     */
+    private File findJolokiaAgentJar(File launcherJar) {
+        if (launcherJar == null || !launcherJar.isFile()) {
+            return null;
+        }
+        Path dir = launcherJar.toPath().getParent();
+        if (dir == null) {
+            return null;
+        }
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "jolokia-*-javaagent.jar")) {
+            for (Path entry : stream) {
+                return entry.toFile();
+            }
+        } catch (IOException e) {
+            // directory not readable
+        }
+        return null;
+    }
+
     long getPid() {
         return pid;
     }

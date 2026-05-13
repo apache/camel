@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.box;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class BoxSearchManagerIT extends AbstractBoxITSupport {
         headers.put("CamelBox.query", "*");
 
         @SuppressWarnings("rawtypes")
-        final java.util.Collection result = requestBodyAndHeaders("direct://SEARCHFOLDER", null, headers);
+        final Collection result = requestBodyAndHeaders("direct://SEARCHFOLDER", null, headers);
 
         assertNotNull(result, "searchFolder result");
         LOG.debug("searchFolder: {}", result);

@@ -44,6 +44,7 @@ public class DisableEndpointTest extends ExchangeTestSupport {
         CamelContext context = super.createCamelContext();
         this.mockTracer = new MockTracer();
         mockTracer.setTraceProcessors(true);
+        this.mockTracer.setDisableCoreProcessors(true);
         mockTracer.setExcludePatterns("log*,to*,setVariable*");
         CamelContextAware.trySetCamelContext(mockTracer, context);
         mockTracer.init(context);

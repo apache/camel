@@ -606,6 +606,56 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to allow doing manual acknowledgment via NatsManualAck. If
+         * this option is enabled then an instance of NatsManualAck is stored on
+         * the org.apache.camel.Exchange message header, which allows end users
+         * to access this API and perform manual ack/nak/term operations via the
+         * JetStream consumer. When enabled, the automatic acknowledgment on
+         * exchange completion is disabled. If the user does not call any ack
+         * method, the message remains unacknowledged and NATS will redeliver it
+         * after the ackWait timeout expires. This option is only applicable
+         * when JetStream is enabled (jetstreamEnabled=true). It has no effect
+         * when ackPolicy=None since the server acknowledges messages
+         * automatically on delivery.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAck the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder manualAck(boolean manualAck) {
+            doSetProperty("manualAck", manualAck);
+            return this;
+        }
+        /**
+         * Whether to allow doing manual acknowledgment via NatsManualAck. If
+         * this option is enabled then an instance of NatsManualAck is stored on
+         * the org.apache.camel.Exchange message header, which allows end users
+         * to access this API and perform manual ack/nak/term operations via the
+         * JetStream consumer. When enabled, the automatic acknowledgment on
+         * exchange completion is disabled. If the user does not call any ack
+         * method, the message remains unacknowledged and NATS will redeliver it
+         * after the ackWait timeout expires. This option is only applicable
+         * when JetStream is enabled (jetstreamEnabled=true). It has no effect
+         * when ackPolicy=None since the server acknowledges messages
+         * automatically on delivery.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAck the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder manualAck(String manualAck) {
+            doSetProperty("manualAck", manualAck);
+            return this;
+        }
+        /**
          * Maximum number of attempts to deliver a message from Nats to a
          * consumer. Once MaxDeliver is reached, the NATS server stops
          * attempting to deliver that specific message. The message is not
@@ -726,6 +776,74 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder poolSize(String poolSize) {
             doSetProperty("poolSize", poolSize);
+            return this;
+        }
+        /**
+         * Maximum number of messages to fetch per pull request when using a
+         * JetStream Pull Subscription. Only used when {code
+         * pullSubscription=true}.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param pullBatchSize the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullBatchSize(int pullBatchSize) {
+            doSetProperty("pullBatchSize", pullBatchSize);
+            return this;
+        }
+        /**
+         * Maximum number of messages to fetch per pull request when using a
+         * JetStream Pull Subscription. Only used when {code
+         * pullSubscription=true}.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param pullBatchSize the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullBatchSize(String pullBatchSize) {
+            doSetProperty("pullBatchSize", pullBatchSize);
+            return this;
+        }
+        /**
+         * Maximum time (in milliseconds) to wait for a batch of messages to be
+         * available on the server during a single fetch when using a JetStream
+         * Pull Subscription. Only used when {code pullSubscription=true}.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param pullFetchTimeout the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullFetchTimeout(long pullFetchTimeout) {
+            doSetProperty("pullFetchTimeout", pullFetchTimeout);
+            return this;
+        }
+        /**
+         * Maximum time (in milliseconds) to wait for a batch of messages to be
+         * available on the server during a single fetch when using a JetStream
+         * Pull Subscription. Only used when {code pullSubscription=true}.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param pullFetchTimeout the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullFetchTimeout(String pullFetchTimeout) {
+            doSetProperty("pullFetchTimeout", pullFetchTimeout);
             return this;
         }
         /**
@@ -2792,6 +2910,20 @@ public interface NatsEndpointBuilderFactory {
          */
         public String natsDeliveryCounter() {
             return "CamelNatsDeliveryCounter";
+        }
+        /**
+         * The manual acknowledgment handle for JetStream messages (only set
+         * when manualAck=true).
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.nats.NatsManualAck} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code NatsManualAck}.
+         */
+        public String natsManualAck() {
+            return "CamelNatsManualAck";
         }
     }
     static NatsEndpointBuilder endpointBuilder(String componentName, String path) {

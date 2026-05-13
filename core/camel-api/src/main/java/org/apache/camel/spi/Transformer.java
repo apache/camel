@@ -16,11 +16,14 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * <a href="http://camel.apache.org/transformer.html">Transformer</a> performs message transformation according to the
@@ -32,10 +35,10 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class Transformer extends ServiceSupport implements CamelContextAware {
 
-    private CamelContext camelContext;
-    private String name;
-    private DataType from;
-    private DataType to;
+    private @Nullable CamelContext camelContext;
+    private @Nullable String name;
+    private @Nullable DataType from;
+    private @Nullable DataType to;
 
     protected Transformer() {
         if (this.getClass().isAnnotationPresent(DataTypeTransformer.class)) {
@@ -55,7 +58,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     }
 
     protected Transformer(String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name, "name");
     }
 
     /**
@@ -70,21 +73,21 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     /**
      * Get the transformer name that represents the supported data type model.
      */
-    public String getName() {
+    public @Nullable String getName() {
         return name;
     }
 
     /**
      * Get 'from' data type.
      */
-    public DataType getFrom() {
+    public @Nullable DataType getFrom() {
         return from;
     }
 
     /**
      * Get 'to' data type.
      */
-    public DataType getTo() {
+    public @Nullable DataType getTo() {
         return to;
     }
 
@@ -92,7 +95,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
      * Set the name for this transformer. Usually a combination of scheme and name.
      */
     public Transformer setName(String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name, "name");
         return this;
     }
 
@@ -103,7 +106,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
      * @param scheme supported data type scheme
      * @param name   transformer name
      */
-    public Transformer setName(String scheme, String name) {
+    public Transformer setName(@Nullable String scheme, @Nullable String name) {
         if (ObjectHelper.isNotEmpty(scheme)) {
             if (ObjectHelper.isNotEmpty(name)) {
                 this.name = scheme + ":" + name;
@@ -119,27 +122,27 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
     /**
      * Set 'from' data type.
      */
-    public Transformer setFrom(String from) {
-        this.from = new DataType(from);
+    public Transformer setFrom(@Nullable String from) {
+        this.from = from != null ? new DataType(from) : null;
         return this;
     }
 
     /**
      * Set 'to' data type.
      */
-    public Transformer setTo(String to) {
-        this.to = new DataType(to);
+    public Transformer setTo(@Nullable String to) {
+        this.to = to != null ? new DataType(to) : null;
         return this;
     }
 
     @Override
-    public CamelContext getCamelContext() {
+    public @Nullable CamelContext getCamelContext() {
         return this.camelContext;
     }
 
     @Override
     public void setCamelContext(CamelContext context) {
-        this.camelContext = context;
+        this.camelContext = Objects.requireNonNull(context, "context");
     }
 
     @Override

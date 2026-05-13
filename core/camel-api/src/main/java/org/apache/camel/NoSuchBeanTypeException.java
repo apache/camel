@@ -16,17 +16,19 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * A runtime exception if a given bean type could not be found in the {@link org.apache.camel.spi.Registry}
  */
 public class NoSuchBeanTypeException extends NoSuchBeanException {
 
     public NoSuchBeanTypeException(Class<?> type) {
-        super(type.getName());
+        super(Objects.requireNonNull(type, "type").getName());
     }
 
     public NoSuchBeanTypeException(Class<?> type, int size) {
-        super(type.getName(), size);
+        super(Objects.requireNonNull(type, "type").getName(), size);
     }
 
 }

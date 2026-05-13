@@ -21,7 +21,7 @@ camel dependency [options]
 | xref:jbang-commands/camel-jbang-dependency-copy.adoc[copy] | Copies all Camel dependencies required to run to a specific directory
 | xref:jbang-commands/camel-jbang-dependency-list.adoc[list] | Displays all Camel dependencies required to run
 | xref:jbang-commands/camel-jbang-dependency-runtime.adoc[runtime] | Display Camel runtime and version for given Maven project
-| xref:jbang-commands/camel-jbang-dependency-update.adoc[update] | Updates dependencies in Maven pom.xml or Java source file (JBang style)
+| xref:jbang-commands/camel-jbang-dependency-update.adoc[update] | Updates dependencies in Maven pom.xml or Java source files (JBang style)
 |===
 
 

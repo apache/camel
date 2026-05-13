@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * Exception used for forcing an Exchange to be rolled back.
  */
@@ -30,10 +32,11 @@ public class RollbackExchangeException extends CamelExchangeException {
     }
 
     public RollbackExchangeException(String message, Exchange exchange) {
-        super(message, exchange);
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"));
     }
 
     public RollbackExchangeException(String message, Exchange exchange, Throwable cause) {
-        super(message, exchange, cause);
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"),
+              Objects.requireNonNull(cause, "cause"));
     }
 }

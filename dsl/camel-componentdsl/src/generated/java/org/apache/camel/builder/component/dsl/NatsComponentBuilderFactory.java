@@ -433,6 +433,33 @@ public interface NatsComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to allow doing manual acknowledgment via NatsManualAck. If
+         * this option is enabled then an instance of NatsManualAck is stored on
+         * the org.apache.camel.Exchange message header, which allows end users
+         * to access this API and perform manual ack/nak/term operations via the
+         * JetStream consumer. When enabled, the automatic acknowledgment on
+         * exchange completion is disabled. If the user does not call any ack
+         * method, the message remains unacknowledged and NATS will redeliver it
+         * after the ackWait timeout expires. This option is only applicable
+         * when JetStream is enabled (jetstreamEnabled=true). It has no effect
+         * when ackPolicy=None since the server acknowledges messages
+         * automatically on delivery.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param manualAck the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder manualAck(boolean manualAck) {
+            doSetProperty("manualAck", manualAck);
+            return this;
+        }
+    
         /**
          * Maximum number of attempts to deliver a message from Nats to a
          * consumer. Once MaxDeliver is reached, the NATS server stops
@@ -505,6 +532,44 @@ public interface NatsComponentBuilderFactory {
          */
         default NatsComponentBuilder poolSize(int poolSize) {
             doSetProperty("poolSize", poolSize);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum number of messages to fetch per pull request when using a
+         * JetStream Pull Subscription. Only used when {code
+         * pullSubscription=true}.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: consumer
+         * 
+         * @param pullBatchSize the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder pullBatchSize(int pullBatchSize) {
+            doSetProperty("pullBatchSize", pullBatchSize);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum time (in milliseconds) to wait for a batch of messages to be
+         * available on the server during a single fetch when using a JetStream
+         * Pull Subscription. Only used when {code pullSubscription=true}.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param pullFetchTimeout the value to set
+         * @return the dsl builder
+         */
+        default NatsComponentBuilder pullFetchTimeout(long pullFetchTimeout) {
+            doSetProperty("pullFetchTimeout", pullFetchTimeout);
             return this;
         }
     
@@ -837,10 +902,13 @@ public interface NatsComponentBuilderFactory {
             case "ackWait": getOrCreateConfiguration((NatsComponent) component).setAckWait((long) value); return true;
             case "bridgeErrorHandler": ((NatsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "durableName": getOrCreateConfiguration((NatsComponent) component).setDurableName((java.lang.String) value); return true;
+            case "manualAck": getOrCreateConfiguration((NatsComponent) component).setManualAck((boolean) value); return true;
             case "maxDeliver": getOrCreateConfiguration((NatsComponent) component).setMaxDeliver((long) value); return true;
             case "maxMessages": getOrCreateConfiguration((NatsComponent) component).setMaxMessages((java.lang.String) value); return true;
             case "nackWait": getOrCreateConfiguration((NatsComponent) component).setNackWait((long) value); return true;
             case "poolSize": getOrCreateConfiguration((NatsComponent) component).setPoolSize((int) value); return true;
+            case "pullBatchSize": getOrCreateConfiguration((NatsComponent) component).setPullBatchSize((int) value); return true;
+            case "pullFetchTimeout": getOrCreateConfiguration((NatsComponent) component).setPullFetchTimeout((long) value); return true;
             case "pullSubscription": getOrCreateConfiguration((NatsComponent) component).setPullSubscription((boolean) value); return true;
             case "queueName": getOrCreateConfiguration((NatsComponent) component).setQueueName((java.lang.String) value); return true;
             case "replyToDisabled": getOrCreateConfiguration((NatsComponent) component).setReplyToDisabled((boolean) value); return true;

@@ -21,6 +21,9 @@ import java.util.List;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -48,7 +51,11 @@ public final class RouteDiagramHelper {
         }
 
         for (int i = 0; i < arr.size(); i++) {
-            JsonObject o = (JsonObject) arr.get(i);
+            Object item = arr.get(i);
+            if (!(item instanceof JsonObject)) {
+                continue;
+            }
+            JsonObject o = (JsonObject) item;
             RouteInfo route = new RouteInfo();
             route.routeId = o.getString("routeId");
             String source = o.getString("source");
@@ -60,8 +67,40 @@ public final class RouteDiagramHelper {
                     NodeInfo node = new NodeInfo();
                     node.type = line.getString("type");
                     node.code = Jsoner.unescape(line.getString("code"));
+                    node.description = line.getString("description");
                     Integer level = line.getInteger("level");
                     node.level = level != null ? level : 0;
+
+                    if (line.containsKey("statistics")) {
+                        JsonObject ls = line.getJsonObject("statistics");
+                        RouteDiagramLayoutEngine.StatInfo stat;
+                        if ("route".equals(node.type)) {
+                            // route has some special stats
+                            var s = new RouteDiagramLayoutEngine.RouteStatInfo();
+                            s.coverage = ls.getString("coverage");
+                            s.load01 = ls.getString("load01");
+                            s.load05 = ls.getString("load05");
+                            s.load15 = ls.getString("load15");
+                            s.exchangesThroughput = ls.getString("exchangesThroughput");
+                            stat = s;
+                        } else {
+                            // common stats
+                            stat = new RouteDiagramLayoutEngine.StatInfo();
+                        }
+                        node.stat = stat;
+                        stat.idleSince = ls.getLong("idleSince");
+                        stat.exchangesTotal = ls.getLong("exchangesTotal");
+                        stat.exchangesFailed = ls.getLong("exchangesFailed");
+                        stat.exchangesInflight = ls.getLong("exchangesInflight");
+                        stat.meanProcessingTime = ls.getLong("meanProcessingTime");
+                        stat.maxProcessingTime = ls.getLong("maxProcessingTime");
+                        stat.minProcessingTime = ls.getLong("minProcessingTime");
+                        stat.lastProcessingTime = ls.getLongOrDefault("lastProcessingTime", -1);
+                        stat.deltaProcessingTime = ls.getLongOrDefault("deltaProcessingTime", -1);
+                        stat.lastCreatedExchangeTimestamp = ls.getLongOrDefault("lastCreatedExchangeTimestamp", -1);
+                        stat.lastCompletedExchangeTimestamp = ls.getLongOrDefault("lastCompletedExchangeTimestamp", -1);
+                        stat.lastFailedExchangeTimestamp = ls.getLongOrDefault("lastFailedExchangeTimestamp", -1);
+                    }
                     route.nodes.add(node);
                 }
             }
@@ -81,16 +120,17 @@ public final class RouteDiagramHelper {
         if (source == null || source.isBlank()) {
             return null;
         }
-        // strip scheme prefix (e.g. "file:")
-        int colon = source.lastIndexOf(':');
-        if (colon >= 0 && colon < source.length() - 1) {
-            source = source.substring(colon + 1);
+        source = source.replace(' ', '-');
+        if (source.startsWith("source:")) {
+            source = source.substring(7);
+            // skip middle packages
+            if (source.contains(".")) {
+                source = StringHelper.afterLast(source, ".");
+            }
         }
-        // return just the filename part
-        int slash = Math.max(source.lastIndexOf('/'), source.lastIndexOf('\\'));
-        if (slash >= 0 && slash < source.length() - 1) {
-            return source.substring(slash + 1);
-        }
+        source = LoggerHelper.sourceNameOnly(source);
+        source = LoggerHelper.stripScheme(source);
+        source = FileUtil.stripPath(source);
         return source;
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.openai.mock;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -43,15 +45,15 @@ public class AudioTranscriptionResponseBuilder {
     }
 
     private String createVerboseResponse(AudioTranscriptionExpectation expectation) throws Exception {
-        record VerboseTranscriptionResponse(String text, String language, double duration, java.util.List<?> segments,
-                java.util.List<?> words) {
+        record VerboseTranscriptionResponse(String text, String language, double duration, List<?> segments,
+                List<?> words) {
         }
 
         return objectMapper.writeValueAsString(new VerboseTranscriptionResponse(
                 expectation.getTranscriptionText(),
                 expectation.getLanguage(),
                 expectation.getDuration(),
-                java.util.List.of(),
-                java.util.List.of()));
+                List.of(),
+                List.of()));
     }
 }

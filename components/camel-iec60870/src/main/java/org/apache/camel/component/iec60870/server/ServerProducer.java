@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.Value;
 
+@Deprecated(since = "4.21")
 public class ServerProducer extends DefaultProducer {
 
     private final ServerEndpoint endpoint;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A shared scheduler to run small period tasks, such as updating internal statistics, or for custom components to have
  * a background task.
@@ -49,6 +51,6 @@ public interface PeriodTaskScheduler {
      * @param  type the type of the task
      * @return      the task, or <tt>null</tt> if no tasks exists
      */
-    <T> T getTaskByType(Class<T> type);
+    <T> @Nullable T getTaskByType(Class<T> type);
 
 }

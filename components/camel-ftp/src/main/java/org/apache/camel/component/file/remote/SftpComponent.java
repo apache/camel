@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.StringHelper;
 
@@ -34,6 +35,27 @@ import org.apache.camel.util.StringHelper;
 @Component("sftp")
 @ManagedResource(description = "Managed SFTP Component")
 public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
+
+    @Metadata(label = "security", defaultValue = "no", enums = "no,yes", security = "insecure:ssl",
+              description = "Sets whether to use strict host key checking globally for all endpoints. "
+                            + "Setting this to 'no' (the default) disables host key verification and makes SFTP connections "
+                            + "vulnerable to man-in-the-middle attacks. Use 'yes' in production environments.")
+    private String strictHostKeyChecking = "no";
+    @Metadata(label = "security", security = "secret",
+              description = "Sets the known_hosts file globally, so that the SFTP endpoints can do host key verification.")
+    private String knownHostsFile;
+    @Metadata(label = "security", security = "secret",
+              description = "Sets the known_hosts file (loaded from classpath by default) globally, so that the SFTP endpoints can do host key verification.")
+    private String knownHostsUri;
+    @Metadata(label = "security", security = "secret",
+              description = "Sets the known_hosts from the byte array globally, so that the SFTP endpoints can do host key verification.")
+    private byte[] knownHosts;
+    @Metadata(label = "security", defaultValue = "true",
+              description = "If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home)/.ssh/known_hosts")
+    private boolean useUserKnownHostsFile = true;
+    @Metadata(label = "security", defaultValue = "false",
+              description = "If knownHostFile does not exist, then attempt to auto-create the path and file (beware that the file will be created by the current user of the running Java process, which may not have file permission).")
+    private boolean autoCreateKnownHostsFile;
 
     public SftpComponent() {
     }
@@ -57,6 +79,23 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
         // customize its own version
         SftpConfiguration config = new SftpConfiguration(new URI(baseUri));
 
+        // apply component-level host key verification settings as defaults
+        // (endpoint URI parameters will override these)
+        if (strictHostKeyChecking != null) {
+            config.setStrictHostKeyChecking(strictHostKeyChecking);
+        }
+        if (knownHostsFile != null) {
+            config.setKnownHostsFile(knownHostsFile);
+        }
+        if (knownHostsUri != null) {
+            config.setKnownHostsUri(knownHostsUri);
+        }
+        if (knownHosts != null) {
+            config.setKnownHosts(knownHosts);
+        }
+        config.setUseUserKnownHostsFile(useUserKnownHostsFile);
+        config.setAutoCreateKnownHostsFile(autoCreateKnownHostsFile);
+
         FtpUtils.ensureRelativeFtpDirectory(this, config);
 
         return new SftpEndpoint(uri, this, config);
@@ -65,6 +104,77 @@ public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
     @Override
     protected void afterPropertiesSet(GenericFileEndpoint<SftpRemoteFile> endpoint) throws Exception {
         // noop
+    }
+
+    public String getStrictHostKeyChecking() {
+        return strictHostKeyChecking;
+    }
+
+    /**
+     * Sets whether to use strict host key checking globally for all endpoints. Setting this to 'no' (the default)
+     * disables host key verification and makes SFTP connections vulnerable to man-in-the-middle attacks. Use 'yes' in
+     * production environments.
+     */
+    public void setStrictHostKeyChecking(String strictHostKeyChecking) {
+        this.strictHostKeyChecking = strictHostKeyChecking;
+    }
+
+    public String getKnownHostsFile() {
+        return knownHostsFile;
+    }
+
+    /**
+     * Sets the known_hosts file globally, so that the SFTP endpoints can do host key verification.
+     */
+    public void setKnownHostsFile(String knownHostsFile) {
+        this.knownHostsFile = knownHostsFile;
+    }
+
+    public String getKnownHostsUri() {
+        return knownHostsUri;
+    }
+
+    /**
+     * Sets the known_hosts file (loaded from classpath by default) globally, so that the SFTP endpoints can do host key
+     * verification.
+     */
+    public void setKnownHostsUri(String knownHostsUri) {
+        this.knownHostsUri = knownHostsUri;
+    }
+
+    public byte[] getKnownHosts() {
+        return knownHosts;
+    }
+
+    /**
+     * Sets the known_hosts from the byte array globally, so that the SFTP endpoints can do host key verification.
+     */
+    public void setKnownHosts(byte[] knownHosts) {
+        this.knownHosts = knownHosts;
+    }
+
+    public boolean isUseUserKnownHostsFile() {
+        return useUserKnownHostsFile;
+    }
+
+    /**
+     * If knownHostFile has not been explicit configured then use the host file from
+     * System.getProperty(user.home)/.ssh/known_hosts
+     */
+    public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
+        this.useUserKnownHostsFile = useUserKnownHostsFile;
+    }
+
+    public boolean isAutoCreateKnownHostsFile() {
+        return autoCreateKnownHostsFile;
+    }
+
+    /**
+     * If knownHostFile does not exist, then attempt to auto-create the path and file (beware that the file will be
+     * created by the current user of the running Java process, which may not have file permission).
+     */
+    public void setAutoCreateKnownHostsFile(boolean autoCreateKnownHostsFile) {
+        this.autoCreateKnownHostsFile = autoCreateKnownHostsFile;
     }
 
     @ManagedOperation(description = "Dump JSCH Configuration")

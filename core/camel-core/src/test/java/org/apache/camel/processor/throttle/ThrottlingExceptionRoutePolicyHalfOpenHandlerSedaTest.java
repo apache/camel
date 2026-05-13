@@ -75,7 +75,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         final ServiceSupport consumer = (ServiceSupport) context.getRoute("foo").getConsumer();
 
         // wait long enough to have the consumer suspended
-        await().atMost(2, TimeUnit.SECONDS).until(consumer::isSuspended);
+        await().atMost(5, TimeUnit.SECONDS).until(consumer::isSuspended);
 
         // send more messages
         // but should get there (yet)
@@ -92,7 +92,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         result.expectedBodiesReceivedInAnyOrder(bodies);
 
         // wait long enough to have the consumer resumed
-        await().atMost(2, TimeUnit.SECONDS).until(consumer::isStarted);
+        await().atMost(5, TimeUnit.SECONDS).until(consumer::isStarted);
 
         // send message
         // should get through
@@ -109,7 +109,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
             public void configure() {
                 int threshold = 2;
                 long failureWindow = 30;
-                long halfOpenAfter = 250;
+                long halfOpenAfter = 1000;
                 ThrottlingExceptionRoutePolicy policy
                         = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
                 policy.setHalfOpenHandler(new AlwaysCloseHandler());

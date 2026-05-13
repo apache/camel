@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An interface to represent an object that supports variables.
  */
@@ -31,6 +33,7 @@ public interface VariableAware {
      * @param  name the name of the variable
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
      */
+    @Nullable
     Object getVariable(String name);
 
     /**

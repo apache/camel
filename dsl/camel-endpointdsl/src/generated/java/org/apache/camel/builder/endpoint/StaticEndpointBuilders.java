@@ -4272,6 +4272,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String path) {
         return digitalocean("digitalocean", path);
     }
@@ -4300,6 +4301,7 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
+    @Deprecated
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String componentName, String path) {
         return DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -7879,6 +7881,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String path) {
         return iec60870Client("iec60870-client", path);
     }
@@ -7901,6 +7904,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String componentName, String path) {
         return ClientEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -7921,6 +7925,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String path) {
         return iec60870Server("iec60870-server", path);
     }
@@ -7943,6 +7948,7 @@ public class StaticEndpointBuilders {
      * @param path uriPath
      * @return the dsl builder
      */
+    @Deprecated
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String componentName, String path) {
         return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -8530,6 +8536,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String path) {
         return irc("irc", path);
     }
@@ -8555,6 +8562,7 @@ public class StaticEndpointBuilders {
      * @param path hostname:port
      * @return the dsl builder
      */
+    @Deprecated
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String componentName, String path) {
         return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -8575,6 +8583,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String path) {
         return ironmq("ironmq", path);
     }
@@ -8597,6 +8606,7 @@ public class StaticEndpointBuilders {
      * @param path queueName
      * @return the dsl builder
      */
+    @Deprecated
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String componentName, String path) {
         return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * An interface to represent an object which is capable of configuring via {@link PropertyConfigurer}.
  */
@@ -26,6 +28,7 @@ public interface PropertyConfigurerAware {
      *
      * @param instance the bean instance
      */
+    @Nullable
     PropertyConfigurer getPropertyConfigurer(Object instance);
 
 }

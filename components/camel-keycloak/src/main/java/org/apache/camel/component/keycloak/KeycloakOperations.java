@@ -114,5 +114,18 @@ public enum KeycloakOperations {
     bulkDeleteUsers,
     bulkAssignRolesToUser,
     bulkAssignRoleToUsers,
-    bulkUpdateUsers
+    bulkUpdateUsers,
+    // Organization operations (Keycloak 26+)
+    createOrganization,
+    updateOrganization,
+    deleteOrganization,
+    getOrganization,
+    listOrganizations,
+    searchOrganizations,
+    addOrganizationMember,
+    removeOrganizationMember,
+    listOrganizationMembers,
+    linkOrganizationIdentityProvider,
+    unlinkOrganizationIdentityProvider,
+    listOrganizationIdentityProviders
 }

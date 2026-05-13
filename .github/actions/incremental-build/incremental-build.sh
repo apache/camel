@@ -512,10 +512,8 @@ main() {
       local projectRoot
       projectRoot=$(findProjectRoot "${project}")
       if [[ ${projectRoot} = "." ]]; then
-        echo "The root project is affected, skipping targeted module testing"
-        echo "<!-- ci-tested-modules -->" > "incremental-test-comment.md"
-        echo ":information_source: CI did not run targeted module tests (root project files changed)." >> "incremental-test-comment.md"
-        exit 0
+        echo "  Skipping non-module file: ${project} (no parent pom.xml found)"
+        continue
       elif [[ ${projectRoot} != "${lastProjectRoot}" ]]; then
         totalAffected=$((totalAffected + 1))
         pl="$pl,${projectRoot}"

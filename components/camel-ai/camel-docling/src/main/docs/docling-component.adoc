@@ -2514,6 +2514,10 @@ When using docling-serve API mode, the component uses the https://github.com/doc
 | 300000
 | Maximum time to wait for async conversion completion in milliseconds (5 minutes).
 
+| `asyncTaskTtl`
+| 86400000
+| Time-to-live for pending async conversion tasks in milliseconds (24 hours). Tasks older than this will be automatically evicted from memory to prevent leaks. A background cleanup task runs periodically to remove expired entries.
+
 |===
 
 IMPORTANT: The default `processTimeout` of 30 seconds may not be sufficient for complex PDF documents, especially when OCR or enrichment options are enabled. For production use with PDF files, consider increasing `processTimeout` to at least 120000 (2 minutes).

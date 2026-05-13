@@ -17,7 +17,9 @@
 package org.apache.camel.component.springai.vectorstore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -117,13 +119,15 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                             documents.add(new Document(str));
                         }
                     }
-                } else if (body instanceof String str) {
-                    // Create document from text
-                    documents.add(new Document(str));
                 } else {
-                    throw new IllegalArgumentException(
-                            "Message body must be a Document, List<Document>, String, List<String>, " +
-                                                       "float[], or List<float[]>, or embeddings must be present in headers");
+                    String str = message.getBody(String.class);
+                    if (str != null) {
+                        documents.add(new Document(str));
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Message body must be a Document, List<Document>, String, List<String>, " +
+                                                           "float[], or List<float[]>, or embeddings must be present in headers");
+                    }
                 }
             }
         }
@@ -144,7 +148,7 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
      * special key that can be used by vector stores that support pre-computed embeddings.
      */
     private Document createDocumentWithEmbedding(String text, float[] embedding) {
-        java.util.Map<String, Object> metadata = new java.util.HashMap<>();
+        Map<String, Object> metadata = new HashMap<>();
         // Store the embedding in metadata with a standard key
         // Note: Most vector stores will ignore this and compute their own embeddings,
         // but custom implementations can use it
@@ -163,8 +167,11 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
             Object body = message.getBody();
             if (body instanceof List) {
                 documentIds = (List<String>) body;
-            } else if (body instanceof String str) {
-                documentIds = List.of(str);
+            } else {
+                String str = message.getBody(String.class);
+                if (str != null) {
+                    documentIds = List.of(str);
+                }
             }
         }
 

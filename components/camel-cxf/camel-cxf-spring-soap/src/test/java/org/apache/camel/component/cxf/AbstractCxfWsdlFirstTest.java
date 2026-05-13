@@ -27,6 +27,7 @@ import jakarta.xml.ws.WebServiceException;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -105,7 +106,7 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     public void testInvokingServiceWithCamelProducer() throws Exception {
         Exchange exchange = sendJaxWsMessageWithHolders("hello");
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
-        org.apache.camel.Message out = exchange.getMessage();
+        Message out = exchange.getMessage();
         List<Object> result = out.getBody(List.class);
         assertEquals(4, result.size(), "The result list should not be empty");
         Holder<String> name = (Holder<String>) result.get(3);

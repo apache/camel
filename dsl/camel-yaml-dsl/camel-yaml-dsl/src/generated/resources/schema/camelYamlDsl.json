@@ -521,6 +521,12 @@
             "description" : "Turns on using optimistic locking, which requires the aggregationRepository being used, is supporting this by implementing org.apache.camel.spi.OptimisticLockingAggregationRepository .",
             "default" : false
           },
+          "optimisticLockingSyncRetry" : {
+            "type" : "boolean",
+            "title" : "Optimistic Locking Sync Retry",
+            "description" : "When optimistic locking is enabled, retries happen synchronously in the same thread instead of being scheduled on a background thread. This preserves transaction context for repositories that require single-thread transactional guarantees. Only takes effect when optimisticLocking() is also enabled.",
+            "default" : false
+          },
           "parallelProcessing" : {
             "type" : "boolean",
             "title" : "Parallel Processing",

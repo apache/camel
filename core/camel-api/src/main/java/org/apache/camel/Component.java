@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import org.apache.camel.component.extension.ComponentExtension;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A <a href="http://camel.apache.org/component.html">component</a> is a factory of {@link Endpoint} objects.
@@ -40,6 +41,7 @@ public interface Component extends CamelContextAware, Service {
      * @throws Exception is thrown if error creating the endpoint
      * @see              #useRawUri()
      */
+    @Nullable
     Endpoint createEndpoint(String uri) throws Exception;
 
     /**
@@ -54,6 +56,7 @@ public interface Component extends CamelContextAware, Service {
      * @throws Exception  is thrown if error creating the endpoint
      * @see               #useRawUri()
      */
+    @Nullable
     Endpoint createEndpoint(String uri, Map<String, Object> parameters) throws Exception;
 
     /**
@@ -70,7 +73,7 @@ public interface Component extends CamelContextAware, Service {
      *
      * @return the configurer, or <tt>null</tt> if the component does not support using property configurer.
      */
-    default PropertyConfigurer getComponentPropertyConfigurer() {
+    default @Nullable PropertyConfigurer getComponentPropertyConfigurer() {
         return null;
     }
 
@@ -79,7 +82,7 @@ public interface Component extends CamelContextAware, Service {
      *
      * @return the configurer, or <tt>null</tt> if the endpoint does not support using property configurer.
      */
-    default PropertyConfigurer getEndpointPropertyConfigurer() {
+    default @Nullable PropertyConfigurer getEndpointPropertyConfigurer() {
         return null;
     }
 
@@ -116,7 +119,7 @@ public interface Component extends CamelContextAware, Service {
     /**
      * Gets the default name of the component.
      */
-    default String getDefaultName() {
+    default @Nullable String getDefaultName() {
         return null;
     }
 

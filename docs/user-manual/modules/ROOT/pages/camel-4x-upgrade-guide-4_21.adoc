@@ -13,7 +13,18 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.20 to 4.21
 
+=== camel-grok - potential breaking change
+
+The library used for Camel Grok component has been migrated from no more maintained `io.krakens:java-grok` to its fork `io.github.whatap:java-grok`.
+It implies small differences listed https://github.com/whatap/java-grok#what-is-different-from-iokrakensjava-grok[here].
+
 === camel-core
+
+The `camel-api` module now has an optional dependency on `org.jspecify:jspecify` for null safety annotations
+(`@NullMarked`, `@Nullable`). The dependency is `<optional>true</optional>`, so it is not pulled transitively
+into your application. The annotations are used to document nullability contracts across the Camel API surface
+and enable compile-time null checking with tools like NullAway. If you want to leverage these annotations in
+your own code or tooling, add `org.jspecify:jspecify` explicitly to your project dependencies.
 
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
@@ -35,6 +46,34 @@ Previously these nodes were flattened to the same level as their parent `choice`
 `doCatch` and `doFinally` work inside `doTry`. Now `when` and `otherwise` contribute their own level, consistent
 with the tree structure exposed by `getChildren()`. This affects level values reported via JMX (`ManagedProcessor.getLevel()`)
 and dev consoles for nodes inside Choice EIP branches.
+
+=== camel-jbang
+
+The `camel wrapper` command now installs the scripts as `camel` instead of `camelw`.
+You can use the `--command-name=camelw` to use the old name.
+
+When `camel.main.routesReloadEnabled=true` (automatically set by `camel run --dev`), Camel now
+auto-disables `contentCache` on resource-based components (such as `xslt`) whose default is
+`true`, so that edits to the resource file are picked up on the next message without restarting
+the route. Set `camel.component.<name>.contentCache=true` (or pass `?contentCache=true` on the
+URI) to opt back in to caching during dev mode.
+
+==== camel-jbang plugins
+
+Plugins are now loaded lazily. Built-in commands that do not consume plugins
+(for example `camel get`, `camel version`, `camel ps`, `camel stop`) skip plugin
+discovery entirely, avoiding classpath scans and Maven resolution on every
+invocation. Plugin-consuming commands (`run`, `export`, `cmd`, `shell`) and
+plugin-provided commands (such as `kubernetes`, `generate`, `test`) continue
+to work unchanged. When an external plugin is resolved through Maven, its resolved classpath is
+cached in `~/.camel-jbang-plugins.json` under a new `resolved` block. Subsequent
+invocations load the plugin directly from the cached jars without going through
+the Maven downloader. The cache is validated by file size and modification time
+on both the cached jars and the plugin's POM, so SNAPSHOT plugins rebuilt
+locally are picked up automatically. The cache is also invalidated when the
+Camel version, the plugin GAV, or the effective `--repos`/`--repo` value
+changes. No user action is required; existing plugin entries are populated on
+first use after upgrade.
 
 === camel-yaml-dsl
 
@@ -132,6 +171,34 @@ Or, on a single endpoint:
 jms:queue:foo?objectMessageEnabled=true
 ----
 
+=== camel-sjms / camel-sjms2
+
+The same default applies to `camel-sjms` (and `camel-sjms2`, which inherits from it): JMS `ObjectMessage`
+support is now disabled by default and gated by a new `objectMessageEnabled` option (default `false`)
+on `SjmsComponent` / `SjmsEndpoint`.
+
+This affects the same endpoint/component options as `camel-jms`:
+
+* `jmsMessageType=Object` (or sending a `Serializable` body that is auto-detected as `Object`)
+* `transferException=true`
+* receiving a JMS `ObjectMessage` produced by an external sender
+
+To restore the previous behavior, enable the option at the component or endpoint level:
+
+[source,properties]
+----
+camel.component.sjms.objectMessageEnabled=true
+camel.component.sjms2.objectMessageEnabled=true
+----
+
+Or, on a single endpoint:
+
+[source,text]
+----
+sjms:queue:foo?objectMessageEnabled=true
+sjms2:queue:foo?objectMessageEnabled=true
+----
+
 === camel-hazelcast
 
 Hazelcast instances created and managed by Camel (when no user-supplied
@@ -174,9 +241,23 @@ Camel Guava EventBus was deprecated with Camel 4.6. The component is now removed
 
 Camel Grape was deprecated with Camel 4.1. The component is now removed.
 
+=== camel-elytron removal
+
+Camel Grape was deprecated with Camel 4.0. The component is now removed.
+
 === camel-telemetry
 
-If you have custom telemetry implementations, the following interfaces have changed:
+In order to prevent some potential span leakage in `camel-opentelemetry2` (see notes below) we had to perform some changes and introduce the following parameter:
+
+```
+|`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
+```
+
+This is required in order to distinguish the older `traceProcessors` parameter which now accounts **exclusively** for custom processors. Keeping the default parameter (`false`) could increase the number of spans generated, though, this is required to guarantee consistency and memory sealing. If you need to reduce the number of spans for any reason you can explicitly provide exclusion configuration.
+
+NOTE: turn `disableCoreProcessors` to `true` and `traceProcessors` to `false` to skip entirely all processors. However it is not recommended to disable core processors in order to avoid the generation of third party dependencies orphaned spans.
+
+In this version we have also changed certain interfaces, so, if you have custom telemetry implementations, you may need to adjust to them:
 
 ==== `org.apache.camel.telemetry.SpanLifecycleManager`
 
@@ -215,4 +296,44 @@ In order to prevent a potential leak when running asynchronous components we nee
 What it means is that, from now on, the final user or any third party dependency can only "control" the Opentelemetry context within the boundary of a Processor execution.
 
 This is just an informative note, there is not action expected by the final user.
+
+=== camel-aws-bedrock
+
+The `applyGuardrail` producer operation now reads the guardrail identifier from a new dedicated header
+`CamelAwsBedrockGuardrailIdentifier` (constant `BedrockConstants.GUARDRAIL_IDENTIFIER`, typed `String`)
+instead of `CamelAwsBedrockGuardrailConfig`. The `CamelAwsBedrockGuardrailConfig` header is typed
+`GuardrailConfiguration` and is reserved for the `converse` and `converseStream` operations; the
+previous code path silently produced `null` whenever a route mixed `converse` and `applyGuardrail`
+calls. If you were not setting the guardrail identifier via header, the endpoint-level
+`guardrailIdentifier` option continues to work without changes.
+
+=== camel-nats
+
+Fixed the JetStream consumer pull subscription mode (which is the default) so that messages are
+actually consumed from the server. Previously the consumer would set up a pull subscription but never
+issue any pull/fetch requests, so no messages were delivered until the user explicitly switched to
+push mode with `pullSubscription=false`.
+
+Two new endpoint options have been added to control the pull fetch loop:
+
+* `pullBatchSize` (default `10`) — maximum number of messages to fetch per pull request.
+* `pullFetchTimeout` (default `1000` ms) — maximum time to wait for a batch on each fetch.
+
+=== Deprecation of camel-ironmqThe library used had no stable release since 2007. There is no Java library very active for this protocol.
+
+The component camel-ironmq is deprecated. The official library used has been unmaintained since 2017
+All the other client libraries (in other languages) are unmaintained since the same amount of time.
+The whole iron-io GitHub organization has almost no activity.
+
+=== Deprecation of camel-digitalocean
+
+The component camel-digitalocean is deprecated. The java library used has been unmaintained for several years and there is no replacement.
+
+=== Deprecation of camel-irc
+
+The component camel-irc is deprecated. The library used had no stable release since 2007. There is no Java library very active for this protocol.
+
+=== Deprecation of camel-iec-60870
+
+The component camel-iec-60870 is deprecated. The library used to implement it NeoScada is no more maintained since 2021. There are no alternatives in Java with compatible license.
 

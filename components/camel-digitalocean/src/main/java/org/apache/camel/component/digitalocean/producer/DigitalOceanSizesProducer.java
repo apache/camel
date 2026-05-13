@@ -24,6 +24,7 @@ import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
 /**
  * The DigitalOcean producer for Sizes API.
  */
+@Deprecated(since = "4.21")
 public class DigitalOceanSizesProducer extends DigitalOceanProducer {
 
     public DigitalOceanSizesProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {

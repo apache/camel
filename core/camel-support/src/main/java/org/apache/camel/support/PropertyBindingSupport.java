@@ -437,7 +437,7 @@ public final class PropertyBindingSupport {
             Object obj = getObjectForType(camelContext, parameterType);
 
             if (obj != null) {
-                org.apache.camel.support.ObjectHelper.invokeMethod(method, newTarget, obj);
+                ObjectHelper.invokeMethod(method, newTarget, obj);
                 answer = obj;
             }
         }

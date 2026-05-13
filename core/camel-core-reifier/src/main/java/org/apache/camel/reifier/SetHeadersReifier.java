@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Expression;
@@ -38,8 +39,8 @@ public class SetHeadersReifier extends ProcessorReifier<SetHeadersDefinition> {
         if (definition.getHeaders().isEmpty()) {
             throw new IllegalArgumentException("There must be at least one header specified");
         }
-        List<Expression> nameExprs = new java.util.ArrayList<>(definition.getHeaders().size());
-        List<Expression> valueExprs = new java.util.ArrayList<>(definition.getHeaders().size());
+        List<Expression> nameExprs = new ArrayList<>(definition.getHeaders().size());
+        List<Expression> valueExprs = new ArrayList<>(definition.getHeaders().size());
         for (SetHeaderDefinition hdrDef : definition.getHeaders()) {
             valueExprs.add(createExpression(hdrDef.getExpression()));
             Expression nameExpr;

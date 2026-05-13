@@ -27,6 +27,7 @@ import org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType;
 import org.eclipse.neoscada.protocol.iec60870.ProtocolOptions;
 
 @UriParams
+@Deprecated(since = "4.21")
 public abstract class BaseOptions<T extends BaseOptions<T>> {
 
     /**

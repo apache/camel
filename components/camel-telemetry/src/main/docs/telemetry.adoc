@@ -26,7 +26,8 @@ The configuration properties for the Telemetry component are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Default |Description
-|`traceProcessors`| false | Trace inner processors.
+|`traceProcessors`| false | Trace inner custom processors (i.e., any `process` configured in the route).
+|`disableCoreProcessors`| false | Disable any inner core processors (any core DSL processor provided in the route, for example `bean`, `log`, ...).
 |`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
 |`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
@@ -121,11 +122,13 @@ The upstream application must inject the context into the event sent (typically 
 
 This feature is implementation specific, the abstraction just provide the interface that must be implemented concretely in each of the implementation.
 
-=== Processor tracing
+=== Custom Processor tracing
 
 When this feature is enabled, you will be able to collect a finer grain number of Spans into a Trace. Each of the different endpoint processors will be collected. You can enable the feature using the `traceProcessors` parameter (default `false`).
 
 NOTE: enabling this feature will provide many more Spans for each Trace.
+
+By default, the "core" processors part of any Camel DSL (for example, `bean`, `log`, ...) are included in order to manage properly any further instrumentation done at this level. Disabling this feature is not recommended but it can be done via `disableCoreProcessors` parameter.
 
 == Implementation specific abstraction
 

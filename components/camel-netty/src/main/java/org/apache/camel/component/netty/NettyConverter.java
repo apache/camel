@@ -122,6 +122,13 @@ public final class NettyConverter {
     }
 
     @Converter
+    public static ByteBuf toByteBuffer(InputStream is, Exchange exchange) {
+        // convert to byte array first
+        byte[] arr = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, is);
+        return toByteBuffer(arr);
+    }
+
+    @Converter
     public static Document toDocument(ByteBuf buffer, Exchange exchange) {
         InputStream is = toInputStream(buffer, exchange);
         return exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);

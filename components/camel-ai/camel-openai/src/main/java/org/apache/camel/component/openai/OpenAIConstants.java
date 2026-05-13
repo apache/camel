@@ -53,6 +53,10 @@ public final class OpenAIConstants {
     @Metadata(description = "The thinking content extracted from <think>...</think> blocks in the model response",
               javaType = "String")
     public static final String THINKING_CONTENT = "CamelOpenAIThinkingContent";
+    @Metadata(description = "The reasoning content from the model response reasoning_content field, "
+                            + "used by thinking models like Qwen3 and DeepSeek-R1",
+              javaType = "String")
+    public static final String REASONING_CONTENT = "CamelOpenAIReasoningContent";
     @Metadata(description = "The model used for the completion response", javaType = "String")
     public static final String RESPONSE_MODEL = "CamelOpenAIResponseModel";
     @Metadata(description = "The unique identifier for the completion response", javaType = "String")

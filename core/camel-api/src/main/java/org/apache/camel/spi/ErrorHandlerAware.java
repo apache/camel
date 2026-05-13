@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Processor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An interface for {@link Processor} aware of its {@link ErrorHandler} which are wrapped via the
@@ -35,6 +36,7 @@ public interface ErrorHandlerAware {
     /**
      * Gets the error handler
      */
+    @Nullable
     Processor getErrorHandler();
 
 }

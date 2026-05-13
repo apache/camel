@@ -16,14 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Stack;
 import java.util.StringJoiner;
 
@@ -101,7 +105,12 @@ public class Init extends CamelCommand {
             return listTemplates();
         }
         if (file == null) {
+            // try interactive picker if running in a TTY and not in CI
+            if (System.console() != null && System.getenv("CI") == null) {
+                return interactivePicker();
+            }
             printer().printErr("Missing required parameter: <file>");
+            printer().printErr("Run 'camel init --list' to see available templates, or run interactively in a terminal.");
             return 1;
         }
         int code = execute();
@@ -234,7 +243,7 @@ public class Init extends CamelCommand {
         int index = canonicalPath.indexOf(srcMainJavaPath);
         if (index != -1) {
             String packagePath = canonicalPath.substring(index + srcMainJavaPath.length() + 1);
-            String packageName = packagePath.replace(java.io.File.separatorChar, '.');
+            String packageName = packagePath.replace(File.separatorChar, '.');
             if (!packageName.isEmpty()) {
                 packageDeclaration = "package " + packageName + ";\n\n";
             }
@@ -283,6 +292,104 @@ public class Init extends CamelCommand {
         printer().println("Example: camel init MyRoute.java");
 
         return 0;
+    }
+
+    private int interactivePicker() throws Exception {
+        // Build template categories
+        Map<String, List<String[]>> categories = new LinkedHashMap<>();
+        categories.put("Routes", List.of(
+                new String[] { "yaml", "YAML DSL route", ".yaml" },
+                new String[] { "java", "Java DSL route", ".java" },
+                new String[] { "xml", "XML DSL route", ".xml" }));
+        categories.put("Kamelets", List.of(
+                new String[] { "kamelet-source.yaml", "Kamelet source connector", ".kamelet.yaml" },
+                new String[] { "kamelet-sink.yaml", "Kamelet sink connector", ".kamelet.yaml" },
+                new String[] { "kamelet-action.yaml", "Kamelet action processor", ".kamelet.yaml" }));
+        List<String[]> pipeTemplates = new ArrayList<>();
+        pipeTemplates.add(new String[] { "init-pipe.yaml", "Pipe CR (source to sink)", ".yaml" });
+        categories.put("Pipes and CRs", pipeTemplates);
+
+        Scanner scanner = new Scanner(System.in);
+
+        // Step 1: Pick a category
+        printer().println("Select a template category:");
+        List<String> categoryNames = new ArrayList<>(categories.keySet());
+        for (int i = 0; i < categoryNames.size(); i++) {
+            printer().printf("  %d) %s%n", i + 1, categoryNames.get(i));
+        }
+        printer().print("Choice [1]: ");
+        String categoryInput = scanner.nextLine().trim();
+        int categoryIdx;
+        try {
+            categoryIdx = categoryInput.isEmpty() ? 0 : Integer.parseInt(categoryInput) - 1;
+        } catch (NumberFormatException e) {
+            printer().printErr("Invalid choice: " + categoryInput);
+            return 1;
+        }
+        if (categoryIdx < 0 || categoryIdx >= categoryNames.size()) {
+            printer().printErr("Invalid choice: must be between 1 and " + categoryNames.size());
+            return 1;
+        }
+
+        // Step 2: Pick a template
+        String selectedCategory = categoryNames.get(categoryIdx);
+        List<String[]> templates = categories.get(selectedCategory);
+        printer().println();
+        printer().println("Select a template:");
+        for (int i = 0; i < templates.size(); i++) {
+            printer().printf("  %d) %s%n", i + 1, templates.get(i)[1]);
+        }
+        printer().print("Choice [1]: ");
+        String templateInput = scanner.nextLine().trim();
+        int templateIdx;
+        try {
+            templateIdx = templateInput.isEmpty() ? 0 : Integer.parseInt(templateInput) - 1;
+        } catch (NumberFormatException e) {
+            printer().printErr("Invalid choice: " + templateInput);
+            return 1;
+        }
+        if (templateIdx < 0 || templateIdx >= templates.size()) {
+            printer().printErr("Invalid choice: must be between 1 and " + templates.size());
+            return 1;
+        }
+
+        String[] selected = templates.get(templateIdx);
+        String ext = selected[2];
+        String defaultName = "MyRoute" + ext;
+        if (ext.endsWith(".kamelet.yaml")) {
+            if (selected[0].contains("source")) {
+                defaultName = "my-source.kamelet.yaml";
+            } else if (selected[0].contains("sink")) {
+                defaultName = "my-sink.kamelet.yaml";
+            } else {
+                defaultName = "my-action.kamelet.yaml";
+            }
+        } else if (selected[0].contains("pipe")) {
+            defaultName = "my-pipe.yaml";
+            pipe = true;
+        }
+
+        // Step 3: Prompt for filename
+        printer().println();
+        printer().printf("Filename [%s]: ", defaultName);
+        String filename = scanner.nextLine().trim();
+        if (filename.isEmpty()) {
+            filename = defaultName;
+        }
+
+        this.file = filename;
+        int code = execute();
+        if (code == 0) {
+            createWorkingDirectoryIfAbsent();
+            printer().println();
+            printer().println("Created: " + filename);
+            printer().println();
+            printer().println("Next steps:");
+            printer().println("  Run:           camel run " + filename);
+            printer().println("  Run (live):    camel run " + filename + " --dev");
+            printer().println("  Documentation: camel doc <component>");
+        }
+        return code;
     }
 
     private void createWorkingDirectoryIfAbsent() {

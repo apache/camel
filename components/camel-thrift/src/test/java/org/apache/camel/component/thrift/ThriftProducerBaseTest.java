@@ -18,19 +18,16 @@ package org.apache.camel.component.thrift;
 
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.thrift.server.THsHaServer;
 import org.apache.thrift.server.THsHaServer.Args;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ThriftProducerBaseTest extends CamelTestSupport {
-    @RegisterExtension
-    AvailablePortFinder.Port thriftTestPort = AvailablePortFinder.find();
+    protected int thriftTestPort;
     protected static final int THRIFT_TEST_NUM1 = 12;
     protected static final int THRIFT_TEST_NUM2 = 13;
     @SuppressWarnings({ "rawtypes" })
@@ -42,13 +39,14 @@ public abstract class ThriftProducerBaseTest extends CamelTestSupport {
 
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void setupResources() throws Exception {
+    public void doPreSetup() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
-        serverTransport = new TNonblockingServerSocket(thriftTestPort.getPort());
+        serverTransport = new TNonblockingServerSocket(0);
+        thriftTestPort = serverTransport.getPort();
         server = new THsHaServer(new Args(serverTransport).processor(processor));
         Runnable simple = new Runnable() {
             public void run() {
-                LOG.info("Thrift server started on port: {}", thriftTestPort.getPort());
+                LOG.info("Thrift server started on port: {}", thriftTestPort);
                 server.serve();
             }
         };

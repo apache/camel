@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Catalog level interface for the {@link CamelContext}
@@ -31,6 +32,7 @@ public interface CatalogCamelContext extends CamelContext {
      *
      * @return the json or <tt>null</tt> if the component is <b>not</b> built with JSON schema support
      */
+    @Nullable
     String getComponentParameterJsonSchema(String componentName) throws IOException;
 
     /**
@@ -38,6 +40,7 @@ public interface CatalogCamelContext extends CamelContext {
      *
      * @return the json or <tt>null</tt> if the data format does not exist
      */
+    @Nullable
     String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException;
 
     /**
@@ -45,6 +48,7 @@ public interface CatalogCamelContext extends CamelContext {
      *
      * @return the json or <tt>null</tt> if the language does not exist
      */
+    @Nullable
     String getLanguageParameterJsonSchema(String languageName) throws IOException;
 
     /**
@@ -53,6 +57,7 @@ public interface CatalogCamelContext extends CamelContext {
      *
      * @return the json or <tt>null</tt> if the transformer does not exist
      */
+    @Nullable
     String getTransformerParameterJsonSchema(String transformerName) throws IOException;
 
     /**
@@ -61,6 +66,7 @@ public interface CatalogCamelContext extends CamelContext {
      *
      * @return the json or <tt>null</tt> if the dev-console does not exist
      */
+    @Nullable
     String getDevConsoleParameterJsonSchema(String devConsoleName) throws IOException;
 
     /**
@@ -68,6 +74,7 @@ public interface CatalogCamelContext extends CamelContext {
      *
      * @return the json or <tt>null</tt> if the EIP does not exist
      */
+    @Nullable
     String getEipParameterJsonSchema(String eipName) throws IOException;
 
     /**
@@ -75,6 +82,7 @@ public interface CatalogCamelContext extends CamelContext {
      *
      * @return the json or <tt>null</tt> if the pojo bean does not exist
      */
+    @Nullable
     String getPojoBeanParameterJsonSchema(String name) throws IOException;
 
 }

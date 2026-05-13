@@ -17,7 +17,7 @@
   "message": "Potential cryptocurrency mining activity detected on EC2 instance",
 
   "metadata": {
-    "version": "1.7.0",
+    "version": "1.8.0",
     "product": {
       "name": "GuardDuty",
       "vendor_name": "AWS",

@@ -29,7 +29,7 @@
 
     <artifactId>camel-digitalocean</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: DigitalOcean</name>
+    <name>Camel :: DigitalOcean (deprecated)</name>
     <description>Camel DigitalOcean support</description>
 
     <properties>

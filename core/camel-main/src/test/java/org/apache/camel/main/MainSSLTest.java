@@ -17,6 +17,8 @@
 package org.apache.camel.main;
 
 import java.security.KeyStore;
+import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
@@ -455,12 +457,12 @@ public class MainSSLTest {
         Assertions.assertTrue(ks.containsAlias("camel-self-signed"));
         assertNotNull(ks.getKey("camel-self-signed", "test-password".toCharArray()));
 
-        java.security.cert.X509Certificate cert
-                = (java.security.cert.X509Certificate) ks.getCertificate("camel-self-signed");
+        X509Certificate cert
+                = (X509Certificate) ks.getCertificate("camel-self-signed");
         assertNotNull(cert);
 
         // verify the certificate has a SAN extension with localhost
-        java.util.Collection<java.util.List<?>> sans = cert.getSubjectAlternativeNames();
+        Collection<List<?>> sans = cert.getSubjectAlternativeNames();
         assertNotNull(sans);
         // should have DNS:localhost and IP:127.0.0.1
         Assertions.assertTrue(sans.size() >= 2);

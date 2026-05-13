@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Various runtime configuration options used by {@link org.apache.camel.CamelContext} and {@link Route} for cross
  * cutting functions such as tracing, delayer, stream cache and the like.
@@ -58,13 +60,14 @@ public interface RuntimeConfiguration {
      * Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern
      * matches by node and route id's Multiple patterns can be separated by comma.
      */
+    @Nullable
     String getTracingPattern();
 
     /**
      * Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern
      * matches by node and route id's Multiple patterns can be separated by comma.
      */
-    void setTracingPattern(String tracePattern);
+    void setTracingPattern(@Nullable String tracePattern);
 
     /**
      * Sets whether backlog tracing is enabled or not (default is disabled).
@@ -157,6 +160,7 @@ public interface RuntimeConfiguration {
      *
      * @return delay in millis, or <tt>null</tt> if disabled
      */
+    @Nullable
     Long getDelayer();
 
     /**

@@ -1,10 +1,11 @@
-= IRC Component
+= IRC Component (deprecated)
 :doctitle: IRC
 :shortname: irc
 :artifactid: camel-irc
 :description: Send and receive messages to/from and IRC chat.
 :since: 1.1
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

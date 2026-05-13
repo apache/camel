@@ -26,7 +26,7 @@ import org.knowm.xchange.dto.marketdata.Ticker;
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled("See CAMEL-19751 before enabling")
+@Disabled("CAMEL-19751 - tests hit live Binance API during exchange init, WireMock does not cover futures endpoint")
 public class MarketDataProducerTest extends XChangeTestSupport {
 
     @Override

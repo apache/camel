@@ -23,6 +23,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
+@Deprecated(since = "4.21")
 public class IronMQConfiguration {
     // common properties
 

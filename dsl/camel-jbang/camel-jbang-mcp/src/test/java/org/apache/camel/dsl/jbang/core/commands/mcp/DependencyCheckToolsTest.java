@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.util.Optional;
+
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +31,7 @@ class DependencyCheckToolsTest {
     DependencyCheckToolsTest() {
         tools = new DependencyCheckTools();
         CatalogService catalogService = new CatalogService();
-        catalogService.catalogRepos = java.util.Optional.empty();
+        catalogService.catalogRepos = Optional.empty();
         tools.catalogService = catalogService;
         tools.dependencyData = new DependencyData();
     }

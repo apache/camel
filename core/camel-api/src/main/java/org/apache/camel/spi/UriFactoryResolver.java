@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A pluggable strategy for resolving different URI factories in a loosely coupled manner.
@@ -30,5 +31,6 @@ public interface UriFactoryResolver {
      * @param  context the camel context
      * @return         the resolved factory, or <tt>null</tt> if no factory could be found
      */
+    @Nullable
     EndpointUriFactory resolveFactory(String name, CamelContext context);
 }

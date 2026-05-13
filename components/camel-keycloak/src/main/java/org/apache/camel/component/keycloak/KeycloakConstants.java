@@ -193,6 +193,28 @@ public final class KeycloakConstants {
     @Metadata(description = "Whether to only return the list of permissions without obtaining an RPT", javaType = "Boolean")
     public static final String PERMISSIONS_ONLY = "CamelKeycloakPermissionsOnly";
 
+    // Organization constants (Keycloak 26+)
+    @Metadata(description = "The organization ID", javaType = "String")
+    public static final String ORGANIZATION_ID = "CamelKeycloakOrganizationId";
+
+    @Metadata(description = "The organization name", javaType = "String")
+    public static final String ORGANIZATION_NAME = "CamelKeycloakOrganizationName";
+
+    @Metadata(description = "The organization alias", javaType = "String")
+    public static final String ORGANIZATION_ALIAS = "CamelKeycloakOrganizationAlias";
+
+    @Metadata(description = "The organization description", javaType = "String")
+    public static final String ORGANIZATION_DESCRIPTION = "CamelKeycloakOrganizationDescription";
+
+    @Metadata(description = "The organization redirect URL", javaType = "String")
+    public static final String ORGANIZATION_REDIRECT_URL = "CamelKeycloakOrganizationRedirectUrl";
+
+    @Metadata(description = "The organization domain name", javaType = "String")
+    public static final String ORGANIZATION_DOMAIN = "CamelKeycloakOrganizationDomain";
+
+    @Metadata(description = "Search query for organizations", javaType = "String")
+    public static final String ORGANIZATION_SEARCH = "CamelKeycloakOrganizationSearch";
+
     private KeycloakConstants() {
         // Utility class
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Wraps a file.
  */
@@ -26,6 +28,7 @@ public interface WrappedFile<T> {
      *
      * @return the file.
      */
+    @Nullable
     T getFile();
 
     /**
@@ -33,6 +36,7 @@ public interface WrappedFile<T> {
      *
      * @return the content of the file.
      */
+    @Nullable
     Object getBody();
 
     /**

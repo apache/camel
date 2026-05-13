@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.support.ExpressionSupport;
+import org.mvel2.MVEL;
 
 public class MvelExpression extends ExpressionSupport {
 
@@ -34,7 +35,7 @@ public class MvelExpression extends ExpressionSupport {
         this.type = type;
 
         try {
-            this.compiled = org.mvel2.MVEL.compileExpression(expressionString);
+            this.compiled = MVEL.compileExpression(expressionString);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(expressionString, e);
         }
@@ -47,7 +48,7 @@ public class MvelExpression extends ExpressionSupport {
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         try {
-            Object value = org.mvel2.MVEL.executeExpression(compiled, new RootObject(exchange));
+            Object value = MVEL.executeExpression(compiled, new RootObject(exchange));
             return exchange.getContext().getTypeConverter().convertTo(tClass, value);
         } catch (Exception e) {
             throw new ExpressionEvaluationException(this, exchange, e);
@@ -57,7 +58,7 @@ public class MvelExpression extends ExpressionSupport {
     @Override
     public Object evaluate(Exchange exchange) {
         try {
-            return org.mvel2.MVEL.executeExpression(compiled, new RootObject(exchange));
+            return MVEL.executeExpression(compiled, new RootObject(exchange));
         } catch (Exception e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }

@@ -25,6 +25,8 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "disablecoreprocessors":
+        case "disableCoreProcessors": target.setDisableCoreProcessors(property(camelContext, boolean.class, value)); return true;
         case "excludepatterns":
         case "excludePatterns": target.setExcludePatterns(property(camelContext, java.lang.String.class, value)); return true;
         case "observationregistry":
@@ -46,6 +48,8 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
         case "camelContext": return org.apache.camel.CamelContext.class;
+        case "disablecoreprocessors":
+        case "disableCoreProcessors": return boolean.class;
         case "excludepatterns":
         case "excludePatterns": return java.lang.String.class;
         case "observationregistry":
@@ -68,6 +72,8 @@ public class MicrometerObservabilityTracerConfigurer extends org.apache.camel.su
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
         case "camelContext": return target.getCamelContext();
+        case "disablecoreprocessors":
+        case "disableCoreProcessors": return target.isDisableCoreProcessors();
         case "excludepatterns":
         case "excludePatterns": return target.getExcludePatterns();
         case "observationregistry":

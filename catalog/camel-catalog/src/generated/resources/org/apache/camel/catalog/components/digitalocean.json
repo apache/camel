@@ -4,7 +4,7 @@
     "name": "digitalocean",
     "title": "DigitalOcean",
     "description": "Manage Droplets and resources within the DigitalOcean cloud.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "cloud,management",
     "javaType": "org.apache.camel.component.digitalocean.DigitalOceanComponent",

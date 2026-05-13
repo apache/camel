@@ -19,6 +19,8 @@ package org.apache.camel;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Tagging interface to indicate that a type is capable of caching the underlying data stream.
  * <p/>
@@ -64,6 +66,7 @@ public interface StreamCache {
      * @return                     a copy, or <tt>null</tt> if copy is not possible
      * @throws java.io.IOException is thrown if the copy fails
      */
+    @Nullable
     StreamCache copy(Exchange exchange) throws IOException;
 
     /**

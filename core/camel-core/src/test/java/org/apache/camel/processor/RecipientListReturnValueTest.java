@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RecipientList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
@@ -74,7 +75,7 @@ public class RecipientListReturnValueTest extends ContextTestSupport {
 
     public static class MyBean {
 
-        @org.apache.camel.RecipientList
+        @RecipientList
         public String[] route() {
             return new String[] { "direct:a", "direct:b" };
         }

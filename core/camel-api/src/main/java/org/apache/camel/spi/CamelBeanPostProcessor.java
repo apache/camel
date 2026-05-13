@@ -16,7 +16,10 @@
  */
 package org.apache.camel.spi;
 
+import java.util.function.Predicate;
+
 import org.apache.camel.BindToRegistry;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Bean post processor.
@@ -34,7 +37,7 @@ public interface CamelBeanPostProcessor {
      *                   subsequent BeanPostProcessors will be invoked
      * @throws Exception is thrown if error post processing bean
      */
-    default Object postProcessBeforeInitialization(Object bean, String beanName) throws Exception {
+    default @Nullable Object postProcessBeforeInitialization(Object bean, @Nullable String beanName) throws Exception {
         return bean;
     }
 
@@ -49,7 +52,7 @@ public interface CamelBeanPostProcessor {
      *                   subsequent BeanPostProcessors will be invoked
      * @throws Exception is thrown if error post processing bean
      */
-    default Object postProcessAfterInitialization(Object bean, String beanName) throws Exception {
+    default @Nullable Object postProcessAfterInitialization(Object bean, @Nullable String beanName) throws Exception {
         return bean;
     }
 
@@ -97,11 +100,11 @@ public interface CamelBeanPostProcessor {
     /**
      * Custom strategy for handling {@link BindToRegistry} beans and whether they are lazy or not.
      */
-    void setLazyBeanStrategy(java.util.function.Predicate<BindToRegistry> strategy);
+    void setLazyBeanStrategy(Predicate<BindToRegistry> strategy);
 
     /**
      * Custom strategy for handling {@link BindToRegistry} beans and whether they are lazy or not.
      */
-    java.util.function.Predicate<BindToRegistry> getLazyBeanStrategy();
+    Predicate<BindToRegistry> getLazyBeanStrategy();
 
 }
