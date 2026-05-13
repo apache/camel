@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.Channel;
@@ -30,6 +31,7 @@ import org.apache.camel.ShutdownableService;
 import org.apache.camel.StatefulService;
 import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +53,7 @@ public final class ServiceHelper {
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
-    public static void buildService(Object value) {
+    public static void buildService(@Nullable Object value) {
         if (value instanceof Service service) {
             service.build();
         } else if (value instanceof Iterable iterable) {
@@ -67,7 +69,7 @@ public final class ServiceHelper {
      *
      * @see #buildService(Object)
      */
-    public static void buildService(Object... services) {
+    public static void buildService(@Nullable Object @Nullable... services) {
         if (services != null) {
             for (Object o : services) {
                 buildService(o);
@@ -80,7 +82,7 @@ public final class ServiceHelper {
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
-    public static void initService(Object value) {
+    public static void initService(@Nullable Object value) {
         if (value instanceof Service service) {
             service.init();
         } else if (value instanceof Iterable iterable) {
@@ -96,7 +98,7 @@ public final class ServiceHelper {
      *
      * @see #initService(Object)
      */
-    public static void initService(Object... services) {
+    public static void initService(@Nullable Object @Nullable... services) {
         if (services != null) {
             for (Object o : services) {
                 initService(o);
@@ -109,7 +111,7 @@ public final class ServiceHelper {
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
-    public static void startService(Object value) {
+    public static void startService(@Nullable Object value) {
         if (value instanceof Service service) {
             startService(service);
         } else if (value instanceof Iterable iterable) {
@@ -122,7 +124,7 @@ public final class ServiceHelper {
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
-    public static void startService(Service service) {
+    public static void startService(@Nullable Service service) {
         if (service != null) {
             service.start();
         }
@@ -133,7 +135,7 @@ public final class ServiceHelper {
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.
      */
-    public static void startService(Iterable<?> value) {
+    public static void startService(@Nullable Iterable<?> value) {
         if (value != null) {
             for (Object o : value) {
                 startService(o);
@@ -147,7 +149,7 @@ public final class ServiceHelper {
      *
      * @see #startService(Object)
      */
-    public static void startService(Object... services) {
+    public static void startService(@Nullable Object @Nullable... services) {
         if (services != null) {
             for (Object o : services) {
                 startService(o);
@@ -164,7 +166,7 @@ public final class ServiceHelper {
      *
      * @see #stopService(Collection)
      */
-    public static void stopService(Object... services) {
+    public static void stopService(@Nullable Object @Nullable... services) {
         if (services != null) {
             for (Object o : services) {
                 stopService(o);
@@ -180,7 +182,7 @@ public final class ServiceHelper {
      * @see Service#stop()
      * @see #stopService(Collection)
      */
-    public static void stopService(Object value) {
+    public static void stopService(@Nullable Object value) {
         if (value instanceof Service service) {
             stopService(service);
         } else if (value instanceof Iterable iterable) {
@@ -196,7 +198,7 @@ public final class ServiceHelper {
      * @see Service#stop()
      * @see #stopService(Collection)
      */
-    public static void stopService(Service service) {
+    public static void stopService(@Nullable Service service) {
         if (service != null) {
             service.stop();
         }
@@ -210,7 +212,7 @@ public final class ServiceHelper {
      * @see Service#stop()
      * @see #stopService(Collection)
      */
-    public static void stopService(Iterable<?> value) {
+    public static void stopService(@Nullable Iterable<?> value) {
         if (value != null) {
             for (Object o : value) {
                 stopService(o);
@@ -227,7 +229,7 @@ public final class ServiceHelper {
      *
      * @see #stopService(Object)
      */
-    public static void stopService(Collection<?> services) {
+    public static void stopService(@Nullable Collection<?> services) {
         if (services == null) {
             return;
         }
@@ -258,7 +260,7 @@ public final class ServiceHelper {
      *
      * @see #stopAndShutdownServices(Collection)
      */
-    public static void stopAndShutdownServices(Object... services) {
+    public static void stopAndShutdownServices(@Nullable Object @Nullable... services) {
         if (services == null) {
             return;
         }
@@ -274,7 +276,7 @@ public final class ServiceHelper {
      * @see #stopService(Object)
      * @see ShutdownableService#shutdown()
      */
-    public static void stopAndShutdownService(Object value) {
+    public static void stopAndShutdownService(@Nullable Object value) {
         stopService(value);
 
         // then try to shutdown
@@ -292,7 +294,7 @@ public final class ServiceHelper {
      * @see #stopService(Object)
      * @see ShutdownableService#shutdown()
      */
-    public static void stopAndShutdownService(ShutdownableService service) {
+    public static void stopAndShutdownService(@Nullable ShutdownableService service) {
         stopService(service);
 
         if (service != null) {
@@ -311,7 +313,7 @@ public final class ServiceHelper {
      * @see #stopService(Object)
      * @see ShutdownableService#shutdown()
      */
-    public static void stopAndShutdownServices(Collection<?> services) {
+    public static void stopAndShutdownServices(@Nullable Collection<?> services) {
         if (services == null) {
             return;
         }
@@ -344,7 +346,7 @@ public final class ServiceHelper {
      *
      * @see #resumeService(Object)
      */
-    public static void resumeServices(Collection<?> services) {
+    public static void resumeServices(@Nullable Collection<?> services) {
         if (services == null) {
             return;
         }
@@ -386,7 +388,7 @@ public final class ServiceHelper {
      * @throws Exception is thrown if error occurred
      * @see              #startService(Object)
      */
-    public static boolean resumeService(Object service) {
+    public static boolean resumeService(@Nullable Object service) {
         if (service instanceof Suspendable && service instanceof SuspendableService ss) {
             if (ss.isSuspended()) {
                 LOG.debug("Resuming service {}", service);
@@ -410,7 +412,7 @@ public final class ServiceHelper {
      *
      * @see #suspendService(Object)
      */
-    public static void suspendServices(Collection<?> services) {
+    public static void suspendServices(@Nullable Collection<?> services) {
         if (services == null) {
             return;
         }
@@ -452,7 +454,7 @@ public final class ServiceHelper {
      * @throws Exception is thrown if error occurred
      * @see              #stopService(Object)
      */
-    public static boolean suspendService(Object service) {
+    public static boolean suspendService(@Nullable Object service) {
         if (service instanceof Suspendable && service instanceof SuspendableService ss) {
             if (!ss.isSuspended()) {
                 LOG.trace("Suspending service {}", service);
@@ -474,7 +476,7 @@ public final class ServiceHelper {
      * @see    StatefulService#isStopping()
      * @see    StatefulService#isStopped()
      */
-    public static boolean isStopped(Object value) {
+    public static boolean isStopped(@Nullable Object value) {
         if (value instanceof StatefulService statefulService) {
             return isStopped(statefulService);
         }
@@ -489,7 +491,7 @@ public final class ServiceHelper {
      * @see    StatefulService#isStopping()
      * @see    StatefulService#isStopped()
      */
-    public static boolean isStopped(StatefulService service) {
+    public static boolean isStopped(@Nullable StatefulService service) {
         if (service != null && (service.isStopping() || service.isStopped())) {
             return true;
         }
@@ -504,7 +506,7 @@ public final class ServiceHelper {
      * @see    StatefulService#isStarting()
      * @see    StatefulService#isStarted()
      */
-    public static boolean isStarted(Object value) {
+    public static boolean isStarted(@Nullable Object value) {
         if (value instanceof StatefulService statefulService) {
             return isStarted(statefulService);
         }
@@ -519,7 +521,7 @@ public final class ServiceHelper {
      * @see    StatefulService#isStarting()
      * @see    StatefulService#isStarted()
      */
-    public static boolean isStarted(StatefulService service) {
+    public static boolean isStarted(@Nullable StatefulService service) {
         if (service != null && (service.isStarting() || service.isStarted())) {
             return true;
         }
@@ -534,7 +536,7 @@ public final class ServiceHelper {
      * @see    StatefulService#isSuspending()
      * @see    StatefulService#isSuspended()
      */
-    public static boolean isSuspended(Object value) {
+    public static boolean isSuspended(@Nullable Object value) {
         if (value instanceof StatefulService statefulService) {
             return isSuspended(statefulService);
         }
@@ -549,7 +551,7 @@ public final class ServiceHelper {
      * @see    StatefulService#isSuspending()
      * @see    StatefulService#isSuspended()
      */
-    public static boolean isSuspended(StatefulService service) {
+    public static boolean isSuspended(@Nullable StatefulService service) {
         if (service != null && (service.isSuspending() || service.isSuspended())) {
             return true;
         }
@@ -566,6 +568,7 @@ public final class ServiceHelper {
      * @return         the services, including the parent service, and all its children
      */
     public static Set<Service> getChildServices(Service service) {
+        Objects.requireNonNull(service, "service");
         return getChildServices(service, false);
     }
 
@@ -577,6 +580,7 @@ public final class ServiceHelper {
      * @return                     the services, including the parent service, and all its children
      */
     public static Set<Service> getChildServices(Service service, boolean includeErrorHandler) {
+        Objects.requireNonNull(service, "service");
         Set<Service> answer = new LinkedHashSet<>();
         doGetChildServices(answer, service, includeErrorHandler);
         return answer;
@@ -587,6 +591,9 @@ public final class ServiceHelper {
         if (service instanceof Navigate nav) {
             if (nav.hasNext()) {
                 List<?> children = nav.next();
+                if (children == null) {
+                    return;
+                }
                 for (Object child : children) {
                     if (child instanceof Channel channel) {
                         if (includeErrorHandler) {

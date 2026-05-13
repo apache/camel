@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import org.apache.camel.spi.Resource;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a node in the {@link org.apache.camel.model routes} which is identified as a route.
@@ -36,6 +37,7 @@ public interface NamedRoute {
     /**
      * Gets the node prefix id.
      */
+    @Nullable
     String getNodePrefixId();
 
     /**

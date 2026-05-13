@@ -19,6 +19,7 @@ package org.apache.camel.component.extension;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.camel.Component;
@@ -28,6 +29,7 @@ import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.Exc
 import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.GroupErrorAttribute;
 import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.HttpErrorAttribute;
 import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.StandardErrorCode;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines the interface used for validating component/endpoint parameters. The central method of this interface is
@@ -128,8 +130,8 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @param  scope the scope as string, which can be in any case
          * @return       the scope enum represented by this string
          */
-        public static Scope fromString(String scope) {
-            return Scope.valueOf(scope != null ? scope.toUpperCase() : null);
+        public static Scope fromString(@Nullable String scope) {
+            return Scope.valueOf(Objects.requireNonNull(scope, "scope").toUpperCase());
         }
     }
 
@@ -153,6 +155,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          *
          * @return the error description (if available)
          */
+        @Nullable
         String getDescription();
 
         /**
@@ -179,7 +182,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @param  attribute the attribute to lookup
          * @return           the detail value or null if no such attribute exists
          */
-        default Object getDetail(Attribute attribute) {
+        default @Nullable Object getDetail(Attribute attribute) {
             Map<Attribute, Object> details = getDetails();
             if (details != null) {
                 return details.get(attribute);
@@ -193,7 +196,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @param  attribute the attribute to lookup
          * @return           the detail value or null if no such attribute exists
          */
-        default Object getDetail(String attribute) {
+        default @Nullable Object getDetail(String attribute) {
             return getDetail(asAttribute(attribute));
         }
 

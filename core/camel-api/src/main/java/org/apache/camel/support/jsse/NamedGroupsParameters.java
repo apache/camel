@@ -18,6 +18,9 @@ package org.apache.camel.support.jsse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a list of TLS/SSL named groups (also known as elliptic curves or key exchange groups) for use in TLS
@@ -25,7 +28,7 @@ import java.util.List;
  * post-quantum hybrid groups such as {@code X25519MLKEM768}.
  */
 public class NamedGroupsParameters {
-    private List<String> namedGroup;
+    private @Nullable List<String> namedGroup;
 
     /**
      * Returns a live reference to the list of named group names.
@@ -40,6 +43,7 @@ public class NamedGroupsParameters {
     }
 
     public void addNamedGroup(String group) {
+        Objects.requireNonNull(group, "group");
         if (this.namedGroup == null) {
             this.namedGroup = new ArrayList<>();
         }
@@ -52,7 +56,8 @@ public class NamedGroupsParameters {
      * @param namedGroup named groups
      */
     public void setNamedGroup(List<String> namedGroup) {
-        this.namedGroup = namedGroup == null ? null : new ArrayList<>(namedGroup);
+        Objects.requireNonNull(namedGroup, "namedGroup");
+        this.namedGroup = new ArrayList<>(namedGroup);
     }
 
     @Override

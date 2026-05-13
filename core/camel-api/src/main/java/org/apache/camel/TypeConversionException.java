@@ -16,16 +16,20 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * Exception when failing during type conversion.
  */
 public class TypeConversionException extends RuntimeCamelException {
 
-    private final transient Object value;
+    private final transient @Nullable Object value;
     private final transient Class<?> type;
 
-    public TypeConversionException(Object value, Class<?> type, Throwable cause) {
-        super(createMessage(value, type, cause), cause);
+    public TypeConversionException(@Nullable Object value, Class<?> type, Throwable cause) {
+        super(createMessage(value, Objects.requireNonNull(type, "type"), Objects.requireNonNull(cause, "cause")), cause);
         this.value = value;
         this.type = type;
     }
@@ -33,7 +37,7 @@ public class TypeConversionException extends RuntimeCamelException {
     /**
      * Returns the value which could not be converted
      */
-    public Object getValue() {
+    public @Nullable Object getValue() {
         return value;
     }
 
@@ -47,7 +51,7 @@ public class TypeConversionException extends RuntimeCamelException {
     /**
      * Returns the required <tt>from</tt> type. Returns <tt>null</tt> if the provided value was null.
      */
-    public Class<?> getFromType() {
+    public @Nullable Class<?> getFromType() {
         if (value != null) {
             return value.getClass();
         } else {
@@ -58,7 +62,9 @@ public class TypeConversionException extends RuntimeCamelException {
     /**
      * Returns an error message for type conversion failed.
      */
-    public static String createMessage(Object value, Class<?> type, Throwable cause) {
+    public static String createMessage(@Nullable Object value, Class<?> type, Throwable cause) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(cause, "cause");
         return "Error during type conversion from type: " + (value != null ? value.getClass().getCanonicalName() : null)
                + " to the required type: " + type.getCanonicalName() + " with value " + value + " due to "
                + cause.getClass().getName() + ": " + cause.getMessage();

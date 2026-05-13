@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A factory to create {@link Processor} based on the {@link org.apache.camel.model.ProcessorDefinition definition}.
@@ -52,6 +53,7 @@ public interface ProcessorFactory {
      *                    processor.
      * @throws Exception  can be thrown if error creating the processor
      */
+    @Nullable
     Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception;
 
     /**
@@ -63,6 +65,7 @@ public interface ProcessorFactory {
      *                    processor.
      * @throws Exception  can be thrown if error creating the processor
      */
+    @Nullable
     Processor createProcessor(Route route, NamedNode definition) throws Exception;
 
     /**
@@ -75,6 +78,7 @@ public interface ProcessorFactory {
      * @return                the created processor, or <tt>null</tt> if this situation is not yet implemented.
      * @throws Exception      can be thrown if error creating the processor
      */
+    @Nullable
     Processor createProcessor(CamelContext camelContext, String definitionName, Object[] args) throws Exception;
 
 }

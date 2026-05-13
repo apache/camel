@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Used for getting information about location to (hosted or external) network services.
  *
@@ -36,11 +38,13 @@ public interface EndpointServiceLocation {
      *
      * @return the address or null if no address can be determined.
      */
+    @Nullable
     String getServiceUrl();
 
     /**
      * Get the protocol the service is using such as http, amqp, tcp.
      */
+    @Nullable
     String getServiceProtocol();
 
     /**
@@ -50,7 +54,7 @@ public interface EndpointServiceLocation {
      *
      * @return optional metadata or null if no data
      */
-    default Map<String, String> getServiceMetadata() {
+    default @Nullable Map<String, String> getServiceMetadata() {
         return null;
     }
 }

@@ -18,10 +18,12 @@ package org.apache.camel.spi;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A profile which defines thread pool settings.
@@ -32,15 +34,15 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
 
     private static final @Serial long serialVersionUID = 1L;
 
-    private String id;
-    private Boolean defaultProfile;
-    private Integer poolSize;
-    private Integer maxPoolSize;
-    private Long keepAliveTime;
-    private TimeUnit timeUnit;
-    private Integer maxQueueSize;
-    private Boolean allowCoreThreadTimeOut;
-    private ThreadPoolRejectedPolicy rejectedPolicy;
+    private @Nullable String id;
+    private @Nullable Boolean defaultProfile;
+    private @Nullable Integer poolSize;
+    private @Nullable Integer maxPoolSize;
+    private @Nullable Long keepAliveTime;
+    private @Nullable TimeUnit timeUnit;
+    private @Nullable Integer maxQueueSize;
+    private @Nullable Boolean allowCoreThreadTimeOut;
+    private @Nullable ThreadPoolRejectedPolicy rejectedPolicy;
 
     /**
      * Creates a new thread pool profile, with no id set.
@@ -54,7 +56,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      * @param id id of the profile
      */
     public ThreadPoolProfile(String id) {
-        this.id = id;
+        this.id = Objects.requireNonNull(id, "id");
     }
 
     /**
@@ -62,7 +64,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @return the id of this profile
      */
-    public String getId() {
+    public @Nullable String getId() {
         return id;
     }
 
@@ -71,7 +73,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param id profile id
      */
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
     }
 
@@ -89,7 +91,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param defaultProfile the option
      */
-    public void setDefaultProfile(Boolean defaultProfile) {
+    public void setDefaultProfile(@Nullable Boolean defaultProfile) {
         this.defaultProfile = defaultProfile;
     }
 
@@ -98,7 +100,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @return the pool size
      */
-    public Integer getPoolSize() {
+    public @Nullable Integer getPoolSize() {
         return poolSize;
     }
 
@@ -107,7 +109,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param poolSize the pool size
      */
-    public void setPoolSize(Integer poolSize) {
+    public void setPoolSize(@Nullable Integer poolSize) {
         this.poolSize = poolSize;
     }
 
@@ -116,7 +118,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @return the maximum pool size
      */
-    public Integer getMaxPoolSize() {
+    public @Nullable Integer getMaxPoolSize() {
         return maxPoolSize;
     }
 
@@ -125,7 +127,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param maxPoolSize the max pool size
      */
-    public void setMaxPoolSize(Integer maxPoolSize) {
+    public void setMaxPoolSize(@Nullable Integer maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
 
@@ -134,7 +136,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @return the keep alive time
      */
-    public Long getKeepAliveTime() {
+    public @Nullable Long getKeepAliveTime() {
         return keepAliveTime;
     }
 
@@ -143,7 +145,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param keepAliveTime the keep alive time
      */
-    public void setKeepAliveTime(Long keepAliveTime) {
+    public void setKeepAliveTime(@Nullable Long keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
     }
 
@@ -152,7 +154,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @return the time unit
      */
-    public TimeUnit getTimeUnit() {
+    public @Nullable TimeUnit getTimeUnit() {
         return timeUnit;
     }
 
@@ -161,7 +163,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param timeUnit the time unit
      */
-    public void setTimeUnit(TimeUnit timeUnit) {
+    public void setTimeUnit(@Nullable TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
     }
 
@@ -172,7 +174,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @return the max queue size
      */
-    public Integer getMaxQueueSize() {
+    public @Nullable Integer getMaxQueueSize() {
         return maxQueueSize;
     }
 
@@ -183,7 +185,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param maxQueueSize the max queue size
      */
-    public void setMaxQueueSize(Integer maxQueueSize) {
+    public void setMaxQueueSize(@Nullable Integer maxQueueSize) {
         this.maxQueueSize = maxQueueSize;
     }
 
@@ -192,7 +194,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @return the allow core threads to timeout
      */
-    public Boolean getAllowCoreThreadTimeOut() {
+    public @Nullable Boolean getAllowCoreThreadTimeOut() {
         return allowCoreThreadTimeOut;
     }
 
@@ -201,7 +203,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param allowCoreThreadTimeOut <tt>true</tt> to allow timeout
      */
-    public void setAllowCoreThreadTimeOut(Boolean allowCoreThreadTimeOut) {
+    public void setAllowCoreThreadTimeOut(@Nullable Boolean allowCoreThreadTimeOut) {
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
     }
 
@@ -210,7 +212,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @return the policy for the handler
      */
-    public ThreadPoolRejectedPolicy getRejectedPolicy() {
+    public @Nullable ThreadPoolRejectedPolicy getRejectedPolicy() {
         return rejectedPolicy;
     }
 
@@ -219,7 +221,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @return the handler, or <tt>null</tt> if none defined
      */
-    public RejectedExecutionHandler getRejectedExecutionHandler() {
+    public @Nullable RejectedExecutionHandler getRejectedExecutionHandler() {
         if (rejectedPolicy != null) {
             return rejectedPolicy.asRejectedExecutionHandler();
         }
@@ -231,7 +233,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param rejectedPolicy the policy for the handler
      */
-    public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+    public void setRejectedPolicy(@Nullable ThreadPoolRejectedPolicy rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
     }
 
@@ -240,7 +242,7 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
      *
      * @param defaultProfile profile with default values
      */
-    public void addDefaults(ThreadPoolProfile defaultProfile) {
+    public void addDefaults(@Nullable ThreadPoolProfile defaultProfile) {
         if (defaultProfile == null) {
             return;
         }

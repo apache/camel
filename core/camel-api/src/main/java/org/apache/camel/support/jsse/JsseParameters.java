@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -28,19 +29,20 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class that provides optional integration with core Camel capabilities.
  */
 public class JsseParameters implements CamelContextAware {
 
-    private CamelContext context;
+    private @Nullable CamelContext context;
 
     /**
      * @see #setCamelContext(CamelContext)
      */
     @Override
-    public CamelContext getCamelContext() {
+    public @Nullable CamelContext getCamelContext() {
         return context;
     }
 
@@ -52,7 +54,7 @@ public class JsseParameters implements CamelContextAware {
      */
     @Override
     public void setCamelContext(CamelContext context) {
-        this.context = context;
+        this.context = Objects.requireNonNull(context, "context");
     }
 
     /**
@@ -66,8 +68,8 @@ public class JsseParameters implements CamelContextAware {
      *
      * @see                          #setCamelContext(CamelContext)
      */
-    protected String parsePropertyValue(String value) throws RuntimeCamelException {
-        if (this.getCamelContext() != null) {
+    protected @Nullable String parsePropertyValue(@Nullable String value) throws RuntimeCamelException {
+        if (this.getCamelContext() != null && value != null) {
             try {
                 return this.getCamelContext().resolvePropertyPlaceholders(value);
             } catch (Exception e) {
@@ -90,12 +92,14 @@ public class JsseParameters implements CamelContextAware {
      * @see                          #parsePropertyValue(String)
      */
     protected List<String> parsePropertyValues(List<String> values) throws RuntimeCamelException {
+        Objects.requireNonNull(values, "values");
         if (this.getCamelContext() == null) {
             return values;
         } else {
             List<String> parsedValues = new ArrayList<>(values.size());
             for (String value : values) {
-                parsedValues.add(this.parsePropertyValue(value));
+                String parsed = this.parsePropertyValue(value);
+                parsedValues.add(parsed != null ? parsed : value);
             }
             return parsedValues;
         }
@@ -112,10 +116,18 @@ public class JsseParameters implements CamelContextAware {
      * @throws IOException if the resource cannot be resolved using any of the above methods
      */
     protected InputStream resolveResource(String resource) throws IOException {
+        Objects.requireNonNull(resource, "resource");
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+        if (getCamelContext() == null) {
+            throw new IOException("CamelContext is required to resolve resource: " + resource);
+        }
 
-        Resource res
-                = getCamelContext().getCamelContextExtension().getContextPlugin(ResourceLoader.class).resolveResource(resource);
+        ResourceLoader resourceLoader
+                = getCamelContext().getCamelContextExtension().getContextPlugin(ResourceLoader.class);
+        if (resourceLoader == null) {
+            throw new IOException("ResourceLoader is not available to resolve resource: " + resource);
+        }
+        Resource res = resourceLoader.resolveResource(resource);
         if (res == null || !res.exists()) {
             throw new IOException("Could not open " + resource + " as a file, class path resource, or URL.");
         }

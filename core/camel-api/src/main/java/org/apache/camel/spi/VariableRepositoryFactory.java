@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Factory for {@link VariableRepository}.
  */
@@ -37,6 +39,7 @@ public interface VariableRepositoryFactory {
      * @param  id the repository id
      * @return    the repository or <tt>null</tt> if none found
      */
+    @Nullable
     VariableRepository getVariableRepository(String id);
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -64,7 +65,8 @@ public interface AggregationStrategy {
      * @return             a combined composite of the two exchanges, return either the old or new exchange from the
      *                     input parameters; favor returning the old exchange whenever possible)
      */
-    Exchange aggregate(Exchange oldExchange, Exchange newExchange);
+    @Nullable
+    Exchange aggregate(@Nullable Exchange oldExchange, @Nullable Exchange newExchange);
 
     /**
      * Aggregates an old and new exchange together to create a single combined exchange.
@@ -82,7 +84,8 @@ public interface AggregationStrategy {
      * @return               a combined composite of the two exchanges, return either the old or new exchange from the
      *                       input parameters; favor returning the old exchange whenever possible)
      */
-    default Exchange aggregate(Exchange oldExchange, Exchange newExchange, Exchange inputExchange) {
+    default @Nullable Exchange aggregate(
+            @Nullable Exchange oldExchange, @Nullable Exchange newExchange, Exchange inputExchange) {
         return aggregate(oldExchange, newExchange);
     }
 
@@ -105,7 +108,7 @@ public interface AggregationStrategy {
      * @return             <tt>true</tt> to complete current group and start a new group, or <tt>false</tt> to keep
      *                     using current
      */
-    default boolean preComplete(Exchange oldExchange, Exchange newExchange) {
+    default boolean preComplete(@Nullable Exchange oldExchange, @Nullable Exchange newExchange) {
         return false;
     }
 

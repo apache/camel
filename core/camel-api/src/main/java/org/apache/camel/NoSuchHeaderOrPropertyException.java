@@ -16,6 +16,10 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
 
     private final String headerName;
@@ -25,10 +29,10 @@ public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
     public NoSuchHeaderOrPropertyException(Exchange exchange, String headerName, String propertyName, Class<?> type) {
         super(String.format(
                 "No '%s' header or '%s' property available of type: %s (header: %s, property: %s)",
-                headerName,
-                propertyName,
-                type.getName(),
-                header(exchange, headerName),
+                Objects.requireNonNull(headerName, "headerName"),
+                Objects.requireNonNull(propertyName, "propertyName"),
+                Objects.requireNonNull(type, "type").getName(),
+                header(Objects.requireNonNull(exchange, "exchange"), headerName),
                 property(exchange, headerName)),
               exchange);
 
@@ -50,16 +54,20 @@ public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
     }
 
     protected static String header(Exchange exchange, String headerName) {
+        Objects.requireNonNull(exchange, "exchange");
+        Objects.requireNonNull(headerName, "headerName");
         Object value = exchange.getMessage().getHeader(headerName);
         return valueDescription(value);
     }
 
     protected static String property(Exchange exchange, String propertyName) {
+        Objects.requireNonNull(exchange, "exchange");
+        Objects.requireNonNull(propertyName, "propertyName");
         Object value = exchange.getProperty(propertyName);
         return valueDescription(value);
     }
 
-    static String valueDescription(Object value) {
+    static String valueDescription(@Nullable Object value) {
         if (value == null) {
             return "null";
         }

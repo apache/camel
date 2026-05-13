@@ -16,18 +16,22 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception caused when a mandatory variable is not available
  */
 public class NoSuchVariableException extends CamelExchangeException {
 
     private final String variableName;
-    private final transient Class<?> type;
+    private final transient @Nullable Class<?> type;
 
     public NoSuchVariableException(Exchange exchange, String variableName) {
         super(String.format(
-                "No '%s' variable available", variableName),
-              exchange);
+                "No '%s' variable available", Objects.requireNonNull(variableName, "variableName")),
+              Objects.requireNonNull(exchange, "exchange"));
         this.variableName = variableName;
         this.type = null;
     }
@@ -35,9 +39,9 @@ public class NoSuchVariableException extends CamelExchangeException {
     public NoSuchVariableException(Exchange exchange, String variableName, Class<?> type) {
         super(String.format(
                 "No '%s' variable available of type: %s",
-                variableName,
-                type.getName()),
-              exchange);
+                Objects.requireNonNull(variableName, "variableName"),
+                Objects.requireNonNull(type, "type").getName()),
+              Objects.requireNonNull(exchange, "exchange"));
         this.variableName = variableName;
         this.type = type;
     }
@@ -46,7 +50,7 @@ public class NoSuchVariableException extends CamelExchangeException {
         return variableName;
     }
 
-    public Class<?> getType() {
+    public @Nullable Class<?> getType() {
         return type;
     }
 

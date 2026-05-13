@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A {@link org.apache.camel.spi.UnitOfWork} failed with a number of caused exceptions.
@@ -30,8 +31,9 @@ public class CamelUnitOfWorkException extends CamelExchangeException {
 
     public CamelUnitOfWorkException(Exchange exchange, List<Exception> causes) {
         // just provide the first exception as cause, as it will be logged in the stacktraces
-        super("Unit of work failed on exchange with " + causes.size()
-              + " caused exceptions. First exception provided as cause to this exception.", exchange, causes.get(0));
+        super("Unit of work failed on exchange with " + Objects.requireNonNull(causes, "causes").size()
+              + " caused exceptions. First exception provided as cause to this exception.",
+              Objects.requireNonNull(exchange, "exchange"), causes.get(0));
         this.causes = causes;
     }
 

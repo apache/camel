@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 /**
  * A runtime exception if a given service could not be found in the classpath
  */
@@ -25,7 +27,8 @@ public class NoSuchServiceException extends RuntimeCamelException {
     private final String jar;
 
     public NoSuchServiceException(String name, String jar) {
-        super("No " + name + " service could be found in the classpath. Add " + jar + " to classpath.");
+        super("No " + Objects.requireNonNull(name, "name") + " service could be found in the classpath. Add "
+              + Objects.requireNonNull(jar, "jar") + " to classpath.");
         this.name = name;
         this.jar = jar;
     }

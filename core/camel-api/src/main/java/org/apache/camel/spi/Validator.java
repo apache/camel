@@ -16,11 +16,14 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Objects;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
 import org.apache.camel.support.service.ServiceSupport;
+import org.jspecify.annotations.Nullable;
 
 /**
  * <a href="http://camel.apache.org/validator.html">Validator</a> performs message content validation according to the
@@ -32,8 +35,8 @@ import org.apache.camel.support.service.ServiceSupport;
  */
 public abstract class Validator extends ServiceSupport implements CamelContextAware {
 
-    private CamelContext camelContext;
-    private DataType type;
+    private @Nullable CamelContext camelContext;
+    private @Nullable DataType type;
 
     /**
      * Perform data validation with specified type.
@@ -47,7 +50,7 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
     /**
      * Get 'from' data type.
      */
-    public DataType getType() {
+    public @Nullable DataType getType() {
         return type;
     }
 
@@ -57,18 +60,19 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
      * @param type data type
      */
     public Validator setType(String type) {
+        Objects.requireNonNull(type, "type");
         this.type = new DataType(type);
         return this;
     }
 
     @Override
-    public CamelContext getCamelContext() {
+    public @Nullable CamelContext getCamelContext() {
         return this.camelContext;
     }
 
     @Override
     public void setCamelContext(CamelContext context) {
-        this.camelContext = context;
+        this.camelContext = Objects.requireNonNull(context, "context");
     }
 
     @Override

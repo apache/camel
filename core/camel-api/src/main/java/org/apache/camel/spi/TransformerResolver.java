@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.StringHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Resolves data type transformers from given transformer key. This represents the opportunity to lazy load transformers
@@ -39,6 +40,7 @@ public interface TransformerResolver<K> {
      * @param  camelContext the current Camel context.
      * @return              data type transformer resolved via URI factory finder or null if not found.
      */
+    @Nullable
     Transformer resolve(K key, CamelContext camelContext);
 
     /**

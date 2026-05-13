@@ -19,6 +19,8 @@ package org.apache.camel.resume;
 
 import java.nio.ByteBuffer;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Generic offset without a concrete type
  *
@@ -38,6 +40,7 @@ public interface Offset<T> extends Serializable {
      *
      * @return the offset value
      */
+    @Nullable
     T getValue();
 
     /**
@@ -46,7 +49,7 @@ public interface Offset<T> extends Serializable {
      * @param  tClass type to convert the value to
      * @return        the offset value or null if it cannot be converted
      */
-    default <V> V getValue(Class<V> tClass) {
+    default <V> @Nullable V getValue(Class<V> tClass) {
         try {
             return tClass.cast(getValue());
         } catch (ClassCastException e) {
@@ -55,7 +58,7 @@ public interface Offset<T> extends Serializable {
     }
 
     @Override
-    default ByteBuffer serialize() {
+    default @Nullable ByteBuffer serialize() {
         return serialize(getValue());
     }
 }

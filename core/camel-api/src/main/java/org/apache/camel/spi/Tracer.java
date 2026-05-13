@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * SPI for tracing messages.
@@ -139,13 +140,14 @@ public interface Tracer extends StaticService {
      * Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern
      * matches by node and route id's Multiple patterns can be separated by comma.
      */
+    @Nullable
     String getTracePattern();
 
     /**
      * Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern
      * matches by node and route id's Multiple patterns can be separated by comma.
      */
-    void setTracePattern(String tracePattern);
+    void setTracePattern(@Nullable String tracePattern);
 
     /**
      * Whether to include tracing of before/after routes to trace the input and responses of routes.

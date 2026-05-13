@@ -17,6 +17,7 @@
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to AWS Secret.
@@ -24,62 +25,62 @@ import org.apache.camel.spi.Metadata;
 public class AwsVaultConfiguration extends VaultConfiguration {
 
     @Metadata(security = "secret")
-    private String accessKey;
+    private @Nullable String accessKey;
     @Metadata(security = "secret")
-    private String secretKey;
+    private @Nullable String secretKey;
     @Metadata
-    private String region;
+    private @Nullable String region;
     @Metadata
     private boolean defaultCredentialsProvider;
     @Metadata
     private boolean profileCredentialsProvider;
     @Metadata
-    private String profileName;
+    private @Nullable String profileName;
     @Metadata
     private boolean refreshEnabled;
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
     @Metadata
-    private String secrets;
+    private @Nullable String secrets;
     @Metadata
     private boolean useSqsNotification;
     @Metadata
-    private String sqsQueueUrl;
+    private @Nullable String sqsQueueUrl;
     @Metadata
     private boolean overrideEndpoint;
     @Metadata
-    private String uriEndpointOverride;
+    private @Nullable String uriEndpointOverride;
 
-    public String getAccessKey() {
+    public @Nullable String getAccessKey() {
         return accessKey;
     }
 
     /**
      * The AWS access key
      */
-    public void setAccessKey(String accessKey) {
+    public void setAccessKey(@Nullable String accessKey) {
         this.accessKey = accessKey;
     }
 
-    public String getSecretKey() {
+    public @Nullable String getSecretKey() {
         return secretKey;
     }
 
     /**
      * The AWS secret key
      */
-    public void setSecretKey(String secretKey) {
+    public void setSecretKey(@Nullable String secretKey) {
         this.secretKey = secretKey;
     }
 
-    public String getRegion() {
+    public @Nullable String getRegion() {
         return region;
     }
 
     /**
      * The AWS region
      */
-    public void setRegion(String region) {
+    public void setRegion(@Nullable String region) {
         this.region = region;
     }
 
@@ -105,14 +106,14 @@ public class AwsVaultConfiguration extends VaultConfiguration {
         this.profileCredentialsProvider = profileCredentialsProvider;
     }
 
-    public String getProfileName() {
+    public @Nullable String getProfileName() {
         return profileName;
     }
 
     /**
      * Define the profile name to use if Profile Credentials Provider is selected
      */
-    public void setProfileName(String profileName) {
+    public void setProfileName(@Nullable String profileName) {
         this.profileName = profileName;
     }
 
@@ -138,14 +139,14 @@ public class AwsVaultConfiguration extends VaultConfiguration {
         this.refreshPeriod = refreshPeriod;
     }
 
-    public String getSecrets() {
+    public @Nullable String getSecrets() {
         return secrets;
     }
 
     /**
      * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
      */
-    public void setSecrets(String secrets) {
+    public void setSecrets(@Nullable String secrets) {
         this.secrets = secrets;
     }
 
@@ -161,14 +162,14 @@ public class AwsVaultConfiguration extends VaultConfiguration {
         this.useSqsNotification = useSqsNotification;
     }
 
-    public String getSqsQueueUrl() {
+    public @Nullable String getSqsQueueUrl() {
         return sqsQueueUrl;
     }
 
     /**
      * In case of usage of SQS notification this field will specified the Queue URL to use
      */
-    public void setSqsQueueUrl(String sqsQueueUrl) {
+    public void setSqsQueueUrl(@Nullable String sqsQueueUrl) {
         this.sqsQueueUrl = sqsQueueUrl;
     }
 
@@ -184,14 +185,14 @@ public class AwsVaultConfiguration extends VaultConfiguration {
         this.overrideEndpoint = overrideEndpoint;
     }
 
-    public String getUriEndpointOverride() {
+    public @Nullable String getUriEndpointOverride() {
         return uriEndpointOverride;
     }
 
     /**
      * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
      */
-    public void setUriEndpointOverride(String uriEndpointOverride) {
+    public void setUriEndpointOverride(@Nullable String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
     }
 }

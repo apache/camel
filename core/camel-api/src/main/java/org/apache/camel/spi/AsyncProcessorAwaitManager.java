@@ -21,6 +21,7 @@ import java.util.Collection;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A manager to handle async routing engine, when {@link Exchange}s are being handed over from one thread to another,
@@ -110,6 +111,7 @@ public interface AsyncProcessorAwaitManager extends StaticService {
          * <p/>
          * Is <tt>null</tt> if message history is disabled.
          */
+        @Nullable
         String getRouteId();
 
         /**
@@ -117,6 +119,7 @@ public interface AsyncProcessorAwaitManager extends StaticService {
          * <p/>
          * Is <tt>null</tt> if message history is disabled.
          */
+        @Nullable
         String getNodeId();
 
     }

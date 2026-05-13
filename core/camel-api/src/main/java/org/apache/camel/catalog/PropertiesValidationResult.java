@@ -25,32 +25,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
+
 abstract class PropertiesValidationResult implements Serializable {
 
     int errors;
     int warnings;
 
     // general error
+    @Nullable
     String syntaxError;
     // general warnings
+    @Nullable
     String unknownComponent;
+    @Nullable
     String incapable;
 
     // options
+    @Nullable
     Set<String> unknown;
+    @Nullable
     Map<String, String[]> unknownSuggestions;
+    @Nullable
     Set<String> required;
+    @Nullable
     Set<String> deprecated;
+    @Nullable
     Map<String, String> invalidEnum;
+    @Nullable
     Map<String, String[]> invalidEnumChoices;
+    @Nullable
     Map<String, String[]> invalidEnumSuggestions;
+    @Nullable
     Map<String, String> invalidMap;
+    @Nullable
     Map<String, String> invalidArray;
+    @Nullable
     Map<String, String> invalidReference;
+    @Nullable
     Map<String, String> invalidBoolean;
+    @Nullable
     Map<String, String> invalidInteger;
+    @Nullable
     Map<String, String> invalidNumber;
+    @Nullable
     Map<String, String> invalidDuration;
+    @Nullable
     Map<String, String> defaultValues;
 
     public boolean hasErrors() {
@@ -221,43 +241,43 @@ abstract class PropertiesValidationResult implements Serializable {
         defaultValues.put(name, value);
     }
 
-    public String getSyntaxError() {
+    public @Nullable String getSyntaxError() {
         return syntaxError;
     }
 
-    public String getIncapable() {
+    public @Nullable String getIncapable() {
         return incapable;
     }
 
-    public Set<String> getUnknown() {
+    public @Nullable Set<String> getUnknown() {
         return unknown;
     }
 
-    public Map<String, String[]> getUnknownSuggestions() {
+    public @Nullable Map<String, String[]> getUnknownSuggestions() {
         return unknownSuggestions;
     }
 
-    public String getUnknownComponent() {
+    public @Nullable String getUnknownComponent() {
         return unknownComponent;
     }
 
-    public Set<String> getRequired() {
+    public @Nullable Set<String> getRequired() {
         return required;
     }
 
-    public Set<String> getDeprecated() {
+    public @Nullable Set<String> getDeprecated() {
         return deprecated;
     }
 
-    public Map<String, String> getInvalidEnum() {
+    public @Nullable Map<String, String> getInvalidEnum() {
         return invalidEnum;
     }
 
-    public Map<String, String[]> getInvalidEnumChoices() {
+    public @Nullable Map<String, String[]> getInvalidEnumChoices() {
         return invalidEnumChoices;
     }
 
-    public Map<String, String[]> getInvalidEnumSuggestions() {
+    public @Nullable Map<String, String[]> getInvalidEnumSuggestions() {
         return invalidEnumSuggestions;
     }
 
@@ -272,35 +292,35 @@ abstract class PropertiesValidationResult implements Serializable {
         return Collections.emptyList();
     }
 
-    public Map<String, String> getInvalidReference() {
+    public @Nullable Map<String, String> getInvalidReference() {
         return invalidReference;
     }
 
-    public Map<String, String> getInvalidMap() {
+    public @Nullable Map<String, String> getInvalidMap() {
         return invalidMap;
     }
 
-    public Map<String, String> getInvalidArray() {
+    public @Nullable Map<String, String> getInvalidArray() {
         return invalidArray;
     }
 
-    public Map<String, String> getInvalidBoolean() {
+    public @Nullable Map<String, String> getInvalidBoolean() {
         return invalidBoolean;
     }
 
-    public Map<String, String> getInvalidInteger() {
+    public @Nullable Map<String, String> getInvalidInteger() {
         return invalidInteger;
     }
 
-    public Map<String, String> getInvalidNumber() {
+    public @Nullable Map<String, String> getInvalidNumber() {
         return invalidNumber;
     }
 
-    public Map<String, String> getInvalidDuration() {
+    public @Nullable Map<String, String> getInvalidDuration() {
         return invalidDuration;
     }
 
-    public Map<String, String> getDefaultValues() {
+    public @Nullable Map<String, String> getDefaultValues() {
         return defaultValues;
     }
 

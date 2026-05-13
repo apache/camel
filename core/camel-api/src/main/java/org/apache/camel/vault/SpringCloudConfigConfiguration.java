@@ -17,6 +17,7 @@
 package org.apache.camel.vault;
 
 import org.apache.camel.spi.Metadata;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for Spring Cloud Config
@@ -24,30 +25,30 @@ import org.apache.camel.spi.Metadata;
 public class SpringCloudConfigConfiguration extends VaultConfiguration {
 
     @Metadata(security = "secret")
-    private String password;
+    private @Nullable String password;
     @Metadata(security = "secret", defaultValue = "user")
     private String username = "user";
     @Metadata(security = "secret")
-    private String token;
+    private @Nullable String token;
     @Metadata(defaultValue = "http://localhost:8888", description = "Comma separated list of Spring Config Server URIs")
     private String uris = "http://localhost:8888";
     @Metadata
-    private String label;
+    private @Nullable String label;
     @Metadata
-    private String profile;
+    private @Nullable String profile;
     @Metadata
     private boolean refreshEnabled;
     @Metadata(defaultValue = "30000")
     private long refreshPeriod = 30000;
 
-    public String getPassword() {
+    public @Nullable String getPassword() {
         return password;
     }
 
     /**
      * Password for Spring Config Server
      */
-    public void setPassword(String password) {
+    public void setPassword(@Nullable String password) {
         this.password = password;
     }
 
@@ -95,36 +96,36 @@ public class SpringCloudConfigConfiguration extends VaultConfiguration {
         this.refreshPeriod = refreshPeriod;
     }
 
-    public String getToken() {
+    public @Nullable String getToken() {
         return token;
     }
 
     /**
      * Authentication token for the Config Server
      */
-    public void setToken(String token) {
+    public void setToken(@Nullable String token) {
         this.token = token;
     }
 
-    public String getLabel() {
+    public @Nullable String getLabel() {
         return label;
     }
 
     /**
      * Config Server label to use (e.g., git branch)
      */
-    public void setLabel(String label) {
+    public void setLabel(@Nullable String label) {
         this.label = label;
     }
 
-    public String getProfile() {
+    public @Nullable String getProfile() {
         return profile;
     }
 
     /**
      * Configuration profile to use
      */
-    public void setProfile(String profile) {
+    public void setProfile(@Nullable String profile) {
         this.profile = profile;
     }
 }

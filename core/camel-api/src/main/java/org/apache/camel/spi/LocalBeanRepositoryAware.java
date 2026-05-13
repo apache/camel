@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Allows a {@link BeanRepository} to temporary have a local repository take precedence, such as when creating route
  * templates to give more flexibility.
@@ -27,11 +29,12 @@ public interface LocalBeanRepositoryAware {
      *
      * @param repository the local repository, or <tt>null</tt> to unset when no longer needed.
      */
-    void setLocalBeanRepository(BeanRepository repository);
+    void setLocalBeanRepository(@Nullable BeanRepository repository);
 
     /**
      * Gets the local bean repository (if any in use)
      */
+    @Nullable
     BeanRepository getLocalBeanRepository();
 
 }

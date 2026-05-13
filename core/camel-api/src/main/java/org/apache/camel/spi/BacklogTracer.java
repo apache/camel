@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 import java.util.Collection;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Backlog tracer that captures the last N messages during routing in a backlog.
  */
@@ -153,22 +155,24 @@ public interface BacklogTracer {
     /**
      * Filter for tracing by route or node id
      */
+    @Nullable
     String getTracePattern();
 
     /**
      * Filter for tracing by route or node id
      */
-    void setTracePattern(String tracePattern);
+    void setTracePattern(@Nullable String tracePattern);
 
     /**
      * Filter for tracing messages
      */
+    @Nullable
     String getTraceFilter();
 
     /**
      * Filter for tracing messages
      */
-    void setTraceFilter(String filter);
+    void setTraceFilter(@Nullable String filter);
 
     /**
      * Gets the trace counter (total number of traced messages)

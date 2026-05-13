@@ -20,6 +20,12 @@ It implies small differences listed https://github.com/whatap/java-grok#what-is-
 
 === camel-core
 
+The `camel-api` module now has an optional dependency on `org.jspecify:jspecify` for null safety annotations
+(`@NullMarked`, `@Nullable`). The dependency is `<optional>true</optional>`, so it is not pulled transitively
+into your application. The annotations are used to document nullability contracts across the Camel API surface
+and enable compile-time null checking with tools like NullAway. If you want to leverage these annotations in
+your own code or tooling, add `org.jspecify:jspecify` explicitly to your project dependencies.
+
 The `org.apache.camel.support.DefaultHeaderFilterStrategy` changed default setting for lowercase from `false` to `true`.
 
 The type converters for Java serialized objects with types `java.io.ObjectInput` and `java.io.ObjectOutput` has been removed.

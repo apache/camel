@@ -20,6 +20,8 @@ package org.apache.camel.resume;
 import java.io.File;
 import java.nio.ByteBuffer;
 
+import org.jspecify.annotations.Nullable;
+
 public interface Deserializable {
 
     /**
@@ -28,7 +30,7 @@ public interface Deserializable {
      * @param  buffer the buffer containing the object
      * @return        the deserialized object
      */
-    default Object deserializeObject(ByteBuffer buffer) {
+    default @Nullable Object deserializeObject(ByteBuffer buffer) {
         buffer.clear();
 
         int dataType = buffer.getInt();
@@ -65,7 +67,7 @@ public interface Deserializable {
      * @param  keyBuffer the buffer containing the key data
      * @return           the deserialized object
      */
-    default Object deserializeKey(ByteBuffer keyBuffer) {
+    default @Nullable Object deserializeKey(ByteBuffer keyBuffer) {
         return deserializeObject(keyBuffer);
     }
 
@@ -75,7 +77,7 @@ public interface Deserializable {
      * @param  valueBuffer the buffer containing the value data
      * @return             the deserialized object
      */
-    default Object deserializeValue(ByteBuffer valueBuffer) {
+    default @Nullable Object deserializeValue(ByteBuffer valueBuffer) {
         return deserializeObject(valueBuffer);
     }
 

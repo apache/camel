@@ -16,6 +16,10 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception caused when a mandatory property is not available on a message {@link Exchange}
  *
@@ -24,15 +28,16 @@ package org.apache.camel;
 public class NoSuchPropertyException extends CamelExchangeException {
 
     private final String propertyName;
-    private final transient Class<?> type;
+    private final transient @Nullable Class<?> type;
 
     public NoSuchPropertyException(Exchange exchange, String propertyName) {
         this(exchange, propertyName, null);
     }
 
-    public NoSuchPropertyException(Exchange exchange, String propertyName, Class<?> type) {
-        super("No '" + propertyName + "' exchange property available" + (type != null ? " of type: " + type.getName() : "")
-              + reason(exchange, propertyName), exchange);
+    public NoSuchPropertyException(Exchange exchange, String propertyName, @Nullable Class<?> type) {
+        super("No '" + Objects.requireNonNull(propertyName, "propertyName") + "' exchange property available"
+              + (type != null ? " of type: " + type.getName() : "")
+              + reason(Objects.requireNonNull(exchange, "exchange"), propertyName), exchange);
         this.propertyName = propertyName;
         this.type = type;
     }
@@ -41,16 +46,18 @@ public class NoSuchPropertyException extends CamelExchangeException {
         return propertyName;
     }
 
-    public Class<?> getType() {
+    public @Nullable Class<?> getType() {
         return type;
     }
 
     protected static String reason(Exchange exchange, String propertyName) {
+        Objects.requireNonNull(exchange, "exchange");
+        Objects.requireNonNull(propertyName, "propertyName");
         Object value = exchange.getProperty(propertyName);
         return valueDescription(value);
     }
 
-    static String valueDescription(Object value) {
+    static String valueDescription(@Nullable Object value) {
         if (value == null) {
             return "";
         }

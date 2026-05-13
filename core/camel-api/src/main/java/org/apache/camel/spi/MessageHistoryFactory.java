@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.StaticService;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A factory to create {@link MessageHistory} instances.
@@ -56,6 +57,7 @@ public interface MessageHistoryFactory extends StaticService, CamelContextAware 
      * only include nodes that are Step EIPs then use the EIP shortname, eg step. You can also include multiple nodes
      * separated by comma, eg step,wiretap,to
      */
+    @Nullable
     String getNodePattern();
 
     /**
@@ -63,6 +65,6 @@ public interface MessageHistoryFactory extends StaticService, CamelContextAware 
      * only include nodes that are Step EIPs then use the EIP shortname, eg step. You can also include multiple nodes
      * separated by comma, eg step,wiretap,to
      */
-    void setNodePattern(String nodePattern);
+    void setNodePattern(@Nullable String nodePattern);
 
 }

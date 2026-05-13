@@ -16,6 +16,10 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception thrown if an InOut exchange times out receiving the OUT message
  */
@@ -23,13 +27,14 @@ public class ExchangeTimedOutException extends CamelExchangeException {
 
     private final long timeout;
 
-    public ExchangeTimedOutException(Exchange exchange, long timeout) {
+    public ExchangeTimedOutException(@Nullable Exchange exchange, long timeout) {
         super("The OUT message was not received within: " + timeout + " millis", exchange);
         this.timeout = timeout;
     }
 
-    public ExchangeTimedOutException(Exchange exchange, long timeout, String message) {
-        super("The OUT message was not received within: " + timeout + " millis due " + message, exchange);
+    public ExchangeTimedOutException(@Nullable Exchange exchange, long timeout, String message) {
+        super("The OUT message was not received within: " + timeout + " millis due "
+              + Objects.requireNonNull(message, "message"), exchange);
         this.timeout = timeout;
     }
 

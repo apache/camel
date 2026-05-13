@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Access to a repository to store aggregated exchanges to support pluggable implementations.
@@ -40,6 +41,7 @@ public interface AggregationRepository {
      * @param  exchange     the aggregated exchange
      * @return              the old exchange if any existed
      */
+    @Nullable
     Exchange add(CamelContext camelContext, String key, Exchange exchange);
 
     /**
@@ -51,6 +53,7 @@ public interface AggregationRepository {
      * @param  key          the correlation key
      * @return              the exchange, or <tt>null</tt> if no exchange was previously added
      */
+    @Nullable
     Exchange get(CamelContext camelContext, String key);
 
     /**

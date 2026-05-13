@@ -17,6 +17,8 @@
 
 package org.apache.camel.clock;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A specialized clock that tracks the pass of time for one or more types of events
  *
@@ -30,7 +32,7 @@ public interface EventClock<T extends Enum<T>> extends Clock {
      * @param event the event to track
      * @param clock the clock associated with the event
      */
-    void add(T event, Clock clock);
+    void add(T event, @Nullable Clock clock);
 
     /**
      * Get the clock for the event
@@ -38,5 +40,6 @@ public interface EventClock<T extends Enum<T>> extends Clock {
      * @param  event the event to get the clock for
      * @return       the clock instance or null if not set
      */
+    @Nullable
     Clock get(T event);
 }

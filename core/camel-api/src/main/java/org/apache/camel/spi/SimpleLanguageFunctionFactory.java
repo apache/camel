@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A factory for extending the simple language with functions from external components.
@@ -40,6 +41,7 @@ public interface SimpleLanguageFunctionFactory {
      *
      * @return              the created function as an expression, or <tt>null</tt> if not supported by this factory.
      */
+    @Nullable
     Expression createFunction(CamelContext camelContext, String function, int index);
 
     /**
@@ -50,6 +52,7 @@ public interface SimpleLanguageFunctionFactory {
      * @param  index        index of the function in the literal input
      * @return              the source code or <tt>null</tt> if not supported by this factory.
      */
+    @Nullable
     String createCode(CamelContext camelContext, String function, int index);
 
 }

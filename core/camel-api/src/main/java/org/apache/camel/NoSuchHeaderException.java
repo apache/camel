@@ -16,6 +16,10 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
+
 /**
  * An exception caused when a mandatory header is not available on a message {@link Exchange}
  *
@@ -24,17 +28,18 @@ package org.apache.camel;
 public class NoSuchHeaderException extends CamelExchangeException {
 
     private final String headerName;
-    private final transient Class<?> type;
+    private final transient @Nullable Class<?> type;
 
     public NoSuchHeaderException(String message, Exchange exchange, String headerName) {
-        super(message, exchange);
-        this.headerName = headerName;
+        super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"));
+        this.headerName = Objects.requireNonNull(headerName, "headerName");
         this.type = null;
     }
 
-    public NoSuchHeaderException(Exchange exchange, String headerName, Class<?> type) {
-        super("No '" + headerName + "' header available" + (type != null ? " of type: " + type.getName() : "")
-              + reason(exchange, headerName), exchange);
+    public NoSuchHeaderException(Exchange exchange, String headerName, @Nullable Class<?> type) {
+        super("No '" + Objects.requireNonNull(headerName, "headerName") + "' header available"
+              + (type != null ? " of type: " + type.getName() : "")
+              + reason(Objects.requireNonNull(exchange, "exchange"), headerName), exchange);
         this.headerName = headerName;
         this.type = type;
     }
@@ -43,16 +48,18 @@ public class NoSuchHeaderException extends CamelExchangeException {
         return headerName;
     }
 
-    public Class<?> getType() {
+    public @Nullable Class<?> getType() {
         return type;
     }
 
     protected static String reason(Exchange exchange, String headerName) {
+        Objects.requireNonNull(exchange, "exchange");
+        Objects.requireNonNull(headerName, "headerName");
         Object value = exchange.getMessage().getHeader(headerName);
         return valueDescription(value);
     }
 
-    static String valueDescription(Object value) {
+    static String valueDescription(@Nullable Object value) {
         if (value == null) {
             return "";
         }

@@ -21,6 +21,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 
 import org.apache.camel.util.ObjectHelper;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An interface that represents resumable objects that can be serialized to a medium
@@ -40,7 +41,7 @@ public interface Serializable {
      * @param  obj the object to serialize
      * @return     a ByteBuffer instance with the serialized contents of this object
      */
-    default ByteBuffer serialize(Object obj) {
+    default @Nullable ByteBuffer serialize(@Nullable Object obj) {
         ObjectHelper.notNull(obj, "Cannot perform serialization on a null object");
 
         if (obj instanceof Long value) {
@@ -79,5 +80,6 @@ public interface Serializable {
      *
      * @return a ByteBuffer instance with the serialized contents of this object
      */
+    @Nullable
     ByteBuffer serialize();
 }

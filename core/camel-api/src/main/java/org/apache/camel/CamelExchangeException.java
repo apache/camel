@@ -17,6 +17,9 @@
 package org.apache.camel;
 
 import java.io.Serial;
+import java.util.Objects;
+
+import org.jspecify.annotations.Nullable;
 
 /**
  * An exception caused by a specific message {@link Exchange}
@@ -24,22 +27,26 @@ import java.io.Serial;
 public class CamelExchangeException extends CamelException {
     private static final @Serial long serialVersionUID = -8721487431101572630L;
     // exchange is not guaranteed to be serializable so we set it as transient
-    private final transient Exchange exchange;
+    private final transient @Nullable Exchange exchange;
 
-    public CamelExchangeException(String message, Exchange exchange) {
-        super(CamelExchangeException.createExceptionMessage(message, exchange, null));
+    public CamelExchangeException(String message, @Nullable Exchange exchange) {
+        super(CamelExchangeException.createExceptionMessage(
+                Objects.requireNonNull(message, "message"), exchange, null));
         this.exchange = exchange;
     }
 
-    public CamelExchangeException(String message, Exchange exchange, Throwable cause) {
-        super(CamelExchangeException.createExceptionMessage(message, exchange, cause), cause);
+    public CamelExchangeException(String message, @Nullable Exchange exchange, Throwable cause) {
+        super(CamelExchangeException.createExceptionMessage(
+                Objects.requireNonNull(message, "message"), exchange,
+                Objects.requireNonNull(cause, "cause")),
+              cause);
         this.exchange = exchange;
     }
 
     /**
      * Returns the exchange which caused the exception
      */
-    public Exchange getExchange() {
+    public @Nullable Exchange getExchange() {
         return exchange;
     }
 
@@ -53,7 +60,8 @@ public class CamelExchangeException extends CamelException {
      * @param  cause    the caused exception
      * @return          an error message (without stacktrace from exception)
      */
-    public static String createExceptionMessage(String message, Exchange exchange, Throwable cause) {
+    public static String createExceptionMessage(
+            @Nullable String message, @Nullable Exchange exchange, @Nullable Throwable cause) {
         StringBuilder sb = new StringBuilder(1024);
         if (message != null) {
             sb.append(message);

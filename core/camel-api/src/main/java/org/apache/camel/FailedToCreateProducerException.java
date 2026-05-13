@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.Objects;
+
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
@@ -26,7 +28,8 @@ public class FailedToCreateProducerException extends RuntimeCamelException {
     private final String uri;
 
     public FailedToCreateProducerException(Endpoint endpoint, Throwable cause) {
-        super("Failed to create Producer for endpoint: " + endpoint + ". Reason: " + cause, cause);
+        super("Failed to create Producer for endpoint: " + Objects.requireNonNull(endpoint, "endpoint") + ". Reason: "
+              + Objects.requireNonNull(cause, "cause"), cause);
         this.uri = sanitizeUri(endpoint.getEndpointUri());
     }
 
