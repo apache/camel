@@ -24,10 +24,15 @@ import jakarta.xml.bind.annotation.XmlEnum;
 @XmlEnum
 public enum StartupSummaryLevel {
 
+    /** Most detailed startup summary with all routes and their endpoints. */
     Verbose,
+    /** Default startup summary with route overview. */
     Default,
+    /** Brief startup summary with route count. */
     Brief,
+    /** Single-line startup summary. */
     Oneline,
+    /** No startup summary logged. */
     Off
 
 }

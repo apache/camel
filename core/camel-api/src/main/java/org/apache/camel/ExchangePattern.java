@@ -25,7 +25,9 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType
 @XmlEnum
 public enum ExchangePattern {
+    /** Fire-and-forget: the caller sends a message and does not expect a reply. */
     InOnly,
+    /** Request-reply: the caller sends a message and expects a response. */
     InOut;
 
     /**

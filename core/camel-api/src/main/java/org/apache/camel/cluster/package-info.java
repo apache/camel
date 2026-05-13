@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Cluster API for leader election, namespace-based partitioning, and cluster membership management.
+ */
 @NullMarked
 package org.apache.camel.cluster;
 

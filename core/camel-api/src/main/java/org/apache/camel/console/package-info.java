@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Developer console API for exposing runtime operational information in text and JSON formats.
+ */
 @NullMarked
 package org.apache.camel.console;
 

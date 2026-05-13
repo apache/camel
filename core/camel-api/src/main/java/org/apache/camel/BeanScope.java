@@ -18,11 +18,15 @@ package org.apache.camel;
 
 import jakarta.xml.bind.annotation.XmlEnum;
 
+/** Defines the scope for bean lookups in the {@link org.apache.camel.spi.Registry}. */
 @XmlEnum
 public enum BeanScope {
 
+    /** Reuses a single bean instance for all invocations (default). */
     Singleton,
+    /** Creates a new bean instance per exchange. */
     Request,
+    /** Creates a new bean instance per invocation. */
     Prototype
 
 }

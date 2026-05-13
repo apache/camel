@@ -26,6 +26,10 @@ import org.apache.camel.Ordered;
 import org.apache.camel.Service;
 import org.apache.camel.spi.IdAware;
 
+/**
+ * Represents a cluster service providing distributed operations such as leader election and view-based namespace
+ * partitioning. Implementations are backed by distributed coordination systems (e.g., ZooKeeper, Consul, Kubernetes).
+ */
 public interface CamelClusterService extends Service, CamelContextAware, IdAware, Ordered {
 
     @Override

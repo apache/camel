@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Base classes for implementing the Camel service lifecycle (build, init, start, stop, suspend, resume).
+ */
 @NullMarked
 package org.apache.camel.support.service;
 

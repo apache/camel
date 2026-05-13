@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Runtime catalog API for validating endpoint URIs, configuration properties, and language expressions.
+ */
 @NullMarked
 package org.apache.camel.catalog;
 
