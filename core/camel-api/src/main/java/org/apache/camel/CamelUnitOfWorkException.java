@@ -29,6 +29,10 @@ public class CamelUnitOfWorkException extends CamelExchangeException {
 
     private final transient List<Exception> causes;
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param causes   the list of exceptions that caused the unit of work to fail
+     */
     public CamelUnitOfWorkException(Exchange exchange, List<Exception> causes) {
         // just provide the first exception as cause, as it will be logged in the stacktraces
         super("Unit of work failed on exchange with " + Objects.requireNonNull(causes, "causes").size()

@@ -18,7 +18,7 @@
 package org.apache.camel.resume;
 
 /**
- * Provides and interface for integrations to run actions during resume
+ * Provides an interface for integrations to run actions during resume
  */
 public interface ResumeAction {
 

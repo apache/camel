@@ -31,20 +31,40 @@ public class VetoCamelContextStartException extends Exception {
     private final CamelContext context;
     private final boolean rethrowException;
 
+    /**
+     * @param message the detail message
+     * @param context the CamelContext whose start is being vetoed
+     */
     public VetoCamelContextStartException(String message, CamelContext context) {
         this(message, context, true);
     }
 
+    /**
+     * @param message          the detail message
+     * @param context          the CamelContext whose start is being vetoed
+     * @param rethrowException whether to rethrow this exception when starting CamelContext
+     */
     public VetoCamelContextStartException(String message, CamelContext context, boolean rethrowException) {
         super(Objects.requireNonNull(message, "message"));
         this.context = Objects.requireNonNull(context, "context");
         this.rethrowException = rethrowException;
     }
 
+    /**
+     * @param message the detail message
+     * @param cause   the cause of the veto
+     * @param context the CamelContext whose start is being vetoed
+     */
     public VetoCamelContextStartException(String message, Throwable cause, CamelContext context) {
         this(message, cause, context, true);
     }
 
+    /**
+     * @param message          the detail message
+     * @param cause            the cause of the veto
+     * @param context          the CamelContext whose start is being vetoed
+     * @param rethrowException whether to rethrow this exception when starting CamelContext
+     */
     public VetoCamelContextStartException(String message, Throwable cause, CamelContext context, boolean rethrowException) {
         super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
         this.context = Objects.requireNonNull(context, "context");

@@ -26,6 +26,10 @@ public class NoSuchServiceException extends RuntimeCamelException {
     private final String name;
     private final String jar;
 
+    /**
+     * @param name the name of the service that could not be found
+     * @param jar  the JAR that should be added to the classpath to provide the service
+     */
     public NoSuchServiceException(String name, String jar) {
         super("No " + Objects.requireNonNull(name, "name") + " service could be found in the classpath. Add "
               + Objects.requireNonNull(jar, "jar") + " to classpath.");

@@ -29,18 +29,29 @@ public class ResolveEndpointFailedException extends RuntimeCamelException {
 
     private final @Nullable String uri;
 
+    /**
+     * @param uri   the endpoint URI that could not be resolved
+     * @param cause the cause of the failure
+     */
     public ResolveEndpointFailedException(@Nullable String uri, Throwable cause) {
         super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: "
               + Objects.requireNonNull(cause, "cause").getMessage(), cause);
         this.uri = sanitizeUri(uri);
     }
 
+    /**
+     * @param uri     the endpoint URI that could not be resolved
+     * @param message the detail message describing why the endpoint could not be resolved
+     */
     public ResolveEndpointFailedException(@Nullable String uri, String message) {
         super("Failed to resolve endpoint: " + sanitizeUri(uri) + " due to: "
               + Objects.requireNonNull(message, "message"));
         this.uri = sanitizeUri(uri);
     }
 
+    /**
+     * @param uri the endpoint URI that could not be resolved
+     */
     public ResolveEndpointFailedException(@Nullable String uri) {
         super("Failed to resolve endpoint: " + sanitizeUri(uri));
         this.uri = sanitizeUri(uri);
