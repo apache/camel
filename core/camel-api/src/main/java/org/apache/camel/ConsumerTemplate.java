@@ -131,7 +131,7 @@ public interface ConsumerTemplate extends Service {
     Exchange receive(Endpoint endpoint, long timeout);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      * <p/>
      * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
@@ -142,7 +142,7 @@ public interface ConsumerTemplate extends Service {
     Exchange receiveNoWait(String endpointUri);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      * <p/>
      * <b>Important:</b> See {@link #doneUoW(Exchange)}
      *
@@ -191,7 +191,7 @@ public interface ConsumerTemplate extends Service {
     Object receiveBody(Endpoint endpoint, long timeout);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      *
      * @param  endpointUri the endpoint to receive from
      * @return             the returned response body, or <tt>null</tt> if no response
@@ -200,7 +200,7 @@ public interface ConsumerTemplate extends Service {
     Object receiveBodyNoWait(String endpointUri);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      *
      * @param  endpoint the endpoint to receive from
      * @return          the returned response body, or <tt>null</tt> if no response
@@ -247,7 +247,7 @@ public interface ConsumerTemplate extends Service {
     <T> @Nullable T receiveBody(Endpoint endpoint, long timeout, Class<T> type);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      *
      * @param  endpointUri the endpoint to receive from
      * @param  type        the expected response type
@@ -256,7 +256,7 @@ public interface ConsumerTemplate extends Service {
     <T> @Nullable T receiveBodyNoWait(String endpointUri, Class<T> type);
 
     /**
-     * Receives from the endpoint, not waiting for a response if non exists.
+     * Receives from the endpoint, not waiting for a response if none exists.
      *
      * @param  endpoint the endpoint to receive from
      * @param  type     the expected response type

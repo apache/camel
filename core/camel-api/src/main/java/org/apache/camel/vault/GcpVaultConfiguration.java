@@ -88,7 +88,7 @@ public class GcpVaultConfiguration extends VaultConfiguration {
     }
 
     /**
-     * Whether to automatically reload Camel upon secrets being updated in AWS.
+     * Whether to automatically reload Camel upon secrets being updated in GCP.
      */
     public void setRefreshEnabled(boolean refreshEnabled) {
         this.refreshEnabled = refreshEnabled;

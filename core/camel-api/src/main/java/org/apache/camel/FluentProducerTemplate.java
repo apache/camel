@@ -76,9 +76,7 @@ import org.jspecify.annotations.Nullable;
  * <ul>
  * <li>throws {@link org.apache.camel.CamelExecutionException} if processing failed <i>during</i> routing with the
  * caused exception wrapped</li>
- * <li>The <tt>fault.body</tt> if there is a fault message set and its not <tt>null</tt></li>
- * <li>Either <tt>IN</tt> or <tt>OUT</tt> body according to the message exchange pattern. If the pattern is Out capable
- * then the <tt>OUT</tt> body is returned, otherwise <tt>IN</tt>.
+ * <li>The <tt>OUT</tt> body if the pattern is Out capable, otherwise <tt>IN</tt>.
  * </ul>
  * <br/>
  * <p/>
@@ -148,8 +146,8 @@ public interface FluentProducerTemplate extends Service {
     void setDefaultEndpointUri(String endpointUri);
 
     /**
-     * Sets whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link ProducerTemplate} to
-     * send events about the {@link Exchange} being sent.
+     * Sets whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link FluentProducerTemplate}
+     * to send events about the {@link Exchange} being sent.
      * <p/>
      * By default this is enabled.
      *
@@ -158,8 +156,8 @@ public interface FluentProducerTemplate extends Service {
     void setEventNotifierEnabled(boolean enabled);
 
     /**
-     * Whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link ProducerTemplate} to send
-     * events about the {@link Exchange} being sent.
+     * Whether the {@link org.apache.camel.spi.EventNotifier} should be used by this {@link FluentProducerTemplate} to
+     * send events about the {@link Exchange} being sent.
      *
      * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
      */
@@ -226,7 +224,7 @@ public interface FluentProducerTemplate extends Service {
     FluentProducerTemplate withVariables(Map<String, Object> variables);
 
     /**
-     * Set the exchange property
+     * Set the variable with the given value.
      *
      * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
      * withBody/withHeaders to construct the message to be sent.
