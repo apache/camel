@@ -72,10 +72,11 @@ import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import dev.tamboui.widgets.tabs.Tabs;
 import dev.tamboui.widgets.tabs.TabsState;
-import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramRenderer;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -185,6 +186,8 @@ public class CamelMonitor extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        System.setProperty("java.awt.headless", "true");
+
         // to make ServiceLoader work with tamboui for downloaded JARs
         Thread.currentThread().setContextClassLoader(classLoader);
         TuiHelper.preloadClasses(classLoader);
@@ -946,11 +949,12 @@ public class CamelMonitor extends CamelCommand {
         root.put("action", "route-structure");
         root.put("filter", "*");
         root.put("brief", false);
+        root.put("metric", true);
 
         Path actionFile = getActionFile(selectedPid);
         org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
 
-        JsonObject jo = pollJsonResponse(outputFile, 2000);
+        JsonObject jo = pollJsonResponse(outputFile, 5000);
         PathUtils.deleteFile(outputFile);
 
         if (jo == null) {
@@ -1040,8 +1044,8 @@ public class CamelMonitor extends CamelCommand {
                         }
                     };
 
-            RouteDiagramRenderer renderer = new RouteDiagramRenderer();
-            renderer.printTextDiagram(diagramRoutes, capturingPrinter);
+            String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true);
+            sb.append(ascii);
 
             List<String> result = new ArrayList<>();
             for (String line : sb.toString().split("\n", -1)) {
@@ -1053,6 +1057,25 @@ public class CamelMonitor extends CamelCommand {
         }
 
         showDiagram = true;
+    }
+
+    private static String renderAscii(
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode) {
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
+                nodeWidth, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
+                RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
+
+        List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
+        int currentY = RouteDiagramLayoutEngine.PADDING;
+        for (RouteDiagramLayoutEngine.RouteInfo route : routes) {
+            RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(route, currentY);
+            layoutRoutes.add(lr);
+            currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+        }
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(
+                nodeWidth * RouteDiagramLayoutEngine.SCALE, unicode);
+        return renderer.renderDiagram(layoutRoutes, currentY);
     }
 
     private static JsonObject pollJsonResponse(Path outputFile, long timeout) {
