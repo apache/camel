@@ -1747,8 +1747,9 @@ public class CamelMonitor extends CamelCommand {
                     Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
         } else if (tab == TAB_ROUTES) {
             if (showDiagram) {
+                String closeKey = diagramTextMode ? "D" : "d";
                 footer = Line.from(
-                        Span.styled(" d", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled(" " + closeKey, Style.create().fg(Color.YELLOW).bold()),
                         Span.raw("/"),
                         Span.styled("Esc", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" close  "),
