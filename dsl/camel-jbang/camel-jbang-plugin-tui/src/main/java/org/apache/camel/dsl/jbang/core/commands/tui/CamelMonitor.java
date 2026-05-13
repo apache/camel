@@ -430,12 +430,12 @@ public class CamelMonitor extends CamelCommand {
                     logFollowMode = !logFollowMode;
                     return true;
                 }
-                if (ke.isChar('g')) {
+                if (ke.isHome()) {
                     logFollowMode = false;
                     logTableState.select(0);
                     return true;
                 }
-                if (ke.isChar('G')) {
+                if (ke.isEnd()) {
                     logFollowMode = true;
                     return true;
                 }
@@ -2017,7 +2017,7 @@ public class CamelMonitor extends CamelCommand {
                     Span.raw(" levels  "),
                     Span.styled("f", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" follow  "),
-                    Span.styled("g/G", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("Home/End", Style.create().fg(Color.YELLOW).bold()),
                     Span.raw(" top/end"));
         } else if (tab == TAB_TRACE) {
             footer = Line.from(
