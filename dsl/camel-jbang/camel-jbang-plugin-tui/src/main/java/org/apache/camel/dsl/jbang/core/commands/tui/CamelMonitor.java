@@ -179,7 +179,12 @@ public class CamelMonitor extends CamelCommand {
     private final ScrollbarState diagramHScrollState = new ScrollbarState();
     private String diagramRouteId;
     private ImageData diagramImageData;
+    private ImageData diagramFullImageData;
     private ImageProtocol diagramProtocol;
+    private int diagramCropX = -1;
+    private int diagramCropY = -1;
+    private int diagramCropW = -1;
+    private int diagramCropH = -1;
 
     private volatile long lastRefresh;
 
@@ -216,13 +221,13 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof MouseEvent me) {
-            if (showDiagram && diagramImageData == null && tabsState.selected() == TAB_ROUTES) {
+            if (showDiagram && tabsState.selected() == TAB_ROUTES) {
                 if (me.kind() == MouseEventKind.SCROLL_UP) {
                     diagramScroll = Math.max(0, diagramScroll - 3);
                     return true;
                 }
                 if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-                    diagramScroll = Math.min(Math.max(0, diagramLines.size() - 1), diagramScroll + 3);
+                    diagramScroll += 3;
                     return true;
                 }
             }
@@ -233,6 +238,7 @@ public class CamelMonitor extends CamelCommand {
                 if (showDiagram) {
                     showDiagram = false;
                     diagramImageData = null;
+                    diagramFullImageData = null;
                     return true;
                 }
                 // If in a detail tab, go back to overview first
@@ -284,7 +290,7 @@ public class CamelMonitor extends CamelCommand {
 
             // Navigation (all tabs)
             if (ke.isUp()) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Math.max(0, diagramScroll - 1);
                 } else {
                     navigateUp();
@@ -292,15 +298,15 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isDown()) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
-                    diagramScroll = Math.min(Math.max(0, diagramLines.size() - 1), diagramScroll + 1);
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScroll++;
                 } else {
                     navigateDown();
                 }
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_UP)) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Math.max(0, diagramScroll - 20);
                 } else if (tab == TAB_LOG) {
                     logFollowMode = false;
@@ -311,8 +317,8 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
-                    diagramScroll = Math.min(Math.max(0, diagramLines.size() - 1), diagramScroll + 20);
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScroll += 20;
                 } else if (tab == TAB_LOG) {
                     for (int i = 0; i < 20; i++) {
                         logTableState.selectNext(filteredLogEntries.size());
@@ -321,13 +327,13 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isLeft()) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                if (showDiagram && tab == TAB_ROUTES) {
                     diagramScrollX = Math.max(0, diagramScrollX - 1);
                     return true;
                 }
             }
             if (ke.isRight()) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                if (showDiagram && tab == TAB_ROUTES) {
                     diagramScrollX++;
                     return true;
                 }
@@ -352,6 +358,7 @@ public class CamelMonitor extends CamelCommand {
                 if (showDiagram) {
                     showDiagram = false;
                     diagramImageData = null;
+                    diagramFullImageData = null;
                 } else {
                     diagramTextMode = false;
                     loadDiagramForSelectedRoute();
@@ -362,6 +369,7 @@ public class CamelMonitor extends CamelCommand {
                 if (showDiagram) {
                     showDiagram = false;
                     diagramImageData = null;
+                    diagramFullImageData = null;
                 } else {
                     diagramTextMode = true;
                     loadDiagramForSelectedRoute();
@@ -441,10 +449,13 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
-            if (now - lastRefresh >= refreshInterval) {
+            long interval = showDiagram ? Math.max(refreshInterval, 1000) : refreshInterval;
+            if (now - lastRefresh >= interval) {
                 refreshData();
+                return true;
             }
-            return true;
+            // Skip re-render when showing image diagram to prevent flicker
+            return diagramFullImageData == null;
         }
         return false;
     }
@@ -711,8 +722,8 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Fullscreen text diagram mode
-        if (showDiagram && diagramTextMode && !diagramLines.isEmpty()) {
+        // Fullscreen diagram mode
+        if (showDiagram && (diagramTextMode ? !diagramLines.isEmpty() : diagramFullImageData != null)) {
             // Split: route info header (4 rows) + diagram (fill)
             List<Rect> fullChunks = Layout.vertical()
                     .constraints(Constraint.length(4), Constraint.fill())
@@ -934,14 +945,8 @@ public class CamelMonitor extends CamelCommand {
                 .title(diagramTextMode ? "" : " Diagram [" + diagramRouteId + "] ")
                 .build();
 
-        if (diagramImageData != null) {
-            Image img = Image.builder()
-                    .data(diagramImageData)
-                    .protocol(diagramProtocol)
-                    .scaling(ImageScaling.FIT)
-                    .block(block)
-                    .build();
-            frame.renderWidget(img, area);
+        if (diagramFullImageData != null) {
+            renderImageDiagram(frame, area, block);
             return;
         }
 
@@ -1005,6 +1010,88 @@ public class CamelMonitor extends CamelCommand {
         if (maxWidth > visibleCols) {
             diagramHScrollState.contentLength(maxWidth);
             diagramHScrollState.viewportContentLength(visibleCols);
+            diagramHScrollState.position(diagramScrollX);
+            frame.renderStatefulWidget(
+                    Scrollbar.horizontal(),
+                    vChunks.get(1), diagramHScrollState);
+        }
+    }
+
+    private void renderImageDiagram(Frame frame, Rect area, Block block) {
+        int imgW = diagramFullImageData.width();
+        int imgH = diagramFullImageData.height();
+
+        Rect inner = block.inner(area);
+        // Convert cell area to pixel viewport using protocol resolution
+        int pxPerCol = diagramProtocol.resolution().widthMultiplier();
+        int pxPerRow = diagramProtocol.resolution().heightMultiplier();
+        // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
+        int viewCols = Math.max(1, inner.width() - 1);
+        int viewRows = Math.max(1, inner.height() - 1);
+        int viewW = viewCols * pxPerCol;
+        int viewH = viewRows * pxPerRow;
+
+        // Scroll units are in cells; convert to pixels for clamping
+        int maxScrollY = Math.max(0, (imgH - viewH + pxPerRow - 1) / pxPerRow);
+        int maxScrollX = Math.max(0, (imgW - viewW + pxPerCol - 1) / pxPerCol);
+        diagramScroll = Math.min(diagramScroll, maxScrollY);
+        diagramScrollX = Math.min(diagramScrollX, maxScrollX);
+
+        int cropX = Math.min(diagramScrollX * pxPerCol, imgW);
+        int cropY = Math.min(diagramScroll * pxPerRow, imgH);
+        int cropW = Math.min(viewW, imgW - cropX);
+        int cropH = Math.min(viewH, imgH - cropY);
+
+        if (cropW > 0 && cropH > 0) {
+            if (cropX != diagramCropX || cropY != diagramCropY
+                    || cropW != diagramCropW || cropH != diagramCropH) {
+                diagramImageData = diagramFullImageData.crop(cropX, cropY, cropW, cropH);
+                diagramCropX = cropX;
+                diagramCropY = cropY;
+                diagramCropW = cropW;
+                diagramCropH = cropH;
+            }
+        } else if (diagramImageData != diagramFullImageData) {
+            diagramImageData = diagramFullImageData;
+        }
+
+        // Render the outer block border
+        frame.renderWidget(block, area);
+
+        // Vertical layout inside the block: [image+vscrollbar (fill), hscrollbar (1 row)]
+        List<Rect> vChunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        // Horizontal layout: [image (fill), vertical scrollbar (1 col)]
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(vChunks.get(0));
+
+        // Render cropped image
+        Image img = Image.builder()
+                .data(diagramImageData)
+                .protocol(diagramProtocol)
+                .scaling(ImageScaling.FIT)
+                .build();
+        frame.renderWidget(img, hChunks.get(0));
+
+        // Render vertical scrollbar
+        int totalRows = (imgH + pxPerRow - 1) / pxPerRow;
+        diagramVScrollState.contentLength(totalRows);
+        diagramVScrollState.viewportContentLength(viewRows);
+        diagramVScrollState.position(diagramScroll);
+        frame.renderStatefulWidget(
+                Scrollbar.builder()
+                        .thumbStyle(Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)))
+                        .build(),
+                hChunks.get(1), diagramVScrollState);
+
+        // Render horizontal scrollbar
+        if (imgW > viewW) {
+            int totalCols = (imgW + pxPerCol - 1) / pxPerCol;
+            diagramHScrollState.contentLength(totalCols);
+            diagramHScrollState.viewportContentLength(viewCols);
             diagramHScrollState.position(diagramScrollX);
             frame.renderStatefulWidget(
                     Scrollbar.horizontal(),
@@ -1146,9 +1233,14 @@ public class CamelMonitor extends CamelCommand {
         diagramRouteId = selectedRoute.routeId;
         diagramScroll = 0;
         diagramScrollX = 0;
+        diagramCropX = -1;
+        diagramCropY = -1;
+        diagramCropW = -1;
+        diagramCropH = -1;
 
         if (diagramTextMode) {
             diagramImageData = null;
+            diagramFullImageData = null;
             diagramProtocol = null;
 
             String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true);
@@ -1174,11 +1266,14 @@ public class CamelMonitor extends CamelCommand {
                 RouteDiagramRenderer renderer = new RouteDiagramRenderer();
                 RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
                 java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
-                diagramImageData = ImageData.fromBufferedImage(image);
+                ImageData fullImage = ImageData.fromBufferedImage(image);
+                diagramFullImageData = fullImage.resize(fullImage.width() / 2, fullImage.height() / 2);
+                diagramImageData = diagramFullImageData;
                 diagramProtocol = caps.bestProtocol();
                 diagramLines = Collections.emptyList();
             } else {
                 diagramImageData = null;
+                diagramFullImageData = null;
                 diagramProtocol = null;
                 diagramLines = List.of(
                         "(Terminal does not support image rendering)",
