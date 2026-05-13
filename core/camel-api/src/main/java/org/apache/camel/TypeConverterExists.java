@@ -24,8 +24,11 @@ import jakarta.xml.bind.annotation.XmlEnum;
 @XmlEnum
 public enum TypeConverterExists {
 
+    /** Replace the existing type converter. */
     Override,
+    /** Keep the existing type converter and discard the new one. */
     Ignore,
+    /** Throw an exception to signal a duplicate type converter. */
     Fail
 
 }

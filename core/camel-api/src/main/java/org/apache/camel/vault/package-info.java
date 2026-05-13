@@ -14,6 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Configuration classes for accessing external secret vaults such as AWS Secrets Manager, GCP Secret Manager, Azure Key
+ * Vault, and HashiCorp Vault.
+ */
 @NullMarked
 package org.apache.camel.vault;
 

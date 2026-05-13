@@ -17,9 +17,10 @@
 package org.apache.camel.spi;
 
 /**
- * Notifier to send {@link java.util.EventObject events}.
+ * Notifier to send {@link CamelEvent} notifications.
  *
- * @see org.apache.camel.spi.EventFactory
+ * @see CamelEvent
+ * @see EventFactory
  */
 public interface EventNotifier {
 
@@ -48,57 +49,83 @@ public interface EventNotifier {
      */
     boolean isDisabled();
 
+    /** Whether to ignore CamelContext initialization events. */
     boolean isIgnoreCamelContextInitEvents();
 
+    /** Set whether to ignore CamelContext initialization events. */
     void setIgnoreCamelContextInitEvents(boolean ignoreCamelContextInitEvents);
 
+    /** Whether to ignore CamelContext lifecycle events (start, stop, suspend, resume). */
     boolean isIgnoreCamelContextEvents();
 
+    /** Set whether to ignore CamelContext lifecycle events (start, stop, suspend, resume). */
     void setIgnoreCamelContextEvents(boolean ignoreCamelContextEvents);
 
+    /** Whether to ignore route lifecycle events (added, removed, started, stopped). */
     boolean isIgnoreRouteEvents();
 
+    /** Set whether to ignore route lifecycle events (added, removed, started, stopped). */
     void setIgnoreRouteEvents(boolean ignoreRouteEvents);
 
+    /** Whether to ignore service lifecycle events (start failure, stop failure). */
     boolean isIgnoreServiceEvents();
 
+    /** Set whether to ignore service lifecycle events (start failure, stop failure). */
     void setIgnoreServiceEvents(boolean ignoreServiceEvents);
 
+    /** Whether to ignore all exchange events. */
     boolean isIgnoreExchangeEvents();
 
+    /** Set whether to ignore all exchange events. */
     void setIgnoreExchangeEvents(boolean ignoreExchangeEvents);
 
+    /** Whether to ignore exchange created events. */
     boolean isIgnoreExchangeCreatedEvent();
 
+    /** Set whether to ignore exchange created events. */
     void setIgnoreExchangeCreatedEvent(boolean ignoreExchangeCreatedEvent);
 
+    /** Whether to ignore exchange completed events. */
     boolean isIgnoreExchangeCompletedEvent();
 
+    /** Set whether to ignore exchange completed events. */
     void setIgnoreExchangeCompletedEvent(boolean ignoreExchangeCompletedEvent);
 
+    /** Whether to ignore exchange failed events. */
     boolean isIgnoreExchangeFailedEvents();
 
+    /** Set whether to ignore exchange failed events. */
     void setIgnoreExchangeFailedEvents(boolean ignoreExchangeFailureEvents);
 
+    /** Whether to ignore exchange redelivery events. */
     boolean isIgnoreExchangeRedeliveryEvents();
 
+    /** Set whether to ignore exchange redelivery events. */
     void setIgnoreExchangeRedeliveryEvents(boolean ignoreExchangeRedeliveryEvents);
 
+    /** Whether to ignore exchange sent events (after sending to an endpoint). */
     boolean isIgnoreExchangeSentEvents();
 
+    /** Set whether to ignore exchange sent events (after sending to an endpoint). */
     void setIgnoreExchangeSentEvents(boolean ignoreExchangeSentEvents);
 
+    /** Whether to ignore exchange sending events (before sending to an endpoint). */
     boolean isIgnoreExchangeSendingEvents();
 
+    /** Set whether to ignore exchange sending events (before sending to an endpoint). */
     void setIgnoreExchangeSendingEvents(boolean ignoreExchangeSendingEvents);
 
+    /** Whether to ignore step events. */
     boolean isIgnoreStepEvents();
 
+    /** Set whether to ignore step events. */
     void setIgnoreStepEvents(boolean ignoreStepEvents);
 
+    /** @deprecated Set whether to ignore exchange async processing started events. */
     @Deprecated(since = "4.19.0")
     void setIgnoreExchangeAsyncProcessingStartedEvents(boolean ignoreExchangeAsyncProcessingStartedEvents);
 
+    /** @deprecated Whether to ignore exchange async processing started events. */
     @Deprecated(since = "4.19.0")
     boolean isIgnoreExchangeAsyncProcessingStartedEvents();
 }

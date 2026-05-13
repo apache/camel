@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Health check API for readiness and liveness monitoring of the CamelContext, routes, and components.
+ */
 @NullMarked
 package org.apache.camel.health;
 

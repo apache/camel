@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Configuration classes for Java Secure Socket Extension (JSSE) SSL/TLS setup.
+ */
 @NullMarked
 package org.apache.camel.support.jsse;
 

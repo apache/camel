@@ -14,6 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Resume strategy API for offset-based message consumption, allowing consumers to resume processing from a previously
+ * saved position.
+ */
 @NullMarked
 package org.apache.camel.resume;
 

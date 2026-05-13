@@ -398,26 +398,26 @@ public interface Route extends RuntimeConfiguration {
      */
     List<RoutePolicy> getRoutePolicyList();
 
-    // called at completion time
+    /** Sets the error handler factory for this route. */
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
 
-    // called at runtime
+    /** Gets the error handler factory for this route. */
     ErrorHandlerFactory getErrorHandlerFactory();
 
-    // called at runtime
+    /** Gets the on completion processors. */
     Collection<Processor> getOnCompletions();
 
-    // called at completion time
+    /** Sets an on completion processor. */
     void setOnCompletion(String onCompletionId, Processor processor);
 
-    // called at runtime
+    /** Gets the on exception processors. */
     Collection<Processor> getOnExceptions();
 
-    // called at runtime
+    /** Gets the on exception processor for the given id. */
     @Nullable
     Processor getOnException(String onExceptionId);
 
-    // called at completion time
+    /** Sets an on exception processor. */
     void setOnException(String onExceptionId, Processor processor);
 
     /**
