@@ -27,6 +27,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
+import org.apache.camel.util.StringHelper;
 import picocli.CommandLine.Command;
 
 @Command(name = "doctor", description = "Checks the environment and reports potential issues",
@@ -43,9 +44,9 @@ public class Doctor extends CamelCommand {
         printer().println("==================");
         printer().println();
 
+        checkCamelVersion();
         checkJava();
         checkJBang();
-        checkCamelVersion();
         checkMavenRepository();
         checkContainerRuntime();
         checkCommonPorts();
@@ -66,7 +67,7 @@ public class Doctor extends CamelCommand {
         } else {
             status = "UNSUPPORTED (17+ required)";
         }
-        printer().printf("  Java:        %s (%s) [%s]%n", version, vendor, status);
+        printer().printf("  Java:        %s (%s) (%s)%n", version, vendor, status);
     }
 
     private void checkJBang() {
@@ -74,7 +75,7 @@ public class Doctor extends CamelCommand {
         if (version != null) {
             printer().printf("  JBang:       %s (OK)%n", version);
         } else {
-            printer().printf("  JBang:       not detected%n");
+            printer().printf("  JBang:       Not detected%n");
         }
     }
 
@@ -85,19 +86,18 @@ public class Doctor extends CamelCommand {
     }
 
     private void checkMavenRepository() {
-        MavenDownloaderImpl downloader = new MavenDownloaderImpl();
-        try {
+        try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
             downloader.build();
             CamelCatalog catalog = new DefaultCamelCatalog();
             String version = catalog.getCatalogVersion();
             downloader.resolveArtifacts(
                     List.of("org.apache.camel:camel-api:" + version),
                     Set.of(), false, false);
-            printer().printf("  Maven:       artifact resolution OK%n");
+            printer().printf("  Maven:       Artifact resolution (OK)%n");
         } catch (MavenResolutionException e) {
-            printer().printf("  Maven:       artifact resolution failed (%s)%n", e.getMessage());
+            printer().printf("  Maven:       Artifact resolution failed (%s)%n", e.getMessage());
         } catch (Exception e) {
-            printer().printf("  Maven:       error (%s)%n", e.getMessage());
+            printer().printf("  Maven:       Error (%s)%n", e.getMessage());
         }
     }
 
@@ -112,14 +112,14 @@ public class Doctor extends CamelCommand {
                 p.getInputStream().transferTo(OutputStream.nullOutputStream());
                 int exit = p.waitFor();
                 if (exit == 0) {
-                    printer().printf("  Container:   %s running (OK, optional)%n", cmd);
+                    printer().printf("  Container:   %s running (OK, optional)%n", StringHelper.capitalize(cmd));
                     return;
                 }
             } catch (Exception e) {
                 // not found, try next
             }
         }
-        printer().printf("  Container:   not found (optional — needed for test containers)%n");
+        printer().printf("  Container:   Not found (optional — needed for running external infra services)%n");
     }
 
     private void checkCommonPorts() {
@@ -133,7 +133,7 @@ public class Doctor extends CamelCommand {
             }
         }
         if (!conflicts.isEmpty()) {
-            printer().printf("  Ports:       in use: %s%n", conflicts);
+            printer().printf("  Ports:       In use: %s%n", conflicts);
         } else {
             printer().printf("  Ports:       8080, 8443, 9090 free (OK)%n");
         }
@@ -152,7 +152,9 @@ public class Doctor extends CamelCommand {
         File tmpDir = new File(System.getProperty("java.io.tmpdir"));
         long free = tmpDir.getFreeSpace();
         long mb = free / (1024 * 1024);
+        long gb = mb / (1024);
         String status = mb > 500 ? "OK" : "LOW";
-        printer().printf("  Disk space:  %d MB free in temp (%s)%n", mb, status);
+        String unit = gb > 10 ? "GB" : "MB";
+        printer().printf("  Disk Space:  %d %s free in temp dir (%s)%n", gb > 0 ? gb : mb, unit, status);
     }
 }

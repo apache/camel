@@ -76,7 +76,7 @@ class DoctorTest extends CamelCommandBaseTestSupport {
         command.doCall();
 
         String output = printer.getOutput();
-        Assertions.assertTrue(output.contains("Disk space:"));
+        Assertions.assertTrue(output.contains("Disk Space:"));
     }
 
     @Test
