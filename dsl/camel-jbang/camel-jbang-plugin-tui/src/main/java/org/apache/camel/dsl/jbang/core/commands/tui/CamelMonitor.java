@@ -713,7 +713,12 @@ public class CamelMonitor extends CamelCommand {
 
         // Fullscreen text diagram mode
         if (showDiagram && diagramTextMode && !diagramLines.isEmpty()) {
-            renderDiagram(frame, area);
+            // Split: route info header (4 rows) + diagram (fill)
+            List<Rect> fullChunks = Layout.vertical()
+                    .constraints(Constraint.length(4), Constraint.fill())
+                    .split(area);
+            renderRouteHeader(frame, fullChunks.get(0), info);
+            renderDiagram(frame, fullChunks.get(1));
             return;
         }
 
@@ -860,6 +865,64 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(8))
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Processors [" + route.routeId + "] ").build())
+                .build();
+
+        frame.renderStatefulWidget(table, area, new TableState());
+    }
+
+    private void renderRouteHeader(Frame frame, Rect area, IntegrationInfo info) {
+        RouteInfo route = null;
+        if (diagramRouteId != null) {
+            for (RouteInfo r : info.routes) {
+                if (diagramRouteId.equals(r.routeId)) {
+                    route = r;
+                    break;
+                }
+            }
+        }
+
+        List<Row> rows = new ArrayList<>();
+        if (route != null) {
+            Style stateStyle = "Started".equals(route.state)
+                    ? Style.create().fg(Color.GREEN)
+                    : Style.create().fg(Color.RED);
+            Style failStyle = route.failed > 0
+                    ? Style.create().fg(Color.RED).bold()
+                    : Style.create();
+            rows.add(Row.from(
+                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(route.from != null ? route.from : ""),
+                    Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
+                    Cell.from(route.uptime != null ? route.uptime : ""),
+                    Cell.from(route.throughput != null ? route.throughput : ""),
+                    Cell.from(String.valueOf(route.total)),
+                    Cell.from(Span.styled(String.valueOf(route.failed), failStyle)),
+                    Cell.from(route.meanTime + "/" + route.maxTime)));
+        }
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled("ROUTE", Style.create().bold())),
+                        Cell.from(Span.styled("FROM", Style.create().bold())),
+                        Cell.from(Span.styled("STATE", Style.create().bold())),
+                        Cell.from(Span.styled("UPTIME", Style.create().bold())),
+                        Cell.from(Span.styled("THRUPUT", Style.create().bold())),
+                        Cell.from(Span.styled("TOTAL", Style.create().bold())),
+                        Cell.from(Span.styled("FAILED", Style.create().bold())),
+                        Cell.from(Span.styled("MEAN/MAX", Style.create().bold()))))
+                .widths(
+                        Constraint.length(12),
+                        Constraint.fill(),
+                        Constraint.length(10),
+                        Constraint.length(8),
+                        Constraint.length(10),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(12))
+                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(" Route [" + info.name + "] ").build())
                 .build();
 
         frame.renderStatefulWidget(table, area, new TableState());
