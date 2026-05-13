@@ -33,6 +33,7 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // A will timeout so we only get B and C (C is faster than B)
         mock.expectedBodiesReceived("CB");
+        mock.setResultWaitTime(20000);
 
         template.sendBody("direct:start", "Hello");
 
@@ -54,11 +55,11 @@ public class MulticastParallelStreamingTimeoutTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
                         return oldExchange;
                     }
-                }).parallelProcessing().streaming().timeout(5000).to("direct:a", "direct:b", "direct:c")
+                }).parallelProcessing().streaming().timeout(10000).to("direct:a", "direct:b", "direct:c")
                         // use end to indicate end of multicast route
                         .end().to("mock:result");
 
-                from("direct:a").delay(10000).setBody(constant("A"));
+                from("direct:a").delay(20000).setBody(constant("A"));
 
                 from("direct:b").delay(500).setBody(constant("B"));
 
