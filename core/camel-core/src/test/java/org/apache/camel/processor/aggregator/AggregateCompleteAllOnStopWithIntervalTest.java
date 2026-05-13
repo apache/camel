@@ -16,11 +16,15 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * This test verifies that completeAllOnStop() properly completes aggregations on shutdown when using
@@ -53,7 +57,7 @@ public class AggregateCompleteAllOnStopWithIntervalTest extends ContextTestSuppo
         // With completeAllOnStop(), we expect the aggregation to be completed
         context.stop();
 
-        mock.assertIsSatisfied();
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(mock::assertIsSatisfied);
     }
 
     @Override
