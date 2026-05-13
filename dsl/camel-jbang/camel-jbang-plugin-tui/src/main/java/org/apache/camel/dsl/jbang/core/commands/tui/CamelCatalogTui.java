@@ -577,7 +577,9 @@ public class CamelCatalogTui extends CamelCommand {
                 flowFields(lines, fields, wrapWidth, opt);
 
                 lines.add(Line.from(Span.raw("")));
-                wrapText(lines, opt.description, wrapWidth, Style.EMPTY);
+                if (opt.description != null && !opt.description.isEmpty()) {
+                    lines.add(Line.from(Span.raw(" " + opt.description)));
+                }
             } else {
                 title = " Description ";
             }
@@ -602,32 +604,19 @@ public class CamelCatalogTui extends CamelCommand {
                 flowFields(lines, fields, wrapWidth, null);
 
                 lines.add(Line.from(Span.raw("")));
-                wrapText(lines, comp.description, wrapWidth, Style.EMPTY);
+                if (comp.description != null && !comp.description.isEmpty()) {
+                    lines.add(Line.from(Span.raw(" " + comp.description)));
+                }
             } else {
                 title = " Description ";
             }
         }
 
-        // Apply scroll
-        int innerHeight = Math.max(1, area.height() - 2);
-        int maxScroll = Math.max(0, lines.size() - innerHeight);
-        if (descriptionScroll > maxScroll) {
-            descriptionScroll = maxScroll;
-        }
-        List<Line> visible;
-        if (descriptionScroll > 0) {
-            int end = Math.min(descriptionScroll + innerHeight, lines.size());
-            visible = lines.subList(descriptionScroll, end);
-        } else if (lines.size() > innerHeight) {
-            visible = lines.subList(0, innerHeight);
-        } else {
-            visible = lines;
-        }
-
         frame.renderWidget(
                 Paragraph.builder()
-                        .text(Text.from(visible))
-                        .overflow(Overflow.CLIP)
+                        .text(Text.from(lines))
+                        .overflow(Overflow.WRAP_WORD)
+                        .scroll(descriptionScroll)
                         .block(Block.builder()
                                 .borderType(BorderType.ROUNDED)
                                 .title(title)
@@ -718,28 +707,6 @@ public class CamelCatalogTui extends CamelCommand {
 
         if (!currentSpans.isEmpty()) {
             lines.add(Line.from(currentSpans));
-        }
-    }
-
-    private static void wrapText(List<Line> lines, String text, int width, Style style) {
-        if (text == null || text.isEmpty()) {
-            return;
-        }
-        int pos = 0;
-        while (pos < text.length()) {
-            String remaining = text.substring(pos);
-            int remainingWidth = CharWidth.of(remaining);
-            if (remainingWidth <= width) {
-                lines.add(Line.from(Span.styled(" " + remaining.trim(), style)));
-                break;
-            }
-            String chunk = CharWidth.substringByWidth(remaining, width);
-            int lastSpace = chunk.lastIndexOf(' ');
-            if (lastSpace > 0) {
-                chunk = chunk.substring(0, lastSpace + 1);
-            }
-            lines.add(Line.from(Span.styled(" " + chunk.trim(), style)));
-            pos += chunk.length();
         }
     }
 
