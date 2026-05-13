@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerKey;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -103,13 +104,51 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
                 assertEquals("xml:test", to);
             } else if (description.startsWith("MyTransformer")) {
                 assertEquals("custom", name);
-                assertEquals("camel:any", from);
-                assertEquals("camel:any", to);
+                assertEquals("", from);
+                assertEquals("", to);
             } else {
                 fail("Unexpected transformer:" + description);
             }
         }
         assertEquals(2, data.size());
+    }
+
+    @Test
+    public void testListTransformersWithNullFromTo() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+
+        // add a transformer with null from/to directly to the registry
+        Transformer nullTypesTransformer = new MyTransformer();
+        nullTypesTransformer.setName("null-types");
+        context.getTransformerRegistry().put(new TransformerKey("null-types"), nullTypesTransformer);
+
+        MBeanServer mbeanServer = getMBeanServer();
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
+        ObjectName on = null;
+        for (ObjectName name : set) {
+            if (name.getCanonicalName().contains("DefaultTransformerRegistry")) {
+                on = name;
+                break;
+            }
+        }
+        assertNotNull(on, "Should have found TransformerRegistry");
+
+        TabularData data = (TabularData) mbeanServer.invoke(on, "listTransformers", null, null);
+        assertEquals(3, data.size());
+
+        boolean found = false;
+        for (Object row : data.values()) {
+            CompositeData composite = (CompositeData) row;
+            String name = (String) composite.get("name");
+            if ("null-types".equals(name)) {
+                found = true;
+                assertEquals("", composite.get("from"));
+                assertEquals("", composite.get("to"));
+            }
+        }
+        assertTrue(found, "Should have found the null-types transformer");
     }
 
     @Override
