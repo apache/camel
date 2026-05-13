@@ -338,6 +338,19 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
             }
+            if (ke.isKey(KeyCode.HOME)) {
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScroll = 0;
+                    diagramScrollX = 0;
+                    return true;
+                }
+            }
+            if (ke.isKey(KeyCode.END)) {
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScroll = Integer.MAX_VALUE;
+                    return true;
+                }
+            }
 
             // Enter to drill into selected integration
             if (ke.isKey(KeyCode.ENTER) && tab == TAB_OVERVIEW) {
@@ -1914,7 +1927,9 @@ public class CamelMonitor extends CamelCommand {
                         Span.styled("\u2191\u2193\u2190\u2192", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" scroll  "),
                         Span.styled("PgUp/PgDn", Style.create().fg(Color.YELLOW).bold()),
-                        Span.raw(" page"));
+                        Span.raw(" page  "),
+                        Span.styled("Home/End", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" top/bottom"));
             } else {
                 footer = Line.from(
                         Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
