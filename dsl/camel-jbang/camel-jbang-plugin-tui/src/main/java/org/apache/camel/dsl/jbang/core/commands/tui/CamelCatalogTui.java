@@ -28,6 +28,7 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -374,10 +375,10 @@ public class CamelCatalogTui extends CamelCommand {
             // Typing filters the active panel
             if (ke.code() == KeyCode.CHAR) {
                 if (focus == FOCUS_LIST) {
-                    componentFilter.append(ke.character());
+                    componentFilter.append(ke.string());
                     applyComponentFilter();
                 } else {
-                    optionFilter.append(ke.character());
+                    optionFilter.append(ke.string());
                     applyOptionFilter();
                 }
                 return true;
@@ -677,10 +678,10 @@ public class CamelCatalogTui extends CamelCommand {
         for (String[] field : fields) {
             String label = field[0] + ": ";
             String value = field[1];
-            int fieldLen = label.length() + value.length();
+            int fieldLen = CharWidth.of(label) + CharWidth.of(value);
 
             // If adding this field would exceed width, flush current line
-            if (!currentSpans.isEmpty() && currentLen + gap.length() + fieldLen > maxWidth) {
+            if (!currentSpans.isEmpty() && currentLen + CharWidth.of(gap) + fieldLen > maxWidth) {
                 lines.add(Line.from(currentSpans));
                 currentSpans = new ArrayList<>();
                 currentLen = 1;
@@ -688,7 +689,7 @@ public class CamelCatalogTui extends CamelCommand {
 
             if (!currentSpans.isEmpty()) {
                 currentSpans.add(Span.raw(gap));
-                currentLen += gap.length();
+                currentLen += CharWidth.of(gap);
             } else {
                 currentSpans.add(Span.raw(" "));
             }
@@ -723,15 +724,19 @@ public class CamelCatalogTui extends CamelCommand {
         }
         int pos = 0;
         while (pos < text.length()) {
-            int end = Math.min(pos + width, text.length());
-            if (end < text.length() && end > pos) {
-                int lastSpace = text.lastIndexOf(' ', end);
-                if (lastSpace > pos) {
-                    end = lastSpace + 1;
-                }
+            String remaining = text.substring(pos);
+            int remainingWidth = CharWidth.of(remaining);
+            if (remainingWidth <= width) {
+                lines.add(Line.from(Span.styled(" " + remaining.trim(), style)));
+                break;
             }
-            lines.add(Line.from(Span.styled(" " + text.substring(pos, end).trim(), style)));
-            pos = end;
+            String chunk = CharWidth.substringByWidth(remaining, width);
+            int lastSpace = chunk.lastIndexOf(' ');
+            if (lastSpace > 0) {
+                chunk = chunk.substring(0, lastSpace + 1);
+            }
+            lines.add(Line.from(Span.styled(" " + chunk.trim(), style)));
+            pos += chunk.length();
         }
     }
 

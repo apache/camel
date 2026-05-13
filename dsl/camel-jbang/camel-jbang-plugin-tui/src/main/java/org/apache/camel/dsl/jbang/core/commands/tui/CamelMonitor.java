@@ -49,9 +49,11 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.TuiConfig;
 import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.tui.event.Event;
 import dev.tamboui.tui.event.KeyCode;
@@ -131,6 +133,8 @@ public class CamelMonitor extends CamelCommand {
     private final TableState routeTableState = new TableState();
     private final TableState healthTableState = new TableState();
     private final TableState endpointTableState = new TableState();
+    private final TableState processorTableState = new TableState();
+    private final TableState routeHeaderTableState = new TableState();
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
 
     // Sparkline: throughput history per PID (one point per second)
@@ -206,7 +210,7 @@ public class CamelMonitor extends CamelCommand {
         // Initial data load
         refreshData();
 
-        try (var tui = TuiRunner.create()) {
+        try (var tui = TuiRunner.create(TuiConfig.builder().mouseCapture(true).build())) {
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
@@ -936,7 +940,7 @@ public class CamelMonitor extends CamelCommand {
                         .title(" Processors [" + route.routeId + "] ").build())
                 .build();
 
-        frame.renderStatefulWidget(table, area, new TableState());
+        frame.renderStatefulWidget(table, area, processorTableState);
     }
 
     private void renderRouteHeader(Frame frame, Rect area, IntegrationInfo info) {
@@ -994,7 +998,7 @@ public class CamelMonitor extends CamelCommand {
                         .title(" Route [" + info.name + "] ").build())
                 .build();
 
-        frame.renderStatefulWidget(table, area, new TableState());
+        frame.renderStatefulWidget(table, area, routeHeaderTableState);
     }
 
     private void renderDiagram(Frame frame, Rect area) {
@@ -1011,7 +1015,7 @@ public class CamelMonitor extends CamelCommand {
         // Compute max width for horizontal scrolling
         int maxWidth = 0;
         for (String line : diagramLines) {
-            maxWidth = Math.max(maxWidth, line.length());
+            maxWidth = Math.max(maxWidth, CharWidth.of(line));
         }
 
         Rect inner = block.inner(area);

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import dev.tamboui.text.CharWidth;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
@@ -109,7 +110,9 @@ final class TuiHelper {
         if (s == null) {
             return "";
         }
-        return s.length() > max ? s.substring(0, max - 1) + "\u2026" : s;
+        return CharWidth.of(s) > max
+                ? CharWidth.truncateWithEllipsis(s, max, CharWidth.TruncatePosition.END)
+                : s;
     }
 
     /**
