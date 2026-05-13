@@ -38,6 +38,7 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -537,9 +538,11 @@ public class CamelCatalogTui extends CamelCommand {
     }
 
     private void renderSeparator(Frame frame, Rect area) {
-        String line = "\u2500".repeat(Math.max(0, area.width()));
         frame.renderWidget(
-                Paragraph.from(Line.from(Span.styled(line, Style.create().fg(Color.DARK_GRAY)))),
+                Block.builder()
+                        .borders(Borders.TOP_ONLY)
+                        .borderStyle(Style.create().fg(Color.DARK_GRAY))
+                        .build(),
                 area);
     }
 
