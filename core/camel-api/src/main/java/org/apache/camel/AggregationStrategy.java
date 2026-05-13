@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
  * If an implementation also implements {@link org.apache.camel.CamelContextAware} then any
  * <a href="http://camel.apache.org/eip">EIP</a> that allowing configuring a {@link AggregationStrategy} will inject the
  * {@link org.apache.camel.CamelContext} prior to using the aggregation strategy.
+ *
+ * @since 3.0
  */
 public interface AggregationStrategy {
 

@@ -25,7 +25,8 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * Camel provides source code generated strategies via the camel maven tooling.
  *
- * @see InvokeOnHeader
+ * @see   InvokeOnHeader
+ * @since 3.8
  */
 public interface InvokeOnHeaderStrategy {
 

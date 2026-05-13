@@ -28,6 +28,8 @@ import org.jspecify.annotations.Nullable;
  * artifacts are scanned for {@link org.apache.camel.Converter}s and then bulked together into a single source code
  * generated class. This class is then used at runtime as an optimized and really fast way of using all those type
  * converters by the {@link TypeConverterRegistry}.
+ *
+ * @since 3.7
  */
 public interface BulkTypeConverters extends Ordered, TypeConverter {
 

@@ -20,6 +20,8 @@ import java.util.Map;
 
 /**
  * A strategy that allows SPI to process {@link HealthCheck} results and enrich and manipulate the result.
+ *
+ * @since 3.16
  */
 public interface HealthCheckResultStrategy {
 

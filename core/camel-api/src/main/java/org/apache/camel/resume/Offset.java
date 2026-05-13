@@ -25,6 +25,7 @@ import org.jspecify.annotations.Nullable;
  * Generic offset without a concrete type
  *
  * @param <T> the type of the offset
+ * @since     3.17
  */
 public interface Offset<T> extends Serializable {
 

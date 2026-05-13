@@ -22,6 +22,9 @@ import java.nio.ByteBuffer;
 
 import org.jspecify.annotations.Nullable;
 
+/**
+ * @since 3.18
+ */
 public interface Deserializable {
 
     /**

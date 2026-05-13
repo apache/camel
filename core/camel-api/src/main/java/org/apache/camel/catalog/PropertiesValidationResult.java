@@ -27,6 +27,9 @@ import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
 
+/**
+ * @since 3.1
+ */
 abstract class PropertiesValidationResult implements Serializable {
 
     int errors;

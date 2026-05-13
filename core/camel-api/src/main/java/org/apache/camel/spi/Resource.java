@@ -30,6 +30,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Describe a resource, such as a file or class path resource.
+ *
+ * @since 3.8
  */
 public interface Resource {
 

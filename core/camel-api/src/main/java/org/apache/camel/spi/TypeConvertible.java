@@ -28,6 +28,7 @@ import static org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperTy
  *
  * @param <F> The "from" type
  * @param <T> The "to" type.
+ * @since     4.2
  */
 public final class TypeConvertible<F, T> {
     private final Class<F> from;

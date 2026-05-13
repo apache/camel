@@ -31,8 +31,9 @@ import org.apache.camel.Processor;
  * The factory is pluggable which allows to use different strategies. The default factory will create a new
  * {@link Exchange} instance, and the pooled factory will pool and reuse exchanges.
  *
- * @see ExchangeFactory
- * @see org.apache.camel.PooledExchange
+ * @see   ExchangeFactory
+ * @see   org.apache.camel.PooledExchange
+ * @since 3.10
  */
 public interface ProcessorExchangeFactory extends PooledObjectFactory<Exchange>, NonManagedService, RouteIdAware, IdAware {
 

@@ -20,6 +20,8 @@ import java.util.Collection;
 
 /**
  * A scoped view over error entries in an {@link ErrorRegistry}, supporting browsing and clearing.
+ *
+ * @since 4.19
  */
 public interface ErrorRegistryView {
 

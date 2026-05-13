@@ -19,6 +19,8 @@ package org.apache.camel;
 /**
  * Recording state of steps during startup to capture execution time, and being able to emit events to diagnostic tools
  * such as Java Flight Recorder.
+ *
+ * @since 3.8
  */
 public interface StartupStep {
 

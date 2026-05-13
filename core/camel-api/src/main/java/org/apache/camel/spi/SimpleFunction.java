@@ -23,6 +23,8 @@ import org.jspecify.annotations.Nullable;
  * A custom simple language function
  *
  * This allows to plugin custom functions to the built-in simple language.
+ *
+ * @since 4.18
  */
 public interface SimpleFunction {
 

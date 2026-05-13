@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A factory to create {@link Endpoint} which are intercepted.
+ *
+ * @since 3.7
  */
 public interface InterceptEndpointFactory {
 

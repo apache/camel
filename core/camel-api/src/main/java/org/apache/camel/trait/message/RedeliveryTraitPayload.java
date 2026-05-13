@@ -19,6 +19,8 @@ package org.apache.camel.trait.message;
 /**
  * Some messages can carry redelivery details which might affect routing (i.e; JMS messages). This trait allows
  * implementations to assign a payload that determines the redelivery state for the message.
+ *
+ * @since 4.0
  */
 public enum RedeliveryTraitPayload {
 

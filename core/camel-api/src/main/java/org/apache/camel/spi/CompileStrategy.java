@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Strategy for runtime compiled languages and DSLs.
+ *
+ * @since 4.3
  */
 public interface CompileStrategy {
 

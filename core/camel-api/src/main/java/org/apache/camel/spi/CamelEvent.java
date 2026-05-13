@@ -27,6 +27,8 @@ import org.jspecify.annotations.Nullable;
  * Base interface for all Camel events used by the {@link EventNotifier} for notifications about
  * {@link org.apache.camel.Exchange}, {@link org.apache.camel.Route}, {@link org.apache.camel.CamelContext}, and
  * {@link org.apache.camel.Service} lifecycle changes.
+ *
+ * @since 3.0
  */
 public interface CamelEvent {
 

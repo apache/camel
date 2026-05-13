@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * An interface to represent an object that supports variables.
+ *
+ * @since 4.4
  */
 public interface VariableAware {
 

@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a node in the {@link org.apache.camel.model routes} which is identified as a route.
+ *
+ * @since 3.0
  */
 public interface NamedRoute {
 

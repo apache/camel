@@ -20,6 +20,9 @@ import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
+/**
+ * @since 3.6
+ */
 public class StreamCacheException extends TypeConversionException {
 
     public StreamCacheException(@Nullable Object value, Throwable cause) {

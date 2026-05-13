@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
  *
  * This can be used to let Camel wait for a specific file to be present, an environment-variable, or some other custom
  * conditions.
+ *
+ * @since 4.9
  */
 public interface StartupCondition {
 

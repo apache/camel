@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Basic configuration holder for resume strategies
+ *
+ * @since 3.18
  */
 public abstract class ResumeStrategyConfiguration {
     private Cacheable.@Nullable FillPolicy cacheFillPolicy;

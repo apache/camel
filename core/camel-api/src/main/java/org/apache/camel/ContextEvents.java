@@ -19,6 +19,8 @@ package org.apache.camel;
 
 /**
  * Context events that can be traced by an {@link org.apache.camel.clock.EventClock}
+ *
+ * @since 4.4
  */
 public enum ContextEvents {
 

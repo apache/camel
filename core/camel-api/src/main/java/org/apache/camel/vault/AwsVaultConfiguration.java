@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to AWS Secret.
+ *
+ * @since 3.16
  */
 public class AwsVaultConfiguration extends VaultConfiguration {
 

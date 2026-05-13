@@ -22,6 +22,8 @@ import java.io.IOException;
 
 /**
  * To dump routes as visual diagrams as PNG images.
+ *
+ * @since 4.21
  */
 public interface RouteDiagramDumper {
 

@@ -20,6 +20,8 @@ import org.apache.camel.ExpressionFactory;
 
 /**
  * When an instance is aware of {@link ExpressionFactory}.
+ *
+ * @since 3.7
  */
 public interface ExpressionFactoryAware {
 

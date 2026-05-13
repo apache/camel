@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Marked if the {@link Expression} or {@link Predicate} is based from a constant value (ie is static).
+ *
+ * @since 3.7
  */
 public interface StaticExpression extends Expression {
 

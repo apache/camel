@@ -28,6 +28,8 @@ import org.jspecify.annotations.Nullable;
  * {@link Exchange} extensions which contains the methods and APIs that are not intended for Camel end users but
  * used internally by Camel for optimization purposes, SPI, custom components, or more advanced used-cases with
  * Camel.
+  *
+  * @since 4.0
  */
 public interface ExchangeExtension {
 

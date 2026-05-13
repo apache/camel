@@ -28,6 +28,8 @@ import org.jspecify.annotations.Nullable;
  * Used for components that can optimise the usage of {@link org.apache.camel.processor.PollProcessor} (poll/pollEnrich)
  * to reuse a static {@link Endpoint} and {@link org.apache.camel.DynamicPollingConsumer} that supports using headers to
  * provide the dynamic parts. For example many of the file based components supports this.
+ *
+ * @since 4.11
  */
 public interface PollDynamicAware extends Service, CamelContextAware {
 

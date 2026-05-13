@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
  *
  * For example the AWS vault is using this to periodically check for secrets refreshed in AWS to trigger Camel to reload
  * to use the updated secrets.
+ *
+ * @since 3.19
  */
 public interface PeriodTaskScheduler {
 

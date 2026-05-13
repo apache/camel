@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * Allows a {@link BeanRepository} to temporary have a local repository take precedence, such as when creating route
  * templates to give more flexibility.
+ *
+ * @since 3.10
  */
 public interface LocalBeanRepositoryAware {
 

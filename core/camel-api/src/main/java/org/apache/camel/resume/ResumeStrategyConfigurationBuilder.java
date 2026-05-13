@@ -24,6 +24,7 @@ import org.apache.camel.resume.cache.ResumeCache;
  *
  * @param <T> The {@link ResumeStrategyConfigurationBuilder} providing the custom configuration
  * @param <Y> The type of the {@link ResumeStrategyConfiguration} that will be built by the builder
+ * @since     3.18
  */
 public interface ResumeStrategyConfigurationBuilder<
         T extends ResumeStrategyConfigurationBuilder, Y extends ResumeStrategyConfiguration> {

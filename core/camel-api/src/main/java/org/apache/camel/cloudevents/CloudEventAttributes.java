@@ -21,6 +21,8 @@ import java.util.Collection;
 
 /**
  * Attributes for cloud event specs.
+ *
+ * @since 4.7
  */
 final class CloudEventAttributes {
 

@@ -29,6 +29,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A registry for dev console.
+ *
+ * @since 3.15
  */
 public interface DevConsoleRegistry extends CamelContextAware, StaticService, IdAware {
 

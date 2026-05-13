@@ -27,6 +27,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @param <T>
  * @see       org.apache.camel.impl.engine.CamelInternalProcessor
+ * @since     3.0
  */
 public interface CamelInternalProcessorAdvice<T> {
 

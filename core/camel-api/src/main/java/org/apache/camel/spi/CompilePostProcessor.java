@@ -26,7 +26,8 @@ import org.jspecify.annotations.Nullable;
  * This is used to detect and handle {@link org.apache.camel.BindToRegistry} and {@link org.apache.camel.Converter}
  * classes.
  *
- * @see CompilePreProcessor
+ * @see   CompilePreProcessor
+ * @since 3.17
  */
 public interface CompilePostProcessor {
 

@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Base configuration for access to Vaults.
+ *
+ * @since 3.16
  */
 public class VaultConfiguration {
 

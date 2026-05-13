@@ -16,6 +16,8 @@
  */
 /**
  * Configuration classes for Java Secure Socket Extension (JSSE) SSL/TLS setup.
+ *
+ * @since 4.21
  */
 @NullMarked
 package org.apache.camel.support.jsse;

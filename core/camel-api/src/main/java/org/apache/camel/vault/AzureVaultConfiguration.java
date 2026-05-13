@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to Azure Key Vault.
+ *
+ * @since 3.17
  */
 public class AzureVaultConfiguration extends VaultConfiguration {
 

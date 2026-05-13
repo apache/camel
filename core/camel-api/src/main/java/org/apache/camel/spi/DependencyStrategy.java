@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 /**
  * Strategy when 3rd party dependencies are detected during loading routes. For example when loading YAML DSL routes for
  * Camel K where dependencies are listed in the YAML file.
+ *
+ * @since 3.16
  */
 @FunctionalInterface
 public interface DependencyStrategy {

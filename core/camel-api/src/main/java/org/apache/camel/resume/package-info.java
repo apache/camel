@@ -17,6 +17,8 @@
 /**
  * Resume strategy API for offset-based message consumption, allowing consumers to resume processing from a previously
  * saved position.
+ *
+ * @since 4.21
  */
 @NullMarked
 package org.apache.camel.resume;

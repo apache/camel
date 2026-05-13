@@ -23,6 +23,8 @@ import org.jspecify.annotations.Nullable;
  * An interface for {@link Processor} aware of its {@link ErrorHandler} which are wrapped via the
  * {@link org.apache.camel.Channel} during route initialization, or specially used by
  * {@link org.apache.camel.RecipientList} EIP annotation.
+ *
+ * @since 3.7
  */
 public interface ErrorHandlerAware {
 

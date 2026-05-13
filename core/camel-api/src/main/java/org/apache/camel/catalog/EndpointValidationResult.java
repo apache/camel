@@ -28,6 +28,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Details result of validating endpoint uri.
+ *
+ * @since 3.1
  */
 public class EndpointValidationResult extends PropertiesValidationResult implements Serializable {
 

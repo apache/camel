@@ -18,6 +18,8 @@ package org.apache.camel;
 
 /**
  * Lifecycle API for {@link CamelContext}.
+ *
+ * @since 3.2
  */
 public interface CamelContextLifecycle extends AutoCloseable {
 

@@ -28,6 +28,8 @@ import org.apache.camel.RoutesBuilder;
 
 /**
  * SPI for loading {@link RoutesBuilder} from a list of {@link Resource}.
+ *
+ * @since 3.8
  */
 public interface RoutesLoader extends CamelContextAware {
 

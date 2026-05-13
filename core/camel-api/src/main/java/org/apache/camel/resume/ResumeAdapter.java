@@ -26,6 +26,8 @@ package org.apache.camel.resume;
  *
  * It is the responsibility of the supported components to implement the custom implementation for this part of the
  * resume API, as well as to offer component-specific interfaces that can be specialized by other integrations.
+ *
+ * @since 3.17
  */
 public interface ResumeAdapter {
     String RESUME_ADAPTER_FACTORY = "adapter-factory";

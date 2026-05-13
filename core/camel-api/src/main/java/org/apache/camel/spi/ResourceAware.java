@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * An interface to represent an object which wishes to be injected with the {@link Resource}
+ *
+ * @since 3.17
  */
 public interface ResourceAware {
 

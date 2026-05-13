@@ -23,6 +23,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * A factory that can be used to create a specific exception when a {@link Predicate} returning false, which can be used
  * by camel-validator and other components.
+ *
+ * @since 3.15
  */
 public interface PredicateExceptionFactory {
 

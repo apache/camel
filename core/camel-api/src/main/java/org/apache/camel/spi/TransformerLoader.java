@@ -20,6 +20,8 @@ package org.apache.camel.spi;
 /**
  * A pluggable strategy to load data types into a {@link TransformerRegistry}. Loads one to many data type transformers
  * to the given registry.
+ *
+ * @since 4.0
  */
 public interface TransformerLoader {
 

@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Listener to trigger when the properties component is looking up and found a property.
+ *
+ * @since 3.17
  */
 @FunctionalInterface
 public interface PropertiesLookupListener {

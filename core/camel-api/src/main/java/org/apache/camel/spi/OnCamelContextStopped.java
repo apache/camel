@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 
 /**
  * Notification on a stopped {@link CamelContext}.
+ *
+ * @since 3.5
  */
 @FunctionalInterface
 public interface OnCamelContextStopped extends OnCamelContextEvent {

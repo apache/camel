@@ -21,6 +21,8 @@ import org.apache.camel.Processor;
 /**
  * Customizer for {@link ErrorHandler} which supports redeliveries. This is used internally by Camel to instrument the
  * error handler with additional instrumentations during route initialization.
+ *
+ * @since 3.7
  */
 public interface ErrorHandlerRedeliveryCustomizer {
 

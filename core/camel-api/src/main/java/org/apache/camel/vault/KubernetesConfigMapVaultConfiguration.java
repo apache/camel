@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to Kubernetes Confimaps
+ *
+ * @since 4.9
  */
 public class KubernetesConfigMapVaultConfiguration extends VaultConfiguration {
 

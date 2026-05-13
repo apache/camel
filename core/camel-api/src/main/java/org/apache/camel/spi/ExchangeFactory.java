@@ -35,8 +35,9 @@ import org.jspecify.annotations.Nullable;
  * The factory is pluggable which allows using different strategies. The default factory will create a new
  * {@link Exchange} instance, and the pooled factory will pool and reuse exchanges.
  *
- * @see ProcessorExchangeFactory
- * @see org.apache.camel.PooledExchange
+ * @see   ProcessorExchangeFactory
+ * @see   org.apache.camel.PooledExchange
+ * @since 3.9
  */
 public interface ExchangeFactory extends PooledObjectFactory<Exchange>, NonManagedService, RouteIdAware {
 

@@ -343,6 +343,7 @@ public interface Exchange extends VariableAware {
      *
      * @param  key the exchange key
      * @return     the value of the given property or <tt>null</tt> if there is no property for the given key
+     * @since      3.9
      */
     @Nullable
     Object getProperty(ExchangePropertyKey key);
@@ -354,6 +355,8 @@ public interface Exchange extends VariableAware {
      * @param  type the type of the property
      * @return      the value of the given property or <tt>null</tt> if there is no property for the given name or
      *              <tt>null</tt> if it cannot be converted to the given type
+     *
+     * @since       3.9
      */
     <T> @Nullable T getProperty(ExchangePropertyKey key, Class<T> type);
 
@@ -365,6 +368,8 @@ public interface Exchange extends VariableAware {
      * @param  type         the type of the property
      * @return              the value of the given property or <tt>defaultValue</tt> if there is no property for the
      *                      given name or <tt>null</tt> if it cannot be converted to the given type
+     *
+     * @since               3.9
      */
     <T> @Nullable T getProperty(ExchangePropertyKey key, Object defaultValue, Class<T> type);
 
@@ -373,6 +378,7 @@ public interface Exchange extends VariableAware {
      *
      * @param key   the exchange key
      * @param value to associate with the name
+     * @since       3.9
      */
     void setProperty(ExchangePropertyKey key, @Nullable Object value);
 
@@ -381,6 +387,7 @@ public interface Exchange extends VariableAware {
      *
      * @param  key the exchange key
      * @return     the old value of the property
+     * @since      3.9
      */
     @Nullable
     Object removeProperty(ExchangePropertyKey key);
@@ -479,6 +486,7 @@ public interface Exchange extends VariableAware {
      * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
      *              repository. If no repo-id is provided, then variables will be from the current exchange.
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name
+     * @since       4.4
      */
     @Nullable
     Object getVariable(String name);
@@ -491,6 +499,8 @@ public interface Exchange extends VariableAware {
      * @param  type the type of the variable
      * @return      the value of the given variable or <tt>null</tt> if there is no variable for the given name or
      *              <tt>null</tt> if it cannot be converted to the given type
+     *
+     * @since       4.4
      */
     <T> @Nullable T getVariable(String name, Class<T> type);
 
@@ -503,6 +513,8 @@ public interface Exchange extends VariableAware {
      * @param  type         the type of the variable
      * @return              the value of the given variable or <tt>defaultValue</tt> if there is no variable for the
      *                      given name or <tt>null</tt> if it cannot be converted to the given type
+     *
+     * @since               4.4
      */
     <T> @Nullable T getVariable(String name, Object defaultValue, Class<T> type);
 
@@ -512,6 +524,7 @@ public interface Exchange extends VariableAware {
      * @param name  the variable name. Can be prefixed with repo-id:name to store the variable in a specific repository.
      *              If no repo-id is provided, then variables will be stored in the current exchange.
      * @param value the value of the variable
+     * @since       4.4
      */
     void setVariable(String name, @Nullable Object value);
 
@@ -523,6 +536,7 @@ public interface Exchange extends VariableAware {
      * @param  name the variable name. Can be prefixed with repo-id:name to remove the variable in a specific
      *              repository. If no repo-id is provided, then the variable from the current exchange will be removed
      * @return      the old value of the variable, or <tt>null</tt> if there was no variable for the given name
+     * @since       4.4
      */
     @Nullable
     Object removeVariable(String name);
@@ -531,6 +545,7 @@ public interface Exchange extends VariableAware {
      * Returns the variables from the current exchange
      *
      * @return the variables from the current exchange in a Map.
+     * @since  4.4
      */
     Map<String, Object> getVariables();
 
@@ -538,6 +553,7 @@ public interface Exchange extends VariableAware {
      * Returns whether any variables have been set on the current exchange
      *
      * @return <tt>true</tt> if any variables has been set on the current exchange
+     * @since  4.4
      */
     boolean hasVariables();
 
@@ -552,6 +568,7 @@ public interface Exchange extends VariableAware {
      * Returns the current message
      *
      * @return the current message
+     * @since  3.0
      */
     Message getMessage();
 
@@ -560,6 +577,7 @@ public interface Exchange extends VariableAware {
      *
      * @param  type the given type
      * @return      the message as the given type or <tt>null</tt> if not possible to convert to given type
+     * @since       3.0
      */
     <T> @Nullable T getMessage(Class<T> type);
 
@@ -567,6 +585,7 @@ public interface Exchange extends VariableAware {
      * Replace the current message instance.
      *
      * @param message the new message
+     * @since         3.0
      */
     void setMessage(Message message);
 
@@ -791,11 +810,14 @@ public interface Exchange extends VariableAware {
      * intended for internal usage within Camel and end-users should avoid using them.
      *
      * @return the {@link ExchangeExtension} point for this exchange.
+     * @since  4.0
      */
     ExchangeExtension getExchangeExtension();
 
     /**
      * Gets {@link Clock} that holds time information about the exchange
+     *
+     * @since 4.4
      */
     Clock getClock();
 

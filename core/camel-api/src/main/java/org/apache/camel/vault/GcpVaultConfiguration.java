@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to GCP Secret Manager.
+ *
+ * @since 3.16
  */
 public class GcpVaultConfiguration extends VaultConfiguration {
 

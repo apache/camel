@@ -16,6 +16,8 @@
  */
 /**
  * Developer console API for exposing runtime operational information in text and JSON formats.
+ *
+ * @since 4.21
  */
 @NullMarked
 package org.apache.camel.console;

@@ -26,6 +26,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * An event clock that tracks the pass of time for different types of context-related events (see {@link ContextEvents})
+ *
+ * @since 4.4
  */
 public final class ContextClock implements EventClock<ContextEvents> {
     private final EnumMap<ContextEvents, Clock> events = new EnumMap<>(ContextEvents.class);

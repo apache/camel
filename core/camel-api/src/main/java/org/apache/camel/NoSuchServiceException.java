@@ -20,6 +20,8 @@ import java.util.Objects;
 
 /**
  * A runtime exception if a given service could not be found in the classpath
+ *
+ * @since 4.19
  */
 public class NoSuchServiceException extends RuntimeCamelException {
 

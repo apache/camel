@@ -37,6 +37,8 @@ import org.jspecify.annotations.Nullable;
  * This implementation will only break the first {@link Exchange} that arrives to a breakpoint. If Camel routes using
  * concurrency then sub-sequent {@link Exchange} will continue to be routed, if their breakpoint already holds a
  * suspended {@link Exchange}.
+ *
+ * @since 4.2
  */
 public interface BacklogDebugger extends StatefulService {
 

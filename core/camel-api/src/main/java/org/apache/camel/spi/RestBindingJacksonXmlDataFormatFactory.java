@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * SPI for setting up XML data format (jacksonXml) for rest-dsl.
+ *
+ * @since 4.16
  */
 public interface RestBindingJacksonXmlDataFormatFactory {
 

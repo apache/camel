@@ -21,6 +21,8 @@ import org.apache.camel.Service;
 
 /**
  * A Camel tracing service is a factory for telemetry tracers.
+ *
+ * @since 4.5
  */
 public interface CamelTracingService extends Service, CamelContextAware {
 

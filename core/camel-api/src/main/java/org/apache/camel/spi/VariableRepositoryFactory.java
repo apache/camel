@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Factory for {@link VariableRepository}.
+ *
+ * @since 4.4
  */
 public interface VariableRepositoryFactory {
 

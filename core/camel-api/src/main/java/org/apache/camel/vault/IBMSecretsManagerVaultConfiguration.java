@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to IBM Secrets Manager Vault Secrets.
+ *
+ * @since 4.11
  */
 public class IBMSecretsManagerVaultConfiguration extends VaultConfiguration {
 

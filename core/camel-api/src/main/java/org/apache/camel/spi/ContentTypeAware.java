@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Represents an object that can have an associated content type. Such as a file or http resource.
+ *
+ * @since 3.18
  */
 public interface ContentTypeAware {
     /**

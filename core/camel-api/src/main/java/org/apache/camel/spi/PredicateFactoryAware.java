@@ -20,6 +20,8 @@ import org.apache.camel.PredicateFactory;
 
 /**
  * When an instance is aware of {@link org.apache.camel.PredicateFactory}.
+ *
+ * @since 3.8
  */
 public interface PredicateFactoryAware {
 

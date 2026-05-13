@@ -39,6 +39,8 @@ import org.jspecify.annotations.Nullable;
  * <li>{@link Transformer}</li>
  * </ul>
  * ... and more.
+ *
+ * @since 3.7
  */
 public interface InternalProcessor extends AsyncProcessor {
 

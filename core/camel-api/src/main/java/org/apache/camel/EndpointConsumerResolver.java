@@ -18,6 +18,8 @@ package org.apache.camel;
 
 /**
  * An interface to represent an object that can be resolved as a consumer {@link Endpoint}
+ *
+ * @since 3.1
  */
 public interface EndpointConsumerResolver {
 

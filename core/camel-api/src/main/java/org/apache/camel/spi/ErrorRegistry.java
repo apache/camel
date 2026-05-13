@@ -31,8 +31,9 @@ import org.apache.camel.StaticService;
  * The registry itself implements {@link ErrorRegistryView} for global scope, and scoped views for individual routes can
  * be obtained via {@link #forRoute(String)}.
  *
- * @see ErrorRegistryEntry
- * @see ErrorRegistryView
+ * @see   ErrorRegistryEntry
+ * @see   ErrorRegistryView
+ * @since 4.19
  */
 public interface ErrorRegistry extends ErrorRegistryView, StaticService {
 

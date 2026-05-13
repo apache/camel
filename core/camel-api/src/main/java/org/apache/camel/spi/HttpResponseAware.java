@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Represents an object which is aware of HTTP responses.
+ *
+ * @since 3.14
  */
 public interface HttpResponseAware {
 

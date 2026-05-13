@@ -22,6 +22,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Repository for storing and accessing variables.
+ *
+ * @since 4.4
  */
 public interface VariableRepository extends StaticService, VariableAware {
 

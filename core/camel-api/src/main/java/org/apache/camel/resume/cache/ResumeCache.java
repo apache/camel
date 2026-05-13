@@ -27,6 +27,7 @@ import org.jspecify.annotations.Nullable;
  * This cache stored the resumed data from a {@link ResumeStrategy}.
  *
  * @param <K> the type of the key
+ * @since     3.17
  */
 public interface ResumeCache<K> {
     /**

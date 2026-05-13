@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * An entity that can point to a given line number from a source {@link org.apache.camel.spi.Resource} such as YAML and
  * XML DSL parsers.
+ *
+ * @since 3.15
  */
 public interface LineNumberAware {
 

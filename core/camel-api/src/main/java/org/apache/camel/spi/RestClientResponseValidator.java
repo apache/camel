@@ -26,6 +26,8 @@ import org.jspecify.annotations.Nullable;
  * Used for validating incoming client responses with Camel Rest DSL.
  * <p>
  * This allows to plugin different validators.
+ *
+ * @since 4.13
  */
 public interface RestClientResponseValidator {
 

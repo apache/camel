@@ -23,6 +23,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a traced message by the BacklogTracer.
+ *
+ * @since 4.0
  */
 public interface BacklogTracerEventMessage {
 

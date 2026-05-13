@@ -16,6 +16,8 @@
  */
 /**
  * Base classes for implementing the Camel service lifecycle (build, init, start, stop, suspend, resume).
+ *
+ * @since 4.21
  */
 @NullMarked
 package org.apache.camel.support.service;

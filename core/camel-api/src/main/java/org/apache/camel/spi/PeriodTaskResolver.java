@@ -20,6 +20,8 @@ import java.util.Optional;
 
 /**
  * Finder to find {@link org.apache.camel.spi.annotations.PeriodicTask} tasks.
+ *
+ * @since 3.19
  */
 public interface PeriodTaskResolver {
 

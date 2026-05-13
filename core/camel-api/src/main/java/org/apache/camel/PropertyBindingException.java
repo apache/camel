@@ -22,6 +22,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Error binding property to a bean.
+ *
+ * @since 3.0
  */
 public class PropertyBindingException extends RuntimeCamelException {
 

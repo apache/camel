@@ -32,6 +32,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Cache containing created {@link Producer}.
+ *
+ * @since 3.0
  */
 public interface ProducerCache extends Service {
 

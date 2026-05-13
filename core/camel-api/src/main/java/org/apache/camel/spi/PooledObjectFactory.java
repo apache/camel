@@ -22,6 +22,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Factory for pooled objects or tasks.
+ *
+ * @since 3.9
  */
 public interface PooledObjectFactory<T> extends Service, CamelContextAware {
 
