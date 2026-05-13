@@ -19,14 +19,20 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -57,11 +63,47 @@ public final class PluginHelper {
     public static final String PLUGIN_CONFIG = ".camel-jbang-plugins.json";
     public static final String PLUGIN_SERVICE_DIR = "META-INF/services/org/apache/camel/camel-jbang-plugin/";
 
+    /**
+     * Built-in top-level commands that consume plugins — either by accepting plugin-contributed sub-options (run,
+     * export) or by dispatching to plugin-provided commands (shell, cmd). Plugin discovery must still run for these
+     * even if the target name is registered as a built-in subcommand.
+     */
+    private static final Set<String> PLUGIN_CONSUMING_BUILTINS = Set.of("shell", "run", "export", "cmd");
+
     private static final FactoryFinder FACTORY_FINDER
             = new DefaultFactoryFinder(new DefaultClassResolver(), FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/");
 
     private PluginHelper() {
         // prevent instantiation of utility class
+    }
+
+    /**
+     * Decides whether plugin discovery (classpath scan + JSON config + Maven resolution) is needed for the current
+     * invocation. Returns false when the target command is a built-in that does not consume plugins, skipping all
+     * plugin-related IO. Returns true for plugin-consuming built-ins (run/export/cmd/shell), for unknown commands
+     * (likely plugin-provided), and when no target is given (e.g. --help listing).
+     *
+     * @param  commandLine the command line with all built-in subcommands already registered
+     * @param  args        the raw CLI args; only args[0] is inspected
+     * @return             true if plugin discovery should run, false to short-circuit
+     */
+    public static boolean shouldDiscoverPlugins(CommandLine commandLine, String... args) {
+        if (args == null || args.length == 0) {
+            return true;
+        }
+        // Only args[0] is inspected. If the user puts global options before the subcommand
+        // (e.g. `camel --verbose version`), we conservatively load plugins. Picocli option grammar
+        // is non-trivial enough that a heuristic skip would risk false negatives; the missed
+        // optimization is acceptable since this prefix-options pattern is uncommon.
+        String target = args[0];
+        if (target == null || target.isBlank() || target.startsWith("-")) {
+            return true;
+        }
+        if (PLUGIN_CONSUMING_BUILTINS.contains(target)) {
+            return true;
+        }
+        // target is a built-in (and not a plugin-consuming one) → no plugin needed
+        return !commandLine.getSubcommands().containsKey(target);
     }
 
     /**
@@ -161,6 +203,7 @@ public final class PluginHelper {
             String version = catalog.getCatalogVersion();
             JsonObject plugins = config.getMap("plugins");
 
+            boolean configDirty = false;
             for (String pluginKey : plugins.keySet()) {
                 JsonObject properties = plugins.getMap(pluginKey);
 
@@ -179,13 +222,19 @@ public final class PluginHelper {
                     versionCheck(main, version, firstVersion, command);
                 }
 
-                Optional<Plugin> plugin = getPlugin(command, version, gav, repos, main.getOut());
-                if (plugin.isPresent()) {
-                    activePlugins.put(command, plugin.get());
+                ResolveResult res = resolvePlugin(properties, command, version, gav, repos, main.getOut());
+                if (res.plugin().isPresent()) {
+                    activePlugins.put(command, res.plugin().get());
+                    if (res.cacheWritten()) {
+                        configDirty = true;
+                    }
                 } else {
                     main.getOut().println("camel-jbang-plugin-" + command + " not found. Exit");
                     main.quit(1);
                 }
+            }
+            if (configDirty) {
+                savePluginConfig(config);
             }
         }
 
@@ -193,16 +242,223 @@ public final class PluginHelper {
     }
 
     public static Optional<Plugin> getPlugin(String name, String defaultVersion, String gav, String repos, Printer printer) {
-        Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + name, Plugin.class);
-        if (plugin.isEmpty()) {
-            final MavenGav mavenGav = dependencyAsMavenGav(gav);
-            final String group = extractGroup(mavenGav, "org.apache.camel");
-            final String depVersion = extractVersion(mavenGav, defaultVersion);
+        return resolvePlugin(null, name, defaultVersion, gav, repos, printer).plugin();
+    }
 
-            plugin = downloadPlugin(name, defaultVersion, depVersion, group, repos, printer);
+    /**
+     * Resolves a plugin by trying, in order: the cached metadata in the plugin entry (fast path with no IO beyond
+     * size+mtime checks), the factory finder (embedded plugin on the JVM classpath), and finally the Maven downloader.
+     * When the downloader runs, the resolved classpath is captured into the plugin entry's {@code resolved} block so
+     * subsequent invocations take the fast path.
+     */
+    private static ResolveResult resolvePlugin(
+            JsonObject entry, String name, String defaultVersion, String gav, String repos, Printer printer) {
+        Optional<Plugin> cached = loadFromCache(entry, defaultVersion, gav, repos);
+        if (cached.isPresent()) {
+            return new ResolveResult(cached, false);
         }
 
-        return plugin;
+        Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + name, Plugin.class);
+        if (plugin.isPresent()) {
+            return new ResolveResult(plugin, false);
+        }
+
+        final MavenGav mavenGav = dependencyAsMavenGav(gav);
+        final String group = extractGroup(mavenGav, "org.apache.camel");
+        final String depVersion = extractVersion(mavenGav, defaultVersion);
+
+        DownloadResult dr = downloadPlugin(name, defaultVersion, depVersion, group, repos, printer);
+        boolean cacheWritten = false;
+        if (dr.plugin().isPresent() && entry != null && dr.classLoader() != null && dr.className() != null) {
+            cacheWritten = writeCache(entry, defaultVersion, gav, repos, dr.className(), dr.classLoader(), name, depVersion);
+        }
+        return new ResolveResult(dr.plugin(), cacheWritten);
+    }
+
+    private static Optional<Plugin> loadFromCache(JsonObject entry, String camelVersion, String gav, String repos) {
+        if (entry == null) {
+            return Optional.empty();
+        }
+        JsonObject resolved = entry.getMap("resolved");
+        if (resolved == null) {
+            return Optional.empty();
+        }
+        if (!sameCamelVersion(asString(resolved.get("camelVersion")), camelVersion)) {
+            return Optional.empty();
+        }
+        if (!Objects.equals(normalize(asString(resolved.get("gav"))), normalize(gav))) {
+            return Optional.empty();
+        }
+        if (!Objects.equals(normalize(asString(resolved.get("repos"))), normalize(repos))) {
+            return Optional.empty();
+        }
+        String className = asString(resolved.get("className"));
+        if (className == null || className.isBlank()) {
+            return Optional.empty();
+        }
+        Object cpObj = resolved.get("classpath");
+        if (!(cpObj instanceof Collection)) {
+            return Optional.empty();
+        }
+        Collection<?> classpath = (Collection<?>) cpObj;
+        if (classpath.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<URL> urls = new ArrayList<>(classpath.size());
+        for (Object o : classpath) {
+            if (!(o instanceof Map)) {
+                return Optional.empty();
+            }
+            Map<?, ?> jar = (Map<?, ?>) o;
+            Path p = validateFileEntry(jar);
+            if (p == null) {
+                return Optional.empty();
+            }
+            try {
+                urls.add(p.toUri().toURL());
+            } catch (IOException e) {
+                return Optional.empty();
+            }
+        }
+
+        // If the cache tracks the plugin POM, validate it too. Detects POM-only changes (e.g. a SNAPSHOT
+        // plugin's transitive deps changed without a jar rebuild).
+        Object pomObj = resolved.get("pom");
+        if (pomObj instanceof Map<?, ?> pom) {
+            if (validateFileEntry(pom) == null) {
+                return Optional.empty();
+            }
+        }
+
+        try {
+            URLClassLoader cl = new URLClassLoader(urls.toArray(new URL[0]), PluginHelper.class.getClassLoader());
+            Class<?> pluginClass = cl.loadClass(className);
+            Plugin instance = (Plugin) ObjectHelper.newInstance(pluginClass);
+            instance.setClassLoader(cl);
+            return Optional.of(instance);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Persists the resolved plugin classpath into the entry's {@code resolved} block. Package-private so unit tests can
+     * drive the happy path without invoking the Maven downloader. Also tracks the plugin's own POM file (size+mtime) so
+     * a POM-only change (e.g. a SNAPSHOT plugin gaining a new transitive dependency without a jar rebuild) invalidates
+     * the cache on the next invocation.
+     */
+    static boolean writeCache(
+            JsonObject entry, String camelVersion, String gav, String repos, String className, ClassLoader cl,
+            String pluginCommand, String pluginVersion) {
+        URL[] urls;
+        if (cl instanceof URLClassLoader ucl) {
+            urls = ucl.getURLs();
+        } else {
+            return false;
+        }
+        if (urls == null || urls.length == 0) {
+            return false;
+        }
+        Collection<JsonObject> classpath = new ArrayList<>(urls.length);
+        JsonObject pomEntry = null;
+        String pluginJarName = "camel-jbang-plugin-" + pluginCommand + "-" + pluginVersion + ".jar";
+        for (URL u : urls) {
+            try {
+                Path p = Path.of(u.toURI());
+                if (!Files.exists(p)) {
+                    return false;
+                }
+                JsonObject jar = new JsonObject();
+                jar.put("path", p.toAbsolutePath().toString());
+                jar.put("size", Files.size(p));
+                jar.put("mtime", Files.getLastModifiedTime(p).toMillis());
+                classpath.add(jar);
+
+                // Identify the plugin's own jar by filename and track the sibling POM, so a Maven re-install
+                // of the plugin (which always rewrites the POM) is detected even when the jar bytes happen
+                // to be unchanged.
+                if (pomEntry == null && pluginJarName.equals(p.getFileName().toString())) {
+                    Path pom = p.resolveSibling("camel-jbang-plugin-" + pluginCommand + "-" + pluginVersion + ".pom");
+                    if (Files.exists(pom)) {
+                        pomEntry = new JsonObject();
+                        pomEntry.put("path", pom.toAbsolutePath().toString());
+                        pomEntry.put("size", Files.size(pom));
+                        pomEntry.put("mtime", Files.getLastModifiedTime(pom).toMillis());
+                    }
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        JsonObject resolved = new JsonObject();
+        resolved.put("camelVersion", camelVersion);
+        if (normalize(gav) != null) {
+            resolved.put("gav", normalize(gav));
+        }
+        if (normalize(repos) != null) {
+            resolved.put("repos", normalize(repos));
+        }
+        resolved.put("className", className);
+        resolved.put("cachedAt", System.currentTimeMillis());
+        resolved.put("classpath", classpath);
+        if (pomEntry != null) {
+            resolved.put("pom", pomEntry);
+        }
+        entry.put("resolved", resolved);
+        return true;
+    }
+
+    /**
+     * Validates a {path, size, mtime} entry from the cache against the actual file on disk. Returns the resolved Path
+     * on match, or null if the file is missing, was modified, or the entry is malformed.
+     */
+    private static Path validateFileEntry(Map<?, ?> entry) {
+        String path = asString(entry.get("path"));
+        Object sizeObj = entry.get("size");
+        Object mtimeObj = entry.get("mtime");
+        if (path == null || !(sizeObj instanceof Number) || !(mtimeObj instanceof Number)) {
+            return null;
+        }
+        long size = ((Number) sizeObj).longValue();
+        long mtime = ((Number) mtimeObj).longValue();
+        Path p = Path.of(path);
+        try {
+            if (!Files.exists(p) || Files.size(p) != size || Files.getLastModifiedTime(p).toMillis() != mtime) {
+                return null;
+            }
+            return p;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static boolean sameCamelVersion(String a, String b) {
+        return stripSnapshot(a).equals(stripSnapshot(b));
+    }
+
+    private static String stripSnapshot(String v) {
+        if (v == null) {
+            return "";
+        }
+        return v.endsWith("-SNAPSHOT") ? v.substring(0, v.length() - "-SNAPSHOT".length()) : v;
+    }
+
+    private static String normalize(String s) {
+        if (s == null || s.isBlank()) {
+            return null;
+        }
+        return s.trim();
+    }
+
+    private static String asString(Object o) {
+        return o == null ? null : o.toString();
+    }
+
+    private record ResolveResult(Optional<Plugin> plugin, boolean cacheWritten) {
+    }
+
+    private record DownloadResult(Optional<Plugin> plugin, ClassLoader classLoader, String className) {
     }
 
     private static MavenGav dependencyAsMavenGav(String gav) {
@@ -227,7 +483,7 @@ public final class PluginHelper {
         }
     }
 
-    private static Optional<Plugin> downloadPlugin(
+    private static DownloadResult downloadPlugin(
             String command, String camelVersion, String version, String group, String repos, Printer printer) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
         DependencyDownloaderClassLoader ddlcl = new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
@@ -242,6 +498,7 @@ public final class PluginHelper {
         downloader.downloadDependencyWithParent("org.apache.camel:camel-jbang-parent:pom:" + camelVersion, group,
                 "camel-jbang-plugin-" + command, version);
         Optional<Plugin> instance = Optional.empty();
+        String pluginClassName = null;
         InputStream in = null;
         String path = FactoryFinder.DEFAULT_PATH + "camel-jbang-plugin/camel-jbang-plugin-" + command;
         try {
@@ -250,7 +507,7 @@ public final class PluginHelper {
             if (in != null) {
                 Properties prop = new Properties();
                 prop.load(in);
-                String pluginClassName = prop.getProperty("class");
+                pluginClassName = prop.getProperty("class");
                 DefaultClassResolver resolver = new DefaultClassResolver();
                 Class<?> pluginClass = resolver.resolveClass(pluginClassName, ddlcl);
                 instance = Optional.of(Plugin.class.cast(ObjectHelper.newInstance(pluginClass)));
@@ -270,7 +527,7 @@ public final class PluginHelper {
             }
             IOHelper.close(in);
         }
-        return instance;
+        return new DownloadResult(instance, ddlcl, pluginClassName);
     }
 
     public static JsonObject getOrCreatePluginConfig() {
