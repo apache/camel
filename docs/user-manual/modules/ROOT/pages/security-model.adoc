@@ -306,12 +306,14 @@ they are, the change is announced through the normal upgrade-guide channel.
 Operators are responsible for the following. None of these are framework
 vulnerabilities if skipped; all of them reduce the attack surface materially.
 
-* *Enable the security policy framework.* Set `camel.main.profile = prod` so
-  the default policy for the four categories (`secret`, `insecure:ssl`,
-  `insecure:serialization`, `insecure:dev`) defaults to `fail`. Override
-  individual categories explicitly when a deployment genuinely needs the
-  relaxed behaviour. See the `proposals/security.adoc` design document for
-  details.
+* *Stay on the default `prod` profile in production.* Camel defaults to the
+  `prod` profile, under which the security policy framework defaults to `fail`
+  for the four categories (`secret`, `insecure:ssl`, `insecure:serialization`,
+  `insecure:dev`). Setting `camel.main.profile = dev` or `test` is an explicit
+  opt-in to development-only behaviour (extra services, dev console, debug
+  endpoints) and should not be used in production. Override individual
+  categories explicitly when a deployment genuinely needs a relaxed policy.
+  See the `proposals/security.adoc` design document for details.
 * *Resolve secrets through a vault.* Use one of the supported backends
   (xref:security.adoc[AWS Secrets Manager, Azure Key Vault, Google Secret
   Manager, HashiCorp Vault, IBM Secrets Manager, CyberArk Conjur]) rather than
@@ -329,7 +331,6 @@ vulnerabilities if skipped; all of them reduce the attack surface materially.
 ----
 from("jetty:http://0.0.0.0:8080/api")
     .removeHeaders("Camel*")
-    .removeHeaders("org.apache.camel.*")
     .to("direct:trusted-pipeline");
 ----
 * *Do not enable Java serialisation on consumers exposed to untrusted
@@ -346,6 +347,9 @@ from("jetty:http://0.0.0.0:8080/api")
 * *Run with least privilege.* Limit the OS user's file-system, network and
   process privileges; in a container deployment, drop unneeded capabilities
   and mount only the filesystem paths the routes actually need.
+* *Use the minimal set of dependencies.* Include only the Camel components and
+  third-party JARs the application actually uses. Every extra dependency
+  enlarges the attack surface and the patch responsibility.
 
 == Guidance for component authors and reviewers
 
@@ -354,9 +358,12 @@ existing one, the following questions decide whether the change is in line
 with the security model.
 
 * *Does the component consume untrusted input?* If yes, the inbound side must
-  apply a `HeaderFilterStrategy` that blocks `Camel*`, `camel*`,
-  `org.apache.camel.*` and any internal headers the component itself uses,
-  case-insensitively.
+  apply a `HeaderFilterStrategy` that blocks `Camel*` and any internal headers
+  the component itself uses. The default `DefaultHeaderFilterStrategy` is
+  case-insensitive out of the box (so `Camel`, `CAMEL` and `caMEL` are all
+  filtered identically); custom strategies must either extend
+  `DefaultHeaderFilterStrategy` to inherit this behaviour or implement the
+  case-insensitive matching themselves.
 * *Does the component deserialise into a Java object?* If it uses
   `ObjectInputStream.readObject()`, an XStream-style unmarshaller or a
   polymorphic Jackson reader on input the operator did not explicitly control,
@@ -389,8 +396,12 @@ process:
 * Read https://camel.apache.org/security/[Apache Camel Security].
 * Email private-security@camel.apache.org with a description, affected
   versions, and a proof of concept that demonstrates the trust-boundary breach.
-* Do not file a public Jira ticket or open a public pull request for an
-  unpublished vulnerability.
+* Do not file a public Jira ticket, open a public pull request, post on a
+  mailing list, social media, or any other public channel for an unpublished
+  vulnerability - avoid disclosing anything about the potential issue until a
+  coordinated fix is released. Only contact the
+  https://apache.org/security/[Apache Software Foundation Security team] to
+  report the issue and follow their instructions.
 
 Reports that match the in-scope classes above will be triaged on the private
 security list, fixed in a coordinated release, and published as a CVE
