@@ -240,6 +240,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
     @Override
     public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        if (suspendOnly) {
+            return;
+        }
         // prepare for shutdown, eg do not allow redelivery if configured
         LOG.trace("Prepare shutdown on error handler: {}", this);
         preparingShutdown = true;
