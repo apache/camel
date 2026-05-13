@@ -461,7 +461,7 @@ public class MiloClientConfiguration implements Cloneable {
         }
 
         if (configuration.getMaxResponseMessageSize() != null) {
-            builder.setMaxResponseMessageSize(UInteger.valueOf(configuration.getMaxPendingPublishRequests()));
+            builder.setMaxResponseMessageSize(UInteger.valueOf(configuration.getMaxResponseMessageSize()));
         }
 
         if (configuration.getKeyStoreUrl() != null) {
