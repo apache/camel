@@ -26,7 +26,7 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A <a href="http://camel.apache.org/component.html">component</a> is a factory of {@link Endpoint} objects.
+ * A <a href="https://camel.apache.org/component.html">component</a> is a factory of {@link Endpoint} objects.
  */
 public interface Component extends CamelContextAware, Service {
 

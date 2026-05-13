@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.jspecify.annotations.Nullable;
 
 /**
- * <a href="http://camel.apache.org/transformer.html">Transformer</a> performs message transformation according to the
+ * <a href="https://camel.apache.org/transformer.html">Transformer</a> performs message transformation according to the
  * declared data type. {@link org.apache.camel.processor.ContractAdvice} looks for a required Transformer and apply if
  * input/output type declared on a route is different from current message type.
  *

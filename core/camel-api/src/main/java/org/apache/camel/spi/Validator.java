@@ -26,7 +26,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.jspecify.annotations.Nullable;
 
 /**
- * <a href="http://camel.apache.org/validator.html">Validator</a> performs message content validation according to the
+ * <a href="https://camel.apache.org/validator.html">Validator</a> performs message content validation according to the
  * declared data type. {@link org.apache.camel.processor.ContractAdvice} applies Validator if input/output type is
  * declared on a route with validation enabled.
  *

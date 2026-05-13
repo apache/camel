@@ -20,7 +20,10 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 
 /**
- * Represents a language to be used for {@link Expression} or {@link Predicate} instances
+ * Represents a language to be used for creating {@link Expression} or {@link Predicate} instances.
+ * <p/>
+ * Languages are resolved by name via the {@link org.apache.camel.CamelContext#resolveLanguage(String)} method.
+ * Implementations must be thread-safe as expressions and predicates may be evaluated concurrently.
  */
 public interface Language {
 

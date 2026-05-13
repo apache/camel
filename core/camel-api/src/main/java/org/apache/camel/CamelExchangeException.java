@@ -29,12 +29,21 @@ public class CamelExchangeException extends CamelException {
     // exchange is not guaranteed to be serializable so we set it as transient
     private final transient @Nullable Exchange exchange;
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     */
     public CamelExchangeException(String message, @Nullable Exchange exchange) {
         super(CamelExchangeException.createExceptionMessage(
                 Objects.requireNonNull(message, "message"), exchange, null));
         this.exchange = exchange;
     }
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     * @param cause    the cause of the failure
+     */
     public CamelExchangeException(String message, @Nullable Exchange exchange, Throwable cause) {
         super(CamelExchangeException.createExceptionMessage(
                 Objects.requireNonNull(message, "message"), exchange,

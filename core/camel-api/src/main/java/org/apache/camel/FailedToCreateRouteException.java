@@ -29,12 +29,21 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
     private final @Nullable String routeId;
     private final @Nullable String location;
 
+    /**
+     * @param cause a description of why route creation failed
+     */
     public FailedToCreateRouteException(String cause) {
         super("Failed to create route because: " + Objects.requireNonNull(cause, "cause"));
         this.routeId = null;
         this.location = null;
     }
 
+    /**
+     * @param routeId  the ID of the route that failed to be created
+     * @param location the source location of the route definition, or {@code null} if unknown
+     * @param route    the route definition string
+     * @param cause    the error message describing why route creation failed
+     */
     public FailedToCreateRouteException(String routeId, @Nullable String location, String route, String cause) {
         super("Failed to create route: " + Objects.requireNonNull(routeId, "routeId")
               + (location != null ? " (source: " + location + ")" : "") + ": "
@@ -44,6 +53,12 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
         this.location = location;
     }
 
+    /**
+     * @param routeId  the ID of the route that failed to be created
+     * @param location the source location of the route definition, or {@code null} if unknown
+     * @param route    the route definition string
+     * @param cause    the cause of the failure
+     */
     public FailedToCreateRouteException(String routeId, @Nullable String location, String route, Throwable cause) {
         super("Failed to create route: " + Objects.requireNonNull(routeId, "routeId")
               + (location != null ? " (source: " + location + ")" : "") + ": "
@@ -54,6 +69,13 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
         this.location = location;
     }
 
+    /**
+     * @param routeId  the ID of the route that failed to be created
+     * @param location the source location of the route definition, or {@code null} if unknown
+     * @param route    the route definition string
+     * @param at       the location in the route definition where the error occurred
+     * @param cause    the cause of the failure
+     */
     public FailedToCreateRouteException(String routeId, @Nullable String location, String route, String at, Throwable cause) {
         super("Failed to create route: " + Objects.requireNonNull(routeId, "routeId")
               + (location != null ? " (source: " + location + ")" : "") + " at: >>> "

@@ -22,8 +22,8 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
- * An <a href="http://camel.apache.org/endpoint.html">endpoint</a> implements the
- * <a href="http://camel.apache.org/message-endpoint.html">Message Endpoint</a> pattern and represents an endpoint that
+ * An <a href="https://camel.apache.org/endpoint.html">endpoint</a> implements the
+ * <a href="https://camel.apache.org/message-endpoint.html">Message Endpoint</a> pattern and represents an endpoint that
  * can send and receive message exchanges
  *
  * @see Exchange
@@ -130,7 +130,7 @@ public interface Endpoint extends IsSingleton, Service, ComponentAware {
     AsyncProducer createAsyncProducer() throws Exception;
 
     /**
-     * Creates a new <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a> which
+     * Creates a new <a href="https://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a> which
      * consumes messages from the endpoint using the given processor
      *
      * Important: Do not do any initialization in the constructor of the {@link Consumer}. Instead use
@@ -143,10 +143,10 @@ public interface Endpoint extends IsSingleton, Service, ComponentAware {
     Consumer createConsumer(Processor processor) throws Exception;
 
     /**
-     * Creates a new <a href="http://camel.apache.org/polling-consumer.html">Polling Consumer</a> so that the caller can
-     * poll message exchanges from the consumer using {@link PollingConsumer#receive()},
+     * Creates a new <a href="https://camel.apache.org/polling-consumer.html">Polling Consumer</a> so that the caller
+     * can poll message exchanges from the consumer using {@link PollingConsumer#receive()},
      * {@link PollingConsumer#receiveNoWait()} or {@link PollingConsumer#receive(long)} whenever it is ready to do so
-     * rather than using the <a href="http://camel.apache.org/event-driven-consumer.html">Event Based Consumer</a>
+     * rather than using the <a href="https://camel.apache.org/event-driven-consumer.html">Event Based Consumer</a>
      * returned by {@link #createConsumer(Processor)}
      *
      * Important: Do not do any initialization in the constructor of the {@link PollingConsumer}. Instead use

@@ -27,6 +27,9 @@ public class NoSuchLanguageException extends RuntimeCamelException {
 
     private final String language;
 
+    /**
+     * @param language the language name that could not be resolved
+     */
     public NoSuchLanguageException(String language) {
         super("No language could be found for: " + Objects.requireNonNull(language, "language"));
         this.language = language;

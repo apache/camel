@@ -27,10 +27,19 @@ import org.jspecify.annotations.Nullable;
  */
 public class CamelExecutionException extends RuntimeExchangeException {
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     */
     public CamelExecutionException(String message, @Nullable Exchange exchange) {
         super(Objects.requireNonNull(message, "message"), exchange);
     }
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     * @param cause    the cause of the failure
+     */
     public CamelExecutionException(String message, @Nullable Exchange exchange, Throwable cause) {
         super(Objects.requireNonNull(message, "message"), exchange,
               Objects.requireNonNull(cause, "cause"));

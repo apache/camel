@@ -19,7 +19,7 @@ package org.apache.camel;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Represents a <a href="http://camel.apache.org/polling-consumer.html">Polling Consumer</a> where the caller polls for
+ * Represents a <a href="https://camel.apache.org/polling-consumer.html">Polling Consumer</a> where the caller polls for
  * messages when it is ready.
  * <p/>
  * When you are done with the returned {@link Exchange} you must ensure to invoke
