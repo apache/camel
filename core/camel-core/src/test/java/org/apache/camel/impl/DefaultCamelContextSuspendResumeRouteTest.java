@@ -49,9 +49,12 @@ public class DefaultCamelContextSuspendResumeRouteTest extends ContextTestSuppor
 
         context.suspend();
 
-        // wait for the seda consumer to complete its current poll cycle and become idle
+        // wait for the context to be fully suspended
         Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .pollDelay(1, TimeUnit.SECONDS)
+                .until(() -> context.isSuspended());
+        // give seda consumer thread time to complete its current poll cycle
+        Awaitility.await().pollDelay(1, TimeUnit.SECONDS)
+                .atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> Assertions.assertDoesNotThrow(() -> template.sendBody("seda:foo", "B")));
 
         mock.assertIsSatisfied(1000);

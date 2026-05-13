@@ -59,11 +59,14 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
         // mode where
         // it would poll and route (there is a little slack (up till 1 sec)
         // before suspension is empowered)
-        // wait for queues to empty and consumer to complete its poll cycle
-        await().pollDelay(1, TimeUnit.SECONDS)
-                .atMost(5, TimeUnit.SECONDS)
+        // wait for queues to empty
+        await().atMost(5, TimeUnit.SECONDS)
                 .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().isEmpty()
                         && context.getEndpoint("seda:bar", SedaEndpoint.class).getQueue().isEmpty());
+        // give consumer thread time to idle after queues empty
+        await().pollDelay(1, TimeUnit.SECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("Suspended", consumer.getStatus().name()));
 
         template.sendBody("seda:foo", "B");
         // wait a little to ensure seda consumer thread would have tried to poll
