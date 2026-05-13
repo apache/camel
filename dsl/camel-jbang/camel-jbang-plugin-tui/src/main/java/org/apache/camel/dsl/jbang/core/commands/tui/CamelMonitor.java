@@ -169,6 +169,7 @@ public class CamelMonitor extends CamelCommand {
 
     // Diagram state
     private boolean showDiagram;
+    private boolean diagramTextMode;
     private List<String> diagramLines = Collections.emptyList();
     private int diagramScroll;
     private String diagramRouteId;
@@ -330,11 +331,22 @@ public class CamelMonitor extends CamelCommand {
                 routeSort = ROUTE_SORT_COLUMNS[routeSortIndex];
                 return true;
             }
-            if (tab == TAB_ROUTES && ke.isCharIgnoreCase('d')) {
+            if (tab == TAB_ROUTES && ke.isChar('d')) {
                 if (showDiagram) {
                     showDiagram = false;
                     diagramImageData = null;
                 } else {
+                    diagramTextMode = false;
+                    loadDiagramForSelectedRoute();
+                }
+                return true;
+            }
+            if (tab == TAB_ROUTES && ke.isChar('D')) {
+                if (showDiagram) {
+                    showDiagram = false;
+                    diagramImageData = null;
+                } else {
+                    diagramTextMode = true;
                     loadDiagramForSelectedRoute();
                 }
                 return true;
@@ -1000,60 +1012,43 @@ public class CamelMonitor extends CamelCommand {
         diagramRouteId = selectedRoute.routeId;
         diagramScroll = 0;
 
-        TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
-        if (caps.supportsNativeImages()) {
-            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
-            List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
-            int totalHeight = 0;
-            for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
-                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, totalHeight);
-                layoutRoutes.add(lr);
-                totalHeight = lr.maxY;
-            }
-            RouteDiagramRenderer renderer = new RouteDiagramRenderer();
-            RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
-            java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
-            diagramImageData = ImageData.fromBufferedImage(image);
-            diagramProtocol = caps.bestProtocol();
-            diagramLines = Collections.emptyList();
-        } else {
+        if (diagramTextMode) {
             diagramImageData = null;
             diagramProtocol = null;
 
-            StringBuilder sb = new StringBuilder();
-            org.apache.camel.dsl.jbang.core.common.Printer capturingPrinter
-                    = new org.apache.camel.dsl.jbang.core.common.Printer() {
-                        @Override
-                        public void println() {
-                            sb.append('\n');
-                        }
-
-                        @Override
-                        public void println(String line) {
-                            sb.append(line).append('\n');
-                        }
-
-                        @Override
-                        public void print(String output) {
-                            sb.append(output);
-                        }
-
-                        @Override
-                        public void printf(String format, Object... args) {
-                            sb.append(String.format(format, args));
-                        }
-                    };
-
             String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true);
-            sb.append(ascii);
 
             List<String> result = new ArrayList<>();
-            for (String line : sb.toString().split("\n", -1)) {
+            for (String line : ascii.split("\n", -1)) {
                 if (!line.isEmpty()) {
                     result.add(line);
                 }
             }
             diagramLines = result;
+        } else {
+            TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
+            if (caps.supportsNativeImages()) {
+                RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+                List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
+                int totalHeight = 0;
+                for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
+                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, totalHeight);
+                    layoutRoutes.add(lr);
+                    totalHeight = lr.maxY;
+                }
+                RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+                RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
+                java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
+                diagramImageData = ImageData.fromBufferedImage(image);
+                diagramProtocol = caps.bestProtocol();
+                diagramLines = Collections.emptyList();
+            } else {
+                diagramImageData = null;
+                diagramProtocol = null;
+                diagramLines = List.of(
+                        "(Terminal does not support image rendering)",
+                        "(Press Shift+D for text diagram)");
+            }
         }
 
         showDiagram = true;
@@ -1699,6 +1694,8 @@ public class CamelMonitor extends CamelCommand {
                         Span.raw(" sort  "),
                         Span.styled("d", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" diagram  "),
+                        Span.styled("D", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" text diagram  "),
                         Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" tabs  "),
                         Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
