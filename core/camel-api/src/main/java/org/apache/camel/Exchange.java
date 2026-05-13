@@ -559,7 +559,7 @@ public interface Exchange extends VariableAware {
      * Returns the current message as the given type
      *
      * @param  type the given type
-     * @return      the message as the given type or <tt>null</tt> if not possible to covert to given type
+     * @return      the message as the given type or <tt>null</tt> if not possible to convert to given type
      */
     <T> @Nullable T getMessage(Class<T> type);
 
@@ -574,7 +574,7 @@ public interface Exchange extends VariableAware {
      * Returns the inbound request message as the given type
      *
      * @param  type the given type
-     * @return      the message as the given type or <tt>null</tt> if not possible to covert to given type
+     * @return      the message as the given type or <tt>null</tt> if not possible to convert to given type
      */
     <T> @Nullable T getIn(Class<T> type);
 
@@ -613,7 +613,7 @@ public interface Exchange extends VariableAware {
      * If you want to test whether an OUT message has been set or not, use the {@link #hasOut()} method.
      *
      * @param      type the given type
-     * @return          the message as the given type or <tt>null</tt> if not possible to covert to given type
+     * @return          the message as the given type or <tt>null</tt> if not possible to convert to given type
      * @see             #getIn(Class)
      * @deprecated      use {@link #getMessage(Class)}
      */
@@ -739,7 +739,7 @@ public interface Exchange extends VariableAware {
 
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message
-     * exchange, otherwise his property will be <tt>null</tt>.
+     * exchange, otherwise this property will be <tt>null</tt>.
      *
      * Note: In case this message exchange has been cloned through another parent message exchange (which itself has
      * been created through the consumer of it's own endpoint), then if desired one could still retrieve the consumer

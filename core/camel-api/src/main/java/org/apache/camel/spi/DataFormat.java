@@ -44,11 +44,11 @@ public interface DataFormat extends Service {
     /**
      * Unmarshals the given stream into an object.
      * <p/>
-     * <b>Notice:</b> The result is set as body on the exchange OUT message. It is possible to mutate the OUT message
-     * provided in the given exchange parameter. For instance adding headers to the OUT message will be preserved.
+     * <b>Notice:</b> The result is set as body on the exchange message. It is possible to mutate the message provided
+     * in the given exchange parameter. For instance adding headers to the message will be preserved.
      * <p/>
      * It's also legal to return the <b>same</b> passed <tt>exchange</tt> as is but also a {@link Message} object as
-     * well which will be used as the OUT message of <tt>exchange</tt>.
+     * well which will be used as the message of <tt>exchange</tt>.
      *
      * @param  exchange  the current exchange
      * @param  stream    the input stream with the object to be unmarshalled
@@ -61,11 +61,11 @@ public interface DataFormat extends Service {
     /**
      * Unmarshals the given body into an object.
      * <p/>
-     * <b>Notice:</b> The result is set as body on the exchange OUT message. It is possible to mutate the OUT message
-     * provided in the given exchange parameter. For instance adding headers to the OUT message will be preserved.
+     * <b>Notice:</b> The result is set as body on the exchange message. It is possible to mutate the message provided
+     * in the given exchange parameter. For instance adding headers to the message will be preserved.
      * <p/>
      * It's also legal to return the <b>same</b> passed <tt>exchange</tt> as is but also a {@link Message} object as
-     * well which will be used as the OUT message of <tt>exchange</tt>.
+     * well which will be used as the message of <tt>exchange</tt>.
      * <p/>
      * This method can be used when a dataformat is optimized to handle any kind of message body as-is. For example
      * camel-jaxb has been optimized to do this. The regular {@link #unmarshal(Exchange, InputStream)} method requires

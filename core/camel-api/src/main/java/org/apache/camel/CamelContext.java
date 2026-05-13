@@ -807,7 +807,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     List<RoutePolicyFactory> getRoutePolicyFactories();
 
     /**
-     * Gets a light-weight API for the route model defunitions.
+     * Gets a light-weight API for the route model definitions.
      */
     List<NamedRoute> getNamedRouteDefinitions();
 
@@ -959,7 +959,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     Object getVariable(String name);
 
     /**
-     * To get a variable by name and covert to the given type.
+     * To get a variable by name and convert to the given type.
      *
      * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
      *              repository. If no repo-id is provided, then global repository will be used.
@@ -1105,7 +1105,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     ConsumerTemplate createConsumerTemplate(int maximumCacheSize);
 
     /**
-     * Resolve an existing data format, or creates a new by the given its name
+     * Resolve an existing data format, or creates a new one with the given name
      *
      * @param  name the data format name or a reference to it in the {@link Registry}
      * @return      the resolved data format, or <tt>null</tt> if not found
