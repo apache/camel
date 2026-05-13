@@ -2975,6 +2975,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default PahoHeaderNameBuilder paho() {
             return PahoHeaderNameBuilder.INSTANCE;
         }
@@ -2994,6 +2995,7 @@ public interface PahoEndpointBuilderFactory {
          * @param path topic
          * @return the dsl builder
          */
+        @Deprecated
         default PahoEndpointBuilder paho(String path) {
             return PahoEndpointBuilderFactory.endpointBuilder("paho", path);
         }
@@ -3015,6 +3017,7 @@ public interface PahoEndpointBuilderFactory {
          * @param path topic
          * @return the dsl builder
          */
+        @Deprecated
         default PahoEndpointBuilder paho(String componentName, String path) {
             return PahoEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

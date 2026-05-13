@@ -1,10 +1,11 @@
-= Paho Component
+= Paho Component (deprecated)
 :doctitle: Paho
 :shortname: paho
 :artifactid: camel-paho
 :description: Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
 :since: 2.16
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

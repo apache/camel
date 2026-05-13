@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.support.DefaultMessage;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+@Deprecated(since = "4.21")
 public class PahoMessage extends DefaultMessage {
 
     private transient MqttMessage mqttMessage;

@@ -13052,6 +13052,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static PahoEndpointBuilderFactory.PahoEndpointBuilder paho(String path) {
         return paho("paho", path);
     }
@@ -13073,6 +13074,7 @@ public class StaticEndpointBuilders {
      * @param path topic
      * @return the dsl builder
      */
+    @Deprecated
     public static PahoEndpointBuilderFactory.PahoEndpointBuilder paho(String componentName, String path) {
         return PahoEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
