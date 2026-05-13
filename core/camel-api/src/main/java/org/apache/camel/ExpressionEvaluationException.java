@@ -28,6 +28,11 @@ public class ExpressionEvaluationException extends RuntimeCamelException {
     private final transient @Nullable Expression expression;
     private final transient @Nullable Exchange exchange;
 
+    /**
+     * @param expression the expression that failed to evaluate
+     * @param exchange   the exchange that caused the error
+     * @param cause      the cause of the failure
+     */
     public ExpressionEvaluationException(
                                          @Nullable Expression expression, @Nullable Exchange exchange,
                                          @Nullable Throwable cause) {
@@ -36,6 +41,12 @@ public class ExpressionEvaluationException extends RuntimeCamelException {
         this.exchange = exchange;
     }
 
+    /**
+     * @param expression the expression that failed to evaluate
+     * @param message    the detail message
+     * @param exchange   the exchange that caused the error
+     * @param cause      the cause of the failure
+     */
     public ExpressionEvaluationException(
                                          @Nullable Expression expression, String message, @Nullable Exchange exchange,
                                          @Nullable Throwable cause) {

@@ -200,6 +200,11 @@ public class RestConfiguration {
         this.useXForwardHeaders = useXForwardHeaders;
     }
 
+    /**
+     * Gets the hostname to use for the API documentation (such as swagger or openapi).
+     *
+     * @return the API host, or <tt>null</tt> to use the default host
+     */
     public @Nullable String getApiHost() {
         return apiHost;
     }
@@ -271,6 +276,11 @@ public class RestConfiguration {
         this.contextPath = Objects.requireNonNull(contextPath, "contextPath");
     }
 
+    /**
+     * Gets the leading API context-path the REST API services will be using.
+     *
+     * @return the API context path, or <tt>null</tt> if none configured.
+     */
     public @Nullable String getApiContextPath() {
         return apiContextPath;
     }
@@ -287,6 +297,11 @@ public class RestConfiguration {
         this.apiContextPath = Objects.requireNonNull(contextPath, "contextPath");
     }
 
+    /**
+     * Gets the route id used for the route that services the REST API.
+     *
+     * @return the route id, or <tt>null</tt> if using an auto-assigned id
+     */
     public @Nullable String getApiContextRouteId() {
         return apiContextRouteId;
     }
@@ -302,6 +317,11 @@ public class RestConfiguration {
         this.apiContextRouteId = Objects.requireNonNull(apiContextRouteId, "apiContextRouteId");
     }
 
+    /**
+     * Whether vendor extension is enabled in the REST APIs.
+     *
+     * @return true if vendor extensions are included in the API docs
+     */
     public boolean isApiVendorExtension() {
         return apiVendorExtension;
     }
@@ -371,6 +391,11 @@ public class RestConfiguration {
         this.bindingMode = RestBindingMode.valueOf(bindingMode);
     }
 
+    /**
+     * Gets the package name used as base for classpath scanning of POJO classes when binding mode is enabled.
+     *
+     * @return the package name, or <tt>null</tt> if not configured
+     */
     public @Nullable String getBindingPackageScan() {
         return bindingPackageScan;
     }
@@ -405,6 +430,11 @@ public class RestConfiguration {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
+    /**
+     * Whether client request validation is enabled.
+     *
+     * @return true if client request validation is enabled
+     */
     public boolean isClientRequestValidation() {
         return clientRequestValidation;
     }
@@ -421,6 +451,11 @@ public class RestConfiguration {
         this.clientRequestValidation = clientRequestValidation;
     }
 
+    /**
+     * Whether client response validation is enabled.
+     *
+     * @return true if client response validation is enabled
+     */
     public boolean isClientResponseValidation() {
         return clientResponseValidation;
     }
@@ -460,6 +495,11 @@ public class RestConfiguration {
         this.enableCORS = enableCORS;
     }
 
+    /**
+     * Whether HTTP 204 No Content responses are enabled for empty JSON or XML responses.
+     *
+     * @return true if HTTP 204 responses are enabled
+     */
     public boolean isEnableNoContentResponse() {
         return enableNoContentResponse;
     }
@@ -475,6 +515,11 @@ public class RestConfiguration {
         this.enableNoContentResponse = enableNoContentResponse;
     }
 
+    /**
+     * Whether routes in rest-dsl linked via direct endpoints are inlined as a single route.
+     *
+     * @return true if rest-dsl routes are inlined
+     */
     public boolean isInlineRoutes() {
         return inlineRoutes;
     }
@@ -613,6 +658,11 @@ public class RestConfiguration {
         this.dataFormatProperties = Objects.requireNonNull(dataFormatProperties, "dataFormatProperties");
     }
 
+    /**
+     * Gets additional options on API level.
+     *
+     * @return additional options
+     */
     public @Nullable Map<String, Object> getApiProperties() {
         return apiProperties;
     }

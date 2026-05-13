@@ -28,6 +28,10 @@ public class ExpectedBodyTypeException extends RuntimeCamelException {
     private final transient @Nullable Exchange exchange;
     private final transient @Nullable Class<?> expectedBodyType;
 
+    /**
+     * @param exchange         the exchange that caused the error
+     * @param expectedBodyType the expected body type that could not be extracted
+     */
     public ExpectedBodyTypeException(Exchange exchange, Class<?> expectedBodyType) {
         super("Could not extract IN message body as type: " + Objects.requireNonNull(expectedBodyType, "expectedBodyType")
               + " body is: " + Objects.requireNonNull(exchange, "exchange").getIn().getBody());

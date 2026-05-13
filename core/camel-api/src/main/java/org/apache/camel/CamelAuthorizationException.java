@@ -28,11 +28,20 @@ public class CamelAuthorizationException extends CamelExchangeException {
 
     private final @Nullable String policyId;
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     */
     public CamelAuthorizationException(String message, Exchange exchange) {
         super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"));
         policyId = exchange.getIn().getHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, String.class);
     }
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     * @param cause    the cause of the failure
+     */
     public CamelAuthorizationException(String message, Exchange exchange, Throwable cause) {
         super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"),
               Objects.requireNonNull(cause, "cause"));

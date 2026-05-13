@@ -26,11 +26,18 @@ public class NoFactoryAvailableException extends IOException {
 
     private final String uri;
 
+    /**
+     * @param uri the URI for which no factory class could be found
+     */
     public NoFactoryAvailableException(String uri) {
         super("Cannot find factory class for resource: " + Objects.requireNonNull(uri, "uri"));
         this.uri = uri;
     }
 
+    /**
+     * @param uri   the URI for which no factory class could be found
+     * @param cause the cause of the failure
+     */
     public NoFactoryAvailableException(String uri, Throwable cause) {
         this(uri);
         initCause(Objects.requireNonNull(cause, "cause"));

@@ -26,6 +26,10 @@ public class LoadPropertiesException extends CamelException {
 
     private final URL url;
 
+    /**
+     * @param url   the URL of the properties file that failed to load
+     * @param cause the cause of the failure
+     */
     public LoadPropertiesException(URL url, Exception cause) {
         super("Failed to load URL: " + Objects.requireNonNull(url, "url") + ". Reason: "
               + Objects.requireNonNull(cause, "cause"), cause);

@@ -23,10 +23,17 @@ import java.util.Objects;
  */
 public class NoSuchBeanTypeException extends NoSuchBeanException {
 
+    /**
+     * @param type the expected type that could not be found in the registry
+     */
     public NoSuchBeanTypeException(Class<?> type) {
         super(Objects.requireNonNull(type, "type").getName());
     }
 
+    /**
+     * @param type the expected type that could not be uniquely resolved in the registry
+     * @param size the number of beans found with that type
+     */
     public NoSuchBeanTypeException(Class<?> type, int size) {
         super(Objects.requireNonNull(type, "type").getName(), size);
     }

@@ -23,14 +23,24 @@ import java.util.Objects;
  */
 public class RuntimeExpressionException extends RuntimeCamelException {
 
+    /**
+     * @param message the detail message
+     */
     public RuntimeExpressionException(String message) {
         super(Objects.requireNonNull(message, "message"));
     }
 
+    /**
+     * @param message the detail message
+     * @param cause   the cause of the failure
+     */
     public RuntimeExpressionException(String message, Throwable cause) {
         super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
     }
 
+    /**
+     * @param cause the cause of the failure
+     */
     public RuntimeExpressionException(Throwable cause) {
         super(Objects.requireNonNull(cause, "cause"));
     }
