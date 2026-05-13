@@ -56,7 +56,6 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.TuiConfig;
 import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.tui.event.Event;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -238,7 +237,7 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof KeyEvent ke) {
             // Global keys
-            if (ke.isQuit() || ke.isCharIgnoreCase('q') || ke.isKey(KeyCode.ESCAPE)) {
+            if (ke.isQuit() || ke.isCharIgnoreCase('q') || ke.isCancel()) {
                 if (showDiagram) {
                     showDiagram = false;
                     diagramImageData = null;
@@ -280,7 +279,7 @@ public class CamelMonitor extends CamelCommand {
             }
 
             // Tab cycling
-            if (ke.isKey(KeyCode.TAB)) {
+            if (ke.isFocusNext()) {
                 int next = (tabsState.selected() + 1) % NUM_TABS;
                 if (next != TAB_OVERVIEW) {
                     selectCurrentIntegration();
@@ -309,7 +308,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return true;
             }
-            if (ke.isKey(KeyCode.PAGE_UP)) {
+            if (ke.isPageUp()) {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Math.max(0, diagramScroll - 20);
                 } else if (tab == TAB_LOG) {
@@ -320,7 +319,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return true;
             }
-            if (ke.isKey(KeyCode.PAGE_DOWN)) {
+            if (ke.isPageDown()) {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll += 20;
                 } else if (tab == TAB_LOG) {
@@ -342,14 +341,14 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
             }
-            if (ke.isKey(KeyCode.HOME)) {
+            if (ke.isHome()) {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = 0;
                     diagramScrollX = 0;
                     return true;
                 }
             }
-            if (ke.isKey(KeyCode.END)) {
+            if (ke.isEnd()) {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Integer.MAX_VALUE;
                     return true;
@@ -357,7 +356,7 @@ public class CamelMonitor extends CamelCommand {
             }
 
             // Enter to drill into selected integration
-            if (ke.isKey(KeyCode.ENTER) && tab == TAB_OVERVIEW) {
+            if (ke.isConfirm() && tab == TAB_OVERVIEW) {
                 selectCurrentIntegration();
                 if (selectedPid != null) {
                     tabsState.select(TAB_ROUTES);

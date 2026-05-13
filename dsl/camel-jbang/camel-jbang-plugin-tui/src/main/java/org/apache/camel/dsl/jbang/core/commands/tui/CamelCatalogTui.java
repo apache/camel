@@ -268,7 +268,7 @@ public class CamelCatalogTui extends CamelCommand {
             }
 
             // Escape: clear filter first, then go back, then quit
-            if (ke.isKey(KeyCode.ESCAPE)) {
+            if (ke.isCancel()) {
                 if (focus == FOCUS_OPTIONS && (!optionFilter.isEmpty() || optionFullText)) {
                     optionFilter.setLength(0);
                     optionFullText = false;
@@ -291,7 +291,7 @@ public class CamelCatalogTui extends CamelCommand {
             }
 
             // Backspace: delete from active filter
-            if (ke.isKey(KeyCode.BACKSPACE)) {
+            if (ke.isDeleteBackward()) {
                 if (focus == FOCUS_LIST && !componentFilter.isEmpty()) {
                     componentFilter.deleteCharAt(componentFilter.length() - 1);
                     applyComponentFilter();
@@ -303,7 +303,7 @@ public class CamelCatalogTui extends CamelCommand {
             }
 
             // Panel switching — only when no active filter on current panel
-            if (ke.isKey(KeyCode.TAB)) {
+            if (ke.isFocusNext()) {
                 if (focus == FOCUS_LIST) {
                     focus = FOCUS_OPTIONS;
                 } else {
@@ -312,19 +312,19 @@ public class CamelCatalogTui extends CamelCommand {
                 descriptionScroll = 0;
                 return true;
             }
-            if (ke.isKey(KeyCode.RIGHT) && focus == FOCUS_LIST) {
+            if (ke.isRight() && focus == FOCUS_LIST) {
                 focus = FOCUS_OPTIONS;
                 descriptionScroll = 0;
                 return true;
             }
-            if (ke.isKey(KeyCode.LEFT) && focus == FOCUS_OPTIONS) {
+            if (ke.isLeft() && focus == FOCUS_OPTIONS) {
                 focus = FOCUS_LIST;
                 descriptionScroll = 0;
                 return true;
             }
 
             // Enter drills into options
-            if (ke.isKey(KeyCode.ENTER) && focus == FOCUS_LIST) {
+            if (ke.isConfirm() && focus == FOCUS_LIST) {
                 focus = FOCUS_OPTIONS;
                 descriptionScroll = 0;
                 return true;
@@ -351,11 +351,11 @@ public class CamelCatalogTui extends CamelCommand {
                 }
                 return true;
             }
-            if (ke.isKey(KeyCode.PAGE_UP)) {
+            if (ke.isPageUp()) {
                 descriptionScroll = Math.max(0, descriptionScroll - 5);
                 return true;
             }
-            if (ke.isKey(KeyCode.PAGE_DOWN)) {
+            if (ke.isPageDown()) {
                 descriptionScroll += 5;
                 return true;
             }
