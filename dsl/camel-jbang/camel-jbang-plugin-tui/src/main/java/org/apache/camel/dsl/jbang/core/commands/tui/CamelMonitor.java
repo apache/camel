@@ -66,6 +66,8 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.gauge.Gauge;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -172,6 +174,9 @@ public class CamelMonitor extends CamelCommand {
     private boolean diagramTextMode;
     private List<String> diagramLines = Collections.emptyList();
     private int diagramScroll;
+    private int diagramScrollX;
+    private final ScrollbarState diagramVScrollState = new ScrollbarState();
+    private final ScrollbarState diagramHScrollState = new ScrollbarState();
     private String diagramRouteId;
     private ImageData diagramImageData;
     private ImageProtocol diagramProtocol;
@@ -314,6 +319,18 @@ public class CamelMonitor extends CamelCommand {
                     }
                 }
                 return true;
+            }
+            if (ke.isLeft()) {
+                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                    diagramScrollX = Math.max(0, diagramScrollX - 1);
+                    return true;
+                }
+            }
+            if (ke.isRight()) {
+                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                    diagramScrollX++;
+                    return true;
+                }
             }
 
             // Enter to drill into selected integration
@@ -694,6 +711,12 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
+        // Fullscreen text diagram mode
+        if (showDiagram && diagramTextMode && !diagramLines.isEmpty()) {
+            renderDiagram(frame, area);
+            return;
+        }
+
         // Sort routes
         List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
         sortedRoutes.sort(this::sortRoute);
@@ -859,23 +882,71 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        Rect inner = block.inner(area);
-        int visibleLines = inner.height();
-        int maxScroll = Math.max(0, diagramLines.size() - visibleLines);
-        diagramScroll = Math.min(diagramScroll, maxScroll);
+        // Compute max width for horizontal scrolling
+        int maxWidth = 0;
+        for (String line : diagramLines) {
+            maxWidth = Math.max(maxWidth, line.length());
+        }
 
+        Rect inner = block.inner(area);
+        // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
+        int visibleLines = Math.max(1, inner.height() - 1);
+        int visibleCols = Math.max(1, inner.width() - 1);
+
+        int maxVScroll = Math.max(0, diagramLines.size() - visibleLines);
+        int maxHScroll = Math.max(0, maxWidth - visibleCols);
+        diagramScroll = Math.min(diagramScroll, maxVScroll);
+        diagramScrollX = Math.min(diagramScrollX, maxHScroll);
+
+        // Build visible lines with horizontal offset applied
         List<Line> lines = new ArrayList<>();
         int end = Math.min(diagramScroll + visibleLines, diagramLines.size());
         for (int i = diagramScroll; i < end; i++) {
-            lines.add(styleDiagramLine(diagramLines.get(i)));
+            String line = diagramLines.get(i);
+            if (diagramScrollX > 0) {
+                line = diagramScrollX < line.length() ? line.substring(diagramScrollX) : "";
+            }
+            lines.add(styleDiagramLine(line));
         }
 
+        // Layout: outer block wraps everything, inner splits content + scrollbars
+        frame.renderWidget(block, area);
+
+        // Vertical layout inside the block: [content row (fill), horizontal scrollbar (1 row)]
+        List<Rect> vChunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        // Horizontal layout for content row: [text (fill), vertical scrollbar (1 col)]
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(vChunks.get(0));
+
+        // Render diagram text
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(block)
                 .build();
+        frame.renderWidget(paragraph, hChunks.get(0));
 
-        frame.renderWidget(paragraph, area);
+        // Render vertical scrollbar
+        diagramVScrollState.contentLength(diagramLines.size());
+        diagramVScrollState.viewportContentLength(visibleLines);
+        diagramVScrollState.position(diagramScroll);
+        frame.renderStatefulWidget(
+                Scrollbar.builder()
+                        .thumbStyle(Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)))
+                        .build(),
+                hChunks.get(1), diagramVScrollState);
+
+        // Render horizontal scrollbar
+        if (maxWidth > visibleCols) {
+            diagramHScrollState.contentLength(maxWidth);
+            diagramHScrollState.viewportContentLength(visibleCols);
+            diagramHScrollState.position(diagramScrollX);
+            frame.renderStatefulWidget(
+                    Scrollbar.horizontal(),
+                    vChunks.get(1), diagramHScrollState);
+        }
     }
 
     private Line styleDiagramLine(String text) {
@@ -1011,6 +1082,7 @@ public class CamelMonitor extends CamelCommand {
 
         diagramRouteId = selectedRoute.routeId;
         diagramScroll = 0;
+        diagramScrollX = 0;
 
         if (diagramTextMode) {
             diagramImageData = null;
@@ -1680,7 +1752,7 @@ public class CamelMonitor extends CamelCommand {
                         Span.raw("/"),
                         Span.styled("Esc", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" close  "),
-                        Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("\u2191\u2193\u2190\u2192", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" scroll  "),
                         Span.styled("PgUp/PgDn", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" page"));
