@@ -307,6 +307,16 @@ previous code path silently produced `null` whenever a route mixed `converse` an
 calls. If you were not setting the guardrail identifier via header, the endpoint-level
 `guardrailIdentifier` option continues to work without changes.
 
+=== camel-aws2-s3
+
+The `listObjects` operation now uses the `ListObjectsV2` AWS API instead of the deprecated `ListObjects` API.
+If you use `pojoRequest=true` with `operation=listObjects`, you must change your request and response types:
+
+* `ListObjectsRequest` -> `ListObjectsV2Request`
+* `ListObjectsResponse` -> `ListObjectsV2Response`
+
+The non-POJO path (header-based configuration) is updated automatically and requires no changes.
+
 === camel-nats
 
 Fixed the JetStream consumer pull subscription mode (which is the default) so that messages are
