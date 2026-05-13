@@ -298,6 +298,9 @@ public final class DefaultConfigurationConfigurer {
             reloader.setPattern(config.getRoutesReloadPattern());
             reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
             camelContext.addService(reloader);
+            // disable contentCache on resource-based components so that resource files (e.g. XSLT
+            // stylesheets, templates) are reloaded live without restarting routes
+            camelContext.addLifecycleStrategy(new DevModeContentCacheStrategy());
         }
         if (config.getDumpRoutes() != null) {
             DumpRoutesStrategy drs = camelContext.getCamelContextExtension().getContextPlugin(DumpRoutesStrategy.class);
