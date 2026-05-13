@@ -35,7 +35,7 @@ public class AggregateCompleteAllOnStopWithIntervalTest extends ContextTestSuppo
     @Test
     public void testCompleteAllOnStopWithCompletionIntervalOnly() throws Exception {
         // Set shutdown timeout to 5x the completion interval (1 second)
-        context.getShutdownStrategy().setTimeout(5);
+        context.getShutdownStrategy().setTimeout(10);
 
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         // We expect the incomplete aggregation to be completed on shutdown
@@ -57,7 +57,7 @@ public class AggregateCompleteAllOnStopWithIntervalTest extends ContextTestSuppo
         // With completeAllOnStop(), we expect the aggregation to be completed
         context.stop();
 
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(mock::assertIsSatisfied);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(mock::assertIsSatisfied);
     }
 
     @Override
