@@ -41,9 +41,9 @@ public class NotAllowRedeliveryWhileStoppingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait for the error handler to start the redelivery cycle
-        await().pollDelay(200, TimeUnit.MILLISECONDS)
-                .atMost(5, TimeUnit.SECONDS)
-                .until(() -> context.getInflightRepository().size() > 0);
+        await().pollDelay(500, TimeUnit.MILLISECONDS)
+                .atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(context.getInflightRepository().size() > 0));
 
         context.stop();
 
