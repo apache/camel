@@ -931,7 +931,7 @@ public class CamelMonitor extends CamelCommand {
     private void renderDiagram(Frame frame, Rect area) {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(" Diagram [" + diagramRouteId + "] ")
+                .title(diagramTextMode ? "" : " Diagram [" + diagramRouteId + "] ")
                 .build();
 
         if (diagramImageData != null) {
