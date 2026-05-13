@@ -46,7 +46,7 @@ import org.jspecify.annotations.Nullable;
  * <p/>
  * To access or modify the current message, use the {@link #getMessage()} method. Camel uses {@link #getMessage()} to
  * obtain the current message during routing. If a {@link Processor} modifies the message, those changes are visible to
- * subsequent processors.
+ * subsequent processors. The {@link ExchangePattern} determines whether a reply is expected (InOut) or not (InOnly).
  */
 @ConstantProvider("org.apache.camel.ExchangeConstantProvider")
 public interface Exchange extends VariableAware {

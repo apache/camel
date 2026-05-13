@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Provides a hook for custom {@link org.apache.camel.Processor} or {@link org.apache.camel.Component} instances to
  * respond to completed or failed processing of an {@link Exchange} rather like Spring's
- * {@code TransactionSynchronization}
+ * {@code org.springframework.transaction.support.TransactionSynchronization}
  */
 public interface Synchronization {
 

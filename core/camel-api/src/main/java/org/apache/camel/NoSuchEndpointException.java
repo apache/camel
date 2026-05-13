@@ -39,7 +39,7 @@ public class NoSuchEndpointException extends RuntimeCamelException {
 
     /**
      * @param uri           the endpoint URI that could not be found
-     * @param resolveMethod the hint on how to resolve the missing endpoint
+     * @param resolveMethod a resolution instruction appended after "please" in the error message
      */
     public NoSuchEndpointException(String uri, String resolveMethod) {
         super("No endpoint could be found for: " + sanitizeUri(Objects.requireNonNull(uri, "uri"))

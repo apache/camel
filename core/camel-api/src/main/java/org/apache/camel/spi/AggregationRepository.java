@@ -32,7 +32,6 @@ import org.jspecify.annotations.Nullable;
  * <p/>
  * Implementations must be thread-safe as multiple threads may aggregate concurrently for different correlation keys.
  *
- * @see org.apache.camel.processor.aggregate.AggregateProcessor
  */
 public interface AggregationRepository {
 

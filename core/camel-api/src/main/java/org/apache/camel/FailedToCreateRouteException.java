@@ -30,7 +30,7 @@ public class FailedToCreateRouteException extends RuntimeCamelException {
     private final @Nullable String location;
 
     /**
-     * @param cause the error message describing why route creation failed
+     * @param cause a description of why route creation failed
      */
     public FailedToCreateRouteException(String cause) {
         super("Failed to create route because: " + Objects.requireNonNull(cause, "cause"));

@@ -47,7 +47,7 @@ public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
     /**
      * @param exchange the exchange that caused the error
      * @param type     the expected body type
-     * @param message  the message whose body could not be converted
+     * @param message  the message with the invalid or missing payload
      */
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Message message) {
         super("No body available of type: " + Objects.requireNonNull(type, "type").getName()
@@ -59,7 +59,7 @@ public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
     /**
      * @param exchange the exchange that caused the error
      * @param type     the expected body type
-     * @param message  the message whose body could not be converted
+     * @param message  the message with the invalid or missing payload
      * @param cause    the cause of the failure
      */
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Message message, Throwable cause) {

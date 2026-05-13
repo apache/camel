@@ -18,7 +18,7 @@
  * The core Camel API.
  */
 @NullMarked
-@XmlSchema(namespace = "https://camel.apache.org/schema/spring",
+@XmlSchema(namespace = "http://camel.apache.org/schema/spring",
            elementFormDefault = XmlNsForm.QUALIFIED)
 package org.apache.camel;
 

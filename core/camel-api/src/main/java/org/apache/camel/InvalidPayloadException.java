@@ -38,7 +38,7 @@ public class InvalidPayloadException extends CamelExchangeException {
     /**
      * @param exchange the exchange that caused the error
      * @param type     the expected body type
-     * @param message  the message whose body could not be converted
+     * @param message  the message with the invalid or missing payload
      */
     public InvalidPayloadException(Exchange exchange, Class<?> type, Message message) {
         super("No body available of type: " + Objects.requireNonNull(type, "type").getCanonicalName()
@@ -50,7 +50,7 @@ public class InvalidPayloadException extends CamelExchangeException {
     /**
      * @param exchange the exchange that caused the error
      * @param type     the expected body type
-     * @param message  the message whose body could not be converted
+     * @param message  the message with the invalid or missing payload
      * @param cause    the cause of the failure
      */
     public InvalidPayloadException(Exchange exchange, Class<?> type, Message message, Throwable cause) {
