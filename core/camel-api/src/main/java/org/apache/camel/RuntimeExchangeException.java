@@ -26,11 +26,20 @@ import org.jspecify.annotations.Nullable;
 public class RuntimeExchangeException extends RuntimeCamelException {
     private final transient @Nullable Exchange exchange;
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     */
     public RuntimeExchangeException(String message, @Nullable Exchange exchange) {
         super(createMessage(Objects.requireNonNull(message, "message"), exchange));
         this.exchange = exchange;
     }
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that caused the error
+     * @param cause    the cause of the failure
+     */
     public RuntimeExchangeException(String message, @Nullable Exchange exchange, Throwable cause) {
         super(createMessage(Objects.requireNonNull(message, "message"), exchange),
               Objects.requireNonNull(cause, "cause"));

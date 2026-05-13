@@ -27,6 +27,10 @@ public class FailedToCreateProducerException extends RuntimeCamelException {
 
     private final String uri;
 
+    /**
+     * @param endpoint the endpoint for which producer creation failed
+     * @param cause    the cause of the failure
+     */
     public FailedToCreateProducerException(Endpoint endpoint, Throwable cause) {
         super("Failed to create Producer for endpoint: " + Objects.requireNonNull(endpoint, "endpoint") + ". Reason: "
               + Objects.requireNonNull(cause, "cause"), cause);

@@ -30,10 +30,19 @@ public class NoSuchPropertyException extends CamelExchangeException {
     private final String propertyName;
     private final transient @Nullable Class<?> type;
 
+    /**
+     * @param exchange     the exchange that caused the error
+     * @param propertyName the name of the missing exchange property
+     */
     public NoSuchPropertyException(Exchange exchange, String propertyName) {
         this(exchange, propertyName, null);
     }
 
+    /**
+     * @param exchange     the exchange that caused the error
+     * @param propertyName the name of the missing exchange property
+     * @param type         the expected property type, or {@code null} if no specific type is required
+     */
     public NoSuchPropertyException(Exchange exchange, String propertyName, @Nullable Class<?> type) {
         super("No '" + Objects.requireNonNull(propertyName, "propertyName") + "' exchange property available"
               + (type != null ? " of type: " + type.getName() : "")

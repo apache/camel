@@ -28,12 +28,21 @@ public class NoTypeConversionAvailableException extends CamelException {
     private final transient @Nullable Object value;
     private final transient Class<?> type;
 
+    /**
+     * @param value the value for which no type converter was found
+     * @param type  the expected target type
+     */
     public NoTypeConversionAvailableException(@Nullable Object value, Class<?> type) {
         super(createMessage(value, Objects.requireNonNull(type, "type")));
         this.value = value;
         this.type = type;
     }
 
+    /**
+     * @param value the value for which no type converter was found
+     * @param type  the expected target type
+     * @param cause the cause of the failure
+     */
     public NoTypeConversionAvailableException(@Nullable Object value, Class<?> type, Throwable cause) {
         super(createMessage(value, Objects.requireNonNull(type, "type"), Objects.requireNonNull(cause, "cause")), cause);
         this.value = value;

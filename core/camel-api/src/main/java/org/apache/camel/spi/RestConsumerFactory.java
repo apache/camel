@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Allows SPI to plugin a {@link RestConsumerFactory} that creates the Camel {@link Consumer} responsible for handling
  * incoming HTTP requests from clients that request to access REST services which has been created using the
- * <a href="http://camel.apache.org/rest-dsl">rest-dsl</a>.
+ * <a href="https://camel.apache.org/rest-dsl">rest-dsl</a>.
  *
  * @see RestApiConsumerFactory
  * @see RestOpenApiConsumerFactory
@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
 public interface RestConsumerFactory {
 
     /**
-     * Creates a new REST <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>, which
+     * Creates a new REST <a href="https://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>, which
      * consumes messages from the endpoint using the given processor
      *
      * @param  camelContext  the camel context

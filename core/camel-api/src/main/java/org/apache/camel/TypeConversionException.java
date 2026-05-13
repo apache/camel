@@ -28,6 +28,11 @@ public class TypeConversionException extends RuntimeCamelException {
     private final transient @Nullable Object value;
     private final transient Class<?> type;
 
+    /**
+     * @param value the value that could not be converted
+     * @param type  the expected target type
+     * @param cause the cause of the failure
+     */
     public TypeConversionException(@Nullable Object value, Class<?> type, Throwable cause) {
         super(createMessage(value, Objects.requireNonNull(type, "type"), Objects.requireNonNull(cause, "cause")), cause);
         this.value = value;

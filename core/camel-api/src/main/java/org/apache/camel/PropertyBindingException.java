@@ -33,6 +33,11 @@ public class PropertyBindingException extends RuntimeCamelException {
     private final @Nullable String optionPrefix;
     private final @Nullable String optionKey;
 
+    /**
+     * @param target       the target bean on which property binding failed
+     * @param propertyName the name of the property that could not be bound, or {@code null}
+     * @param value        the value that could not be bound, or {@code null}
+     */
     public PropertyBindingException(Object target, @Nullable String propertyName, @Nullable Object value) {
         this.target = Objects.requireNonNull(target, "target");
         this.propertyName = propertyName;
@@ -41,6 +46,12 @@ public class PropertyBindingException extends RuntimeCamelException {
         this.optionKey = null;
     }
 
+    /**
+     * @param target       the target bean on which property binding failed
+     * @param propertyName the name of the property that could not be bound, or {@code null}
+     * @param value        the value that could not be bound, or {@code null}
+     * @param e            the cause of the failure
+     */
     public PropertyBindingException(Object target, @Nullable String propertyName, @Nullable Object value, Throwable e) {
         initCause(Objects.requireNonNull(e, "e"));
         this.target = Objects.requireNonNull(target, "target");
@@ -50,6 +61,10 @@ public class PropertyBindingException extends RuntimeCamelException {
         this.optionKey = null;
     }
 
+    /**
+     * @param target the target bean on which property binding failed
+     * @param e      the cause of the failure
+     */
     public PropertyBindingException(Object target, Throwable e) {
         initCause(Objects.requireNonNull(e, "e"));
         this.target = Objects.requireNonNull(target, "target");
@@ -59,6 +74,14 @@ public class PropertyBindingException extends RuntimeCamelException {
         this.optionKey = null;
     }
 
+    /**
+     * @param target       the target bean on which property binding failed
+     * @param propertyName the name of the property that could not be bound, or {@code null}
+     * @param value        the value that could not be bound, or {@code null}
+     * @param optionPrefix the option prefix used when resolving the property, or {@code null}
+     * @param optionKey    the option key used when resolving the property, or {@code null}
+     * @param e            the cause of the failure
+     */
     public PropertyBindingException(Object target, @Nullable String propertyName, @Nullable Object value,
                                     @Nullable String optionPrefix, @Nullable String optionKey, Throwable e) {
         initCause(Objects.requireNonNull(e, "e"));

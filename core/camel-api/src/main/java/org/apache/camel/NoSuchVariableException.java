@@ -30,6 +30,10 @@ public class NoSuchVariableException extends CamelExchangeException {
     private final String variableName;
     private final transient @Nullable Class<?> type;
 
+    /**
+     * @param exchange     the exchange that caused the error
+     * @param variableName the name of the missing variable
+     */
     public NoSuchVariableException(Exchange exchange, String variableName) {
         super(String.format(
                 "No '%s' variable available", Objects.requireNonNull(variableName, "variableName")),
@@ -38,6 +42,11 @@ public class NoSuchVariableException extends CamelExchangeException {
         this.type = null;
     }
 
+    /**
+     * @param exchange     the exchange that caused the error
+     * @param variableName the name of the missing variable
+     * @param type         the expected variable type
+     */
     public NoSuchVariableException(Exchange exchange, String variableName, Class<?> type) {
         super(String.format(
                 "No '%s' variable available of type: %s",

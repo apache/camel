@@ -28,9 +28,9 @@ import org.jspecify.annotations.Nullable;
  * An Exchange is the message container holding the information during the entire routing of a {@link Message} received
  * by a {@link Consumer}.
  * <p/>
- * During processing down the {@link Processor} chain, the {@link Exchange} provides access to the current (not the
- * original) request and response {@link Message} messages. The {@link Exchange} also holds meta-data during its entire
- * lifetime stored as properties accessible using the various {@link #getProperty(String)} methods. The
+ * During processing down the {@link Processor} chain, the {@link Exchange} provides access to the current
+ * {@link Message} via {@link #getMessage()}. The {@link Exchange} also holds meta-data during its entire lifetime
+ * stored as properties accessible using the various {@link #getProperty(String)} methods. The
  * {@link #setProperty(String, Object)} is used to store a property. For example, you can use this to store security,
  * SLA related data or any other information deemed useful throughout processing. If an {@link Exchange} failed during
  * routing the {@link Exception} that caused the failure is stored and accessible via the {@link #getException()}
@@ -39,28 +39,14 @@ import org.jspecify.annotations.Nullable;
  * An Exchange is created when a {@link Consumer} receives a request. A new {@link Message} is created, the request is
  * set as the body of the {@link Message} and depending on the {@link Consumer} other {@link Endpoint} and protocol
  * related information is added as headers on the {@link Message}. Then an Exchange is created and the newly created
- * {@link Message} is set as the in on the Exchange. Therefore, an Exchange starts its life in a {@link Consumer}. The
- * Exchange is then sent down the {@link Route} for processing along a {@link Processor} chain. The {@link Processor} as
- * the name suggests is what processes the {@link Message} in the Exchange and Camel, in addition to providing
- * out-of-the-box a large number of useful processors, it also allows you to create your own. The rule Camel uses is to
- * take the out {@link Message} produced by the previous {@link Processor} and set it as the in for the next
- * {@link Processor}. If the previous {@link Processor} did not produce an out, then the in of the previous
- * {@link Processor} is sent as the next in. At the end of the processing chain, depending on the {@link ExchangePattern
- * Message Exchange Pattern} (or MEP) the last out (or in of no out available) is sent by the {@link Consumer} back to
- * the original caller.
+ * {@link Message} is set on the Exchange. Therefore, an Exchange starts its life in a {@link Consumer}. The Exchange is
+ * then sent down the {@link Route} for processing along a {@link Processor} chain. The {@link Processor} as the name
+ * suggests is what processes the {@link Message} in the Exchange. Camel provides a large number of useful processors
+ * out-of-the-box, and it also allows you to create your own.
  * <p/>
- * Camel, in addition to providing out-of-the-box a large number of useful processors, it also allows you to implement
- * and use your own. When the Exchange is passed to a {@link Processor}, it always contains an in {@link Message} and no
- * out {@link Message}. The {@link Processor} <b>may</b> produce an out, depending on the nature of the
- * {@link Processor}. The in {@link Message} can be accessed using the {@link #getIn()} method. Since the out message is
- * null when entering the {@link Processor}, the {@link #getOut()} method is actually a convenient factory method that
- * will lazily instantiate a {@link org.apache.camel.support.DefaultMessage} which you could populate. As an alternative
- * you could also instantiate your specialized {@link Message} and set it on the exchange using the
- * {@link #setOut(org.apache.camel.Message)} method. Please note that a {@link Message} contains not only the body but
- * also headers and attachments. If you are creating a new {@link Message} the headers and attachments of the in
- * {@link Message} are not automatically copied to the out by Camel, and you'll have to set the headers and attachments
- * you need yourself. If your {@link Processor} is not producing a different {@link Message} but only needs to slightly
- * modify the in, you can simply update the in {@link Message} returned by {@link #getIn()}.
+ * To access or modify the current message, use the {@link #getMessage()} method. Camel uses {@link #getMessage()} to
+ * obtain the current message during routing. If a {@link Processor} modifies the message, those changes are visible to
+ * subsequent processors. The {@link ExchangePattern} determines whether a reply is expected (InOut) or not (InOnly).
  */
 @ConstantProvider("org.apache.camel.ExchangeConstantProvider")
 public interface Exchange extends VariableAware {

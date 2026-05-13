@@ -66,6 +66,8 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.gauge.Gauge;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
@@ -169,11 +171,20 @@ public class CamelMonitor extends CamelCommand {
 
     // Diagram state
     private boolean showDiagram;
+    private boolean diagramTextMode;
     private List<String> diagramLines = Collections.emptyList();
     private int diagramScroll;
+    private int diagramScrollX;
+    private final ScrollbarState diagramVScrollState = new ScrollbarState();
+    private final ScrollbarState diagramHScrollState = new ScrollbarState();
     private String diagramRouteId;
     private ImageData diagramImageData;
+    private ImageData diagramFullImageData;
     private ImageProtocol diagramProtocol;
+    private int diagramCropX = -1;
+    private int diagramCropY = -1;
+    private int diagramCropW = -1;
+    private int diagramCropH = -1;
 
     private volatile long lastRefresh;
 
@@ -210,13 +221,13 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof MouseEvent me) {
-            if (showDiagram && diagramImageData == null && tabsState.selected() == TAB_ROUTES) {
+            if (showDiagram && tabsState.selected() == TAB_ROUTES) {
                 if (me.kind() == MouseEventKind.SCROLL_UP) {
                     diagramScroll = Math.max(0, diagramScroll - 3);
                     return true;
                 }
                 if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-                    diagramScroll = Math.min(Math.max(0, diagramLines.size() - 1), diagramScroll + 3);
+                    diagramScroll += 3;
                     return true;
                 }
             }
@@ -227,6 +238,7 @@ public class CamelMonitor extends CamelCommand {
                 if (showDiagram) {
                     showDiagram = false;
                     diagramImageData = null;
+                    diagramFullImageData = null;
                     return true;
                 }
                 // If in a detail tab, go back to overview first
@@ -278,7 +290,7 @@ public class CamelMonitor extends CamelCommand {
 
             // Navigation (all tabs)
             if (ke.isUp()) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Math.max(0, diagramScroll - 1);
                 } else {
                     navigateUp();
@@ -286,15 +298,15 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isDown()) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
-                    diagramScroll = Math.min(Math.max(0, diagramLines.size() - 1), diagramScroll + 1);
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScroll++;
                 } else {
                     navigateDown();
                 }
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_UP)) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
+                if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Math.max(0, diagramScroll - 20);
                 } else if (tab == TAB_LOG) {
                     logFollowMode = false;
@@ -305,14 +317,39 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
             if (ke.isKey(KeyCode.PAGE_DOWN)) {
-                if (showDiagram && diagramImageData == null && tab == TAB_ROUTES) {
-                    diagramScroll = Math.min(Math.max(0, diagramLines.size() - 1), diagramScroll + 20);
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScroll += 20;
                 } else if (tab == TAB_LOG) {
                     for (int i = 0; i < 20; i++) {
                         logTableState.selectNext(filteredLogEntries.size());
                     }
                 }
                 return true;
+            }
+            if (ke.isLeft()) {
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScrollX = Math.max(0, diagramScrollX - 1);
+                    return true;
+                }
+            }
+            if (ke.isRight()) {
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScrollX++;
+                    return true;
+                }
+            }
+            if (ke.isKey(KeyCode.HOME)) {
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScroll = 0;
+                    diagramScrollX = 0;
+                    return true;
+                }
+            }
+            if (ke.isKey(KeyCode.END)) {
+                if (showDiagram && tab == TAB_ROUTES) {
+                    diagramScroll = Integer.MAX_VALUE;
+                    return true;
+                }
             }
 
             // Enter to drill into selected integration
@@ -330,11 +367,24 @@ public class CamelMonitor extends CamelCommand {
                 routeSort = ROUTE_SORT_COLUMNS[routeSortIndex];
                 return true;
             }
-            if (tab == TAB_ROUTES && ke.isCharIgnoreCase('d')) {
+            if (tab == TAB_ROUTES && ke.isChar('d')) {
                 if (showDiagram) {
                     showDiagram = false;
                     diagramImageData = null;
+                    diagramFullImageData = null;
                 } else {
+                    diagramTextMode = false;
+                    loadDiagramForSelectedRoute();
+                }
+                return true;
+            }
+            if (tab == TAB_ROUTES && ke.isChar('D')) {
+                if (showDiagram) {
+                    showDiagram = false;
+                    diagramImageData = null;
+                    diagramFullImageData = null;
+                } else {
+                    diagramTextMode = true;
                     loadDiagramForSelectedRoute();
                 }
                 return true;
@@ -412,10 +462,13 @@ public class CamelMonitor extends CamelCommand {
         }
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
-            if (now - lastRefresh >= refreshInterval) {
+            long interval = showDiagram ? Math.max(refreshInterval, 1000) : refreshInterval;
+            if (now - lastRefresh >= interval) {
                 refreshData();
+                return true;
             }
-            return true;
+            // Skip re-render when showing image diagram to prevent flicker
+            return diagramFullImageData == null;
         }
         return false;
     }
@@ -564,7 +617,7 @@ public class CamelMonitor extends CamelCommand {
         List<Rect> chunks;
         if (hasSparkline) {
             chunks = Layout.vertical()
-                    .constraints(Constraint.fill(), Constraint.length(8))
+                    .constraints(Constraint.fill(), Constraint.length(13))
                     .split(area);
         } else {
             chunks = List.of(area);
@@ -582,9 +635,18 @@ public class CamelMonitor extends CamelCommand {
                 rows.add(Row.from(
                         Cell.from(Span.styled(info.pid, dimStyle)),
                         Cell.from(Span.styled(info.name != null ? info.name : "", dimStyle)),
-                        Cell.from(Span.styled(info.platform != null ? info.platform : "", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("\u2716 Stopped", Style.create().fg(Color.RED).dim())),
+                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
+                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle))));
@@ -595,13 +657,31 @@ public class CamelMonitor extends CamelCommand {
                     default -> Style.create().fg(Color.YELLOW);
                 };
 
+                String platformDisplay = info.platform != null ? info.platform : "";
+                if (info.platformVersion != null && !info.platformVersion.isEmpty()) {
+                    platformDisplay += " " + info.platformVersion;
+                }
+
+                Style failStyle = info.failed > 0 ? Style.create().fg(Color.RED).bold() : Style.create();
+
+                String sinceLastDisplay = formatSinceLast(info);
+
                 rows.add(Row.from(
                         Cell.from(info.pid),
                         Cell.from(Span.styled(info.name != null ? info.name : "", Style.create().fg(Color.CYAN))),
-                        Cell.from(info.platform != null ? info.platform : ""),
+                        Cell.from(info.camelVersion != null ? info.camelVersion : ""),
+                        Cell.from(platformDisplay),
+                        Cell.from(info.ready != null ? info.ready : ""),
                         Cell.from(Span.styled(extractState(info.state), statusStyle)),
+                        Cell.from(info.reloaded != null ? info.reloaded : ""),
                         Cell.from(info.ago != null ? info.ago : ""),
+                        Cell.from(info.routeStarted + "/" + info.routeTotal),
                         Cell.from(info.throughput != null ? info.throughput : ""),
+                        Cell.from(String.valueOf(info.exchangesTotal)),
+                        Cell.from(Span.styled(String.valueOf(info.failed), failStyle)),
+                        Cell.from(String.valueOf(info.inflight)),
+                        Cell.from(info.last != null ? info.last : ""),
+                        Cell.from(sinceLastDisplay),
                         Cell.from(formatMemory(info.heapMemUsed, info.heapMemMax)),
                         Cell.from(formatThreads(info.threadCount, info.peakThreadCount))));
             }
@@ -610,10 +690,19 @@ public class CamelMonitor extends CamelCommand {
         Row header = Row.from(
                 Cell.from(Span.styled("PID", Style.create().bold())),
                 Cell.from(Span.styled("NAME", Style.create().bold())),
+                Cell.from(Span.styled("CAMEL", Style.create().bold())),
                 Cell.from(Span.styled("PLATFORM", Style.create().bold())),
+                Cell.from(Span.styled("READY", Style.create().bold())),
                 Cell.from(Span.styled("STATUS", Style.create().bold())),
+                Cell.from(Span.styled("RELOAD", Style.create().bold())),
                 Cell.from(Span.styled("AGE", Style.create().bold())),
-                Cell.from(Span.styled("THRUPUT", Style.create().bold())),
+                Cell.from(Span.styled("ROUTE", Style.create().bold())),
+                Cell.from(Span.styled("MSG/S", Style.create().bold())),
+                Cell.from(Span.styled("TOTAL", Style.create().bold())),
+                Cell.from(Span.styled("FAIL", Style.create().bold())),
+                Cell.from(Span.styled("INFLIGHT", Style.create().bold())),
+                Cell.from(Span.styled("LAST", Style.create().bold())),
+                Cell.from(Span.styled("SINCE-LAST", Style.create().bold())),
                 Cell.from(Span.styled("HEAP", Style.create().bold())),
                 Cell.from(Span.styled("THREADS", Style.create().bold())));
 
@@ -623,12 +712,21 @@ public class CamelMonitor extends CamelCommand {
                 .widths(
                         Constraint.length(8),
                         Constraint.fill(),
+                        Constraint.length(16),
+                        Constraint.length(12),
+                        Constraint.length(5),
                         Constraint.length(10),
-                        Constraint.length(10),
+                        Constraint.length(6),
                         Constraint.length(8),
-                        Constraint.length(10),
-                        Constraint.length(15),
-                        Constraint.length(12))
+                        Constraint.length(7),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(6),
+                        Constraint.length(8),
+                        Constraint.length(6),
+                        Constraint.length(12),
+                        Constraint.length(14),
+                        Constraint.length(10))
                 .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
@@ -636,7 +734,7 @@ public class CamelMonitor extends CamelCommand {
 
         frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
 
-        // Bar chart for throughput
+        // Sparkline for throughput
         if (hasSparkline && chunks.size() > 1) {
             // Merge all throughput histories for overview chart
             LinkedList<Long> merged = new LinkedList<>();
@@ -655,7 +753,6 @@ public class CamelMonitor extends CamelCommand {
             long curTp = merged.isEmpty() ? 0 : merged.get(merged.size() - 1);
             String chartTitle = String.format(" Throughput: %d msg/s (peak: %d) ", curTp, maxTp);
 
-            // Build bar groups — one bar per data point
             List<BarGroup> groups = new ArrayList<>();
             for (Long value : merged) {
                 groups.add(BarGroup.of(Bar.of(value)));
@@ -663,6 +760,7 @@ public class CamelMonitor extends CamelCommand {
 
             BarChart barChart = BarChart.builder()
                     .data(groups)
+                    .max(maxTp > 0 ? maxTp + 2 : 2)
                     .barWidth(1)
                     .barGap(0)
                     .barStyle(Style.create().fg(Color.GREEN))
@@ -679,6 +777,17 @@ public class CamelMonitor extends CamelCommand {
         IntegrationInfo info = findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
+            return;
+        }
+
+        // Fullscreen diagram mode
+        if (showDiagram && (diagramTextMode ? !diagramLines.isEmpty() : diagramFullImageData != null)) {
+            // Split: route info header (4 rows) + diagram (fill)
+            List<Rect> fullChunks = Layout.vertical()
+                    .constraints(Constraint.length(4), Constraint.fill())
+                    .split(area);
+            renderRouteHeader(frame, fullChunks.get(0), info);
+            renderDiagram(frame, fullChunks.get(1));
             return;
         }
 
@@ -830,40 +939,222 @@ public class CamelMonitor extends CamelCommand {
         frame.renderStatefulWidget(table, area, new TableState());
     }
 
+    private void renderRouteHeader(Frame frame, Rect area, IntegrationInfo info) {
+        RouteInfo route = null;
+        if (diagramRouteId != null) {
+            for (RouteInfo r : info.routes) {
+                if (diagramRouteId.equals(r.routeId)) {
+                    route = r;
+                    break;
+                }
+            }
+        }
+
+        List<Row> rows = new ArrayList<>();
+        if (route != null) {
+            Style stateStyle = "Started".equals(route.state)
+                    ? Style.create().fg(Color.GREEN)
+                    : Style.create().fg(Color.RED);
+            Style failStyle = route.failed > 0
+                    ? Style.create().fg(Color.RED).bold()
+                    : Style.create();
+            rows.add(Row.from(
+                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(route.from != null ? route.from : ""),
+                    Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
+                    Cell.from(route.uptime != null ? route.uptime : ""),
+                    Cell.from(route.throughput != null ? route.throughput : ""),
+                    Cell.from(String.valueOf(route.total)),
+                    Cell.from(Span.styled(String.valueOf(route.failed), failStyle)),
+                    Cell.from(route.meanTime + "/" + route.maxTime)));
+        }
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled("ROUTE", Style.create().bold())),
+                        Cell.from(Span.styled("FROM", Style.create().bold())),
+                        Cell.from(Span.styled("STATE", Style.create().bold())),
+                        Cell.from(Span.styled("UPTIME", Style.create().bold())),
+                        Cell.from(Span.styled("THRUPUT", Style.create().bold())),
+                        Cell.from(Span.styled("TOTAL", Style.create().bold())),
+                        Cell.from(Span.styled("FAILED", Style.create().bold())),
+                        Cell.from(Span.styled("MEAN/MAX", Style.create().bold()))))
+                .widths(
+                        Constraint.length(12),
+                        Constraint.fill(),
+                        Constraint.length(10),
+                        Constraint.length(8),
+                        Constraint.length(10),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(12))
+                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(" Route [" + info.name + "] ").build())
+                .build();
+
+        frame.renderStatefulWidget(table, area, new TableState());
+    }
+
     private void renderDiagram(Frame frame, Rect area) {
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(" Diagram [" + diagramRouteId + "] ")
+                .title(diagramTextMode ? "" : " Diagram [" + diagramRouteId + "] ")
                 .build();
 
-        if (diagramImageData != null) {
-            Image img = Image.builder()
-                    .data(diagramImageData)
-                    .protocol(diagramProtocol)
-                    .scaling(ImageScaling.FIT)
-                    .block(block)
-                    .build();
-            frame.renderWidget(img, area);
+        if (diagramFullImageData != null) {
+            renderImageDiagram(frame, area, block);
             return;
         }
 
-        Rect inner = block.inner(area);
-        int visibleLines = inner.height();
-        int maxScroll = Math.max(0, diagramLines.size() - visibleLines);
-        diagramScroll = Math.min(diagramScroll, maxScroll);
+        // Compute max width for horizontal scrolling
+        int maxWidth = 0;
+        for (String line : diagramLines) {
+            maxWidth = Math.max(maxWidth, line.length());
+        }
 
+        Rect inner = block.inner(area);
+        // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
+        int visibleLines = Math.max(1, inner.height() - 1);
+        int visibleCols = Math.max(1, inner.width() - 1);
+
+        int maxVScroll = Math.max(0, diagramLines.size() - visibleLines);
+        int maxHScroll = Math.max(0, maxWidth - visibleCols);
+        diagramScroll = Math.min(diagramScroll, maxVScroll);
+        diagramScrollX = Math.min(diagramScrollX, maxHScroll);
+
+        // Build visible lines with horizontal offset applied
         List<Line> lines = new ArrayList<>();
         int end = Math.min(diagramScroll + visibleLines, diagramLines.size());
         for (int i = diagramScroll; i < end; i++) {
-            lines.add(styleDiagramLine(diagramLines.get(i)));
+            String line = diagramLines.get(i);
+            if (diagramScrollX > 0) {
+                line = diagramScrollX < line.length() ? line.substring(diagramScrollX) : "";
+            }
+            lines.add(styleDiagramLine(line));
         }
 
+        // Layout: outer block wraps everything, inner splits content + scrollbars
+        frame.renderWidget(block, area);
+
+        // Vertical layout inside the block: [content row (fill), horizontal scrollbar (1 row)]
+        List<Rect> vChunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        // Horizontal layout for content row: [text (fill), vertical scrollbar (1 col)]
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(vChunks.get(0));
+
+        // Render diagram text
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(block)
                 .build();
+        frame.renderWidget(paragraph, hChunks.get(0));
 
-        frame.renderWidget(paragraph, area);
+        // Render vertical scrollbar
+        diagramVScrollState.contentLength(diagramLines.size());
+        diagramVScrollState.viewportContentLength(visibleLines);
+        diagramVScrollState.position(diagramScroll);
+        frame.renderStatefulWidget(
+                Scrollbar.builder()
+                        .thumbStyle(Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)))
+                        .build(),
+                hChunks.get(1), diagramVScrollState);
+
+        // Render horizontal scrollbar
+        if (maxWidth > visibleCols) {
+            diagramHScrollState.contentLength(maxWidth);
+            diagramHScrollState.viewportContentLength(visibleCols);
+            diagramHScrollState.position(diagramScrollX);
+            frame.renderStatefulWidget(
+                    Scrollbar.horizontal(),
+                    vChunks.get(1), diagramHScrollState);
+        }
+    }
+
+    private void renderImageDiagram(Frame frame, Rect area, Block block) {
+        int imgW = diagramFullImageData.width();
+        int imgH = diagramFullImageData.height();
+
+        Rect inner = block.inner(area);
+        // Convert cell area to pixel viewport using protocol resolution
+        int pxPerCol = diagramProtocol.resolution().widthMultiplier();
+        int pxPerRow = diagramProtocol.resolution().heightMultiplier();
+        // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
+        int viewCols = Math.max(1, inner.width() - 1);
+        int viewRows = Math.max(1, inner.height() - 1);
+        int viewW = viewCols * pxPerCol;
+        int viewH = viewRows * pxPerRow;
+
+        // Scroll units are in cells; convert to pixels for clamping
+        int maxScrollY = Math.max(0, (imgH - viewH + pxPerRow - 1) / pxPerRow);
+        int maxScrollX = Math.max(0, (imgW - viewW + pxPerCol - 1) / pxPerCol);
+        diagramScroll = Math.min(diagramScroll, maxScrollY);
+        diagramScrollX = Math.min(diagramScrollX, maxScrollX);
+
+        int cropX = Math.min(diagramScrollX * pxPerCol, imgW);
+        int cropY = Math.min(diagramScroll * pxPerRow, imgH);
+        int cropW = Math.min(viewW, imgW - cropX);
+        int cropH = Math.min(viewH, imgH - cropY);
+
+        if (cropW > 0 && cropH > 0) {
+            if (cropX != diagramCropX || cropY != diagramCropY
+                    || cropW != diagramCropW || cropH != diagramCropH) {
+                diagramImageData = diagramFullImageData.crop(cropX, cropY, cropW, cropH);
+                diagramCropX = cropX;
+                diagramCropY = cropY;
+                diagramCropW = cropW;
+                diagramCropH = cropH;
+            }
+        } else if (diagramImageData != diagramFullImageData) {
+            diagramImageData = diagramFullImageData;
+        }
+
+        // Render the outer block border
+        frame.renderWidget(block, area);
+
+        // Vertical layout inside the block: [image+vscrollbar (fill), hscrollbar (1 row)]
+        List<Rect> vChunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        // Horizontal layout: [image (fill), vertical scrollbar (1 col)]
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(vChunks.get(0));
+
+        // Render cropped image
+        Image img = Image.builder()
+                .data(diagramImageData)
+                .protocol(diagramProtocol)
+                .scaling(ImageScaling.FIT)
+                .build();
+        frame.renderWidget(img, hChunks.get(0));
+
+        // Render vertical scrollbar
+        int totalRows = (imgH + pxPerRow - 1) / pxPerRow;
+        diagramVScrollState.contentLength(totalRows);
+        diagramVScrollState.viewportContentLength(viewRows);
+        diagramVScrollState.position(diagramScroll);
+        frame.renderStatefulWidget(
+                Scrollbar.builder()
+                        .thumbStyle(Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)))
+                        .build(),
+                hChunks.get(1), diagramVScrollState);
+
+        // Render horizontal scrollbar
+        if (imgW > viewW) {
+            int totalCols = (imgW + pxPerCol - 1) / pxPerCol;
+            diagramHScrollState.contentLength(totalCols);
+            diagramHScrollState.viewportContentLength(viewCols);
+            diagramHScrollState.position(diagramScrollX);
+            frame.renderStatefulWidget(
+                    Scrollbar.horizontal(),
+                    vChunks.get(1), diagramHScrollState);
+        }
     }
 
     private Line styleDiagramLine(String text) {
@@ -999,61 +1290,53 @@ public class CamelMonitor extends CamelCommand {
 
         diagramRouteId = selectedRoute.routeId;
         diagramScroll = 0;
+        diagramScrollX = 0;
+        diagramCropX = -1;
+        diagramCropY = -1;
+        diagramCropW = -1;
+        diagramCropH = -1;
 
-        TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
-        if (caps.supportsNativeImages()) {
-            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
-            List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
-            int totalHeight = 0;
-            for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
-                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, totalHeight);
-                layoutRoutes.add(lr);
-                totalHeight = lr.maxY;
-            }
-            RouteDiagramRenderer renderer = new RouteDiagramRenderer();
-            RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
-            java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
-            diagramImageData = ImageData.fromBufferedImage(image);
-            diagramProtocol = caps.bestProtocol();
-            diagramLines = Collections.emptyList();
-        } else {
+        if (diagramTextMode) {
             diagramImageData = null;
+            diagramFullImageData = null;
             diagramProtocol = null;
 
-            StringBuilder sb = new StringBuilder();
-            org.apache.camel.dsl.jbang.core.common.Printer capturingPrinter
-                    = new org.apache.camel.dsl.jbang.core.common.Printer() {
-                        @Override
-                        public void println() {
-                            sb.append('\n');
-                        }
-
-                        @Override
-                        public void println(String line) {
-                            sb.append(line).append('\n');
-                        }
-
-                        @Override
-                        public void print(String output) {
-                            sb.append(output);
-                        }
-
-                        @Override
-                        public void printf(String format, Object... args) {
-                            sb.append(String.format(format, args));
-                        }
-                    };
-
             String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true);
-            sb.append(ascii);
 
             List<String> result = new ArrayList<>();
-            for (String line : sb.toString().split("\n", -1)) {
+            for (String line : ascii.split("\n", -1)) {
                 if (!line.isEmpty()) {
                     result.add(line);
                 }
             }
             diagramLines = result;
+        } else {
+            TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
+            if (caps.supportsNativeImages()) {
+                RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+                List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
+                int totalHeight = 0;
+                for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
+                    RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, totalHeight);
+                    layoutRoutes.add(lr);
+                    totalHeight = lr.maxY;
+                }
+                RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+                RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
+                java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
+                ImageData fullImage = ImageData.fromBufferedImage(image);
+                diagramFullImageData = fullImage.resize(fullImage.width() / 2, fullImage.height() / 2);
+                diagramImageData = diagramFullImageData;
+                diagramProtocol = caps.bestProtocol();
+                diagramLines = Collections.emptyList();
+            } else {
+                diagramImageData = null;
+                diagramFullImageData = null;
+                diagramProtocol = null;
+                diagramLines = List.of(
+                        "(Terminal does not support image rendering)",
+                        "(Press Shift+D for text diagram)");
+            }
         }
 
         showDiagram = true;
@@ -1680,15 +1963,18 @@ public class CamelMonitor extends CamelCommand {
                     Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
         } else if (tab == TAB_ROUTES) {
             if (showDiagram) {
+                String closeKey = diagramTextMode ? "D" : "d";
                 footer = Line.from(
-                        Span.styled(" d", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled(" " + closeKey, Style.create().fg(Color.YELLOW).bold()),
                         Span.raw("/"),
                         Span.styled("Esc", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" close  "),
-                        Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("\u2191\u2193\u2190\u2192", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" scroll  "),
                         Span.styled("PgUp/PgDn", Style.create().fg(Color.YELLOW).bold()),
-                        Span.raw(" page"));
+                        Span.raw(" page  "),
+                        Span.styled("Home/End", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" top/bottom"));
             } else {
                 footer = Line.from(
                         Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
@@ -1699,6 +1985,8 @@ public class CamelMonitor extends CamelCommand {
                         Span.raw(" sort  "),
                         Span.styled("d", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" diagram  "),
+                        Span.styled("D", Style.create().fg(Color.YELLOW).bold()),
+                        Span.raw(" text diagram  "),
                         Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
                         Span.raw(" tabs  "),
                         Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
@@ -2082,9 +2370,12 @@ public class CamelMonitor extends CamelCommand {
         info.uptime = extractSince(ph);
         info.ago = TimeUtils.printSince(info.uptime);
         info.state = context.getIntegerOrDefault("phase", 0);
+        info.camelVersion = context.getString("version");
+        info.profile = context.getString("profile");
 
         JsonObject runtime = (JsonObject) root.get("runtime");
         info.platform = runtime != null ? runtime.getString("platform") : null;
+        info.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
 
         Map<String, ?> stats = context.getMap("statistics");
         if (stats != null) {
@@ -2093,6 +2384,26 @@ public class CamelMonitor extends CamelCommand {
                 info.throughput = thp.toString();
             }
             info.exchangesTotal = objToLong(stats.get("exchangesTotal"));
+            info.failed = objToLong(stats.get("exchangesFailed"));
+            info.inflight = objToLong(stats.get("exchangesInflight"));
+            info.last = objToString(stats.get("lastProcessingTime"));
+            info.delta = objToString(stats.get("deltaProcessingTime"));
+            long tsStarted = objToLong(stats.get("lastCreatedExchangeTimestamp"));
+            if (tsStarted > 0) {
+                info.sinceLastStarted = TimeUtils.printSince(tsStarted);
+            }
+            long tsCompleted = objToLong(stats.get("lastCompletedExchangeTimestamp"));
+            if (tsCompleted > 0) {
+                info.sinceLastCompleted = TimeUtils.printSince(tsCompleted);
+            }
+            long tsFailed = objToLong(stats.get("lastFailedExchangeTimestamp"));
+            if (tsFailed > 0) {
+                info.sinceLastFailed = TimeUtils.printSince(tsFailed);
+            }
+            Object reloaded = stats.get("reloaded");
+            if (reloaded != null) {
+                info.reloaded = reloaded.toString();
+            }
         }
 
         JsonObject mem = (JsonObject) root.get("memory");
@@ -2152,11 +2463,15 @@ public class CamelMonitor extends CamelCommand {
 
                 info.routes.add(ri);
             }
+            info.routeTotal = info.routes.size();
+            info.routeStarted = (int) info.routes.stream().filter(r -> "Started".equals(r.state)).count();
         }
 
-        // Parse health checks
+        // Parse health checks and ready status
         JsonObject healthChecks = (JsonObject) root.get("healthChecks");
         if (healthChecks != null) {
+            Boolean rdy = (Boolean) healthChecks.get("ready");
+            info.ready = Boolean.TRUE.equals(rdy) ? "1/1" : "0/1";
             JsonArray checks = (JsonArray) healthChecks.get("checks");
             if (checks != null) {
                 for (Object c : checks) {
@@ -2254,6 +2569,26 @@ public class CamelMonitor extends CamelCommand {
         return (bytes / (1024 * 1024)) + "M";
     }
 
+    private static String formatSinceLast(IntegrationInfo info) {
+        StringBuilder sb = new StringBuilder();
+        if (info.sinceLastStarted != null) {
+            sb.append(info.sinceLastStarted);
+        }
+        if (info.sinceLastCompleted != null) {
+            if (!sb.isEmpty()) {
+                sb.append('/');
+            }
+            sb.append(info.sinceLastCompleted);
+        }
+        if (info.sinceLastFailed != null) {
+            if (!sb.isEmpty()) {
+                sb.append('/');
+            }
+            sb.append(info.sinceLastFailed);
+        }
+        return sb.toString();
+    }
+
     private static String formatThreads(int count, int peak) {
         if (count <= 0) {
             return "";
@@ -2274,12 +2609,26 @@ public class CamelMonitor extends CamelCommand {
     static class IntegrationInfo {
         String pid;
         String name;
+        String camelVersion;
         String platform;
+        String platformVersion;
+        String profile;
+        String ready;
         int state;
         long uptime;
         String ago;
         String throughput;
         long exchangesTotal;
+        long failed;
+        long inflight;
+        String last;
+        String delta;
+        String sinceLastStarted;
+        String sinceLastCompleted;
+        String sinceLastFailed;
+        String reloaded;
+        int routeStarted;
+        int routeTotal;
         long heapMemUsed;
         long heapMemMax;
         int threadCount;

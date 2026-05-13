@@ -26,7 +26,7 @@ import org.apache.camel.StreamCache;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Strategy for using <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
+ * Strategy for using <a href="https://camel.apache.org/stream-caching.html">stream caching</a>.
  */
 public interface StreamCachingStrategy extends StaticService {
 

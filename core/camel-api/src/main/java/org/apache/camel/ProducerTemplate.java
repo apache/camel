@@ -53,8 +53,8 @@ import org.jspecify.annotations.Nullable;
  * the template. <br/>
  * <p/>
  * <b>Important note on usage:</b> See this
- * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a> before
- * using.
+ * <a href="https://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
+ * before using.
  *
  * @see FluentProducerTemplate
  * @see ConsumerTemplate

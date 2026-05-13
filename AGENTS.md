@@ -169,6 +169,109 @@ When writing or modifying `.adoc` documentation:
 - **When reviewing doc PRs**, check that all `xref:` links and anchors resolve correctly, especially
   cross-component references that may span versions.
 
+## Security Model
+
+Camel has a documented threat model that defines who is trusted, where the trust boundaries sit,
+what counts as a framework vulnerability, and what is operator responsibility. The canonical
+document is [`docs/user-manual/modules/ROOT/pages/security-model.adoc`](docs/user-manual/modules/ROOT/pages/security-model.adoc).
+Use it as the reference when triaging security reports, deciding whether a finding warrants a
+CVE, or reviewing a security-sensitive PR.
+
+### Trust assumptions
+
+- **Camel committers and component authors** are trusted to ship secure defaults.
+- **Route authors** (the people writing DSL routes) are **fully trusted**. They execute arbitrary
+  Java in `.bean()` / `.process()`, evaluate arbitrary expressions in `simple` / `groovy` / `jexl`
+  / `mvel` / `xpath`, and configure every component option. Code execution by a route author is
+  by design and is **not** a vulnerability.
+- **Deployment operators** are **fully trusted**. They set configuration, secrets, network
+  exposure and the JVM. Their misconfiguration is not a framework vulnerability unless Camel's
+  default exposed it.
+- **External message senders** (HTTP clients, JMS producers, file droppers, SMTP senders, CoAP
+  peers, etc.) are **untrusted**. This is the primary attacker model.
+
+The fundamental trust boundary is between **the route plus its configuration** (trusted) and
+**the data flowing through the route** (untrusted). The framework must not turn untrusted data
+into code execution, file read, request forgery, or auth bypass on its own.
+
+### What is in scope (concise summary)
+
+Reports that demonstrate untrusted input crossing a trust boundary the framework should have
+held — in a default or reasonably-expected configuration — are in scope. Concrete classes the
+PMC has historically accepted:
+
+- **Unsafe deserialisation** of untrusted input (XStream / Hessian / Jackson polymorphic / raw
+  `ObjectInputStream` in consumers, type converters, aggregation repositories, key stores).
+- **XXE** and remote DTD/stylesheet resolution in XML/XSLT/XPath/XSD parsers.
+- **Expression or template language injection** where the framework itself passes untrusted
+  input to an evaluator (not the route author).
+- **Path traversal** in file/mail/FTP consumers and producers.
+- **SSRF triggered by parser default resolution**.
+- **Camel-header / bean-dispatch abuse** when a consumer maps untrusted input into the Exchange
+  header map without a strict, case-insensitive `HeaderFilterStrategy`.
+- **Auth/authz bypass** in components implementing AAA (Keycloak, Shiro, platform-http auth,
+  Spring Security integration).
+- **Information disclosure** of secrets or Exchange state via logs, events, world-readable files
+  or HTTP responses.
+- **Insecure defaults** — any component shipping with deserialisation, TLS-skip or admin-exposure
+  enabled out of the box.
+- **Injection into back-end queries** built by Camel itself (Cypher, XSLT extension functions,
+  etc.).
+
+### What is out of scope
+
+The following are explicitly **not** framework vulnerabilities and will be closed as such:
+
+- A **route author** executing arbitrary code through `.bean()`, `.process()`, `Runtime.exec()`,
+  or evaluating `simple` / `groovy` on untrusted input. Route code is trusted.
+- A route author building a SQL / Cypher / LDAP / HTTP URI from untrusted input without
+  parameterising. The route is at fault, not the framework.
+- Behaviour that is enabled by **explicit opt-in**: `allowJavaSerializedObject=true`,
+  `transferException=true`, `trustAllCertificates=true`, `hostnameVerificationEnabled=false`, or
+  selecting an `ObjectInputStream`-using data format.
+- **DoS / resource exhaustion** through unthrottled routes. Operators apply `throttle`,
+  `circuitBreaker`, `resilience4j`, JVM limits.
+- A deployer exposing `camel-management`, the developer console, `camel-jolokia` or JMX on a
+  public network.
+- Third-party transitive dependency CVEs that are not reachable through any Camel-exposed code
+  path.
+- Automated scanner reports without a PoC demonstrating an actual trust-boundary breach.
+
+### Operator hardening checklist
+
+When reviewing or recommending a deployment, surface the following:
+
+- Enable the security policy framework: set `camel.main.profile = prod` so the default for
+  `secret` / `insecure:ssl` / `insecure:serialization` / `insecure:dev` is `fail`
+  (see [`proposals/security.adoc`](proposals/security.adoc)).
+- Resolve secrets through one of the supported vaults rather than plain-text properties.
+- Configure TLS through `SSLContextParameters` (the JSSE Utility); never `trustAllCertificates`
+  in production.
+- Strip Camel-internal headers (`Camel*`, `org.apache.camel.*`) from messages arriving from
+  untrusted producers using `removeHeaders("Camel*")` before any dispatching processor.
+- Do not enable Java serialisation on consumers exposed to untrusted networks.
+- Keep `camel-management`, the developer console, `camel-jolokia` and JMX on a trusted network
+  only.
+
+### Committer review checklist (for security-sensitive PRs)
+
+When reviewing a PR that touches a consumer, type converter, aggregation repository, data
+format, parser, or anything that handles `@UriParam` security knobs:
+
+- Does the inbound side apply a `HeaderFilterStrategy` that blocks `Camel*` / `camel*` /
+  `org.apache.camel.*` **case-insensitively**? The header-injection family (CVE-2025-27636 and
+  five follow-ons) recurred precisely because new consumers shipped without it.
+- Does the change call `ObjectInputStream.readObject()` (directly or via Hessian/Castor/XStream)
+  without an `ObjectInputFilter`? Five sequential CVEs (CVE-2024-22369, 23114, 2026-25747, 27172,
+  40858) accepted this exact pattern in aggregation repositories.
+- Does any new `@UriParam` control a security-relevant default? If so, mark it with
+  `secret = true` for secrets or `security = "insecure:ssl"` / `"insecure:serialization"` /
+  `"insecure:dev"` for risky flags (see the `Annotations` subsection further down).
+- Does the change relax a default? New defaults err toward "denied unless opted in". A relaxed
+  default needs an upgrade-guide entry and PMC sign-off.
+- Does an authentication or authorization component enforce what its option names claim — issuer
+  validation, audience checking, signature verification, every advertised sub-path covered?
+
 ## Structure
 
 ```

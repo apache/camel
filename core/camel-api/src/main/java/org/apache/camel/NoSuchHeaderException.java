@@ -30,12 +30,22 @@ public class NoSuchHeaderException extends CamelExchangeException {
     private final String headerName;
     private final transient @Nullable Class<?> type;
 
+    /**
+     * @param message    the detail message
+     * @param exchange   the exchange that caused the error
+     * @param headerName the name of the missing header
+     */
     public NoSuchHeaderException(String message, Exchange exchange, String headerName) {
         super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"));
         this.headerName = Objects.requireNonNull(headerName, "headerName");
         this.type = null;
     }
 
+    /**
+     * @param exchange   the exchange that caused the error
+     * @param headerName the name of the missing header
+     * @param type       the expected header type, or {@code null} if no specific type is required
+     */
     public NoSuchHeaderException(Exchange exchange, String headerName, @Nullable Class<?> type) {
         super("No '" + Objects.requireNonNull(headerName, "headerName") + "' header available"
               + (type != null ? " of type: " + type.getName() : "")

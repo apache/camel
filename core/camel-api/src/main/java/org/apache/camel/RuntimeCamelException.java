@@ -30,14 +30,24 @@ public class RuntimeCamelException extends RuntimeException {
     public RuntimeCamelException() {
     }
 
+    /**
+     * @param message the detail message
+     */
     public RuntimeCamelException(@Nullable String message) {
         super(message);
     }
 
+    /**
+     * @param message the detail message
+     * @param cause   the cause of the failure
+     */
     public RuntimeCamelException(@Nullable String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * @param cause the cause of the failure
+     */
     public RuntimeCamelException(@Nullable Throwable cause) {
         super(cause);
     }
