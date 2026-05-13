@@ -298,7 +298,7 @@ they are, the change is announced through the normal upgrade-guide channel.
 * *Many components inherit the security posture of their underlying client.*
   `camel-jms` inherits JMS-broker client behaviour; `camel-kafka` inherits
   Kafka-client behaviour; cloud SDK components inherit the SDK's TLS and auth
-  defaults. A report against Camel must show the framework, not the underlying
+  defaults. A report against Camel must show the Camel framework, not the underlying
   client, is the cause.
 
 == Deployment hardening
