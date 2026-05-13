@@ -104,7 +104,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri("in?readLock=markerFile&initialDelay=0&delay=10")).onCompletion()
+                from(fileUri("in?readLock=markerFile&initialDelay=0&delay=2000")).onCompletion()
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 numberOfFilesProcessed.addAndGet(1);

@@ -58,7 +58,7 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
                         .to("mock:input")
                         .aggregate(header("id"), new BodyInAggregatingStrategy())
                         .aggregationRepository(new MemoryAggregationRepository())
-                        .completionSize(2).completionTimeout(100).completeAllOnStop().completionTimeoutCheckerInterval(10)
+                        .completionSize(2).completionTimeout(5000).completeAllOnStop().completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
             }
         };

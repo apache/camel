@@ -56,7 +56,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?fileName=d1.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10"))
+                        "d1?fileName=d1.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=2000"))
                         .to("mock:result");
             }
         });
@@ -78,7 +78,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2"))
+                        "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=2000&recursive=true&minDepth=2&maxDepth=2"))
                         .to("mock:result");
             }
         });
@@ -104,7 +104,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=4"))
+                        "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=2000&recursive=true&minDepth=2&maxDepth=4"))
                         .to("mock:result");
             }
         });
@@ -129,7 +129,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?antInclude=**/*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=4"))
+                        "d1?antInclude=**/*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=2000&recursive=true&minDepth=2&maxDepth=4"))
                         .to("mock:result");
             }
         });
@@ -154,7 +154,7 @@ public class MarkerFileExclusiveReadLockStrategyRecursiveCleanupTest extends Con
             @Override
             public void configure() {
                 from(fileUri(
-                        "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=10&recursive=true"))
+                        "d1?include=.*.dat&readLock=markerFile&readLockDeleteOrphanLockFiles=true&initialDelay=0&delay=2000&recursive=true"))
                         .to("mock:result");
             }
         });
