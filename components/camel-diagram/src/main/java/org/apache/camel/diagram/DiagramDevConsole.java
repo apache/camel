@@ -35,7 +35,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
     public static final String FILTER = "filter";
 
     /**
-     * Theme to use: dark or light
+     * Theme to use: dark, light, transparent, ascii, or unicode
      */
     public static final String THEME = "theme";
 
@@ -84,18 +84,25 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
-            BufferedImage image = dumper.dumpRoutesAsImage(filter, RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
-                    metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
-            String base64 = dumper.imageToBase64(image);
-            // For HTML embedding:
-            String html = String.format(
-                    "  <body>\n    <img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\">\n  </body>\n",
-                    base64);
-            if (refresh) {
-                html = "<head><meta http-equiv=\"refresh\" content=\"5\"></head>\n" + html;
+            if (isTextTheme(theme)) {
+                String text = dumper.dumpRoutesAsAsciiArt(filter,
+                        RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
+                        nodeWidth, isUnicodeTheme(theme));
+                sj.add(text);
+            } else {
+                BufferedImage image = dumper.dumpRoutesAsImage(filter,
+                        RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
+                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
+                String base64 = dumper.imageToBase64(image);
+                String html = String.format(
+                        "  <body>\n    <img src=\"data:image/png;base64,%s\" alt=\"Route Diagram\">\n  </body>\n",
+                        base64);
+                if (refresh) {
+                    html = "<head><meta http-equiv=\"refresh\" content=\"5\"></head>\n" + html;
+                }
+                html = "<html>\n" + html + "</html>\n";
+                sj.add(html);
             }
-            html = "<html>\n" + html + "</html>\n";
-            sj.add(html);
         } catch (Exception e) {
             // ignore
         }
@@ -117,15 +124,31 @@ public class DiagramDevConsole extends AbstractDevConsole {
         JsonObject root = new JsonObject();
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
-            BufferedImage image = dumper.dumpRoutesAsImage(filter, RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
-                    metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
-            String base64 = dumper.imageToBase64(image);
-            root.put("image", base64);
+            if (isTextTheme(theme)) {
+                String text = dumper.dumpRoutesAsAsciiArt(filter,
+                        RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
+                        nodeWidth, isUnicodeTheme(theme));
+                root.put("text", text);
+            } else {
+                BufferedImage image = dumper.dumpRoutesAsImage(filter,
+                        RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
+                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
+                String base64 = dumper.imageToBase64(image);
+                root.put("image", base64);
+            }
         } catch (Exception e) {
             // ignore
         }
 
         return root;
+    }
+
+    private static boolean isTextTheme(String theme) {
+        return "ascii".equalsIgnoreCase(theme) || "unicode".equalsIgnoreCase(theme);
+    }
+
+    private static boolean isUnicodeTheme(String theme) {
+        return "unicode".equalsIgnoreCase(theme);
     }
 
 }
