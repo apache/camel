@@ -70,7 +70,11 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
 
         // start some exchanges.
         template.asyncSendBody("direct:start", latch1);
-        Thread.sleep(250);
+        // wait for first exchange to be inflight before sending the second
+        await().atMost(5, TimeUnit.SECONDS).until(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+            return num != null && num == 1;
+        });
         template.asyncSendBody("direct:start", latch2);
 
         await().atMost(2, TimeUnit.SECONDS).until(() -> {
@@ -91,8 +95,11 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
         // complete first exchange
         latch1.countDown();
 
-        // Lets wait for the first exchange to complete.
-        Thread.sleep(200);
+        // wait for the first exchange to complete (inflight drops to 1)
+        await().atMost(5, TimeUnit.SECONDS).until(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+            return num != null && num == 1;
+        });
         Long ts2 = (Long) mbeanServer.getAttribute(on, "OldestInflightDuration");
         assertNotNull(ts2);
         String id2 = (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId");

@@ -16,12 +16,16 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.resequencer.MessageRejectedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+
+import static org.awaitility.Awaitility.await;
 
 @DisabledOnOs(value = { OS.LINUX },
               architectures = { "s390x" },
@@ -76,7 +80,9 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "seqno", 4);
         template.sendBodyAndHeader("direct:start", "A", "seqno", 1);
 
-        Thread.sleep(100);
+        // wait for at least one message to be delivered before sending the rest
+        await().atMost(5, TimeUnit.SECONDS)
+                .until(() -> getMockEndpoint("mock:result").getReceivedCounter() >= 1);
 
         template.sendBodyAndHeader("direct:start", "B", "seqno", 2);
         template.sendBodyAndHeader("direct:start", "C", "seqno", 3);
