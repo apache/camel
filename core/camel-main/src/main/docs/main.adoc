@@ -456,7 +456,7 @@ The camel.vault.gcp supports 7 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.vault.gcp.projectId* | The GCP Project ID |  | String
-| *camel.vault.gcp.refreshEnabled* | Whether to automatically reload Camel upon secrets being updated in AWS. | false | boolean
+| *camel.vault.gcp.refreshEnabled* | Whether to automatically reload Camel upon secrets being updated in GCP. | false | boolean
 | *camel.vault.gcp.refreshPeriod* | The period (millis) between checking Google for updated secrets. | 30000 | long
 | *camel.vault.gcp.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.gcp.serviceAccountKey* | The Service Account Key location |  | String
