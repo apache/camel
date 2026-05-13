@@ -806,7 +806,8 @@ public class BedrockProducer extends DefaultProducer {
                     = software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest.builder();
 
             // Guardrail identifier from header or configuration
-            String guardrailIdentifier = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG, String.class);
+            String guardrailIdentifier
+                    = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_IDENTIFIER, String.class);
             if (ObjectHelper.isEmpty(guardrailIdentifier)) {
                 guardrailIdentifier = getConfiguration().getGuardrailIdentifier();
             }
