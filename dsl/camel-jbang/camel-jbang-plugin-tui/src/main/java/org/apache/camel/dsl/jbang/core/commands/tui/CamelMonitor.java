@@ -1946,103 +1946,76 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderFooter(Frame frame, Rect area) {
+        List<Span> spans = new ArrayList<>();
+        int tab = tabsState.selected();
+
+        if (tab == TAB_OVERVIEW) {
+            hint(spans, "q", "quit");
+            hint(spans, "r", "refresh");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "Enter", "details");
+            hint(spans, "1-6", "tabs");
+            hintRefresh(spans);
+        } else if (tab == TAB_ROUTES && showDiagram) {
+            String closeKey = diagramTextMode ? "D" : "d";
+            hint(spans, closeKey + "/Esc", "close");
+            hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
+            hint(spans, "PgUp/PgDn", "page");
+            hintLast(spans, "Home/End", "top/bottom");
+        } else if (tab == TAB_ROUTES) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "s", "sort");
+            hint(spans, "d", "diagram");
+            hint(spans, "D", "text diagram");
+            hint(spans, "1-6", "tabs");
+            hintRefresh(spans);
+        } else if (tab == TAB_HEALTH) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "d", "toggle DOWN");
+            hint(spans, "1-6", "tabs");
+            hintRefresh(spans);
+        } else if (tab == TAB_LOG) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "scroll");
+            hint(spans, "PgUp/PgDn", "page");
+            hint(spans, "t/d/i/w/e", "levels");
+            hint(spans, "f", "follow");
+            hintLast(spans, "Home/End", "top/end");
+        } else if (tab == TAB_TRACE) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
+            hint(spans, "b", "body" + (showTraceBody ? " [on]" : " [off]"));
+            hintLast(spans, "f", "follow" + (traceFollowMode ? " [on]" : " [off]"));
+        } else {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "1-6", "tabs");
+            hintRefresh(spans);
+        }
+
+        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
+    }
+
+    private static final Style HINT_KEY_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
+
+    private static void hint(List<Span> spans, String key, String label) {
+        spans.add(Span.styled(" " + key, HINT_KEY_STYLE));
+        spans.add(Span.raw(" " + label + "  "));
+    }
+
+    private static void hintLast(List<Span> spans, String key, String label) {
+        spans.add(Span.styled(" " + key, HINT_KEY_STYLE));
+        spans.add(Span.raw(" " + label));
+    }
+
+    private void hintRefresh(List<Span> spans) {
         String refreshLabel = refreshInterval >= 1000
                 ? (refreshInterval / 1000) + "s"
                 : refreshInterval + "ms";
-        Line footer;
-        int tab = tabsState.selected();
-        if (tab == TAB_OVERVIEW) {
-            footer = Line.from(
-                    Span.styled(" q", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" quit  "),
-                    Span.styled("r", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" refresh  "),
-                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("Enter", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" details  "),
-                    Span.styled("1-6", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
-        } else if (tab == TAB_ROUTES) {
-            if (showDiagram) {
-                String closeKey = diagramTextMode ? "D" : "d";
-                footer = Line.from(
-                        Span.styled(" " + closeKey, Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw("/"),
-                        Span.styled("Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" close  "),
-                        Span.styled("\u2191\u2193\u2190\u2192", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" scroll  "),
-                        Span.styled("PgUp/PgDn", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" page  "),
-                        Span.styled("Home/End", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" top/bottom"));
-            } else {
-                footer = Line.from(
-                        Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" back  "),
-                        Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" navigate  "),
-                        Span.styled("s", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" sort  "),
-                        Span.styled("d", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" diagram  "),
-                        Span.styled("D", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" text diagram  "),
-                        Span.styled("1-6", Style.EMPTY.fg(Color.YELLOW).bold()),
-                        Span.raw(" tabs  "),
-                        Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
-            }
-        } else if (tab == TAB_HEALTH) {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("d", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" toggle DOWN  "),
-                    Span.styled("1-6", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
-        } else if (tab == TAB_LOG) {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" scroll  "),
-                    Span.styled("PgUp/PgDn", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" page  "),
-                    Span.styled("t/d/i/w/e", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" levels  "),
-                    Span.styled("f", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" follow  "),
-                    Span.styled("Home/End", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" top/end"));
-        } else if (tab == TAB_TRACE) {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("h", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" headers" + (showTraceHeaders ? " [on]" : " [off]") + "  "),
-                    Span.styled("b", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" body" + (showTraceBody ? " [on]" : " [off]") + "  "),
-                    Span.styled("f", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" follow" + (traceFollowMode ? " [on]" : " [off]")));
-        } else {
-            footer = Line.from(
-                    Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" navigate  "),
-                    Span.styled("1-6", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
-        }
-
-        frame.renderWidget(Paragraph.from(footer), area);
+        spans.add(Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
     }
 
     // ---- Data Loading ----
