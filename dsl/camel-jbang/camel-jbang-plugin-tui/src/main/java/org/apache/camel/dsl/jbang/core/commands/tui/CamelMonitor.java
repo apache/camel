@@ -566,11 +566,11 @@ public class CamelMonitor extends CamelCommand {
         long activeCount = infos.stream().filter(i -> !i.vanishing).count();
 
         Line titleLine = Line.from(
-                Span.styled(" Camel Monitor", Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)).bold()),
+                Span.styled(" Camel Monitor", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()),
                 Span.raw("  "),
-                Span.styled(camelVersion != null ? "v" + camelVersion : "", Style.create().fg(Color.GREEN)),
+                Span.styled(camelVersion != null ? "v" + camelVersion : "", Style.EMPTY.fg(Color.GREEN)),
                 Span.raw("  "),
-                Span.styled(activeCount + " integration(s)", Style.create().fg(Color.CYAN)));
+                Span.styled(activeCount + " integration(s)", Style.EMPTY.fg(Color.CYAN)));
 
         Block headerBlock = Block.builder()
                 .borderType(BorderType.ROUNDED)
@@ -592,8 +592,8 @@ public class CamelMonitor extends CamelCommand {
                         " 4 Endpoints" + sel + " ",
                         " 5 Log" + sel + " ",
                         " 6 Trace" + sel + " ")
-                .highlightStyle(Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
-                .divider(Span.styled(" | ", Style.create().dim()))
+                .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
+                .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
 
         frame.renderStatefulWidget(tabs, area, tabsState);
@@ -633,7 +633,7 @@ public class CamelMonitor extends CamelCommand {
                 long elapsed = System.currentTimeMillis() - info.vanishStart;
                 float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
                 int gray = (int) (100 * fade);
-                Style dimStyle = Style.create().fg(Color.indexed(232 + Math.min(gray / 4, 23)));
+                Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
 
                 rows.add(Row.from(
                         Cell.from(Span.styled(info.pid, dimStyle)),
@@ -641,7 +641,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("\u2716 Stopped", Style.create().fg(Color.RED).dim())),
+                        Cell.from(Span.styled("\u2716 Stopped", Style.EMPTY.fg(Color.RED).dim())),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
@@ -655,9 +655,9 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled("", dimStyle))));
             } else {
                 Style statusStyle = switch (extractState(info.state)) {
-                    case "Started" -> Style.create().fg(Color.GREEN);
-                    case "Stopped" -> Style.create().fg(Color.RED);
-                    default -> Style.create().fg(Color.YELLOW);
+                    case "Started" -> Style.EMPTY.fg(Color.GREEN);
+                    case "Stopped" -> Style.EMPTY.fg(Color.RED);
+                    default -> Style.EMPTY.fg(Color.YELLOW);
                 };
 
                 String platformDisplay = info.platform != null ? info.platform : "";
@@ -665,13 +665,13 @@ public class CamelMonitor extends CamelCommand {
                     platformDisplay += " " + info.platformVersion;
                 }
 
-                Style failStyle = info.failed > 0 ? Style.create().fg(Color.RED).bold() : Style.create();
+                Style failStyle = info.failed > 0 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY;
 
                 String sinceLastDisplay = formatSinceLast(info);
 
                 rows.add(Row.from(
                         Cell.from(info.pid),
-                        Cell.from(Span.styled(info.name != null ? info.name : "", Style.create().fg(Color.CYAN))),
+                        Cell.from(Span.styled(info.name != null ? info.name : "", Style.EMPTY.fg(Color.CYAN))),
                         Cell.from(info.camelVersion != null ? info.camelVersion : ""),
                         Cell.from(platformDisplay),
                         Cell.from(info.ready != null ? info.ready : ""),
@@ -691,23 +691,23 @@ public class CamelMonitor extends CamelCommand {
         }
 
         Row header = Row.from(
-                Cell.from(Span.styled("PID", Style.create().bold())),
-                Cell.from(Span.styled("NAME", Style.create().bold())),
-                Cell.from(Span.styled("CAMEL", Style.create().bold())),
-                Cell.from(Span.styled("PLATFORM", Style.create().bold())),
-                Cell.from(Span.styled("READY", Style.create().bold())),
-                Cell.from(Span.styled("STATUS", Style.create().bold())),
-                Cell.from(Span.styled("RELOAD", Style.create().bold())),
-                Cell.from(Span.styled("AGE", Style.create().bold())),
-                Cell.from(Span.styled("ROUTE", Style.create().bold())),
-                Cell.from(Span.styled("MSG/S", Style.create().bold())),
-                Cell.from(Span.styled("TOTAL", Style.create().bold())),
-                Cell.from(Span.styled("FAIL", Style.create().bold())),
-                Cell.from(Span.styled("INFLIGHT", Style.create().bold())),
-                Cell.from(Span.styled("LAST", Style.create().bold())),
-                Cell.from(Span.styled("SINCE-LAST", Style.create().bold())),
-                Cell.from(Span.styled("HEAP", Style.create().bold())),
-                Cell.from(Span.styled("THREADS", Style.create().bold())));
+                Cell.from(Span.styled("PID", Style.EMPTY.bold())),
+                Cell.from(Span.styled("NAME", Style.EMPTY.bold())),
+                Cell.from(Span.styled("CAMEL", Style.EMPTY.bold())),
+                Cell.from(Span.styled("PLATFORM", Style.EMPTY.bold())),
+                Cell.from(Span.styled("READY", Style.EMPTY.bold())),
+                Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
+                Cell.from(Span.styled("RELOAD", Style.EMPTY.bold())),
+                Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("MSG/S", Style.EMPTY.bold())),
+                Cell.from(Span.styled("TOTAL", Style.EMPTY.bold())),
+                Cell.from(Span.styled("FAIL", Style.EMPTY.bold())),
+                Cell.from(Span.styled("INFLIGHT", Style.EMPTY.bold())),
+                Cell.from(Span.styled("LAST", Style.EMPTY.bold())),
+                Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
+                Cell.from(Span.styled("HEAP", Style.EMPTY.bold())),
+                Cell.from(Span.styled("THREADS", Style.EMPTY.bold())));
 
         Table table = Table.builder()
                 .rows(rows)
@@ -730,7 +730,7 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(12),
                         Constraint.length(14),
                         Constraint.length(10))
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
                 .build();
@@ -766,7 +766,7 @@ public class CamelMonitor extends CamelCommand {
                     .max(maxTp > 0 ? maxTp + 2 : 2)
                     .barWidth(1)
                     .barGap(0)
-                    .barStyle(Style.create().fg(Color.GREEN))
+                    .barStyle(Style.EMPTY.fg(Color.GREEN))
                     .block(Block.builder().borderType(BorderType.ROUNDED).title(chartTitle).build())
                     .build();
 
@@ -807,15 +807,15 @@ public class CamelMonitor extends CamelCommand {
         List<Row> routeRows = new ArrayList<>();
         for (RouteInfo route : sortedRoutes) {
             Style stateStyle = "Started".equals(route.state)
-                    ? Style.create().fg(Color.GREEN)
-                    : Style.create().fg(Color.RED);
+                    ? Style.EMPTY.fg(Color.GREEN)
+                    : Style.EMPTY.fg(Color.RED);
 
             Style failStyle = route.failed > 0
-                    ? Style.create().fg(Color.RED).bold()
-                    : Style.create();
+                    ? Style.EMPTY.fg(Color.RED).bold()
+                    : Style.EMPTY;
 
             routeRows.add(Row.from(
-                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(route.from != null ? route.from : ""),
                     Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                     Cell.from(route.uptime != null ? route.uptime : ""),
@@ -828,11 +828,11 @@ public class CamelMonitor extends CamelCommand {
         Table routeTable = Table.builder()
                 .rows(routeRows)
                 .header(Row.from(
-                        Cell.from(Span.styled("ROUTE", Style.create().bold())),
-                        Cell.from(Span.styled("FROM", Style.create().bold())),
-                        Cell.from(Span.styled("STATE", Style.create().bold())),
-                        Cell.from(Span.styled("UPTIME", Style.create().bold())),
-                        Cell.from(Span.styled("THRUPUT", Style.create().bold())),
+                        Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("FROM", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("STATE", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("UPTIME", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("THRUPUT", Style.EMPTY.bold())),
                         Cell.from(Span.styled(routeSortLabel("TOTAL", "total"), routeSortStyle("total"))),
                         Cell.from(Span.styled(routeSortLabel("FAILED", "failed"), routeSortStyle("failed"))),
                         Cell.from(Span.styled(routeSortLabel("MEAN/MAX", "mean"), routeSortStyle("mean")))))
@@ -845,7 +845,7 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(12))
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Routes [" + info.name + "] sort:" + routeSort + " ").build())
@@ -866,7 +866,7 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 frame.renderWidget(
                         Paragraph.builder()
-                                .text(Text.from(Line.from(Span.styled("No routes", Style.create().dim()))))
+                                .text(Text.from(Line.from(Span.styled("No routes", Style.EMPTY.dim()))))
                                 .block(Block.builder().borderType(BorderType.ROUNDED).title(" Processors ").build())
                                 .build(),
                         chunks.get(1));
@@ -895,22 +895,22 @@ public class CamelMonitor extends CamelCommand {
 
     private Style routeSortStyle(String column) {
         return routeSort.equals(column)
-                ? Style.create().fg(Color.YELLOW).bold()
-                : Style.create().bold();
+                ? Style.EMPTY.fg(Color.YELLOW).bold()
+                : Style.EMPTY.bold();
     }
 
     private void renderProcessors(Frame frame, Rect area, RouteInfo route) {
         List<Row> rows = new ArrayList<>();
         for (ProcessorInfo proc : route.processors) {
             String indent = "  ".repeat(proc.level);
-            Style nameStyle = proc.failed > 0 ? Style.create().fg(Color.RED) : Style.create().fg(Color.CYAN);
+            Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.CYAN);
 
             rows.add(Row.from(
                     Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
                     Cell.from(proc.processor != null ? proc.processor : ""),
                     Cell.from(String.valueOf(proc.total)),
                     Cell.from(proc.failed > 0
-                            ? Span.styled(String.valueOf(proc.failed), Style.create().fg(Color.RED))
+                            ? Span.styled(String.valueOf(proc.failed), Style.EMPTY.fg(Color.RED))
                             : Span.raw("0")),
                     Cell.from(proc.meanTime + "ms"),
                     Cell.from(proc.maxTime + "ms"),
@@ -920,13 +920,13 @@ public class CamelMonitor extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("PROCESSOR", Style.create().bold())),
-                        Cell.from(Span.styled("TYPE", Style.create().bold())),
-                        Cell.from(Span.styled("TOTAL", Style.create().bold())),
-                        Cell.from(Span.styled("FAILED", Style.create().bold())),
-                        Cell.from(Span.styled("MEAN", Style.create().bold())),
-                        Cell.from(Span.styled("MAX", Style.create().bold())),
-                        Cell.from(Span.styled("LAST", Style.create().bold()))))
+                        Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("TYPE", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("TOTAL", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("FAILED", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("MEAN", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("MAX", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("LAST", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.fill(),
                         Constraint.length(15),
@@ -956,13 +956,13 @@ public class CamelMonitor extends CamelCommand {
         List<Row> rows = new ArrayList<>();
         if (route != null) {
             Style stateStyle = "Started".equals(route.state)
-                    ? Style.create().fg(Color.GREEN)
-                    : Style.create().fg(Color.RED);
+                    ? Style.EMPTY.fg(Color.GREEN)
+                    : Style.EMPTY.fg(Color.RED);
             Style failStyle = route.failed > 0
-                    ? Style.create().fg(Color.RED).bold()
-                    : Style.create();
+                    ? Style.EMPTY.fg(Color.RED).bold()
+                    : Style.EMPTY;
             rows.add(Row.from(
-                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(route.from != null ? route.from : ""),
                     Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                     Cell.from(route.uptime != null ? route.uptime : ""),
@@ -975,14 +975,14 @@ public class CamelMonitor extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("ROUTE", Style.create().bold())),
-                        Cell.from(Span.styled("FROM", Style.create().bold())),
-                        Cell.from(Span.styled("STATE", Style.create().bold())),
-                        Cell.from(Span.styled("UPTIME", Style.create().bold())),
-                        Cell.from(Span.styled("THRUPUT", Style.create().bold())),
-                        Cell.from(Span.styled("TOTAL", Style.create().bold())),
-                        Cell.from(Span.styled("FAILED", Style.create().bold())),
-                        Cell.from(Span.styled("MEAN/MAX", Style.create().bold()))))
+                        Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("FROM", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("STATE", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("UPTIME", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("THRUPUT", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("TOTAL", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("FAILED", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("MEAN/MAX", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(12),
                         Constraint.fill(),
@@ -992,7 +992,7 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(8),
                         Constraint.length(8),
                         Constraint.length(12))
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Route [" + info.name + "] ").build())
                 .build();
@@ -1063,7 +1063,7 @@ public class CamelMonitor extends CamelCommand {
         diagramVScrollState.position(diagramScroll);
         frame.renderStatefulWidget(
                 Scrollbar.builder()
-                        .thumbStyle(Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)))
+                        .thumbStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)))
                         .build(),
                 hChunks.get(1), diagramVScrollState);
 
@@ -1144,7 +1144,7 @@ public class CamelMonitor extends CamelCommand {
         diagramVScrollState.position(diagramScroll);
         frame.renderStatefulWidget(
                 Scrollbar.builder()
-                        .thumbStyle(Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)))
+                        .thumbStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)))
                         .build(),
                 hChunks.get(1), diagramVScrollState);
 
@@ -1166,27 +1166,27 @@ public class CamelMonitor extends CamelCommand {
         while (idx < text.length()) {
             int open = text.indexOf('[', idx);
             if (open < 0) {
-                spans.add(Span.styled(text.substring(idx), Style.create().fg(Color.WHITE)));
+                spans.add(Span.styled(text.substring(idx), Style.EMPTY.fg(Color.WHITE)));
                 break;
             }
             int close = text.indexOf(']', open);
             if (close < 0) {
-                spans.add(Span.styled(text.substring(idx), Style.create().fg(Color.WHITE)));
+                spans.add(Span.styled(text.substring(idx), Style.EMPTY.fg(Color.WHITE)));
                 break;
             }
             if (open > idx) {
-                spans.add(Span.styled(text.substring(idx, open), Style.create().fg(Color.GRAY)));
+                spans.add(Span.styled(text.substring(idx, open), Style.EMPTY.fg(Color.GRAY)));
             }
             String tag = text.substring(open + 1, close);
             Color tagColor = getDiagramNodeColor(tag);
-            spans.add(Span.styled("[" + tag + "]", Style.create().fg(tagColor).bold()));
+            spans.add(Span.styled("[" + tag + "]", Style.EMPTY.fg(tagColor).bold()));
 
             int afterTag = close + 1;
             int nextOpen = text.indexOf('[', afterTag);
             int nextNewline = text.length();
             int labelEnd = nextOpen >= 0 ? nextOpen : nextNewline;
             if (afterTag < labelEnd) {
-                spans.add(Span.styled(text.substring(afterTag, labelEnd), Style.create().fg(Color.WHITE)));
+                spans.add(Span.styled(text.substring(afterTag, labelEnd), Style.EMPTY.fg(Color.WHITE)));
             }
             idx = labelEnd;
         }
@@ -1404,13 +1404,13 @@ public class CamelMonitor extends CamelCommand {
             Style stateStyle;
             String icon;
             if ("UP".equals(hc.state)) {
-                stateStyle = Style.create().fg(Color.GREEN);
+                stateStyle = Style.EMPTY.fg(Color.GREEN);
                 icon = "\u2714 ";
             } else if ("DOWN".equals(hc.state)) {
-                stateStyle = Style.create().fg(Color.RED);
+                stateStyle = Style.EMPTY.fg(Color.RED);
                 icon = "\u2716 ";
             } else {
-                stateStyle = Style.create().fg(Color.YELLOW);
+                stateStyle = Style.EMPTY.fg(Color.YELLOW);
                 icon = "\u26A0 ";
             }
 
@@ -1423,8 +1423,8 @@ public class CamelMonitor extends CamelCommand {
             }
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(hc.group != null ? hc.group : "", Style.create().dim())),
-                    Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(Span.styled(hc.group != null ? hc.group : "", Style.EMPTY.dim())),
+                    Cell.from(Span.styled(hc.name != null ? hc.name : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(icon + hc.state, stateStyle)),
                     Cell.from(kind),
                     Cell.from(hc.message != null ? hc.message : "")));
@@ -1434,7 +1434,7 @@ public class CamelMonitor extends CamelCommand {
             rows.add(Row.from(
                     Cell.from(""),
                     Cell.from(Span.styled(showOnlyDown ? "No DOWN checks" : "No health checks registered",
-                            Style.create().dim())),
+                            Style.EMPTY.dim())),
                     Cell.from(""),
                     Cell.from(""),
                     Cell.from("")));
@@ -1447,18 +1447,18 @@ public class CamelMonitor extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("GROUP", Style.create().bold())),
-                        Cell.from(Span.styled("NAME", Style.create().bold())),
-                        Cell.from(Span.styled("STATUS", Style.create().bold())),
-                        Cell.from(Span.styled("KIND", Style.create().bold())),
-                        Cell.from(Span.styled("MESSAGE", Style.create().bold()))))
+                        Cell.from(Span.styled("GROUP", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("NAME", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("KIND", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(12),
                         Constraint.length(25),
                         Constraint.length(12),
                         Constraint.length(6),
                         Constraint.fill())
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
                 .build();
@@ -1468,8 +1468,8 @@ public class CamelMonitor extends CamelCommand {
         // Memory gauge
         if (info.heapMemMax > 0) {
             int pct = (int) (100.0 * info.heapMemUsed / info.heapMemMax);
-            Style gaugeStyle = pct > 80 ? Style.create().fg(Color.RED)
-                    : pct > 60 ? Style.create().fg(Color.YELLOW) : Style.create().fg(Color.GREEN);
+            Style gaugeStyle = pct > 80 ? Style.EMPTY.fg(Color.RED)
+                    : pct > 60 ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY.fg(Color.GREEN);
             Gauge gauge = Gauge.builder()
                     .percent(pct)
                     .label(String.format("Heap: %s / %s (%d%%)", formatBytes(info.heapMemUsed),
@@ -1502,9 +1502,9 @@ public class CamelMonitor extends CamelCommand {
         for (EndpointInfo ep : info.endpoints) {
             String dir = ep.direction != null ? ep.direction : "";
             Style dirStyle = switch (dir) {
-                case "in" -> Style.create().fg(Color.GREEN);
-                case "out" -> Style.create().fg(Color.BLUE);
-                default -> Style.create().fg(Color.YELLOW);
+                case "in" -> Style.EMPTY.fg(Color.GREEN);
+                case "out" -> Style.EMPTY.fg(Color.BLUE);
+                default -> Style.EMPTY.fg(Color.YELLOW);
             };
             String arrow = switch (dir) {
                 case "in" -> "\u2192 ";
@@ -1513,7 +1513,7 @@ public class CamelMonitor extends CamelCommand {
             };
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(arrow + dir, dirStyle)),
                     Cell.from(ep.uri != null ? ep.uri : ""),
                     Cell.from(ep.routeId != null ? ep.routeId : "")));
@@ -1522,7 +1522,7 @@ public class CamelMonitor extends CamelCommand {
         if (rows.isEmpty()) {
             rows.add(Row.from(
                     Cell.from(""),
-                    Cell.from(Span.styled("No endpoints", Style.create().dim())),
+                    Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())),
                     Cell.from(""),
                     Cell.from("")));
         }
@@ -1530,16 +1530,16 @@ public class CamelMonitor extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("COMPONENT", Style.create().bold())),
-                        Cell.from(Span.styled("DIR", Style.create().bold())),
-                        Cell.from(Span.styled("URI", Style.create().bold())),
-                        Cell.from(Span.styled("ROUTE", Style.create().bold()))))
+                        Cell.from(Span.styled("COMPONENT", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("DIR", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("URI", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("ROUTE", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(15),
                         Constraint.length(8),
                         Constraint.fill(),
                         Constraint.length(20))
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Endpoints [" + info.name + "] ").build())
@@ -1573,16 +1573,16 @@ public class CamelMonitor extends CamelCommand {
         List<Row> rows = new ArrayList<>();
         for (LogEntry entry : filteredLogEntries) {
             Style levelStyle = switch (entry.level) {
-                case "ERROR", "FATAL" -> Style.create().fg(Color.RED);
-                case "WARN" -> Style.create().fg(Color.YELLOW);
-                case "DEBUG", "TRACE" -> Style.create().dim();
-                default -> Style.create();
+                case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
+                case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
+                case "DEBUG", "TRACE" -> Style.EMPTY.dim();
+                default -> Style.EMPTY;
             };
 
             rows.add(Row.from(
-                    Cell.from(Span.styled(entry.time, Style.create().dim())),
+                    Cell.from(Span.styled(entry.time, Style.EMPTY.dim())),
                     Cell.from(Span.styled(entry.level, levelStyle)),
-                    Cell.from(Span.styled(entry.logger != null ? entry.logger : "", Style.create().fg(Color.CYAN))),
+                    Cell.from(Span.styled(entry.logger != null ? entry.logger : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(Span.styled(entry.message, levelStyle))));
         }
 
@@ -1590,16 +1590,16 @@ public class CamelMonitor extends CamelCommand {
         Table logTable = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("TIME", Style.create().bold())),
-                        Cell.from(Span.styled("LEVEL", Style.create().bold())),
-                        Cell.from(Span.styled("LOGGER", Style.create().bold())),
-                        Cell.from(Span.styled("MESSAGE", Style.create().bold()))))
+                        Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("LEVEL", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("LOGGER", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(12),
                         Constraint.length(6),
                         Constraint.length(20),
                         Constraint.fill())
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Log [" + info.name + "] " + levelTitle).build())
@@ -1617,7 +1617,7 @@ public class CamelMonitor extends CamelCommand {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
-                                    Span.styled(" Select a log entry", Style.create().dim()))))
+                                    Span.styled(" Select a log entry", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED)
                                     .title(" Detail ").build())
                             .build(),
@@ -1638,10 +1638,10 @@ public class CamelMonitor extends CamelCommand {
 
     private Style colorStyleForLevel(String level) {
         return switch (level) {
-            case "ERROR", "FATAL" -> Style.create().fg(Color.RED);
-            case "WARN" -> Style.create().fg(Color.YELLOW);
-            case "DEBUG", "TRACE" -> Style.create().dim();
-            default -> Style.create();
+            case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
+            case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
+            case "DEBUG", "TRACE" -> Style.EMPTY.dim();
+            default -> Style.EMPTY;
         };
     }
 
@@ -1778,10 +1778,10 @@ public class CamelMonitor extends CamelCommand {
         for (TraceEntry entry : current) {
             String status = entry.status != null ? entry.status : "";
             Style statusStyle = switch (status) {
-                case "Done" -> Style.create().fg(Color.GREEN);
-                case "Failed" -> Style.create().fg(Color.RED);
-                case "Processing" -> Style.create().fg(Color.YELLOW);
-                default -> Style.create().fg(Color.WHITE);
+                case "Done" -> Style.EMPTY.fg(Color.GREEN);
+                case "Failed" -> Style.EMPTY.fg(Color.RED);
+                case "Processing" -> Style.EMPTY.fg(Color.YELLOW);
+                default -> Style.EMPTY.fg(Color.WHITE);
             };
 
             String bodyPreview = entry.bodyPreview != null ? truncate(entry.bodyPreview, 40) : "";
@@ -1791,7 +1791,7 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(entry.pid != null ? entry.pid : ""),
                     Cell.from(Span.styled(
                             entry.routeId != null ? truncate(entry.routeId, 15) : "",
-                            Style.create().fg(Color.CYAN))),
+                            Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(entry.nodeId != null ? truncate(entry.nodeId, 15) : ""),
                     Cell.from(Span.styled(status, statusStyle)),
                     Cell.from(entry.elapsed + "ms"),
@@ -1799,13 +1799,13 @@ public class CamelMonitor extends CamelCommand {
         }
 
         Row header = Row.from(
-                Cell.from(Span.styled("TIME", Style.create().bold())),
-                Cell.from(Span.styled("PID", Style.create().bold())),
-                Cell.from(Span.styled("ROUTE", Style.create().bold())),
-                Cell.from(Span.styled("NODE", Style.create().bold())),
-                Cell.from(Span.styled("STATUS", Style.create().bold())),
-                Cell.from(Span.styled("ELAPSED", Style.create().bold())),
-                Cell.from(Span.styled("BODY", Style.create().bold())));
+                Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
+                Cell.from(Span.styled("PID", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("NODE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("STATUS", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())),
+                Cell.from(Span.styled("BODY", Style.EMPTY.bold())));
 
         String traceTitle = String.format(" Traces [%d] %s ",
                 current.size(),
@@ -1822,7 +1822,7 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(12),
                         Constraint.length(10),
                         Constraint.fill())
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(traceTitle).build())
                 .build();
@@ -1841,7 +1841,7 @@ public class CamelMonitor extends CamelCommand {
                     Paragraph.builder()
                             .text(Text.from(Line.from(
                                     Span.styled(" Select a trace entry to view details",
-                                            Style.create().dim()))))
+                                            Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED)
                                     .title(" Detail ").build())
                             .build(),
@@ -1854,22 +1854,22 @@ public class CamelMonitor extends CamelCommand {
 
         // Exchange info
         lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(entry.exchangeId != null ? entry.exchangeId : "")));
         lines.add(Line.from(
-                Span.styled(" UID:      ", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled(" UID:      ", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(entry.uid != null ? entry.uid : "")));
         lines.add(Line.from(
-                Span.styled(" Location: ", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(entry.location != null ? entry.location : "")));
         lines.add(Line.from(
-                Span.styled(" Route:    ", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(entry.routeId != null ? entry.routeId : ""),
                 Span.raw("  Node: "),
                 Span.raw(entry.nodeId != null ? entry.nodeId : ""),
                 Span.raw(entry.nodeLabel != null ? " (" + entry.nodeLabel + ")" : "")));
         lines.add(Line.from(
-                Span.styled(" Status:   ", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(entry.status != null ? entry.status : ""),
                 Span.raw("  Elapsed: "),
                 Span.raw(entry.elapsed + "ms")));
@@ -1877,10 +1877,10 @@ public class CamelMonitor extends CamelCommand {
 
         // Headers
         if (showTraceHeaders && entry.headers != null && !entry.headers.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Headers:", Style.create().fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Headers:", Style.EMPTY.fg(Color.GREEN).bold())));
             for (Map.Entry<String, Object> h : entry.headers.entrySet()) {
                 lines.add(Line.from(
-                        Span.styled("   " + h.getKey(), Style.create().fg(Color.CYAN)),
+                        Span.styled("   " + h.getKey(), Style.EMPTY.fg(Color.CYAN)),
                         Span.raw(" = "),
                         Span.raw(h.getValue() != null ? h.getValue().toString() : "null")));
             }
@@ -1889,7 +1889,7 @@ public class CamelMonitor extends CamelCommand {
 
         // Body
         if (showTraceBody && entry.body != null) {
-            lines.add(Line.from(Span.styled(" Body:", Style.create().fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
             String[] bodyLines = entry.body.split("\n");
             for (String bl : bodyLines) {
                 lines.add(Line.from(Span.raw("   " + bl)));
@@ -1899,10 +1899,10 @@ public class CamelMonitor extends CamelCommand {
 
         // Exchange properties
         if (entry.exchangeProperties != null && !entry.exchangeProperties.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Properties:", Style.create().fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Exchange Properties:", Style.EMPTY.fg(Color.GREEN).bold())));
             for (Map.Entry<String, Object> p : entry.exchangeProperties.entrySet()) {
                 lines.add(Line.from(
-                        Span.styled("   " + p.getKey(), Style.create().fg(Color.CYAN)),
+                        Span.styled("   " + p.getKey(), Style.EMPTY.fg(Color.CYAN)),
                         Span.raw(" = "),
                         Span.raw(p.getValue() != null ? p.getValue().toString() : "null")));
             }
@@ -1911,10 +1911,10 @@ public class CamelMonitor extends CamelCommand {
 
         // Exchange variables
         if (entry.exchangeVariables != null && !entry.exchangeVariables.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Variables:", Style.create().fg(Color.GREEN).bold())));
+            lines.add(Line.from(Span.styled(" Exchange Variables:", Style.EMPTY.fg(Color.GREEN).bold())));
             for (Map.Entry<String, Object> v : entry.exchangeVariables.entrySet()) {
                 lines.add(Line.from(
-                        Span.styled("   " + v.getKey(), Style.create().fg(Color.CYAN)),
+                        Span.styled("   " + v.getKey(), Style.EMPTY.fg(Color.CYAN)),
                         Span.raw(" = "),
                         Span.raw(v.getValue() != null ? v.getValue().toString() : "null")));
             }
@@ -1938,7 +1938,7 @@ public class CamelMonitor extends CamelCommand {
                 Paragraph.builder()
                         .text(Text.from(Line.from(
                                 Span.styled(" Select an integration from the Overview tab (press 1)",
-                                        Style.create().dim()))))
+                                        Style.EMPTY.dim()))))
                         .block(Block.builder().borderType(BorderType.ROUNDED)
                                 .title(" No integration selected ").build())
                         .build(),
@@ -1953,93 +1953,93 @@ public class CamelMonitor extends CamelCommand {
         int tab = tabsState.selected();
         if (tab == TAB_OVERVIEW) {
             footer = Line.from(
-                    Span.styled(" q", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled(" q", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" quit  "),
-                    Span.styled("r", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("r", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" refresh  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" navigate  "),
-                    Span.styled("Enter", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("Enter", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" details  "),
-                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("1-6", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+                    Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
         } else if (tab == TAB_ROUTES) {
             if (showDiagram) {
                 String closeKey = diagramTextMode ? "D" : "d";
                 footer = Line.from(
-                        Span.styled(" " + closeKey, Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled(" " + closeKey, Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw("/"),
-                        Span.styled("Esc", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" close  "),
-                        Span.styled("\u2191\u2193\u2190\u2192", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("\u2191\u2193\u2190\u2192", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" scroll  "),
-                        Span.styled("PgUp/PgDn", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("PgUp/PgDn", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" page  "),
-                        Span.styled("Home/End", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("Home/End", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" top/bottom"));
             } else {
                 footer = Line.from(
-                        Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" back  "),
-                        Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" navigate  "),
-                        Span.styled("s", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("s", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" sort  "),
-                        Span.styled("d", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("d", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" diagram  "),
-                        Span.styled("D", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("D", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" text diagram  "),
-                        Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
+                        Span.styled("1-6", Style.EMPTY.fg(Color.YELLOW).bold()),
                         Span.raw(" tabs  "),
-                        Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+                        Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
             }
         } else if (tab == TAB_HEALTH) {
             footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" navigate  "),
-                    Span.styled("d", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("d", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" toggle DOWN  "),
-                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("1-6", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+                    Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
         } else if (tab == TAB_LOG) {
             footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" scroll  "),
-                    Span.styled("PgUp/PgDn", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("PgUp/PgDn", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" page  "),
-                    Span.styled("t/d/i/w/e", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("t/d/i/w/e", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" levels  "),
-                    Span.styled("f", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("f", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" follow  "),
-                    Span.styled("Home/End", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("Home/End", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" top/end"));
         } else if (tab == TAB_TRACE) {
             footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" navigate  "),
-                    Span.styled("h", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("h", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" headers" + (showTraceHeaders ? " [on]" : " [off]") + "  "),
-                    Span.styled("b", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("b", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" body" + (showTraceBody ? " [on]" : " [off]") + "  "),
-                    Span.styled("f", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("f", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" follow" + (traceFollowMode ? " [on]" : " [off]")));
         } else {
             footer = Line.from(
-                    Span.styled(" Esc", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled(" Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" back  "),
-                    Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" navigate  "),
-                    Span.styled("1-6", Style.create().fg(Color.YELLOW).bold()),
+                    Span.styled("1-6", Style.EMPTY.fg(Color.YELLOW).bold()),
                     Span.raw(" tabs  "),
-                    Span.styled("Refresh: " + refreshLabel, Style.create().dim()));
+                    Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
         }
 
         frame.renderWidget(Paragraph.from(footer), area);

@@ -412,10 +412,10 @@ public class CamelCatalogTui extends CamelCommand {
 
     private void renderHeader(Frame frame, Rect area) {
         Line titleLine = Line.from(
-                Span.styled(" Camel Catalog", Style.create().fg(Color.rgb(0xF6, 0x91, 0x23)).bold()),
+                Span.styled(" Camel Catalog", Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold()),
                 Span.raw("  "),
                 Span.styled(filteredComponents.size() + "/" + allComponents.size() + " components",
-                        Style.create().fg(Color.CYAN)));
+                        Style.EMPTY.fg(Color.CYAN)));
 
         Block headerBlock = Block.builder()
                 .borderType(BorderType.ROUNDED)
@@ -441,8 +441,8 @@ public class CamelCatalogTui extends CamelCommand {
         List<Row> rows = new ArrayList<>();
         for (ComponentInfo comp : filteredComponents) {
             Style nameStyle = comp.deprecated
-                    ? Style.create().fg(Color.RED).dim()
-                    : Style.create().fg(Color.CYAN);
+                    ? Style.EMPTY.fg(Color.RED).dim()
+                    : Style.EMPTY.fg(Color.CYAN);
             String label = comp.name;
             if (comp.deprecated) {
                 label = label + " (deprecated)";
@@ -451,12 +451,12 @@ public class CamelCatalogTui extends CamelCommand {
         }
 
         if (rows.isEmpty()) {
-            rows.add(Row.from(Cell.from(Span.styled("No matching components", Style.create().dim()))));
+            rows.add(Row.from(Cell.from(Span.styled("No matching components", Style.EMPTY.dim()))));
         }
 
         Style borderStyle = focus == FOCUS_LIST
-                ? Style.create().fg(Color.rgb(0xF6, 0x91, 0x23))
-                : Style.create();
+                ? Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23))
+                : Style.EMPTY;
 
         String modePrefix = componentFullText ? "/" : "";
         String listTitle = componentFilter.isEmpty() && !componentFullText
@@ -466,7 +466,7 @@ public class CamelCatalogTui extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .widths(Constraint.fill())
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
@@ -480,8 +480,8 @@ public class CamelCatalogTui extends CamelCommand {
 
     private void renderOptionsTable(Frame frame, Rect area) {
         Style borderStyle = focus == FOCUS_OPTIONS
-                ? Style.create().fg(Color.rgb(0xF6, 0x91, 0x23))
-                : Style.create();
+                ? Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23))
+                : Style.EMPTY;
 
         String optModePrefix = optionFullText ? "/" : "";
         String optTitle = optionFilter.isEmpty() && !optionFullText
@@ -493,7 +493,7 @@ public class CamelCatalogTui extends CamelCommand {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(
-                                    Span.styled(emptyMsg, Style.create().dim()))))
+                                    Span.styled(emptyMsg, Style.EMPTY.dim()))))
                             .block(Block.builder()
                                     .borderType(BorderType.ROUNDED)
                                     .borderStyle(borderStyle)
@@ -510,11 +510,11 @@ public class CamelCatalogTui extends CamelCommand {
         }
 
         Row header = Row.from(
-                Cell.from(Span.styled("NAME", Style.create().bold())),
-                Cell.from(Span.styled("TYPE", Style.create().bold())),
-                Cell.from(Span.styled("REQ", Style.create().bold())),
-                Cell.from(Span.styled("DEFAULT", Style.create().bold())),
-                Cell.from(Span.styled("KIND", Style.create().bold())));
+                Cell.from(Span.styled("NAME", Style.EMPTY.bold())),
+                Cell.from(Span.styled("TYPE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("REQ", Style.EMPTY.bold())),
+                Cell.from(Span.styled("DEFAULT", Style.EMPTY.bold())),
+                Cell.from(Span.styled("KIND", Style.EMPTY.bold())));
 
         Table table = Table.builder()
                 .rows(rows)
@@ -525,7 +525,7 @@ public class CamelCatalogTui extends CamelCommand {
                         Constraint.length(4),
                         Constraint.length(12),
                         Constraint.fill())
-                .highlightStyle(Style.create().fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
@@ -541,7 +541,7 @@ public class CamelCatalogTui extends CamelCommand {
         frame.renderWidget(
                 Block.builder()
                         .borders(Borders.TOP_ONLY)
-                        .borderStyle(Style.create().fg(Color.DARK_GRAY))
+                        .borderStyle(Style.EMPTY.fg(Color.DARK_GRAY))
                         .build(),
                 area);
     }
@@ -577,7 +577,7 @@ public class CamelCatalogTui extends CamelCommand {
                 flowFields(lines, fields, wrapWidth, opt);
 
                 lines.add(Line.from(Span.raw("")));
-                wrapText(lines, opt.description, wrapWidth, Style.create());
+                wrapText(lines, opt.description, wrapWidth, Style.EMPTY);
             } else {
                 title = " Description ";
             }
@@ -602,7 +602,7 @@ public class CamelCatalogTui extends CamelCommand {
                 flowFields(lines, fields, wrapWidth, null);
 
                 lines.add(Line.from(Span.raw("")));
-                wrapText(lines, comp.description, wrapWidth, Style.create());
+                wrapText(lines, comp.description, wrapWidth, Style.EMPTY);
             } else {
                 title = " Description ";
             }
@@ -638,34 +638,34 @@ public class CamelCatalogTui extends CamelCommand {
 
     private Row optionToRow(OptionInfo opt) {
         Style nameStyle = opt.required
-                ? Style.create().fg(Color.CYAN).bold()
-                : Style.create().fg(Color.CYAN);
+                ? Style.EMPTY.fg(Color.CYAN).bold()
+                : Style.EMPTY.fg(Color.CYAN);
 
         return Row.from(
                 Cell.from(Span.styled(opt.name, nameStyle)),
-                Cell.from(Span.styled(opt.type, Style.create().dim())),
+                Cell.from(Span.styled(opt.type, Style.EMPTY.dim())),
                 Cell.from(opt.required
-                        ? Span.styled("*", Style.create().fg(Color.RED).bold())
+                        ? Span.styled("*", Style.EMPTY.fg(Color.RED).bold())
                         : Span.raw("")),
-                Cell.from(Span.styled(opt.defaultValue, Style.create().dim())),
-                Cell.from(Span.styled(opt.kind != null ? opt.kind : "", Style.create().dim())));
+                Cell.from(Span.styled(opt.defaultValue, Style.EMPTY.dim())),
+                Cell.from(Span.styled(opt.kind != null ? opt.kind : "", Style.EMPTY.dim())));
     }
 
     private void renderFooter(Frame frame, Rect area) {
         Line footer = Line.from(
-                Span.styled(" Type", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled(" Type", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(" name filter  "),
-                Span.styled("/", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled("/", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(" full-text  "),
-                Span.styled("Esc", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled("Esc", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(" clear/back/quit  "),
-                Span.styled("\u2191\u2193", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled("\u2191\u2193", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(" navigate  "),
-                Span.styled("\u2190\u2192", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled("\u2190\u2192", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw("/"),
-                Span.styled("Tab", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled("Tab", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(" panels  "),
-                Span.styled("PgUp/Dn", Style.create().fg(Color.YELLOW).bold()),
+                Span.styled("PgUp/Dn", Style.EMPTY.fg(Color.YELLOW).bold()),
                 Span.raw(" scroll"));
 
         frame.renderWidget(Paragraph.from(footer), area);
@@ -697,20 +697,20 @@ public class CamelCatalogTui extends CamelCommand {
                 currentSpans.add(Span.raw(" "));
             }
 
-            currentSpans.add(Span.styled(label, Style.create().fg(Color.YELLOW).bold()));
+            currentSpans.add(Span.styled(label, Style.EMPTY.fg(Color.YELLOW).bold()));
 
             // Apply special styling for certain values
             Style valueStyle;
             if ("DEPRECATED".equals(value)) {
-                valueStyle = Style.create().fg(Color.RED).bold();
+                valueStyle = Style.EMPTY.fg(Color.RED).bold();
             } else if (opt != null && "Required".equals(field[0]) && opt.required) {
-                valueStyle = Style.create().fg(Color.RED).bold();
+                valueStyle = Style.EMPTY.fg(Color.RED).bold();
             } else if (opt != null && "Name".equals(field[0])) {
-                valueStyle = Style.create().fg(Color.CYAN).bold();
+                valueStyle = Style.EMPTY.fg(Color.CYAN).bold();
             } else if ("Label".equals(field[0]) || "Values".equals(field[0])) {
-                valueStyle = Style.create().fg(Color.CYAN);
+                valueStyle = Style.EMPTY.fg(Color.CYAN);
             } else {
-                valueStyle = Style.create();
+                valueStyle = Style.EMPTY;
             }
             currentSpans.add(Span.styled(value, valueStyle));
             currentLen += fieldLen;
