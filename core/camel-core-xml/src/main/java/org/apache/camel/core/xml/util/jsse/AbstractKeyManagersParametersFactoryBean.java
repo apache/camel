@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import javax.net.ssl.KeyManager;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 
@@ -99,11 +100,11 @@ public abstract class AbstractKeyManagersParametersFactoryBean extends AbstractJ
         newInstance.setAlgorithm(algorithm);
         newInstance.setKeyPassword(keyPassword);
         if (getKeyStore() != null) {
-            getKeyStore().setCamelContext(getCamelContext());
+            CamelContextAware.trySetCamelContext(getKeyStore(), getCamelContext());
             newInstance.setKeyStore(getKeyStore().getObject());
         }
         newInstance.setProvider(provider);
-        newInstance.setCamelContext(getCamelContext());
+        CamelContextAware.trySetCamelContext(newInstance, getCamelContext());
 
         return newInstance;
     }

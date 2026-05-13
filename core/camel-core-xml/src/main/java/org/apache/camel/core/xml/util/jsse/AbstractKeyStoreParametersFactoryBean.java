@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -109,7 +110,7 @@ public abstract class AbstractKeyStoreParametersFactoryBean extends AbstractJsse
 
     protected KeyStoreParameters createInstance() {
         KeyStoreParameters newInstance = new KeyStoreParameters();
-        newInstance.setCamelContext(getCamelContext());
+        CamelContextAware.trySetCamelContext(newInstance, getCamelContext());
         newInstance.setType(this.type);
         newInstance.setPassword(this.password);
         newInstance.setProvider(this.provider);

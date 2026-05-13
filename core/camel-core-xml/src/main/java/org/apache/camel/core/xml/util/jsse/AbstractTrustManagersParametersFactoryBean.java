@@ -23,6 +23,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 
 import javax.net.ssl.TrustManager;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.jsse.TrustManagersParameters;
@@ -95,11 +96,11 @@ public abstract class AbstractTrustManagersParametersFactoryBean extends Abstrac
 
         newInstance.setAlgorithm(algorithm);
         if (getKeyStore() != null) {
-            getKeyStore().setCamelContext(getCamelContext());
+            CamelContextAware.trySetCamelContext(getKeyStore(), getCamelContext());
             newInstance.setKeyStore(getKeyStore().getObject());
         }
         newInstance.setProvider(provider);
-        newInstance.setCamelContext(getCamelContext());
+        CamelContextAware.trySetCamelContext(newInstance, getCamelContext());
 
         if (trustManager != null) {
             TrustManager tm = CamelContextHelper.mandatoryLookup(getCamelContext(), trustManager, TrustManager.class);
