@@ -21,6 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
@@ -50,34 +51,34 @@ public abstract class AbstractSSLContextParametersFactoryBean
         SSLContextParameters newInstance = new SSLContextParameters();
 
         if (getKeyManagers() != null) {
-            getKeyManagers().setCamelContext(getCamelContext());
+            CamelContextAware.trySetCamelContext(getKeyManagers(), getCamelContext());
             newInstance.setKeyManagers(getKeyManagers().getObject());
         }
 
         if (getTrustManagers() != null) {
-            getTrustManagers().setCamelContext(getCamelContext());
+            CamelContextAware.trySetCamelContext(getTrustManagers(), getCamelContext());
             newInstance.setTrustManagers(getTrustManagers().getObject());
         }
 
         if (getSecureRandom() != null) {
-            getSecureRandom().setCamelContext(getCamelContext());
+            CamelContextAware.trySetCamelContext(getSecureRandom(), getCamelContext());
             newInstance.setSecureRandom(getSecureRandom().getObject());
         }
 
         if (getClientParameters() != null) {
-            getClientParameters().setCamelContext(getCamelContext());
+            CamelContextAware.trySetCamelContext(getClientParameters(), getCamelContext());
             newInstance.setClientParameters(getClientParameters().getObject());
         }
 
         if (getServerParameters() != null) {
-            getServerParameters().setCamelContext(getCamelContext());
+            CamelContextAware.trySetCamelContext(getServerParameters(), getCamelContext());
             newInstance.setServerParameters(getServerParameters().getObject());
         }
 
         newInstance.setProvider(provider);
         newInstance.setSecureSocketProtocol(secureSocketProtocol);
         newInstance.setCertAlias(certAlias);
-        newInstance.setCamelContext(getCamelContext());
+        CamelContextAware.trySetCamelContext(newInstance, getCamelContext());
 
         return newInstance;
     }
