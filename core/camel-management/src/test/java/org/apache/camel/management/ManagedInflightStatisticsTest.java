@@ -95,10 +95,13 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
         // complete first exchange
         latch1.countDown();
 
-        // wait for the first exchange to complete (inflight drops to 1)
-        await().atMost(5, TimeUnit.SECONDS).until(() -> {
-            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
-            return num != null && num == 1;
+        // wait for the first exchange to complete and the oldest to change
+        final Long tsSnapshot = ts;
+        final String idSnapshot = id;
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertEquals(Long.valueOf(1), (Long) mbeanServer.getAttribute(on, "ExchangesInflight"));
+            assertNotEquals(idSnapshot, (String) mbeanServer.getAttribute(on, "OldestInflightExchangeId"));
+            assertNotEquals(tsSnapshot, (Long) mbeanServer.getAttribute(on, "OldestInflightDuration"));
         });
         Long ts2 = (Long) mbeanServer.getAttribute(on, "OldestInflightDuration");
         assertNotNull(ts2);
@@ -106,11 +109,6 @@ public class ManagedInflightStatisticsTest extends ManagementTestSupport {
         assertNotNull(id2);
 
         log.info("Oldest Exchange id: {}, duration: {}", id2, ts2);
-
-        // Lets verify the oldest changed.
-        assertNotEquals(id, id2);
-        // The duration values could be different
-        assertNotEquals(ts, ts2);
 
         latch2.countDown();
 
