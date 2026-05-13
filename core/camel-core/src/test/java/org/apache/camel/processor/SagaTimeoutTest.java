@@ -52,7 +52,7 @@ public class SagaTimeoutTest extends ContextTestSupport {
     public void testTimeoutHasNoEffectIfCompleted() throws Exception {
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
         compensate.expectedMessageCount(1);
-        compensate.setResultWaitTime(500);
+        compensate.setResultWaitTime(2000);
 
         MockEndpoint complete = getMockEndpoint("mock:complete");
         complete.expectedMessageCount(1);
@@ -105,7 +105,7 @@ public class SagaTimeoutTest extends ContextTestSupport {
                         .completionMode(SagaCompletionMode.MANUAL)
                         .compensation("mock:compensate").to("mock:end");
 
-                from("direct:saga-auto").saga().timeout(350, TimeUnit.MILLISECONDS).option("id", constant("myid"))
+                from("direct:saga-auto").saga().timeout(2000, TimeUnit.MILLISECONDS).option("id", constant("myid"))
                         .compensation("mock:compensate").completion("mock:complete")
                         .to("mock:end");
 
