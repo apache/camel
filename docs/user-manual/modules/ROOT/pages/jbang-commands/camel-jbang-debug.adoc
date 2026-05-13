@@ -31,6 +31,8 @@ camel debug [options]
 | `--dep,--dependency` | Add additional dependencies |  | List
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--empty` | Run an empty Camel without loading source files | false | boolean
+| `--example` | Run a built-in example by name (e.g., timer-log, rest-api). Use --example --list to show available examples. |  | String
+| `--example-list` | List available built-in examples |  | boolean
 | `--exclude` | Exclude files by name or pattern |  | List
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--gav` | The Maven group:artifact:version (used during exporting) |  | String

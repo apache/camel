@@ -153,6 +153,10 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
                 "validate      validate      org.apache.camel:camel-jbang-plugin-validate      %s"
                         .formatted(PluginType.VALIDATE.getDescription()),
                 output.get(11));
+        Assertions.assertEquals(
+                "tui           tui           org.apache.camel:camel-jbang-plugin-tui           %s"
+                        .formatted(PluginType.TUI.getDescription()),
+                output.get(12));
     }
 
 }
