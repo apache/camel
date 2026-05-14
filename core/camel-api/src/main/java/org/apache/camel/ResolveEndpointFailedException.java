@@ -18,6 +18,8 @@ package org.apache.camel;
 
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import static org.apache.camel.util.URISupport.sanitizeUri;
 
 /**
