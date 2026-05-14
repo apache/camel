@@ -194,13 +194,13 @@ public interface LifecycleStrategy {
      *
      * @param camelContext        the camel context
      * @param threadPool          the thread pool
-     * @param id                  id of the thread pool (can be null in special cases)
+     * @param id                  id of the thread pool
      * @param sourceId            id of the source creating the thread pool (can be null in special cases)
      * @param routeId             id of the route for the source (is null if no source)
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
     void onThreadPoolAdd(
-            CamelContext camelContext, ThreadPoolExecutor threadPool, @Nullable String id,
+            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
             @Nullable String sourceId, @Nullable String routeId, @Nullable String threadPoolProfileId);
 
     /**
@@ -217,13 +217,13 @@ public interface LifecycleStrategy {
      *
      * @param camelContext        the camel context
      * @param executorService     the executor service
-     * @param id                  id of the thread pool (can be null in special cases)
+     * @param id                  id of the thread pool
      * @param sourceId            id of the source creating the thread pool (can be null in special cases)
      * @param routeId             id of the route for the source (is null if no source)
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
     default void onThreadPoolAdd(
-            CamelContext camelContext, ExecutorService executorService, @Nullable String id,
+            CamelContext camelContext, ExecutorService executorService, String id,
             @Nullable String sourceId, @Nullable String routeId, @Nullable String threadPoolProfileId) {
     }
 

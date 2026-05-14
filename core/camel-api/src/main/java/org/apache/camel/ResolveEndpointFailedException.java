@@ -27,7 +27,7 @@ import static org.apache.camel.util.URISupport.sanitizeUri;
  */
 public class ResolveEndpointFailedException extends RuntimeCamelException {
 
-    private final @Nullable String uri;
+    private final String uri;
 
     /**
      * @param uri   the endpoint URI that could not be resolved
@@ -57,7 +57,7 @@ public class ResolveEndpointFailedException extends RuntimeCamelException {
         this.uri = sanitizeUri(uri);
     }
 
-    public @Nullable String getUri() {
+    public String getUri() {
         return uri;
     }
 }
