@@ -27,6 +27,11 @@ public class FailedToCreateRouteFromTemplateException extends RuntimeCamelExcept
     private final String templateId;
     private final String routeId;
 
+    /**
+     * @param routeId    the route id that failed to be created
+     * @param templateId the template id used to create the route
+     * @param message    the detail message
+     */
     public FailedToCreateRouteFromTemplateException(String routeId, String templateId, String message) {
         super("Failed to create route " + Objects.requireNonNull(routeId, "routeId") + " from template "
               + Objects.requireNonNull(templateId, "templateId") + " because of "
@@ -35,6 +40,12 @@ public class FailedToCreateRouteFromTemplateException extends RuntimeCamelExcept
         this.templateId = templateId;
     }
 
+    /**
+     * @param routeId    the route id that failed to be created
+     * @param templateId the template id used to create the route
+     * @param message    the detail message
+     * @param cause      the cause of the failure
+     */
     public FailedToCreateRouteFromTemplateException(String routeId, String templateId, String message, Throwable cause) {
         super("Failed to create route " + Objects.requireNonNull(routeId, "routeId") + " from template "
               + Objects.requireNonNull(templateId, "templateId") + " because of "

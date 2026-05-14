@@ -26,14 +26,24 @@ public class CamelException extends Exception {
     public CamelException() {
     }
 
+    /**
+     * @param message the detail message
+     */
     public CamelException(@Nullable String message) {
         super(message);
     }
 
+    /**
+     * @param message the detail message
+     * @param cause   the cause of the failure
+     */
     public CamelException(@Nullable String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * @param cause the cause of the failure
+     */
     public CamelException(@Nullable Throwable cause) {
         super(cause);
     }

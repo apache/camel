@@ -28,10 +28,19 @@ public class InvalidPropertyException extends RuntimeCamelException {
     private final transient @Nullable Object owner;
     private final String propertyName;
 
+    /**
+     * @param owner        the object that does not have the property
+     * @param propertyName the name of the property that could not be found
+     */
     public InvalidPropertyException(@Nullable Object owner, String propertyName) {
         this(owner, propertyName, owner != null ? owner.getClass() : Object.class);
     }
 
+    /**
+     * @param owner        the object that does not have the property
+     * @param propertyName the name of the property that could not be found
+     * @param type         the type of the object being inspected
+     */
     public InvalidPropertyException(@Nullable Object owner, String propertyName, Class<?> type) {
         super("No '" + Objects.requireNonNull(propertyName, "propertyName") + "' property available on type: "
               + Objects.requireNonNull(type, "type").getName() + " in: " + owner);

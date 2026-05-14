@@ -67,7 +67,9 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
     @Test
     public void testCreateOutputStreamCacheBeforeTimeoutButWriteToOutputStreamCacheAfterTimeout() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(1);
+        getMockEndpoint("mock:exception").setResultWaitTime(15000);
         getMockEndpoint("mock:y").expectedMessageCount(0);
+        getMockEndpoint("mock:y").setAssertPeriod(2000);
 
         template.sendBody("direct:b", "testMessage");
         assertMockEndpointsSatisfied();

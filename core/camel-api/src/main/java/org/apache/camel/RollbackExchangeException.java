@@ -23,18 +23,34 @@ import java.util.Objects;
  */
 public class RollbackExchangeException extends CamelExchangeException {
 
+    /**
+     * @param exchange the exchange that is being rolled back
+     */
     public RollbackExchangeException(Exchange exchange) {
         this("Intended rollback", exchange);
     }
 
+    /**
+     * @param exchange the exchange that is being rolled back
+     * @param cause    the cause of the rollback
+     */
     public RollbackExchangeException(Exchange exchange, Throwable cause) {
         this("Intended rollback", exchange, cause);
     }
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that is being rolled back
+     */
     public RollbackExchangeException(String message, Exchange exchange) {
         super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"));
     }
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that is being rolled back
+     * @param cause    the cause of the rollback
+     */
     public RollbackExchangeException(String message, Exchange exchange, Throwable cause) {
         super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(exchange, "exchange"),
               Objects.requireNonNull(cause, "cause"));

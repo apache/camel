@@ -191,7 +191,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Adds a service to this CamelContext, which allows this CamelContext to control the lifecycle, ensuring the
      * service is stopped when the CamelContext stops.
      * <p/>
-     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}. The service will also
+     * The service will also have {@link CamelContext} injected if it's {@link CamelContextAware}. The service will also
      * be enlisted in JMX for management (if JMX is enabled).
      * <p/>
      * The service will also be deferred to be started together with other services are being started, as part of the
@@ -206,7 +206,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Adds a service to this CamelContext.
      * <p/>
-     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}. The service will also
+     * The service will also have {@link CamelContext} injected if it's {@link CamelContextAware}. The service will also
      * be enlisted in JMX for management (if JMX is enabled).
      * <p/>
      * The service will also be deferred to be started together with other services are being started, as part of the
@@ -226,8 +226,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Adds a service to this CamelContext.
      * <p/>
-     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}. The service will also
-     * be enlisted in JMX for management (if JMX is enabled). The service will be started, if its not already started.
+     * The service will also have {@link CamelContext} injected if it's {@link CamelContextAware}. The service will also
+     * be enlisted in JMX for management (if JMX is enabled). The service will be started, if it's not already started.
      * <p/>
      * The service will also be deferred to be started together with other services are being started, as part of the
      * Camel startup process. If Camel has already been started, then the service is started immediately.
@@ -248,8 +248,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Adds a service to this CamelContext (prototype scope).
      * <p/>
-     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}. The service will be
-     * started, if its not already started.
+     * The service will also have {@link CamelContext} injected if it's {@link CamelContextAware}. The service will be
+     * started, if it's not already started.
      *
      * @param  object    the service
      * @throws Exception can be thrown when starting the service

@@ -23,14 +23,24 @@ import java.util.Objects;
  */
 public class RuntimeTransformException extends RuntimeCamelException {
 
+    /**
+     * @param message the detail message
+     */
     public RuntimeTransformException(String message) {
         super(Objects.requireNonNull(message, "message"));
     }
 
+    /**
+     * @param message the detail message
+     * @param cause   the cause of the failure
+     */
     public RuntimeTransformException(String message, Throwable cause) {
         super(Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
     }
 
+    /**
+     * @param cause the cause of the failure
+     */
     public RuntimeTransformException(Throwable cause) {
         super(Objects.requireNonNull(cause, "cause"));
     }

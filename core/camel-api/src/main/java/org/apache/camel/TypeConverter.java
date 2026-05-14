@@ -25,6 +25,7 @@ import org.jspecify.annotations.Nullable;
  */
 public interface TypeConverter {
 
+    /** Sentinel value indicating that no type converter was found, used internally for caching purposes. */
     Object MISS_VALUE = Void.TYPE;
 
     /**

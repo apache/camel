@@ -27,10 +27,19 @@ import org.jspecify.annotations.Nullable;
  */
 public class ValidationException extends CamelExchangeException {
 
+    /**
+     * @param exchange the exchange that failed validation
+     * @param message  the detail message
+     */
     public ValidationException(@Nullable Exchange exchange, String message) {
         super(Objects.requireNonNull(message, "message"), exchange);
     }
 
+    /**
+     * @param message  the detail message
+     * @param exchange the exchange that failed validation
+     * @param cause    the cause of the failure
+     */
     public ValidationException(String message, @Nullable Exchange exchange, Throwable cause) {
         super(Objects.requireNonNull(message, "message"), exchange, Objects.requireNonNull(cause, "cause"));
     }

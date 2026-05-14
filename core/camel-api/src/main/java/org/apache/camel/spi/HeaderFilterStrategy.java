@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Interface to allow plug-able implementation to filter header to and from Camel message.
+ * Interface to allow pluggable implementation to filter headers to and from Camel message.
  */
 public interface HeaderFilterStrategy {
 

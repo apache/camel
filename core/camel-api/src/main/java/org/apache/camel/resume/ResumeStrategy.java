@@ -110,7 +110,17 @@ public interface ResumeStrategy extends Service {
      */
     void updateLastOffset(OffsetKey<?> offsetKey, Offset<?> offset, @Nullable UpdateCallBack updateCallBack) throws Exception;
 
+    /**
+     * Sets the configuration for this resume strategy.
+     *
+     * @param resumeStrategyConfiguration the resume strategy configuration
+     */
     void setResumeStrategyConfiguration(ResumeStrategyConfiguration resumeStrategyConfiguration);
 
+    /**
+     * Gets the configuration for this resume strategy.
+     *
+     * @return the resume strategy configuration
+     */
     ResumeStrategyConfiguration getResumeStrategyConfiguration();
 }

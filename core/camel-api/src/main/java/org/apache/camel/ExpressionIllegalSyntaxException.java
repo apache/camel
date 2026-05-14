@@ -27,10 +27,17 @@ public class ExpressionIllegalSyntaxException extends RuntimeCamelException {
 
     private final String expression;
 
+    /**
+     * @param expression the expression with illegal syntax
+     */
     public ExpressionIllegalSyntaxException(String expression) {
         this(expression, null);
     }
 
+    /**
+     * @param expression the expression with illegal syntax
+     * @param cause      the cause of the failure
+     */
     public ExpressionIllegalSyntaxException(String expression, @Nullable Throwable cause) {
         super("Illegal syntax: " + Objects.requireNonNull(expression, "expression"), cause);
         this.expression = expression;

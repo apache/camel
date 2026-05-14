@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
               disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
 public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
 
-    public static final String FILE_QUERY = "?initialDelay=0&delay=10&synchronous=true";
+    public static final String FILE_QUERY = "?initialDelay=0&delay=2000&synchronous=true";
 
     @Override
     @BeforeEach

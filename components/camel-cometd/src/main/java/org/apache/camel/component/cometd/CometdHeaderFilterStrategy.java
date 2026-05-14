@@ -14,21 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.component.cometd;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
-/**
- * An experimental user-facing API. Experimental API's might change or be removed in minor versions.
- *
- * @since 3.1
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
-public @interface Experimental {
-    /** The revision number of this experimental API, incremented when the API changes incompatibly. */
-    int revision() default 1;
+public class CometdHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+
+    public CometdHeaderFilterStrategy() {
+        setLowerCase(true);
+        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
+        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
+    }
 }

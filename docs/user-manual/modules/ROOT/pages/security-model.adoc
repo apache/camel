@@ -15,7 +15,7 @@ It complements two existing documents:
   configuration at startup time.
 
 For instructions on how to report a vulnerability, see
-https://camel.apache.org/security/[Apache Camel Security] and the repository
+link:/security/[Apache Camel Security] and the repository
 `SECURITY.md` file.
 
 == Audience
@@ -98,7 +98,7 @@ that the model says it should not cross.
 The classes below are grounded in advisories the Apache Camel PMC has accepted
 in the past. The CVE IDs in each item are representative examples, not an
 exhaustive list. The full advisory history is at
-https://camel.apache.org/security/[].
+link:/security/[].
 
 ==== Unsafe deserialization of untrusted input
 
@@ -343,7 +343,7 @@ from("jetty:http://0.0.0.0:8080/api")
   sidecar, or a separate network only.
 * *Keep components patched.* Pin Camel to a supported version, subscribe to
   the announce list, and respond to advisories at
-  https://camel.apache.org/security/[].
+  link:/security/[].
 * *Run with least privilege.* Limit the OS user's file-system, network and
   process privileges; in a container deployment, drop unneeded capabilities
   and mount only the filesystem paths the routes actually need.
@@ -393,7 +393,7 @@ with the security model.
 The Apache Camel project uses the standard ASF vulnerability reporting
 process:
 
-* Read https://camel.apache.org/security/[Apache Camel Security].
+* Read link:/security/[Apache Camel Security].
 * Email private-security@camel.apache.org with a description, affected
   versions, and a proof of concept that demonstrates the trust-boundary breach.
 * Do not file a public Jira ticket, open a public pull request, post on a
@@ -416,6 +416,6 @@ reference to this document.
   JSSE Utility for SSL/TLS configuration.
 * `proposals/security.adoc` (in the source tree) - design document for the
   security policy enforcement framework.
-* https://camel.apache.org/security/[Apache Camel Security] - the public
+* link:/security/[Apache Camel Security] - the public
   advisory index and reporting process.
 * `SECURITY.md` (in the source tree) - the GitHub-rendered security pointer.

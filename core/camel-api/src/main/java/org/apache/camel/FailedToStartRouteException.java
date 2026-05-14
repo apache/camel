@@ -28,6 +28,10 @@ public class FailedToStartRouteException extends RuntimeCamelException {
     private final String routeId;
     private final @Nullable String location;
 
+    /**
+     * @param routeId the route id that failed to start
+     * @param message the detail message
+     */
     public FailedToStartRouteException(String routeId, String message) {
         super("Failed to start route: " + Objects.requireNonNull(routeId, "routeId") + " because: "
               + Objects.requireNonNull(message, "message"));
@@ -35,6 +39,11 @@ public class FailedToStartRouteException extends RuntimeCamelException {
         this.location = null;
     }
 
+    /**
+     * @param routeId the route id that failed to start
+     * @param message the detail message
+     * @param cause   the cause of the failure
+     */
     public FailedToStartRouteException(String routeId, String message, Throwable cause) {
         super("Failed to start route: " + Objects.requireNonNull(routeId, "routeId") + " because: "
               + Objects.requireNonNull(message, "message"), Objects.requireNonNull(cause, "cause"));
@@ -42,6 +51,12 @@ public class FailedToStartRouteException extends RuntimeCamelException {
         this.location = null;
     }
 
+    /**
+     * @param routeId  the route id that failed to start
+     * @param location the source location of the route definition, or {@code null} if unknown
+     * @param message  the detail message
+     * @param cause    the cause of the failure
+     */
     public FailedToStartRouteException(String routeId, @Nullable String location, String message, Throwable cause) {
         super("Failed to start route: " + Objects.requireNonNull(routeId, "routeId")
               + (location != null ? " (source: " + location + ")" : "") + " because: "

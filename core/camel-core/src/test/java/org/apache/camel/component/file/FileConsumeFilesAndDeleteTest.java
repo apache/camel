@@ -56,7 +56,7 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri("?initialDelay=0&delay=10&fileName=" + TEST_FILE_NAME_1 + "&delete=true"))
+                from(fileUri("?initialDelay=0&delay=2000&fileName=" + TEST_FILE_NAME_1 + "&delete=true"))
                         .convertBodyTo(String.class).to("mock:result");
             }
         };
