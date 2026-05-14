@@ -2010,7 +2010,6 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "Enter", "details");
             hint(spans, "1-6", "tabs");
-            hintRefresh(spans);
         } else if (tab == TAB_ROUTES && showDiagram) {
             String closeKey = diagramTextMode ? "D" : "d";
             hint(spans, closeKey + "/Esc", "close");
@@ -2025,13 +2024,11 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
             hint(spans, "1-6", "tabs");
-            hintRefresh(spans);
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "d", "toggle DOWN");
             hint(spans, "1-6", "tabs");
-            hintRefresh(spans);
         } else if (tab == TAB_LOG) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "scroll");
@@ -2049,7 +2046,6 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "1-6", "tabs");
-            hintRefresh(spans);
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -2067,12 +2063,6 @@ public class CamelMonitor extends CamelCommand {
         spans.add(Span.raw(" " + label));
     }
 
-    private void hintRefresh(List<Span> spans) {
-        String refreshLabel = refreshInterval >= 1000
-                ? (refreshInterval / 1000) + "s"
-                : refreshInterval + "ms";
-        spans.add(Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
-    }
 
     // ---- Data Loading ----
 
