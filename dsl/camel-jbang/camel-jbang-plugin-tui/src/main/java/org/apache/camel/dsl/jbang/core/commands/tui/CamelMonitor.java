@@ -1195,29 +1195,18 @@ public class CamelMonitor extends CamelCommand {
         List<Span> spans = new ArrayList<>();
         int idx = 0;
         while (idx < text.length()) {
-            // Check if current position is a counter
-            int[] counterRange = findCounterRange(counterRanges, idx);
-            if (counterRange != null) {
-                // Flush any text before the counter
-                Color counterColor = counterRange[2] == 1 ? Color.GREEN : Color.RED;
-                spans.add(Span.styled(text.substring(counterRange[0], counterRange[1]),
-                        Style.EMPTY.fg(counterColor).bold()));
-                idx = counterRange[1];
-                continue;
-            }
-
             int open = text.indexOf('[', idx);
             if (open < 0) {
-                spans.add(Span.styled(text.substring(idx), Style.EMPTY.fg(Color.WHITE)));
+                addStyledSegment(spans, text, idx, text.length(), counterRanges, Color.WHITE);
                 break;
             }
             int close = text.indexOf(']', open);
             if (close < 0) {
-                spans.add(Span.styled(text.substring(idx), Style.EMPTY.fg(Color.WHITE)));
+                addStyledSegment(spans, text, idx, text.length(), counterRanges, Color.WHITE);
                 break;
             }
             if (open > idx) {
-                addStyledSegment(spans, text, idx, open, counterRanges);
+                addStyledSegment(spans, text, idx, open, counterRanges, Color.GRAY);
             }
             String tag = text.substring(open + 1, close);
             Color tagColor = getDiagramNodeColor(tag);
@@ -1225,42 +1214,46 @@ public class CamelMonitor extends CamelCommand {
 
             int afterTag = close + 1;
             int nextOpen = text.indexOf('[', afterTag);
-            int nextNewline = text.length();
-            int labelEnd = nextOpen >= 0 ? nextOpen : nextNewline;
+            int labelEnd = nextOpen >= 0 ? nextOpen : text.length();
             if (afterTag < labelEnd) {
-                addStyledSegment(spans, text, afterTag, labelEnd, counterRanges);
+                addStyledSegment(spans, text, afterTag, labelEnd, counterRanges, Color.WHITE);
             }
             idx = labelEnd;
         }
         return Line.from(spans);
     }
 
-    private void addStyledSegment(List<Span> spans, String text, int from, int to, List<int[]> counterRanges) {
+    private void addStyledSegment(
+            List<Span> spans, String text, int from, int to, List<int[]> counterRanges, Color defaultColor) {
         int pos = from;
         while (pos < to) {
-            int[] cr = findCounterRange(counterRanges, pos);
-            if (cr != null && cr[0] < to) {
+            int[] cr = findNextCounterRange(counterRanges, pos, to);
+            if (cr != null) {
                 if (pos < cr[0]) {
-                    spans.add(Span.styled(text.substring(pos, cr[0]), Style.EMPTY.fg(Color.GRAY)));
+                    spans.add(Span.styled(text.substring(pos, cr[0]), Style.EMPTY.fg(defaultColor)));
                 }
                 int counterEnd = Math.min(cr[1], to);
                 Color counterColor = cr[2] == 1 ? Color.GREEN : Color.RED;
                 spans.add(Span.styled(text.substring(cr[0], counterEnd), Style.EMPTY.fg(counterColor).bold()));
                 pos = counterEnd;
             } else {
-                spans.add(Span.styled(text.substring(pos, to), Style.EMPTY.fg(Color.GRAY)));
+                spans.add(Span.styled(text.substring(pos, to), Style.EMPTY.fg(defaultColor)));
                 pos = to;
             }
         }
     }
 
-    private static int[] findCounterRange(List<int[]> ranges, int pos) {
+    private static int[] findNextCounterRange(List<int[]> ranges, int pos, int limit) {
+        int[] best = null;
         for (int[] range : ranges) {
-            if (pos >= range[0] && pos < range[1]) {
-                return range;
+            if (range[1] > pos && range[0] < limit) {
+                int start = Math.max(range[0], pos);
+                if (best == null || start < best[0]) {
+                    best = new int[] { start, range[1], range[2] };
+                }
             }
         }
-        return null;
+        return best;
     }
 
     private Color getDiagramNodeColor(String type) {
