@@ -373,6 +373,13 @@ Two new endpoint options have been added to control the pull fetch loop:
 * `pullBatchSize` (default `10`) — maximum number of messages to fetch per pull request.
 * `pullFetchTimeout` (default `1000` ms) — maximum time to wait for a batch on each fetch.
 
+The default `headerFilterStrategy` is now a new `NatsHeaderFilterStrategy` that filters headers
+starting with `Camel` / `camel` (case-insensitive) in both the inbound and outbound directions,
+aligning the component with the rest of the Camel component catalog (`camel-kafka`, `camel-mail`,
+`camel-coap`, `camel-google-pubsub`, ...). Routes that relied on passing through these header
+names from NATS messages can supply a custom `headerFilterStrategy` to restore the previous
+behaviour.
+
 === camel-lucene
 
 The Exchange header values exposed by `LuceneConstants` have been renamed to follow the standard
