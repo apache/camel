@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -151,8 +152,8 @@ public class CamelMonitor extends CamelCommand {
     private boolean showOnlyDown;
 
     // Log state
-    private final List<String> logLines = new ArrayList<>();
-    private final List<LogEntry> filteredLogEntries = new ArrayList<>();
+    private List<String> logLines = new ArrayList<>();
+    private volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
     private final TableState logTableState = new TableState();
     private boolean logFollowMode = true;
     private boolean showLogTrace = true;
@@ -190,6 +191,9 @@ public class CamelMonitor extends CamelCommand {
     private int diagramCropH = -1;
 
     private volatile long lastRefresh;
+    private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
+    private final AtomicBoolean diagramLoading = new AtomicBoolean(false);
+    private TuiRunner runner;
 
     private ClassLoader classLoader;
 
@@ -206,16 +210,19 @@ public class CamelMonitor extends CamelCommand {
         Thread.currentThread().setContextClassLoader(classLoader);
         TuiHelper.preloadClasses(classLoader);
 
-        // Initial data load
-        refreshData();
+        // Initial data load (synchronous before TUI starts)
+        refreshDataSync();
 
         try (var tui = TuiRunner.create(TuiConfig.builder().mouseCapture(true).build())) {
+            this.runner = tui;
             // Intercept Ctrl+C: quit the TUI cleanly instead of letting
             // the JVM tear down the classloader while we're still running
             Signal.handle(new Signal("INT"), sig -> tui.quit());
             tui.run(
                     this::handleEvent,
                     this::render);
+        } finally {
+            this.runner = null;
         }
         return 0;
     }
@@ -403,27 +410,27 @@ public class CamelMonitor extends CamelCommand {
             if (tab == TAB_LOG) {
                 if (ke.isCharIgnoreCase('t')) {
                     showLogTrace = !showLogTrace;
-                    applyLogFilters();
+                    filteredLogEntries = applyLogFilters(logLines);
                     return true;
                 }
                 if (ke.isCharIgnoreCase('d')) {
                     showLogDebug = !showLogDebug;
-                    applyLogFilters();
+                    filteredLogEntries = applyLogFilters(logLines);
                     return true;
                 }
                 if (ke.isCharIgnoreCase('i')) {
                     showLogInfo = !showLogInfo;
-                    applyLogFilters();
+                    filteredLogEntries = applyLogFilters(logLines);
                     return true;
                 }
                 if (ke.isCharIgnoreCase('w')) {
                     showLogWarn = !showLogWarn;
-                    applyLogFilters();
+                    filteredLogEntries = applyLogFilters(logLines);
                     return true;
                 }
                 if (ke.isCharIgnoreCase('e')) {
                     showLogError = !showLogError;
-                    applyLogFilters();
+                    filteredLogEntries = applyLogFilters(logLines);
                     return true;
                 }
                 if (ke.isCharIgnoreCase('f')) {
@@ -1216,12 +1223,16 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void loadDiagramForSelectedRoute() {
-        if (selectedPid == null) {
+        if (selectedPid == null || runner == null) {
+            return;
+        }
+        if (!diagramLoading.compareAndSet(false, true)) {
             return;
         }
 
         IntegrationInfo info = findSelectedIntegration();
         if (info == null || info.routes.isEmpty()) {
+            diagramLoading.set(false);
             return;
         }
 
@@ -1236,7 +1247,31 @@ public class CamelMonitor extends CamelCommand {
             selectedRoute = sortedRoutes.get(0);
         }
 
-        Path outputFile = getOutputFile(selectedPid);
+        // Capture state needed by the background thread
+        String pid = selectedPid;
+        boolean textMode = diagramTextMode;
+        String routeId = selectedRoute.routeId;
+
+        // Show loading state immediately
+        diagramRouteId = routeId;
+        diagramLines = List.of("(Loading diagram...)");
+        diagramImageData = null;
+        diagramFullImageData = null;
+        showDiagram = true;
+        diagramScroll = 0;
+        diagramScrollX = 0;
+
+        runner.scheduler().execute(() -> {
+            try {
+                loadDiagramInBackground(pid, textMode, routeId);
+            } finally {
+                diagramLoading.set(false);
+            }
+        });
+    }
+
+    private void loadDiagramInBackground(String pid, boolean textMode, String routeId) {
+        Path outputFile = getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
@@ -1245,38 +1280,32 @@ public class CamelMonitor extends CamelCommand {
         root.put("brief", false);
         root.put("metric", true);
 
-        Path actionFile = getActionFile(selectedPid);
+        Path actionFile = getActionFile(pid);
         org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
 
         JsonObject jo = pollJsonResponse(outputFile, 5000);
         PathUtils.deleteFile(outputFile);
 
         if (jo == null) {
-            diagramLines = List.of("(No response from integration)");
-            diagramRouteId = selectedRoute.routeId;
-            showDiagram = true;
-            diagramScroll = 0;
+            applyDiagramResult(routeId, List.of("(No response from integration)"), null, null, null);
             return;
         }
 
         JsonArray arr = (JsonArray) jo.get("routes");
         if (arr == null) {
-            diagramLines = List.of("(No routes in response)");
-            diagramRouteId = selectedRoute.routeId;
-            showDiagram = true;
-            diagramScroll = 0;
+            applyDiagramResult(routeId, List.of("(No routes in response)"), null, null, null);
             return;
         }
 
         List<RouteDiagramLayoutEngine.RouteInfo> diagramRoutes = new ArrayList<>();
         for (int i = 0; i < arr.size(); i++) {
             JsonObject o = (JsonObject) arr.get(i);
-            String routeId = objToString(o.get("routeId"));
-            if (selectedRoute.routeId != null && !selectedRoute.routeId.equals(routeId)) {
+            String rid = objToString(o.get("routeId"));
+            if (routeId != null && !routeId.equals(rid)) {
                 continue;
             }
             RouteDiagramLayoutEngine.RouteInfo route = new RouteDiagramLayoutEngine.RouteInfo();
-            route.routeId = routeId;
+            route.routeId = rid;
             List<JsonObject> lines = o.getCollection("code");
             if (lines != null) {
                 for (JsonObject line : lines) {
@@ -1291,28 +1320,15 @@ public class CamelMonitor extends CamelCommand {
             diagramRoutes.add(route);
         }
 
-        diagramRouteId = selectedRoute.routeId;
-        diagramScroll = 0;
-        diagramScrollX = 0;
-        diagramCropX = -1;
-        diagramCropY = -1;
-        diagramCropW = -1;
-        diagramCropH = -1;
-
-        if (diagramTextMode) {
-            diagramImageData = null;
-            diagramFullImageData = null;
-            diagramProtocol = null;
-
+        if (textMode) {
             String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true);
-
             List<String> result = new ArrayList<>();
             for (String line : ascii.split("\n", -1)) {
                 if (!line.isEmpty()) {
                     result.add(line);
                 }
             }
-            diagramLines = result;
+            applyDiagramResult(routeId, result, null, null, null);
         } else {
             TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
             if (caps.supportsNativeImages()) {
@@ -1328,21 +1344,36 @@ public class CamelMonitor extends CamelCommand {
                 RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
                 java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
                 ImageData fullImage = ImageData.fromBufferedImage(image);
-                diagramFullImageData = fullImage.resize(fullImage.width() / 2, fullImage.height() / 2);
-                diagramImageData = diagramFullImageData;
-                diagramProtocol = caps.bestProtocol();
-                diagramLines = Collections.emptyList();
+                ImageData resized = fullImage.resize(fullImage.width() / 2, fullImage.height() / 2);
+                ImageProtocol protocol = caps.bestProtocol();
+                applyDiagramResult(routeId, Collections.emptyList(), resized, resized, protocol);
             } else {
-                diagramImageData = null;
-                diagramFullImageData = null;
-                diagramProtocol = null;
-                diagramLines = List.of(
+                applyDiagramResult(routeId, List.of(
                         "(Terminal does not support image rendering)",
-                        "(Press Shift+D for text diagram)");
+                        "(Press Shift+D for text diagram)"), null, null, null);
             }
         }
+    }
 
-        showDiagram = true;
+    private void applyDiagramResult(
+            String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol) {
+        if (runner == null) {
+            return;
+        }
+        runner.runOnRenderThread(() -> {
+            diagramRouteId = routeId;
+            diagramLines = lines;
+            diagramImageData = imageData;
+            diagramFullImageData = fullImageData;
+            diagramProtocol = protocol;
+            diagramScroll = 0;
+            diagramScrollX = 0;
+            diagramCropX = -1;
+            diagramCropY = -1;
+            diagramCropW = -1;
+            diagramCropH = -1;
+            showDiagram = true;
+        });
     }
 
     private static String renderAscii(
@@ -1658,8 +1689,8 @@ public class CamelMonitor extends CamelCommand {
         return sb.toString();
     }
 
-    private void readLogFile(String pid) {
-        logLines.clear();
+    private void readLogFile(String pid, List<String> target) {
+        target.clear();
         Path logFile = CommandLineHelper.getCamelDir().resolve(pid + ".log");
         if (!Files.exists(logFile)) {
             return;
@@ -1676,12 +1707,12 @@ public class CamelMonitor extends CamelCommand {
             byte[] remaining = new byte[(int) (length - raf.getFilePointer())];
             raf.readFully(remaining);
             String content = new String(remaining, StandardCharsets.UTF_8);
-            String[] lines = content.split("\n", -1);
-            int start = Math.max(0, lines.length - MAX_LOG_LINES);
-            for (int i = start; i < lines.length; i++) {
-                String line = lines[i].replaceAll("\u001B\\[[;\\d]*m", "");
+            String[] rawLines = content.split("\n", -1);
+            int start = Math.max(0, rawLines.length - MAX_LOG_LINES);
+            for (int i = start; i < rawLines.length; i++) {
+                String line = rawLines[i].replaceAll("\u001B\\[[;\\d]*m", "");
                 if (!line.isEmpty()) {
-                    logLines.add(line);
+                    target.add(line);
                 }
             }
         } catch (IOException e) {
@@ -1689,15 +1720,16 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
-    private void applyLogFilters() {
-        filteredLogEntries.clear();
-        for (String line : logLines) {
+    private List<LogEntry> applyLogFilters(List<String> lines) {
+        List<LogEntry> result = new ArrayList<>();
+        for (String line : lines) {
             LogEntry entry = parseLogLine(line);
             if (!matchesLogLevelFilter(entry.level)) {
                 continue;
             }
-            filteredLogEntries.add(entry);
+            result.add(entry);
         }
+        return result;
     }
 
     // Regex for Spring Boot / Camel log format:
@@ -2021,6 +2053,27 @@ public class CamelMonitor extends CamelCommand {
     // ---- Data Loading ----
 
     private void refreshData() {
+        if (runner == null) {
+            refreshDataSync();
+            return;
+        }
+        if (!refreshInProgress.compareAndSet(false, true)) {
+            return;
+        }
+        lastRefresh = System.currentTimeMillis();
+        String currentSelectedPid = selectedPid;
+        runner.scheduler().execute(() -> {
+            try {
+                refreshDataSync();
+            } finally {
+                refreshInProgress.set(false);
+            }
+            runner.runOnRenderThread(() -> {
+            });
+        });
+    }
+
+    private void refreshDataSync() {
         lastRefresh = System.currentTimeMillis();
         try {
             List<IntegrationInfo> infos = new ArrayList<>();
@@ -2033,7 +2086,6 @@ public class CamelMonitor extends CamelCommand {
                             IntegrationInfo info = parseIntegration(ph, root);
                             if (info != null) {
                                 infos.add(info);
-                                // Track throughput for sparkline
                                 updateThroughputHistory(info);
                             }
                         }
@@ -2071,8 +2123,11 @@ public class CamelMonitor extends CamelCommand {
             // Refresh log data for the selected integration
             IntegrationInfo selected = findSelectedIntegration();
             if (selected != null) {
-                readLogFile(selected.pid);
-                applyLogFilters();
+                List<String> newLogLines = new ArrayList<>();
+                readLogFile(selected.pid, newLogLines);
+                List<LogEntry> newFilteredEntries = applyLogFilters(newLogLines);
+                logLines = newLogLines;
+                filteredLogEntries = newFilteredEntries;
             }
 
             // Refresh trace data
