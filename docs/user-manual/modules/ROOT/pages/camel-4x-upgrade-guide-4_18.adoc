@@ -277,3 +277,43 @@ Two new endpoint options have been added to control the pull fetch loop:
 
 * `pullBatchSize` (default `10`) — maximum number of messages to fetch per pull request.
 * `pullFetchTimeout` (default `1000` ms) — maximum time to wait for a batch on each fetch.
+
+=== camel-couchdb
+
+The Exchange header values exposed by `CouchDbConstants` have been renamed to follow the standard
+Camel naming convention. The field names are unchanged, so routes referencing the constants
+(e.g. `CouchDbConstants.HEADER_METHOD`, `CouchDbConstants.HEADER_DOC_ID`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `CouchDbDatabase` -> `CamelCouchDbDatabase`
+* `CouchDbSeq` -> `CamelCouchDbSeq`
+* `CouchDbId` -> `CamelCouchDbId`
+* `CouchDbRev` -> `CamelCouchDbRev`
+* `CouchDbMethod` -> `CamelCouchDbMethod`
+
+The generated Endpoint DSL header accessors on `CouchDbHeaderNameBuilder` retain the same method names
+but now return the updated `CamelCouchDb*` values. No code changes are needed if you use these accessors.
+
+=== camel-couchbase
+
+The Exchange header values exposed by `CouchbaseConstants` have been renamed to follow the standard
+Camel naming convention. The field names are unchanged, so routes referencing the constants
+(e.g. `CouchbaseConstants.HEADER_ID`, `CouchbaseConstants.HEADER_TTL`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `CCB_KEY` -> `CamelCouchbaseKey`
+* `CCB_ID` -> `CamelCouchbaseId`
+* `CCB_TTL` -> `CamelCouchbaseTtl`
+* `CCB_DDN` -> `CamelCouchbaseDesignDocumentName`
+* `CCB_VN` -> `CamelCouchbaseViewName`
+
+As a consequence, the generated Endpoint DSL header accessors on `CouchbaseHeaderNameBuilder`
+have been renamed accordingly:
+
+* `ccbKey()` -> `couchbaseKey()`
+* `ccbId()` -> `couchbaseId()`
+* `ccbTtl()` -> `couchbaseTtl()`
+* `ccbDdn()` -> `couchbaseDesignDocumentName()`
+* `ccbVn()` -> `couchbaseViewName()`
