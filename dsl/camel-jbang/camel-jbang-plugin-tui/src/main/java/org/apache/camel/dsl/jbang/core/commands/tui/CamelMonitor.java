@@ -57,6 +57,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.TuiConfig;
 import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.tui.event.Event;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -403,10 +404,13 @@ public class CamelMonitor extends CamelCommand {
 
             if (tab == TAB_ROUTES && showDiagram && ke.isCharIgnoreCase('m')) {
                 diagramMetrics = !diagramMetrics;
-                if (diagramTextMode) {
-                    diagramLoading.set(false);
-                    loadDiagramForSelectedRoute();
-                }
+                diagramLoading.set(false);
+                loadDiagramForSelectedRoute();
+                return true;
+            }
+            if (tab == TAB_ROUTES && showDiagram && ke.isKey(KeyCode.F5)) {
+                diagramLoading.set(false);
+                loadDiagramForSelectedRoute();
                 return true;
             }
 
@@ -1359,7 +1363,9 @@ public class CamelMonitor extends CamelCommand {
                     layoutRoutes.add(lr);
                     totalHeight = lr.maxY;
                 }
-                RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+                RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                        engine.getNodeWidth(), RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * RouteDiagramLayoutEngine.SCALE,
+                        metrics);
                 RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
                 java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
                 ImageData fullImage = ImageData.fromBufferedImage(image);
@@ -2016,7 +2022,12 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
             hint(spans, "PgUp/PgDn", "page");
             hint(spans, "Home/End", "top/bottom");
-            hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
+            hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
+            if (diagramMetrics && !diagramTextMode) {
+                hintLast(spans, "F5", "refresh counters");
+            } else if (diagramMetrics && diagramTextMode) {
+                hintLast(spans, "F5", "refresh");
+            }
         } else if (tab == TAB_ROUTES) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
@@ -2062,7 +2073,6 @@ public class CamelMonitor extends CamelCommand {
         spans.add(Span.styled(" " + key, HINT_KEY_STYLE));
         spans.add(Span.raw(" " + label));
     }
-
 
     // ---- Data Loading ----
 
