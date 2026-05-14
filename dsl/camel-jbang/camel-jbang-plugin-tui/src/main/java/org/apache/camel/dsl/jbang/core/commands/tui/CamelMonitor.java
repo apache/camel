@@ -1069,9 +1069,7 @@ public class CamelMonitor extends CamelCommand {
         diagramVScrollState.viewportContentLength(visibleLines);
         diagramVScrollState.position(diagramScroll);
         frame.renderStatefulWidget(
-                Scrollbar.builder()
-                        .thumbStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)))
-                        .build(),
+                Scrollbar.builder().build(),
                 hChunks.get(1), diagramVScrollState);
 
         // Render horizontal scrollbar
@@ -1150,9 +1148,7 @@ public class CamelMonitor extends CamelCommand {
         diagramVScrollState.viewportContentLength(viewRows);
         diagramVScrollState.position(diagramScroll);
         frame.renderStatefulWidget(
-                Scrollbar.builder()
-                        .thumbStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)))
-                        .build(),
+                Scrollbar.builder().build(),
                 hChunks.get(1), diagramVScrollState);
 
         // Render horizontal scrollbar
