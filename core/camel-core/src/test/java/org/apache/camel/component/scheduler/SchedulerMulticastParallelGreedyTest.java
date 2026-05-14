@@ -28,9 +28,7 @@ public class SchedulerMulticastParallelGreedyTest extends ContextTestSupport {
     public void testGreedy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:parentComplete");
         mock.expectedMessageCount(1);
-
-        // give it time to see if too many messages are sent if greedy kicks-in
-        Thread.sleep(50);
+        mock.setAssertPeriod(200);
 
         assertMockEndpointsSatisfied();
     }
