@@ -178,6 +178,7 @@ public class CamelMonitor extends CamelCommand {
     private boolean showDiagram;
     private boolean diagramTextMode;
     private boolean diagramMetrics = true;
+    private List<RouteDiagramAsciiRenderer.CounterPos> diagramCounterPositions = Collections.emptyList();
     private List<String> diagramLines = Collections.emptyList();
     private int diagramScroll;
     private int diagramScrollX;
@@ -1054,7 +1055,7 @@ public class CamelMonitor extends CamelCommand {
             if (diagramScrollX > 0) {
                 line = diagramScrollX < line.length() ? line.substring(diagramScrollX) : "";
             }
-            lines.add(styleDiagramLine(line));
+            lines.add(styleDiagramLine(line, i, diagramScrollX));
         }
 
         // Layout: outer block wraps everything, inner splits content + scrollbars
@@ -1175,10 +1176,36 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
-    private Line styleDiagramLine(String text) {
+    private Line styleDiagramLine(String text, int row, int scrollX) {
+        // Build counter color ranges for this row
+        List<int[]> counterRanges = new ArrayList<>();
+        for (RouteDiagramAsciiRenderer.CounterPos cp : diagramCounterPositions) {
+            if (cp.row() == row) {
+                int start = cp.col() - scrollX;
+                int end = start + cp.length();
+                if (end > 0 && start < text.length()) {
+                    start = Math.max(0, start);
+                    end = Math.min(end, text.length());
+                    int colorFlag = cp.type() == RouteDiagramAsciiRenderer.CounterType.OK ? 1 : 2;
+                    counterRanges.add(new int[] { start, end, colorFlag });
+                }
+            }
+        }
+
         List<Span> spans = new ArrayList<>();
         int idx = 0;
         while (idx < text.length()) {
+            // Check if current position is a counter
+            int[] counterRange = findCounterRange(counterRanges, idx);
+            if (counterRange != null) {
+                // Flush any text before the counter
+                Color counterColor = counterRange[2] == 1 ? Color.GREEN : Color.RED;
+                spans.add(Span.styled(text.substring(counterRange[0], counterRange[1]),
+                        Style.EMPTY.fg(counterColor).bold()));
+                idx = counterRange[1];
+                continue;
+            }
+
             int open = text.indexOf('[', idx);
             if (open < 0) {
                 spans.add(Span.styled(text.substring(idx), Style.EMPTY.fg(Color.WHITE)));
@@ -1190,7 +1217,7 @@ public class CamelMonitor extends CamelCommand {
                 break;
             }
             if (open > idx) {
-                spans.add(Span.styled(text.substring(idx, open), Style.EMPTY.fg(Color.GRAY)));
+                addStyledSegment(spans, text, idx, open, counterRanges);
             }
             String tag = text.substring(open + 1, close);
             Color tagColor = getDiagramNodeColor(tag);
@@ -1201,11 +1228,39 @@ public class CamelMonitor extends CamelCommand {
             int nextNewline = text.length();
             int labelEnd = nextOpen >= 0 ? nextOpen : nextNewline;
             if (afterTag < labelEnd) {
-                spans.add(Span.styled(text.substring(afterTag, labelEnd), Style.EMPTY.fg(Color.WHITE)));
+                addStyledSegment(spans, text, afterTag, labelEnd, counterRanges);
             }
             idx = labelEnd;
         }
         return Line.from(spans);
+    }
+
+    private void addStyledSegment(List<Span> spans, String text, int from, int to, List<int[]> counterRanges) {
+        int pos = from;
+        while (pos < to) {
+            int[] cr = findCounterRange(counterRanges, pos);
+            if (cr != null && cr[0] < to) {
+                if (pos < cr[0]) {
+                    spans.add(Span.styled(text.substring(pos, cr[0]), Style.EMPTY.fg(Color.GRAY)));
+                }
+                int counterEnd = Math.min(cr[1], to);
+                Color counterColor = cr[2] == 1 ? Color.GREEN : Color.RED;
+                spans.add(Span.styled(text.substring(cr[0], counterEnd), Style.EMPTY.fg(counterColor).bold()));
+                pos = counterEnd;
+            } else {
+                spans.add(Span.styled(text.substring(pos, to), Style.EMPTY.fg(Color.GRAY)));
+                pos = to;
+            }
+        }
+    }
+
+    private static int[] findCounterRange(List<int[]> ranges, int pos) {
+        for (int[] range : ranges) {
+            if (pos >= range[0] && pos < range[1]) {
+                return range;
+            }
+        }
+        return null;
     }
 
     private Color getDiagramNodeColor(String type) {
@@ -1339,14 +1394,27 @@ public class CamelMonitor extends CamelCommand {
         }
 
         if (textMode) {
-            String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true, metrics);
+            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
+                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
+                    RouteDiagramLayoutEngine.NodeLabelMode.CODE);
+            List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
+            int currentY = RouteDiagramLayoutEngine.PADDING;
+            for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
+                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, currentY);
+                layoutRoutes.add(lr);
+                currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+            }
+            RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(
+                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE, true, metrics);
+            String ascii = asciiRenderer.renderDiagram(layoutRoutes, currentY);
+            List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>(asciiRenderer.getCounterPositions());
             List<String> result = new ArrayList<>();
             for (String line : ascii.split("\n", -1)) {
                 if (!line.isEmpty()) {
                     result.add(line);
                 }
             }
-            applyDiagramResult(routeId, result, null, null, null);
+            applyDiagramResult(routeId, result, null, null, null, positions);
         } else {
             TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
             if (caps.supportsNativeImages()) {
@@ -1377,6 +1445,12 @@ public class CamelMonitor extends CamelCommand {
 
     private void applyDiagramResult(
             String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol) {
+        applyDiagramResult(routeId, lines, imageData, fullImageData, protocol, Collections.emptyList());
+    }
+
+    private void applyDiagramResult(
+            String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol,
+            List<RouteDiagramAsciiRenderer.CounterPos> positions) {
         if (runner == null) {
             return;
         }
@@ -1384,6 +1458,7 @@ public class CamelMonitor extends CamelCommand {
             boolean wasShowing = showDiagram;
             diagramRouteId = routeId;
             diagramLines = lines;
+            diagramCounterPositions = positions;
             diagramImageData = imageData;
             diagramFullImageData = fullImageData;
             diagramProtocol = protocol;
@@ -1397,26 +1472,6 @@ public class CamelMonitor extends CamelCommand {
             }
             showDiagram = true;
         });
-    }
-
-    private static String renderAscii(
-            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode,
-            boolean metrics) {
-        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                nodeWidth, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
-
-        List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
-        int currentY = RouteDiagramLayoutEngine.PADDING;
-        for (RouteDiagramLayoutEngine.RouteInfo route : routes) {
-            RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(route, currentY);
-            layoutRoutes.add(lr);
-            currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
-        }
-
-        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(
-                nodeWidth * RouteDiagramLayoutEngine.SCALE, unicode, metrics);
-        return renderer.renderDiagram(layoutRoutes, currentY);
     }
 
     private static JsonObject pollJsonResponse(Path outputFile, long timeout) {

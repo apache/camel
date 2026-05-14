@@ -58,6 +58,15 @@ public class RouteDiagramAsciiRenderer {
     private final int boxWidth;
     private final boolean unicode;
     private final boolean metrics;
+    private final List<CounterPos> counterPositions = new ArrayList<>();
+
+    public enum CounterType {
+        OK,
+        FAIL
+    }
+
+    public record CounterPos(int row, int col, int length, CounterType type) {
+    }
 
     public RouteDiagramAsciiRenderer(int nodeWidth) {
         this(nodeWidth, false, false);
@@ -78,7 +87,33 @@ public class RouteDiagramAsciiRenderer {
         return boxWidth;
     }
 
+    public List<CounterPos> getCounterPositions() {
+        return counterPositions;
+    }
+
+    public String renderDiagramAnsi(List<LayoutRoute> layoutRoutes, int totalHeight) {
+        String plain = renderDiagram(layoutRoutes, totalHeight);
+        if (counterPositions.isEmpty()) {
+            return plain;
+        }
+        String[] lines = plain.split("\n", -1);
+        for (CounterPos cp : counterPositions) {
+            if (cp.row >= 0 && cp.row < lines.length) {
+                String line = lines[cp.row];
+                if (cp.col >= 0 && cp.col + cp.length <= line.length()) {
+                    String before = line.substring(0, cp.col);
+                    String counter = line.substring(cp.col, cp.col + cp.length);
+                    String after = line.substring(cp.col + cp.length);
+                    String color = cp.type == CounterType.OK ? "\033[32m" : "\033[31m";
+                    lines[cp.row] = before + color + counter + "\033[0m" + after;
+                }
+            }
+        }
+        return String.join("\n", lines);
+    }
+
     public String renderDiagram(List<LayoutRoute> layoutRoutes, int totalHeight) {
+        counterPositions.clear();
         int maxPixelX = layoutRoutes.stream()
                 .mapToInt(lr -> lr.maxX).max().orElse(nodeWidth) + PADDING;
         int gridWidth = toCol(maxPixelX) + boxWidth + 4;
@@ -215,11 +250,16 @@ public class RouteDiagramAsciiRenderer {
         long failed = stat.exchangesFailed;
         long ok = total - failed;
         if (ok > 0) {
-            drawText(grid, toTop - 1, toCx + 2, "" + ok);
+            String okStr = "" + ok;
+            int col = toCx + 2;
+            drawText(grid, toTop - 1, col, okStr);
+            counterPositions.add(new CounterPos(toTop - 1, col, okStr.length(), CounterType.OK));
         }
         if (failed > 0) {
             String failStr = "" + failed;
-            drawText(grid, toTop - 1, toCx - 1 - failStr.length(), failStr);
+            int col = toCx - 1 - failStr.length();
+            drawText(grid, toTop - 1, col, failStr);
+            counterPositions.add(new CounterPos(toTop - 1, col, failStr.length(), CounterType.FAIL));
         }
     }
 
