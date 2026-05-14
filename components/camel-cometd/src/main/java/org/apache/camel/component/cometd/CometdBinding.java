@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultMessage;
 import org.cometd.bayeux.server.ServerChannel;
@@ -48,6 +49,7 @@ public class CometdBinding {
     private static final Logger LOG = LoggerFactory.getLogger(CometdBinding.class);
 
     private final BayeuxServerImpl bayeux;
+    private final HeaderFilterStrategy headerFilterStrategy;
     private boolean enableSessionHeader;
 
     public CometdBinding(BayeuxServerImpl bayeux) {
@@ -55,8 +57,13 @@ public class CometdBinding {
     }
 
     public CometdBinding(BayeuxServerImpl bayeux, boolean enableSessionHeader) {
+        this(bayeux, enableSessionHeader, new CometdHeaderFilterStrategy());
+    }
+
+    public CometdBinding(BayeuxServerImpl bayeux, boolean enableSessionHeader, HeaderFilterStrategy headerFilterStrategy) {
         this.bayeux = bayeux;
         this.enableSessionHeader = enableSessionHeader;
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public ServerMessage.Mutable createCometdMessage(ServerChannel channel, ServerSession serverSession, Message camelMessage) {
@@ -81,7 +88,14 @@ public class CometdBinding {
         message.setBody(data);
         Map<String, Object> headers = getHeadersFromMessage(cometdMessage);
         if (headers != null) {
-            message.setHeaders(headers);
+            for (Entry<String, Object> entry : headers.entrySet()) {
+                String name = entry.getKey();
+                Object value = entry.getValue();
+                if (headerFilterStrategy == null
+                        || !headerFilterStrategy.applyFilterToExternalHeaders(name, value, null)) {
+                    message.setHeader(name, value);
+                }
+            }
         }
         message.setHeader(COMETD_CLIENT_ID_HEADER_NAME, remote.getId());
 
@@ -116,20 +130,20 @@ public class CometdBinding {
 
     public void addHeadersToMessage(ServerMessage.Mutable cometdMessage, Message camelMessage) {
         if (camelMessage.hasHeaders()) {
-            Map<String, Object> ext = cometdMessage.getExt(true);
-            ext.put(HEADERS_FIELD, filterHeaders(camelMessage.getHeaders()));
-        }
-    }
-
-    //TODO: do something in the style of JMS where they have header Strategies?
-    private Object filterHeaders(Map<String, Object> headers) {
-        Map<String, Object> map = new HashMap<>();
-        for (Entry<String, Object> entry : headers.entrySet()) {
-            if (entry != null && entry.getKey() != null) {
-                map.put(entry.getKey(), entry.getValue());
+            Map<String, Object> filtered = new HashMap<>();
+            for (Entry<String, Object> entry : camelMessage.getHeaders().entrySet()) {
+                if (entry != null && entry.getKey() != null) {
+                    if (headerFilterStrategy == null
+                            || !headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), null)) {
+                        filtered.put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+            if (!filtered.isEmpty()) {
+                Map<String, Object> ext = cometdMessage.getExt(true);
+                ext.put(HEADERS_FIELD, filtered);
             }
         }
-        return map;
     }
 
     @SuppressWarnings("unchecked")
