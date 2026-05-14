@@ -131,4 +131,30 @@ final class TuiHelper {
         }
         return 0;
     }
+
+    static String shortTypeName(String type) {
+        if (type == null) {
+            return "null";
+        } else if (type.startsWith("java.util.concurrent")) {
+            return type.substring(21);
+        } else if (type.startsWith("java.lang.") || type.startsWith("java.util.")) {
+            return type.substring(10);
+        } else if (type.startsWith("org.apache.camel.support.")) {
+            return type.substring(25);
+        } else if (type.equals("org.apache.camel.converter.stream.CachedOutputStream.WrappedInputStream")) {
+            return "WrappedInputStream";
+        } else if (type.startsWith("org.apache.camel.converter.stream.")) {
+            return type.substring(34);
+        } else if (type.equals(
+                "org.apache.camel.processor.aggregate.AbstractListAggregationStrategy.GroupedExchangeList")) {
+            return "GroupedExchangeList";
+        } else if (type.length() > 34) {
+            int pos = type.lastIndexOf('.');
+            if (pos == -1) {
+                pos = type.length() - 34;
+            }
+            return type.substring(pos + 1);
+        }
+        return type;
+    }
 }
