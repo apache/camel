@@ -32,15 +32,15 @@ public interface CouchbaseConstants {
     String DEFAULT_DESIGN_DOCUMENT_NAME = "beer";
     String DEFAULT_VIEWNAME = "brewery_beers";
     @Metadata(label = "consumer", description = "The key", javaType = "String")
-    String HEADER_KEY = "CCB_KEY";
+    String HEADER_KEY = "CamelCouchbaseKey";
     @Metadata(description = "The document id", javaType = "String")
-    String HEADER_ID = "CCB_ID";
+    String HEADER_ID = "CamelCouchbaseId";
     @Metadata(label = "producer", description = "The expiry for the document in seconds", javaType = "String")
-    String HEADER_TTL = "CCB_TTL";
+    String HEADER_TTL = "CamelCouchbaseTtl";
     @Metadata(label = "consumer", description = "The design document name", javaType = "String")
-    String HEADER_DESIGN_DOCUMENT_NAME = "CCB_DDN";
+    String HEADER_DESIGN_DOCUMENT_NAME = "CamelCouchbaseDesignDocumentName";
     @Metadata(label = "consumer", description = "The view name", javaType = "String")
-    String HEADER_VIEWNAME = "CCB_VN";
+    String HEADER_VIEWNAME = "CamelCouchbaseViewName";
 
     @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")
     String COUCHBASE_RESUME_ACTION = "CamelCqlResumeQuery";
