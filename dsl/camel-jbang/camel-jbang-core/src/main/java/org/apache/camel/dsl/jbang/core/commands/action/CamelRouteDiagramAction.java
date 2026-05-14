@@ -211,7 +211,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
             if (isTextTheme()) {
                 RouteDiagramAsciiRenderer asciiRenderer
-                        = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme());
+                        = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme(), pid > 0 && metric);
                 String ascii = asciiRenderer.renderDiagram(layoutRoutes, currentY);
 
                 if (output != null) {
