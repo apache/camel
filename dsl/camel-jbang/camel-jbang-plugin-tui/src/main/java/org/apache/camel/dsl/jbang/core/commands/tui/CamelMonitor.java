@@ -404,6 +404,7 @@ public class CamelMonitor extends CamelCommand {
             if (tab == TAB_ROUTES && showDiagram && ke.isCharIgnoreCase('m')) {
                 diagramMetrics = !diagramMetrics;
                 if (diagramTextMode) {
+                    diagramLoading.set(false);
                     loadDiagramForSelectedRoute();
                 }
                 return true;
