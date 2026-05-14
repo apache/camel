@@ -1407,11 +1407,26 @@ public class CamelMonitor extends CamelCommand {
             RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(
                     RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE, true, metrics);
             String ascii = asciiRenderer.renderDiagram(layoutRoutes, currentY);
-            List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>(asciiRenderer.getCounterPositions());
+            List<RouteDiagramAsciiRenderer.CounterPos> origPositions = asciiRenderer.getCounterPositions();
+
+            // Build result lines, remapping counter positions to account for removed empty lines
+            String[] rawLines = ascii.split("\n", -1);
             List<String> result = new ArrayList<>();
-            for (String line : ascii.split("\n", -1)) {
-                if (!line.isEmpty()) {
-                    result.add(line);
+            int[] rowMapping = new int[rawLines.length];
+            int newRow = 0;
+            for (int i = 0; i < rawLines.length; i++) {
+                if (!rawLines[i].isEmpty()) {
+                    rowMapping[i] = newRow++;
+                    result.add(rawLines[i]);
+                } else {
+                    rowMapping[i] = -1;
+                }
+            }
+            List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
+            for (RouteDiagramAsciiRenderer.CounterPos cp : origPositions) {
+                if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
+                    positions.add(new RouteDiagramAsciiRenderer.CounterPos(
+                            rowMapping[cp.row()], cp.col(), cp.length(), cp.type()));
                 }
             }
             applyDiagramResult(routeId, result, null, null, null, positions);
