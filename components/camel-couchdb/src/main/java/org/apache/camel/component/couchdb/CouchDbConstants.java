@@ -24,16 +24,16 @@ import org.apache.camel.spi.Metadata;
 public interface CouchDbConstants {
 
     @Metadata(label = "consumer", description = "The database the message came from", javaType = "String")
-    String HEADER_DATABASE = "CouchDbDatabase";
+    String HEADER_DATABASE = "CamelCouchDbDatabase";
     @Metadata(label = "consumer", description = "The couchdb changeset sequence number of the update / delete message",
               javaType = "String")
-    String HEADER_SEQ = "CouchDbSeq";
+    String HEADER_SEQ = "CamelCouchDbSeq";
     @Metadata(description = "The couchdb document id", javaType = "String")
-    String HEADER_DOC_ID = "CouchDbId";
+    String HEADER_DOC_ID = "CamelCouchDbId";
     @Metadata(description = "The couchdb document revision", javaType = "String")
-    String HEADER_DOC_REV = "CouchDbRev";
+    String HEADER_DOC_REV = "CamelCouchDbRev";
     @Metadata(description = "The method (delete / update)", javaType = "String")
-    String HEADER_METHOD = "CouchDbMethod";
+    String HEADER_METHOD = "CamelCouchDbMethod";
 
     @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")
     String COUCHDB_RESUME_ACTION = "CamelCouchDbResumeAction";
