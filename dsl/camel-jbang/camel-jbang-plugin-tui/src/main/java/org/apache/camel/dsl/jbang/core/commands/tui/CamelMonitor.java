@@ -2008,9 +2008,9 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "scroll");
             hint(spans, "PgUp/PgDn", "page");
+            hint(spans, "Home/End", "top/end");
             hint(spans, "t/d/i/w/e", "levels");
-            hint(spans, "f", "follow");
-            hintLast(spans, "Home/End", "top/end");
+            hintLast(spans, "f", "follow");
         } else if (tab == TAB_TRACE) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
