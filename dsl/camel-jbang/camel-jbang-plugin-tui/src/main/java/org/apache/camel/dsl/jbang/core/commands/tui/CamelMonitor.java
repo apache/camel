@@ -1310,6 +1310,13 @@ public class CamelMonitor extends CamelCommand {
                     node.code = Jsoner.unescape(objToString(line.get("code")));
                     Integer level = line.getInteger("level");
                     node.level = level != null ? level : 0;
+                    JsonObject stats = (JsonObject) line.get("statistics");
+                    if (stats != null) {
+                        RouteDiagramLayoutEngine.StatInfo stat = new RouteDiagramLayoutEngine.StatInfo();
+                        stat.exchangesTotal = stats.getLongOrDefault("exchangesTotal", 0);
+                        stat.exchangesFailed = stats.getLongOrDefault("exchangesFailed", 0);
+                        node.stat = stat;
+                    }
                     route.nodes.add(node);
                 }
             }
@@ -1317,7 +1324,7 @@ public class CamelMonitor extends CamelCommand {
         }
 
         if (textMode) {
-            String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true);
+            String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true, true);
             List<String> result = new ArrayList<>();
             for (String line : ascii.split("\n", -1)) {
                 if (!line.isEmpty()) {
@@ -1373,7 +1380,8 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private static String renderAscii(
-            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode) {
+            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode,
+            boolean metrics) {
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                 nodeWidth, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                 RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
@@ -1387,7 +1395,7 @@ public class CamelMonitor extends CamelCommand {
         }
 
         RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(
-                nodeWidth * RouteDiagramLayoutEngine.SCALE, unicode);
+                nodeWidth * RouteDiagramLayoutEngine.SCALE, unicode, metrics);
         return renderer.renderDiagram(layoutRoutes, currentY);
     }
 
