@@ -263,7 +263,19 @@ be closed as `not a vulnerability`.
   parser in a way that bypasses the library's own limits.
 * *A deployer placing `camel-management`, the developer console,
   `camel-jolokia`, JMX or another management surface on a public network.*
-  These are management surfaces; they assume a trusted network.
+  These are management surfaces; they assume a trusted network. The
+  operations they expose - including `ManagedCamelContext.sendBody` /
+  `requestBody`, `ManagedBacklogDebugger.evaluateExpressionAtBreakpoint`,
+  `addConditionalBreakpoint` and `BacklogTracer.setTraceFilter` - are
+  intentionally as expressive as a route author's DSL, because they exist
+  to support operator workflows (Camel JBang, Hawtio, JConsole, monitoring
+  agents). The trust boundary is the management surface itself - JVM JMX
+  authentication (`-Dcom.sun.management.jmxremote.authenticate`), the
+  Jolokia restrictor policy, and the network exposure of the management
+  port - not the individual MBean method. A report that demonstrates
+  "MBean operation X executes code or sends to endpoint Y when invoked
+  from a JMX or Jolokia connection" describes the documented contract,
+  not a framework vulnerability.
 * *Vulnerabilities in third-party transitive dependencies that are not
   reachable through any Camel-exposed code path.* See
   https://github.com/apache/camel/blob/main/SECURITY.md[`SECURITY.md`] and the
