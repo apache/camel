@@ -69,7 +69,7 @@ public class SplunkHECProducer extends DefaultProducer {
             connManager = new PoolingHttpClientConnectionManager(registryBuilder.build());
         } else {
             SSLConnectionSocketFactory sslsf
-                    = new SSLConnectionSocketFactory(endpoint.provideSSLContext(), NoopHostnameVerifier.INSTANCE);
+                    = new SSLConnectionSocketFactory(endpoint.provideSSLContext());
             RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
             registryBuilder.register("https", sslsf);
 
