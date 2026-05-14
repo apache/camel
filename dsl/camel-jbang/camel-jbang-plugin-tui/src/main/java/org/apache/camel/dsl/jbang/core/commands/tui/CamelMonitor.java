@@ -176,6 +176,7 @@ public class CamelMonitor extends CamelCommand {
     // Diagram state
     private boolean showDiagram;
     private boolean diagramTextMode;
+    private boolean diagramMetrics = true;
     private List<String> diagramLines = Collections.emptyList();
     private int diagramScroll;
     private int diagramScrollX;
@@ -400,6 +401,14 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
+            if (tab == TAB_ROUTES && showDiagram && ke.isCharIgnoreCase('m')) {
+                diagramMetrics = !diagramMetrics;
+                if (diagramTextMode) {
+                    loadDiagramForSelectedRoute();
+                }
+                return true;
+            }
+
             // Health tab: DOWN filter
             if (tab == TAB_HEALTH && ke.isCharIgnoreCase('d')) {
                 showOnlyDown = !showOnlyDown;
@@ -475,6 +484,9 @@ public class CamelMonitor extends CamelCommand {
             long interval = showDiagram ? Math.max(refreshInterval, 1000) : refreshInterval;
             if (now - lastRefresh >= interval) {
                 refreshData();
+                if (showDiagram && diagramTextMode && diagramMetrics) {
+                    loadDiagramForSelectedRoute();
+                }
                 return true;
             }
             // Skip re-render when showing image diagram to prevent flicker
@@ -1246,6 +1258,7 @@ public class CamelMonitor extends CamelCommand {
         // Capture state needed by the background thread
         String pid = selectedPid;
         boolean textMode = diagramTextMode;
+        boolean showMetrics = diagramMetrics;
         String routeId = selectedRoute.routeId;
 
         // Show loading state immediately
@@ -1259,14 +1272,14 @@ public class CamelMonitor extends CamelCommand {
 
         runner.scheduler().execute(() -> {
             try {
-                loadDiagramInBackground(pid, textMode, routeId);
+                loadDiagramInBackground(pid, textMode, routeId, showMetrics);
             } finally {
                 diagramLoading.set(false);
             }
         });
     }
 
-    private void loadDiagramInBackground(String pid, boolean textMode, String routeId) {
+    private void loadDiagramInBackground(String pid, boolean textMode, String routeId, boolean metrics) {
         Path outputFile = getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
 
@@ -1324,7 +1337,7 @@ public class CamelMonitor extends CamelCommand {
         }
 
         if (textMode) {
-            String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true, true);
+            String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true, metrics);
             List<String> result = new ArrayList<>();
             for (String line : ascii.split("\n", -1)) {
                 if (!line.isEmpty()) {
@@ -1997,7 +2010,8 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, closeKey + "/Esc", "close");
             hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
             hint(spans, "PgUp/PgDn", "page");
-            hintLast(spans, "Home/End", "top/bottom");
+            hint(spans, "Home/End", "top/bottom");
+            hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
         } else if (tab == TAB_ROUTES) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
