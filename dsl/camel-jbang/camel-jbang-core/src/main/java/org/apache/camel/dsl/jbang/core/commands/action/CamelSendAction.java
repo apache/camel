@@ -329,7 +329,7 @@ public class CamelSendAction extends ActionBaseCommand {
     private void printStatusLine(JsonObject jo) {
         // timestamp
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String ts = sdf.format(new Date(jo.getLong("timestamp")));
+        String ts = sdf.format(new Date(jo.getLongOrDefault("timestamp", System.currentTimeMillis())));
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
         } else {
