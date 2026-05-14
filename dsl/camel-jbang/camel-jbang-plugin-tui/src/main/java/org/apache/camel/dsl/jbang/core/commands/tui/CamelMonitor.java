@@ -43,6 +43,7 @@ import dev.tamboui.image.ImageData;
 import dev.tamboui.image.ImageScaling;
 import dev.tamboui.image.capability.TerminalImageCapabilities;
 import dev.tamboui.image.protocol.ImageProtocol;
+import dev.tamboui.layout.Alignment;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -64,6 +65,7 @@ import dev.tamboui.widgets.barchart.BarChart;
 import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
+import dev.tamboui.widgets.block.Title;
 import dev.tamboui.widgets.gauge.Gauge;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
@@ -103,7 +105,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int MAX_SPARKLINE_POINTS = 60;
     private static final int MAX_LOG_LINES = 200;
     private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 6;
+    private static final int NUM_TABS = 7;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
@@ -111,7 +113,8 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_LOG = 2;
     private static final int TAB_ENDPOINTS = 3;
     private static final int TAB_HEALTH = 4;
-    private static final int TAB_TRACE = 5;
+    private static final int TAB_HISTORY = 5;
+    private static final int TAB_TRACE = 6;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "status", "total", "fail" };
@@ -174,6 +177,14 @@ public class CamelMonitor extends CamelCommand {
     private boolean showTraceHeaders = true;
     private boolean showTraceBody = true;
     private boolean traceFollowMode = true;
+
+    // History state
+    private volatile List<HistoryEntry> historyEntries = Collections.emptyList();
+    private final TableState historyTableState = new TableState();
+    private boolean showHistoryHeaders = true;
+    private boolean showHistoryBody = true;
+    private boolean historyWordWrap;
+    private int historyDetailScroll;
 
     // Selected integration for detail views
     private String selectedPid;
@@ -272,6 +283,9 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_HEALTH);
             }
             if (ke.isChar('6')) {
+                return handleTabKey(TAB_HISTORY);
+            }
+            if (ke.isChar('7')) {
                 return handleTabKey(TAB_TRACE);
             }
 
@@ -305,7 +319,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 return true;
             }
-            if (ke.isPageUp()) {
+            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll = Math.max(0, diagramScroll - 20);
                 } else if (tab == TAB_LOG) {
@@ -313,16 +327,20 @@ public class CamelMonitor extends CamelCommand {
                     for (int i = 0; i < 20; i++) {
                         logTableState.selectPrevious();
                     }
+                } else if (tab == TAB_HISTORY) {
+                    historyDetailScroll = Math.max(0, historyDetailScroll - 5);
                 }
                 return true;
             }
-            if (ke.isPageDown()) {
+            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll += 20;
                 } else if (tab == TAB_LOG) {
                     for (int i = 0; i < 20; i++) {
                         logTableState.selectNext(filteredLogEntries.size());
                     }
+                } else if (tab == TAB_HISTORY) {
+                    historyDetailScroll += 5;
                 }
                 return true;
             }
@@ -478,6 +496,29 @@ public class CamelMonitor extends CamelCommand {
                     return true;
                 }
             }
+
+            // History tab: headers/body toggle and refresh
+            if (tab == TAB_HISTORY) {
+                if (ke.isCharIgnoreCase('h')) {
+                    showHistoryHeaders = !showHistoryHeaders;
+                    return true;
+                }
+                if (ke.isCharIgnoreCase('b')) {
+                    showHistoryBody = !showHistoryBody;
+                    return true;
+                }
+                if (ke.isCharIgnoreCase('w')) {
+                    historyWordWrap = !historyWordWrap;
+                    historyDetailScroll = 0;
+                    return true;
+                }
+                if (ke.isKey(KeyCode.F5)) {
+                    if (selectedPid != null) {
+                        refreshHistoryData(List.of(Long.parseLong(selectedPid)));
+                    }
+                    return true;
+                }
+            }
         }
         if (event instanceof TickEvent) {
             long now = System.currentTimeMillis();
@@ -500,6 +541,12 @@ public class CamelMonitor extends CamelCommand {
             selectCurrentIntegration();
         } else {
             selectedPid = null;
+        }
+        if (tab == TAB_HISTORY && selectedPid != null) {
+            refreshHistoryData(List.of(Long.parseLong(selectedPid)));
+            if (!historyEntries.isEmpty()) {
+                historyTableState.select(0);
+            }
         }
         tabsState.select(tab);
         return true;
@@ -532,6 +579,10 @@ public class CamelMonitor extends CamelCommand {
                 traceFollowMode = false;
                 traceTableState.selectPrevious();
             }
+            case TAB_HISTORY -> {
+                historyTableState.selectPrevious();
+                historyDetailScroll = 0;
+            }
         }
     }
 
@@ -555,6 +606,10 @@ public class CamelMonitor extends CamelCommand {
             case TAB_TRACE -> {
                 List<TraceEntry> current = traces.get();
                 traceTableState.selectNext(current.size());
+            }
+            case TAB_HISTORY -> {
+                historyTableState.selectNext(historyEntries.size());
+                historyDetailScroll = 0;
             }
         }
     }
@@ -610,7 +665,8 @@ public class CamelMonitor extends CamelCommand {
                         " 3 Log" + sel + " ",
                         " 4 Endpoints" + sel + " ",
                         " 5 Health" + sel + " ",
-                        " 6 Trace" + sel + " ")
+                        " 6 History" + sel + " ",
+                        " 7 Trace" + sel + " ")
                 .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
@@ -626,6 +682,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_ENDPOINTS -> renderEndpoints(frame, area);
             case TAB_LOG -> renderLog(frame, area);
             case TAB_TRACE -> renderTrace(frame, area);
+            case TAB_HISTORY -> renderHistory(frame, area);
         }
     }
 
@@ -2084,6 +2141,244 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(detail, area);
     }
 
+    // ---- Tab 7: History ----
+
+    private void renderHistory(Frame frame, Rect area) {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null) {
+            renderNoSelection(frame, area);
+            return;
+        }
+
+        List<HistoryEntry> current = historyEntries;
+
+        // Layout: history list (fixed 6 rows + header + borders) + detail panel (fill)
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.length(10), Constraint.fill())
+                .split(area);
+
+        // History list
+        List<Row> rows = new ArrayList<>();
+        for (HistoryEntry entry : current) {
+            Style dirStyle;
+            if (entry.first) {
+                dirStyle = Style.EMPTY.fg(Color.GREEN);
+            } else if (entry.last) {
+                dirStyle = entry.failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+            } else {
+                dirStyle = Style.EMPTY;
+            }
+            String elapsed = entry.elapsed >= 0 ? entry.elapsed + "ms" : "";
+
+            rows.add(Row.from(
+                    Cell.from(Span.styled(entry.direction, dirStyle)),
+                    Cell.from(entry.timestamp != null ? truncate(entry.timestamp, 12) : ""),
+                    Cell.from(Span.styled(
+                            entry.routeId != null ? truncate(entry.routeId, 15) : "",
+                            Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(entry.nodeId != null ? truncate(entry.nodeId, 15) : ""),
+                    Cell.from(entry.processor != null ? entry.processor : ""),
+                    Cell.from(elapsed)));
+        }
+
+        Row header = Row.from(
+                Cell.from(Span.styled("", Style.EMPTY.bold())),
+                Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ID", Style.EMPTY.bold())),
+                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())));
+
+        Title historyTitle = buildHistoryTitle(current);
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(header)
+                .widths(
+                        Constraint.length(4),
+                        Constraint.length(12),
+                        Constraint.length(15),
+                        Constraint.length(15),
+                        Constraint.fill(),
+                        Constraint.length(10))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(historyTitle).build())
+                .build();
+
+        frame.renderStatefulWidget(table, chunks.get(0), historyTableState);
+
+        // Detail panel
+        renderHistoryDetail(frame, chunks.get(1), current);
+    }
+
+    private void renderHistoryDetail(Frame frame, Rect area, List<HistoryEntry> current) {
+        Integer sel = historyTableState.selected();
+
+        if (sel == null || sel < 0 || sel >= current.size()) {
+            frame.renderWidget(
+                    Paragraph.builder()
+                            .text(Text.from(Line.from(
+                                    Span.styled(" Select a history entry to view details",
+                                            Style.EMPTY.dim()))))
+                            .block(Block.builder().borderType(BorderType.ROUNDED)
+                                    .title(" Detail ").build())
+                            .build(),
+                    area);
+            return;
+        }
+
+        HistoryEntry entry = current.get(sel);
+        List<Line> lines = new ArrayList<>();
+
+        // Exchange info
+        lines.add(Line.from(
+                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(entry.exchangeId != null ? entry.exchangeId : "")));
+        lines.add(Line.from(
+                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(entry.routeId != null ? entry.routeId : ""),
+                Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(entry.nodeId != null ? entry.nodeId : ""),
+                Span.raw(entry.nodeLabel != null ? " (" + entry.nodeLabel + ")" : "")));
+        lines.add(Line.from(
+                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(entry.location != null ? entry.location : "")));
+        lines.add(Line.from(
+                Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(entry.elapsed >= 0 ? entry.elapsed + "ms" : ""),
+                Span.styled("  Thread: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(entry.threadName != null ? entry.threadName : "")));
+        if (entry.failed) {
+            lines.add(Line.from(
+                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("Failed", Style.EMPTY.fg(Color.RED).bold())));
+        }
+        lines.add(Line.from(Span.raw("")));
+
+        // Headers
+        if (showHistoryHeaders && entry.headers != null && !entry.headers.isEmpty()) {
+            lines.add(Line.from(Span.styled(" Headers:", Style.EMPTY.fg(Color.GREEN).bold())));
+            for (Map.Entry<String, Object> h : entry.headers.entrySet()) {
+                String type = entry.headerTypes != null ? entry.headerTypes.get(h.getKey()) : null;
+                String typeLabel;
+                if (type != null) {
+                    String t = "(" + type + ")";
+                    t = truncate(t, 20);
+                    typeLabel = String.format("%-20s ", t);
+                } else {
+                    typeLabel = String.format("%-21s", "");
+                }
+                lines.add(Line.from(
+                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
+                        Span.styled(h.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                        Span.raw(" = "),
+                        Span.raw(h.getValue() != null ? h.getValue().toString() : "null")));
+            }
+            lines.add(Line.from(Span.raw("")));
+        }
+
+        // Body
+        if (showHistoryBody) {
+            if (entry.body != null) {
+                if (entry.bodyType != null) {
+                    lines.add(Line.from(
+                            Span.styled(" Body: ", Style.EMPTY.fg(Color.GREEN).bold()),
+                            Span.styled("(" + entry.bodyType + ")", Style.EMPTY.dim())));
+                } else {
+                    lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
+                }
+                String[] bodyLines = entry.body.split("\n");
+                for (String bl : bodyLines) {
+                    lines.add(Line.from(Span.raw("   " + bl)));
+                }
+            } else {
+                lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
+            }
+            lines.add(Line.from(Span.raw("")));
+        }
+
+        // Exception
+        if (entry.exception != null) {
+            lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.RED).bold())));
+            lines.add(Line.from(Span.raw("   " + entry.exception)));
+        }
+
+        Block block = Block.builder().borderType(BorderType.ROUNDED).build();
+        frame.renderWidget(block, area);
+
+        Rect inner = block.inner(area);
+        int visibleHeight = Math.max(1, inner.height());
+        int contentHeight;
+        if (historyWordWrap) {
+            int width = Math.max(1, inner.width() - 1);
+            contentHeight = 0;
+            for (Line l : lines) {
+                int w = l.width();
+                contentHeight += Math.max(1, (w + width - 1) / width);
+            }
+        } else {
+            contentHeight = lines.size();
+        }
+        int maxScroll = Math.max(0, contentHeight - visibleHeight);
+        if (historyDetailScroll > maxScroll) {
+            historyDetailScroll = maxScroll;
+        }
+
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        Paragraph detail = Paragraph.builder()
+                .text(Text.from(lines))
+                .overflow(historyWordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
+                .scroll(historyDetailScroll)
+                .build();
+        frame.renderWidget(detail, hChunks.get(0));
+
+        if (lines.size() > visibleHeight) {
+            ScrollbarState scrollState = new ScrollbarState();
+            scrollState.contentLength(lines.size());
+            scrollState.viewportContentLength(visibleHeight);
+            scrollState.position(historyDetailScroll);
+            frame.renderStatefulWidget(
+                    Scrollbar.builder().build(),
+                    hChunks.get(1), scrollState);
+        }
+    }
+
+    private Title buildHistoryTitle(List<HistoryEntry> entries) {
+        if (entries.isEmpty()) {
+            return Title.from(" History of last completed ");
+        }
+        HistoryEntry first = entries.get(0);
+        HistoryEntry last = null;
+        for (HistoryEntry e : entries) {
+            if (e.last) {
+                last = e;
+                break;
+            }
+        }
+        if (last == null) {
+            last = entries.get(entries.size() - 1);
+        }
+
+        List<Span> spans = new ArrayList<>();
+        spans.add(Span.raw(" History of last completed ("));
+        boolean failed = last.failed;
+        spans.add(Span.styled("status:" + (failed ? "failed" : "success"),
+                failed ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Color.GREEN).bold()));
+        if (last.elapsed >= 0) {
+            spans.add(Span.raw(" elapsed:" + TimeUtils.printDuration(last.elapsed, true)));
+        }
+        if (first.epochMs > 0) {
+            String ago = TimeUtils.printSince(first.epochMs);
+            spans.add(Span.raw(" ago:" + ago));
+        }
+        spans.add(Span.raw(") "));
+        return new Title(Line.from(spans), Alignment.LEFT, Overflow.CLIP);
+    }
+
     // ---- Shared rendering ----
 
     private void renderNoSelection(Frame frame, Rect area) {
@@ -2107,7 +2402,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "Enter", "details");
-            hint(spans, "1-6", "tabs");
+            hint(spans, "1-7", "tabs");
         } else if (tab == TAB_ROUTES && showDiagram) {
             String closeKey = diagramTextMode ? "D" : "d";
             hint(spans, closeKey + "/Esc", "close");
@@ -2126,12 +2421,12 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "s", "sort");
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
-            hint(spans, "1-6", "tabs");
+            hint(spans, "1-7", "tabs");
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "d", "toggle DOWN");
-            hint(spans, "1-6", "tabs");
+            hint(spans, "1-7", "tabs");
         } else if (tab == TAB_LOG) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "scroll");
@@ -2145,10 +2440,18 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
             hint(spans, "b", "body" + (showTraceBody ? " [on]" : " [off]"));
             hintLast(spans, "f", "follow" + (traceFollowMode ? " [on]" : " [off]"));
+        } else if (tab == TAB_HISTORY) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "PgUp/PgDn", "scroll detail");
+            hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
+            hint(spans, "b", "body" + (showHistoryBody ? " [on]" : " [off]"));
+            hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
+            hintLast(spans, "F5", "refresh");
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "1-6", "tabs");
+            hint(spans, "1-7", "tabs");
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -2518,6 +2821,136 @@ public class CamelMonitor extends CamelCommand {
             } else if (varsObj instanceof Map) {
                 entry.exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
             }
+        }
+
+        return entry;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void refreshHistoryData(List<Long> pids) {
+        List<HistoryEntry> allEntries = new ArrayList<>();
+        for (Long pid : pids) {
+            Path historyFile = CommandLineHelper.getCamelDir().resolve(pid + "-history.json");
+            if (!Files.exists(historyFile)) {
+                continue;
+            }
+            try {
+                String content = Files.readString(historyFile);
+                if (content == null || content.isBlank()) {
+                    continue;
+                }
+                JsonObject json = (JsonObject) Jsoner.deserialize(content);
+                Object tracesArray = json.get("traces");
+                if (tracesArray instanceof List<?> traceList) {
+                    for (Object traceObj : traceList) {
+                        if (traceObj instanceof JsonObject traceJson) {
+                            HistoryEntry entry = parseHistoryEntry(traceJson, Long.toString(pid));
+                            if (entry != null) {
+                                allEntries.add(entry);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        historyEntries = allEntries;
+    }
+
+    @SuppressWarnings("unchecked")
+    private HistoryEntry parseHistoryEntry(JsonObject json, String pid) {
+        HistoryEntry entry = new HistoryEntry();
+        entry.pid = pid;
+        entry.exchangeId = json.getString("exchangeId");
+        entry.routeId = json.getString("routeId");
+        entry.fromRouteId = json.getString("fromRouteId");
+        entry.nodeId = json.getString("nodeId");
+        entry.nodeShortName = json.getString("nodeShortName");
+        entry.nodeLabel = json.getString("nodeLabel");
+        entry.location = json.getString("location");
+        entry.threadName = json.getString("threadName");
+        entry.first = json.getBooleanOrDefault("first", false);
+        entry.last = json.getBooleanOrDefault("last", false);
+        entry.failed = json.getBooleanOrDefault("failed", false);
+        entry.nodeLevel = json.getIntegerOrDefault("nodeLevel", 0);
+
+        Object elapsedObj = json.get("elapsed");
+        if (elapsedObj instanceof Number n) {
+            entry.elapsed = n.longValue();
+        } else {
+            entry.elapsed = -1;
+        }
+
+        // Compute direction arrow
+        if (entry.first) {
+            entry.direction = "-->";
+        } else if (entry.last) {
+            entry.direction = "<--";
+        } else {
+            entry.direction = "  >";
+        }
+
+        // Compute processor label with tree indentation
+        if (entry.first || entry.last) {
+            entry.nodeLevel = Math.max(0, entry.nodeLevel - 1);
+        }
+        String indent = "  ".repeat(entry.nodeLevel);
+        if (entry.first) {
+            String uri = json.getString("endpointUri");
+            entry.processor = indent + "from[" + (uri != null ? uri : "") + "]";
+        } else {
+            entry.processor = indent + (entry.nodeLabel != null ? entry.nodeLabel : "");
+        }
+
+        // Timestamp
+        Object tsObj = json.get("timestamp");
+        if (tsObj instanceof Number n) {
+            long epochMs = n.longValue();
+            entry.epochMs = epochMs;
+            entry.timestamp = Instant.ofEpochMilli(epochMs)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalTime().toString();
+            if (entry.timestamp.length() > 12) {
+                entry.timestamp = entry.timestamp.substring(0, 12);
+            }
+        }
+
+        // Parse message
+        Object msgObj = json.get("message");
+        if (msgObj instanceof JsonObject message) {
+            Object headersObj = message.get("headers");
+            if (headersObj instanceof List<?> headerList) {
+                entry.headers = new LinkedHashMap<>();
+                entry.headerTypes = new LinkedHashMap<>();
+                for (Object h : headerList) {
+                    if (h instanceof JsonObject hObj) {
+                        String key = String.valueOf(hObj.get("key"));
+                        entry.headers.put(key, hObj.get("value"));
+                        Object type = hObj.get("type");
+                        if (type != null) {
+                            entry.headerTypes.put(key, TuiHelper.shortTypeName(type.toString()));
+                        }
+                    }
+                }
+            } else if (headersObj instanceof Map) {
+                entry.headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
+            }
+
+            Object bodyObj = message.get("body");
+            if (bodyObj instanceof JsonObject bodyJson) {
+                Object val = bodyJson.get("value");
+                entry.body = val != null ? val.toString() : null;
+                entry.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
+            } else if (bodyObj != null) {
+                entry.body = bodyObj.toString();
+            }
+        }
+
+        // Exception
+        Object excObj = json.get("exception");
+        if (excObj instanceof JsonObject excJson) {
+            entry.exception = excJson.getString("message");
         }
 
         return entry;
@@ -2902,6 +3335,32 @@ public class CamelMonitor extends CamelCommand {
         String level = "INFO";
         String logger;
         String message = "";
+    }
+
+    static class HistoryEntry {
+        String pid;
+        String exchangeId;
+        String timestamp;
+        String routeId;
+        String fromRouteId;
+        String nodeId;
+        String nodeShortName;
+        String nodeLabel;
+        String location;
+        String processor;
+        String direction;
+        String threadName;
+        boolean first;
+        boolean last;
+        boolean failed;
+        int nodeLevel;
+        long elapsed;
+        long epochMs;
+        String body;
+        String bodyType;
+        String exception;
+        Map<String, Object> headers;
+        Map<String, String> headerTypes;
     }
 
     record VanishingInfo(IntegrationInfo info, long startTime) {
