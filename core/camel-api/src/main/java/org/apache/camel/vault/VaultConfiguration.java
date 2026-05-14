@@ -103,6 +103,9 @@ public class VaultConfiguration {
         return ibmSecretsManager;
     }
 
+    /**
+     * Spring Cloud Config Vault Configuration
+     */
     public SpringCloudConfigConfiguration springConfig() {
         if (springConfig == null) {
             springConfig = new SpringCloudConfigConfiguration();
@@ -120,74 +123,92 @@ public class VaultConfiguration {
         return cyberark;
     }
 
+    /** Gets the AWS Vault configuration. */
     public @Nullable AwsVaultConfiguration getAwsVaultConfiguration() {
         return aws;
     }
 
+    /** Sets the AWS Vault configuration. */
     public void setAwsVaultConfiguration(@Nullable AwsVaultConfiguration aws) {
         this.aws = aws;
     }
 
+    /** Gets the GCP Vault configuration. */
     public @Nullable GcpVaultConfiguration getGcpVaultConfiguration() {
         return gcp;
     }
 
+    /** Sets the GCP Vault configuration. */
     public void setGcpVaultConfiguration(@Nullable GcpVaultConfiguration gcp) {
         this.gcp = gcp;
     }
 
+    /** Gets the Azure Vault configuration. */
     public @Nullable AzureVaultConfiguration getAzureVaultConfiguration() {
         return azure;
     }
 
+    /** Sets the Azure Vault configuration. */
     public void setAzureVaultConfiguration(@Nullable AzureVaultConfiguration azure) {
         this.azure = azure;
     }
 
+    /** Gets the Hashicorp Vault configuration. */
     public @Nullable HashicorpVaultConfiguration getHashicorpVaultConfiguration() {
         return hashicorp;
     }
 
+    /** Sets the Hashicorp Vault configuration. */
     public void setHashicorpVaultConfiguration(@Nullable HashicorpVaultConfiguration hashicorp) {
         this.hashicorp = hashicorp;
     }
 
+    /** Gets the Kubernetes Vault configuration. */
     public @Nullable KubernetesVaultConfiguration getKubernetesVaultConfiguration() {
         return kubernetes;
     }
 
+    /** Sets the Kubernetes Vault configuration. */
     public void setKubernetesVaultConfiguration(@Nullable KubernetesVaultConfiguration kubernetes) {
         this.kubernetes = kubernetes;
     }
 
+    /** Gets the Kubernetes ConfigMap Vault configuration. */
     public @Nullable KubernetesConfigMapVaultConfiguration getKubernetesConfigMapVaultConfiguration() {
         return kubernetesConfigmaps;
     }
 
+    /** Sets the Kubernetes ConfigMap Vault configuration. */
     public void setKubernetesConfigMapVaultConfiguration(@Nullable KubernetesConfigMapVaultConfiguration kubernetesConfigmaps) {
         this.kubernetesConfigmaps = kubernetesConfigmaps;
     }
 
+    /** Gets the IBM Secrets Manager Vault configuration. */
     public @Nullable IBMSecretsManagerVaultConfiguration getIBMSecretsManagerVaultConfiguration() {
         return ibmSecretsManager;
     }
 
+    /** Sets the IBM Secrets Manager Vault configuration. */
     public void setIBMSecretsManagerVaultConfiguration(@Nullable IBMSecretsManagerVaultConfiguration ibmSecretsManager) {
         this.ibmSecretsManager = ibmSecretsManager;
     }
 
+    /** Gets the Spring Cloud Config configuration. */
     public @Nullable SpringCloudConfigConfiguration getSpringCloudConfigConfiguration() {
         return springConfig;
     }
 
+    /** Sets the Spring Cloud Config configuration. */
     public void setSpringCloudConfigConfiguration(@Nullable SpringCloudConfigConfiguration springCloudConfigConfiguration) {
         this.springConfig = springCloudConfigConfiguration;
     }
 
+    /** Gets the CyberArk Vault configuration. */
     public @Nullable CyberArkVaultConfiguration getCyberArkVaultConfiguration() {
         return cyberark;
     }
 
+    /** Sets the CyberArk Vault configuration. */
     public void setCyberArkVaultConfiguration(@Nullable CyberArkVaultConfiguration cyberark) {
         this.cyberark = cyberark;
     }

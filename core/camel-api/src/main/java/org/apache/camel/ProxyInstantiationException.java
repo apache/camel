@@ -26,6 +26,11 @@ public class ProxyInstantiationException extends RuntimeCamelException {
     private final Class<?> type;
     private final Endpoint endpoint;
 
+    /**
+     * @param type     the interface type for which a proxy could not be instantiated
+     * @param endpoint the endpoint on which the proxy was being created
+     * @param cause    the cause of the failure
+     */
     public ProxyInstantiationException(Class<?> type, Endpoint endpoint, Throwable cause) {
         super("Could not instantiate proxy of type " + Objects.requireNonNull(type, "type").getName() + " on endpoint "
               + Objects.requireNonNull(endpoint, "endpoint"), Objects.requireNonNull(cause, "cause"));

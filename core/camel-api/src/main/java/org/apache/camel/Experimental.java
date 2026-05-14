@@ -27,5 +27,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface Experimental {
+    /** The revision number of this experimental API, incremented when the API changes incompatibly. */
     int revision() default 1;
 }

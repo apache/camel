@@ -27,11 +27,20 @@ public class ExchangeTimedOutException extends CamelExchangeException {
 
     private final long timeout;
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param timeout  the timeout in milliseconds that expired
+     */
     public ExchangeTimedOutException(@Nullable Exchange exchange, long timeout) {
         super("The OUT message was not received within: " + timeout + " millis", exchange);
         this.timeout = timeout;
     }
 
+    /**
+     * @param exchange the exchange that caused the error
+     * @param timeout  the timeout in milliseconds that expired
+     * @param message  the detail message
+     */
     public ExchangeTimedOutException(@Nullable Exchange exchange, long timeout, String message) {
         super("The OUT message was not received within: " + timeout + " millis due "
               + Objects.requireNonNull(message, "message"), exchange);

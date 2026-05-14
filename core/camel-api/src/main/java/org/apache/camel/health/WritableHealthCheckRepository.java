@@ -17,7 +17,7 @@
 package org.apache.camel.health;
 
 /**
- * An interface to represent an object which wishes to be injected with the {@link HealthCheck}
+ * A {@link HealthCheckRepository} that supports adding and removing health checks at runtime.
  */
 public interface WritableHealthCheckRepository extends HealthCheckRepository {
 

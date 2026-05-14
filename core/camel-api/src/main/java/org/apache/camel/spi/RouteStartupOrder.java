@@ -31,7 +31,7 @@ public interface RouteStartupOrder {
     /**
      * Get the order this route should be started.
      * <p/>
-     * See more at <a href="http://camel.apache.org/configuring-route-startup-ordering-and-autostartup.html">
+     * See more at <a href="https://camel.apache.org/configuring-route-startup-ordering-and-autostartup.html">
      * configuring route startup ordering</a>.
      *
      * @return the order

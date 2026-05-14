@@ -109,6 +109,44 @@ Hazelcast topic, queue, map, list, set, or in one of the repositories
 above must provide their own `Config` with a
 `JavaSerializationFilterConfig` configured for their class names.
 
+=== camel-jgroups
+
+The Exchange header constants in `JGroupsConstants` have been renamed to follow
+the Camel naming convention used across the rest of the component catalog. The
+Java field names are unchanged; only the header string values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `JGroupsConstants.HEADER_JGROUPS_CHANNEL_ADDRESS` | `JGROUPS_CHANNEL_ADDRESS` | `CamelJGroupsChannelAddress`
+| `JGroupsConstants.HEADER_JGROUPS_DEST` | `JGROUPS_DEST` | `CamelJGroupsDest`
+| `JGroupsConstants.HEADER_JGROUPS_SRC` | `JGROUPS_SRC` | `CamelJGroupsSrc`
+| `JGroupsConstants.HEADER_JGROUPS_ORIGINAL_MESSAGE` | `JGROUPS_ORIGINAL_MESSAGE` | `CamelJGroupsOriginalMessage`
+|===
+
+Routes that reference the constant symbolically (for example
+`setHeader(JGroupsConstants.HEADER_JGROUPS_DEST, ...)`) continue to work
+without changes. Routes that set the header by its literal string value
+(for example `setHeader("JGROUPS_DEST", ...)`) must be updated to use the
+new value (`setHeader("CamelJGroupsDest", ...)`).
+
+=== camel-lucene
+
+The Exchange header values exposed by `LuceneConstants` have been renamed to follow the standard
+Camel naming convention. The field names are unchanged, so routes referencing the constants
+(`LuceneConstants.HEADER_QUERY`, `LuceneConstants.HEADER_RETURN_LUCENE_DOCS`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `QUERY` -> `CamelLuceneQuery`
+* `RETURN_LUCENE_DOCS` -> `CamelLuceneReturnLuceneDocs`
+
+As a consequence, the generated Endpoint DSL header accessors on `LuceneHeaderNameBuilder`
+have been renamed accordingly:
+
+* `qUERY()` -> `luceneQuery()`
+* `returnLuceneDocs()` -> `luceneReturnLuceneDocs()`
+
 == Upgrading from 4.18.0 to 4.18.1
 
 === camel-bom

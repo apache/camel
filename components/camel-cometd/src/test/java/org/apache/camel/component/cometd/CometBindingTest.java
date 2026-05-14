@@ -17,7 +17,9 @@
 package org.apache.camel.component.cometd;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +35,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -124,6 +127,35 @@ public class CometBindingTest {
         assertEquals(2, result.getHeaders().size());
         assertEquals(expectedSubscriptionInfo,
                 result.getHeader(CometdBinding.COMETD_SUBSCRIPTION_HEADER_NAME));
+    }
+
+    @Test
+    void testInboundCamelHeadersAreFiltered() {
+        Map<String, Object> camelHeaders = new HashMap<>();
+        camelHeaders.put("CamelSqlQuery", "SELECT * FROM secrets");
+        camelHeaders.put("CamelHttpUri", "http://evil.com");
+        camelHeaders.put("CamelFileName", "../../etc/passwd");
+        camelHeaders.put("X-App-Header", "normal-value");
+
+        Map<String, Object> ext = new HashMap<>();
+        ext.put(CometdBinding.HEADERS_FIELD, camelHeaders);
+        when(cometdMessage.getExt()).thenReturn(ext);
+        when(remote.getId()).thenReturn("test-client-id");
+
+        // act
+        Message result = testObj.createCamelMessage(camelContext, remote, cometdMessage, null);
+
+        // assert: Camel* control headers from ext must be filtered out
+        assertNull(result.getHeader("CamelSqlQuery"), "CamelSqlQuery should be filtered");
+        assertNull(result.getHeader("CamelHttpUri"), "CamelHttpUri should be filtered");
+        assertNull(result.getHeader("CamelFileName"), "CamelFileName should be filtered");
+
+        // assert: non-Camel headers from ext must pass through
+        assertNotNull(result.getHeader("X-App-Header"), "X-App-Header should pass through");
+        assertEquals("normal-value", result.getHeader("X-App-Header"));
+
+        // assert: CometdClientId is set by the binding itself (not from ext), so it must be present
+        assertNotNull(result.getHeader(CometdBinding.COMETD_CLIENT_ID_HEADER_NAME));
     }
 
 }

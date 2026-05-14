@@ -21,7 +21,9 @@ import org.apache.camel.NamedNode;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A factory to create {@link org.apache.camel.spi.RoutePolicy} and assign to routes automatic.
+ * A factory to create {@link org.apache.camel.spi.RoutePolicy} and assign to routes automatically. Factories are
+ * registered via {@link org.apache.camel.CamelContext#addRoutePolicyFactory(RoutePolicyFactory)} and are called for
+ * every route during startup.
  */
 public interface RoutePolicyFactory {
 

@@ -26,6 +26,12 @@ public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
     private final String propertyName;
     private final transient Class<?> type;
 
+    /**
+     * @param exchange     the exchange that caused the error
+     * @param headerName   the name of the header that could not be found
+     * @param propertyName the name of the property that could not be found
+     * @param type         the expected type of the header or property
+     */
     public NoSuchHeaderOrPropertyException(Exchange exchange, String headerName, String propertyName, Class<?> type) {
         super(String.format(
                 "No '%s' header or '%s' property available of type: %s (header: %s, property: %s)",

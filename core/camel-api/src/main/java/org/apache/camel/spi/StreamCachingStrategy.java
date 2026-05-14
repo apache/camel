@@ -26,7 +26,10 @@ import org.apache.camel.StreamCache;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Strategy for using <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
+ * Strategy for stream caching, which allows message bodies based on streams (such as {@link java.io.InputStream}) to be
+ * re-read. The strategy controls whether caching uses memory or spools to disk.
+ *
+ * @see <a href="https://camel.apache.org/stream-caching.html">stream caching</a>
  */
 public interface StreamCachingStrategy extends StaticService {
 
@@ -269,7 +272,7 @@ public interface StreamCachingStrategy extends StaticService {
     boolean shouldSpoolCache(long length);
 
     /**
-     * Caches the body aas a {@link StreamCache}.
+     * Caches the body as a {@link StreamCache}.
      *
      * @param  exchange the exchange
      * @return          the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
@@ -279,7 +282,7 @@ public interface StreamCachingStrategy extends StaticService {
     StreamCache cache(Exchange exchange);
 
     /**
-     * Caches the body aas a {@link StreamCache}.
+     * Caches the body as a {@link StreamCache}.
      *
      * @param  message the message
      * @return         the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
@@ -289,7 +292,7 @@ public interface StreamCachingStrategy extends StaticService {
     StreamCache cache(Message message);
 
     /**
-     * Caches the value aas a {@link StreamCache}.
+     * Caches the value as a {@link StreamCache}.
      *
      * @param  value the value
      * @return       the value cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache

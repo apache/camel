@@ -14,21 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.lucene;
+package org.apache.camel.component.cometd;
 
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
-public final class LuceneConstants {
+public class CometdHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
-    @Metadata(description = "The Lucene Query to performed on the index. The query may include\n" +
-                            "wildcards and phrases.",
-              javaType = "String")
-    public static final String HEADER_QUERY = "CamelLuceneQuery";
-    @Metadata(description = "Set this header to true to include the actual Lucene\n" +
-                            "documentation when returning hit information.",
-              javaType = "String")
-    public static final String HEADER_RETURN_LUCENE_DOCS = "CamelLuceneReturnLuceneDocs";
-
-    private LuceneConstants() {
+    public CometdHeaderFilterStrategy() {
+        setLowerCase(true);
+        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
+        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
 }

@@ -23,10 +23,17 @@ import java.util.Objects;
  */
 public class TypeConverterLoaderException extends RuntimeCamelException {
 
+    /**
+     * @param message the detail message describing why the type converters failed to load
+     */
     public TypeConverterLoaderException(String message) {
         super("Failed to load type converters because of: " + Objects.requireNonNull(message, "message"));
     }
 
+    /**
+     * @param message the detail message describing why the type converters failed to load
+     * @param cause   the cause of the failure
+     */
     public TypeConverterLoaderException(String message, Throwable cause) {
         super("Failed to load type converters because of: " + Objects.requireNonNull(message, "message"),
               Objects.requireNonNull(cause, "cause"));

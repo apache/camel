@@ -19,7 +19,7 @@ package org.apache.camel;
 import org.jspecify.annotations.Nullable;
 
 /**
- * An <a href="http://camel.apache.org/expression.html">expression</a> provides a plugin strategy for evaluating
+ * An <a href="https://camel.apache.org/expression.html">expression</a> provides a plugin strategy for evaluating
  * expressions on a message exchange.
  *
  * An expression should be thread-safe and be able to evaluate concurrently by different threads with different

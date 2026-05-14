@@ -41,29 +41,35 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
         this.check = Objects.requireNonNull(check, "check");
     }
 
+    /** Gets the message for the health check result. */
     public @Nullable String message() {
         return this.message;
     }
 
+    /** Sets the message for the health check result. */
     public HealthCheckResultBuilder message(@Nullable String message) {
         this.message = message;
         return this;
     }
 
+    /** Gets the error associated with the health check result. */
     public @Nullable Throwable error() {
         return this.error;
     }
 
+    /** Sets the error associated with the health check result. */
     public HealthCheckResultBuilder error(@Nullable Throwable error) {
         this.error = error;
         return this;
     }
 
+    /** Gets a detail value by key from the health check result. */
     public @Nullable Object detail(String key) {
         Objects.requireNonNull(key, "key");
         return this.details != null ? this.details.get(key) : null;
     }
 
+    /** Sets a detail key/value pair for the health check result. */
     public HealthCheckResultBuilder detail(String key, Object value) {
         Objects.requireNonNull(key, "key");
         Objects.requireNonNull(value, "value");
@@ -75,6 +81,7 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
         return this;
     }
 
+    /** Sets multiple detail key/value pairs for the health check result. */
     public HealthCheckResultBuilder details(Map<String, Object> details) {
         Objects.requireNonNull(details, "details");
         if (ObjectHelper.isNotEmpty(details)) {
@@ -84,23 +91,28 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
         return this;
     }
 
+    /** Gets the state of the health check result. */
     public HealthCheck.@Nullable State state() {
         return this.state;
     }
 
+    /** Sets the state for the health check result. */
     public HealthCheckResultBuilder state(HealthCheck.State state) {
         this.state = Objects.requireNonNull(state, "state");
         return this;
     }
 
+    /** Marks the health check as UP. */
     public HealthCheckResultBuilder up() {
         return state(HealthCheck.State.UP);
     }
 
+    /** Marks the health check as DOWN. */
     public HealthCheckResultBuilder down() {
         return state(HealthCheck.State.DOWN);
     }
 
+    /** Marks the health check as UNKNOWN. */
     public HealthCheckResultBuilder unknown() {
         return state(HealthCheck.State.UNKNOWN);
     }
@@ -145,6 +157,7 @@ public final class HealthCheckResultBuilder implements Builder<HealthCheck.Resul
         };
     }
 
+    /** Creates a new builder for the given health check. */
     public static HealthCheckResultBuilder on(HealthCheck check) {
         Objects.requireNonNull(check, "check");
         return new HealthCheckResultBuilder(check);

@@ -23,8 +23,10 @@ import java.util.List;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 
+import static org.apache.camel.diagram.RouteDiagramLayoutEngine.BRANCH_CHILD_TYPES;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.PADDING;
 import static org.apache.camel.diagram.RouteDiagramLayoutEngine.SCOPE_BOX_PAD;
 
@@ -55,22 +57,63 @@ public class RouteDiagramAsciiRenderer {
     private final int nodeWidth;
     private final int boxWidth;
     private final boolean unicode;
+    private final boolean metrics;
+    private final List<CounterPos> counterPositions = new ArrayList<>();
+
+    public enum CounterType {
+        OK,
+        FAIL
+    }
+
+    public record CounterPos(int row, int col, int length, CounterType type) {
+    }
 
     public RouteDiagramAsciiRenderer(int nodeWidth) {
-        this(nodeWidth, false);
+        this(nodeWidth, false, false);
     }
 
     public RouteDiagramAsciiRenderer(int nodeWidth, boolean unicode) {
+        this(nodeWidth, unicode, false);
+    }
+
+    public RouteDiagramAsciiRenderer(int nodeWidth, boolean unicode, boolean metrics) {
         this.nodeWidth = nodeWidth;
         this.boxWidth = Math.max(MIN_BOX_WIDTH, nodeWidth / X_DIVISOR);
         this.unicode = unicode;
+        this.metrics = metrics;
     }
 
     public int getBoxWidth() {
         return boxWidth;
     }
 
+    public List<CounterPos> getCounterPositions() {
+        return counterPositions;
+    }
+
+    public String renderDiagramAnsi(List<LayoutRoute> layoutRoutes, int totalHeight) {
+        String plain = renderDiagram(layoutRoutes, totalHeight);
+        if (counterPositions.isEmpty()) {
+            return plain;
+        }
+        String[] lines = plain.split("\n", -1);
+        for (CounterPos cp : counterPositions) {
+            if (cp.row >= 0 && cp.row < lines.length) {
+                String line = lines[cp.row];
+                if (cp.col >= 0 && cp.col + cp.length <= line.length()) {
+                    String before = line.substring(0, cp.col);
+                    String counter = line.substring(cp.col, cp.col + cp.length);
+                    String after = line.substring(cp.col + cp.length);
+                    String color = cp.type == CounterType.OK ? "\033[32m" : "\033[31m";
+                    lines[cp.row] = before + color + counter + "\033[0m" + after;
+                }
+            }
+        }
+        return String.join("\n", lines);
+    }
+
     public String renderDiagram(List<LayoutRoute> layoutRoutes, int totalHeight) {
+        counterPositions.clear();
         int maxPixelX = layoutRoutes.stream()
                 .mapToInt(lr -> lr.maxX).max().orElse(nodeWidth) + PADDING;
         int gridWidth = toCol(maxPixelX) + boxWidth + 4;
@@ -166,7 +209,12 @@ public class RouteDiagramAsciiRenderer {
         int toCx = centerCol(to);
         int toTop = getTopRow(to);
 
-        drawArrowPath(grid, fromCx, fromBottom, toCx, toTop);
+        StatInfo stat = resolveStatInfo(to);
+        long total = stat != null ? stat.exchangesTotal : 0;
+        boolean dashed = metrics && total == 0;
+
+        drawArrowPath(grid, fromCx, fromBottom, toCx, toTop, dashed);
+        drawCounters(grid, toCx, toTop, stat);
     }
 
     private void drawMergeArrow(char[][] grid, LayoutNode to) {
@@ -175,16 +223,53 @@ public class RouteDiagramAsciiRenderer {
         int toCx = centerCol(to);
         int toTop = getTopRow(to);
 
-        drawArrowPath(grid, fromCx, fromRow, toCx, toTop);
+        StatInfo stat = metrics ? to.treeNode.info.stat : null;
+        long total = stat != null ? stat.exchangesTotal : 0;
+        boolean dashed = metrics && total == 0;
+
+        drawArrowPath(grid, fromCx, fromRow, toCx, toTop, dashed);
+        drawCounters(grid, toCx, toTop, stat);
     }
 
-    private void drawArrowPath(char[][] grid, int fromCx, int fromRow, int toCx, int toRow) {
+    private StatInfo resolveStatInfo(LayoutNode to) {
+        if (!metrics) {
+            return null;
+        }
+        StatInfo stat = to.treeNode.info.stat;
+        if (BRANCH_CHILD_TYPES.contains(to.type) && !to.treeNode.children.isEmpty()) {
+            stat = to.treeNode.children.get(0).info.stat;
+        }
+        return stat;
+    }
+
+    private void drawCounters(char[][] grid, int toCx, int toTop, StatInfo stat) {
+        if (!metrics || stat == null) {
+            return;
+        }
+        long total = stat.exchangesTotal;
+        long failed = stat.exchangesFailed;
+        long ok = total - failed;
+        if (ok > 0) {
+            String okStr = "" + ok;
+            int col = toCx + 2;
+            drawText(grid, toTop - 1, col, okStr);
+            counterPositions.add(new CounterPos(toTop - 1, col, okStr.length(), CounterType.OK));
+        }
+        if (failed > 0) {
+            String failStr = "" + failed;
+            int col = toCx - 1 - failStr.length();
+            drawText(grid, toTop - 1, col, failStr);
+            counterPositions.add(new CounterPos(toTop - 1, col, failStr.length(), CounterType.FAIL));
+        }
+    }
+
+    private void drawArrowPath(char[][] grid, int fromCx, int fromRow, int toCx, int toRow, boolean dashed) {
         if (fromRow >= toRow) {
             return;
         }
 
-        char v = unicode ? UNI_V : '|';
-        char h = unicode ? UNI_H : '-';
+        char v = dashed ? (unicode ? UNI_DASH_V : ':') : (unicode ? UNI_V : '|');
+        char h = dashed ? (unicode ? UNI_DASH_H : '.') : (unicode ? UNI_H : '-');
         char arrow = unicode ? UNI_ARROW : 'v';
 
         if (fromCx == toCx) {

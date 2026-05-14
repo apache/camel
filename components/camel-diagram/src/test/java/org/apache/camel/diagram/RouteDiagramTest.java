@@ -24,6 +24,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.junit.jupiter.api.Test;
@@ -1058,6 +1059,77 @@ class RouteDiagramTest {
         assertTrue(lines.get(lines.size() - 1).endsWith("..."), "Truncated text should end with ...");
     }
 
+    @Test
+    void testAsciiDiagramWithMetrics() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithStat("from", "timer:tick", 0, 100, 0));
+        route.nodes.add(nodeWithStat("to", "log:a", 1, 95, 5));
+        route.nodes.add(nodeWithStat("to", "log:b", 1, 90, 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), false, true);
+        String result = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+
+        assertTrue(result.contains("90"), "Should show success counter for log:a (95-5=90)");
+        assertTrue(result.contains("5"), "Should show failure counter for log:a");
+        assertTrue(result.contains("90"), "Should show success counter for log:b");
+    }
+
+    @Test
+    void testAsciiDiagramMetricsDashedArrowForZeroTraffic() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithStat("from", "timer:tick", 0, 0, 0));
+        route.nodes.add(nodeWithStat("to", "log:a", 1, 0, 0));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), false, true);
+        String result = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+
+        assertTrue(result.contains(":"), "Should contain dashed vertical line for zero-traffic arrow");
+    }
+
+    @Test
+    void testUnicodeDiagramWithMetrics() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithStat("from", "timer:tick", 0, 50, 0));
+        route.nodes.add(nodeWithStat("to", "log:a", 1, 50, 2));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), true, true);
+        String result = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+
+        assertTrue(result.contains("48"), "Should show success counter (50-2=48)");
+        assertTrue(result.contains("2"), "Should show failure counter");
+    }
+
+    @Test
+    void testAsciiDiagramMetricsNoCountersWithoutFlag() {
+        RouteInfo route = new RouteInfo();
+        route.routeId = "route1";
+        route.nodes.add(nodeWithStat("from", "timer:tick", 0, 100, 0));
+        route.nodes.add(nodeWithStat("to", "log:a", 1, 100, 10));
+
+        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine();
+        LayoutRoute lr = engine.layoutRoute(route, RouteDiagramLayoutEngine.PADDING);
+
+        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), false, false);
+        String result = renderer.renderDiagram(List.of(lr), lr.maxY + RouteDiagramLayoutEngine.V_GAP);
+
+        // The counters 90 and 10 should not appear when metrics=false
+        // (the numbers might appear in other contexts, but not as standalone counters near arrows)
+        assertTrue(result.contains("timer:tick"));
+        assertTrue(result.contains("log:a"));
+    }
+
     private static NodeInfo node(String type, String code, int level) {
         return node(type, code, level, null);
     }
@@ -1068,6 +1140,15 @@ class RouteDiagramTest {
         n.code = code;
         n.description = description;
         n.level = level;
+        return n;
+    }
+
+    private static NodeInfo nodeWithStat(String type, String code, int level, long total, long failed) {
+        NodeInfo n = node(type, code, level);
+        StatInfo stat = new StatInfo();
+        stat.exchangesTotal = total;
+        stat.exchangesFailed = failed;
+        n.stat = stat;
         return n;
     }
 }

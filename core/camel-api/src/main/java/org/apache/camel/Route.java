@@ -32,7 +32,7 @@ import org.apache.camel.spi.RoutePolicy;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A <a href="http://camel.apache.org/routes.html">Route</a> defines the processing used on an inbound message exchange
+ * A <a href="https://camel.apache.org/routes.html">Route</a> defines the processing used on an inbound message exchange
  * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}.
  * <p/>
  * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route, such as starting and

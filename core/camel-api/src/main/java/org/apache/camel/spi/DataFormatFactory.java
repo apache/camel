@@ -17,7 +17,10 @@
 package org.apache.camel.spi;
 
 /**
- * A factory to create {@link org.apache.camel.spi.DataFormat}.
+ * A factory for creating {@link DataFormat} instances. The factory is used when a data format needs custom
+ * instantiation logic beyond the default resolution mechanism.
+ * <p/>
+ * Each call to {@link #newInstance()} should return a new data format instance.
  */
 @FunctionalInterface
 public interface DataFormatFactory {
