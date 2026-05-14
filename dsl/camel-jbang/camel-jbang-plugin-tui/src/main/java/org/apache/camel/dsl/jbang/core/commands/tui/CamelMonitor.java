@@ -1261,14 +1261,16 @@ public class CamelMonitor extends CamelCommand {
         boolean showMetrics = diagramMetrics;
         String routeId = selectedRoute.routeId;
 
-        // Show loading state immediately
-        diagramRouteId = routeId;
-        diagramLines = List.of("(Loading diagram...)");
-        diagramImageData = null;
-        diagramFullImageData = null;
-        showDiagram = true;
-        diagramScroll = 0;
-        diagramScrollX = 0;
+        boolean initialLoad = !showDiagram;
+        if (initialLoad) {
+            diagramRouteId = routeId;
+            diagramLines = List.of("(Loading diagram...)");
+            diagramImageData = null;
+            diagramFullImageData = null;
+            showDiagram = true;
+            diagramScroll = 0;
+            diagramScrollX = 0;
+        }
 
         runner.scheduler().execute(() -> {
             try {
@@ -1377,17 +1379,20 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
         runner.runOnRenderThread(() -> {
+            boolean wasShowing = showDiagram;
             diagramRouteId = routeId;
             diagramLines = lines;
             diagramImageData = imageData;
             diagramFullImageData = fullImageData;
             diagramProtocol = protocol;
-            diagramScroll = 0;
-            diagramScrollX = 0;
-            diagramCropX = -1;
-            diagramCropY = -1;
-            diagramCropW = -1;
-            diagramCropH = -1;
+            if (!wasShowing) {
+                diagramScroll = 0;
+                diagramScrollX = 0;
+                diagramCropX = -1;
+                diagramCropY = -1;
+                diagramCropW = -1;
+                diagramCropH = -1;
+            }
             showDiagram = true;
         });
     }
