@@ -262,11 +262,6 @@ public class CamelMonitor extends CamelCommand {
                 runner.quit();
                 return true;
             }
-            if (ke.isChar('r')) {
-                refreshData();
-                return true;
-            }
-
             // Tab switching with number keys
             if (ke.isChar('1')) {
                 return handleTabKey(TAB_OVERVIEW);
@@ -2012,7 +2007,6 @@ public class CamelMonitor extends CamelCommand {
 
         if (tab == TAB_OVERVIEW) {
             hint(spans, "q", "quit");
-            hint(spans, "r", "refresh");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "Enter", "details");
             hint(spans, "1-6", "tabs");
