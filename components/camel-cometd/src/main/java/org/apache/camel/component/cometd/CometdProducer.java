@@ -49,8 +49,14 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         endpoint.connect(this);
         // should probably look into synchronization for this.
         if (service == null) {
+            CometdBinding binding;
+            if (endpoint.getHeaderFilterStrategy() != null) {
+                binding = new CometdBinding(bayeux, false, endpoint.getHeaderFilterStrategy());
+            } else {
+                binding = new CometdBinding(bayeux);
+            }
             service = new ProducerService(
-                    getBayeux(), new CometdBinding(bayeux), endpoint.getPath(), this, getEndpoint().isDisconnectLocalSession());
+                    getBayeux(), binding, endpoint.getPath(), this, getEndpoint().isDisconnectLocalSession());
         }
     }
 
