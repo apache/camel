@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.keycloak.common.VerificationException;
+import org.keycloak.jose.jws.JWSBuilder;
 import org.keycloak.representations.AccessToken;
 import org.mockito.Mockito;
 
@@ -171,6 +172,52 @@ public class KeycloakSecurityHelperTest {
         assertThrows(VerificationException.class, () -> {
             KeycloakSecurityHelper.parseAndVerifyAccessToken(invalidToken, publicKey, null);
         });
+    }
+
+    @Test
+    void testParseAndVerifyAccessTokenRejectsExpiredToken() throws Exception {
+        String expectedIssuer = "http://localhost:8080/realms/test";
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        AccessToken token = new AccessToken();
+        token.issuer(expectedIssuer);
+        token.subject("user-123");
+        token.exp(System.currentTimeMillis() / 1000 - 3600);
+
+        String signed = new JWSBuilder()
+                .type("JWT")
+                .jsonContent(token)
+                .rsa256(keyPair.getPrivate());
+
+        assertThrows(VerificationException.class,
+                () -> KeycloakSecurityHelper.parseAndVerifyAccessToken(signed, keyPair.getPublic(), expectedIssuer));
+    }
+
+    @Test
+    void testParseAndVerifyAccessTokenAcceptsValidToken() throws Exception {
+        String expectedIssuer = "http://localhost:8080/realms/test";
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        AccessToken token = new AccessToken();
+        token.issuer(expectedIssuer);
+        token.subject("user-123");
+        token.exp(System.currentTimeMillis() / 1000 + 3600);
+
+        String signed = new JWSBuilder()
+                .type("JWT")
+                .jsonContent(token)
+                .rsa256(keyPair.getPrivate());
+
+        AccessToken verified
+                = KeycloakSecurityHelper.parseAndVerifyAccessToken(signed, keyPair.getPublic(), expectedIssuer);
+        assertEquals("user-123", verified.getSubject());
+        assertEquals(expectedIssuer, verified.getIssuer());
     }
 
     @Test

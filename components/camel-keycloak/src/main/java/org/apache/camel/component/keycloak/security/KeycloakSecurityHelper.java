@@ -62,6 +62,7 @@ public final class KeycloakSecurityHelper {
                 .publicKey(publicKey)
                 .withChecks(
                         TokenVerifier.SUBJECT_EXISTS_CHECK,
+                        TokenVerifier.IS_ACTIVE,
                         new TokenVerifier.RealmUrlCheck(expectedIssuer));
 
         AccessToken token = verifier.verify().getToken();
