@@ -26,7 +26,8 @@ import org.jspecify.annotations.Nullable;
  * Registry for {@link EndpointServiceLocation} to make it easy to find information about usage of external services
  * such as databases, message brokers, cloud systems, that Camel is connecting to.
  *
- * @see EndpointServiceLocation
+ * @see   EndpointServiceLocation
+ * @since 4.7
  */
 public interface EndpointServiceRegistry extends StaticService {
 

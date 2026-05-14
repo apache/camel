@@ -20,6 +20,8 @@ import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * Controls the level of information logged during startup (and shutdown) of {@link CamelContext}.
+ *
+ * @since 3.8
  */
 @XmlEnum
 public enum StartupSummaryLevel {

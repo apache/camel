@@ -23,6 +23,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Bean post processor.
+ *
+ * @since 3.0
  */
 public interface CamelBeanPostProcessor {
 

@@ -25,6 +25,8 @@ import org.apache.camel.Exchange;
  *
  * Implementations of this interface should provide a way to configure the tokenizer, and then use that configuration to
  * tokenize the data in the Exchange.
+ *
+ * @since 4.8
  */
 public interface Tokenizer {
 

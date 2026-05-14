@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * An enum of common and known keys for exchange properties used by camel-core.
+ *
+ * @since 3.9
  */
 public enum ExchangePropertyKey {
 

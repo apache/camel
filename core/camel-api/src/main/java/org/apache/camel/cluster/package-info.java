@@ -16,6 +16,8 @@
  */
 /**
  * Cluster API for leader election, namespace-based partitioning, and cluster membership management.
+ *
+ * @since 4.21
  */
 @NullMarked
 package org.apache.camel.cluster;

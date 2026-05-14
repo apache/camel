@@ -22,6 +22,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a {@link Language} which is a general purpose scripting languages such as groovy, joor and others.
+ *
+ * @since 3.10
  */
 @FunctionalInterface
 public interface ScriptingLanguage {

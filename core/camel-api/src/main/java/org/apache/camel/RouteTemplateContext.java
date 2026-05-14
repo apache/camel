@@ -26,6 +26,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The context used during creating a {@link Route} from a route template.
+ *
+ * @since 3.10
  */
 public interface RouteTemplateContext extends HasCamelContext {
 

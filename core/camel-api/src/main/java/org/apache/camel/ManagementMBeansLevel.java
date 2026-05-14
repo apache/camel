@@ -20,6 +20,8 @@ import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * Level of mbeans for registration
+ *
+ * @since 3.17
  */
 @XmlEnum
 public enum ManagementMBeansLevel {

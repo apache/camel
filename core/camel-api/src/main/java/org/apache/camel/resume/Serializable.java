@@ -25,6 +25,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * An interface that represents resumable objects that can be serialized to a medium
+ *
+ * @since 3.18
  */
 @FunctionalInterface
 public interface Serializable {

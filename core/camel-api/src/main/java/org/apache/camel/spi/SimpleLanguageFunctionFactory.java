@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
  * A factory for extending the simple language with functions from external components.
  * <p/>
  * This requires to have the external component JAR on the classpath.
+ *
+ * @since 4.10
  */
 public interface SimpleLanguageFunctionFactory {
 

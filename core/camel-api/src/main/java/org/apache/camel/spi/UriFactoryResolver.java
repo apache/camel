@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A pluggable strategy for resolving different URI factories in a loosely coupled manner.
+ *
+ * @since 3.6
  */
 public interface UriFactoryResolver {
 

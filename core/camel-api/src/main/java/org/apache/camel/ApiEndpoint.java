@@ -18,6 +18,8 @@ package org.apache.camel;
 
 /**
  * Marks the {@link Endpoint} as an endpoint from an API based component.
+ *
+ * @since 3.6
  */
 public interface ApiEndpoint extends Endpoint {
 

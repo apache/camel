@@ -20,6 +20,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Pluggable resolver to load JSON schema files for components, data formats, languages etc.
+ *
+ * @since 3.1
  */
 public interface JSonSchemaResolver {
 

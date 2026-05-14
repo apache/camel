@@ -21,6 +21,8 @@ import java.util.Objects;
 
 /**
  * Mime types known to Camel data types and its transformers.
+ *
+ * @since 4.2
  */
 public enum MimeType {
     JSON("application/json"),

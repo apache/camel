@@ -22,6 +22,8 @@ import java.util.Objects;
 
 /**
  * Strategy for configurers.
+ *
+ * @since 3.7
  */
 public abstract class ConfigurerStrategy {
 

@@ -16,6 +16,8 @@
  */
 /**
  * Runtime catalog API for validating endpoint URIs, configuration properties, and language expressions.
+ *
+ * @since 4.21
  */
 @NullMarked
 package org.apache.camel.catalog;

@@ -71,6 +71,7 @@ public interface Message {
      *
      * @return the timestamp, or <tt>0</tt> if the message has no source timestamp.
      * @see    Exchange#getClock()
+     * @since  3.11
      */
     long getMessageTimestamp();
 
@@ -83,6 +84,8 @@ public interface Message {
 
     /**
      * Whether the message has any message ID assigned.
+     *
+     * @since 3.11
      */
     boolean hasMessageId();
 

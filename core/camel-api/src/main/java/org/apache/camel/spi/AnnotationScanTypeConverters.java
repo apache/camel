@@ -22,6 +22,8 @@ package org.apache.camel.spi;
  * <p/>
  * This is using Camel 2.x style, and it is recommended to migrate to @Converter(loader = true) for fast type converter
  * mode.
+ *
+ * @since 3.1
  */
 public interface AnnotationScanTypeConverters {
 

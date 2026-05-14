@@ -16,6 +16,8 @@
  */
 /**
  * Cache abstraction for storing resume offset state.
+ *
+ * @since 4.21
  */
 @NullMarked
 package org.apache.camel.resume.cache;

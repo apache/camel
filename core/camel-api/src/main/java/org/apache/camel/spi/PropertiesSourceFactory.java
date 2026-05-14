@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * Factory for creating out of the box {@link PropertiesSource}.
+ *
+ * @since 4.0
  */
 public interface PropertiesSourceFactory {
 

@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 
 /**
  * To let camel-groovy pre-compile script files during bootstrap.
+ *
+ * @since 4.14
  */
 public interface GroovyScriptCompiler {
 

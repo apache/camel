@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for Spring Cloud Config
+ *
+ * @since 4.12
  */
 public class SpringCloudConfigConfiguration extends VaultConfiguration {
 

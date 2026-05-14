@@ -27,6 +27,8 @@ import org.jspecify.annotations.Nullable;
  * A supervising capable {@link RouteController} that delays the startup of the routes after the camel context startup
  * and takes control of starting the routes in a safe manner. This controller is able to retry starting failing routes,
  * and have various options to configure settings for backoff between restarting routes.
+ *
+ * @since 3.3
  */
 public interface SupervisingRouteController extends RouteController {
 

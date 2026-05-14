@@ -23,6 +23,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * Defines a strategy for handling resume operations. Implementations can define different ways to handle how to resume
  * processing records.
+ *
+ * @since 3.17
  */
 public interface ResumeStrategy extends Service {
     /**

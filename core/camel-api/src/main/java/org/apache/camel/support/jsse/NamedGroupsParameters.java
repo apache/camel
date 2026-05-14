@@ -26,6 +26,8 @@ import org.jspecify.annotations.Nullable;
  * Represents a list of TLS/SSL named groups (also known as elliptic curves or key exchange groups) for use in TLS
  * handshakes. Named groups control which key exchange algorithms are available during the TLS handshake, including
  * post-quantum hybrid groups such as {@code X25519MLKEM768}.
+ *
+ * @since 4.19
  */
 public class NamedGroupsParameters {
     private @Nullable List<String> namedGroup;

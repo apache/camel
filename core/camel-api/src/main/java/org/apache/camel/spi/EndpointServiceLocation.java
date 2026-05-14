@@ -28,8 +28,9 @@ import org.jspecify.annotations.Nullable;
  * Hosted services are running inside this Camel application such as with embedded HTTP server for Rest DSL, or TCP
  * networking with netty etc.
  *
- * @see EndpointServiceRegistry
- * @see org.apache.camel.Endpoint
+ * @see   EndpointServiceRegistry
+ * @see   org.apache.camel.Endpoint
+ * @since 4.7
  */
 public interface EndpointServiceLocation {
 

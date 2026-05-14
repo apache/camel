@@ -17,6 +17,8 @@
 /**
  * Configuration classes for accessing external secret vaults such as AWS Secrets Manager, GCP Secret Manager, Azure Key
  * Vault, and HashiCorp Vault.
+ *
+ * @since 4.21
  */
 @NullMarked
 package org.apache.camel.vault;

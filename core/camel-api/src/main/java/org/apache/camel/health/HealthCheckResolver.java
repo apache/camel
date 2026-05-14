@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A pluggable strategy for resolving health checks in a loosely coupled manner
+ *
+ * @since 3.14
  */
 public interface HealthCheckResolver extends CamelContextAware {
 

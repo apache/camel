@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * A auto generated {@link PropertyConfigurer} for fast configuration of Camel components & endpoints.
+ *
+ * @since 3.0
  */
 public interface GeneratedPropertyConfigurer extends PropertyConfigurer {
 

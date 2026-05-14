@@ -20,6 +20,8 @@ import java.util.Objects;
 
 /**
  * Exception when failing to start a {@link Component}.
+ *
+ * @since 3.9
  */
 public class FailedToStartComponentException extends RuntimeCamelException {
 

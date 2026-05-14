@@ -23,6 +23,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Validation result of parsing a language expression or predicate
+ *
+ * @since 3.1
  */
 public class LanguageValidationResult implements Serializable {
     private final String text;

@@ -20,6 +20,9 @@ import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
+/**
+ * @since 3.18
+ */
 public class NoSuchHeaderOrPropertyException extends CamelExchangeException {
 
     private final String headerName;

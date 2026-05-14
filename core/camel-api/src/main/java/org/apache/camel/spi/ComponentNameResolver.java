@@ -22,6 +22,8 @@ import org.apache.camel.CamelContext;
 
 /**
  * Discovers which components are available on the classpath.
+ *
+ * @since 3.2
  */
 public interface ComponentNameResolver {
 

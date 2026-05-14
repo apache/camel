@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
  * A snapshot of an error that occurred during message routing.
  * <p/>
  * This is an immutable value object that does not hold references to the original exchange or exception.
+ *
+ * @since 4.19
  */
 public interface ErrorRegistryEntry {
 

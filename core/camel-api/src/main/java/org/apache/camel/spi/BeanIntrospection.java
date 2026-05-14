@@ -32,6 +32,8 @@ import org.jspecify.annotations.Nullable;
  * one or more properties etc.
  *
  * End users should favour using {@link org.apache.camel.support.PropertyBindingSupport} instead.
+ *
+ * @since 3.0
  */
 public interface BeanIntrospection extends StaticService, AfterPropertiesConfigured {
 

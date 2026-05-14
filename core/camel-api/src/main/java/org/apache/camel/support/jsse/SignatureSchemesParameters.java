@@ -25,6 +25,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * Represents a list of TLS/SSL signature schemes for use in TLS handshakes. Signature schemes control which signature
  * algorithms are available during the TLS handshake, including post-quantum signature algorithms such as ML-DSA.
+ *
+ * @since 4.19
  */
 public class SignatureSchemesParameters {
     private @Nullable List<String> signatureScheme;

@@ -48,6 +48,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
  * but for SPI, custom components, or more advanced used-cases with Camel.
+ *
+ * @since 3.0
  */
 public interface ExtendedCamelContext {
 

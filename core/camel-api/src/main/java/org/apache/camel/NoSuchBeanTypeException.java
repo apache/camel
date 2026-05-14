@@ -20,6 +20,8 @@ import java.util.Objects;
 
 /**
  * A runtime exception if a given bean type could not be found in the {@link org.apache.camel.spi.Registry}
+ *
+ * @since 4.2
  */
 public class NoSuchBeanTypeException extends NoSuchBeanException {
 

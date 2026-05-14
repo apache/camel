@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * Listener for re-loading a {@link Resource} such as a Camel route.
+ *
+ * @since 3.14
  */
 @FunctionalInterface
 public interface ResourceReload {

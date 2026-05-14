@@ -18,7 +18,11 @@ package org.apache.camel;
 
 import jakarta.xml.bind.annotation.XmlEnum;
 
-/** Defines the scope for bean lookups in the {@link org.apache.camel.spi.Registry}. */
+/**
+ * Defines the scope for bean lookups in the {@link org.apache.camel.spi.Registry}.
+ *
+ * @since 3.1
+ */
 @XmlEnum
 public enum BeanScope {
 

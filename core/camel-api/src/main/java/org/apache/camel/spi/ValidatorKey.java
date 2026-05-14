@@ -23,6 +23,8 @@ import org.apache.camel.ValueHolder;
 
 /**
  * Key used in {@link org.apache.camel.spi.ValidatorRegistry} in {@link CamelContext}, to ensure a consistent lookup.
+ *
+ * @since 4.7
  */
 public final class ValidatorKey extends ValueHolder<String> {
 

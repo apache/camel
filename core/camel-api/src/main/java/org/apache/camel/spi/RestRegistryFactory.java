@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 /**
  * A factory for {@link RestRegistry}.
+ *
+ * @since 3.0
  */
 public interface RestRegistryFactory {
 

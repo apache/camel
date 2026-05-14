@@ -20,6 +20,8 @@ import org.apache.camel.Processor;
 
 /**
  * An interface to represent an object which wraps a {@link Processor}.
+ *
+ * @since 3.7
  */
 public interface WrapAwareProcessor {
 

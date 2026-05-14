@@ -25,6 +25,8 @@ import java.lang.annotation.Target;
 /**
  * Used to indicate an injection point of a configuration bean (obtained from the {@link org.apache.camel.spi.Registry},
  * or a new instance is created) into a POJO.
+ *
+ * @since 3.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

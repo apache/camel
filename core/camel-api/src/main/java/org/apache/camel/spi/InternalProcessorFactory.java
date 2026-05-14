@@ -34,7 +34,8 @@ import org.jspecify.annotations.Nullable;
  *
  * Camel end user should NOT use this, but use {@link ProcessorFactory} instead.
  *
- * @see ProcessorFactory
+ * @see   ProcessorFactory
+ * @since 3.7
  */
 public interface InternalProcessorFactory {
 

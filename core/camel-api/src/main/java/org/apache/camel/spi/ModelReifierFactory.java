@@ -25,6 +25,8 @@ import org.apache.camel.Route;
 
 /**
  * Factory that uses reifiers to build an entity from a given model.
+ *
+ * @since 3.7
  */
 public interface ModelReifierFactory {
 

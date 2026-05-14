@@ -23,6 +23,8 @@ import java.util.function.Predicate;
  * An interface for listening to consumer events and allow proxying between a consumer predicate and the Camel
  * component. The whole of the consumer predicate is that of evaluating whether the consumption (from the internal Camel
  * consumer) can continue or should be put on pause.
+ *
+ * @since 3.17
  */
 public interface ConsumerListener<C, P> {
 

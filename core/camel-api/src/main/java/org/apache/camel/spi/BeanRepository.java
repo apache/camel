@@ -25,6 +25,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * Represents a bean repository used to lookup components by name and type. This allows Camel to plugin to third-party
  * bean repositories such as Spring, JNDI, OSGi.
+ *
+ * @since 3.0
  */
 public interface BeanRepository {
 

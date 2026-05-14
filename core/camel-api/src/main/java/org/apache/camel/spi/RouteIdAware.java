@@ -22,6 +22,8 @@ import org.jspecify.annotations.Nullable;
  * To allow objects to be injected with the route id
  * <p/>
  * This allows access to the route id of the processor at runtime, to know which route its associated with.
+ *
+ * @since 3.1
  */
 public interface RouteIdAware {
 

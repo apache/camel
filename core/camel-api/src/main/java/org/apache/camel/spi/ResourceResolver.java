@@ -22,6 +22,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * SPI for loading resources.
+ *
+ * @since 3.9
  */
 public interface ResourceResolver extends StaticService, CamelContextAware {
 

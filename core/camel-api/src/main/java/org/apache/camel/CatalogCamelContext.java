@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Catalog level interface for the {@link CamelContext}
+ *
+ * @since 3.0
  */
 public interface CatalogCamelContext extends CamelContext {
 

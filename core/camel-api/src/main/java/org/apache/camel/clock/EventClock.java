@@ -23,6 +23,7 @@ import org.jspecify.annotations.Nullable;
  * A specialized clock that tracks the pass of time for one or more types of events
  *
  * @param <T> The event type as an Enum
+ * @since     4.4
  */
 public interface EventClock<T extends Enum<T>> extends Clock {
 

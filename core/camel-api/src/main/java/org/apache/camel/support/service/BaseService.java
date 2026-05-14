@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
  * {@link #doStop()}, etc. where you implement your logic. The methods {@link #start()}, {@link #stop()} should
  * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly invoke
  * the operation in a safe manner.
+ *
+ * @since 3.2
  */
 public abstract class BaseService {
 

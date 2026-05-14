@@ -91,11 +91,14 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * are intended for internal usage within Camel and end-users should avoid using them.
      *
      * @return this {@link ExtendedCamelContext} extension point for this context.
+     * @since  4.0
      */
     ExtendedCamelContext getCamelContextExtension();
 
     /**
      * If CamelContext during the start procedure was vetoed, and therefore causing Camel to not start.
+     *
+     * @since 3.0
      */
     boolean isVetoStarted();
 
@@ -177,6 +180,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Gets a clock instance that keeps track of time for relevant CamelContext events
      *
      * @return A clock instance
+     * @since  4.4
      */
     EventClock<ContextEvents> getClock();
 
@@ -619,6 +623,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @param  builder   the builder which has templated routes
      * @throws Exception if the routes could not be created for whatever reason
+     * @since            3.20
      */
     void addTemplatedRoutes(RoutesBuilder builder) throws Exception;
 
@@ -627,6 +632,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @param  builder   the builder which has routes configurations
      * @throws Exception if the routes configurations could not be created for whatever reason
+     * @since            3.12
      */
     void addRoutesConfigurations(RouteConfigurationsBuilder builder) throws Exception;
 
@@ -666,6 +672,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  parameters      parameters to use for the route template when creating the new route
      * @return                 the id of the route added (for example when an id was auto assigned)
      * @throws Exception       is thrown if error creating and adding the new route
+     * @since                  3.5
      */
     String addRouteFromTemplate(@Nullable String routeId, String routeTemplateId, Map<String, Object> parameters)
             throws Exception;
@@ -682,6 +689,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  parameters      parameters to use for the route template when creating the new route
      * @return                 the id of the route added (for example when an id was auto assigned)
      * @throws Exception       is thrown if error creating and adding the new route
+     *
+     * @since                  3.9
      */
     @Deprecated(since = "4.14.0")
     String addRouteFromTemplate(
@@ -702,6 +711,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  parameters      parameters to use for the route template when creating the new route
      * @return                 the id of the route added (for example when an id was auto assigned)
      * @throws Exception       is thrown if error creating and adding the new route
+     *
+     * @since                  4.9
      */
     String addRouteFromTemplate(
             @Nullable String routeId, String routeTemplateId, @Nullable String prefixId, @Nullable String group,
@@ -720,6 +731,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  routeTemplateContext the route template context (mandatory)
      * @return                      the id of the route added (for example when an id was auto assigned)
      * @throws Exception            is thrown if error creating and adding the new route
+     *
+     * @since                       3.10
      */
     @Deprecated(since = "4.14.0")
     String addRouteFromTemplate(
@@ -740,6 +753,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  routeTemplateContext the route template context (mandatory)
      * @return                      the id of the route added (for example when an id was auto assigned)
      * @throws Exception            is thrown if error creating and adding the new route
+     *
+     * @since                       4.9
      */
     String addRouteFromTemplate(
             @Nullable String routeId, String routeTemplateId, @Nullable String prefixId, @Nullable String group,
@@ -757,6 +772,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  parameters        parameters to use for the route template when creating the new route
      * @return                   the id of the route added (for example when an id was auto assigned)
      * @throws Exception         is thrown if error creating and adding the new route
+     *
+     * @since                    4.10
      */
     @Deprecated(since = "4.14.0")
     String addRouteFromKamelet(
@@ -777,6 +794,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  parameters        parameters to use for the route template when creating the new route
      * @return                   the id of the route added (for example when an id was auto assigned)
      * @throws Exception         is thrown if error creating and adding the new route
+     *
+     * @since                    4.10
      */
     String addRouteFromKamelet(
             @Nullable String routeId, String routeTemplateId, @Nullable String prefixId, @Nullable String group,
@@ -789,6 +808,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @param  pattern   pattern, such as * for all, or foo* to remove all foo templates
      * @throws Exception is thrown if error during removing route templates
+     * @since            3.14
      */
     void removeRouteTemplates(String pattern) throws Exception;
 
@@ -833,6 +853,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Sets a custom {@link VaultConfiguration}
      *
      * @param vaultConfiguration the vault configuration
+     * @since                    3.16
      */
     void setVaultConfiguration(VaultConfiguration vaultConfiguration);
 
@@ -840,6 +861,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Gets the vault configuration
      *
      * @return the configuration, or <tt>null</tt> if none has been configured.
+     * @since  3.16
      */
     @Nullable
     VaultConfiguration getVaultConfiguration();
@@ -954,6 +976,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
      *              repository. If no repo-id is provided, then global repository will be used.
      * @return      the variable, or <tt>null</tt> if not found.
+     * @since       4.4
      */
     @Nullable
     Object getVariable(String name);
@@ -965,6 +988,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *              repository. If no repo-id is provided, then global repository will be used.
      * @param  type the type to convert the variable to
      * @return      the variable, or <tt>null</tt> if not found.
+     * @since       4.4
      */
     <T> @Nullable T getVariable(String name, Class<T> type);
 
@@ -974,6 +998,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param name  the variable name. Can be prefixed with repo-id:name to store the variable in a specific repository.
      *              If no repo-id is provided, then global repository will be used.
      * @param value the value of the variable
+     * @since       4.4
      */
     void setVariable(String name, Object value);
 
@@ -1049,6 +1074,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      *
      * @return                       the template
      * @throws RuntimeCamelException is thrown if error starting the template
+     * @since                        3.0
      */
     FluentProducerTemplate createFluentProducerTemplate();
 
@@ -1065,6 +1091,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  maximumCacheSize      the maximum cache size
      * @return                       the template
      * @throws RuntimeCamelException is thrown if error starting the template
+     * @since                        3.0
      */
     FluentProducerTemplate createFluentProducerTemplate(int maximumCacheSize);
 
@@ -1361,36 +1388,48 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     /**
      * Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer
      * can be enabled later at runtime via JMX or via {@link Tracer#setEnabled(boolean)}.
+     *
+     * @since 3.13
      */
     void setTracingStandby(boolean tracingStandby);
 
     /**
      * Whether to set tracing on standby. If on standby then the tracer is installed and made available. Then the tracer
      * can be enabled later at runtime via JMX or via {@link Tracer#setEnabled(boolean)}.
+     *
+     * @since 3.13
      */
     boolean isTracingStandby();
 
     /**
      * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
      * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
+     *
+     * @since 4.0
      */
     void setBacklogTracingStandby(boolean backlogTracingStandby);
 
     /**
      * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
      * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
+     *
+     * @since 4.0
      */
     boolean isBacklogTracingStandby();
 
     /**
      * Whether to set backlog debugger on standby. If on standby then the backlog debugger is installed and made
      * available. Then the backlog debugger can be enabled later at runtime via JMX or via Java API.
+     *
+     * @since 4.3
      */
     void setDebugStandby(boolean debugStandby);
 
     /**
      * Whether to set backlog debugger on standby. If on standby then the backlog debugger is installed and made
      * available. Then the backlog debugger can be enabled later at runtime via JMX or via Java API.
+     *
+     * @since 4.3
      */
     boolean isDebugStandby();
 
@@ -1498,11 +1537,15 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     *
+     * @since 3.16
      */
     Boolean isModeline();
 
     /**
      * Whether to support JBang style //DEPS to specify additional dependencies when running Camel JBang
+     *
+     * @since 3.16
      */
     void setModeline(Boolean modeline);
 
@@ -1510,6 +1553,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Whether to enable developer console (requires camel-console on classpath).
      *
      * The developer console is only for assisting during development. This is NOT for production usage.
+     *
+     * @since 3.15
      */
     Boolean isDevConsole();
 
@@ -1517,6 +1562,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Whether to enable developer console (requires camel-console on classpath)
      *
      * The developer console is only for assisting during development. This is NOT for production usage.
+     *
+     * @since 3.15
      */
     void setDevConsole(Boolean loadDevConsoles);
 
@@ -1737,11 +1784,15 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Controls the level of information logged during startup (and shutdown) of {@link CamelContext}.
+     *
+     * @since 3.8
      */
     void setStartupSummaryLevel(StartupSummaryLevel startupSummaryLevel);
 
     /**
      * Controls the level of information logged during startup (and shutdown) of {@link CamelContext}.
+     *
+     * @since 3.8
      */
     StartupSummaryLevel getStartupSummaryLevel();
 

@@ -22,6 +22,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A manager for internal plugins. This is part of the internal Camel API and not meant for public usage.
+ *
+ * @since 4.0
  */
 public interface PluginManager {
 

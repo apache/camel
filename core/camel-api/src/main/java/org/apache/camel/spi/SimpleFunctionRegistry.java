@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Registry for custom simple functions.
+ *
+ * @since 4.18
  */
 public interface SimpleFunctionRegistry extends StaticService {
 

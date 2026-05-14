@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
  * For example, when reading large files, it may be possible to inform the last offset that was read, thus allowing
  * users of this interface to skip to that offset. This can potentially improve resumable operations by allowing
  * reprocessing of data.
+ *
+ * @since 3.17
  */
 public interface Resumable {
 

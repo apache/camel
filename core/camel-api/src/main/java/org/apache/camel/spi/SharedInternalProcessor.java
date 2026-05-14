@@ -40,6 +40,8 @@ import org.jspecify.annotations.Nullable;
  * <p/>
  *
  * This is intended for internal use only - do not use this.
+ *
+ * @since 3.7
  */
 public interface SharedInternalProcessor extends Processor {
 

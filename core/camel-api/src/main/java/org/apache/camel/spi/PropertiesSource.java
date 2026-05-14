@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
  * <p/>
  * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel properties
  * component. The source with the highest precedence (the lowest number) will be used first.
+ *
+ * @since 3.0
  */
 public interface PropertiesSource {
 

@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * A {@link PollingConsumer} that are used by dynamic Poll and PollEnrich EIPs to facilitate components that can use
  * information from the current {@link Exchange} during the poll.
+ *
+ * @since 4.11
  */
 public interface DynamicPollingConsumer extends PollingConsumer {
 

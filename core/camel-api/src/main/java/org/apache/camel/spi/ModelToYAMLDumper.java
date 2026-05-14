@@ -24,6 +24,8 @@ import org.apache.camel.NamedNode;
 
 /**
  * SPI for dumping model definitions into YAML representation.
+ *
+ * @since 4.0
  */
 public interface ModelToYAMLDumper {
 

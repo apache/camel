@@ -23,6 +23,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Backlog tracer that captures the last N messages during routing in a backlog.
+ *
+ * @since 4.0
  */
 public interface BacklogTracer {
 

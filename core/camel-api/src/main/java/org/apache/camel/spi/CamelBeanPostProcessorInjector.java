@@ -24,6 +24,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * Used for custom injection when doing {@link CamelBeanPostProcessor} bean post-processing. Can be used to support
  * 3rd-party annotations for dependency injections.
+ *
+ * @since 3.16
  */
 public interface CamelBeanPostProcessorInjector {
 

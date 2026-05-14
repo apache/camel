@@ -22,6 +22,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Thrown when stream caching of a message body fails.
+ *
+ * @since 3.6
  */
 public class StreamCacheException extends TypeConversionException {
 

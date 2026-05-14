@@ -364,6 +364,14 @@ Import Style:
 - The build automatically shortens unnecessary FQCNs via OpenRewrite (`rewrite-maven-plugin`).
   CI will fail if uncommitted FQCN changes are detected after the build.
 
+Javadoc `@since` Tags:
+- All new public classes, interfaces, enums, and annotations in `core/camel-api` MUST include
+  a `@since X.Y` Javadoc tag indicating the Camel version when they are introduced.
+- All new public methods added to existing interfaces/classes in `core/camel-api` MUST include
+  a `@since X.Y` Javadoc tag on each new method.
+- Use the upcoming minor release version (e.g., `@since 4.21` if the current SNAPSHOT is 4.21.0).
+- Place `@since` as the last Javadoc tag, after `@param`, `@return`, `@throws`, etc.
+
 ## Adding Components
 
 ### Direct child of components/

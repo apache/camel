@@ -26,6 +26,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * Resolves data type transformers from given transformer key. This represents the opportunity to lazy load transformers
  * via factory finder discovery mechanism.
+ *
+ * @since 4.0
  */
 @FunctionalInterface
 public interface TransformerResolver<K> {

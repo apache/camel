@@ -25,6 +25,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * SPI for tracing messages.
+ *
+ * @since 3.0
  */
 public interface Tracer extends StaticService {
 

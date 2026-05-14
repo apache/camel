@@ -22,6 +22,8 @@ import org.apache.camel.Service;
  * Factory for creating connector to CLI tooling.
  * <p/>
  * Such as a local {@link CliConnector} that allows Camel CLI to manage local running Camel integrations.
+ *
+ * @since 3.19
  */
 public interface CliConnectorFactory {
 

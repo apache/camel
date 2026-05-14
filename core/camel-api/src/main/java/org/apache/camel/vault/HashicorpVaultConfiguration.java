@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to Hashicorp Vault Secrets.
+ *
+ * @since 3.19
  */
 public class HashicorpVaultConfiguration extends VaultConfiguration {
 

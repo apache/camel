@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to Kubernetes Secrets
+ *
+ * @since 4.8
  */
 public class KubernetesVaultConfiguration extends VaultConfiguration {
 

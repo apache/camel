@@ -27,6 +27,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Runtime catalog which limited API needed by components that supports {@link ComponentVerifierExtension}.
+ *
+ * @since 3.1
  */
 public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
 

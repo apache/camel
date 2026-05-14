@@ -25,6 +25,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * To record {@link StartupStep} during startup to allow to capture diagnostic information to help troubleshoot Camel
  * applications via various tooling such as Java Flight Recorder.
+ *
+ * @since 3.8
  */
 public interface StartupStepRecorder extends StaticService {
 

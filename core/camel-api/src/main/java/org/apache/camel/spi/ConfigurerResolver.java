@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A pluggable strategy for resolving different configurers in a loosely coupled manner
+ *
+ * @since 3.1
  */
 public interface ConfigurerResolver {
 

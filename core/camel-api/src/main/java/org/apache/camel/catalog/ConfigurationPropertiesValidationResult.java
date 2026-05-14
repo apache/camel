@@ -25,6 +25,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Details result of validating configuration properties (eg application.properties for camel-main).
+ *
+ * @since 3.1
  */
 public class ConfigurationPropertiesValidationResult extends PropertiesValidationResult implements Serializable {
 

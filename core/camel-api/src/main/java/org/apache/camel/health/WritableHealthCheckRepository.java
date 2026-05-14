@@ -18,6 +18,8 @@ package org.apache.camel.health;
 
 /**
  * A {@link HealthCheckRepository} that supports adding and removing health checks at runtime.
+ *
+ * @since 3.20
  */
 public interface WritableHealthCheckRepository extends HealthCheckRepository {
 

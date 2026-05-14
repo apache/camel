@@ -20,14 +20,15 @@ package org.apache.camel.spi;
  * Marker interface used to make it easy to discover {@link org.apache.camel.CamelContext} related event handlers from
  * the registry.
  *
- * @see OnCamelContextInitializing
- * @see OnCamelContextInitialized
- * @see OnCamelContextStart
- * @see OnCamelContextStarting
- * @see OnCamelContextStarted
- * @see OnCamelContextStop
- * @see OnCamelContextStopped
- * @see OnCamelContextStopping
+ * @see   OnCamelContextInitializing
+ * @see   OnCamelContextInitialized
+ * @see   OnCamelContextStart
+ * @see   OnCamelContextStarting
+ * @see   OnCamelContextStarted
+ * @see   OnCamelContextStop
+ * @see   OnCamelContextStopped
+ * @see   OnCamelContextStopping
+ * @since 3.4
  */
 public interface OnCamelContextEvent {
 }

@@ -22,6 +22,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * An exception caused when a mandatory variable is not available
+ *
+ * @since 4.4
  */
 public class NoSuchVariableException extends CamelExchangeException {
 

@@ -29,6 +29,8 @@ import org.apache.camel.spi.annotations.ServiceFactory;
  * <p/>
  * The annotation is used by specific classpath scanning data type loaders to automatically add the data types to a
  * registry.
+ *
+ * @since 4.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

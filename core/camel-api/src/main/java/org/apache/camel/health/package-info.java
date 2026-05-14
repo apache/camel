@@ -16,6 +16,8 @@
  */
 /**
  * Health check API for readiness and liveness monitoring of the CamelContext, routes, and components.
+ *
+ * @since 4.21
  */
 @NullMarked
 package org.apache.camel.health;

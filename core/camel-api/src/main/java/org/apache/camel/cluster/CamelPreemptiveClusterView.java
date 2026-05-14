@@ -19,6 +19,8 @@ package org.apache.camel.cluster;
 /**
  * A {@link CamelPreemptiveClusterView} is a {@link CamelClusterView} that can be externally disabled by another
  * controller.
+ *
+ * @since 3.7
  */
 public interface CamelPreemptiveClusterView extends CamelClusterView {
 

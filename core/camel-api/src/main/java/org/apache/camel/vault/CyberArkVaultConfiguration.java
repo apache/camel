@@ -21,6 +21,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Configuration for access to CyberArk Conjur Vault.
+ *
+ * @since 4.17
  */
 public class CyberArkVaultConfiguration extends VaultConfiguration {
 

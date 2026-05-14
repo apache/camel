@@ -21,6 +21,8 @@ package org.apache.camel.spi;
  *
  * For example when Kamelets are loaded from YAML files from the classpath, or via github from the Apache Camel Kamelet
  * Catalog.
+ *
+ * @since 3.11
  */
 @FunctionalInterface
 public interface RouteTemplateLoaderListener {

@@ -27,6 +27,8 @@ import org.apache.camel.Endpoint;
  * Factory to create {@link org.apache.camel.Endpoint} URI string from a {@link Map} of parameters.
  *
  * Notice that this factory is only for creating an URL string and not {@link org.apache.camel.Endpoint} instances.
+ *
+ * @since 3.6
  */
 public interface EndpointUriFactory extends CamelContextAware {
 

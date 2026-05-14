@@ -25,8 +25,9 @@ import org.jspecify.annotations.Nullable;
  * This is used in Camel to have fast property configuration of Camel components & endpoints, and for EIP patterns as
  * well.
  *
- * @see PropertyConfigurer
- * @see ExtendedPropertyConfigurerGetter
+ * @see   PropertyConfigurer
+ * @see   ExtendedPropertyConfigurerGetter
+ * @since 3.2
  */
 public interface PropertyConfigurerGetter {
 

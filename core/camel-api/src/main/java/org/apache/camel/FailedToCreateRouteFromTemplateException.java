@@ -20,6 +20,8 @@ import java.util.Objects;
 
 /**
  * Exception when failing to create a {@link Route} from a RouteTemplateDefinition.
+ *
+ * @since 3.10
  */
 public class FailedToCreateRouteFromTemplateException extends RuntimeCamelException {
     private final String templateId;

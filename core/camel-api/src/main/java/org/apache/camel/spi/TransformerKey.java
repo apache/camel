@@ -25,6 +25,8 @@ import org.jspecify.annotations.Nullable;
 /**
  * Key used in {@link org.apache.camel.spi.TransformerRegistry} in
  * {@link org.apache.camel.impl.engine.AbstractCamelContext}, to ensure a consistent lookup.
+ *
+ * @since 4.7
  */
 public final class TransformerKey extends ValueHolder<String> {
 

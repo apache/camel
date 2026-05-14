@@ -27,9 +27,10 @@ import org.apache.camel.Processor;
  * handling incoming HTTP requests from clients that request to access REST services which has been created using the
  * <a href="https://camel.apache.org/rest-dsl">rest-dsl</a> for an entire open-api specification.
  *
- * @see RestApiConsumerFactory
- * @see RestOpenApiConsumerFactory
- * @see RestApiProcessorFactory
+ * @see   RestApiConsumerFactory
+ * @see   RestOpenApiConsumerFactory
+ * @see   RestApiProcessorFactory
+ * @since 4.6
  */
 public interface RestOpenApiConsumerFactory {
 
