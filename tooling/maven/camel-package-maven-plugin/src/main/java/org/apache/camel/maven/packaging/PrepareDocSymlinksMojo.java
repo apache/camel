@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -89,7 +90,7 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
      * resolved relative to this directory; output {@code nav.adoc} files are written next to their destinations.
      */
     @Parameter(defaultValue = "${project.basedir}", required = true)
-    private java.io.File baseDir;
+    private File baseDir;
 
     /**
      * Repository root used to resolve {@code source} globs. Each {@code source} entry in the hard-coded {@code sources}
@@ -97,7 +98,7 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
      * subtrees under {@code rootDir}.
      */
     @Parameter(defaultValue = "${project.basedir}/..", required = true)
-    private java.io.File rootDir;
+    private File rootDir;
 
     /** The maven project. */
     @Parameter(property = "project", required = true, readonly = true)
@@ -213,7 +214,11 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
      */
     private void createSymlinks(Path root, KindSpec spec, Path destination) throws IOException {
         Files.createDirectories(destination);
-        int count = 0;
+        // Track unique destination paths so the log surfaces basename collisions: if two distinct sources
+        // flatten to the same `dest/<basename>`, the second `createRelativeSymlink` overwrites the first
+        // and only one symlink remains on disk. The "(from N sources)" suffix is the signal.
+        Set<Path> uniqueLinks = new LinkedHashSet<>();
+        int sources = 0;
         String jsonRootKey = spec.jsonRootKey();
         for (Path src : walk(root, spec.includes(), spec.excludes())) {
             if (jsonRootKey != null && !matchesJsonFilter(src, jsonRootKey)) {
@@ -221,16 +226,21 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
             }
             Path link = destination.resolve(src.getFileName().toString());
             createRelativeSymlink(link, src);
-            count++;
+            uniqueLinks.add(link);
+            sources++;
         }
-        getLog().info("  → linked " + count + " files to " + relativize(destination));
+        getLog().info("  → linked " + countSuffix(uniqueLinks.size(), sources, "files") + " to "
+                      + relativize(destination));
     }
 
     // ----- example symlinks (preserves repo-relative directory hierarchy) -------------------------------------------
 
     private void createExampleSymlinks(Path root, KindSpec spec, Path destination) throws IOException {
         Files.createDirectories(destination);
-        int count = 0;
+        // Dedup: two .adoc files may reference the same `include::{examplesdir}/...` target, but only one symlink
+        // ends up on disk. Count unique links so the log matches what `find -type l` would report.
+        Set<Path> uniqueLinks = new LinkedHashSet<>();
+        int occurrences = 0;
         for (Path adoc : walk(root, spec.includes(), spec.excludes())) {
             String content = Files.readString(adoc, StandardCharsets.UTF_8);
             Matcher m = EXAMPLES_INCLUDE.matcher(content);
@@ -241,11 +251,22 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
                 Path linkDir = destination.resolve(relDir.toString());
                 Files.createDirectories(linkDir);
                 Path link = linkDir.resolve(resolved.getFileName().toString());
-                createRelativeSymlink(link, resolved);
-                count++;
+                if (uniqueLinks.add(link)) {
+                    createRelativeSymlink(link, resolved);
+                }
+                occurrences++;
             }
         }
-        getLog().info("  → linked " + count + " example files to " + relativize(destination));
+        getLog().info("  → linked " + countSuffix(uniqueLinks.size(), occurrences, "example files")
+                      + " to " + relativize(destination));
+    }
+
+    /** Format a count like {@code "7 files"} or {@code "7 files (from 9 sources)"} when occurrences differ. */
+    private static String countSuffix(int unique, int occurrences, String noun) {
+        if (occurrences == unique) {
+            return unique + " " + noun;
+        }
+        return unique + " " + noun + " (from " + occurrences + " sources)";
     }
 
     private void createRelativeSymlink(Path link, Path target) throws IOException {
@@ -294,6 +315,9 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         if (!Files.isRegularFile(template)) {
             return;
         }
+        // Flat scan is intentional: every entry in `destination` is a symlink produced by createSymlinks
+        // which flattens to `<destination>/<basename>`. gulpfile.js used a recursive `**/*.adoc` glob, but
+        // there are no subdirectories at this layer, so a flat Files.list() is equivalent.
         List<Path> entries = new ArrayList<>();
         if (Files.isDirectory(destination)) {
             try (Stream<Path> s = Files.list(destination)) {
@@ -365,6 +389,7 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
 
         Path navOut = destination.getParent().resolve("nav.adoc");
         Files.writeString(navOut, rendered, StandardCharsets.UTF_8);
+        getLog().info("  → generated " + relativize(navOut) + " with " + entries.size() + " entries");
     }
 
     /**
@@ -462,8 +487,12 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
 
     // ----- glob walking ---------------------------------------------------------------------------------------------
 
-    /** Subtrees pruned during every walk — large build artefact / dev dirs we never want to consider. */
-    private static final List<String> PRUNED_DIRS = List.of("target", ".camel-jbang");
+    /**
+     * Subtrees pruned during every walk — large build artefact / dev dirs we never want to consider. Each entry matches
+     * either the exact directory name or a hyphenated sibling ({@code <name>-...}), so {@code .camel-jbang-work} is
+     * pruned alongside {@code .camel-jbang} — matching the {@code .camel-jbang*} glob used by gulpfile.js.
+     */
+    private static final List<String> PRUNED_DIR_PREFIXES = List.of("target", ".camel-jbang");
 
     /**
      * Walk every file under {@code root} matching at least one of the Ant-style {@code includes} and none of
@@ -482,8 +511,11 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         Files.walkFileTree(root, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                if (PRUNED_DIRS.contains(dir.getFileName() == null ? "" : dir.getFileName().toString())) {
-                    return FileVisitResult.SKIP_SUBTREE;
+                String name = dir.getFileName() == null ? "" : dir.getFileName().toString();
+                for (String prefix : PRUNED_DIR_PREFIXES) {
+                    if (name.equals(prefix) || name.startsWith(prefix + "-")) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
                 }
                 return FileVisitResult.CONTINUE;
             }
@@ -519,37 +551,28 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
     // ----- source table ---------------------------------------------------------------------------------------------
 
     private List<DocGroup> sources() {
-        // Component modules live at up to three depths under components/: components/foo (single), components/family/foo
-        // (e.g. camel-aws/camel-aws2-s3), components/family/sub/foo (e.g. camel-spring-parent/camel-spring-ai/...).
+        // Each group's component-tree depth range mirrors gulpfile.js verbatim. JDK PathMatcher accepts
+        // brace alternatives containing '/' so `{*,*/*}` and `{*,*/*,*/*/*}` collapse the depth lists into
+        // a single literal. DSL patterns stay enumerated because gulp pinned DSL to a single depth.
         List<String> componentDocAdoc = List.of(
                 "core/camel-base/src/main/docs/*.adoc",
                 "core/camel-main/src/main/docs/*.adoc",
-                "components/*/src/main/docs/*.adoc",
-                "components/*/*/src/main/docs/*.adoc",
-                "components/*/*/*/src/main/docs/*.adoc");
-        // Negation of *-component / *-language / *-dataformat / *-summary, expressed as Ant excludes.
+                "components/{*,*/*,*/*/*}/src/main/docs/*.adoc");
         List<String> nonComponentSuffixExcludes = List.of(
                 "**/*-component.adoc", "**/*-language.adoc", "**/*-dataformat.adoc", "**/*-summary.adoc");
-        // JSON catalog files.
         List<String> componentJsonIncludes = List.of(
-                "components/*/src/generated/resources/META-INF/org/apache/camel/{,**/}*.json",
-                "components/*/*/src/generated/resources/META-INF/org/apache/camel/{,**/}*.json",
-                "components/*/*/*/src/generated/resources/META-INF/org/apache/camel/{,**/}*.json");
+                "components/{*,*/*,*/*/*}/src/generated/resources/META-INF/org/apache/camel/{,**/}*.json");
 
         List<DocGroup> list = new ArrayList<>();
 
         DocGroup components = new DocGroup("components");
         components.asciidoc = new KindSpec(
-                List.of(
-                        "core/camel-base/src/main/docs/*-component.adoc",
-                        "components/*/src/main/docs/*-component.adoc",
-                        "components/*/*/src/main/docs/*-component.adoc",
-                        "components/*/*/*/src/main/docs/*-component.adoc",
-                        "components/*/src/main/docs/*-summary.adoc",
-                        "components/*/*/src/main/docs/*-summary.adoc"),
+                List.of("core/camel-base/src/main/docs/*-component.adoc",
+                        "components/{*,*/*,*/*/*}/src/main/docs/*-component.adoc",
+                        "components/{*,*/*}/src/main/docs/*-summary.adoc"),
                 null, "docs/components/modules/ROOT/pages", null, null, null);
         components.image = new KindSpec(
-                List.of("components/*/src/main/docs/*.png", "components/*/*/src/main/docs/*.png"),
+                List.of("components/{*,*/*}/src/main/docs/*.png"),
                 null, "docs/components/modules/ROOT/images", null, null, null);
         components.example = new KindSpec(
                 componentDocAdoc, null,
@@ -561,8 +584,7 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
 
         DocGroup dataformats = new DocGroup("dataformats");
         dataformats.asciidoc = new KindSpec(
-                List.of("components/*/src/main/docs/*-dataformat.adoc",
-                        "components/*/*/src/main/docs/*-dataformat.adoc"),
+                List.of("components/{*,*/*}/src/main/docs/*-dataformat.adoc"),
                 null, "docs/components/modules/dataformats/pages", null, null, null);
         dataformats.json = new KindSpec(
                 concat(componentJsonIncludes, List.of(
@@ -572,14 +594,11 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
 
         DocGroup languages = new DocGroup("languages");
         languages.asciidoc = new KindSpec(
-                List.of("components/*/src/main/docs/*-language.adoc",
-                        "components/*/*/src/main/docs/*-language.adoc",
+                List.of("components/{*,*/*}/src/main/docs/*-language.adoc",
                         "core/camel-core-languages/src/main/docs/modules/languages/pages/*-language.adoc"),
                 null, "docs/components/modules/languages/pages", null, null, null);
         languages.json = new KindSpec(
-                List.of("components/*/src/generated/resources/META-INF/org/apache/camel/*/{,**/}*.json",
-                        "components/*/*/src/generated/resources/META-INF/org/apache/camel/*/{,**/}*.json",
-                        "components/*/*/*/src/generated/resources/META-INF/org/apache/camel/*/{,**/}*.json",
+                List.of("components/{*,*/*,*/*/*}/src/generated/resources/META-INF/org/apache/camel/*/{,**/}*.json",
                         "core/camel-core-languages/src/generated/resources/META-INF/org/apache/camel/language/{,**/}*.json",
                         "core/camel-core-model/src/generated/resources/META-INF/org/apache/camel/model/language/*.json"),
                 null, "docs/components/modules/languages/examples/json", null, "language", null);
@@ -587,11 +606,12 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
 
         DocGroup others = new DocGroup("others");
         others.asciidoc = new KindSpec(
+                // gulpfile.js — `components/{*,*/*}` (depth 1 or 2) and dsl at depths 0, 1 and 2
+                // (`dsl/src/main/docs`, `dsl/*/src/main/docs`, `dsl/*/*/src/main/docs`). target/.camel-jbang
+                // subtrees are pruned by the walker.
                 List.of("core/camel-base/src/main/docs/*.adoc",
                         "core/camel-main/src/main/docs/*.adoc",
-                        "components/*/src/main/docs/*.adoc",
-                        "components/*/*/src/main/docs/*.adoc",
-                        "components/*/*/*/src/main/docs/*.adoc",
+                        "components/{*,*/*}/src/main/docs/*.adoc",
                         "dsl/src/main/docs/*.adoc",
                         "dsl/*/src/main/docs/*.adoc",
                         "dsl/*/*/src/main/docs/*.adoc"),
@@ -599,11 +619,9 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
                 "docs/components/modules/others/pages",
                 List.of("index.adoc", "reactive-threadpoolfactory-vertx.adoc"), null, null);
         others.json = new KindSpec(
-                // gulp used `components/{*,*/*,*/*/*}/src/generated/resources/*.json` — only top-level .json files
-                // (i.e. those NOT under META-INF/...) qualify as "other" component metadata.
-                List.of("components/*/src/generated/resources/*.json",
-                        "components/*/*/src/generated/resources/*.json",
-                        "components/*/*/*/src/generated/resources/*.json"),
+                // gulp used `components/{*,*/*,*/*/*}/src/generated/resources/*.json` — only top-level .json
+                // files (i.e. those NOT under META-INF/...) qualify as "other" component metadata.
+                List.of("components/{*,*/*,*/*/*}/src/generated/resources/*.json"),
                 null, "docs/components/modules/others/examples/json", null, "other", null);
         list.add(others);
 
@@ -620,7 +638,7 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         DocGroup faq = new DocGroup("manual:faq");
         faq.example = new KindSpec(
                 List.of("docs/user-manual/modules/faq/**/*.adoc"),
-                null, "docs/user-manual/modules/faq/examples", null, null, null);
+                null, "docs/user-manual/modules/faq/examples", List.of("json", "js"), null, null);
         list.add(faq);
 
         return list;
