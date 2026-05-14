@@ -473,6 +473,36 @@ public interface CometdEndpointBuilderFactory {
             doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCometdEndpointConsumerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCometdEndpointConsumerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     /**
@@ -844,6 +874,36 @@ public interface CometdEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCometdEndpointProducerBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCometdEndpointProducerBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     /**
@@ -1139,6 +1199,36 @@ public interface CometdEndpointBuilderFactory {
             return (CometdEndpointBuilder) this;
         }
 
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCometdEndpointBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter headers.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCometdEndpointBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     public interface CometdBuilders {

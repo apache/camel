@@ -39,6 +39,8 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "filterpath":
         case "filterPath": target.setFilterPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "interval": target.setInterval(property(camelContext, int.class, value)); return true;
         case "jsoncommented":
         case "jsonCommented": target.setJsonCommented(property(camelContext, boolean.class, value)); return true;
@@ -76,6 +78,8 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "filterpath":
         case "filterPath": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "interval": return int.class;
         case "jsoncommented":
         case "jsonCommented": return boolean.class;
@@ -114,6 +118,8 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "exchangePattern": return target.getExchangePattern();
         case "filterpath":
         case "filterPath": return target.getFilterPath();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "interval": return target.getInterval();
         case "jsoncommented":
         case "jsonCommented": return target.isJsonCommented();
