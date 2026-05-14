@@ -408,7 +408,7 @@ public class CamelMonitor extends CamelCommand {
                 loadDiagramForSelectedRoute();
                 return true;
             }
-            if (tab == TAB_ROUTES && showDiagram && ke.isKey(KeyCode.F5)) {
+            if (tab == TAB_ROUTES && showDiagram && !diagramTextMode && ke.isKey(KeyCode.F5)) {
                 diagramLoading.set(false);
                 loadDiagramForSelectedRoute();
                 return true;
@@ -2022,11 +2022,11 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
             hint(spans, "PgUp/PgDn", "page");
             hint(spans, "Home/End", "top/bottom");
-            hint(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
             if (diagramMetrics && !diagramTextMode) {
+                hint(spans, "m", "metrics [on]");
                 hintLast(spans, "F5", "refresh counters");
-            } else if (diagramMetrics && diagramTextMode) {
-                hintLast(spans, "F5", "refresh");
+            } else {
+                hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
             }
         } else if (tab == TAB_ROUTES) {
             hint(spans, "Esc", "back");
