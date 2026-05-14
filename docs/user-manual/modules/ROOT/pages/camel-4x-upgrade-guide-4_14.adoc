@@ -99,6 +99,23 @@ Hazelcast topic, queue, map, list, set, or in one of the repositories
 above must provide their own `Config` with a
 `JavaSerializationFilterConfig` configured for their class names.
 
+=== camel-lucene
+
+The Exchange header values exposed by `LuceneConstants` have been renamed to follow the standard
+Camel naming convention. The field names are unchanged, so routes referencing the constants
+(`LuceneConstants.HEADER_QUERY`, `LuceneConstants.HEADER_RETURN_LUCENE_DOCS`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `QUERY` -> `CamelLuceneQuery`
+* `RETURN_LUCENE_DOCS` -> `CamelLuceneReturnLuceneDocs`
+
+As a consequence, the generated Endpoint DSL header accessors on `LuceneHeaderNameBuilder`
+have been renamed accordingly:
+
+* `qUERY()` -> `luceneQuery()`
+* `returnLuceneDocs()` -> `luceneReturnLuceneDocs()`
+
 == Upgrading from 4.14.2 to 4.14.3
 
 === camel-tika
