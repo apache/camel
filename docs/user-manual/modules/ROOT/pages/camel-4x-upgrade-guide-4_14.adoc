@@ -336,3 +336,22 @@ WebSocket query parameters before mapping them into the Camel message headers. T
 default `HttpHeaderFilterStrategy` filters headers starting with `Camel` / `camel`
 (case-insensitive). Routes that relied on receiving `Camel`-prefixed header names from WebSocket
 query parameters can supply a custom `headerFilterStrategy` to restore the previous behaviour.
+
+=== camel-aws2-sqs
+
+`Sqs2HeaderFilterStrategy` now also configures an inbound filter aligned with the existing
+outbound regex. Headers starting with `Camel` / `camel` (case-insensitive), `breadcrumbId` and
+`org.apache.camel.*` are now filtered in both the inbound and outbound directions, aligning the
+component with the rest of the Camel component catalog (`camel-kafka`, `camel-mail`,
+`camel-coap`, `camel-google-pubsub`, ...). Routes that relied on receiving these header names
+from inbound SQS messages can supply a custom `headerFilterStrategy` to restore the previous
+behaviour.
+
+=== camel-aws2-sns
+
+`Sns2HeaderFilterStrategy` now also configures an inbound filter aligned with the existing
+outbound regex. Headers starting with `Camel` / `camel` (case-insensitive), `breadcrumbId` and
+`org.apache.camel.*` are now filtered in both the inbound and outbound directions, aligning the
+component with the rest of the Camel component catalog. Routes that relied on receiving these
+header names on inbound SNS messages can supply a custom `headerFilterStrategy` to restore the
+previous behaviour.

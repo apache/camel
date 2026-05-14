@@ -27,6 +27,6 @@ public class Sqs2HeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         setLowerCase(true);
         // filter headers begin with "Camel" or "org.apache.camel"
         setOutFilterPattern("(breadcrumbId|Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
-
+        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
     }
 }
