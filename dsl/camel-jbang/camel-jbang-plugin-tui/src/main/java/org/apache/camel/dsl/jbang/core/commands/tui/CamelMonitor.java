@@ -181,6 +181,7 @@ public class CamelMonitor extends CamelCommand {
     // History state
     private volatile List<HistoryEntry> historyEntries = Collections.emptyList();
     private final TableState historyTableState = new TableState();
+    private boolean showHistoryProperties;
     private boolean showHistoryHeaders = true;
     private boolean showHistoryBody = true;
     private boolean historyWordWrap;
@@ -497,8 +498,12 @@ public class CamelMonitor extends CamelCommand {
                 }
             }
 
-            // History tab: headers/body toggle and refresh
+            // History tab: properties/headers/body toggle and refresh
             if (tab == TAB_HISTORY) {
+                if (ke.isCharIgnoreCase('p')) {
+                    showHistoryProperties = !showHistoryProperties;
+                    return true;
+                }
                 if (ke.isCharIgnoreCase('h')) {
                     showHistoryHeaders = !showHistoryHeaders;
                     return true;
@@ -2257,6 +2262,29 @@ public class CamelMonitor extends CamelCommand {
         lines.add(Line.from(Span.raw("")));
 
         // Headers
+        // Exchange Properties
+        if (showHistoryProperties && entry.exchangeProperties != null && !entry.exchangeProperties.isEmpty()) {
+            lines.add(Line.from(Span.styled(" Exchange Properties:", Style.EMPTY.fg(Color.GREEN).bold())));
+            for (Map.Entry<String, Object> p : entry.exchangeProperties.entrySet()) {
+                String type = entry.exchangePropertyTypes != null ? entry.exchangePropertyTypes.get(p.getKey()) : null;
+                String typeLabel;
+                if (type != null) {
+                    String t = "(" + type + ")";
+                    t = truncate(t, 20);
+                    typeLabel = String.format("%-20s ", t);
+                } else {
+                    typeLabel = String.format("%-21s", "");
+                }
+                lines.add(Line.from(
+                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
+                        Span.styled(p.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                        Span.raw(" = "),
+                        Span.raw(p.getValue() != null ? p.getValue().toString() : "null")));
+            }
+            lines.add(Line.from(Span.raw("")));
+        }
+
+        // Headers
         if (showHistoryHeaders && entry.headers != null && !entry.headers.isEmpty()) {
             lines.add(Line.from(Span.styled(" Headers:", Style.EMPTY.fg(Color.GREEN).bold())));
             for (Map.Entry<String, Object> h : entry.headers.entrySet()) {
@@ -2444,6 +2472,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "PgUp/PgDn", "scroll detail");
+            hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
             hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
             hint(spans, "b", "body" + (showHistoryBody ? " [on]" : " [off]"));
             hint(spans, "w", "wrap" + (historyWordWrap ? " [on]" : " [off]"));
@@ -2945,6 +2974,24 @@ public class CamelMonitor extends CamelCommand {
             } else if (bodyObj != null) {
                 entry.body = bodyObj.toString();
             }
+
+            Object propsObj = message.get("exchangeProperties");
+            if (propsObj instanceof List<?> propList) {
+                entry.exchangeProperties = new LinkedHashMap<>();
+                entry.exchangePropertyTypes = new LinkedHashMap<>();
+                for (Object p : propList) {
+                    if (p instanceof JsonObject pObj) {
+                        String key = String.valueOf(pObj.get("key"));
+                        entry.exchangeProperties.put(key, pObj.get("value"));
+                        Object type = pObj.get("type");
+                        if (type != null) {
+                            entry.exchangePropertyTypes.put(key, TuiHelper.shortTypeName(type.toString()));
+                        }
+                    }
+                }
+            } else if (propsObj instanceof Map) {
+                entry.exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
+            }
         }
 
         // Exception
@@ -3361,6 +3408,8 @@ public class CamelMonitor extends CamelCommand {
         String exception;
         Map<String, Object> headers;
         Map<String, String> headerTypes;
+        Map<String, Object> exchangeProperties;
+        Map<String, String> exchangePropertyTypes;
     }
 
     record VanishingInfo(IntegrationInfo info, long startTime) {
