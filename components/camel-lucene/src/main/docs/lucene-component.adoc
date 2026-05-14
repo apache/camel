@@ -68,7 +68,7 @@ the body in incoming exchanges and associating it with a token
 *query*: the query producer performs searches on a pre-created index.
 The query uses the searchable index to perform score & relevance based
 searches. Queries are sent via the incoming exchange contains a header
-property name called 'QUERY'. The value of the header property 'QUERY'
+property name called `CamelLuceneQuery`. The value of the header property `CamelLuceneQuery`
 is a Lucene Query. For more details on how to create Lucene Queries,
 check out https://lucene.apache.org/core/8_4_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package.description[Query Parser Classic syntax]
 
