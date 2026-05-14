@@ -57,6 +57,7 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.TuiConfig;
 import dev.tamboui.tui.TuiRunner;
 import dev.tamboui.tui.event.Event;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
@@ -176,6 +177,8 @@ public class CamelMonitor extends CamelCommand {
     // Diagram state
     private boolean showDiagram;
     private boolean diagramTextMode;
+    private boolean diagramMetrics = true;
+    private List<RouteDiagramAsciiRenderer.CounterPos> diagramCounterPositions = Collections.emptyList();
     private List<String> diagramLines = Collections.emptyList();
     private int diagramScroll;
     private int diagramScrollX;
@@ -260,11 +263,6 @@ public class CamelMonitor extends CamelCommand {
                 runner.quit();
                 return true;
             }
-            if (ke.isChar('r')) {
-                refreshData();
-                return true;
-            }
-
             // Tab switching with number keys
             if (ke.isChar('1')) {
                 return handleTabKey(TAB_OVERVIEW);
@@ -400,6 +398,18 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
+            if (tab == TAB_ROUTES && showDiagram && ke.isCharIgnoreCase('m')) {
+                diagramMetrics = !diagramMetrics;
+                diagramLoading.set(false);
+                loadDiagramForSelectedRoute();
+                return true;
+            }
+            if (tab == TAB_ROUTES && showDiagram && !diagramTextMode && ke.isKey(KeyCode.F5)) {
+                diagramLoading.set(false);
+                loadDiagramForSelectedRoute();
+                return true;
+            }
+
             // Health tab: DOWN filter
             if (tab == TAB_HEALTH && ke.isCharIgnoreCase('d')) {
                 showOnlyDown = !showOnlyDown;
@@ -475,6 +485,9 @@ public class CamelMonitor extends CamelCommand {
             long interval = showDiagram ? Math.max(refreshInterval, 1000) : refreshInterval;
             if (now - lastRefresh >= interval) {
                 refreshData();
+                if (showDiagram && diagramTextMode && diagramMetrics) {
+                    loadDiagramForSelectedRoute();
+                }
                 return true;
             }
             // Skip re-render when showing image diagram to prevent flicker
@@ -1042,7 +1055,7 @@ public class CamelMonitor extends CamelCommand {
             if (diagramScrollX > 0) {
                 line = diagramScrollX < line.length() ? line.substring(diagramScrollX) : "";
             }
-            lines.add(styleDiagramLine(line));
+            lines.add(styleDiagramLine(line, i, diagramScrollX));
         }
 
         // Layout: outer block wraps everything, inner splits content + scrollbars
@@ -1163,22 +1176,37 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
-    private Line styleDiagramLine(String text) {
+    private Line styleDiagramLine(String text, int row, int scrollX) {
+        // Build counter color ranges for this row
+        List<int[]> counterRanges = new ArrayList<>();
+        for (RouteDiagramAsciiRenderer.CounterPos cp : diagramCounterPositions) {
+            if (cp.row() == row) {
+                int start = cp.col() - scrollX;
+                int end = start + cp.length();
+                if (end > 0 && start < text.length()) {
+                    start = Math.max(0, start);
+                    end = Math.min(end, text.length());
+                    int colorFlag = cp.type() == RouteDiagramAsciiRenderer.CounterType.OK ? 1 : 2;
+                    counterRanges.add(new int[] { start, end, colorFlag });
+                }
+            }
+        }
+
         List<Span> spans = new ArrayList<>();
         int idx = 0;
         while (idx < text.length()) {
             int open = text.indexOf('[', idx);
             if (open < 0) {
-                spans.add(Span.styled(text.substring(idx), Style.EMPTY.fg(Color.WHITE)));
+                addStyledSegment(spans, text, idx, text.length(), counterRanges, Color.WHITE);
                 break;
             }
             int close = text.indexOf(']', open);
             if (close < 0) {
-                spans.add(Span.styled(text.substring(idx), Style.EMPTY.fg(Color.WHITE)));
+                addStyledSegment(spans, text, idx, text.length(), counterRanges, Color.WHITE);
                 break;
             }
             if (open > idx) {
-                spans.add(Span.styled(text.substring(idx, open), Style.EMPTY.fg(Color.GRAY)));
+                addStyledSegment(spans, text, idx, open, counterRanges, Color.GRAY);
             }
             String tag = text.substring(open + 1, close);
             Color tagColor = getDiagramNodeColor(tag);
@@ -1186,14 +1214,46 @@ public class CamelMonitor extends CamelCommand {
 
             int afterTag = close + 1;
             int nextOpen = text.indexOf('[', afterTag);
-            int nextNewline = text.length();
-            int labelEnd = nextOpen >= 0 ? nextOpen : nextNewline;
+            int labelEnd = nextOpen >= 0 ? nextOpen : text.length();
             if (afterTag < labelEnd) {
-                spans.add(Span.styled(text.substring(afterTag, labelEnd), Style.EMPTY.fg(Color.WHITE)));
+                addStyledSegment(spans, text, afterTag, labelEnd, counterRanges, Color.WHITE);
             }
             idx = labelEnd;
         }
         return Line.from(spans);
+    }
+
+    private void addStyledSegment(
+            List<Span> spans, String text, int from, int to, List<int[]> counterRanges, Color defaultColor) {
+        int pos = from;
+        while (pos < to) {
+            int[] cr = findNextCounterRange(counterRanges, pos, to);
+            if (cr != null) {
+                if (pos < cr[0]) {
+                    spans.add(Span.styled(text.substring(pos, cr[0]), Style.EMPTY.fg(defaultColor)));
+                }
+                int counterEnd = Math.min(cr[1], to);
+                Color counterColor = cr[2] == 1 ? Color.GREEN : Color.RED;
+                spans.add(Span.styled(text.substring(cr[0], counterEnd), Style.EMPTY.fg(counterColor).bold()));
+                pos = counterEnd;
+            } else {
+                spans.add(Span.styled(text.substring(pos, to), Style.EMPTY.fg(defaultColor)));
+                pos = to;
+            }
+        }
+    }
+
+    private static int[] findNextCounterRange(List<int[]> ranges, int pos, int limit) {
+        int[] best = null;
+        for (int[] range : ranges) {
+            if (range[1] > pos && range[0] < limit) {
+                int start = Math.max(range[0], pos);
+                if (best == null || start < best[0]) {
+                    best = new int[] { start, range[1], range[2] };
+                }
+            }
+        }
+        return best;
     }
 
     private Color getDiagramNodeColor(String type) {
@@ -1246,27 +1306,30 @@ public class CamelMonitor extends CamelCommand {
         // Capture state needed by the background thread
         String pid = selectedPid;
         boolean textMode = diagramTextMode;
+        boolean showMetrics = diagramMetrics;
         String routeId = selectedRoute.routeId;
 
-        // Show loading state immediately
-        diagramRouteId = routeId;
-        diagramLines = List.of("(Loading diagram...)");
-        diagramImageData = null;
-        diagramFullImageData = null;
-        showDiagram = true;
-        diagramScroll = 0;
-        diagramScrollX = 0;
+        boolean initialLoad = !showDiagram;
+        if (initialLoad) {
+            diagramRouteId = routeId;
+            diagramLines = List.of("(Loading diagram...)");
+            diagramImageData = null;
+            diagramFullImageData = null;
+            showDiagram = true;
+            diagramScroll = 0;
+            diagramScrollX = 0;
+        }
 
         runner.scheduler().execute(() -> {
             try {
-                loadDiagramInBackground(pid, textMode, routeId);
+                loadDiagramInBackground(pid, textMode, routeId, showMetrics);
             } finally {
                 diagramLoading.set(false);
             }
         });
     }
 
-    private void loadDiagramInBackground(String pid, boolean textMode, String routeId) {
+    private void loadDiagramInBackground(String pid, boolean textMode, String routeId, boolean metrics) {
         Path outputFile = getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
 
@@ -1310,6 +1373,13 @@ public class CamelMonitor extends CamelCommand {
                     node.code = Jsoner.unescape(objToString(line.get("code")));
                     Integer level = line.getInteger("level");
                     node.level = level != null ? level : 0;
+                    JsonObject stats = (JsonObject) line.get("statistics");
+                    if (stats != null) {
+                        RouteDiagramLayoutEngine.StatInfo stat = new RouteDiagramLayoutEngine.StatInfo();
+                        stat.exchangesTotal = stats.getLongOrDefault("exchangesTotal", 0);
+                        stat.exchangesFailed = stats.getLongOrDefault("exchangesFailed", 0);
+                        node.stat = stat;
+                    }
                     route.nodes.add(node);
                 }
             }
@@ -1317,14 +1387,42 @@ public class CamelMonitor extends CamelCommand {
         }
 
         if (textMode) {
-            String ascii = renderAscii(diagramRoutes, RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, "CODE", true);
+            RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
+                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
+                    RouteDiagramLayoutEngine.NodeLabelMode.CODE);
+            List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
+            int currentY = RouteDiagramLayoutEngine.PADDING;
+            for (RouteDiagramLayoutEngine.RouteInfo r : diagramRoutes) {
+                RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(r, currentY);
+                layoutRoutes.add(lr);
+                currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+            }
+            RouteDiagramAsciiRenderer asciiRenderer = new RouteDiagramAsciiRenderer(
+                    RouteDiagramLayoutEngine.DEFAULT_BOX_WIDTH * RouteDiagramLayoutEngine.SCALE, true, metrics);
+            String ascii = asciiRenderer.renderDiagram(layoutRoutes, currentY);
+            List<RouteDiagramAsciiRenderer.CounterPos> origPositions = asciiRenderer.getCounterPositions();
+
+            // Build result lines, remapping counter positions to account for removed empty lines
+            String[] rawLines = ascii.split("\n", -1);
             List<String> result = new ArrayList<>();
-            for (String line : ascii.split("\n", -1)) {
-                if (!line.isEmpty()) {
-                    result.add(line);
+            int[] rowMapping = new int[rawLines.length];
+            int newRow = 0;
+            for (int i = 0; i < rawLines.length; i++) {
+                if (!rawLines[i].isEmpty()) {
+                    rowMapping[i] = newRow++;
+                    result.add(rawLines[i]);
+                } else {
+                    rowMapping[i] = -1;
                 }
             }
-            applyDiagramResult(routeId, result, null, null, null);
+            List<RouteDiagramAsciiRenderer.CounterPos> positions = new ArrayList<>();
+            for (RouteDiagramAsciiRenderer.CounterPos cp : origPositions) {
+                if (cp.row() >= 0 && cp.row() < rowMapping.length && rowMapping[cp.row()] >= 0) {
+                    positions.add(new RouteDiagramAsciiRenderer.CounterPos(
+                            rowMapping[cp.row()], cp.col(), cp.length(), cp.type()));
+                }
+            }
+            applyDiagramResult(routeId, result, null, null, null, positions);
         } else {
             TerminalImageCapabilities caps = TerminalImageCapabilities.detect();
             if (caps.supportsNativeImages()) {
@@ -1336,7 +1434,9 @@ public class CamelMonitor extends CamelCommand {
                     layoutRoutes.add(lr);
                     totalHeight = lr.maxY;
                 }
-                RouteDiagramRenderer renderer = new RouteDiagramRenderer();
+                RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                        engine.getNodeWidth(), RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE * RouteDiagramLayoutEngine.SCALE,
+                        metrics);
                 RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse("transparent");
                 java.awt.image.BufferedImage image = renderer.renderDiagram(layoutRoutes, totalHeight, colors);
                 ImageData fullImage = ImageData.fromBufferedImage(image);
@@ -1353,42 +1453,33 @@ public class CamelMonitor extends CamelCommand {
 
     private void applyDiagramResult(
             String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol) {
+        applyDiagramResult(routeId, lines, imageData, fullImageData, protocol, Collections.emptyList());
+    }
+
+    private void applyDiagramResult(
+            String routeId, List<String> lines, ImageData imageData, ImageData fullImageData, ImageProtocol protocol,
+            List<RouteDiagramAsciiRenderer.CounterPos> positions) {
         if (runner == null) {
             return;
         }
         runner.runOnRenderThread(() -> {
+            boolean wasShowing = showDiagram;
             diagramRouteId = routeId;
             diagramLines = lines;
+            diagramCounterPositions = positions;
             diagramImageData = imageData;
             diagramFullImageData = fullImageData;
             diagramProtocol = protocol;
-            diagramScroll = 0;
-            diagramScrollX = 0;
-            diagramCropX = -1;
-            diagramCropY = -1;
-            diagramCropW = -1;
-            diagramCropH = -1;
+            if (!wasShowing) {
+                diagramScroll = 0;
+                diagramScrollX = 0;
+                diagramCropX = -1;
+                diagramCropY = -1;
+                diagramCropW = -1;
+                diagramCropH = -1;
+            }
             showDiagram = true;
         });
-    }
-
-    private static String renderAscii(
-            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode) {
-        RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
-                nodeWidth, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
-                RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
-
-        List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
-        int currentY = RouteDiagramLayoutEngine.PADDING;
-        for (RouteDiagramLayoutEngine.RouteInfo route : routes) {
-            RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(route, currentY);
-            layoutRoutes.add(lr);
-            currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
-        }
-
-        RouteDiagramAsciiRenderer renderer = new RouteDiagramAsciiRenderer(
-                nodeWidth * RouteDiagramLayoutEngine.SCALE, unicode);
-        return renderer.renderDiagram(layoutRoutes, currentY);
     }
 
     private static JsonObject pollJsonResponse(Path outputFile, long timeout) {
@@ -1979,17 +2070,21 @@ public class CamelMonitor extends CamelCommand {
 
         if (tab == TAB_OVERVIEW) {
             hint(spans, "q", "quit");
-            hint(spans, "r", "refresh");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "Enter", "details");
             hint(spans, "1-6", "tabs");
-            hintRefresh(spans);
         } else if (tab == TAB_ROUTES && showDiagram) {
             String closeKey = diagramTextMode ? "D" : "d";
             hint(spans, closeKey + "/Esc", "close");
             hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
             hint(spans, "PgUp/PgDn", "page");
-            hintLast(spans, "Home/End", "top/bottom");
+            hint(spans, "Home/End", "top/bottom");
+            if (diagramMetrics && !diagramTextMode) {
+                hint(spans, "m", "metrics [on]");
+                hintLast(spans, "F5", "refresh counters");
+            } else {
+                hintLast(spans, "m", "metrics" + (diagramMetrics ? " [on]" : " [off]"));
+            }
         } else if (tab == TAB_ROUTES) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
@@ -1997,13 +2092,11 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
             hint(spans, "1-6", "tabs");
-            hintRefresh(spans);
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "d", "toggle DOWN");
             hint(spans, "1-6", "tabs");
-            hintRefresh(spans);
         } else if (tab == TAB_LOG) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "scroll");
@@ -2021,7 +2114,6 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "1-6", "tabs");
-            hintRefresh(spans);
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -2037,13 +2129,6 @@ public class CamelMonitor extends CamelCommand {
     private static void hintLast(List<Span> spans, String key, String label) {
         spans.add(Span.styled(" " + key, HINT_KEY_STYLE));
         spans.add(Span.raw(" " + label));
-    }
-
-    private void hintRefresh(List<Span> spans) {
-        String refreshLabel = refreshInterval >= 1000
-                ? (refreshInterval / 1000) + "s"
-                : refreshInterval + "ms";
-        spans.add(Span.styled("Refresh: " + refreshLabel, Style.EMPTY.dim()));
     }
 
     // ---- Data Loading ----
