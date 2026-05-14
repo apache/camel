@@ -31,20 +31,28 @@ public class AggregateCompleteAllOnStopWithIntervalTest extends ContextTestSuppo
 
     @Test
     public void testCompleteAllOnStopWithCompletionInterval() throws Exception {
+        // Set shutdown timeout shorter than the completion interval (60s)
+        // so the interval timer will never fire — force completion must handle it
         context.getShutdownStrategy().setTimeout(5);
 
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
+        // We expect the incomplete aggregation to be completed on shutdown
+        // The aggregation should contain 3 messages: A, B, C
         mock.expectedMessageCount(1);
 
         MockEndpoint input = getMockEndpoint("mock:input");
         input.expectedMessageCount(3);
 
+        // Send 3 messages with the same correlation key
+        // completionSize is 10, so this won't trigger size-based completion
         template.sendBodyAndHeader("direct:start", "A", "aggregateKey", "group1");
         template.sendBodyAndHeader("direct:start", "B", "aggregateKey", "group1");
         template.sendBodyAndHeader("direct:start", "C", "aggregateKey", "group1");
 
         input.assertIsSatisfied();
 
+        // Stop the context without waiting for completionInterval
+        // With completeAllOnStop(), the aggregation must be force-completed during shutdown
         context.stop();
 
         mock.assertIsSatisfied();
