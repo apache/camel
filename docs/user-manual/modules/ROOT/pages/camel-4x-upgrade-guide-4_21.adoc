@@ -350,6 +350,23 @@ Two new endpoint options have been added to control the pull fetch loop:
 * `pullBatchSize` (default `10`) — maximum number of messages to fetch per pull request.
 * `pullFetchTimeout` (default `1000` ms) — maximum time to wait for a batch on each fetch.
 
+=== camel-lucene
+
+The Exchange header values exposed by `LuceneConstants` have been renamed to follow the standard
+Camel naming convention. The field names are unchanged, so routes referencing the constants
+(`LuceneConstants.HEADER_QUERY`, `LuceneConstants.HEADER_RETURN_LUCENE_DOCS`) continue to work
+without modification. However, routes that set or read these headers using the raw string values
+must be updated:
+
+* `QUERY` -> `CamelLuceneQuery`
+* `RETURN_LUCENE_DOCS` -> `CamelLuceneReturnLuceneDocs`
+
+As a consequence, the generated Endpoint DSL header accessors on `LuceneHeaderNameBuilder`
+have been renamed accordingly:
+
+* `qUERY()` -> `luceneQuery()`
+* `returnLuceneDocs()` -> `luceneReturnLuceneDocs()`
+
 === Deprecation of camel-ironmqThe library used had no stable release since 2007. There is no Java library very active for this protocol.
 
 The component camel-ironmq is deprecated. The official library used has been unmaintained since 2017
