@@ -1702,7 +1702,7 @@ public class AggregateProcessor extends BaseProcessorSupport
         // but only do this when forced=false, as that is when we have chance to
         // send out new messages to be routed by Camel. When forced=true, then
         // we have to shutdown in a hurry
-        if (!forced && forceCompletionOnStop) {
+        if (!forced && (forceCompletionOnStop || completeAllOnStop)) {
             doForceCompletionOnStop();
         }
     }
