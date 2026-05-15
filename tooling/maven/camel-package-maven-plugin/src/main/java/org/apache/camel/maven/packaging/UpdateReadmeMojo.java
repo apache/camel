@@ -276,7 +276,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 String json = loadJsonFrom(jsonFiles, kind, dataFormatName);
                 if (json != null) {
                     // special for some data formats
-                    dataFormatName = asDataFormatName(dataFormatName);
+                    dataFormatName = asDataFormatName(dataFormatName, project.getArtifactId());
 
                     File file = new File(dataformatDocDir, dataFormatName + "-" + kind + ".adoc");
 
@@ -289,7 +289,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                                 .forEach(o -> o.setDefaultValue(null));
                     }
 
-                    String title = asDataFormatTitle(model.getName(), model.getTitle());
+                    String title = asDataFormatTitle(model.getName(), model.getTitle(), project.getArtifactId());
                     model.setTitle(title);
 
                     boolean exists = file.exists();
@@ -456,22 +456,38 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                 || name.equals("smtps");
     }
 
-    private static String asDataFormatName(String name) {
+    private static String asDataFormatName(String name, String artifactId) {
         // special for some dataformats which share the same readme file
         if (name.startsWith("bindy")) {
             return "bindy";
+        }
+        // Jackson 2.x and 3.x ship the same dataformat `name` but live in separate artifacts;
+        // disambiguate the doc filename by appending the major-version suffix. See CAMEL-23531.
+        if (isJacksonFamily(name)) {
+            return name + PackageDataFormatMojo.jacksonFamilySuffix(artifactId);
         }
 
         return name;
     }
 
-    private static String asDataFormatTitle(String name, String title) {
+    private static String asDataFormatTitle(String name, String title, String artifactId) {
         // special for some dataformats which share the same readme file
         if (name.startsWith("bindy")) {
             return "Bindy";
         }
+        // The catalog title for the Jackson family is intentionally unsuffixed (the dataformat `name` is the
+        // same for 2.x and 3.x so the runtime DSL resolves either variant transparently). Doc pages must
+        // disambiguate visually, so we add a "2" / "3" suffix when rendering the .adoc title. See CAMEL-23531.
+        if (isJacksonFamily(name)) {
+            return title + " " + PackageDataFormatMojo.jacksonFamilySuffix(artifactId);
+        }
 
         return title;
+    }
+
+    private static boolean isJacksonFamily(String name) {
+        return "jackson".equals(name) || "jacksonXml".equals(name)
+                || "avroJackson".equals(name) || "protobufJackson".equals(name);
     }
 
     private boolean updateHeader(

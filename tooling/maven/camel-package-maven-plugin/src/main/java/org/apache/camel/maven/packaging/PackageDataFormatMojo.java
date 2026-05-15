@@ -546,13 +546,14 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     }
 
     private static String asModelTitle(String name, String title) {
+        // The Jackson 2.x and 3.x lines deliberately share the same dataformat name (and therefore the same
+        // catalog title) so the runtime DSL resolves either variant transparently. Doc-side disambiguation
+        // is applied by UpdateReadmeMojo at .adoc-rendering time, not here. See CAMEL-23531.
         // special for some data formats
         if ("gson".equals(name)) {
             return "JSON Gson";
         } else if ("jackson".equals(name)) {
             return "JSON Jackson";
-        } else if ("jackson3".equals(name)) {
-            return "JSON Jackson3";
         } else if ("avroJackson".equals(name)) {
             return "Avro Jackson";
         } else if ("protobufJackson".equals(name)) {
@@ -573,6 +574,15 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "YAML SnakeYAML";
         }
         return title;
+    }
+
+    /**
+     * Returns the major-version suffix to append to a Jackson-family dataformat title. Jackson 3.x lives in artifacts
+     * whose name contains {@code jackson3}; everything else in the family (the original {@code camel-jackson},
+     * {@code camel-jacksonxml}, {@code camel-jackson-avro}, {@code camel-jackson-protobuf}) is the 2.x line.
+     */
+    static String jacksonFamilySuffix(String artifactId) {
+        return artifactId != null && artifactId.contains("jackson3") ? "3" : "2";
     }
 
     private static String schemaSubDirectory(String javaType) {

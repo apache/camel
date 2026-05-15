@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -154,6 +155,46 @@ class PrepareDocSymlinksMojoTest {
         List<Path> entries = new ArrayList<>(List.of(b1, a2, a1));
         entries.sort(cmp);
         assertThat(entries).containsExactly(a1, a2, b1);
+    }
+
+    // ----- disambiguate (CAMEL-23531) -------------------------------------------------------------------------------
+
+    @Test
+    void disambiguate_jacksonFamilyAppendsMajorVersionSuffix() throws Exception {
+        Path dest = Paths.get("docs/components/modules/dataformats/examples/json");
+        // Simulate the canonical Jackson 2.x vs 3.x collision: both artifacts produce `jackson.json`.
+        List<Path> srcs = List.of(
+                Paths.get("/repo/components/camel-jackson/src/generated/resources/META-INF/jackson.json"),
+                Paths.get("/repo/components/camel-jackson3/src/generated/resources/META-INF/jackson.json"));
+        assertThat(PrepareDocSymlinksMojo.disambiguate(dest, srcs))
+                .containsExactly("jackson2.json", "jackson3.json");
+    }
+
+    @Test
+    void disambiguate_failsLoudWhenSourceIsNotInTheJacksonFamily() {
+        // Two non-jackson components flattening to the same basename: no rule applies, must fail rather than
+        // silently overwrite.
+        Path dest = Paths.get("docs/components/modules/dataformats/examples/json");
+        List<Path> srcs = List.of(
+                Paths.get("/repo/components/camel-foo/src/generated/resources/META-INF/foo.json"),
+                Paths.get("/repo/components/camel-bar/src/generated/resources/META-INF/foo.json"));
+        assertThatThrownBy(() -> PrepareDocSymlinksMojo.disambiguate(dest, srcs))
+                .isInstanceOf(MojoFailureException.class)
+                .hasMessageContaining("collision")
+                .hasMessageContaining("foo.json");
+    }
+
+    @Test
+    void disambiguate_failsLoudWhenJacksonRuleStillProducesDuplicates() {
+        // Two 3.x sources with the same basename ⇒ the jackson rule maps both to "...3.json", so the disambiguator
+        // can't resolve it. Must fail rather than write one symlink twice.
+        Path dest = Paths.get("docs/components/modules/dataformats/examples/json");
+        List<Path> srcs = List.of(
+                Paths.get("/repo/components/camel-jackson3/src/generated/resources/META-INF/jackson.json"),
+                Paths.get("/repo/components/camel-jackson3-extra/src/generated/resources/META-INF/jackson.json"));
+        assertThatThrownBy(() -> PrepareDocSymlinksMojo.disambiguate(dest, srcs))
+                .isInstanceOf(MojoFailureException.class)
+                .hasMessageContaining("collision");
     }
 
     @Test

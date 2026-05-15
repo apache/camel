@@ -467,7 +467,31 @@ to work without changes. Routes that set the header by its literal string value
 (for example `setHeader("JGROUPSRAFT_SET_TIMEOUT", ...)`) must be updated to
 use the new value (`setHeader("CamelJGroupsRaftSetTimeout", ...)`).
 
-=== Deprecation of camel-ironmqThe library used had no stable release since 2007. There is no Java library very active for this protocol.
+=== Jackson dataformat documentation pages renamed
+
+The Jackson 2.x and Jackson 3.x lines ship the same dataformat names (`jackson`, `jacksonXml`,
+`avroJackson`, `protobufJackson`) for DSL drop-in compatibility, but their documentation pages
+previously shared the same filename and silently overwrote each other when the doc site was
+built (CAMEL-23531). The pages have been split and now carry an explicit `2` or `3` suffix:
+
+[options="header"]
+|===
+| Module | Old page | New page
+| `camel-jackson` | `jackson-dataformat.adoc` | `jackson2-dataformat.adoc`
+| `camel-jacksonxml` | `jacksonXml-dataformat.adoc` | `jacksonXml2-dataformat.adoc`
+| `camel-jackson-avro` | `avroJackson-dataformat.adoc` | `avroJackson2-dataformat.adoc`
+| `camel-jackson-protobuf` | `protobufJackson-dataformat.adoc` | `protobufJackson2-dataformat.adoc`
+| `camel-jackson3` | `jackson-dataformat.adoc` | `jackson3-dataformat.adoc`
+| `camel-jackson3xml` | `jacksonXml-dataformat.adoc` | `jacksonXml3-dataformat.adoc`
+| `camel-jackson3-avro` | `avroJackson-dataformat.adoc` | `avroJackson3-dataformat.adoc`
+| `camel-jackson3-protobuf` | `protobufJackson-dataformat.adoc` | `protobufJackson3-dataformat.adoc`
+|===
+
+The page titles are likewise disambiguated (`JSON Jackson 2` / `JSON Jackson 3`, etc.) and both
+variants now appear in the dataformats navigation. Update any external `xref:` links that point
+at the old filenames; routes referencing the dataformats by `name` are unaffected.
+
+=== Deprecation of camel-ironmq
 
 The component camel-ironmq is deprecated. The official library used has been unmaintained since 2017
 All the other client libraries (in other languages) are unmaintained since the same amount of time.
@@ -484,4 +508,3 @@ The component camel-irc is deprecated. The library used had no stable release si
 === Deprecation of camel-iec-60870
 
 The component camel-iec-60870 is deprecated. The library used to implement it NeoScada is no more maintained since 2021. There are no alternatives in Java with compatible license.
-

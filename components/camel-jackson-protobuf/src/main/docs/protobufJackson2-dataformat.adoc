@@ -1,10 +1,10 @@
-= Protobuf Jackson DataFormat
-:doctitle: Protobuf Jackson
-:shortname: protobufJackson
-:artifactid: camel-jackson3-protobuf
+= Protobuf Jackson 2 DataFormat
+:doctitle: Protobuf Jackson 2
+:shortname: protobufJackson2
+:artifactid: camel-jackson-protobuf
 :description: Marshal POJOs to Protobuf and back using Jackson.
-:since: 4.19
-:supportlevel: Preview
+:since: 3.10
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: jackson-protobuf
@@ -12,7 +12,7 @@
 *Since Camel {since}*
 
 Jackson Protobuf is a Data Format which uses the
-https://github.com/FasterXML/jackson/[Jackson library] version 3 with the https://github.com/FasterXML/jackson-dataformats-binary[Protobuf extension]
+https://github.com/FasterXML/jackson/[Jackson library] with the https://github.com/FasterXML/jackson-dataformats-binary[Protobuf extension]
 to unmarshal a Protobuf payload into Java objects or to marshal Java objects
 into a Protobuf payload.
 
@@ -55,7 +55,7 @@ If you set up a single `ProtobufMapper` in the registry, then Camel will automat
 == Dependencies
 
 To use Protobuf Jackson in your Camel routes, you need to add the dependency
-on *camel-jackson3-protobuf*, which implements this data format.
+on *camel-jackson-protobuf*, which implements this data format.
 
 If you use Maven, you could add the following to your pom.xml,
 substituting the version number for the latest & greatest release.
@@ -64,7 +64,7 @@ substituting the version number for the latest & greatest release.
 ----------------------------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-jackson3-protobuf</artifactId>
+  <artifactId>camel-jackson-protobuf</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>

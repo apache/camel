@@ -1,6 +1,6 @@
-= JSON Jackson DataFormat
-:doctitle: JSON Jackson
-:shortname: jackson
+= JSON Jackson 3 DataFormat
+:doctitle: JSON Jackson 3
+:shortname: jackson3
 :artifactid: camel-jackson3
 :description: Marshal POJOs to JSON and back using Jackson.
 :since: 4.19
