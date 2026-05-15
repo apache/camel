@@ -3168,75 +3168,18 @@ public class CamelMonitor extends CamelCommand {
         // Parse message object
         Object msgObj = json.get("message");
         if (msgObj instanceof JsonObject message) {
-            // Headers
-            Object headersObj = message.get("headers");
-            if (headersObj instanceof List<?> headerList) {
-                entry.headers = new LinkedHashMap<>();
-                entry.headerTypes = new LinkedHashMap<>();
-                for (Object h : headerList) {
-                    if (h instanceof JsonObject hObj) {
-                        String key = String.valueOf(hObj.get("key"));
-                        entry.headers.put(key, hObj.get("value"));
-                        Object type = hObj.get("type");
-                        if (type != null) {
-                            entry.headerTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (headersObj instanceof Map) {
-                entry.headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
-            }
-
-            // Body
-            Object bodyObj = message.get("body");
-            if (bodyObj instanceof JsonObject bodyJson) {
-                Object val = bodyJson.get("value");
-                entry.body = val != null ? val.toString() : null;
-                entry.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
-            } else if (bodyObj != null) {
-                entry.body = bodyObj.toString();
-            }
+            MessageData md = parseMessage(message);
+            entry.headers = md.headers();
+            entry.headerTypes = md.headerTypes();
+            entry.body = md.body();
+            entry.bodyType = md.bodyType();
             if (entry.body != null) {
                 entry.bodyPreview = entry.body.replace("\n", " ").replace("\r", "");
             }
-
-            // Exchange properties
-            Object propsObj = message.get("exchangeProperties");
-            if (propsObj instanceof List<?> propList) {
-                entry.exchangeProperties = new LinkedHashMap<>();
-                entry.exchangePropertyTypes = new LinkedHashMap<>();
-                for (Object p : propList) {
-                    if (p instanceof JsonObject pObj) {
-                        String key = String.valueOf(pObj.get("key"));
-                        entry.exchangeProperties.put(key, pObj.get("value"));
-                        Object type = pObj.get("type");
-                        if (type != null) {
-                            entry.exchangePropertyTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (propsObj instanceof Map) {
-                entry.exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
-            }
-
-            // Exchange variables
-            Object varsObj = message.get("exchangeVariables");
-            if (varsObj instanceof List<?> varList) {
-                entry.exchangeVariables = new LinkedHashMap<>();
-                entry.exchangeVariableTypes = new LinkedHashMap<>();
-                for (Object v : varList) {
-                    if (v instanceof JsonObject vObj) {
-                        String key = String.valueOf(vObj.get("key"));
-                        entry.exchangeVariables.put(key, vObj.get("value"));
-                        Object type = vObj.get("type");
-                        if (type != null) {
-                            entry.exchangeVariableTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (varsObj instanceof Map) {
-                entry.exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
-            }
+            entry.exchangeProperties = md.exchangeProperties();
+            entry.exchangePropertyTypes = md.exchangePropertyTypes();
+            entry.exchangeVariables = md.exchangeVariables();
+            entry.exchangeVariableTypes = md.exchangeVariableTypes();
         }
 
         return entry;
@@ -3335,68 +3278,15 @@ public class CamelMonitor extends CamelCommand {
         // Parse message
         Object msgObj = json.get("message");
         if (msgObj instanceof JsonObject message) {
-            Object headersObj = message.get("headers");
-            if (headersObj instanceof List<?> headerList) {
-                entry.headers = new LinkedHashMap<>();
-                entry.headerTypes = new LinkedHashMap<>();
-                for (Object h : headerList) {
-                    if (h instanceof JsonObject hObj) {
-                        String key = String.valueOf(hObj.get("key"));
-                        entry.headers.put(key, hObj.get("value"));
-                        Object type = hObj.get("type");
-                        if (type != null) {
-                            entry.headerTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (headersObj instanceof Map) {
-                entry.headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
-            }
-
-            Object bodyObj = message.get("body");
-            if (bodyObj instanceof JsonObject bodyJson) {
-                Object val = bodyJson.get("value");
-                entry.body = val != null ? val.toString() : null;
-                entry.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
-            } else if (bodyObj != null) {
-                entry.body = bodyObj.toString();
-            }
-
-            Object propsObj = message.get("exchangeProperties");
-            if (propsObj instanceof List<?> propList) {
-                entry.exchangeProperties = new LinkedHashMap<>();
-                entry.exchangePropertyTypes = new LinkedHashMap<>();
-                for (Object p : propList) {
-                    if (p instanceof JsonObject pObj) {
-                        String key = String.valueOf(pObj.get("key"));
-                        entry.exchangeProperties.put(key, pObj.get("value"));
-                        Object type = pObj.get("type");
-                        if (type != null) {
-                            entry.exchangePropertyTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (propsObj instanceof Map) {
-                entry.exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
-            }
-
-            Object varsObj = message.get("exchangeVariables");
-            if (varsObj instanceof List<?> varList) {
-                entry.exchangeVariables = new LinkedHashMap<>();
-                entry.exchangeVariableTypes = new LinkedHashMap<>();
-                for (Object v : varList) {
-                    if (v instanceof JsonObject vObj) {
-                        String key = String.valueOf(vObj.get("key"));
-                        entry.exchangeVariables.put(key, vObj.get("value"));
-                        Object type = vObj.get("type");
-                        if (type != null) {
-                            entry.exchangeVariableTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (varsObj instanceof Map) {
-                entry.exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
-            }
+            MessageData md = parseMessage(message);
+            entry.headers = md.headers();
+            entry.headerTypes = md.headerTypes();
+            entry.body = md.body();
+            entry.bodyType = md.bodyType();
+            entry.exchangeProperties = md.exchangeProperties();
+            entry.exchangePropertyTypes = md.exchangePropertyTypes();
+            entry.exchangeVariables = md.exchangeVariables();
+            entry.exchangeVariableTypes = md.exchangeVariableTypes();
         }
 
         // Exception
@@ -3410,6 +3300,100 @@ public class CamelMonitor extends CamelCommand {
 
     private static String stringValue(Object obj) {
         return obj != null ? obj.toString() : null;
+    }
+
+    record MessageData(
+            Map<String, Object> headers,
+            Map<String, String> headerTypes,
+            String body,
+            String bodyType,
+            Map<String, Object> exchangeProperties,
+            Map<String, String> exchangePropertyTypes,
+            Map<String, Object> exchangeVariables,
+            Map<String, String> exchangeVariableTypes) {
+    }
+
+    @SuppressWarnings("unchecked")
+    private static MessageData parseMessage(JsonObject message) {
+        Map<String, Object> headers = null;
+        Map<String, String> headerTypes = null;
+        String body = null;
+        String bodyType = null;
+        Map<String, Object> exchangeProperties = null;
+        Map<String, String> exchangePropertyTypes = null;
+        Map<String, Object> exchangeVariables = null;
+        Map<String, String> exchangeVariableTypes = null;
+
+        // Headers
+        Object headersObj = message.get("headers");
+        if (headersObj instanceof List<?> headerList) {
+            headers = new LinkedHashMap<>();
+            headerTypes = new LinkedHashMap<>();
+            for (Object h : headerList) {
+                if (h instanceof JsonObject hObj) {
+                    String key = String.valueOf(hObj.get("key"));
+                    headers.put(key, hObj.get("value"));
+                    Object type = hObj.get("type");
+                    if (type != null) {
+                        headerTypes.put(key, TuiHelper.shortTypeName(type.toString()));
+                    }
+                }
+            }
+        } else if (headersObj instanceof Map) {
+            headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
+        }
+
+        // Body
+        Object bodyObj = message.get("body");
+        if (bodyObj instanceof JsonObject bodyJson) {
+            Object val = bodyJson.get("value");
+            body = val != null ? val.toString() : null;
+            bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
+        } else if (bodyObj != null) {
+            body = bodyObj.toString();
+        }
+
+        // Exchange properties
+        Object propsObj = message.get("exchangeProperties");
+        if (propsObj instanceof List<?> propList) {
+            exchangeProperties = new LinkedHashMap<>();
+            exchangePropertyTypes = new LinkedHashMap<>();
+            for (Object p : propList) {
+                if (p instanceof JsonObject pObj) {
+                    String key = String.valueOf(pObj.get("key"));
+                    exchangeProperties.put(key, pObj.get("value"));
+                    Object type = pObj.get("type");
+                    if (type != null) {
+                        exchangePropertyTypes.put(key, TuiHelper.shortTypeName(type.toString()));
+                    }
+                }
+            }
+        } else if (propsObj instanceof Map) {
+            exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
+        }
+
+        // Exchange variables
+        Object varsObj = message.get("exchangeVariables");
+        if (varsObj instanceof List<?> varList) {
+            exchangeVariables = new LinkedHashMap<>();
+            exchangeVariableTypes = new LinkedHashMap<>();
+            for (Object v : varList) {
+                if (v instanceof JsonObject vObj) {
+                    String key = String.valueOf(vObj.get("key"));
+                    exchangeVariables.put(key, vObj.get("value"));
+                    Object type = vObj.get("type");
+                    if (type != null) {
+                        exchangeVariableTypes.put(key, TuiHelper.shortTypeName(type.toString()));
+                    }
+                }
+            }
+        } else if (varsObj instanceof Map) {
+            exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
+        }
+
+        return new MessageData(
+                headers, headerTypes, body, bodyType,
+                exchangeProperties, exchangePropertyTypes, exchangeVariables, exchangeVariableTypes);
     }
 
     // ---- Integration Parsing ----
