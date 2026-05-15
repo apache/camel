@@ -1921,28 +1921,27 @@ public class CamelMonitor extends CamelCommand {
         // Log table
         List<Row> rows = new ArrayList<>();
         for (LogEntry entry : filteredLogEntries) {
-            Style levelStyle = colorStyleForLevel(entry.level);
             rows.add(Row.from(
-                    Cell.from(Span.styled(entry.time, Style.EMPTY.dim())),
-                    Cell.from(Span.styled(entry.level, levelStyle)),
-                    Cell.from(Span.styled(entry.logger != null ? entry.logger : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(Span.styled(entry.message, levelStyle))));
+                    Cell.from(Span.raw(entry.time != null ? entry.time : "")),
+                    Cell.from(Span.raw(entry.level != null ? entry.level : "")),
+                    Cell.from(Span.raw(entry.logger != null ? entry.logger : "")),
+                    Cell.from(Span.raw(entry.message != null ? entry.message : ""))));
         }
 
         String levelTitle = buildLevelFilterTitle();
         Table logTable = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("LEVEL", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("LOGGER", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
+                        Cell.from(Span.raw("TIME")),
+                        Cell.from(Span.raw("LEVEL")),
+                        Cell.from(Span.raw("LOGGER")),
+                        Cell.from(Span.raw("MESSAGE"))))
                 .widths(
                         Constraint.length(12),
                         Constraint.length(6),
                         Constraint.length(20),
                         Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightStyle(Style.EMPTY)
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Log " + levelTitle).build())
@@ -1959,8 +1958,7 @@ public class CamelMonitor extends CamelCommand {
         if (sel == null || sel < 0 || sel >= filteredLogEntries.size()) {
             frame.renderWidget(
                     Paragraph.builder()
-                            .text(Text.from(Line.from(
-                                    Span.styled(" Select a log entry", Style.EMPTY.dim()))))
+                            .text(Text.from(Line.from(Span.raw(" Select a log entry"))))
                             .block(Block.builder().borderType(BorderType.ROUNDED)
                                     .title(" Detail ").build())
                             .build(),
@@ -1971,7 +1969,7 @@ public class CamelMonitor extends CamelCommand {
         LogEntry entry = filteredLogEntries.get(sel);
         frame.renderWidget(
                 Paragraph.builder()
-                        .text(Text.from(Line.from(Span.styled(entry.raw, colorStyleForLevel(entry.level)))))
+                        .text(Text.from(Line.from(Span.raw(entry.raw != null ? entry.raw : ""))))
                         .overflow(Overflow.WRAP_WORD)
                         .block(Block.builder().borderType(BorderType.ROUNDED)
                                 .title(" " + entry.time + " " + entry.level + " ").build())
