@@ -17,12 +17,20 @@
 package org.apache.camel.component.kafka.integration.batching;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
+import org.apache.kafka.clients.consumer.ConsumerInterceptor;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -36,9 +44,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * The fix is to restart intervalWatch at the same point timeoutWatch is restarted — when exchangeList.isEmpty() is true
  * at the top of processExchange() in KafkaRecordBatchingProcessor.
  *
- * Test scenario: the first post-idle message is sent and flushed to Kafka alone, ensuring the consumer picks it up in a
- * dedicated poll. A 200ms gap (less than pollTimeoutMs=500ms) then separates it from the remaining messages, so the
- * subsequent poll carries those remaining messages while the first is still in the accumulation buffer.
+ * Test scenario: the first post-idle message is sent and flushed to Kafka alone. A Kafka ConsumerInterceptor counts
+ * non-empty polls so the test can await confirmation that the consumer has picked up that message before producing the
+ * rest. This ensures the subsequent poll carries the remaining messages while the first is still in the accumulation
+ * buffer.
  *
  * With the bug: intervalWatch is still expired from the idle period, so it fires on that second poll and prematurely
  * flushes only the first message — the remaining messages end up in a later batch.
@@ -50,8 +59,37 @@ public class KafkaBatchingIntervalResetAfterIdleIT extends BatchingProcessingITS
 
     public static final String TOPIC = "testBatchingIntervalResetAfterIdle";
 
-    private static final int BATCHING_INTERVAL_MS = 2000;
+    private static final int BATCHING_INTERVAL_MS = 400;
     private static final int MAX_POLL_RECORDS = 5;
+
+    // Counts non-empty polls seen by the Kafka consumer interceptor. Reset between test phases
+    // so we can await the first non-empty poll of the post-idle cycle before producing the rest.
+    static final AtomicInteger POST_IDLE_POLLS = new AtomicInteger(0);
+
+    public static class PollCountingInterceptor implements ConsumerInterceptor<String, String> {
+        @Override
+        public ConsumerRecords<String, String> onConsume(ConsumerRecords<String, String> records) {
+            if (!records.isEmpty()) {
+                POST_IDLE_POLLS.incrementAndGet();
+            }
+            return records;
+        }
+
+        @Override
+        public void onCommit(Map<TopicPartition, OffsetAndMetadata> offsets) {
+            // no-op
+        }
+
+        @Override
+        public void close() {
+            // no-op
+        }
+
+        @Override
+        public void configure(Map<String, ?> configs) {
+            // no-op
+        }
+    }
 
     @AfterEach
     public void after() {
@@ -66,7 +104,8 @@ public class KafkaBatchingIntervalResetAfterIdleIT extends BatchingProcessingITS
                       + "&maxPollRecords=" + MAX_POLL_RECORDS
                       + "&batchingIntervalMs=" + BATCHING_INTERVAL_MS
                       + "&pollTimeoutMs=500"
-                      + "&autoOffsetReset=earliest";
+                      + "&autoOffsetReset=earliest"
+                      + "&interceptorClasses=" + PollCountingInterceptor.class.getName();
 
         return new RouteBuilder() {
             @Override
@@ -86,7 +125,10 @@ public class KafkaBatchingIntervalResetAfterIdleIT extends BatchingProcessingITS
 
         // Idle for longer than batchingIntervalMs so that intervalWatch expires while the
         // queue is empty. This is the precondition that triggers the bug on the next cycle.
-        Thread.sleep(BATCHING_INTERVAL_MS + 1000);
+        Thread.sleep(BATCHING_INTERVAL_MS + 600);
+
+        // Reset the poll counter before starting the post-idle phase.
+        POST_IDLE_POLLS.set(0);
 
         // Send 1 message and flush it to Kafka before sending the rest. This guarantees the
         // consumer will poll it alone in a dedicated poll (Kafka consumer returns immediately
@@ -95,10 +137,10 @@ public class KafkaBatchingIntervalResetAfterIdleIT extends BatchingProcessingITS
         sendRecords(MAX_POLL_RECORDS, MAX_POLL_RECORDS + 1, TOPIC);
         producer.flush();
 
-        // 200ms gap: msg 1 will have been consumed in its own poll by the time msgs 2-4
-        // arrive in Kafka. pollTimeoutMs=500ms means the consumer returns from any poll as
-        // soon as a record is available, so msg 1 lands in a poll well within this window.
-        Thread.sleep(200);
+        // Wait until the interceptor confirms the consumer has polled msg 1, then produce
+        // the remainder. This replaces a fixed sleep: the remaining messages only reach Kafka
+        // after we know msg 1 is already in the accumulation buffer.
+        await().atMost(5, TimeUnit.SECONDS).until(() -> POST_IDLE_POLLS.get() >= 1);
 
         // Send remaining messages. With the fix, the consumer will accumulate these with
         // msg 1 since intervalWatch was reset when msg 1 started the new cycle.
@@ -108,7 +150,7 @@ public class KafkaBatchingIntervalResetAfterIdleIT extends BatchingProcessingITS
         producer.flush();
 
         // Wait for at least one batch. With the bug a batch of 1 arrives quickly;
-        // with the fix a single batch of all 4 messages arrives after pollTimeoutMs.
+        // with the fix a single batch of all 4 messages arrives after batchingIntervalMs.
         to.expectedMinimumMessageCount(1);
         to.assertIsSatisfied(8000);
 
