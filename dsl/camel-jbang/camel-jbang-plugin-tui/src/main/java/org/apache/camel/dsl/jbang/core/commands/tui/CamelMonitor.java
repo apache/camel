@@ -261,8 +261,8 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
-            // Global keys
-            if (ke.isQuit() || ke.isCharIgnoreCase('q') || ke.isCancel()) {
+            // Escape: navigate back
+            if (ke.isCancel()) {
                 if (showDiagram) {
                     showDiagram = false;
                     diagramImageData = null;
@@ -275,12 +275,19 @@ public class CamelMonitor extends CamelCommand {
                     traceDetailScroll = 0;
                     return true;
                 }
-                // If in a detail tab, go back to overview first
                 if (tabsState.selected() != TAB_OVERVIEW) {
                     tabsState.select(TAB_OVERVIEW);
                     selectedPid = null;
                     return true;
                 }
+                if (selectedPid != null) {
+                    selectedPid = null;
+                    return true;
+                }
+                return true;
+            }
+            // Quit: q or Ctrl+c
+            if (ke.isCharIgnoreCase('q') || ke.isCtrlC()) {
                 runner.quit();
                 return true;
             }
@@ -639,6 +646,13 @@ public class CamelMonitor extends CamelCommand {
         } else if (infos.size() == 1) {
             selectedPid = infos.get(0).pid;
         }
+        if (selectedPid != null) {
+            List<Long> pids = List.of(Long.parseLong(selectedPid));
+            refreshHistoryData(pids);
+            traceFilePositions.clear();
+            traces.set(Collections.emptyList());
+            refreshTraceData(pids);
+        }
     }
 
     private void navigateUp() {
@@ -748,15 +762,30 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderTabs(Frame frame, Rect area) {
+        // Compute notification counts (0 if no integration selected)
+        List<IntegrationInfo> infos = data.get();
+        long activeCount = infos.stream().filter(i -> !i.vanishing).count();
+        IntegrationInfo sel = findSelectedIntegration();
+        boolean hasSelection = selectedPid != null && sel != null;
+        int routeCount = hasSelection ? sel.routes.size() : 0;
+        int logCount = hasSelection ? filteredLogEntries.size() : 0;
+        int endpointCount = hasSelection ? sel.endpoints.size() : 0;
+        int healthCount = hasSelection ? sel.healthChecks.size() : 0;
+        int historyCount = hasSelection ? historyEntries.size() : 0;
+        boolean hasTraces = hasSelection && !traces.get().isEmpty();
+
         Tabs tabs = Tabs.builder()
                 .titles(
-                        " 1 Overview ",
-                        " 2 Routes ",
-                        " 3 Log ",
-                        " 4 Endpoints ",
-                        " 5 Health ",
-                        " 6 History ",
-                        " 7 Trace ")
+                        badge(" 1 Overview ", activeCount),
+                        badge(" 2 Routes ", routeCount),
+                        badge(" 3 Log ", logCount),
+                        badge(" 4 Endpoints ", endpointCount),
+                        badge(" 5 Health ", healthCount),
+                        badge(" 6 History ", historyCount),
+                        hasTraces
+                                ? Line.from(Span.raw(" 7 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
+                                        Span.raw(" "))
+                                : Line.from(" 7 Trace "))
                 .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
@@ -2842,6 +2871,16 @@ public class CamelMonitor extends CamelCommand {
 
     private static Cell rightCell(String text, int width, Style style) {
         return Cell.from(Span.styled(String.format("%" + width + "s", text), style));
+    }
+
+    private static Line badge(String label, long count) {
+        if (count > 0) {
+            return Line.from(
+                    Span.raw(label),
+                    Span.styled("(" + count + ")", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.raw(" "));
+        }
+        return Line.from(label);
     }
 
     private static final Style HINT_KEY_STYLE = Style.EMPTY.fg(Color.YELLOW).bold();
