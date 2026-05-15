@@ -177,6 +177,29 @@ to work without changes. Routes that set the header by its literal string value
 (for example `setHeader("JGROUPSRAFT_SET_TIMEOUT", ...)`) must be updated to
 use the new value (`setHeader("CamelJGroupsRaftSetTimeout", ...)`).
 
+=== camel-elasticsearch-rest-client
+
+The Exchange header constants in `ElasticSearchRestClientConstant` have been
+renamed to follow the Camel naming convention used across the rest of the
+component catalog. The Java field names are unchanged; only the header string
+values have changed:
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `ElasticSearchRestClientConstant.ID` | `ID` | `CamelElasticsearchId`
+| `ElasticSearchRestClientConstant.SEARCH_QUERY` | `SEARCH_QUERY` | `CamelElasticsearchSearchQuery`
+| `ElasticSearchRestClientConstant.INDEX_SETTINGS` | `INDEX_SETTINGS` | `CamelElasticsearchIndexSettings`
+| `ElasticSearchRestClientConstant.INDEX_NAME` | `INDEX_NAME` | `CamelElasticsearchIndexName`
+| `ElasticSearchRestClientConstant.OPERATION` | `OPERATION` | `CamelElasticsearchOperation`
+|===
+
+Routes that reference the constant symbolically (for example
+`setHeader(ElasticSearchRestClientConstant.SEARCH_QUERY, ...)`) continue to
+work without changes. Routes that set the header by its literal string value
+(for example `setHeader("SEARCH_QUERY", ...)`) must be updated to use the
+new value (`setHeader("CamelElasticsearchSearchQuery", ...)`).
+
 == Upgrading from 4.18.0 to 4.18.1
 
 === camel-bom
