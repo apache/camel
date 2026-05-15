@@ -93,6 +93,66 @@ A report is in scope when it demonstrates that the framework, in a default or
 reasonably-expected configuration, lets untrusted input cross a trust boundary
 that the model says it should not cross.
 
+=== Security properties and violation severity
+
+The trust-boundary statement above commits the framework to a small set of
+concrete properties. Each one maps to a specific impact an attacker achieves
+if the framework fails to uphold it, and to an indicative severity tier. The
+classes in _In-scope vulnerability classes_ below are the *mechanisms* by which
+these properties are broken; the table here is the *impact* view that triage
+tooling and reporters can use to gauge how serious a candidate finding is and
+which protective property it breaks.
+
+[cols="3,3,1",options="header"]
+|===
+| Property the framework upholds for untrusted input (default or reasonably-expected configuration)
+| What a violation looks like (symptom a reporter or scanner observes)
+| Indicative severity
+
+| Untrusted data is never turned into executed code or OS commands
+| A crafted message, header or attachment causes a deserialisation gadget chain, a bean / method / command dispatch, or an expression/template evaluation the route author never requested
+| Critical (CVSS 9.0-10.0)
+
+| Untrusted data cannot redirect the route to a different endpoint, bean, method or command
+| An internal header injected from the wire (`CamelBeanMethodName`, `CamelExecCommandExecutable`, `CamelHttpUri`, `CamelJmsDestinationName`, ...) changes where the exchange is dispatched
+| Critical (CVSS 9.0-9.8)
+
+| Untrusted data is never deserialised into arbitrary Java types
+| A consumer, type converter or persisted-state repository instantiates attacker-chosen classes through `ObjectInputStream` / XStream / Hessian / polymorphic Jackson without an effective filter
+| Critical when gadget-reachable (9.0-9.8); High otherwise (7.0-8.6)
+
+| Untrusted parsing does not resolve external or remote resources
+| An XML / XSLT / XSD / XPath parse of attacker input reads a local file, performs SSRF, or fetches a remote DTD or stylesheet by default
+| High (CVSS 7.5-8.6); Critical if it yields RCE or credential theft
+
+| Untrusted file names or URI components cannot escape the configured root
+| A file / mail / FTP consumer or producer reads or writes a path outside the configured directory via `../` or an absolute path supplied in a header
+| High (CVSS 7.5-8.8)
+
+| Components that advertise authentication or authorization actually enforce it
+| A request is served without a valid token, with an unvalidated issuer / audience / signature, or on a sub-path the auth handler was assumed to cover
+| Critical (CVSS 9.0-9.8)
+
+| Secrets and internal Exchange state are not disclosed
+| Credentials, message bodies or configuration values reach a log, an event, a world-readable file, or an HTTP response visible to a lower-privileged party
+| Medium to High (CVSS 5.3-8.2), depending on what leaks
+
+| Untrusted input is not spliced into a back-end query language Camel builds
+| Camel constructs a Cypher / XSLT-extension / similar query and the attacker alters its structure rather than only its data
+| High to Critical (CVSS 8.1-9.8)
+
+| All of the above hold with zero security configuration
+| Any of the above is reachable simply by adding the component to a route and sending a message, with no risky option explicitly set
+| Severity of the underlying class; always in scope
+|===
+
+The tiers above are *indicative*, reflecting how the Camel PMC has historically
+scored these classes. The PMC assigns the definitive CVSS vector per report
+based on attack vector, the configuration required to reach the code path, and
+the concrete impact demonstrated. A finding that needs an unusual non-default
+configuration, or whose impact is limited, may score lower than the tier
+suggests; one that chains into full host compromise may score higher.
+
 === In-scope vulnerability classes
 
 The classes below are grounded in advisories the Apache Camel PMC has accepted
@@ -263,7 +323,19 @@ be closed as `not a vulnerability`.
   parser in a way that bypasses the library's own limits.
 * *A deployer placing `camel-management`, the developer console,
   `camel-jolokia`, JMX or another management surface on a public network.*
-  These are management surfaces; they assume a trusted network.
+  These are management surfaces; they assume a trusted network. The
+  operations they expose - including `ManagedCamelContext.sendBody` /
+  `requestBody`, `ManagedBacklogDebugger.evaluateExpressionAtBreakpoint`,
+  `addConditionalBreakpoint` and `BacklogTracer.setTraceFilter` - are
+  intentionally as expressive as a route author's DSL, because they exist
+  to support operator workflows (Camel JBang, Hawtio, JConsole, monitoring
+  agents). The trust boundary is the management surface itself - JVM JMX
+  authentication (`-Dcom.sun.management.jmxremote.authenticate`), the
+  Jolokia restrictor policy, and the network exposure of the management
+  port - not the individual MBean method. A report that demonstrates
+  "MBean operation X executes code or sends to endpoint Y when invoked
+  from a JMX or Jolokia connection" describes the documented contract,
+  not a framework vulnerability.
 * *Vulnerabilities in third-party transitive dependencies that are not
   reachable through any Camel-exposed code path.* See
   https://github.com/apache/camel/blob/main/SECURITY.md[`SECURITY.md`] and the
@@ -273,6 +345,33 @@ be closed as `not a vulnerability`.
   trust-boundary breach.* "Component X uses class Y that has historically had
   CVEs" is not, by itself, a finding. The report must show that the code path
   is reachable from an untrusted source and that the trust boundary is crossed.
+
+=== Deprecated and removed components
+
+A component's position in its lifecycle changes how a report against it is
+handled. Whether a component is deprecated is mechanically verifiable: it
+carries the `(deprecated)` suffix in its `pom.xml` name and documentation
+title, an `@Deprecated` annotation, a `deprecated` flag in the Camel catalog,
+and an upgrade-guide entry pointing at the replacement or migration.
+
+* *Deprecated components are in limited scope.* A deprecated component is on a
+  removal path and has a documented replacement or migration. A report against
+  one is still triaged on the private security list, but the *primary
+  remediation is the documented migration*, not necessarily a code change in
+  the deprecated component. Depending on the severity and on how widely the
+  component is still used, the PMC may fix in place, publish an advisory whose
+  remediation is "migrate to the supported replacement", or accelerate removal.
+  Hardening and defence-in-depth work goes to the supported replacement, not
+  the deprecated component.
+* *Removed components are out of scope.* A component that no longer ships in any
+  supported release cannot receive a fix. A finding must be demonstrated
+  against a component present in a supported release; if the only affected code
+  is one that has been removed, the resolution is to upgrade to a release where
+  it is gone or replaced.
+* This lifecycle rule does not change the in-scope classes for a
+  *non-deprecated* component that merely depends on a deprecated or end-of-life
+  *third-party* library - that case is governed by the third-party-dependency
+  item under _Out of scope_ above.
 
 === Known limitations
 
