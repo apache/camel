@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -211,6 +212,8 @@ public class CamelMonitor extends CamelCommand {
     private int diagramScrollX;
     private final ScrollbarState diagramVScrollState = new ScrollbarState();
     private final ScrollbarState diagramHScrollState = new ScrollbarState();
+    private final ScrollbarState traceDetailScrollState = new ScrollbarState();
+    private final ScrollbarState historyDetailScrollState = new ScrollbarState();
     private String diagramRouteId;
     private ImageData diagramImageData;
     private ImageData diagramFullImageData;
@@ -1085,13 +1088,11 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private String overviewSortLabel(String label, String column) {
-        return overviewSort.equals(column) ? label + "▼" : label;
+        return sortLabel(label, column, overviewSort);
     }
 
     private Style overviewSortStyle(String column) {
-        return overviewSort.equals(column)
-                ? Style.EMPTY.fg(Color.YELLOW).bold()
-                : Style.EMPTY.bold();
+        return sortStyle(column, overviewSort);
     }
 
     private int sortRoute(RouteInfo a, RouteInfo b) {
@@ -1113,21 +1114,27 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private String traceSortLabel(String label, String column) {
-        return traceSort.equals(column) ? label + "▼" : label;
+        return sortLabel(label, column, traceSort);
     }
 
     private Style traceSortStyle(String column) {
-        return traceSort.equals(column)
-                ? Style.EMPTY.fg(Color.YELLOW).bold()
-                : Style.EMPTY.bold();
+        return sortStyle(column, traceSort);
     }
 
     private String routeSortLabel(String label, String column) {
-        return routeSort.equals(column) ? label + "\u25BC" : label;
+        return sortLabel(label, column, routeSort);
     }
 
     private Style routeSortStyle(String column) {
-        return routeSort.equals(column)
+        return sortStyle(column, routeSort);
+    }
+
+    private static String sortLabel(String label, String column, String currentSort) {
+        return currentSort.equals(column) ? label + "▼" : label;
+    }
+
+    private static Style sortStyle(String column, String currentSort) {
+        return currentSort.equals(column)
                 ? Style.EMPTY.fg(Color.YELLOW).bold()
                 : Style.EMPTY.bold();
     }
@@ -1910,13 +1917,7 @@ public class CamelMonitor extends CamelCommand {
         // Log table
         List<Row> rows = new ArrayList<>();
         for (LogEntry entry : filteredLogEntries) {
-            Style levelStyle = switch (entry.level) {
-                case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
-                case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
-                case "DEBUG", "TRACE" -> Style.EMPTY.dim();
-                default -> Style.EMPTY;
-            };
-
+            Style levelStyle = colorStyleForLevel(entry.level);
             rows.add(Row.from(
                     Cell.from(Span.styled(entry.time, Style.EMPTY.dim())),
                     Cell.from(Span.styled(entry.level, levelStyle)),
@@ -2215,56 +2216,16 @@ public class CamelMonitor extends CamelCommand {
                 .constraints(Constraint.length(10), Constraint.fill())
                 .split(area);
 
-        // Step table (like History)
         List<Row> rows = new ArrayList<>();
         for (TraceEntry entry : steps) {
-            Style dirStyle;
-            if (entry.first) {
-                dirStyle = Style.EMPTY.fg(Color.GREEN);
-            } else if (entry.last) {
-                dirStyle = entry.failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
-            } else {
-                dirStyle = Style.EMPTY;
-            }
-            String elapsed = entry.elapsed >= 0 ? entry.elapsed + "ms" : "";
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(entry.direction, dirStyle)),
-                    Cell.from(entry.timestamp != null ? truncate(entry.timestamp, 12) : ""),
-                    Cell.from(Span.styled(
-                            entry.routeId != null ? truncate(entry.routeId, 15) : "",
-                            Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(entry.nodeId != null ? truncate(entry.nodeId, 15) : ""),
-                    Cell.from(entry.processor != null ? entry.processor : ""),
-                    Cell.from(elapsed)));
+            rows.add(buildStepRow(
+                    entry.direction, entry.first, entry.last, entry.failed,
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, entry.elapsed));
         }
 
-        Row header = Row.from(
-                Cell.from(Span.styled("", Style.EMPTY.bold())),
-                Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ID", Style.EMPTY.bold())),
-                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())));
-
         String stepTitle = String.format(" Trace [%s] ", truncate(traceSelectedExchangeId, 30));
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(4),
-                        Constraint.length(12),
-                        Constraint.length(15),
-                        Constraint.length(15),
-                        Constraint.fill(),
-                        Constraint.length(10))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(stepTitle).build())
-                .build();
-
-        frame.renderStatefulWidget(table, chunks.get(0), traceStepTableState);
+        frame.renderStatefulWidget(
+                buildStepTable(rows, stepTitle), chunks.get(0), traceStepTableState);
 
         // Detail panel for selected step
         renderTraceStepDetail(frame, chunks.get(1), steps);
@@ -2288,169 +2249,36 @@ public class CamelMonitor extends CamelCommand {
         TraceEntry entry = steps.get(sel);
         List<Line> lines = new ArrayList<>();
 
-        // Exchange info
-        lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.exchangeId != null ? entry.exchangeId : "")));
-        lines.add(Line.from(
-                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.routeId != null ? entry.routeId : ""),
-                Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.nodeId != null ? entry.nodeId : ""),
-                Span.raw(entry.nodeLabel != null ? " (" + entry.nodeLabel + ")" : "")));
-        lines.add(Line.from(
-                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.location != null ? entry.location : "")));
-        lines.add(Line.from(
-                Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.elapsed >= 0 ? entry.elapsed + "ms" : ""),
-                Span.styled("  Thread: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.threadName != null ? entry.threadName : "")));
-        if (entry.failed) {
-            lines.add(Line.from(
-                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("Failed", Style.EMPTY.fg(Color.RED).bold())));
+        addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
+                entry.location, entry.elapsed, entry.threadName, entry.failed);
+        if (showTraceProperties) {
+            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes);
         }
-        lines.add(Line.from(Span.raw("")));
-
-        // Exchange Properties
-        if (showTraceProperties && entry.exchangeProperties != null && !entry.exchangeProperties.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Properties:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> p : entry.exchangeProperties.entrySet()) {
-                String type = entry.exchangePropertyTypes != null ? entry.exchangePropertyTypes.get(p.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(p.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(p.getValue() != null ? p.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
+        if (showTraceVariables) {
+            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes);
         }
-
-        // Exchange Variables
-        if (showTraceVariables && entry.exchangeVariables != null && !entry.exchangeVariables.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Variables:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> v : entry.exchangeVariables.entrySet()) {
-                String type = entry.exchangeVariableTypes != null ? entry.exchangeVariableTypes.get(v.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(v.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(v.getValue() != null ? v.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
+        if (showTraceHeaders) {
+            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes);
         }
-
-        // Headers
-        if (showTraceHeaders && entry.headers != null && !entry.headers.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Headers:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> h : entry.headers.entrySet()) {
-                String type = entry.headerTypes != null ? entry.headerTypes.get(h.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(h.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(h.getValue() != null ? h.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
-        }
-
-        // Body
         if (showTraceBody) {
-            if (entry.body != null) {
-                if (entry.bodyType != null) {
-                    lines.add(Line.from(
-                            Span.styled(" Body: ", Style.EMPTY.fg(Color.GREEN).bold()),
-                            Span.styled("(" + entry.bodyType + ")", Style.EMPTY.dim())));
-                } else {
-                    lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
-                }
-                String[] bodyLines = entry.body.split("\n");
-                for (String bl : bodyLines) {
-                    lines.add(Line.from(Span.raw("   " + bl)));
-                }
-            } else {
-                lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
-            }
-            lines.add(Line.from(Span.raw("")));
+            addBodyLines(lines, entry.body, entry.bodyType);
         }
 
-        Block block = Block.builder().borderType(BorderType.ROUNDED).build();
-        frame.renderWidget(block, area);
-
-        Rect inner = block.inner(area);
-        int visibleHeight = Math.max(1, inner.height());
-        int contentHeight;
-        if (traceWordWrap) {
-            int width = Math.max(1, inner.width() - 1);
-            contentHeight = 0;
-            for (Line l : lines) {
-                int w = l.width();
-                contentHeight += Math.max(1, (w + width - 1) / width);
-            }
-        } else {
-            contentHeight = lines.size();
-        }
-        int maxScroll = Math.max(0, contentHeight - visibleHeight);
-        if (traceDetailScroll > maxScroll) {
-            traceDetailScroll = maxScroll;
-        }
-
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-
-        Paragraph detail = Paragraph.builder()
-                .text(Text.from(lines))
-                .overflow(traceWordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
-                .scroll(traceDetailScroll)
-                .build();
-        frame.renderWidget(detail, hChunks.get(0));
-
-        if (lines.size() > visibleHeight) {
-            ScrollbarState scrollState = new ScrollbarState();
-            scrollState.contentLength(lines.size());
-            scrollState.viewportContentLength(visibleHeight);
-            scrollState.position(traceDetailScroll);
-            frame.renderStatefulWidget(
-                    Scrollbar.builder().build(),
-                    hChunks.get(1), scrollState);
-        }
+        int[] scroll = { traceDetailScroll };
+        renderDetailPanel(frame, area, lines, traceWordWrap, scroll, traceDetailScrollState);
+        traceDetailScroll = scroll[0];
     }
 
     private List<String> getTraceExchangeIds() {
         List<TraceEntry> current = traces.get();
-        List<String> ids = new ArrayList<>();
+        // LinkedHashSet: O(1) contains, preserves first-seen insertion order
+        LinkedHashSet<String> seen = new LinkedHashSet<>();
         for (TraceEntry e : current) {
-            if (e.exchangeId != null && !ids.contains(e.exchangeId)) {
-                ids.add(e.exchangeId);
+            if (e.exchangeId != null) {
+                seen.add(e.exchangeId);
             }
         }
-        return ids;
+        return new ArrayList<>(seen);
     }
 
     private List<TraceEntry> getTraceSteps(String exchangeId) {
@@ -2492,53 +2320,14 @@ public class CamelMonitor extends CamelCommand {
         // History list
         List<Row> rows = new ArrayList<>();
         for (HistoryEntry entry : current) {
-            Style dirStyle;
-            if (entry.first) {
-                dirStyle = Style.EMPTY.fg(Color.GREEN);
-            } else if (entry.last) {
-                dirStyle = entry.failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
-            } else {
-                dirStyle = Style.EMPTY;
-            }
-            String elapsed = entry.elapsed >= 0 ? entry.elapsed + "ms" : "";
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(entry.direction, dirStyle)),
-                    Cell.from(entry.timestamp != null ? truncate(entry.timestamp, 12) : ""),
-                    Cell.from(Span.styled(
-                            entry.routeId != null ? truncate(entry.routeId, 15) : "",
-                            Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(entry.nodeId != null ? truncate(entry.nodeId, 15) : ""),
-                    Cell.from(entry.processor != null ? entry.processor : ""),
-                    Cell.from(elapsed)));
+            rows.add(buildStepRow(
+                    entry.direction, entry.first, entry.last, entry.failed,
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, entry.elapsed));
         }
 
-        Row header = Row.from(
-                Cell.from(Span.styled("", Style.EMPTY.bold())),
-                Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ID", Style.EMPTY.bold())),
-                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())));
-
         Title historyTitle = buildHistoryTitle(current);
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(4),
-                        Constraint.length(12),
-                        Constraint.length(15),
-                        Constraint.length(15),
-                        Constraint.fill(),
-                        Constraint.length(10))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(historyTitle).build())
-                .build();
-
-        frame.renderStatefulWidget(table, chunks.get(0), historyTableState);
+        frame.renderStatefulWidget(
+                buildStepTable(rows, historyTitle), chunks.get(0), historyTableState);
 
         // Detail panel
         renderHistoryDetail(frame, chunks.get(1), current);
@@ -2563,131 +2352,113 @@ public class CamelMonitor extends CamelCommand {
         HistoryEntry entry = current.get(sel);
         List<Line> lines = new ArrayList<>();
 
-        // Exchange info
-        lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.exchangeId != null ? entry.exchangeId : "")));
-        lines.add(Line.from(
-                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.routeId != null ? entry.routeId : ""),
-                Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.nodeId != null ? entry.nodeId : ""),
-                Span.raw(entry.nodeLabel != null ? " (" + entry.nodeLabel + ")" : "")));
-        lines.add(Line.from(
-                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.location != null ? entry.location : "")));
-        lines.add(Line.from(
-                Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.elapsed >= 0 ? entry.elapsed + "ms" : ""),
-                Span.styled("  Thread: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.threadName != null ? entry.threadName : "")));
-        if (entry.failed) {
-            lines.add(Line.from(
-                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("Failed", Style.EMPTY.fg(Color.RED).bold())));
+        addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
+                entry.location, entry.elapsed, entry.threadName, entry.failed);
+        if (showHistoryProperties) {
+            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes);
         }
-        lines.add(Line.from(Span.raw("")));
-
-        // Headers
-        // Exchange Properties
-        if (showHistoryProperties && entry.exchangeProperties != null && !entry.exchangeProperties.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Properties:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> p : entry.exchangeProperties.entrySet()) {
-                String type = entry.exchangePropertyTypes != null ? entry.exchangePropertyTypes.get(p.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(p.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(p.getValue() != null ? p.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
+        if (showHistoryVariables) {
+            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes);
         }
-
-        // Exchange Variables
-        if (showHistoryVariables && entry.exchangeVariables != null && !entry.exchangeVariables.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Variables:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> v : entry.exchangeVariables.entrySet()) {
-                String type = entry.exchangeVariableTypes != null ? entry.exchangeVariableTypes.get(v.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(v.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(v.getValue() != null ? v.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
+        if (showHistoryHeaders) {
+            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes);
         }
-
-        // Headers
-        if (showHistoryHeaders && entry.headers != null && !entry.headers.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Headers:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> h : entry.headers.entrySet()) {
-                String type = entry.headerTypes != null ? entry.headerTypes.get(h.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(h.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(h.getValue() != null ? h.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
-        }
-
-        // Body
         if (showHistoryBody) {
-            if (entry.body != null) {
-                if (entry.bodyType != null) {
-                    lines.add(Line.from(
-                            Span.styled(" Body: ", Style.EMPTY.fg(Color.GREEN).bold()),
-                            Span.styled("(" + entry.bodyType + ")", Style.EMPTY.dim())));
-                } else {
-                    lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
-                }
-                String[] bodyLines = entry.body.split("\n");
-                for (String bl : bodyLines) {
-                    lines.add(Line.from(Span.raw("   " + bl)));
-                }
-            } else {
-                lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
-            }
-            lines.add(Line.from(Span.raw("")));
+            addBodyLines(lines, entry.body, entry.bodyType);
         }
-
-        // Exception
         if (entry.exception != null) {
             lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.RED).bold())));
             lines.add(Line.from(Span.raw("   " + entry.exception)));
         }
 
+        int[] scroll = { historyDetailScroll };
+        renderDetailPanel(frame, area, lines, historyWordWrap, scroll, historyDetailScrollState);
+        historyDetailScroll = scroll[0];
+    }
+
+    private static void addExchangeInfoLines(
+            List<Line> lines, String exchangeId, String routeId,
+            String nodeId, String nodeLabel, String location, long elapsed, String threadName, boolean failed) {
+        lines.add(Line.from(
+                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(exchangeId != null ? exchangeId : "")));
+        lines.add(Line.from(
+                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(routeId != null ? routeId : ""),
+                Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(nodeId != null ? nodeId : ""),
+                Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
+        lines.add(Line.from(
+                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(location != null ? location : "")));
+        lines.add(Line.from(
+                Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(elapsed >= 0 ? elapsed + "ms" : ""),
+                Span.styled("  Thread: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(threadName != null ? threadName : "")));
+        if (failed) {
+            lines.add(Line.from(
+                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("Failed", Style.EMPTY.fg(Color.RED).bold())));
+        }
+        lines.add(Line.from(Span.raw("")));
+    }
+
+    private static void addKvLines(
+            List<Line> lines, String section,
+            Map<String, Object> map, Map<String, String> types) {
+        if (map == null || map.isEmpty()) {
+            return;
+        }
+        lines.add(Line.from(Span.styled(section, Style.EMPTY.fg(Color.GREEN).bold())));
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String type = types != null ? types.get(entry.getKey()) : null;
+            String typeLabel;
+            if (type != null) {
+                String t = "(" + type + ")";
+                t = truncate(t, 20);
+                typeLabel = String.format("%-20s ", t);
+            } else {
+                typeLabel = String.format("%-21s", "");
+            }
+            lines.add(Line.from(
+                    Span.styled("   " + typeLabel, Style.EMPTY.dim()),
+                    Span.styled(entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                    Span.raw(" = "),
+                    Span.raw(entry.getValue() != null ? entry.getValue().toString() : "null")));
+        }
+        lines.add(Line.from(Span.raw("")));
+    }
+
+    private static void addBodyLines(List<Line> lines, String body, String bodyType) {
+        if (body != null) {
+            if (bodyType != null) {
+                lines.add(Line.from(
+                        Span.styled(" Body: ", Style.EMPTY.fg(Color.GREEN).bold()),
+                        Span.styled("(" + bodyType + ")", Style.EMPTY.dim())));
+            } else {
+                lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
+            }
+            String[] bodyParts = body.split("\n");
+            for (String bl : bodyParts) {
+                lines.add(Line.from(Span.raw("   " + bl)));
+            }
+        } else {
+            lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
+        }
+        lines.add(Line.from(Span.raw("")));
+    }
+
+    private void renderDetailPanel(
+            Frame frame, Rect area, List<Line> lines,
+            boolean wordWrap, int[] scroll, ScrollbarState scrollState) {
         Block block = Block.builder().borderType(BorderType.ROUNDED).build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
         int visibleHeight = Math.max(1, inner.height());
         int contentHeight;
-        if (historyWordWrap) {
+        if (wordWrap) {
             int width = Math.max(1, inner.width() - 1);
             contentHeight = 0;
             for (Line l : lines) {
@@ -2698,8 +2469,8 @@ public class CamelMonitor extends CamelCommand {
             contentHeight = lines.size();
         }
         int maxScroll = Math.max(0, contentHeight - visibleHeight);
-        if (historyDetailScroll > maxScroll) {
-            historyDetailScroll = maxScroll;
+        if (scroll[0] > maxScroll) {
+            scroll[0] = maxScroll;
         }
 
         List<Rect> hChunks = Layout.horizontal()
@@ -2708,20 +2479,67 @@ public class CamelMonitor extends CamelCommand {
 
         Paragraph detail = Paragraph.builder()
                 .text(Text.from(lines))
-                .overflow(historyWordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
-                .scroll(historyDetailScroll)
+                .overflow(wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
+                .scroll(scroll[0])
                 .build();
         frame.renderWidget(detail, hChunks.get(0));
 
-        if (lines.size() > visibleHeight) {
-            ScrollbarState scrollState = new ScrollbarState();
-            scrollState.contentLength(lines.size());
+        if (contentHeight > visibleHeight) {
+            scrollState.contentLength(contentHeight);
             scrollState.viewportContentLength(visibleHeight);
-            scrollState.position(historyDetailScroll);
+            scrollState.position(scroll[0]);
             frame.renderStatefulWidget(
                     Scrollbar.builder().build(),
                     hChunks.get(1), scrollState);
         }
+    }
+
+    private static Row buildStepRow(
+            String direction, boolean first, boolean last, boolean failed,
+            String timestamp, String routeId, String nodeId, String processor, long elapsed) {
+        Style dirStyle;
+        if (first) {
+            dirStyle = Style.EMPTY.fg(Color.GREEN);
+        } else if (last) {
+            dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+        } else {
+            dirStyle = Style.EMPTY;
+        }
+        String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
+        return Row.from(
+                Cell.from(Span.styled(direction, dirStyle)),
+                Cell.from(timestamp != null ? truncate(timestamp, 12) : ""),
+                Cell.from(Span.styled(routeId != null ? truncate(routeId, 15) : "", Style.EMPTY.fg(Color.CYAN))),
+                Cell.from(nodeId != null ? truncate(nodeId, 15) : ""),
+                Cell.from(processor != null ? processor : ""),
+                Cell.from(elapsedStr));
+    }
+
+    private static Table buildStepTable(List<Row> rows, Object title) {
+        Row header = Row.from(
+                Cell.from(Span.styled("", Style.EMPTY.bold())),
+                Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ID", Style.EMPTY.bold())),
+                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())));
+        Block block = title instanceof Title t
+                ? Block.builder().borderType(BorderType.ROUNDED).title(t).build()
+                : Block.builder().borderType(BorderType.ROUNDED).title(title.toString()).build();
+        return Table.builder()
+                .rows(rows)
+                .header(header)
+                .widths(
+                        Constraint.length(4),
+                        Constraint.length(12),
+                        Constraint.length(15),
+                        Constraint.length(15),
+                        Constraint.fill(),
+                        Constraint.length(10))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(block)
+                .build();
     }
 
     private Title buildHistoryTitle(List<HistoryEntry> entries) {
@@ -2846,23 +2664,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private static String formatSinceLastRoute(RouteInfo route) {
-        StringBuilder sb = new StringBuilder();
-        if (route.sinceLastStarted != null) {
-            sb.append(route.sinceLastStarted);
-        }
-        if (route.sinceLastCompleted != null) {
-            if (!sb.isEmpty()) {
-                sb.append('/');
-            }
-            sb.append(route.sinceLastCompleted);
-        }
-        if (route.sinceLastFailed != null) {
-            if (!sb.isEmpty()) {
-                sb.append('/');
-            }
-            sb.append(route.sinceLastFailed);
-        }
-        return sb.toString();
+        return formatSinceLast(route.sinceLastStarted, route.sinceLastCompleted, route.sinceLastFailed);
     }
 
     private static Cell rightCell(String text, int width) {
@@ -2913,8 +2715,6 @@ public class CamelMonitor extends CamelCommand {
             } finally {
                 refreshInProgress.set(false);
             }
-            runner.runOnRenderThread(() -> {
-            });
         });
     }
 
@@ -3186,75 +2986,18 @@ public class CamelMonitor extends CamelCommand {
         // Parse message object
         Object msgObj = json.get("message");
         if (msgObj instanceof JsonObject message) {
-            // Headers
-            Object headersObj = message.get("headers");
-            if (headersObj instanceof List<?> headerList) {
-                entry.headers = new LinkedHashMap<>();
-                entry.headerTypes = new LinkedHashMap<>();
-                for (Object h : headerList) {
-                    if (h instanceof JsonObject hObj) {
-                        String key = String.valueOf(hObj.get("key"));
-                        entry.headers.put(key, hObj.get("value"));
-                        Object type = hObj.get("type");
-                        if (type != null) {
-                            entry.headerTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (headersObj instanceof Map) {
-                entry.headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
-            }
-
-            // Body
-            Object bodyObj = message.get("body");
-            if (bodyObj instanceof JsonObject bodyJson) {
-                Object val = bodyJson.get("value");
-                entry.body = val != null ? val.toString() : null;
-                entry.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
-            } else if (bodyObj != null) {
-                entry.body = bodyObj.toString();
-            }
+            MessageData md = parseMessage(message);
+            entry.headers = md.headers();
+            entry.headerTypes = md.headerTypes();
+            entry.body = md.body();
+            entry.bodyType = md.bodyType();
             if (entry.body != null) {
                 entry.bodyPreview = entry.body.replace("\n", " ").replace("\r", "");
             }
-
-            // Exchange properties
-            Object propsObj = message.get("exchangeProperties");
-            if (propsObj instanceof List<?> propList) {
-                entry.exchangeProperties = new LinkedHashMap<>();
-                entry.exchangePropertyTypes = new LinkedHashMap<>();
-                for (Object p : propList) {
-                    if (p instanceof JsonObject pObj) {
-                        String key = String.valueOf(pObj.get("key"));
-                        entry.exchangeProperties.put(key, pObj.get("value"));
-                        Object type = pObj.get("type");
-                        if (type != null) {
-                            entry.exchangePropertyTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (propsObj instanceof Map) {
-                entry.exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
-            }
-
-            // Exchange variables
-            Object varsObj = message.get("exchangeVariables");
-            if (varsObj instanceof List<?> varList) {
-                entry.exchangeVariables = new LinkedHashMap<>();
-                entry.exchangeVariableTypes = new LinkedHashMap<>();
-                for (Object v : varList) {
-                    if (v instanceof JsonObject vObj) {
-                        String key = String.valueOf(vObj.get("key"));
-                        entry.exchangeVariables.put(key, vObj.get("value"));
-                        Object type = vObj.get("type");
-                        if (type != null) {
-                            entry.exchangeVariableTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (varsObj instanceof Map) {
-                entry.exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
-            }
+            entry.exchangeProperties = md.exchangeProperties();
+            entry.exchangePropertyTypes = md.exchangePropertyTypes();
+            entry.exchangeVariables = md.exchangeVariables();
+            entry.exchangeVariableTypes = md.exchangeVariableTypes();
         }
 
         return entry;
@@ -3353,68 +3096,15 @@ public class CamelMonitor extends CamelCommand {
         // Parse message
         Object msgObj = json.get("message");
         if (msgObj instanceof JsonObject message) {
-            Object headersObj = message.get("headers");
-            if (headersObj instanceof List<?> headerList) {
-                entry.headers = new LinkedHashMap<>();
-                entry.headerTypes = new LinkedHashMap<>();
-                for (Object h : headerList) {
-                    if (h instanceof JsonObject hObj) {
-                        String key = String.valueOf(hObj.get("key"));
-                        entry.headers.put(key, hObj.get("value"));
-                        Object type = hObj.get("type");
-                        if (type != null) {
-                            entry.headerTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (headersObj instanceof Map) {
-                entry.headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
-            }
-
-            Object bodyObj = message.get("body");
-            if (bodyObj instanceof JsonObject bodyJson) {
-                Object val = bodyJson.get("value");
-                entry.body = val != null ? val.toString() : null;
-                entry.bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
-            } else if (bodyObj != null) {
-                entry.body = bodyObj.toString();
-            }
-
-            Object propsObj = message.get("exchangeProperties");
-            if (propsObj instanceof List<?> propList) {
-                entry.exchangeProperties = new LinkedHashMap<>();
-                entry.exchangePropertyTypes = new LinkedHashMap<>();
-                for (Object p : propList) {
-                    if (p instanceof JsonObject pObj) {
-                        String key = String.valueOf(pObj.get("key"));
-                        entry.exchangeProperties.put(key, pObj.get("value"));
-                        Object type = pObj.get("type");
-                        if (type != null) {
-                            entry.exchangePropertyTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (propsObj instanceof Map) {
-                entry.exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
-            }
-
-            Object varsObj = message.get("exchangeVariables");
-            if (varsObj instanceof List<?> varList) {
-                entry.exchangeVariables = new LinkedHashMap<>();
-                entry.exchangeVariableTypes = new LinkedHashMap<>();
-                for (Object v : varList) {
-                    if (v instanceof JsonObject vObj) {
-                        String key = String.valueOf(vObj.get("key"));
-                        entry.exchangeVariables.put(key, vObj.get("value"));
-                        Object type = vObj.get("type");
-                        if (type != null) {
-                            entry.exchangeVariableTypes.put(key, TuiHelper.shortTypeName(type.toString()));
-                        }
-                    }
-                }
-            } else if (varsObj instanceof Map) {
-                entry.exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
-            }
+            MessageData md = parseMessage(message);
+            entry.headers = md.headers();
+            entry.headerTypes = md.headerTypes();
+            entry.body = md.body();
+            entry.bodyType = md.bodyType();
+            entry.exchangeProperties = md.exchangeProperties();
+            entry.exchangePropertyTypes = md.exchangePropertyTypes();
+            entry.exchangeVariables = md.exchangeVariables();
+            entry.exchangeVariableTypes = md.exchangeVariableTypes();
         }
 
         // Exception
@@ -3428,6 +3118,100 @@ public class CamelMonitor extends CamelCommand {
 
     private static String stringValue(Object obj) {
         return obj != null ? obj.toString() : null;
+    }
+
+    record MessageData(
+            Map<String, Object> headers,
+            Map<String, String> headerTypes,
+            String body,
+            String bodyType,
+            Map<String, Object> exchangeProperties,
+            Map<String, String> exchangePropertyTypes,
+            Map<String, Object> exchangeVariables,
+            Map<String, String> exchangeVariableTypes) {
+    }
+
+    @SuppressWarnings("unchecked")
+    private static MessageData parseMessage(JsonObject message) {
+        Map<String, Object> headers = null;
+        Map<String, String> headerTypes = null;
+        String body = null;
+        String bodyType = null;
+        Map<String, Object> exchangeProperties = null;
+        Map<String, String> exchangePropertyTypes = null;
+        Map<String, Object> exchangeVariables = null;
+        Map<String, String> exchangeVariableTypes = null;
+
+        // Headers
+        Object headersObj = message.get("headers");
+        if (headersObj instanceof List<?> headerList) {
+            headers = new LinkedHashMap<>();
+            headerTypes = new LinkedHashMap<>();
+            for (Object h : headerList) {
+                if (h instanceof JsonObject hObj) {
+                    String key = String.valueOf(hObj.get("key"));
+                    headers.put(key, hObj.get("value"));
+                    Object type = hObj.get("type");
+                    if (type != null) {
+                        headerTypes.put(key, TuiHelper.shortTypeName(type.toString()));
+                    }
+                }
+            }
+        } else if (headersObj instanceof Map) {
+            headers = new LinkedHashMap<>((Map<String, Object>) headersObj);
+        }
+
+        // Body
+        Object bodyObj = message.get("body");
+        if (bodyObj instanceof JsonObject bodyJson) {
+            Object val = bodyJson.get("value");
+            body = val != null ? val.toString() : null;
+            bodyType = TuiHelper.shortTypeName(bodyJson.getString("type"));
+        } else if (bodyObj != null) {
+            body = bodyObj.toString();
+        }
+
+        // Exchange properties
+        Object propsObj = message.get("exchangeProperties");
+        if (propsObj instanceof List<?> propList) {
+            exchangeProperties = new LinkedHashMap<>();
+            exchangePropertyTypes = new LinkedHashMap<>();
+            for (Object p : propList) {
+                if (p instanceof JsonObject pObj) {
+                    String key = String.valueOf(pObj.get("key"));
+                    exchangeProperties.put(key, pObj.get("value"));
+                    Object type = pObj.get("type");
+                    if (type != null) {
+                        exchangePropertyTypes.put(key, TuiHelper.shortTypeName(type.toString()));
+                    }
+                }
+            }
+        } else if (propsObj instanceof Map) {
+            exchangeProperties = new LinkedHashMap<>((Map<String, Object>) propsObj);
+        }
+
+        // Exchange variables
+        Object varsObj = message.get("exchangeVariables");
+        if (varsObj instanceof List<?> varList) {
+            exchangeVariables = new LinkedHashMap<>();
+            exchangeVariableTypes = new LinkedHashMap<>();
+            for (Object v : varList) {
+                if (v instanceof JsonObject vObj) {
+                    String key = String.valueOf(vObj.get("key"));
+                    exchangeVariables.put(key, vObj.get("value"));
+                    Object type = vObj.get("type");
+                    if (type != null) {
+                        exchangeVariableTypes.put(key, TuiHelper.shortTypeName(type.toString()));
+                    }
+                }
+            }
+        } else if (varsObj instanceof Map) {
+            exchangeVariables = new LinkedHashMap<>((Map<String, Object>) varsObj);
+        }
+
+        return new MessageData(
+                headers, headerTypes, body, bodyType,
+                exchangeProperties, exchangePropertyTypes, exchangeVariables, exchangeVariableTypes);
     }
 
     // ---- Integration Parsing ----
@@ -3664,21 +3448,25 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private static String formatSinceLast(IntegrationInfo info) {
+        return formatSinceLast(info.sinceLastStarted, info.sinceLastCompleted, info.sinceLastFailed);
+    }
+
+    private static String formatSinceLast(String started, String completed, String failed) {
         StringBuilder sb = new StringBuilder();
-        if (info.sinceLastStarted != null) {
-            sb.append(info.sinceLastStarted);
+        if (started != null) {
+            sb.append(started);
         }
-        if (info.sinceLastCompleted != null) {
+        if (completed != null) {
             if (!sb.isEmpty()) {
                 sb.append('/');
             }
-            sb.append(info.sinceLastCompleted);
+            sb.append(completed);
         }
-        if (info.sinceLastFailed != null) {
+        if (failed != null) {
             if (!sb.isEmpty()) {
                 sb.append('/');
             }
-            sb.append(info.sinceLastFailed);
+            sb.append(failed);
         }
         return sb.toString();
     }
