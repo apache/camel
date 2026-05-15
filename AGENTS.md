@@ -177,6 +177,12 @@ document is [`docs/user-manual/modules/ROOT/pages/security-model.adoc`](docs/use
 Use it as the reference when triaging security reports, deciding whether a finding warrants a
 CVE, or reviewing a security-sensitive PR.
 
+For the vulnerability **reporting** convention, [`SECURITY.md`](SECURITY.md) at the repository
+root is the entry point GitHub and security tooling expect. It points to the threat model above
+for scope and to the ASF process for private disclosure. An agent that discovers or is handed a
+suspected vulnerability MUST NOT open a public issue, PR, or mailing-list post about it — follow
+the private process in `SECURITY.md` and stop.
+
 ### Trust assumptions
 
 - **Camel committers and component authors** are trusted to ship secure defaults.
