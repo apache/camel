@@ -163,7 +163,8 @@ public class CamelMonitor extends CamelCommand {
     // Log state
     private List<String> logLines = new ArrayList<>();
     private volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
-    private final TableState logTableState = new TableState();
+    private int logScroll;
+    private final ScrollbarState logScrollState = new ScrollbarState();
     private boolean logFollowMode = true;
     private boolean showLogTrace = true;
     private boolean showLogDebug = true;
@@ -352,9 +353,7 @@ public class CamelMonitor extends CamelCommand {
                     diagramScroll = Math.max(0, diagramScroll - 20);
                 } else if (tab == TAB_LOG) {
                     logFollowMode = false;
-                    for (int i = 0; i < 20; i++) {
-                        logTableState.selectPrevious();
-                    }
+                    logScroll = Math.max(0, logScroll - 20);
                 } else if (tab == TAB_HISTORY) {
                     historyDetailScroll = Math.max(0, historyDetailScroll - 5);
                 } else if (tab == TAB_TRACE && traceDetailView) {
@@ -366,9 +365,7 @@ public class CamelMonitor extends CamelCommand {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll += 20;
                 } else if (tab == TAB_LOG) {
-                    for (int i = 0; i < 20; i++) {
-                        logTableState.selectNext(filteredLogEntries.size());
-                    }
+                    logScroll += 20;
                 } else if (tab == TAB_HISTORY) {
                     historyDetailScroll += 5;
                 } else if (tab == TAB_TRACE && traceDetailView) {
@@ -498,7 +495,7 @@ public class CamelMonitor extends CamelCommand {
                 }
                 if (ke.isHome()) {
                     logFollowMode = false;
-                    logTableState.select(0);
+                    logScroll = 0;
                     return true;
                 }
                 if (ke.isEnd()) {
@@ -666,7 +663,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_ENDPOINTS -> endpointTableState.selectPrevious();
             case TAB_LOG -> {
                 logFollowMode = false;
-                logTableState.selectPrevious();
+                logScroll = Math.max(0, logScroll - 1);
             }
             case TAB_TRACE -> {
                 if (traceDetailView) {
@@ -699,7 +696,7 @@ public class CamelMonitor extends CamelCommand {
                 IntegrationInfo info = findSelectedIntegration();
                 endpointTableState.selectNext(info != null ? info.endpoints.size() : 0);
             }
-            case TAB_LOG -> logTableState.selectNext(filteredLogEntries.size());
+            case TAB_LOG -> logScroll++;
             case TAB_TRACE -> {
                 if (traceDetailView) {
                     List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
@@ -1906,84 +1903,45 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Log data is refreshed in refreshData() tick handler
+        List<LogEntry> entries = filteredLogEntries;
+        int contentHeight = entries.size();
 
-        // Auto-follow: select last entry
-        if (logFollowMode && !filteredLogEntries.isEmpty()) {
-            logTableState.select(filteredLogEntries.size() - 1);
-        }
-
-        // Split: log table (60%) + detail (40%)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.percentage(60), Constraint.fill())
-                .split(area);
-
-        // Log table
-        List<Row> rows = new ArrayList<>();
-        for (LogEntry entry : filteredLogEntries) {
-            rows.add(Row.from(
-                    Cell.from(Span.raw(entry.time != null ? entry.time : "")),
-                    Cell.from(Span.raw(entry.level != null ? entry.level : "")),
-                    Cell.from(Span.raw(entry.logger != null ? entry.logger : "")),
-                    Cell.from(Span.raw(entry.message != null ? entry.message : ""))));
-        }
-
-        String levelTitle = buildLevelFilterTitle();
-        Table logTable = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.raw("TIME")),
-                        Cell.from(Span.raw("LEVEL")),
-                        Cell.from(Span.raw("LOGGER")),
-                        Cell.from(Span.raw("MESSAGE"))))
-                .widths(
-                        Constraint.length(12),
-                        Constraint.length(6),
-                        Constraint.length(20),
-                        Constraint.fill())
-                .highlightStyle(Style.EMPTY)
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Log " + levelTitle).build())
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" Log " + buildLevelFilterTitle())
                 .build();
+        frame.renderWidget(block, area);
 
-        frame.renderStatefulWidget(logTable, chunks.get(0), logTableState);
+        Rect inner = block.inner(area);
+        int visibleHeight = Math.max(1, inner.height());
 
-        // Detail panel for selected log entry
-        renderLogDetail(frame, chunks.get(1));
-    }
+        if (logFollowMode) {
+            logScroll = Math.max(0, contentHeight - visibleHeight);
+        }
+        logScroll = Math.min(logScroll, Math.max(0, contentHeight - visibleHeight));
 
-    private void renderLogDetail(Frame frame, Rect area) {
-        Integer sel = logTableState.selected();
-        if (sel == null || sel < 0 || sel >= filteredLogEntries.size()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(Span.raw(" Select a log entry"))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
-                                    .title(" Detail ").build())
-                            .build(),
-                    area);
-            return;
+        List<Line> lines = new ArrayList<>();
+        for (LogEntry entry : entries) {
+            lines.add(Line.from(Span.raw(entry.raw != null ? entry.raw : "")));
         }
 
-        LogEntry entry = filteredLogEntries.get(sel);
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(Line.from(Span.raw(entry.raw != null ? entry.raw : ""))))
-                        .overflow(Overflow.WRAP_WORD)
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
-                                .title(" " + entry.time + " " + entry.level + " ").build())
-                        .build(),
-                area);
-    }
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
 
-    private Style colorStyleForLevel(String level) {
-        return switch (level) {
-            case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
-            case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
-            case "DEBUG", "TRACE" -> Style.EMPTY.dim();
-            default -> Style.EMPTY;
-        };
+        Paragraph para = Paragraph.builder()
+                .text(Text.from(lines))
+                .overflow(Overflow.CLIP)
+                .scroll(logScroll)
+                .build();
+        frame.renderWidget(para, hChunks.get(0));
+
+        if (contentHeight > visibleHeight) {
+            logScrollState.contentLength(contentHeight);
+            logScrollState.viewportContentLength(visibleHeight);
+            logScrollState.position(logScroll);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), logScrollState);
+        }
     }
 
     private String buildLevelFilterTitle() {
