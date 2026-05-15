@@ -124,6 +124,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
         // Aggregate all consumer records in a single exchange
         if (exchangeList.isEmpty()) {
             timeoutWatch.takenAndRestart();
+            intervalWatch.restart();
         }
 
         // If timeout has expired, process current batch but continue to handle new records
