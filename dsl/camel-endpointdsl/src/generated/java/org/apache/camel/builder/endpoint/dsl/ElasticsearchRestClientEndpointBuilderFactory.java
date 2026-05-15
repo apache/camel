@@ -466,10 +466,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code ID}.
+         * @return the name of the header {@code ElasticsearchId}.
          */
-        public String iD() {
-            return "ID";
+        public String elasticsearchId() {
+            return "CamelElasticsearchId";
         }
         /**
          * The JSON Query to perform for search.
@@ -478,10 +478,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code SEARCH_QUERY}.
+         * @return the name of the header {@code ElasticsearchSearchQuery}.
          */
-        public String searchQuery() {
-            return "SEARCH_QUERY";
+        public String elasticsearchSearchQuery() {
+            return "CamelElasticsearchSearchQuery";
         }
         /**
          * Advanced - The JSON Index Settings and/or Mappings Query to perform
@@ -491,10 +491,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code INDEX_SETTINGS}.
+         * @return the name of the header {@code ElasticsearchIndexSettings}.
          */
-        public String indexSettings() {
-            return "INDEX_SETTINGS";
+        public String elasticsearchIndexSettings() {
+            return "CamelElasticsearchIndexSettings";
         }
         /**
          * The Index name.
@@ -503,10 +503,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code INDEX_NAME}.
+         * @return the name of the header {@code ElasticsearchIndexName}.
          */
-        public String indexName() {
-            return "INDEX_NAME";
+        public String elasticsearchIndexName() {
+            return "CamelElasticsearchIndexName";
         }
         /**
          * The operation to perform.
@@ -516,10 +516,10 @@ public interface ElasticsearchRestClientEndpointBuilderFactory {
          * 
          * Group: producer
          * 
-         * @return the name of the header {@code OPERATION}.
+         * @return the name of the header {@code ElasticsearchOperation}.
          */
-        public String oPERATION() {
-            return "OPERATION";
+        public String elasticsearchOperation() {
+            return "CamelElasticsearchOperation";
         }
     }
     static ElasticsearchRestClientEndpointBuilder endpointBuilder(String componentName, String path) {
