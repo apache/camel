@@ -212,6 +212,8 @@ public class CamelMonitor extends CamelCommand {
     private int diagramScrollX;
     private final ScrollbarState diagramVScrollState = new ScrollbarState();
     private final ScrollbarState diagramHScrollState = new ScrollbarState();
+    private final ScrollbarState traceDetailScrollState = new ScrollbarState();
+    private final ScrollbarState historyDetailScrollState = new ScrollbarState();
     private String diagramRouteId;
     private ImageData diagramImageData;
     private ImageData diagramFullImageData;
@@ -2431,13 +2433,12 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(detail, hChunks.get(0));
 
         if (contentHeight > visibleHeight) {
-            ScrollbarState scrollState = new ScrollbarState();
-            scrollState.contentLength(contentHeight);
-            scrollState.viewportContentLength(visibleHeight);
-            scrollState.position(traceDetailScroll);
+            traceDetailScrollState.contentLength(contentHeight);
+            traceDetailScrollState.viewportContentLength(visibleHeight);
+            traceDetailScrollState.position(traceDetailScroll);
             frame.renderStatefulWidget(
                     Scrollbar.builder().build(),
-                    hChunks.get(1), scrollState);
+                    hChunks.get(1), traceDetailScrollState);
         }
     }
 
@@ -2714,13 +2715,12 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(detail, hChunks.get(0));
 
         if (contentHeight > visibleHeight) {
-            ScrollbarState scrollState = new ScrollbarState();
-            scrollState.contentLength(contentHeight);
-            scrollState.viewportContentLength(visibleHeight);
-            scrollState.position(historyDetailScroll);
+            historyDetailScrollState.contentLength(contentHeight);
+            historyDetailScrollState.viewportContentLength(visibleHeight);
+            historyDetailScrollState.position(historyDetailScroll);
             frame.renderStatefulWidget(
                     Scrollbar.builder().build(),
-                    hChunks.get(1), scrollState);
+                    hChunks.get(1), historyDetailScrollState);
         }
     }
 
