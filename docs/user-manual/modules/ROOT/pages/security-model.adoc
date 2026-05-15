@@ -248,6 +248,23 @@ filter), CVE-2026-33453 (`camel-coap`), CVE-2026-33454 (`camel-mail`),
 CVE-2026-40453 (`camel-jms`, `camel-sjms`, `camel-coap`, `camel-google-pubsub`
 case-variant follow-on).
 
+The prefixed headers of the API-based components - `CamelFhir.*`,
+`CamelBox.*`, `CamelOlingo4.*`, `CamelAs2.*` and the other
+`camel-api-component` generated producers, which select the API method and its
+arguments - sit inside the `Camel*` namespace, so they are governed by exactly
+this rule. The project's position on a `Camel<Api>.*` header reaching an API
+producer from an untrusted source is therefore *conditional, and the condition
+is at the inbound consumer, not at the API producer*; it is not "always out of
+scope". A consumer that admits a `Camel<Api>.*` header from an untrusted source
+without an effective case-insensitive `Camel*` `HeaderFilterStrategy` is in
+scope regardless of which producer ultimately consumes the header - this is the
+same class as the CVE-2025-27636 family. The API producer honouring a
+`Camel<Api>.*` header that reached it only because a route author wired an
+untrusted source straight to the producer without `removeHeaders("Camel*")`,
+while the inbound filter was in place and effective, is the documented
+bean-dispatch contract (see _Known limitations_), not a framework
+vulnerability.
+
 ==== Authentication or authorization bypass in security-providing components
 
 Components that explicitly provide authentication, authorization, or tenant
@@ -390,6 +407,25 @@ they are, the change is announced through the normal upgrade-guide channel.
   component behaviour. Route authors must filter Camel-internal headers from
   untrusted producers (see _Deployment hardening_ below); component authors
   must apply a strict `HeaderFilterStrategy` on the inbound path.
+* *The framework's automatic header filtering is scoped to the internal
+  `Camel*` / `org.apache.camel.*` namespace.* `DefaultHeaderFilterStrategy`
+  filters that namespace case-insensitively; it does not, and cannot, filter
+  the non-prefixed application-level headers a component reads as semantic
+  input - `To`, `Cc`, `Bcc`, `Subject`, `From` in `camel-mail`; HTTP header
+  names; JMS properties; and so on. Those headers are part of each component's
+  documented header contract and are intentionally passed through. There is one
+  uniform rule rather than a per-component policy: protecting a producer's
+  semantic headers from an untrusted upstream is route-author responsibility -
+  strip or normalise them at the trust boundary, exactly as for a query string
+  built from untrusted input - while the *specific* set of semantic headers a
+  component honours is necessarily component-by-component and is documented on
+  each component page. The framework itself is in scope only when a *consumer*
+  maps untrusted wire input into those headers as part of its own default
+  behaviour without an effective inbound `HeaderFilterStrategy` (the same
+  inbound-filter class as the Camel-header item under _In-scope vulnerability
+  classes_, e.g. CVE-2026-33454 in `camel-mail`); the path-traversal class
+  applies independently where such a header navigates outside a configured root
+  (e.g. CVE-2018-8041).
 * *Aggregation repositories that persist Java objects assume the backing store
   is trusted.* JDBC, Cassandra, Infinispan, LevelDB, Consul and similar
   repositories are state stores for routes the operator wrote; the operator is
