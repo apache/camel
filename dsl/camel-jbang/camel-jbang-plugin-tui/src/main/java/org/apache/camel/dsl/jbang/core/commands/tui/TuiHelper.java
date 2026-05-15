@@ -160,7 +160,10 @@ final class TuiHelper {
                     i++; // unrecognised, skip just the ESC
                 }
             } else if (ch == '\r') {
-                i++; // strip carriage returns (Windows line endings, progress output)
+                i++;
+            } else if (ch == '\t') {
+                sb.append("  "); // two spaces -- preserves stack-trace indentation without tab-stop jumps
+                i++;
             } else {
                 sb.append(ch);
                 i++;
