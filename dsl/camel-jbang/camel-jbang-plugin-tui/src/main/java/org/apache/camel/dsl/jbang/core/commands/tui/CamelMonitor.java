@@ -2216,56 +2216,16 @@ public class CamelMonitor extends CamelCommand {
                 .constraints(Constraint.length(10), Constraint.fill())
                 .split(area);
 
-        // Step table (like History)
         List<Row> rows = new ArrayList<>();
         for (TraceEntry entry : steps) {
-            Style dirStyle;
-            if (entry.first) {
-                dirStyle = Style.EMPTY.fg(Color.GREEN);
-            } else if (entry.last) {
-                dirStyle = entry.failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
-            } else {
-                dirStyle = Style.EMPTY;
-            }
-            String elapsed = entry.elapsed >= 0 ? entry.elapsed + "ms" : "";
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(entry.direction, dirStyle)),
-                    Cell.from(entry.timestamp != null ? truncate(entry.timestamp, 12) : ""),
-                    Cell.from(Span.styled(
-                            entry.routeId != null ? truncate(entry.routeId, 15) : "",
-                            Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(entry.nodeId != null ? truncate(entry.nodeId, 15) : ""),
-                    Cell.from(entry.processor != null ? entry.processor : ""),
-                    Cell.from(elapsed)));
+            rows.add(buildStepRow(
+                    entry.direction, entry.first, entry.last, entry.failed,
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, entry.elapsed));
         }
 
-        Row header = Row.from(
-                Cell.from(Span.styled("", Style.EMPTY.bold())),
-                Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ID", Style.EMPTY.bold())),
-                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())));
-
         String stepTitle = String.format(" Trace [%s] ", truncate(traceSelectedExchangeId, 30));
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(4),
-                        Constraint.length(12),
-                        Constraint.length(15),
-                        Constraint.length(15),
-                        Constraint.fill(),
-                        Constraint.length(10))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(stepTitle).build())
-                .build();
-
-        frame.renderStatefulWidget(table, chunks.get(0), traceStepTableState);
+        frame.renderStatefulWidget(
+                buildStepTable(rows, stepTitle), chunks.get(0), traceStepTableState);
 
         // Detail panel for selected step
         renderTraceStepDetail(frame, chunks.get(1), steps);
@@ -2493,53 +2453,14 @@ public class CamelMonitor extends CamelCommand {
         // History list
         List<Row> rows = new ArrayList<>();
         for (HistoryEntry entry : current) {
-            Style dirStyle;
-            if (entry.first) {
-                dirStyle = Style.EMPTY.fg(Color.GREEN);
-            } else if (entry.last) {
-                dirStyle = entry.failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
-            } else {
-                dirStyle = Style.EMPTY;
-            }
-            String elapsed = entry.elapsed >= 0 ? entry.elapsed + "ms" : "";
-
-            rows.add(Row.from(
-                    Cell.from(Span.styled(entry.direction, dirStyle)),
-                    Cell.from(entry.timestamp != null ? truncate(entry.timestamp, 12) : ""),
-                    Cell.from(Span.styled(
-                            entry.routeId != null ? truncate(entry.routeId, 15) : "",
-                            Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(entry.nodeId != null ? truncate(entry.nodeId, 15) : ""),
-                    Cell.from(entry.processor != null ? entry.processor : ""),
-                    Cell.from(elapsed)));
+            rows.add(buildStepRow(
+                    entry.direction, entry.first, entry.last, entry.failed,
+                    entry.timestamp, entry.routeId, entry.nodeId, entry.processor, entry.elapsed));
         }
 
-        Row header = Row.from(
-                Cell.from(Span.styled("", Style.EMPTY.bold())),
-                Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ID", Style.EMPTY.bold())),
-                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())));
-
         Title historyTitle = buildHistoryTitle(current);
-
-        Table table = Table.builder()
-                .rows(rows)
-                .header(header)
-                .widths(
-                        Constraint.length(4),
-                        Constraint.length(12),
-                        Constraint.length(15),
-                        Constraint.length(15),
-                        Constraint.fill(),
-                        Constraint.length(10))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).title(historyTitle).build())
-                .build();
-
-        frame.renderStatefulWidget(table, chunks.get(0), historyTableState);
+        frame.renderStatefulWidget(
+                buildStepTable(rows, historyTitle), chunks.get(0), historyTableState);
 
         // Detail panel
         renderHistoryDetail(frame, chunks.get(1), current);
@@ -2722,6 +2643,54 @@ public class CamelMonitor extends CamelCommand {
                     Scrollbar.builder().build(),
                     hChunks.get(1), historyDetailScrollState);
         }
+    }
+
+    private static Row buildStepRow(
+            String direction, boolean first, boolean last, boolean failed,
+            String timestamp, String routeId, String nodeId, String processor, long elapsed) {
+        Style dirStyle;
+        if (first) {
+            dirStyle = Style.EMPTY.fg(Color.GREEN);
+        } else if (last) {
+            dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+        } else {
+            dirStyle = Style.EMPTY;
+        }
+        String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
+        return Row.from(
+                Cell.from(Span.styled(direction, dirStyle)),
+                Cell.from(timestamp != null ? truncate(timestamp, 12) : ""),
+                Cell.from(Span.styled(routeId != null ? truncate(routeId, 15) : "", Style.EMPTY.fg(Color.CYAN))),
+                Cell.from(nodeId != null ? truncate(nodeId, 15) : ""),
+                Cell.from(processor != null ? processor : ""),
+                Cell.from(elapsedStr));
+    }
+
+    private static Table buildStepTable(List<Row> rows, Object title) {
+        Row header = Row.from(
+                Cell.from(Span.styled("", Style.EMPTY.bold())),
+                Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ID", Style.EMPTY.bold())),
+                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                Cell.from(Span.styled("ELAPSED", Style.EMPTY.bold())));
+        Block block = title instanceof Title t
+                ? Block.builder().borderType(BorderType.ROUNDED).title(t).build()
+                : Block.builder().borderType(BorderType.ROUNDED).title(title.toString()).build();
+        return Table.builder()
+                .rows(rows)
+                .header(header)
+                .widths(
+                        Constraint.length(4),
+                        Constraint.length(12),
+                        Constraint.length(15),
+                        Constraint.length(15),
+                        Constraint.fill(),
+                        Constraint.length(10))
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(block)
+                .build();
     }
 
     private Title buildHistoryTitle(List<HistoryEntry> entries) {
