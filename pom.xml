@@ -316,8 +316,6 @@
                                     <exclude>**/.eslint*</exclude>
                                     <exclude>**/.pnp*</exclude>
                                     <exclude>**/*.jte</exclude>
-                                    <exclude>**/.yarn/**</exclude>
-                                    <exclude>**/.yarnrc.yml</exclude>
                                     <exclude>**/CamelJBang.java</exclude>
                                     <exclude>**/LICENSE.txt</exclude>
                                     <exclude>**/LICENSE</exclude>
@@ -374,7 +372,6 @@
                                     <exclude>**/test-kerb5.conf</exclude>
                                     <exclude>**/variables/variables.data-*-of-*</exclude>
                                     <exclude>**/variables/variables.index</exclude>
-                                    <exclude>**/yarn.lock</exclude>
                                     <exclude>**/zkserver*.conf</exclude>
                                     <exclude>**/*.wasm</exclude>
                                     <exclude>**/*.lock</exclude>
@@ -550,9 +547,7 @@
                             <exclude>**/node/**</exclude>
                             <exclude>**/node_modules/**</exclude>
                             <exclude>**/user-manual/**</exclude>
-                            <exclude>**/yarn.lock</exclude>
                             <exclude>**/docs/**/*</exclude>
-                            <exclude>**/yarn*.cjs</exclude>
                             <exclude>**/build-state.yml</exclude>
                             <!-- generated files -->
                             <exclude>**/target/**/*</exclude>
