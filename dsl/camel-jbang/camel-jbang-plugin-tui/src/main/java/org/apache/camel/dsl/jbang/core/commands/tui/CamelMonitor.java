@@ -2431,9 +2431,9 @@ public class CamelMonitor extends CamelCommand {
                 .build();
         frame.renderWidget(detail, hChunks.get(0));
 
-        if (lines.size() > visibleHeight) {
+        if (contentHeight > visibleHeight) {
             ScrollbarState scrollState = new ScrollbarState();
-            scrollState.contentLength(lines.size());
+            scrollState.contentLength(contentHeight);
             scrollState.viewportContentLength(visibleHeight);
             scrollState.position(traceDetailScroll);
             frame.renderStatefulWidget(
@@ -2713,9 +2713,9 @@ public class CamelMonitor extends CamelCommand {
                 .build();
         frame.renderWidget(detail, hChunks.get(0));
 
-        if (lines.size() > visibleHeight) {
+        if (contentHeight > visibleHeight) {
             ScrollbarState scrollState = new ScrollbarState();
-            scrollState.contentLength(lines.size());
+            scrollState.contentLength(contentHeight);
             scrollState.viewportContentLength(visibleHeight);
             scrollState.position(historyDetailScroll);
             frame.renderStatefulWidget(
