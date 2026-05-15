@@ -132,6 +132,43 @@ final class TuiHelper {
         return 0;
     }
 
+    /**
+     * Strip ANSI escape sequences and carriage returns from a log line. Handles CSI sequences (\e[...finalChar where
+     * finalChar is any char in @-~), 2-char Fe/Fp escape sequences, and \r.
+     */
+    static String stripAnsi(String line) {
+        if (line == null || line.isEmpty()) {
+            return line;
+        }
+        StringBuilder sb = new StringBuilder(line.length());
+        int i = 0;
+        while (i < line.length()) {
+            char ch = line.charAt(i);
+            if (ch == '\u001B' && i + 1 < line.length()) {
+                char next = line.charAt(i + 1);
+                if (next == '[') {
+                    // CSI sequence: \e[ + params/intermediates + final byte (any char @-~)
+                    i += 2;
+                    while (i < line.length() && (line.charAt(i) < '@' || line.charAt(i) > '~')) {
+                        i++;
+                    }
+                    i++; // skip the final byte
+                } else if (next >= '@' && next <= '_') {
+                    // 2-char Fe/Fp escape sequence (e.g. \eM, \e7, \e8)
+                    i += 2;
+                } else {
+                    i++; // unrecognised, skip just the ESC
+                }
+            } else if (ch == '\r') {
+                i++; // strip carriage returns (Windows line endings, progress output)
+            } else {
+                sb.append(ch);
+                i++;
+            }
+        }
+        return sb.toString();
+    }
+
     static String shortTypeName(String type) {
         if (type == null) {
             return "null";

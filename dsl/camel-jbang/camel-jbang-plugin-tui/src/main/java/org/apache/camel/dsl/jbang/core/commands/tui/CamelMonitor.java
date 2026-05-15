@@ -2018,7 +2018,7 @@ public class CamelMonitor extends CamelCommand {
             String[] rawLines = content.split("\n", -1);
             int start = Math.max(0, rawLines.length - MAX_LOG_LINES);
             for (int i = start; i < rawLines.length; i++) {
-                String line = rawLines[i].replaceAll("\u001B\\[[;\\d]*m", "");
+                String line = TuiHelper.stripAnsi(rawLines[i]);
                 if (!line.isEmpty()) {
                     target.add(line);
                 }
