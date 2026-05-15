@@ -618,6 +618,8 @@ format on the classpath. By default, Camel will use `jackson` as the data format
 |`json_xml` |Binding to/from JSON and XML is enabled and requires both data formats to be on the classpath.
 |===
 
+IMPORTANT: In `auto` binding mode, the `consumes` option is used as a *fallback* for format detection when the incoming request has no `Content-Type` header (or the header does not indicate JSON or XML). It does *not* reject requests whose `Content-Type` does not match `consumes`. For example, an endpoint configured with `.consumes("application/json").bindingMode(auto)` will still accept and deserialize an XML request if the client sends `Content-Type: application/xml` and an XML-capable data format (e.g., `camel-jaxb`) is on the classpath. If you need to enforce that the `Content-Type` matches the `consumes` declaration, enable <<Client Request and Response Validation>> with `clientRequestValidation(true)`, which returns HTTP 415 for mismatched content types. Alternatively, use an explicit binding mode (`json` or `xml`) to restrict which data formats are available.
+
 When using `camel-jaxb` for XML bindings, then
 you can use the option `mustBeJAXBElement` to relax the output message
 body must be a class with JAXB annotations. You can use this in
