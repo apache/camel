@@ -2249,157 +2249,24 @@ public class CamelMonitor extends CamelCommand {
         TraceEntry entry = steps.get(sel);
         List<Line> lines = new ArrayList<>();
 
-        // Exchange info
-        lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.exchangeId != null ? entry.exchangeId : "")));
-        lines.add(Line.from(
-                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.routeId != null ? entry.routeId : ""),
-                Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.nodeId != null ? entry.nodeId : ""),
-                Span.raw(entry.nodeLabel != null ? " (" + entry.nodeLabel + ")" : "")));
-        lines.add(Line.from(
-                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.location != null ? entry.location : "")));
-        lines.add(Line.from(
-                Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.elapsed >= 0 ? entry.elapsed + "ms" : ""),
-                Span.styled("  Thread: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.threadName != null ? entry.threadName : "")));
-        if (entry.failed) {
-            lines.add(Line.from(
-                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("Failed", Style.EMPTY.fg(Color.RED).bold())));
+        addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
+                entry.location, entry.elapsed, entry.threadName, entry.failed);
+        if (showTraceProperties) {
+            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes);
         }
-        lines.add(Line.from(Span.raw("")));
-
-        // Exchange Properties
-        if (showTraceProperties && entry.exchangeProperties != null && !entry.exchangeProperties.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Properties:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> p : entry.exchangeProperties.entrySet()) {
-                String type = entry.exchangePropertyTypes != null ? entry.exchangePropertyTypes.get(p.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(p.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(p.getValue() != null ? p.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
+        if (showTraceVariables) {
+            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes);
         }
-
-        // Exchange Variables
-        if (showTraceVariables && entry.exchangeVariables != null && !entry.exchangeVariables.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Variables:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> v : entry.exchangeVariables.entrySet()) {
-                String type = entry.exchangeVariableTypes != null ? entry.exchangeVariableTypes.get(v.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(v.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(v.getValue() != null ? v.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
+        if (showTraceHeaders) {
+            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes);
         }
-
-        // Headers
-        if (showTraceHeaders && entry.headers != null && !entry.headers.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Headers:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> h : entry.headers.entrySet()) {
-                String type = entry.headerTypes != null ? entry.headerTypes.get(h.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(h.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(h.getValue() != null ? h.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
-        }
-
-        // Body
         if (showTraceBody) {
-            if (entry.body != null) {
-                if (entry.bodyType != null) {
-                    lines.add(Line.from(
-                            Span.styled(" Body: ", Style.EMPTY.fg(Color.GREEN).bold()),
-                            Span.styled("(" + entry.bodyType + ")", Style.EMPTY.dim())));
-                } else {
-                    lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
-                }
-                String[] bodyLines = entry.body.split("\n");
-                for (String bl : bodyLines) {
-                    lines.add(Line.from(Span.raw("   " + bl)));
-                }
-            } else {
-                lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
-            }
-            lines.add(Line.from(Span.raw("")));
+            addBodyLines(lines, entry.body, entry.bodyType);
         }
 
-        Block block = Block.builder().borderType(BorderType.ROUNDED).build();
-        frame.renderWidget(block, area);
-
-        Rect inner = block.inner(area);
-        int visibleHeight = Math.max(1, inner.height());
-        int contentHeight;
-        if (traceWordWrap) {
-            int width = Math.max(1, inner.width() - 1);
-            contentHeight = 0;
-            for (Line l : lines) {
-                int w = l.width();
-                contentHeight += Math.max(1, (w + width - 1) / width);
-            }
-        } else {
-            contentHeight = lines.size();
-        }
-        int maxScroll = Math.max(0, contentHeight - visibleHeight);
-        if (traceDetailScroll > maxScroll) {
-            traceDetailScroll = maxScroll;
-        }
-
-        List<Rect> hChunks = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(1))
-                .split(inner);
-
-        Paragraph detail = Paragraph.builder()
-                .text(Text.from(lines))
-                .overflow(traceWordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
-                .scroll(traceDetailScroll)
-                .build();
-        frame.renderWidget(detail, hChunks.get(0));
-
-        if (contentHeight > visibleHeight) {
-            traceDetailScrollState.contentLength(contentHeight);
-            traceDetailScrollState.viewportContentLength(visibleHeight);
-            traceDetailScrollState.position(traceDetailScroll);
-            frame.renderStatefulWidget(
-                    Scrollbar.builder().build(),
-                    hChunks.get(1), traceDetailScrollState);
-        }
+        int[] scroll = { traceDetailScroll };
+        renderDetailPanel(frame, area, lines, traceWordWrap, scroll, traceDetailScrollState);
+        traceDetailScroll = scroll[0];
     }
 
     private List<String> getTraceExchangeIds() {
@@ -2485,131 +2352,113 @@ public class CamelMonitor extends CamelCommand {
         HistoryEntry entry = current.get(sel);
         List<Line> lines = new ArrayList<>();
 
-        // Exchange info
-        lines.add(Line.from(
-                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.exchangeId != null ? entry.exchangeId : "")));
-        lines.add(Line.from(
-                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.routeId != null ? entry.routeId : ""),
-                Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.nodeId != null ? entry.nodeId : ""),
-                Span.raw(entry.nodeLabel != null ? " (" + entry.nodeLabel + ")" : "")));
-        lines.add(Line.from(
-                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.location != null ? entry.location : "")));
-        lines.add(Line.from(
-                Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.elapsed >= 0 ? entry.elapsed + "ms" : ""),
-                Span.styled("  Thread: ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                Span.raw(entry.threadName != null ? entry.threadName : "")));
-        if (entry.failed) {
-            lines.add(Line.from(
-                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("Failed", Style.EMPTY.fg(Color.RED).bold())));
+        addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
+                entry.location, entry.elapsed, entry.threadName, entry.failed);
+        if (showHistoryProperties) {
+            addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes);
         }
-        lines.add(Line.from(Span.raw("")));
-
-        // Headers
-        // Exchange Properties
-        if (showHistoryProperties && entry.exchangeProperties != null && !entry.exchangeProperties.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Properties:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> p : entry.exchangeProperties.entrySet()) {
-                String type = entry.exchangePropertyTypes != null ? entry.exchangePropertyTypes.get(p.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(p.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(p.getValue() != null ? p.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
+        if (showHistoryVariables) {
+            addKvLines(lines, " Exchange Variables:", entry.exchangeVariables, entry.exchangeVariableTypes);
         }
-
-        // Exchange Variables
-        if (showHistoryVariables && entry.exchangeVariables != null && !entry.exchangeVariables.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Exchange Variables:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> v : entry.exchangeVariables.entrySet()) {
-                String type = entry.exchangeVariableTypes != null ? entry.exchangeVariableTypes.get(v.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(v.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(v.getValue() != null ? v.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
+        if (showHistoryHeaders) {
+            addKvLines(lines, " Headers:", entry.headers, entry.headerTypes);
         }
-
-        // Headers
-        if (showHistoryHeaders && entry.headers != null && !entry.headers.isEmpty()) {
-            lines.add(Line.from(Span.styled(" Headers:", Style.EMPTY.fg(Color.GREEN).bold())));
-            for (Map.Entry<String, Object> h : entry.headers.entrySet()) {
-                String type = entry.headerTypes != null ? entry.headerTypes.get(h.getKey()) : null;
-                String typeLabel;
-                if (type != null) {
-                    String t = "(" + type + ")";
-                    t = truncate(t, 20);
-                    typeLabel = String.format("%-20s ", t);
-                } else {
-                    typeLabel = String.format("%-21s", "");
-                }
-                lines.add(Line.from(
-                        Span.styled("   " + typeLabel, Style.EMPTY.dim()),
-                        Span.styled(h.getKey(), Style.EMPTY.fg(Color.CYAN)),
-                        Span.raw(" = "),
-                        Span.raw(h.getValue() != null ? h.getValue().toString() : "null")));
-            }
-            lines.add(Line.from(Span.raw("")));
-        }
-
-        // Body
         if (showHistoryBody) {
-            if (entry.body != null) {
-                if (entry.bodyType != null) {
-                    lines.add(Line.from(
-                            Span.styled(" Body: ", Style.EMPTY.fg(Color.GREEN).bold()),
-                            Span.styled("(" + entry.bodyType + ")", Style.EMPTY.dim())));
-                } else {
-                    lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
-                }
-                String[] bodyLines = entry.body.split("\n");
-                for (String bl : bodyLines) {
-                    lines.add(Line.from(Span.raw("   " + bl)));
-                }
-            } else {
-                lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
-            }
-            lines.add(Line.from(Span.raw("")));
+            addBodyLines(lines, entry.body, entry.bodyType);
         }
-
-        // Exception
         if (entry.exception != null) {
             lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.RED).bold())));
             lines.add(Line.from(Span.raw("   " + entry.exception)));
         }
 
+        int[] scroll = { historyDetailScroll };
+        renderDetailPanel(frame, area, lines, historyWordWrap, scroll, historyDetailScrollState);
+        historyDetailScroll = scroll[0];
+    }
+
+    private static void addExchangeInfoLines(
+            List<Line> lines, String exchangeId, String routeId,
+            String nodeId, String nodeLabel, String location, long elapsed, String threadName, boolean failed) {
+        lines.add(Line.from(
+                Span.styled(" Exchange: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(exchangeId != null ? exchangeId : "")));
+        lines.add(Line.from(
+                Span.styled(" Route:    ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(routeId != null ? routeId : ""),
+                Span.styled("  Node: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(nodeId != null ? nodeId : ""),
+                Span.raw(nodeLabel != null ? " (" + nodeLabel + ")" : "")));
+        lines.add(Line.from(
+                Span.styled(" Location: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(location != null ? location : "")));
+        lines.add(Line.from(
+                Span.styled(" Elapsed:  ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(elapsed >= 0 ? elapsed + "ms" : ""),
+                Span.styled("  Thread: ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                Span.raw(threadName != null ? threadName : "")));
+        if (failed) {
+            lines.add(Line.from(
+                    Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
+                    Span.styled("Failed", Style.EMPTY.fg(Color.RED).bold())));
+        }
+        lines.add(Line.from(Span.raw("")));
+    }
+
+    private static void addKvLines(
+            List<Line> lines, String section,
+            Map<String, Object> map, Map<String, String> types) {
+        if (map == null || map.isEmpty()) {
+            return;
+        }
+        lines.add(Line.from(Span.styled(section, Style.EMPTY.fg(Color.GREEN).bold())));
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String type = types != null ? types.get(entry.getKey()) : null;
+            String typeLabel;
+            if (type != null) {
+                String t = "(" + type + ")";
+                t = truncate(t, 20);
+                typeLabel = String.format("%-20s ", t);
+            } else {
+                typeLabel = String.format("%-21s", "");
+            }
+            lines.add(Line.from(
+                    Span.styled("   " + typeLabel, Style.EMPTY.dim()),
+                    Span.styled(entry.getKey(), Style.EMPTY.fg(Color.CYAN)),
+                    Span.raw(" = "),
+                    Span.raw(entry.getValue() != null ? entry.getValue().toString() : "null")));
+        }
+        lines.add(Line.from(Span.raw("")));
+    }
+
+    private static void addBodyLines(List<Line> lines, String body, String bodyType) {
+        if (body != null) {
+            if (bodyType != null) {
+                lines.add(Line.from(
+                        Span.styled(" Body: ", Style.EMPTY.fg(Color.GREEN).bold()),
+                        Span.styled("(" + bodyType + ")", Style.EMPTY.dim())));
+            } else {
+                lines.add(Line.from(Span.styled(" Body:", Style.EMPTY.fg(Color.GREEN).bold())));
+            }
+            String[] bodyParts = body.split("\n");
+            for (String bl : bodyParts) {
+                lines.add(Line.from(Span.raw("   " + bl)));
+            }
+        } else {
+            lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
+        }
+        lines.add(Line.from(Span.raw("")));
+    }
+
+    private void renderDetailPanel(
+            Frame frame, Rect area, List<Line> lines,
+            boolean wordWrap, int[] scroll, ScrollbarState scrollState) {
         Block block = Block.builder().borderType(BorderType.ROUNDED).build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
         int visibleHeight = Math.max(1, inner.height());
         int contentHeight;
-        if (historyWordWrap) {
+        if (wordWrap) {
             int width = Math.max(1, inner.width() - 1);
             contentHeight = 0;
             for (Line l : lines) {
@@ -2620,8 +2469,8 @@ public class CamelMonitor extends CamelCommand {
             contentHeight = lines.size();
         }
         int maxScroll = Math.max(0, contentHeight - visibleHeight);
-        if (historyDetailScroll > maxScroll) {
-            historyDetailScroll = maxScroll;
+        if (scroll[0] > maxScroll) {
+            scroll[0] = maxScroll;
         }
 
         List<Rect> hChunks = Layout.horizontal()
@@ -2630,18 +2479,18 @@ public class CamelMonitor extends CamelCommand {
 
         Paragraph detail = Paragraph.builder()
                 .text(Text.from(lines))
-                .overflow(historyWordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
-                .scroll(historyDetailScroll)
+                .overflow(wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
+                .scroll(scroll[0])
                 .build();
         frame.renderWidget(detail, hChunks.get(0));
 
         if (contentHeight > visibleHeight) {
-            historyDetailScrollState.contentLength(contentHeight);
-            historyDetailScrollState.viewportContentLength(visibleHeight);
-            historyDetailScrollState.position(historyDetailScroll);
+            scrollState.contentLength(contentHeight);
+            scrollState.viewportContentLength(visibleHeight);
+            scrollState.position(scroll[0]);
             frame.renderStatefulWidget(
                     Scrollbar.builder().build(),
-                    hChunks.get(1), historyDetailScrollState);
+                    hChunks.get(1), scrollState);
         }
     }
 
