@@ -1086,13 +1086,11 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private String overviewSortLabel(String label, String column) {
-        return overviewSort.equals(column) ? label + "▼" : label;
+        return sortLabel(label, column, overviewSort);
     }
 
     private Style overviewSortStyle(String column) {
-        return overviewSort.equals(column)
-                ? Style.EMPTY.fg(Color.YELLOW).bold()
-                : Style.EMPTY.bold();
+        return sortStyle(column, overviewSort);
     }
 
     private int sortRoute(RouteInfo a, RouteInfo b) {
@@ -1114,21 +1112,27 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private String traceSortLabel(String label, String column) {
-        return traceSort.equals(column) ? label + "▼" : label;
+        return sortLabel(label, column, traceSort);
     }
 
     private Style traceSortStyle(String column) {
-        return traceSort.equals(column)
-                ? Style.EMPTY.fg(Color.YELLOW).bold()
-                : Style.EMPTY.bold();
+        return sortStyle(column, traceSort);
     }
 
     private String routeSortLabel(String label, String column) {
-        return routeSort.equals(column) ? label + "\u25BC" : label;
+        return sortLabel(label, column, routeSort);
     }
 
     private Style routeSortStyle(String column) {
-        return routeSort.equals(column)
+        return sortStyle(column, routeSort);
+    }
+
+    private static String sortLabel(String label, String column, String currentSort) {
+        return currentSort.equals(column) ? label + "▼" : label;
+    }
+
+    private static Style sortStyle(String column, String currentSort) {
+        return currentSort.equals(column)
                 ? Style.EMPTY.fg(Color.YELLOW).bold()
                 : Style.EMPTY.bold();
     }
@@ -1911,13 +1915,7 @@ public class CamelMonitor extends CamelCommand {
         // Log table
         List<Row> rows = new ArrayList<>();
         for (LogEntry entry : filteredLogEntries) {
-            Style levelStyle = switch (entry.level) {
-                case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
-                case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
-                case "DEBUG", "TRACE" -> Style.EMPTY.dim();
-                default -> Style.EMPTY;
-            };
-
+            Style levelStyle = colorStyleForLevel(entry.level);
             rows.add(Row.from(
                     Cell.from(Span.styled(entry.time, Style.EMPTY.dim())),
                     Cell.from(Span.styled(entry.level, levelStyle)),
@@ -2848,23 +2846,7 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private static String formatSinceLastRoute(RouteInfo route) {
-        StringBuilder sb = new StringBuilder();
-        if (route.sinceLastStarted != null) {
-            sb.append(route.sinceLastStarted);
-        }
-        if (route.sinceLastCompleted != null) {
-            if (!sb.isEmpty()) {
-                sb.append('/');
-            }
-            sb.append(route.sinceLastCompleted);
-        }
-        if (route.sinceLastFailed != null) {
-            if (!sb.isEmpty()) {
-                sb.append('/');
-            }
-            sb.append(route.sinceLastFailed);
-        }
-        return sb.toString();
+        return formatSinceLast(route.sinceLastStarted, route.sinceLastCompleted, route.sinceLastFailed);
     }
 
     private static Cell rightCell(String text, int width) {
@@ -3664,21 +3646,25 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private static String formatSinceLast(IntegrationInfo info) {
+        return formatSinceLast(info.sinceLastStarted, info.sinceLastCompleted, info.sinceLastFailed);
+    }
+
+    private static String formatSinceLast(String started, String completed, String failed) {
         StringBuilder sb = new StringBuilder();
-        if (info.sinceLastStarted != null) {
-            sb.append(info.sinceLastStarted);
+        if (started != null) {
+            sb.append(started);
         }
-        if (info.sinceLastCompleted != null) {
+        if (completed != null) {
             if (!sb.isEmpty()) {
                 sb.append('/');
             }
-            sb.append(info.sinceLastCompleted);
+            sb.append(completed);
         }
-        if (info.sinceLastFailed != null) {
+        if (failed != null) {
             if (!sb.isEmpty()) {
                 sb.append('/');
             }
-            sb.append(info.sinceLastFailed);
+            sb.append(failed);
         }
         return sb.toString();
     }
