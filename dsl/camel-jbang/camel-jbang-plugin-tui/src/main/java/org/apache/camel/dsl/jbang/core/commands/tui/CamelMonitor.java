@@ -797,6 +797,10 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderContent(Frame frame, Rect area) {
+        // Clear the content area before rendering the active tab. Without this, styled cells
+        // from the previous tab (e.g. RED error text in the log detail) can bleed through when
+        // switching tabs if TamboUI's buffer diff does not reset every cell in the region.
+        frame.buffer().clear(area);
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> renderOverview(frame, area);
             case TAB_ROUTES -> renderRoutes(frame, area);
