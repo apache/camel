@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -2444,13 +2445,14 @@ public class CamelMonitor extends CamelCommand {
 
     private List<String> getTraceExchangeIds() {
         List<TraceEntry> current = traces.get();
-        List<String> ids = new ArrayList<>();
+        // LinkedHashSet: O(1) contains, preserves first-seen insertion order
+        LinkedHashSet<String> seen = new LinkedHashSet<>();
         for (TraceEntry e : current) {
-            if (e.exchangeId != null && !ids.contains(e.exchangeId)) {
-                ids.add(e.exchangeId);
+            if (e.exchangeId != null) {
+                seen.add(e.exchangeId);
             }
         }
-        return ids;
+        return new ArrayList<>(seen);
     }
 
     private List<TraceEntry> getTraceSteps(String exchangeId) {
@@ -2913,8 +2915,6 @@ public class CamelMonitor extends CamelCommand {
             } finally {
                 refreshInProgress.set(false);
             }
-            runner.runOnRenderThread(() -> {
-            });
         });
     }
 
