@@ -3659,10 +3659,12 @@ public class CamelMonitor extends CamelCommand {
                     hc.state = cj.getString("state");
                     hc.readiness = cj.getBooleanOrDefault("readiness", false);
                     hc.liveness = cj.getBooleanOrDefault("liveness", false);
-                    // Extract message from details if available
-                    JsonObject details = (JsonObject) cj.get("details");
-                    if (details != null && details.containsKey("failure.error.message")) {
-                        hc.message = details.getString("failure.error.message");
+                    hc.message = cj.getString("message");
+                    if (hc.message == null) {
+                        JsonObject details = (JsonObject) cj.get("details");
+                        if (details != null && details.containsKey("failure.error.message")) {
+                            hc.message = details.getString("failure.error.message");
+                        }
                     }
                     info.healthChecks.add(hc);
                 }
