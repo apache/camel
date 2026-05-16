@@ -110,8 +110,8 @@ public class CamelMonitor extends CamelCommand {
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
-    private static final int TAB_ROUTES = 1;
-    private static final int TAB_LOG = 2;
+    private static final int TAB_LOG = 1;
+    private static final int TAB_ROUTES = 2;
     private static final int TAB_ENDPOINTS = 3;
     private static final int TAB_HEALTH = 4;
     private static final int TAB_HISTORY = 5;
@@ -280,7 +280,6 @@ public class CamelMonitor extends CamelCommand {
                 }
                 if (tabsState.selected() != TAB_OVERVIEW) {
                     tabsState.select(TAB_OVERVIEW);
-                    selectedPid = null;
                     return true;
                 }
                 if (selectedPid != null) {
@@ -299,10 +298,10 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_OVERVIEW);
             }
             if (ke.isChar('2')) {
-                return handleTabKey(TAB_ROUTES);
+                return handleTabKey(TAB_LOG);
             }
             if (ke.isChar('3')) {
-                return handleTabKey(TAB_LOG);
+                return handleTabKey(TAB_ROUTES);
             }
             if (ke.isChar('4')) {
                 return handleTabKey(TAB_ENDPOINTS);
@@ -414,7 +413,7 @@ public class CamelMonitor extends CamelCommand {
             if (ke.isConfirm() && tab == TAB_OVERVIEW) {
                 selectCurrentIntegration();
                 if (selectedPid != null) {
-                    tabsState.select(TAB_ROUTES);
+                    tabsState.select(TAB_LOG);
                 }
                 return true;
             }
@@ -617,8 +616,6 @@ public class CamelMonitor extends CamelCommand {
     private boolean handleTabKey(int tab) {
         if (tab != TAB_OVERVIEW) {
             selectCurrentIntegration();
-        } else {
-            selectedPid = null;
         }
         if (tab == TAB_HISTORY && selectedPid != null) {
             refreshHistoryData(List.of(Long.parseLong(selectedPid)));
@@ -783,8 +780,8 @@ public class CamelMonitor extends CamelCommand {
         Tabs tabs = Tabs.builder()
                 .titles(
                         badge(" 1 Overview ", activeCount),
-                        badge(" 2 Routes ", routeCount),
-                        badge(" 3 Log ", logCount),
+                        badge(" 2 Log ", logCount),
+                        badge(" 3 Routes ", routeCount),
                         badge(" 4 Endpoints ", endpointCount),
                         badge(" 5 Health ", healthCount),
                         badge(" 6 History ", historyCount),
@@ -2612,6 +2609,9 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "Enter", "details");
+            if (selectedPid != null) {
+                hint(spans, "Esc", "unselect");
+            }
             hint(spans, "1-7", "tabs");
         } else if (tab == TAB_ROUTES && showDiagram) {
             String closeKey = diagramTextMode ? "D" : "d";
