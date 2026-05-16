@@ -3882,9 +3882,9 @@ public class CamelMonitor extends CamelCommand {
                     ri.total = objToLong(rs.get("exchangesTotal"));
                     ri.failed = objToLong(rs.get("exchangesFailed"));
                     ri.inflight = objToLong(rs.get("exchangesInflight"));
-                    ri.meanTime = objToLong(rs.get("meanProcessingTime"));
-                    ri.minTime = objToLong(rs.get("minProcessingTime"));
-                    ri.maxTime = objToLong(rs.get("maxProcessingTime"));
+                    ri.meanTime = Math.max(0, objToLong(rs.get("meanProcessingTime")));
+                    ri.minTime = Math.max(0, objToLong(rs.get("minProcessingTime")));
+                    ri.maxTime = Math.max(0, objToLong(rs.get("maxProcessingTime")));
                     long tsStarted = objToLong(rs.get("lastCreatedExchangeTimestamp"));
                     if (tsStarted > 0) {
                         ri.sinceLastStarted = TimeUtils.printSince(tsStarted);
@@ -3913,9 +3913,9 @@ public class CamelMonitor extends CamelCommand {
                         if (ps != null) {
                             pi.total = objToLong(ps.get("exchangesTotal"));
                             pi.failed = objToLong(ps.get("exchangesFailed"));
-                            pi.meanTime = objToLong(ps.get("meanProcessingTime"));
-                            pi.minTime = objToLong(ps.get("minProcessingTime"));
-                            pi.maxTime = objToLong(ps.get("maxProcessingTime"));
+                            pi.meanTime = Math.max(0, objToLong(ps.get("meanProcessingTime")));
+                            pi.minTime = Math.max(0, objToLong(ps.get("minProcessingTime")));
+                            pi.maxTime = Math.max(0, objToLong(ps.get("maxProcessingTime")));
                             pi.lastTime = objToLong(ps.get("lastProcessingTime"));
                         }
 
