@@ -818,6 +818,8 @@ public class CamelMonitor extends CamelCommand {
         int consumerCount = hasSelection ? sel.consumers.size() : 0;
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
         int healthCount = hasSelection ? sel.healthChecks.size() : 0;
+        long healthDownCount = hasSelection
+                ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
         int historyCount = hasSelection ? historyEntries.size() : 0;
         boolean hasTraces = hasSelection && !traces.get().isEmpty();
 
@@ -828,7 +830,7 @@ public class CamelMonitor extends CamelCommand {
                         badge(" 3 Routes ", routeCount),
                         badge(" 4 Consumers ", consumerCount),
                         badge(" 5 Endpoints ", endpointCount),
-                        badge(" 6 Health ", healthCount),
+                        badgeHealth(" 6 Health ", healthCount, healthDownCount),
                         badge(" 7 History ", historyCount),
                         hasTraces
                                 ? Line.from(Span.raw(" 8 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
@@ -2977,6 +2979,16 @@ public class CamelMonitor extends CamelCommand {
         int padding = Math.max(0, width - len);
         int leftPad = padding / 2;
         return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
+    }
+
+    private static Line badgeHealth(String label, long total, long down) {
+        if (down > 0) {
+            return Line.from(
+                    Span.raw(label),
+                    Span.styled("(" + down + " DOWN)", Style.EMPTY.fg(Color.RED).bold()),
+                    Span.raw(" "));
+        }
+        return badge(label, total);
     }
 
     private static Line badge(String label, long count) {
