@@ -123,6 +123,9 @@ public class CamelMonitor extends CamelCommand {
     // Route sort columns
     private static final String[] ROUTE_SORT_COLUMNS = { "total", "failed", "name", "status" };
 
+    // Endpoint sort columns (order matches table column order)
+    private static final String[] ENDPOINT_SORT_COLUMNS = { "component", "route", "dir", "total", "uri" };
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
@@ -156,6 +159,13 @@ public class CamelMonitor extends CamelCommand {
     // Route sort state
     private String routeSort = "name";
     private int routeSortIndex = 2;
+
+    // Endpoint sort state (default: route = index 1)
+    private String endpointSort = "route";
+    private int endpointSortIndex = 1;
+
+    // Endpoint filter state
+    private boolean showOnlyRemote;
 
     // Health filter state
     private boolean showOnlyDown;
@@ -422,6 +432,17 @@ public class CamelMonitor extends CamelCommand {
             if (tab == TAB_OVERVIEW && ke.isCharIgnoreCase('s')) {
                 overviewSortIndex = (overviewSortIndex + 1) % OVERVIEW_SORT_COLUMNS.length;
                 overviewSort = OVERVIEW_SORT_COLUMNS[overviewSortIndex];
+                return true;
+            }
+
+            // Endpoints tab: sort and filter
+            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('s')) {
+                endpointSortIndex = (endpointSortIndex + 1) % ENDPOINT_SORT_COLUMNS.length;
+                endpointSort = ENDPOINT_SORT_COLUMNS[endpointSortIndex];
+                return true;
+            }
+            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('r')) {
+                showOnlyRemote = !showOnlyRemote;
                 return true;
             }
 
@@ -1130,6 +1151,40 @@ public class CamelMonitor extends CamelCommand {
 
     private Style routeSortStyle(String column) {
         return sortStyle(column, routeSort);
+    }
+
+    private String endpointSortLabel(String label, String column) {
+        return sortLabel(label, column, endpointSort);
+    }
+
+    private Style endpointSortStyle(String column) {
+        return sortStyle(column, endpointSort);
+    }
+
+    private int sortEndpoint(EndpointInfo a, EndpointInfo b) {
+        return switch (endpointSort) {
+            case "component" -> {
+                String ca = a.component != null ? a.component : "";
+                String cb = b.component != null ? b.component : "";
+                yield ca.compareToIgnoreCase(cb);
+            }
+            case "dir" -> {
+                String da = a.direction != null ? a.direction : "";
+                String db = b.direction != null ? b.direction : "";
+                yield da.compareToIgnoreCase(db);
+            }
+            case "total" -> Long.compare(b.hits, a.hits);
+            case "uri" -> {
+                String ua = a.uri != null ? a.uri : "";
+                String ub = b.uri != null ? b.uri : "";
+                yield ua.compareToIgnoreCase(ub);
+            }
+            default -> { // "route"
+                String ra = a.routeId != null ? a.routeId : "";
+                String rb = b.routeId != null ? b.routeId : "";
+                yield ra.compareToIgnoreCase(rb);
+            }
+        };
     }
 
     private static String sortLabel(String label, String column, String currentSort) {
@@ -1862,8 +1917,14 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
+        List<EndpointInfo> sortedEndpoints = new ArrayList<>(info.endpoints);
+        if (showOnlyRemote) {
+            sortedEndpoints.removeIf(ep -> !ep.remote);
+        }
+        sortedEndpoints.sort(this::sortEndpoint);
+
         List<Row> rows = new ArrayList<>();
-        for (EndpointInfo ep : info.endpoints) {
+        for (EndpointInfo ep : sortedEndpoints) {
             String dir = ep.direction != null ? ep.direction : "";
             Style dirStyle = switch (dir) {
                 case "in" -> Style.EMPTY.fg(Color.GREEN);
@@ -1880,33 +1941,45 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Color.CYAN))),
                     Cell.from(ep.routeId != null ? ep.routeId : ""),
                     Cell.from(Span.styled(arrow + dir, dirStyle)),
+                    rightCell(ep.hits > 0 ? String.valueOf(ep.hits) : "", 8),
+                    centerCell(ep.stub ? "x" : "", 6),
+                    centerCell(ep.remote ? "x" : "", 8),
                     Cell.from(ep.uri != null ? ep.uri : "")));
         }
 
         if (rows.isEmpty()) {
             rows.add(Row.from(
-                    Cell.from(""),
-                    Cell.from(""),
                     Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())),
+                    Cell.from(""),
+                    Cell.from(""),
+                    Cell.from(""),
+                    Cell.from(""),
+                    Cell.from(""),
                     Cell.from("")));
         }
 
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("COMPONENT", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("DIR", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("URI", Style.EMPTY.bold()))))
+                        Cell.from(Span.styled(endpointSortLabel("COMPONENT", "component"), endpointSortStyle("component"))),
+                        Cell.from(Span.styled(endpointSortLabel("ROUTE", "route"), endpointSortStyle("route"))),
+                        Cell.from(Span.styled(endpointSortLabel("DIR", "dir"), endpointSortStyle("dir"))),
+                        rightCell(endpointSortLabel("TOTAL", "total"), 8, endpointSortStyle("total")),
+                        centerCell("STUB", 6, Style.EMPTY.bold()),
+                        centerCell("REMOTE", 8, Style.EMPTY.bold()),
+                        Cell.from(Span.styled(endpointSortLabel("URI", "uri"), endpointSortStyle("uri")))))
                 .widths(
                         Constraint.length(15),
                         Constraint.length(20),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(6),
                         Constraint.length(8),
                         Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Endpoints ").build())
+                        .title(" Endpoints sort:" + endpointSort + (showOnlyRemote ? " remote" : "") + " ").build())
                 .build();
 
         frame.renderStatefulWidget(table, area, endpointTableState);
@@ -2647,6 +2720,12 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
             hint(spans, "1-7", "tabs");
+        } else if (tab == TAB_ENDPOINTS) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "s", "sort");
+            hint(spans, "r", "remote" + (showOnlyRemote ? " [on]" : " [off]"));
+            hint(spans, "1-7", "tabs");
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
@@ -2712,6 +2791,20 @@ public class CamelMonitor extends CamelCommand {
 
     private static Cell rightCell(String text, int width, Style style) {
         return Cell.from(Span.styled(String.format("%" + width + "s", text), style));
+    }
+
+    private static Cell centerCell(String text, int width) {
+        int len = text.length();
+        int padding = Math.max(0, width - len);
+        int leftPad = padding / 2;
+        return Cell.from(" ".repeat(leftPad) + text);
+    }
+
+    private static Cell centerCell(String text, int width, Style style) {
+        int len = text.length();
+        int padding = Math.max(0, width - len);
+        int leftPad = padding / 2;
+        return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
     }
 
     private static Line badge(String label, long count) {
@@ -3436,6 +3529,9 @@ public class CamelMonitor extends CamelCommand {
                     ep.uri = ej.getString("uri");
                     ep.direction = ej.getString("direction");
                     ep.routeId = ej.getString("routeId");
+                    ep.hits = TuiHelper.objToLong(ej.get("hits"));
+                    ep.stub = Boolean.TRUE.equals(ej.get("stub"));
+                    ep.remote = !Boolean.FALSE.equals(ej.get("remote"));
                     // Extract component from URI (e.g., "timer://tick" -> "timer")
                     if (ep.uri != null) {
                         int idx = ep.uri.indexOf(':');
@@ -3622,6 +3718,9 @@ public class CamelMonitor extends CamelCommand {
         String component;
         String direction;
         String routeId;
+        long hits;
+        boolean stub;
+        boolean remote;
     }
 
     static class TraceEntry {
