@@ -1237,6 +1237,19 @@ public class CamelMonitor extends CamelCommand {
         return dot >= 0 ? s.substring(dot + 1) : s;
     }
 
+    private static HealthCheckInfo consumerHealthCheck(IntegrationInfo info, ConsumerInfo ci) {
+        if (ci.id == null) {
+            return null;
+        }
+        String hcId = "consumer:" + ci.id;
+        for (HealthCheckInfo hc : info.healthChecks) {
+            if (hcId.equals(hc.name)) {
+                return hc;
+            }
+        }
+        return null;
+    }
+
     private static String consumerPeriod(ConsumerInfo ci) {
         if (ci.period != null) {
             return ci.period + "ms";
@@ -1266,22 +1279,30 @@ public class CamelMonitor extends CamelCommand {
         List<Row> rows = new ArrayList<>();
         for (ConsumerInfo ci : sorted) {
             String status = consumerStatus(ci);
-            Style statusStyle = "Started".equals(ci.state) || "Polling".equals(status)
-                    ? Style.EMPTY.fg(Color.GREEN)
-                    : Style.EMPTY.fg(Color.RED);
+            HealthCheckInfo hc = consumerHealthCheck(info, ci);
+            boolean healthDown = hc != null && "DOWN".equals(hc.state);
+            Style statusStyle = healthDown
+                    ? Style.EMPTY.fg(Color.RED)
+                    : ("Started".equals(ci.state) || "Polling".equals(status)
+                            ? Style.EMPTY.fg(Color.GREEN)
+                            : Style.EMPTY.fg(Color.RED));
+            String statusText = healthDown ? "⚠ " + status : status;
             String type = consumerType(ci);
             String period = consumerPeriod(ci);
             String sinceLast = consumerSinceLast(ci);
+            String uri = healthDown && hc.message != null
+                    ? hc.message
+                    : (ci.uri != null ? ci.uri : "");
 
             rows.add(Row.from(
                     Cell.from(Span.styled(ci.id != null ? ci.id : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(Span.styled(status, statusStyle)),
+                    Cell.from(Span.styled(statusText, statusStyle)),
                     Cell.from(type),
                     rightCell(ci.inflight > 0 ? String.valueOf(ci.inflight) : "", 8),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     rightCell(period, 10),
                     Cell.from(sinceLast),
-                    Cell.from(ci.uri != null ? ci.uri : "")));
+                    Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.RED) : Style.EMPTY))));
         }
 
         if (rows.isEmpty()) {
