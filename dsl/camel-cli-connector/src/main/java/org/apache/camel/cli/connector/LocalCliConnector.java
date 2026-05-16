@@ -1098,6 +1098,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
             if (mb != null) {
                 rc.put("javaVersion", mb.getVmVersion());
+                rc.put("javaVendor", mb.getVmVendor());
+                rc.put("javaVmName", mb.getVmName());
             }
             root.put("runtime", rc);
 

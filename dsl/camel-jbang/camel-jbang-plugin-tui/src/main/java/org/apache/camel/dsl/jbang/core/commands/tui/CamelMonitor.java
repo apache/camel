@@ -1002,10 +1002,17 @@ public class CamelMonitor extends CamelCommand {
         if (hasSparkline && chunks.size() > 1) {
             Rect chartTotalArea = chunks.get(1);
 
+            // Split chart area horizontally: bar chart (fill) + info panel (30 cols)
+            List<Rect> chartHSplit = Layout.horizontal()
+                    .constraints(Constraint.fill(), Constraint.length(30))
+                    .split(chartTotalArea);
+            Rect chartArea = chartHSplit.get(0);
+            Rect infoArea = chartHSplit.get(1);
+
             // Split chart area: chart rows (13) + x-axis label row (1)
             List<Rect> vChunks = Layout.vertical()
                     .constraints(Constraint.fill(), Constraint.length(1))
-                    .split(chartTotalArea);
+                    .split(chartArea);
 
             // Split chart rows: y-axis labels (4 cols) + bar chart (fill)
             List<Rect> hChunks = Layout.horizontal()
@@ -1114,7 +1121,82 @@ public class CamelMonitor extends CamelCommand {
                     }
                 }
             }
+
+            // Info panel: heap and threads for the selected integration
+            renderOverviewInfoPanel(frame, infoArea);
         }
+    }
+
+    private void renderOverviewInfoPanel(Frame frame, Rect area) {
+        IntegrationInfo sel = findSelectedIntegration();
+        // Fall back to the single active integration when nothing is explicitly selected
+        if (sel == null) {
+            List<IntegrationInfo> active = data.get().stream().filter(i -> !i.vanishing).toList();
+            if (active.size() == 1) {
+                sel = active.get(0);
+            }
+        }
+        Block infoBlock = Block.builder().borderType(BorderType.ROUNDED).build();
+        frame.renderWidget(infoBlock, area);
+        Rect inner = infoBlock.inner(area);
+        List<Line> lines = new ArrayList<>();
+        Style dim = Style.EMPTY.dim();
+        if (sel != null) {
+            // Identity
+            if (sel.platform != null) {
+                String plat = sel.platformVersion != null
+                        ? sel.platform + "/" + sel.platformVersion
+                        : sel.platform;
+                lines.add(Line.from(
+                        Span.styled("Runtime: ", dim),
+                        Span.raw(TuiHelper.truncate(plat, inner.width() - 9))));
+            }
+            if (sel.camelVersion != null) {
+                lines.add(Line.from(
+                        Span.styled("Version: ", dim),
+                        Span.raw(TuiHelper.truncate(sel.camelVersion, inner.width() - 9))));
+            }
+            lines.add(Line.from(Span.raw("")));
+            // Resources
+            if (sel.javaVersion != null) {
+                lines.add(Line.from(
+                        Span.styled("JVM:  ", dim),
+                        Span.raw(TuiHelper.truncate(sel.javaVersion, inner.width() - 6))));
+            }
+            if (sel.javaVendor != null) {
+                lines.add(Line.from(
+                        Span.styled("      ", dim),
+                        Span.raw(TuiHelper.truncate(sel.javaVendor, inner.width() - 6))));
+            }
+            if (sel.javaVmName != null) {
+                lines.add(Line.from(
+                        Span.styled("      ", dim),
+                        Span.raw(TuiHelper.truncate(sel.javaVmName, inner.width() - 6))));
+            }
+            lines.add(Line.from(
+                    Span.styled("Uptime: ", dim),
+                    Span.raw(sel.ago != null ? sel.ago : "-")));
+            if (sel.heapMemUsed > 0) {
+                String heap = formatMemory(sel.heapMemUsed, sel.heapMemMax);
+                long pct = sel.heapMemMax > 0 ? sel.heapMemUsed * 100 / sel.heapMemMax : 0;
+                lines.add(Line.from(
+                        Span.styled("Heap: ", dim),
+                        Span.raw(heap + " " + pct + "%")));
+            }
+            if (sel.nonHeapMemUsed > 0) {
+                lines.add(Line.from(
+                        Span.styled("Meta: ", dim),
+                        Span.raw(formatMemory(sel.nonHeapMemUsed, 0))));
+            }
+            if (sel.threadCount > 0) {
+                lines.add(Line.from(
+                        Span.styled("Thds: ", dim),
+                        Span.raw(sel.threadCount + " / " + sel.peakThreadCount)));
+            }
+        } else {
+            lines.add(Line.from(Span.raw("-")));
+        }
+        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).build(), inner);
     }
 
     // ---- Tab 2: Routes ----
@@ -1633,24 +1715,13 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderDiagram(Frame frame, Rect area) {
-        IntegrationInfo sel = findSelectedIntegration();
-
-        // Split: diagram (fill) + info panel (24 cols)
-        List<Rect> hSplit = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(24))
-                .split(area);
-        Rect diagramArea = hSplit.get(0);
-        Rect infoArea = hSplit.get(1);
-
-        Rect area2 = diagramArea;
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(diagramTextMode ? "" : " Diagram [" + diagramRouteId + "] ")
                 .build();
 
         if (diagramFullImageData != null) {
-            renderImageDiagram(frame, area2, block);
-            renderDiagramInfoPanel(frame, infoArea, sel);
+            renderImageDiagram(frame, area, block);
             return;
         }
 
@@ -1660,7 +1731,7 @@ public class CamelMonitor extends CamelCommand {
             maxWidth = Math.max(maxWidth, CharWidth.of(line));
         }
 
-        Rect inner = block.inner(area2);
+        Rect inner = block.inner(area);
         // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
         int visibleLines = Math.max(1, inner.height() - 1);
         int visibleCols = Math.max(1, inner.width() - 1);
@@ -1682,7 +1753,7 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Layout: outer block wraps everything, inner splits content + scrollbars
-        frame.renderWidget(block, area2);
+        frame.renderWidget(block, area);
 
         // Vertical layout inside the block: [content row (fill), horizontal scrollbar (1 row)]
         List<Rect> vChunks = Layout.vertical()
@@ -1717,28 +1788,6 @@ public class CamelMonitor extends CamelCommand {
                     Scrollbar.horizontal(),
                     vChunks.get(1), diagramHScrollState);
         }
-
-        renderDiagramInfoPanel(frame, infoArea, sel);
-    }
-
-    private void renderDiagramInfoPanel(Frame frame, Rect area, IntegrationInfo sel) {
-        List<Line> infoLines = new ArrayList<>();
-        if (sel != null) {
-            infoLines.add(Line.from(Span.styled("HEAP", Style.EMPTY.bold())));
-            String heap = formatMemory(sel.heapMemUsed, sel.heapMemMax);
-            long pct = sel.heapMemMax > 0 ? sel.heapMemUsed * 100 / sel.heapMemMax : 0;
-            infoLines.add(Line.from(Span.raw(heap.isEmpty() ? "-" : heap + " (" + pct + "%)")));
-            infoLines.add(Line.from(Span.raw("")));
-            infoLines.add(Line.from(Span.styled("THREADS", Style.EMPTY.bold())));
-            infoLines.add(Line.from(Span.raw("Current: " + sel.threadCount)));
-            infoLines.add(Line.from(Span.raw("Peak:    " + sel.peakThreadCount)));
-        }
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(infoLines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build())
-                        .build(),
-                area);
     }
 
     private void renderImageDiagram(Frame frame, Rect area, Block block) {
@@ -3850,6 +3899,9 @@ public class CamelMonitor extends CamelCommand {
         JsonObject runtime = (JsonObject) root.get("runtime");
         info.platform = runtime != null ? runtime.getString("platform") : null;
         info.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
+        info.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
+        info.javaVendor = runtime != null ? runtime.getString("javaVendor") : null;
+        info.javaVmName = runtime != null ? runtime.getString("javaVmName") : null;
 
         Map<String, ?> stats = context.getMap("statistics");
         if (stats != null) {
@@ -3884,6 +3936,7 @@ public class CamelMonitor extends CamelCommand {
         if (mem != null) {
             info.heapMemUsed = mem.getLongOrDefault("heapMemoryUsed", 0L);
             info.heapMemMax = mem.getLongOrDefault("heapMemoryMax", 0L);
+            info.nonHeapMemUsed = mem.getLongOrDefault("nonHeapMemoryUsed", 0L);
         }
 
         JsonObject threads = (JsonObject) root.get("threads");
@@ -4186,6 +4239,9 @@ public class CamelMonitor extends CamelCommand {
         String camelVersion;
         String platform;
         String platformVersion;
+        String javaVersion;
+        String javaVendor;
+        String javaVmName;
         String profile;
         String ready;
         int state;
@@ -4205,6 +4261,7 @@ public class CamelMonitor extends CamelCommand {
         int routeTotal;
         long heapMemUsed;
         long heapMemMax;
+        long nonHeapMemUsed;
         int threadCount;
         int peakThreadCount;
         boolean vanishing;
