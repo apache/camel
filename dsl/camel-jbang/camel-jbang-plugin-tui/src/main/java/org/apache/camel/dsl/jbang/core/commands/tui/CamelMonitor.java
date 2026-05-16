@@ -254,6 +254,15 @@ public class CamelMonitor extends CamelCommand {
     private int diagramCropH = -1;
 
     private volatile long lastRefresh;
+    private boolean showSource;
+    private List<String> sourceLines = Collections.emptyList();
+    private String sourceTitle;
+    private int sourceScroll;
+    private int sourceScrollX;
+    private final ScrollbarState sourceVScrollState = new ScrollbarState();
+    private final ScrollbarState sourceHScrollState = new ScrollbarState();
+    private final AtomicBoolean sourceLoading = new AtomicBoolean(false);
+
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
     private final AtomicBoolean diagramLoading = new AtomicBoolean(false);
     private TuiRunner runner;
@@ -296,6 +305,10 @@ public class CamelMonitor extends CamelCommand {
         if (event instanceof KeyEvent ke) {
             // Escape: navigate back
             if (ke.isCancel()) {
+                if (showSource) {
+                    showSource = false;
+                    return true;
+                }
                 if (showDiagram) {
                     showDiagram = false;
                     diagramImageData = null;
@@ -520,6 +533,37 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
+            if (tab == TAB_ROUTES && ke.isChar('c')) {
+                if (showSource) {
+                    showSource = false;
+                } else {
+                    loadSourceForSelectedRoute();
+                }
+                return true;
+            }
+            if (tab == TAB_ROUTES && showSource) {
+                if (ke.isUp()) {
+                    sourceScroll = Math.max(0, sourceScroll - 1);
+                } else if (ke.isDown()) {
+                    sourceScroll++;
+                } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
+                    sourceScroll = Math.max(0, sourceScroll - 20);
+                } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+                    sourceScroll += 20;
+                } else if (ke.isLeft()) {
+                    sourceScrollX = Math.max(0, sourceScrollX - 1);
+                } else if (ke.isRight()) {
+                    sourceScrollX++;
+                } else if (ke.isHome()) {
+                    sourceScroll = 0;
+                    sourceScrollX = 0;
+                } else if (ke.isEnd()) {
+                    sourceScroll = Integer.MAX_VALUE;
+                } else {
+                    return false;
+                }
+                return true;
+            }
             if (tab == TAB_ROUTES && showDiagram && ke.isCharIgnoreCase('m')) {
                 diagramMetrics = !diagramMetrics;
                 diagramLoading.set(false);
@@ -747,6 +791,12 @@ public class CamelMonitor extends CamelCommand {
     // NOTE: When adding a new tab, reset its view state here too so switching integrations
     // on the Overview always shows a clean slate for the newly selected integration.
     private void resetIntegrationTabState() {
+        // Source (TAB_ROUTES)
+        showSource = false;
+        sourceLines = Collections.emptyList();
+        sourceTitle = null;
+        sourceScroll = 0;
+        sourceScrollX = 0;
         // Diagram (TAB_ROUTES)
         showDiagram = false;
         diagramImageData = null;
@@ -1277,6 +1327,16 @@ public class CamelMonitor extends CamelCommand {
         IntegrationInfo info = findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
+            return;
+        }
+
+        // Fullscreen source view
+        if (showSource) {
+            List<Rect> fullChunks = Layout.vertical()
+                    .constraints(Constraint.length(4), Constraint.fill())
+                    .split(area);
+            renderRouteHeader(frame, fullChunks.get(0), info);
+            renderSource(frame, fullChunks.get(1));
             return;
         }
 
@@ -2095,6 +2155,121 @@ public class CamelMonitor extends CamelCommand {
         });
     }
 
+    private void loadSourceForSelectedRoute() {
+        if (selectedPid == null || runner == null) {
+            return;
+        }
+        if (!sourceLoading.compareAndSet(false, true)) {
+            return;
+        }
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null || info.routes.isEmpty()) {
+            sourceLoading.set(false);
+            return;
+        }
+        List<RouteInfo> sortedRoutes = new ArrayList<>(info.routes);
+        sortedRoutes.sort(this::sortRoute);
+        Integer sel = routeTableState.selected();
+        RouteInfo selectedRoute = (sel != null && sel >= 0 && sel < sortedRoutes.size())
+                ? sortedRoutes.get(sel) : sortedRoutes.get(0);
+
+        sourceLines = List.of("(Loading source...)");
+        sourceTitle = selectedRoute.routeId;
+        sourceScroll = 0;
+        sourceScrollX = 0;
+        showSource = true;
+
+        String pid = selectedPid;
+        String routeId = selectedRoute.routeId;
+        runner.scheduler().execute(() -> {
+            try {
+                loadSourceInBackground(pid, routeId);
+            } finally {
+                sourceLoading.set(false);
+            }
+        });
+    }
+
+    private void loadSourceInBackground(String pid, String routeId) {
+        Path outputFile = getOutputFile(pid);
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "source");
+        root.put("filter", routeId);
+
+        Path actionFile = getActionFile(pid);
+        org.apache.camel.dsl.jbang.core.common.PathUtils.writeTextSafely(root.toJson(), actionFile);
+
+        JsonObject jo = pollJsonResponse(outputFile, 5000);
+        PathUtils.deleteFile(outputFile);
+
+        if (jo == null) {
+            applySourceResult(routeId, null, List.of("(No response from integration)"));
+            return;
+        }
+
+        JsonArray routes = (JsonArray) jo.get("routes");
+        if (routes == null || routes.isEmpty()) {
+            applySourceResult(routeId, null, List.of("(No source available for route: " + routeId + ")"));
+            return;
+        }
+
+        JsonObject routeObj = (JsonObject) routes.get(0);
+        String sourceLocation = objToString(routeObj.get("source"));
+        List<JsonObject> codeLines = routeObj.getCollection("code");
+        if (codeLines == null || codeLines.isEmpty()) {
+            applySourceResult(routeId, sourceLocation, List.of("(No source code available)"));
+            return;
+        }
+
+        List<String> lines = new ArrayList<>();
+        int maxLineNum = 0;
+        for (JsonObject codeLine : codeLines) {
+            Integer lineNum = codeLine.getInteger("line");
+            if (lineNum != null && lineNum > maxLineNum) {
+                maxLineNum = lineNum;
+            }
+        }
+        int lineNumWidth = String.valueOf(maxLineNum).length();
+        int matchLine = -1;
+        int idx = 0;
+        for (JsonObject codeLine : codeLines) {
+            Integer lineNum = codeLine.getInteger("line");
+            String code = Jsoner.unescape(objToString(codeLine.get("code")));
+            Boolean match = codeLine.getBoolean("match");
+            String prefix = lineNum != null
+                    ? String.format("%" + lineNumWidth + "d  ", lineNum)
+                    : String.format("%" + lineNumWidth + "s  ", "");
+            lines.add(prefix + code);
+            if (Boolean.TRUE.equals(match) && matchLine < 0) {
+                matchLine = idx;
+            }
+            idx++;
+        }
+
+        int scrollTo = matchLine > 0 ? Math.max(0, matchLine - 2) : 0;
+        applySourceResult(routeId, sourceLocation, lines, scrollTo);
+    }
+
+    private void applySourceResult(String routeId, String location, List<String> lines) {
+        applySourceResult(routeId, location, lines, 0);
+    }
+
+    private void applySourceResult(String routeId, String location, List<String> lines, int scrollTo) {
+        if (runner == null) {
+            return;
+        }
+        runner.runOnRenderThread(() -> {
+            if (!showSource) {
+                return; // user cancelled via Esc while loading
+            }
+            sourceTitle = location != null ? routeId + "  " + location : routeId;
+            sourceLines = lines;
+            sourceScroll = scrollTo;
+        });
+    }
+
     private void loadDiagramInBackground(String pid, boolean textMode, String routeId, boolean metrics) {
         Path outputFile = getOutputFile(pid);
         PathUtils.deleteFile(outputFile);
@@ -2370,6 +2545,46 @@ public class CamelMonitor extends CamelCommand {
         if (b == null)
             return -1;
         return a.compareToIgnoreCase(b);
+    }
+
+    private void renderSource(Frame frame, Rect area) {
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" Source [" + (sourceTitle != null ? sourceTitle : "") + "] ")
+                .build();
+        Rect inner = block.inner(area);
+        frame.renderWidget(block, area);
+
+        if (sourceLines.isEmpty()) {
+            return;
+        }
+
+        int visibleLines = inner.height();
+        int maxScroll = Math.max(0, sourceLines.size() - visibleLines);
+        sourceScroll = Math.min(sourceScroll, maxScroll);
+
+        int maxLineWidth = sourceLines.stream().mapToInt(String::length).max().orElse(0);
+        int maxHScroll = Math.max(0, maxLineWidth - inner.width());
+        sourceScrollX = Math.min(sourceScrollX, maxHScroll);
+
+        int end = Math.min(sourceScroll + visibleLines, sourceLines.size());
+        List<Line> visible = new ArrayList<>();
+        for (int i = sourceScroll; i < end; i++) {
+            String raw = sourceLines.get(i);
+            visible.add(TuiHelper.ansiToLine(raw, sourceScrollX));
+        }
+        frame.renderWidget(Paragraph.builder().text(Text.from(visible)).build(), inner);
+
+        // Vertical scrollbar
+        if (sourceLines.size() > visibleLines) {
+            sourceVScrollState.contentLength(sourceLines.size()).viewportContentLength(visibleLines).position(sourceScroll);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), inner, sourceVScrollState);
+        }
+        // Horizontal scrollbar
+        if (maxHScroll > 0) {
+            sourceHScrollState.contentLength(maxLineWidth).viewportContentLength(inner.width()).position(sourceScrollX);
+            frame.renderStatefulWidget(Scrollbar.horizontal(), inner, sourceHScrollState);
+        }
     }
 
     // ---- Tab 3: Health ----
@@ -3251,6 +3466,11 @@ public class CamelMonitor extends CamelCommand {
                 hint(spans, "Esc", "unselect");
             }
             hint(spans, "1-9", "tabs");
+        } else if (tab == TAB_ROUTES && showSource) {
+            hint(spans, "c/Esc", "close");
+            hint(spans, "\u2191\u2193\u2190\u2192", "scroll");
+            hint(spans, "PgUp/PgDn", "page");
+            hintLast(spans, "Home/End", "top/bottom");
         } else if (tab == TAB_ROUTES && showDiagram) {
             String closeKey = diagramTextMode ? "D" : "d";
             hint(spans, closeKey + "/Esc", "close");
@@ -3267,6 +3487,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
+            hint(spans, "c", "source");
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
             hint(spans, "1-9", "tabs");
