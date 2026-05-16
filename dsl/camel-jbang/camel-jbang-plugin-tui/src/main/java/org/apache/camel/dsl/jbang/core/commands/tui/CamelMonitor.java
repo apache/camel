@@ -771,7 +771,6 @@ public class CamelMonitor extends CamelCommand {
         IntegrationInfo sel = findSelectedIntegration();
         boolean hasSelection = selectedPid != null && sel != null;
         int routeCount = hasSelection ? sel.routes.size() : 0;
-        int logCount = hasSelection ? filteredLogEntries.size() : 0;
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
         int healthCount = hasSelection ? sel.healthChecks.size() : 0;
         int historyCount = hasSelection ? historyEntries.size() : 0;
@@ -780,7 +779,7 @@ public class CamelMonitor extends CamelCommand {
         Tabs tabs = Tabs.builder()
                 .titles(
                         badge(" 1 Overview ", activeCount),
-                        badge(" 2 Log ", logCount),
+                        Line.from(" 2 Log "),
                         badge(" 3 Routes ", routeCount),
                         badge(" 4 Endpoints ", endpointCount),
                         badge(" 5 Health ", healthCount),
