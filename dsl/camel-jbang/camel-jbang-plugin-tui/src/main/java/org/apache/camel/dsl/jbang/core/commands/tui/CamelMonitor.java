@@ -105,7 +105,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int MAX_SPARKLINE_POINTS = 60;
     private static final int MAX_LOG_LINES = 5000;
     private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 8;
+    private static final int NUM_TABS = 9;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
@@ -113,9 +113,10 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_ROUTES = 2;
     private static final int TAB_CONSUMERS = 3;
     private static final int TAB_ENDPOINTS = 4;
-    private static final int TAB_HEALTH = 5;
-    private static final int TAB_HISTORY = 6;
-    private static final int TAB_TRACE = 7;
+    private static final int TAB_CIRCUIT_BREAKER = 5;
+    private static final int TAB_HEALTH = 6;
+    private static final int TAB_HISTORY = 7;
+    private static final int TAB_TRACE = 8;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "status", "total", "fail" };
@@ -128,6 +129,9 @@ public class CamelMonitor extends CamelCommand {
 
     // Endpoint sort columns (order matches table column order)
     private static final String[] ENDPOINT_SORT_COLUMNS = { "component", "route", "dir", "total", "uri" };
+
+    // Circuit breaker sort columns (order matches table column order)
+    private static final String[] CB_SORT_COLUMNS = { "route", "id", "component", "state" };
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -145,6 +149,7 @@ public class CamelMonitor extends CamelCommand {
     private final TableState consumerTableState = new TableState();
     private final TableState healthTableState = new TableState();
     private final TableState endpointTableState = new TableState();
+    private final TableState cbTableState = new TableState();
     private final TableState processorTableState = new TableState();
     private final TableState routeHeaderTableState = new TableState();
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
@@ -174,6 +179,10 @@ public class CamelMonitor extends CamelCommand {
 
     // Endpoint filter state
     private boolean showOnlyRemote;
+
+    // Circuit breaker sort state (default: route = index 0)
+    private String cbSort = "route";
+    private int cbSortIndex = 0;
 
     // Health filter state
     private boolean showOnlyDown;
@@ -328,12 +337,15 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_ENDPOINTS);
             }
             if (ke.isChar('6')) {
-                return handleTabKey(TAB_HEALTH);
+                return handleTabKey(TAB_CIRCUIT_BREAKER);
             }
             if (ke.isChar('7')) {
-                return handleTabKey(TAB_HISTORY);
+                return handleTabKey(TAB_HEALTH);
             }
             if (ke.isChar('8')) {
+                return handleTabKey(TAB_HISTORY);
+            }
+            if (ke.isChar('9')) {
                 return handleTabKey(TAB_TRACE);
             }
 
@@ -450,6 +462,13 @@ public class CamelMonitor extends CamelCommand {
             if (tab == TAB_CONSUMERS && ke.isCharIgnoreCase('s')) {
                 consumerSortIndex = (consumerSortIndex + 1) % CONSUMER_SORT_COLUMNS.length;
                 consumerSort = CONSUMER_SORT_COLUMNS[consumerSortIndex];
+                return true;
+            }
+
+            // Circuit breaker tab: sort
+            if (tab == TAB_CIRCUIT_BREAKER && ke.isCharIgnoreCase('s')) {
+                cbSortIndex = (cbSortIndex + 1) % CB_SORT_COLUMNS.length;
+                cbSort = CB_SORT_COLUMNS[cbSortIndex];
                 return true;
             }
 
@@ -704,6 +723,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_CONSUMERS -> consumerTableState.selectPrevious();
             case TAB_HEALTH -> healthTableState.selectPrevious();
             case TAB_ENDPOINTS -> endpointTableState.selectPrevious();
+            case TAB_CIRCUIT_BREAKER -> cbTableState.selectPrevious();
             case TAB_LOG -> {
                 logFollowMode = false;
                 logScroll = Math.max(0, logScroll - 1);
@@ -742,6 +762,10 @@ public class CamelMonitor extends CamelCommand {
             case TAB_ENDPOINTS -> {
                 IntegrationInfo info = findSelectedIntegration();
                 endpointTableState.selectNext(info != null ? info.endpoints.size() : 0);
+            }
+            case TAB_CIRCUIT_BREAKER -> {
+                IntegrationInfo info = findSelectedIntegration();
+                cbTableState.selectNext(info != null ? info.circuitBreakers.size() : 0);
             }
             case TAB_LOG -> logScroll++;
             case TAB_TRACE -> {
@@ -817,6 +841,9 @@ public class CamelMonitor extends CamelCommand {
         int routeCount = hasSelection ? sel.routes.size() : 0;
         int consumerCount = hasSelection ? sel.consumers.size() : 0;
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
+        int cbCount = hasSelection ? sel.circuitBreakers.size() : 0;
+        long cbOpenCount = hasSelection
+                ? sel.circuitBreakers.stream().filter(cb -> "OPEN".equals(cb.state)).count() : 0;
         int healthCount = hasSelection ? sel.healthChecks.size() : 0;
         long healthDownCount = hasSelection
                 ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
@@ -830,12 +857,13 @@ public class CamelMonitor extends CamelCommand {
                         badge(" 3 Routes ", routeCount),
                         badge(" 4 Consumers ", consumerCount),
                         badge(" 5 Endpoints ", endpointCount),
-                        badgeHealth(" 6 Health ", healthCount, healthDownCount),
-                        badge(" 7 History ", historyCount),
+                        badgeCb(" 6 Circuit Breaker ", cbCount, cbOpenCount),
+                        badgeHealth(" 7 Health ", healthCount, healthDownCount),
+                        badge(" 8 History ", historyCount),
                         hasTraces
-                                ? Line.from(Span.raw(" 8 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
+                                ? Line.from(Span.raw(" 9 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
                                         Span.raw(" "))
-                                : Line.from(" 8 Trace "))
+                                : Line.from(" 9 Trace "))
                 .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
@@ -852,8 +880,9 @@ public class CamelMonitor extends CamelCommand {
             case TAB_OVERVIEW -> renderOverview(frame, area);
             case TAB_ROUTES -> renderRoutes(frame, area);
             case TAB_CONSUMERS -> renderConsumers(frame, area);
-            case TAB_HEALTH -> renderHealth(frame, area);
             case TAB_ENDPOINTS -> renderEndpoints(frame, area);
+            case TAB_CIRCUIT_BREAKER -> renderCircuitBreaker(frame, area);
+            case TAB_HEALTH -> renderHealth(frame, area);
             case TAB_LOG -> renderLog(frame, area);
             case TAB_TRACE -> renderTrace(frame, area);
             case TAB_HISTORY -> renderHistory(frame, area);
@@ -1992,6 +2021,108 @@ public class CamelMonitor extends CamelCommand {
         return null;
     }
 
+    // ---- Tab 5: Circuit Breaker ----
+
+    private void renderCircuitBreaker(Frame frame, Rect area) {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null) {
+            renderNoSelection(frame, area);
+            return;
+        }
+
+        List<CircuitBreakerInfo> sorted = new ArrayList<>(info.circuitBreakers);
+        sorted.sort(this::sortCircuitBreaker);
+
+        List<Row> rows = new ArrayList<>();
+        for (CircuitBreakerInfo cb : sorted) {
+            Style stateStyle = switch (cb.state != null ? cb.state.toLowerCase() : "") {
+                case "closed" -> Style.EMPTY.fg(Color.GREEN);
+                case "open", "forced_open" -> Style.EMPTY.fg(Color.RED);
+                default -> Style.EMPTY.fg(Color.YELLOW); // half_open / half opened / unknown
+            };
+            String state = cb.state != null ? cb.state : "";
+            String pending = cb.bufferedCalls > 0 ? String.valueOf(cb.bufferedCalls) : "";
+            String success = cb.successfulCalls > 0 ? String.valueOf(cb.successfulCalls) : "";
+            String failed = cb.failedCalls > 0 ? String.valueOf(cb.failedCalls) : "";
+            String reject = cb.notPermittedCalls > 0 ? String.valueOf(cb.notPermittedCalls) : "";
+            String rate = cb.failureRate >= 0 ? String.format("%.0f%%", cb.failureRate) : "";
+
+            rows.add(Row.from(
+                    Cell.from(Span.styled(cb.routeId != null ? cb.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(cb.id != null ? cb.id : ""),
+                    Cell.from(cb.component != null ? cb.component : ""),
+                    Cell.from(Span.styled(state, stateStyle)),
+                    rightCell(pending, 8),
+                    rightCell(success, 8),
+                    rightCell(failed, 8),
+                    rightCell(rate, 6),
+                    rightCell(reject, 8)));
+        }
+
+        if (rows.isEmpty()) {
+            rows.add(Row.from(
+                    Cell.from(Span.styled("No circuit breakers", Style.EMPTY.dim())),
+                    Cell.from(""), Cell.from(""), Cell.from(""),
+                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+        }
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled(cbSortLabel("ROUTE", "route"), cbSortStyle("route"))),
+                        Cell.from(Span.styled(cbSortLabel("ID", "id"), cbSortStyle("id"))),
+                        Cell.from(Span.styled(cbSortLabel("COMPONENT", "component"), cbSortStyle("component"))),
+                        Cell.from(Span.styled(cbSortLabel("STATE", "state"), cbSortStyle("state"))),
+                        rightCell("PENDING", 8, Style.EMPTY.bold()),
+                        rightCell("SUCCESS", 8, Style.EMPTY.bold()),
+                        rightCell("FAIL", 8, Style.EMPTY.bold()),
+                        rightCell("RATE%", 6, Style.EMPTY.bold()),
+                        rightCell("REJECT", 8, Style.EMPTY.bold())))
+                .widths(
+                        Constraint.length(20),
+                        Constraint.length(20),
+                        Constraint.length(16),
+                        Constraint.length(12),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(6),
+                        Constraint.fill())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Circuit Breaker ").build())
+                .build();
+
+        frame.renderStatefulWidget(table, area, cbTableState);
+    }
+
+    private String cbSortLabel(String label, String column) {
+        return cbSort.equals(column) ? label + " ▴" : label;
+    }
+
+    private Style cbSortStyle(String column) {
+        return cbSort.equals(column) ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.bold();
+    }
+
+    private int sortCircuitBreaker(CircuitBreakerInfo a, CircuitBreakerInfo b) {
+        return switch (cbSort) {
+            case "id" -> compareStr(a.id, b.id);
+            case "component" -> compareStr(a.component, b.component);
+            case "state" -> compareStr(a.state, b.state);
+            default -> compareStr(a.routeId, b.routeId); // "route"
+        };
+    }
+
+    private static int compareStr(String a, String b) {
+        if (a == null && b == null)
+            return 0;
+        if (a == null)
+            return 1;
+        if (b == null)
+            return -1;
+        return a.compareToIgnoreCase(b);
+    }
+
     // ---- Tab 3: Health ----
 
     private void renderHealth(Frame frame, Rect area) {
@@ -2869,7 +3000,7 @@ public class CamelMonitor extends CamelCommand {
             if (selectedPid != null) {
                 hint(spans, "Esc", "unselect");
             }
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_ROUTES && showDiagram) {
             String closeKey = diagramTextMode ? "D" : "d";
             hint(spans, closeKey + "/Esc", "close");
@@ -2888,23 +3019,28 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "s", "sort");
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CONSUMERS) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_ENDPOINTS) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "r", "remote" + (showOnlyRemote ? " [on]" : " [off]"));
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
+        } else if (tab == TAB_CIRCUIT_BREAKER) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "s", "sort");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "d", "toggle DOWN");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_LOG) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "scroll");
@@ -2949,7 +3085,7 @@ public class CamelMonitor extends CamelCommand {
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -2979,6 +3115,16 @@ public class CamelMonitor extends CamelCommand {
         int padding = Math.max(0, width - len);
         int leftPad = padding / 2;
         return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
+    }
+
+    private static Line badgeCb(String label, long total, long open) {
+        if (open > 0) {
+            return Line.from(
+                    Span.raw(label),
+                    Span.styled("(" + open + " OPEN)", Style.EMPTY.fg(Color.RED).bold()),
+                    Span.raw(" "));
+        }
+        return badge(label, total);
     }
 
     private static Line badgeHealth(String label, long total, long down) {
@@ -3766,7 +3912,43 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
+        // Parse circuit breakers: resilience4j, fault-tolerance, core
+        parseCbSection(root, "resilience4j", info);
+        parseCbSection(root, "fault-tolerance", info);
+        parseCbSection(root, "circuit-breaker", info);
+
         return info;
+    }
+
+    private static void parseCbSection(JsonObject root, String key, IntegrationInfo info) {
+        JsonObject section = (JsonObject) root.get(key);
+        if (section == null) {
+            return;
+        }
+        JsonArray breakers = (JsonArray) section.get("circuitBreakers");
+        if (breakers == null) {
+            return;
+        }
+        String component = switch (key) {
+            case "resilience4j" -> "resilience4j";
+            case "fault-tolerance" -> "fault-tolerance";
+            default -> "core";
+        };
+        for (Object b : breakers) {
+            JsonObject bj = (JsonObject) b;
+            CircuitBreakerInfo cb = new CircuitBreakerInfo();
+            cb.component = component;
+            cb.routeId = bj.getString("routeId");
+            cb.id = bj.getString("id");
+            cb.state = bj.getString("state");
+            cb.bufferedCalls = bj.getIntegerOrDefault("bufferedCalls", 0);
+            cb.successfulCalls = TuiHelper.objToLong(bj.get("successfulCalls"));
+            cb.failedCalls = TuiHelper.objToLong(bj.get("failedCalls"));
+            cb.notPermittedCalls = TuiHelper.objToLong(bj.get("notPermittedCalls"));
+            Object fr = bj.get("failureRate");
+            cb.failureRate = fr instanceof Number n ? n.doubleValue() : -1;
+            info.circuitBreakers.add(cb);
+        }
     }
 
     // ---- Helpers ----
@@ -3896,6 +4078,7 @@ public class CamelMonitor extends CamelCommand {
         final List<ConsumerInfo> consumers = new ArrayList<>();
         final List<HealthCheckInfo> healthChecks = new ArrayList<>();
         final List<EndpointInfo> endpoints = new ArrayList<>();
+        final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
     }
 
     static class RouteInfo {
@@ -3962,6 +4145,18 @@ public class CamelMonitor extends CamelCommand {
         long hits;
         boolean stub;
         boolean remote;
+    }
+
+    static class CircuitBreakerInfo {
+        String routeId;
+        String id;
+        String component; // "resilience4j", "fault-tolerance", "core"
+        String state;
+        int bufferedCalls;
+        long successfulCalls;
+        long failedCalls;
+        long notPermittedCalls;
+        double failureRate; // -1 means not available
     }
 
     static class TraceEntry {
