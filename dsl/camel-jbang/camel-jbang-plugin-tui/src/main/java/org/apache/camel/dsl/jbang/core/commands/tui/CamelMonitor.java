@@ -2441,7 +2441,7 @@ public class CamelMonitor extends CamelCommand {
         } else if (last) {
             dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
         } else {
-            dirStyle = Style.EMPTY;
+            dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY;
         }
         String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
         return Row.from(
