@@ -1149,8 +1149,8 @@ public class CamelMonitor extends CamelCommand {
         // Synthetic top row representing the route itself
         Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.CYAN);
         rows.add(Row.from(
-                Cell.from("route"),
-                Cell.from(Span.styled("  " + (route.from != null ? route.from : route.routeId), routeStyle)),
+                Cell.from("   route"),
+                Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
                 Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                 rightCell(String.valueOf(route.total), 8),
                 rightCell(String.valueOf(route.failed), 6,
@@ -1162,11 +1162,11 @@ public class CamelMonitor extends CamelCommand {
                 Cell.from("")));
 
         for (ProcessorInfo proc : route.processors) {
-            String indent = "  ".repeat(proc.level + 1); // +1 to nest under route row
+            String indent = "  ".repeat(proc.level);
             Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.CYAN);
 
             rows.add(Row.from(
-                    Cell.from(proc.processor != null ? proc.processor : ""),
+                    Cell.from("   " + (proc.processor != null ? proc.processor : "")),
                     Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                     rightCell(String.valueOf(proc.total), 8),
@@ -1182,7 +1182,7 @@ public class CamelMonitor extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("TYPE", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
                         Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
                         Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                         rightCell("TOTAL", 8, Style.EMPTY.bold()),
@@ -1202,8 +1202,6 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(8),
                         Constraint.length(14),
                         Constraint.length(12))
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(" Processors [" + route.routeId + "] ").build())
                 .build();
