@@ -1910,15 +1910,10 @@ public class CamelMonitor extends CamelCommand {
         }
         logScroll = Math.min(logScroll, Math.max(0, contentHeight - visibleHeight));
 
+        int hSkip = logWordWrap ? 0 : logHScroll;
         List<Line> lines = new ArrayList<>();
         for (LogEntry entry : entries) {
-            String raw = entry.raw != null ? entry.raw : "";
-            if (!logWordWrap && logHScroll > 0) {
-                int total = CharWidth.of(raw);
-                int remaining = total - logHScroll;
-                raw = remaining > 0 ? CharWidth.substringByWidthFromEnd(raw, remaining) : "";
-            }
-            lines.add(Line.from(Span.raw(raw)));
+            lines.add(TuiHelper.ansiToLine(entry.raw != null ? entry.raw : "", hSkip));
         }
 
         List<Rect> hChunks = Layout.horizontal()
@@ -1962,7 +1957,7 @@ public class CamelMonitor extends CamelCommand {
             String[] rawLines = content.split("\n", -1);
             int start = Math.max(0, rawLines.length - MAX_LOG_LINES);
             for (int i = start; i < rawLines.length; i++) {
-                String line = TuiHelper.stripAnsi(rawLines[i]);
+                String line = TuiHelper.fixControlChars(rawLines[i]);
                 if (!line.isEmpty()) {
                     target.add(line);
                 }
@@ -1994,7 +1989,8 @@ public class CamelMonitor extends CamelCommand {
         LogEntry entry = new LogEntry();
         entry.raw = line;
         try {
-            Matcher m = LOG_PATTERN.matcher(line);
+            String plain = TuiHelper.stripAnsi(line);
+            Matcher m = LOG_PATTERN.matcher(plain);
             if (m.matches()) {
                 entry.time = m.group(2); // HH:mm:ss.SSS...
                 // Truncate time to 12 chars (HH:mm:ss.SSS)
@@ -2012,12 +2008,12 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 entry.time = "";
                 entry.level = "INFO";
-                entry.message = line;
+                entry.message = plain;
             }
         } catch (Exception e) {
             entry.time = "";
             entry.level = "INFO";
-            entry.message = line;
+            entry.message = TuiHelper.stripAnsi(line);
         }
         return entry;
     }
