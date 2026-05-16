@@ -1635,31 +1635,12 @@ public class CamelMonitor extends CamelCommand {
     private void renderDiagram(Frame frame, Rect area) {
         IntegrationInfo sel = findSelectedIntegration();
 
-        // Split: diagram (fill) + info panel (22 cols)
+        // Split: diagram (fill) + info panel (24 cols)
         List<Rect> hSplit = Layout.horizontal()
-                .constraints(Constraint.fill(), Constraint.length(22))
+                .constraints(Constraint.fill(), Constraint.length(24))
                 .split(area);
         Rect diagramArea = hSplit.get(0);
         Rect infoArea = hSplit.get(1);
-
-        // Info panel: heap and threads
-        List<Line> infoLines = new ArrayList<>();
-        if (sel != null) {
-            infoLines.add(Line.from(Span.styled("HEAP", Style.EMPTY.bold())));
-            String heap = formatMemory(sel.heapMemUsed, sel.heapMemMax);
-            long pct = sel.heapMemMax > 0 ? sel.heapMemUsed * 100 / sel.heapMemMax : 0;
-            infoLines.add(Line.from(heap.isEmpty() ? "-" : heap + " (" + pct + "%)"));
-            infoLines.add(Line.from(""));
-            infoLines.add(Line.from(Span.styled("THREADS", Style.EMPTY.bold())));
-            infoLines.add(Line.from("Current: " + sel.threadCount));
-            infoLines.add(Line.from("Peak:    " + sel.peakThreadCount));
-        }
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(infoLines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build())
-                        .build(),
-                infoArea);
 
         Rect area2 = diagramArea;
         Block block = Block.builder()
@@ -1669,6 +1650,7 @@ public class CamelMonitor extends CamelCommand {
 
         if (diagramFullImageData != null) {
             renderImageDiagram(frame, area2, block);
+            renderDiagramInfoPanel(frame, infoArea, sel);
             return;
         }
 
@@ -1735,6 +1717,28 @@ public class CamelMonitor extends CamelCommand {
                     Scrollbar.horizontal(),
                     vChunks.get(1), diagramHScrollState);
         }
+
+        renderDiagramInfoPanel(frame, infoArea, sel);
+    }
+
+    private void renderDiagramInfoPanel(Frame frame, Rect area, IntegrationInfo sel) {
+        List<Line> infoLines = new ArrayList<>();
+        if (sel != null) {
+            infoLines.add(Line.from(Span.styled("HEAP", Style.EMPTY.bold())));
+            String heap = formatMemory(sel.heapMemUsed, sel.heapMemMax);
+            long pct = sel.heapMemMax > 0 ? sel.heapMemUsed * 100 / sel.heapMemMax : 0;
+            infoLines.add(Line.from(Span.raw(heap.isEmpty() ? "-" : heap + " (" + pct + "%)")));
+            infoLines.add(Line.from(Span.raw("")));
+            infoLines.add(Line.from(Span.styled("THREADS", Style.EMPTY.bold())));
+            infoLines.add(Line.from(Span.raw("Current: " + sel.threadCount)));
+            infoLines.add(Line.from(Span.raw("Peak:    " + sel.peakThreadCount)));
+        }
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(infoLines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build())
+                        .build(),
+                area);
     }
 
     private void renderImageDiagram(Frame frame, Rect area, Block block) {
