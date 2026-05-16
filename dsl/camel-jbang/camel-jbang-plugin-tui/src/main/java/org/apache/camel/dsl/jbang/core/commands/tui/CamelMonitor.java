@@ -156,7 +156,9 @@ public class CamelMonitor extends CamelCommand {
 
     // Sparkline: throughput history per PID (one point per second)
     private final Map<String, LinkedList<Long>> throughputHistory = new ConcurrentHashMap<>();
-    // Sliding window of [timestamp, exchangesTotal] samples for smoothing
+    // Sparkline: failed throughput history per PID (one point per second)
+    private final Map<String, LinkedList<Long>> failedHistory = new ConcurrentHashMap<>();
+    // Sliding window of [timestamp, exchangesTotal, exchangesFailed] samples for smoothing
     private final Map<String, LinkedList<long[]>> throughputSamples = new ConcurrentHashMap<>();
     // Track last time a sparkline point was recorded
     private final Map<String, Long> previousExchangesTime = new ConcurrentHashMap<>();
@@ -1000,28 +1002,43 @@ public class CamelMonitor extends CamelCommand {
 
         frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
 
-        // Sparkline for throughput
+        // Split green/red throughput bar chart
         if (hasSparkline && chunks.size() > 1) {
-            // Merge all throughput histories for overview chart
-            LinkedList<Long> merged = new LinkedList<>();
-            for (int i = 0; i < MAX_SPARKLINE_POINTS; i++) {
-                long sum = 0;
+            // Render last 30 ticks as pairs of bars (ok=green, failed=red) to keep ~60 columns
+            int renderPoints = Math.min(30, MAX_SPARKLINE_POINTS);
+            long[] mergedTotal = new long[renderPoints];
+            long[] mergedFailed = new long[renderPoints];
+            for (int i = 0; i < renderPoints; i++) {
                 for (LinkedList<Long> hist : throughputHistory.values()) {
-                    if (i < hist.size()) {
-                        sum += hist.get(hist.size() - 1 - i);
+                    int idx = hist.size() - renderPoints + i;
+                    if (idx >= 0) {
+                        mergedTotal[i] += hist.get(idx);
                     }
                 }
-                merged.addFirst(sum);
+                for (LinkedList<Long> hist : failedHistory.values()) {
+                    int idx = hist.size() - renderPoints + i;
+                    if (idx >= 0) {
+                        mergedFailed[i] += hist.get(idx);
+                    }
+                }
             }
 
-            // Compute stats for title display
-            long maxTp = merged.stream().mapToLong(Long::longValue).max().orElse(0);
-            long curTp = merged.isEmpty() ? 0 : merged.get(merged.size() - 1);
-            String chartTitle = String.format(" Throughput: %d msg/s (peak: %d) ", curTp, maxTp);
+            long maxTp = 0;
+            for (long v : mergedTotal) {
+                maxTp = Math.max(maxTp, v);
+            }
+            long curTp = mergedTotal[renderPoints - 1];
+            long curFailed = mergedFailed[renderPoints - 1];
+            long curOk = Math.max(0, curTp - curFailed);
+            String chartTitle = String.format(" Throughput: %d msg/s (%d ok / %d failed) ", curTp, curOk, curFailed);
 
             List<BarGroup> groups = new ArrayList<>();
-            for (Long value : merged) {
-                groups.add(BarGroup.of(Bar.of(value)));
+            for (int i = 0; i < renderPoints; i++) {
+                long failed = Math.min(mergedFailed[i], mergedTotal[i]);
+                long ok = Math.max(0, mergedTotal[i] - failed);
+                groups.add(BarGroup.of(
+                        Bar.builder().value(ok).style(Style.EMPTY.fg(Color.GREEN)).build(),
+                        Bar.builder().value(failed).style(Style.EMPTY.fg(Color.RED)).build()));
             }
 
             BarChart barChart = BarChart.builder()
@@ -1029,7 +1046,7 @@ public class CamelMonitor extends CamelCommand {
                     .max(maxTp > 0 ? maxTp + 2 : 2)
                     .barWidth(1)
                     .barGap(0)
-                    .barStyle(Style.EMPTY.fg(Color.GREEN))
+                    .groupGap(0)
                     .block(Block.builder().borderType(BorderType.ROUNDED).title(chartTitle).build())
                     .build();
 
@@ -3219,6 +3236,7 @@ public class CamelMonitor extends CamelCommand {
                 if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
                     it.remove();
                     throughputHistory.remove(entry.getKey());
+                    failedHistory.remove(entry.getKey());
                 } else if (!livePids.contains(entry.getKey())) {
                     IntegrationInfo ghost = entry.getValue().info;
                     ghost.vanishing = true;
@@ -3249,13 +3267,14 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void updateThroughputHistory(IntegrationInfo info) {
-        // Track exchangesTotal over a 1-second sliding window for stable throughput
+        // Track exchangesTotal and exchangesFailed over a 1-second sliding window
         long currentTotal = info.exchangesTotal;
+        long currentFailed = info.failed;
         long now = System.currentTimeMillis();
 
         String pid = info.pid;
         LinkedList<long[]> samples = throughputSamples.computeIfAbsent(pid, k -> new LinkedList<>());
-        samples.add(new long[] { now, currentTotal });
+        samples.add(new long[] { now, currentTotal, currentFailed });
 
         // Remove samples older than 1 second
         while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
@@ -3266,18 +3285,25 @@ public class CamelMonitor extends CamelCommand {
         if (samples.size() >= 2) {
             long[] oldest = samples.get(0);
             long[] newest = samples.get(samples.size() - 1);
-            long deltaExchanges = newest[1] - oldest[1];
+            long deltaTotal = newest[1] - oldest[1];
+            long deltaFailed = newest[2] - oldest[2];
             long deltaTimeMs = newest[0] - oldest[0];
-            long tp = deltaTimeMs > 0 ? (deltaExchanges * 1000) / deltaTimeMs : 0;
+            long tp = deltaTimeMs > 0 ? (deltaTotal * 1000) / deltaTimeMs : 0;
+            long fp = deltaTimeMs > 0 ? (deltaFailed * 1000) / deltaTimeMs : 0;
 
-            LinkedList<Long> hist = throughputHistory.computeIfAbsent(pid, k -> new LinkedList<>());
             // Only add one point per second to keep the sparkline meaningful
             Long lastTime = previousExchangesTime.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
                 previousExchangesTime.put(pid, now);
+                LinkedList<Long> hist = throughputHistory.computeIfAbsent(pid, k -> new LinkedList<>());
                 hist.add(tp);
                 while (hist.size() > MAX_SPARKLINE_POINTS) {
                     hist.remove(0);
+                }
+                LinkedList<Long> fhist = failedHistory.computeIfAbsent(pid, k -> new LinkedList<>());
+                fhist.add(fp);
+                while (fhist.size() > MAX_SPARKLINE_POINTS) {
+                    fhist.remove(0);
                 }
             }
         }
