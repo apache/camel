@@ -933,7 +933,6 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle))));
             } else {
                 Style statusStyle = switch (extractState(info.state)) {
@@ -958,8 +957,7 @@ public class CamelMonitor extends CamelCommand {
                         rightCell(String.valueOf(info.exchangesTotal), 8),
                         rightCell(String.valueOf(info.failed), 6, failStyle),
                         rightCell(String.valueOf(info.inflight), 8),
-                        Cell.from(sinceLastDisplay),
-                        Cell.from(formatMemory(info.heapMemUsed, info.heapMemMax))));
+                        Cell.from(sinceLastDisplay)));
             }
         }
 
@@ -975,8 +973,7 @@ public class CamelMonitor extends CamelCommand {
                 rightCell(overviewSortLabel("TOTAL", "total"), 8, overviewSortStyle("total")),
                 rightCell(overviewSortLabel("FAIL", "fail"), 6, overviewSortStyle("fail")),
                 rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
-                Cell.from(Span.styled("HEAP", Style.EMPTY.bold())));
+                Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())));
 
         Table table = Table.builder()
                 .rows(rows)
@@ -993,8 +990,7 @@ public class CamelMonitor extends CamelCommand {
                         Constraint.length(8),
                         Constraint.length(6),
                         Constraint.length(8),
-                        Constraint.length(12),
-                        Constraint.length(14))
+                        Constraint.length(12))
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(" Integrations ").build())
@@ -1637,13 +1633,42 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderDiagram(Frame frame, Rect area) {
+        IntegrationInfo sel = findSelectedIntegration();
+
+        // Split: diagram (fill) + info panel (22 cols)
+        List<Rect> hSplit = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(22))
+                .split(area);
+        Rect diagramArea = hSplit.get(0);
+        Rect infoArea = hSplit.get(1);
+
+        // Info panel: heap and threads
+        List<Line> infoLines = new ArrayList<>();
+        if (sel != null) {
+            infoLines.add(Line.from(Span.styled("HEAP", Style.EMPTY.bold())));
+            String heap = formatMemory(sel.heapMemUsed, sel.heapMemMax);
+            long pct = sel.heapMemMax > 0 ? sel.heapMemUsed * 100 / sel.heapMemMax : 0;
+            infoLines.add(Line.from(heap.isEmpty() ? "-" : heap + " (" + pct + "%)"));
+            infoLines.add(Line.from(""));
+            infoLines.add(Line.from(Span.styled("THREADS", Style.EMPTY.bold())));
+            infoLines.add(Line.from("Current: " + sel.threadCount));
+            infoLines.add(Line.from("Peak:    " + sel.peakThreadCount));
+        }
+        frame.renderWidget(
+                Paragraph.builder()
+                        .text(Text.from(infoLines))
+                        .block(Block.builder().borderType(BorderType.ROUNDED).title(" Info ").build())
+                        .build(),
+                infoArea);
+
+        Rect area2 = diagramArea;
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
                 .title(diagramTextMode ? "" : " Diagram [" + diagramRouteId + "] ")
                 .build();
 
         if (diagramFullImageData != null) {
-            renderImageDiagram(frame, area, block);
+            renderImageDiagram(frame, area2, block);
             return;
         }
 
@@ -1653,7 +1678,7 @@ public class CamelMonitor extends CamelCommand {
             maxWidth = Math.max(maxWidth, CharWidth.of(line));
         }
 
-        Rect inner = block.inner(area);
+        Rect inner = block.inner(area2);
         // Reserve 1 col for vertical scrollbar, 1 row for horizontal scrollbar
         int visibleLines = Math.max(1, inner.height() - 1);
         int visibleCols = Math.max(1, inner.width() - 1);
@@ -1675,7 +1700,7 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Layout: outer block wraps everything, inner splits content + scrollbars
-        frame.renderWidget(block, area);
+        frame.renderWidget(block, area2);
 
         // Vertical layout inside the block: [content row (fill), horizontal scrollbar (1 row)]
         List<Rect> vChunks = Layout.vertical()
