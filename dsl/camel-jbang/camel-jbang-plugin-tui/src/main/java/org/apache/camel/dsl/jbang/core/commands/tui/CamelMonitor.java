@@ -67,7 +67,6 @@ import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.gauge.Gauge;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -1280,7 +1279,7 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(type),
                     rightCell(ci.inflight > 0 ? String.valueOf(ci.inflight) : "", 8),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
-                    Cell.from(period),
+                    rightCell(period, 10),
                     Cell.from(sinceLast),
                     Cell.from(ci.uri != null ? ci.uri : "")));
         }
@@ -1300,7 +1299,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled(consumerSortLabel("TYPE", "type"), consumerSortStyle("type"))),
                         rightCell(consumerSortLabel("INFLIGHT", "inflight"), 8, consumerSortStyle("inflight")),
                         rightCell(consumerSortLabel("TOTAL", "total"), 8, consumerSortStyle("total")),
-                        Cell.from(Span.styled("PERIOD", Style.EMPTY.bold())),
+                        rightCell("PERIOD", 10, Style.EMPTY.bold()),
                         Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
                         Cell.from(Span.styled(consumerSortLabel("URI", "uri"), consumerSortStyle("uri")))))
                 .widths(
@@ -1979,11 +1978,6 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Split: health table (fill) + memory gauge (3 rows)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(3))
-                .split(area);
-
         List<HealthCheckInfo> healthChecks = getFilteredHealthChecks(info);
 
         List<Row> rows = new ArrayList<>();
@@ -2050,23 +2044,7 @@ public class CamelMonitor extends CamelCommand {
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
                 .build();
 
-        frame.renderStatefulWidget(table, chunks.get(0), healthTableState);
-
-        // Memory gauge
-        if (info.heapMemMax > 0) {
-            int pct = (int) (100.0 * info.heapMemUsed / info.heapMemMax);
-            Style gaugeStyle = pct > 80 ? Style.EMPTY.fg(Color.RED)
-                    : pct > 60 ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY.fg(Color.GREEN);
-            Gauge gauge = Gauge.builder()
-                    .percent(pct)
-                    .label(String.format("Heap: %s / %s (%d%%)", formatBytes(info.heapMemUsed),
-                            formatBytes(info.heapMemMax), pct))
-                    .gaugeStyle(gaugeStyle)
-                    .block(Block.builder().borderType(BorderType.ROUNDED).build())
-                    .build();
-
-            frame.renderWidget(gauge, chunks.get(1));
-        }
+        frame.renderStatefulWidget(table, area, healthTableState);
     }
 
     private List<HealthCheckInfo> getFilteredHealthChecks(IntegrationInfo info) {
