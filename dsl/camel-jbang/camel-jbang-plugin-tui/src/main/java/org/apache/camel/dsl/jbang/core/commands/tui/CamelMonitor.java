@@ -901,12 +901,12 @@ public class CamelMonitor extends CamelCommand {
         List<IntegrationInfo> infos = new ArrayList<>(data.get());
         infos.sort(this::sortOverview);
 
-        // Split: table (fill) + sparkline (height 8) if we have data
+        // Split: table (fill) + chart (14 rows: 13 chart + 1 x-axis) if we have data
         boolean hasSparkline = !throughputHistory.isEmpty();
         List<Rect> chunks;
         if (hasSparkline) {
             chunks = Layout.vertical()
-                    .constraints(Constraint.fill(), Constraint.length(13))
+                    .constraints(Constraint.fill(), Constraint.length(14))
                     .split(area);
         } else {
             chunks = List.of(area);
@@ -1002,11 +1002,27 @@ public class CamelMonitor extends CamelCommand {
 
         frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
 
-        // Split green/red throughput bar chart
+        // Split green/red throughput bar chart with Y and X axes
         if (hasSparkline && chunks.size() > 1) {
-            // Render last 20 ticks as pairs of bars (ok=green, failed=red); barWidth=2 so
-            // double-digit values fit: 20 ticks × 2 bars × width 2 = ~80 columns
-            int renderPoints = Math.min(20, MAX_SPARKLINE_POINTS);
+            Rect chartTotalArea = chunks.get(1);
+
+            // Split chart area: chart rows (13) + x-axis label row (1)
+            List<Rect> vChunks = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(chartTotalArea);
+
+            // Split chart rows: y-axis labels (4 cols) + bar chart (fill)
+            List<Rect> hChunks = Layout.horizontal()
+                    .constraints(Constraint.length(4), Constraint.fill())
+                    .split(vChunks.get(0));
+
+            Rect barChartArea = hChunks.get(1);
+
+            // Compute how many ticks fit: each tick = 2 bars × barWidth=1 = 2 cols
+            int innerBarCols = Math.max(2, barChartArea.width() - 2); // minus block borders
+            int renderPoints = Math.min(MAX_SPARKLINE_POINTS, innerBarCols / 2);
+
+            // Merge throughput histories across all PIDs
             long[] mergedTotal = new long[renderPoints];
             long[] mergedFailed = new long[renderPoints];
             for (int i = 0; i < renderPoints; i++) {
@@ -1031,27 +1047,77 @@ public class CamelMonitor extends CamelCommand {
             long curTp = mergedTotal[renderPoints - 1];
             long curFailed = mergedFailed[renderPoints - 1];
             long curOk = Math.max(0, curTp - curFailed);
-            String chartTitle = String.format(" Throughput: %d msg/s (%d ok / %d failed) ", curTp, curOk, curFailed);
 
+            // Styled legend in chart title
+            Line titleLine = Line.from(
+                    Span.raw(String.format(" Throughput: %d msg/s  ", curTp)),
+                    Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
+                    Span.raw(String.format(" ok:%d  ", curOk)),
+                    Span.styled("■", Style.EMPTY.fg(Color.RED)),
+                    Span.raw(String.format(" fail:%d ", curFailed)));
+
+            // Build bar groups (ok=green, failed=red), no bar value labels
             List<BarGroup> groups = new ArrayList<>();
             for (int i = 0; i < renderPoints; i++) {
                 long failed = Math.min(mergedFailed[i], mergedTotal[i]);
                 long ok = Math.max(0, mergedTotal[i] - failed);
                 groups.add(BarGroup.of(
-                        Bar.builder().value(ok).style(Style.EMPTY.fg(Color.GREEN)).build(),
-                        Bar.builder().value(failed).style(Style.EMPTY.fg(Color.RED)).build()));
+                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.GREEN)).build(),
+                        Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
             }
 
             BarChart barChart = BarChart.builder()
                     .data(groups)
                     .max(maxTp > 0 ? maxTp + 2 : 2)
-                    .barWidth(2)
+                    .barWidth(1)
                     .barGap(0)
                     .groupGap(0)
-                    .block(Block.builder().borderType(BorderType.ROUNDED).title(chartTitle).build())
+                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .title(Title.from(titleLine)).build())
                     .build();
 
-            frame.renderWidget(barChart, chunks.get(1));
+            frame.renderWidget(barChart, barChartArea);
+
+            // Y-axis: scale labels aligned with bar chart inner rows
+            int barRows = vChunks.get(0).height() - 2; // minus top + bottom border
+            List<Line> yLines = new ArrayList<>();
+            Style dimStyle = Style.EMPTY.dim();
+            for (int row = 0; row < vChunks.get(0).height(); row++) {
+                int barRow = row - 1; // bar area starts after top border
+                if (barRow == 0) {
+                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp), dimStyle)));
+                } else if (barRows > 4 && barRow == barRows / 2) {
+                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp / 2), dimStyle)));
+                } else if (barRow == barRows - 1) {
+                    yLines.add(Line.from(Span.styled("  0", dimStyle)));
+                } else {
+                    yLines.add(Line.from(""));
+                }
+            }
+            frame.renderWidget(Paragraph.builder().text(Text.from(yLines)).build(), hChunks.get(0));
+
+            // X-axis: time labels drawn into the bottom row
+            if (!vChunks.get(1).isEmpty()) {
+                int barInnerStartX = barChartArea.x() + 1; // inside left border
+                int xAxisY = vChunks.get(1).y();
+                // Markers at: oldest, 1/4, 1/2, 3/4, newest
+                int[][] markerIndices = {
+                        { 0, renderPoints },
+                        { renderPoints / 4, renderPoints - renderPoints / 4 },
+                        { renderPoints / 2, renderPoints / 2 },
+                        { 3 * renderPoints / 4, renderPoints / 4 },
+                        { renderPoints - 1, 0 }
+                };
+                for (int[] m : markerIndices) {
+                    int groupIdx = m[0];
+                    int secsAgo = m[1];
+                    String label = secsAgo == 0 ? "now" : "-" + secsAgo + "s";
+                    int markerX = barInnerStartX + groupIdx * 2;
+                    if (markerX + label.length() <= barChartArea.right()) {
+                        frame.buffer().setString(markerX, xAxisY, label, dimStyle);
+                    }
+                }
+            }
         }
     }
 
