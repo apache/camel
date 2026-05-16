@@ -121,6 +121,19 @@ final class TuiHelper {
     }
 
     /**
+     * Truncate a string to max length by removing from the start (keeping the end), prepending an ellipsis. Useful for
+     * Java type names where the class name is at the end and more meaningful than the package prefix.
+     */
+    static String truncateStart(String s, int max) {
+        if (s == null) {
+            return "";
+        }
+        return CharWidth.of(s) > max
+                ? CharWidth.truncateWithEllipsis(s, max, CharWidth.TruncatePosition.START)
+                : s;
+    }
+
+    /**
      * Convert an Object (typically from JSON) to a long value.
      */
     static long objToLong(Object o) {

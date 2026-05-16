@@ -2343,7 +2343,7 @@ public class CamelMonitor extends CamelCommand {
             String typeLabel;
             if (type != null) {
                 String t = "(" + type + ")";
-                t = truncate(t, 20);
+                t = TuiHelper.truncateStart(t, 20);
                 typeLabel = String.format("%-20s ", t);
             } else {
                 typeLabel = String.format("%-21s", "");
