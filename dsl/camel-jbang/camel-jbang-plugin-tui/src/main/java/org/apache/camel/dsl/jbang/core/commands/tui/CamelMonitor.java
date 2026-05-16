@@ -2192,6 +2192,7 @@ public class CamelMonitor extends CamelCommand {
         if (showTraceBody) {
             addBodyLines(lines, entry.body, entry.bodyType);
         }
+        addExceptionLines(lines, entry.exception);
 
         int[] scroll = { traceDetailScroll };
         renderDetailPanel(frame, area, lines, traceWordWrap, scroll, traceDetailScrollState);
@@ -2295,10 +2296,7 @@ public class CamelMonitor extends CamelCommand {
         if (showHistoryBody) {
             addBodyLines(lines, entry.body, entry.bodyType);
         }
-        if (entry.exception != null) {
-            lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.RED).bold())));
-            lines.add(Line.from(Span.raw("   " + entry.exception)));
-        }
+        addExceptionLines(lines, entry.exception);
 
         int[] scroll = { historyDetailScroll };
         renderDetailPanel(frame, area, lines, historyWordWrap, scroll, historyDetailScrollState);
@@ -2374,6 +2372,17 @@ public class CamelMonitor extends CamelCommand {
             }
         } else {
             lines.add(Line.from(Span.styled(" Body is null", Style.EMPTY.fg(Color.GREEN).bold())));
+        }
+        lines.add(Line.from(Span.raw("")));
+    }
+
+    private static void addExceptionLines(List<Line> lines, String exception) {
+        if (exception == null) {
+            return;
+        }
+        lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.RED).bold())));
+        for (String l : exception.split("\n", -1)) {
+            lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(l))));
         }
         lines.add(Line.from(Span.raw("")));
     }
@@ -2932,6 +2941,16 @@ public class CamelMonitor extends CamelCommand {
             entry.exchangeVariableTypes = md.exchangeVariableTypes();
         }
 
+        // Exception (message + full stacktrace)
+        Object excObj = json.get("exception");
+        if (excObj instanceof JsonObject excJson) {
+            entry.exception = excJson.getString("message");
+            String st = excJson.getString("stackTrace");
+            if (st != null && !st.isEmpty()) {
+                entry.exception = entry.exception + "\n" + st;
+            }
+        }
+
         return entry;
     }
 
@@ -3039,10 +3058,14 @@ public class CamelMonitor extends CamelCommand {
             entry.exchangeVariableTypes = md.exchangeVariableTypes();
         }
 
-        // Exception
+        // Exception (message + full stacktrace)
         Object excObj = json.get("exception");
         if (excObj instanceof JsonObject excJson) {
             entry.exception = excJson.getString("message");
+            String st = excJson.getString("stackTrace");
+            if (st != null && !st.isEmpty()) {
+                entry.exception = entry.exception + "\n" + st;
+            }
         }
 
         return entry;
@@ -3530,6 +3553,7 @@ public class CamelMonitor extends CamelCommand {
         Map<String, String> exchangePropertyTypes;
         Map<String, Object> exchangeVariables;
         Map<String, String> exchangeVariableTypes;
+        String exception;
     }
 
     static class LogEntry {
