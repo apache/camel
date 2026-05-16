@@ -184,8 +184,9 @@ public class CamelMonitor extends CamelCommand {
     private boolean showTraceVariables;
     private boolean showTraceHeaders = true;
     private boolean showTraceBody = true;
-    private boolean traceWordWrap;
+    private boolean traceWordWrap = true;
     private int traceDetailScroll;
+    private int traceDetailHScroll;
 
     // History state
     private volatile List<HistoryEntry> historyEntries = Collections.emptyList();
@@ -194,8 +195,9 @@ public class CamelMonitor extends CamelCommand {
     private boolean showHistoryVariables;
     private boolean showHistoryHeaders = true;
     private boolean showHistoryBody = true;
-    private boolean historyWordWrap;
+    private boolean historyWordWrap = true;
     private int historyDetailScroll;
+    private int historyDetailHScroll;
 
     // Selected integration for detail views
     private String selectedPid;
@@ -374,11 +376,23 @@ public class CamelMonitor extends CamelCommand {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScrollX = Math.max(0, diagramScrollX - 1);
                     return true;
+                } else if (tab == TAB_TRACE && traceDetailView && !traceWordWrap) {
+                    traceDetailHScroll = Math.max(0, traceDetailHScroll - 4);
+                    return true;
+                } else if (tab == TAB_HISTORY && !historyWordWrap) {
+                    historyDetailHScroll = Math.max(0, historyDetailHScroll - 4);
+                    return true;
                 }
             }
             if (ke.isRight()) {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScrollX++;
+                    return true;
+                } else if (tab == TAB_TRACE && traceDetailView && !traceWordWrap) {
+                    traceDetailHScroll += 4;
+                    return true;
+                } else if (tab == TAB_HISTORY && !historyWordWrap) {
+                    historyDetailHScroll += 4;
                     return true;
                 }
             }
@@ -522,6 +536,7 @@ public class CamelMonitor extends CamelCommand {
                     if (ke.isCharIgnoreCase('w')) {
                         traceWordWrap = !traceWordWrap;
                         traceDetailScroll = 0;
+                        traceDetailHScroll = 0;
                         return true;
                     }
                 } else {
@@ -572,6 +587,7 @@ public class CamelMonitor extends CamelCommand {
                 if (ke.isCharIgnoreCase('w')) {
                     historyWordWrap = !historyWordWrap;
                     historyDetailScroll = 0;
+                    historyDetailHScroll = 0;
                     return true;
                 }
                 if (ke.isKey(KeyCode.F5)) {
@@ -2195,7 +2211,7 @@ public class CamelMonitor extends CamelCommand {
         addExceptionLines(lines, entry.exception);
 
         int[] scroll = { traceDetailScroll };
-        renderDetailPanel(frame, area, lines, traceWordWrap, scroll, traceDetailScrollState);
+        renderDetailPanel(frame, area, lines, traceWordWrap, traceDetailHScroll, scroll, traceDetailScrollState);
         traceDetailScroll = scroll[0];
     }
 
@@ -2299,7 +2315,7 @@ public class CamelMonitor extends CamelCommand {
         addExceptionLines(lines, entry.exception);
 
         int[] scroll = { historyDetailScroll };
-        renderDetailPanel(frame, area, lines, historyWordWrap, scroll, historyDetailScrollState);
+        renderDetailPanel(frame, area, lines, historyWordWrap, historyDetailHScroll, scroll, historyDetailScrollState);
         historyDetailScroll = scroll[0];
     }
 
@@ -2389,7 +2405,7 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderDetailPanel(
             Frame frame, Rect area, List<Line> lines,
-            boolean wordWrap, int[] scroll, ScrollbarState scrollState) {
+            boolean wordWrap, int hSkip, int[] scroll, ScrollbarState scrollState) {
         Block block = Block.builder().borderType(BorderType.ROUNDED).build();
         frame.renderWidget(block, area);
 
@@ -2415,8 +2431,9 @@ public class CamelMonitor extends CamelCommand {
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(inner);
 
+        List<Line> visibleLines = (!wordWrap && hSkip > 0) ? applyHSkip(lines, hSkip) : lines;
         Paragraph detail = Paragraph.builder()
-                .text(Text.from(lines))
+                .text(Text.from(visibleLines))
                 .overflow(wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
                 .scroll(scroll[0])
                 .build();
@@ -2430,6 +2447,45 @@ public class CamelMonitor extends CamelCommand {
                     Scrollbar.builder().build(),
                     hChunks.get(1), scrollState);
         }
+    }
+
+    private static List<Line> applyHSkip(List<Line> lines, int hSkip) {
+        List<Line> result = new ArrayList<>(lines.size());
+        for (Line line : lines) {
+            result.add(hSkipLine(line, hSkip));
+        }
+        return result;
+    }
+
+    private static Line hSkipLine(Line line, int hSkip) {
+        List<Span> result = new ArrayList<>();
+        int skip = hSkip;
+        for (Span span : line.spans()) {
+            if (skip <= 0) {
+                result.add(span);
+                continue;
+            }
+            String text = span.content();
+            int spanWidth = CharWidth.of(text);
+            if (spanWidth <= skip) {
+                skip -= spanWidth;
+            } else {
+                // Partial skip: advance char-by-char until skip columns consumed
+                int i = 0;
+                int consumed = 0;
+                while (i < text.length() && consumed < skip) {
+                    int cp = text.codePointAt(i);
+                    consumed += CharWidth.of(cp);
+                    i += Character.charCount(cp);
+                }
+                skip = 0;
+                String remaining = text.substring(i);
+                if (!remaining.isEmpty()) {
+                    result.add(Span.styled(remaining, span.style()));
+                }
+            }
+        }
+        return Line.from(result);
     }
 
     private static Row buildStepRow(
@@ -2574,6 +2630,9 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "PgUp/PgDn", "scroll detail");
+            if (!traceWordWrap) {
+                hint(spans, "\u2190\u2192", "h-scroll");
+            }
             hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
             hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
             hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
@@ -2589,6 +2648,9 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "PgUp/PgDn", "scroll detail");
+            if (!historyWordWrap) {
+                hint(spans, "\u2190\u2192", "h-scroll");
+            }
             hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
             hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
             hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
