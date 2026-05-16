@@ -718,9 +718,53 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    private void syncSelectedPidFromOverview() {
+        List<IntegrationInfo> infos = data.get().stream().filter(i -> !i.vanishing).toList();
+        Integer sel = overviewTableState.selected();
+        String newPid = null;
+        if (sel != null && sel >= 0 && sel < infos.size()) {
+            newPid = infos.get(sel).pid;
+        } else if (infos.size() == 1) {
+            newPid = infos.get(0).pid;
+        }
+        if (newPid != null && !newPid.equals(selectedPid)) {
+            selectedPid = newPid;
+            resetIntegrationTabState();
+            List<Long> pids = List.of(Long.parseLong(selectedPid));
+            refreshHistoryData(pids);
+            traceFilePositions.clear();
+            traces.set(Collections.emptyList());
+            refreshTraceData(pids);
+        }
+    }
+
+    // NOTE: When adding a new tab, reset its view state here too so switching integrations
+    // on the Overview always shows a clean slate for the newly selected integration.
+    private void resetIntegrationTabState() {
+        // Diagram (TAB_ROUTES)
+        showDiagram = false;
+        diagramImageData = null;
+        diagramFullImageData = null;
+        diagramLines = Collections.emptyList();
+        diagramScroll = 0;
+        diagramScrollX = 0;
+        // Routes (TAB_ROUTES)
+        routeTableState.select(0);
+        // Log (TAB_LOG)
+        logScroll = 0;
+        logFollowMode = true;
+        // Trace (TAB_TRACE)
+        traceDetailView = false;
+        traceSelectedExchangeId = null;
+        traceDetailScroll = 0;
+    }
+
     private void navigateUp() {
         switch (tabsState.selected()) {
-            case TAB_OVERVIEW -> overviewTableState.selectPrevious();
+            case TAB_OVERVIEW -> {
+                overviewTableState.selectPrevious();
+                syncSelectedPidFromOverview();
+            }
             case TAB_ROUTES -> routeTableState.selectPrevious();
             case TAB_CONSUMERS -> consumerTableState.selectPrevious();
             case TAB_HEALTH -> healthTableState.selectPrevious();
@@ -748,7 +792,10 @@ public class CamelMonitor extends CamelCommand {
     private void navigateDown() {
         List<IntegrationInfo> infos = data.get().stream().filter(i -> !i.vanishing).toList();
         switch (tabsState.selected()) {
-            case TAB_OVERVIEW -> overviewTableState.selectNext(infos.size());
+            case TAB_OVERVIEW -> {
+                overviewTableState.selectNext(infos.size());
+                syncSelectedPidFromOverview();
+            }
             case TAB_ROUTES -> {
                 IntegrationInfo info = findSelectedIntegration();
                 routeTableState.selectNext(info != null ? info.routes.size() : 0);
@@ -2172,7 +2219,10 @@ public class CamelMonitor extends CamelCommand {
                 diagramCropW = -1;
                 diagramCropH = -1;
             }
-            showDiagram = true;
+            // Only restore showDiagram if user hasn't cancelled via Esc while loading
+            if (wasShowing) {
+                showDiagram = true;
+            }
         });
     }
 
