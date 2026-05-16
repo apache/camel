@@ -166,11 +166,8 @@ public class CamelMonitor extends CamelCommand {
     private int logScroll;
     private final ScrollbarState logScrollState = new ScrollbarState();
     private boolean logFollowMode = true;
-    private boolean showLogTrace = true;
-    private boolean showLogDebug = true;
-    private boolean showLogInfo = true;
-    private boolean showLogWarn = true;
-    private boolean showLogError = true;
+    private boolean logWordWrap = true;
+    private int logHScroll;
 
     // Trace state
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
@@ -462,40 +459,33 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
-            // Log tab: level filters and follow mode
+            // Log tab: follow mode, word wrap, horizontal scroll
             if (tab == TAB_LOG) {
-                if (ke.isCharIgnoreCase('t')) {
-                    showLogTrace = !showLogTrace;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('d')) {
-                    showLogDebug = !showLogDebug;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('i')) {
-                    showLogInfo = !showLogInfo;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('w')) {
-                    showLogWarn = !showLogWarn;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('e')) {
-                    showLogError = !showLogError;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
                 if (ke.isCharIgnoreCase('f')) {
                     logFollowMode = !logFollowMode;
                     return true;
                 }
+                if (ke.isCharIgnoreCase('w')) {
+                    logWordWrap = !logWordWrap;
+                    logHScroll = 0;
+                    return true;
+                }
+                if (!logWordWrap) {
+                    if (ke.isLeft()) {
+                        logFollowMode = false;
+                        logHScroll = Math.max(0, logHScroll - 4);
+                        return true;
+                    }
+                    if (ke.isRight()) {
+                        logFollowMode = false;
+                        logHScroll += 4;
+                        return true;
+                    }
+                }
                 if (ke.isHome()) {
                     logFollowMode = false;
                     logScroll = 0;
+                    logHScroll = 0;
                     return true;
                 }
                 if (ke.isEnd()) {
@@ -1908,7 +1898,7 @@ public class CamelMonitor extends CamelCommand {
 
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED)
-                .title(" Log " + buildLevelFilterTitle())
+                .title(" Log ")
                 .build();
         frame.renderWidget(block, area);
 
@@ -1922,16 +1912,23 @@ public class CamelMonitor extends CamelCommand {
 
         List<Line> lines = new ArrayList<>();
         for (LogEntry entry : entries) {
-            lines.add(Line.from(Span.raw(entry.raw != null ? entry.raw : "")));
+            String raw = entry.raw != null ? entry.raw : "";
+            if (!logWordWrap && logHScroll > 0) {
+                int total = CharWidth.of(raw);
+                int remaining = total - logHScroll;
+                raw = remaining > 0 ? CharWidth.substringByWidthFromEnd(raw, remaining) : "";
+            }
+            lines.add(Line.from(Span.raw(raw)));
         }
 
         List<Rect> hChunks = Layout.horizontal()
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(inner);
 
+        Overflow overflow = logWordWrap ? Overflow.WRAP_WORD : Overflow.CLIP;
         Paragraph para = Paragraph.builder()
                 .text(Text.from(lines))
-                .overflow(Overflow.CLIP)
+                .overflow(overflow)
                 .scroll(logScroll)
                 .build();
         frame.renderWidget(para, hChunks.get(0));
@@ -1942,19 +1939,6 @@ public class CamelMonitor extends CamelCommand {
             logScrollState.position(logScroll);
             frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), logScrollState);
         }
-    }
-
-    private String buildLevelFilterTitle() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(showLogTrace ? "[T] " : "[t] ");
-        sb.append(showLogDebug ? "[D] " : "[d] ");
-        sb.append(showLogInfo ? "[I] " : "[i] ");
-        sb.append(showLogWarn ? "[W] " : "[w] ");
-        sb.append(showLogError ? "[E] " : "[e] ");
-        if (logFollowMode) {
-            sb.append("[FOLLOW]");
-        }
-        return sb.toString();
     }
 
     private void readLogFile(String pid, List<String> target) {
@@ -1991,11 +1975,7 @@ public class CamelMonitor extends CamelCommand {
     private List<LogEntry> applyLogFilters(List<String> lines) {
         List<LogEntry> result = new ArrayList<>();
         for (String line : lines) {
-            LogEntry entry = parseLogLine(line);
-            if (!matchesLogLevelFilter(entry.level)) {
-                continue;
-            }
-            result.add(entry);
+            result.add(parseLogLine(line));
         }
         return result;
     }
@@ -2040,16 +2020,6 @@ public class CamelMonitor extends CamelCommand {
             entry.message = line;
         }
         return entry;
-    }
-
-    private boolean matchesLogLevelFilter(String level) {
-        return switch (level) {
-            case "ERROR", "FATAL" -> showLogError;
-            case "WARN" -> showLogWarn;
-            case "DEBUG" -> showLogDebug;
-            case "TRACE" -> showLogTrace;
-            default -> showLogInfo;
-        };
     }
 
     // ---- Tab 6: Trace ----
@@ -2587,8 +2557,11 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193", "scroll");
             hint(spans, "PgUp/PgDn", "page");
             hint(spans, "Home/End", "top/end");
-            hint(spans, "t/d/i/w/e", "levels");
-            hintLast(spans, "f", "follow");
+            hint(spans, "w", "wrap" + (logWordWrap ? " [on]" : " [off]"));
+            if (!logWordWrap) {
+                hint(spans, "\u2190\u2192", "h-scroll");
+            }
+            hintLast(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
         } else if (tab == TAB_TRACE && traceDetailView) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
