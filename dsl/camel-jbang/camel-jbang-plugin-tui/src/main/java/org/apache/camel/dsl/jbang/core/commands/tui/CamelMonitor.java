@@ -1850,16 +1850,16 @@ public class CamelMonitor extends CamelCommand {
 
             rows.add(Row.from(
                     Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(ep.routeId != null ? ep.routeId : ""),
                     Cell.from(Span.styled(arrow + dir, dirStyle)),
-                    Cell.from(ep.uri != null ? ep.uri : ""),
-                    Cell.from(ep.routeId != null ? ep.routeId : "")));
+                    Cell.from(ep.uri != null ? ep.uri : "")));
         }
 
         if (rows.isEmpty()) {
             rows.add(Row.from(
                     Cell.from(""),
-                    Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())),
                     Cell.from(""),
+                    Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())),
                     Cell.from("")));
         }
 
@@ -1867,14 +1867,14 @@ public class CamelMonitor extends CamelCommand {
                 .rows(rows)
                 .header(Row.from(
                         Cell.from(Span.styled("COMPONENT", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
                         Cell.from(Span.styled("DIR", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("URI", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("ROUTE", Style.EMPTY.bold()))))
+                        Cell.from(Span.styled("URI", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(15),
+                        Constraint.length(20),
                         Constraint.length(8),
-                        Constraint.fill(),
-                        Constraint.length(20))
+                        Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
