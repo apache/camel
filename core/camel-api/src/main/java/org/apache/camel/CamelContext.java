@@ -83,6 +83,8 @@ import org.jspecify.annotations.Nullable;
  * <p/>
  * You can use the {@link CamelContext#getCamelContextExtension()} to obtain the extension point for the
  * {@link CamelContext}. This extension point exposes internal APIs via {@link ExtendedCamelContext}.
+ *
+ * TEST: Java change — OpenRewrite SHOULD run for core/camel-api only.
  */
 public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 
