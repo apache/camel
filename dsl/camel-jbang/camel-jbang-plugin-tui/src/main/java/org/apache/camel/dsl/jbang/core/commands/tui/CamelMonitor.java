@@ -3027,10 +3027,11 @@ public class CamelMonitor extends CamelCommand {
         // Exception (message + full stacktrace)
         Object excObj = json.get("exception");
         if (excObj instanceof JsonObject excJson) {
-            entry.exception = excJson.getString("message");
+            String msg = excJson.getString("message");
+            entry.exception = msg != null ? Jsoner.unescape(msg) : null;
             String st = excJson.getString("stackTrace");
             if (st != null && !st.isEmpty()) {
-                entry.exception = entry.exception + "\n" + st;
+                entry.exception = entry.exception + "\n" + Jsoner.unescape(st);
             }
         }
 
@@ -3144,10 +3145,11 @@ public class CamelMonitor extends CamelCommand {
         // Exception (message + full stacktrace)
         Object excObj = json.get("exception");
         if (excObj instanceof JsonObject excJson) {
-            entry.exception = excJson.getString("message");
+            String msg = excJson.getString("message");
+            entry.exception = msg != null ? Jsoner.unescape(msg) : null;
             String st = excJson.getString("stackTrace");
             if (st != null && !st.isEmpty()) {
-                entry.exception = entry.exception + "\n" + st;
+                entry.exception = entry.exception + "\n" + Jsoner.unescape(st);
             }
         }
 
