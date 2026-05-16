@@ -67,7 +67,6 @@ import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.gauge.Gauge;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -106,22 +105,26 @@ public class CamelMonitor extends CamelCommand {
     private static final int MAX_SPARKLINE_POINTS = 60;
     private static final int MAX_LOG_LINES = 5000;
     private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 7;
+    private static final int NUM_TABS = 8;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
     private static final int TAB_LOG = 1;
     private static final int TAB_ROUTES = 2;
-    private static final int TAB_ENDPOINTS = 3;
-    private static final int TAB_HEALTH = 4;
-    private static final int TAB_HISTORY = 5;
-    private static final int TAB_TRACE = 6;
+    private static final int TAB_CONSUMERS = 3;
+    private static final int TAB_ENDPOINTS = 4;
+    private static final int TAB_HEALTH = 5;
+    private static final int TAB_HISTORY = 6;
+    private static final int TAB_TRACE = 7;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "status", "total", "fail" };
 
     // Route sort columns
     private static final String[] ROUTE_SORT_COLUMNS = { "total", "failed", "name", "status" };
+
+    // Consumer sort columns (order matches table column order)
+    private static final String[] CONSUMER_SORT_COLUMNS = { "id", "status", "type", "inflight", "total", "uri" };
 
     // Endpoint sort columns (order matches table column order)
     private static final String[] ENDPOINT_SORT_COLUMNS = { "component", "route", "dir", "total", "uri" };
@@ -139,6 +142,7 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, VanishingInfo> vanishing = new ConcurrentHashMap<>();
     private final TableState overviewTableState = new TableState();
     private final TableState routeTableState = new TableState();
+    private final TableState consumerTableState = new TableState();
     private final TableState healthTableState = new TableState();
     private final TableState endpointTableState = new TableState();
     private final TableState processorTableState = new TableState();
@@ -159,6 +163,10 @@ public class CamelMonitor extends CamelCommand {
     // Route sort state
     private String routeSort = "name";
     private int routeSortIndex = 2;
+
+    // Consumer sort state (default: id = index 0)
+    private String consumerSort = "id";
+    private int consumerSortIndex = 0;
 
     // Endpoint sort state (default: route = index 1)
     private String endpointSort = "route";
@@ -314,15 +322,18 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_ROUTES);
             }
             if (ke.isChar('4')) {
-                return handleTabKey(TAB_ENDPOINTS);
+                return handleTabKey(TAB_CONSUMERS);
             }
             if (ke.isChar('5')) {
-                return handleTabKey(TAB_HEALTH);
+                return handleTabKey(TAB_ENDPOINTS);
             }
             if (ke.isChar('6')) {
-                return handleTabKey(TAB_HISTORY);
+                return handleTabKey(TAB_HEALTH);
             }
             if (ke.isChar('7')) {
+                return handleTabKey(TAB_HISTORY);
+            }
+            if (ke.isChar('8')) {
                 return handleTabKey(TAB_TRACE);
             }
 
@@ -432,6 +443,13 @@ public class CamelMonitor extends CamelCommand {
             if (tab == TAB_OVERVIEW && ke.isCharIgnoreCase('s')) {
                 overviewSortIndex = (overviewSortIndex + 1) % OVERVIEW_SORT_COLUMNS.length;
                 overviewSort = OVERVIEW_SORT_COLUMNS[overviewSortIndex];
+                return true;
+            }
+
+            // Consumers tab: sort
+            if (tab == TAB_CONSUMERS && ke.isCharIgnoreCase('s')) {
+                consumerSortIndex = (consumerSortIndex + 1) % CONSUMER_SORT_COLUMNS.length;
+                consumerSort = CONSUMER_SORT_COLUMNS[consumerSortIndex];
                 return true;
             }
 
@@ -683,6 +701,7 @@ public class CamelMonitor extends CamelCommand {
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> overviewTableState.selectPrevious();
             case TAB_ROUTES -> routeTableState.selectPrevious();
+            case TAB_CONSUMERS -> consumerTableState.selectPrevious();
             case TAB_HEALTH -> healthTableState.selectPrevious();
             case TAB_ENDPOINTS -> endpointTableState.selectPrevious();
             case TAB_LOG -> {
@@ -711,6 +730,10 @@ public class CamelMonitor extends CamelCommand {
             case TAB_ROUTES -> {
                 IntegrationInfo info = findSelectedIntegration();
                 routeTableState.selectNext(info != null ? info.routes.size() : 0);
+            }
+            case TAB_CONSUMERS -> {
+                IntegrationInfo info = findSelectedIntegration();
+                consumerTableState.selectNext(info != null ? info.consumers.size() : 0);
             }
             case TAB_HEALTH -> {
                 IntegrationInfo info = findSelectedIntegration();
@@ -792,8 +815,11 @@ public class CamelMonitor extends CamelCommand {
         IntegrationInfo sel = findSelectedIntegration();
         boolean hasSelection = selectedPid != null && sel != null;
         int routeCount = hasSelection ? sel.routes.size() : 0;
+        int consumerCount = hasSelection ? sel.consumers.size() : 0;
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
         int healthCount = hasSelection ? sel.healthChecks.size() : 0;
+        long healthDownCount = hasSelection
+                ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
         int historyCount = hasSelection ? historyEntries.size() : 0;
         boolean hasTraces = hasSelection && !traces.get().isEmpty();
 
@@ -802,13 +828,14 @@ public class CamelMonitor extends CamelCommand {
                         badge(" 1 Overview ", activeCount),
                         Line.from(" 2 Log "),
                         badge(" 3 Routes ", routeCount),
-                        badge(" 4 Endpoints ", endpointCount),
-                        badge(" 5 Health ", healthCount),
-                        badge(" 6 History ", historyCount),
+                        badge(" 4 Consumers ", consumerCount),
+                        badge(" 5 Endpoints ", endpointCount),
+                        badgeHealth(" 6 Health ", healthCount, healthDownCount),
+                        badge(" 7 History ", historyCount),
                         hasTraces
-                                ? Line.from(Span.raw(" 7 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
+                                ? Line.from(Span.raw(" 8 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
                                         Span.raw(" "))
-                                : Line.from(" 7 Trace "))
+                                : Line.from(" 8 Trace "))
                 .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
@@ -824,6 +851,7 @@ public class CamelMonitor extends CamelCommand {
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> renderOverview(frame, area);
             case TAB_ROUTES -> renderRoutes(frame, area);
+            case TAB_CONSUMERS -> renderConsumers(frame, area);
             case TAB_HEALTH -> renderHealth(frame, area);
             case TAB_ENDPOINTS -> renderEndpoints(frame, area);
             case TAB_LOG -> renderLog(frame, area);
@@ -1151,6 +1179,168 @@ public class CamelMonitor extends CamelCommand {
 
     private Style routeSortStyle(String column) {
         return sortStyle(column, routeSort);
+    }
+
+    private String consumerSortLabel(String label, String column) {
+        return sortLabel(label, column, consumerSort);
+    }
+
+    private Style consumerSortStyle(String column) {
+        return sortStyle(column, consumerSort);
+    }
+
+    private int sortConsumer(ConsumerInfo a, ConsumerInfo b) {
+        return switch (consumerSort) {
+            case "status" -> {
+                String sa = consumerStatus(a);
+                String sb = consumerStatus(b);
+                yield sa.compareToIgnoreCase(sb);
+            }
+            case "type" -> {
+                String ta = consumerType(a);
+                String tb = consumerType(b);
+                yield ta.compareToIgnoreCase(tb);
+            }
+            case "inflight" -> Integer.compare(b.inflight, a.inflight);
+            case "total" -> {
+                long la = a.totalCounter != null ? a.totalCounter : 0;
+                long lb = b.totalCounter != null ? b.totalCounter : 0;
+                yield Long.compare(lb, la);
+            }
+            case "uri" -> {
+                String ua = a.uri != null ? a.uri : "";
+                String ub = b.uri != null ? b.uri : "";
+                yield ua.compareToIgnoreCase(ub);
+            }
+            default -> { // "id"
+                String ia = a.id != null ? a.id : "";
+                String ib = b.id != null ? b.id : "";
+                yield ia.compareToIgnoreCase(ib);
+            }
+        };
+    }
+
+    private static String consumerStatus(ConsumerInfo ci) {
+        if (ci.polling != null && ci.polling) {
+            return "Polling";
+        }
+        return ci.state != null ? ci.state : "";
+    }
+
+    private static String consumerType(ConsumerInfo ci) {
+        if (ci.className == null) {
+            return "";
+        }
+        String s = ci.className;
+        if (s.endsWith("Consumer")) {
+            s = s.substring(0, s.length() - 8);
+        }
+        int dot = s.lastIndexOf('.');
+        return dot >= 0 ? s.substring(dot + 1) : s;
+    }
+
+    private static HealthCheckInfo consumerHealthCheck(IntegrationInfo info, ConsumerInfo ci) {
+        if (ci.id == null) {
+            return null;
+        }
+        String hcId = "consumer:" + ci.id;
+        for (HealthCheckInfo hc : info.healthChecks) {
+            if (hcId.equals(hc.name)) {
+                return hc;
+            }
+        }
+        return null;
+    }
+
+    private static String consumerPeriod(ConsumerInfo ci) {
+        if (ci.period != null) {
+            return ci.period + "ms";
+        } else if (ci.delay != null) {
+            return ci.delay + "ms";
+        }
+        return "";
+    }
+
+    private static String consumerSinceLast(ConsumerInfo ci) {
+        String s1 = ci.sinceLastStarted != null ? ci.sinceLastStarted : "-";
+        String s2 = ci.sinceLastCompleted != null ? ci.sinceLastCompleted : "-";
+        String s3 = ci.sinceLastFailed != null ? ci.sinceLastFailed : "-";
+        return s1 + "/" + s2 + "/" + s3;
+    }
+
+    private void renderConsumers(Frame frame, Rect area) {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null) {
+            renderNoSelection(frame, area);
+            return;
+        }
+
+        List<ConsumerInfo> sorted = new ArrayList<>(info.consumers);
+        sorted.sort(this::sortConsumer);
+
+        List<Row> rows = new ArrayList<>();
+        for (ConsumerInfo ci : sorted) {
+            String status = consumerStatus(ci);
+            HealthCheckInfo hc = consumerHealthCheck(info, ci);
+            boolean healthDown = hc != null && "DOWN".equals(hc.state);
+            Style statusStyle = healthDown
+                    ? Style.EMPTY.fg(Color.RED)
+                    : ("Started".equals(ci.state) || "Polling".equals(status)
+                            ? Style.EMPTY.fg(Color.GREEN)
+                            : Style.EMPTY.fg(Color.RED));
+            String statusText = healthDown ? "⚠ " + status : status;
+            String type = consumerType(ci);
+            String period = consumerPeriod(ci);
+            String sinceLast = consumerSinceLast(ci);
+            String uri = healthDown && hc.message != null
+                    ? hc.message
+                    : (ci.uri != null ? ci.uri : "");
+
+            rows.add(Row.from(
+                    Cell.from(Span.styled(ci.id != null ? ci.id : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(statusText, statusStyle)),
+                    Cell.from(type),
+                    rightCell(ci.inflight > 0 ? String.valueOf(ci.inflight) : "", 8),
+                    rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
+                    rightCell(period, 10),
+                    Cell.from(sinceLast),
+                    Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.RED) : Style.EMPTY))));
+        }
+
+        if (rows.isEmpty()) {
+            rows.add(Row.from(
+                    Cell.from(Span.styled("No consumers", Style.EMPTY.dim())),
+                    Cell.from(""), Cell.from(""), Cell.from(""),
+                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+        }
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled(consumerSortLabel("ID", "id"), consumerSortStyle("id"))),
+                        Cell.from(Span.styled(consumerSortLabel("STATUS", "status"), consumerSortStyle("status"))),
+                        Cell.from(Span.styled(consumerSortLabel("TYPE", "type"), consumerSortStyle("type"))),
+                        rightCell(consumerSortLabel("INFLIGHT", "inflight"), 8, consumerSortStyle("inflight")),
+                        rightCell(consumerSortLabel("TOTAL", "total"), 8, consumerSortStyle("total")),
+                        rightCell("PERIOD", 10, Style.EMPTY.bold()),
+                        Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
+                        Cell.from(Span.styled(consumerSortLabel("URI", "uri"), consumerSortStyle("uri")))))
+                .widths(
+                        Constraint.length(20),
+                        Constraint.length(10),
+                        Constraint.length(20),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(10),
+                        Constraint.length(22),
+                        Constraint.fill())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(" Consumers sort:" + consumerSort + " ").build())
+                .build();
+
+        frame.renderStatefulWidget(table, area, consumerTableState);
     }
 
     private String endpointSortLabel(String label, String column) {
@@ -1811,11 +2001,6 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Split: health table (fill) + memory gauge (3 rows)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.fill(), Constraint.length(3))
-                .split(area);
-
         List<HealthCheckInfo> healthChecks = getFilteredHealthChecks(info);
 
         List<Row> rows = new ArrayList<>();
@@ -1882,23 +2067,7 @@ public class CamelMonitor extends CamelCommand {
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(title).build())
                 .build();
 
-        frame.renderStatefulWidget(table, chunks.get(0), healthTableState);
-
-        // Memory gauge
-        if (info.heapMemMax > 0) {
-            int pct = (int) (100.0 * info.heapMemUsed / info.heapMemMax);
-            Style gaugeStyle = pct > 80 ? Style.EMPTY.fg(Color.RED)
-                    : pct > 60 ? Style.EMPTY.fg(Color.YELLOW) : Style.EMPTY.fg(Color.GREEN);
-            Gauge gauge = Gauge.builder()
-                    .percent(pct)
-                    .label(String.format("Heap: %s / %s (%d%%)", formatBytes(info.heapMemUsed),
-                            formatBytes(info.heapMemMax), pct))
-                    .gaugeStyle(gaugeStyle)
-                    .block(Block.builder().borderType(BorderType.ROUNDED).build())
-                    .build();
-
-            frame.renderWidget(gauge, chunks.get(1));
-        }
+        frame.renderStatefulWidget(table, area, healthTableState);
     }
 
     private List<HealthCheckInfo> getFilteredHealthChecks(IntegrationInfo info) {
@@ -2700,7 +2869,7 @@ public class CamelMonitor extends CamelCommand {
             if (selectedPid != null) {
                 hint(spans, "Esc", "unselect");
             }
-            hint(spans, "1-7", "tabs");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_ROUTES && showDiagram) {
             String closeKey = diagramTextMode ? "D" : "d";
             hint(spans, closeKey + "/Esc", "close");
@@ -2719,18 +2888,23 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "s", "sort");
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
-            hint(spans, "1-7", "tabs");
+            hint(spans, "1-8", "tabs");
+        } else if (tab == TAB_CONSUMERS) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "s", "sort");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_ENDPOINTS) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "r", "remote" + (showOnlyRemote ? " [on]" : " [off]"));
-            hint(spans, "1-7", "tabs");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "d", "toggle DOWN");
-            hint(spans, "1-7", "tabs");
+            hint(spans, "1-8", "tabs");
         } else if (tab == TAB_LOG) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "scroll");
@@ -2775,7 +2949,7 @@ public class CamelMonitor extends CamelCommand {
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "1-7", "tabs");
+            hint(spans, "1-8", "tabs");
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -2805,6 +2979,16 @@ public class CamelMonitor extends CamelCommand {
         int padding = Math.max(0, width - len);
         int leftPad = padding / 2;
         return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
+    }
+
+    private static Line badgeHealth(String label, long total, long down) {
+        if (down > 0) {
+            return Line.from(
+                    Span.raw(label),
+                    Span.styled("(" + down + " DOWN)", Style.EMPTY.fg(Color.RED).bold()),
+                    Span.raw(" "));
+        }
+        return badge(label, total);
     }
 
     private static Line badge(String label, long count) {
@@ -3508,12 +3692,52 @@ public class CamelMonitor extends CamelCommand {
                     hc.state = cj.getString("state");
                     hc.readiness = cj.getBooleanOrDefault("readiness", false);
                     hc.liveness = cj.getBooleanOrDefault("liveness", false);
-                    // Extract message from details if available
-                    JsonObject details = (JsonObject) cj.get("details");
-                    if (details != null && details.containsKey("failure.error.message")) {
-                        hc.message = details.getString("failure.error.message");
+                    hc.message = cj.getString("message");
+                    if (hc.message == null) {
+                        JsonObject details = (JsonObject) cj.get("details");
+                        if (details != null && details.containsKey("failure.error.message")) {
+                            hc.message = details.getString("failure.error.message");
+                        }
                     }
                     info.healthChecks.add(hc);
+                }
+            }
+        }
+
+        // Parse consumers
+        JsonObject consumersObj = (JsonObject) root.get("consumers");
+        if (consumersObj != null) {
+            JsonArray consumerList = (JsonArray) consumersObj.get("consumers");
+            if (consumerList != null) {
+                for (Object c : consumerList) {
+                    JsonObject cj = (JsonObject) c;
+                    ConsumerInfo ci = new ConsumerInfo();
+                    ci.id = cj.getString("id");
+                    ci.uri = cj.getString("uri");
+                    ci.state = cj.getString("state");
+                    ci.className = cj.getString("class");
+                    ci.scheduled = Boolean.TRUE.equals(cj.get("scheduled"));
+                    ci.inflight = cj.getIntegerOrDefault("inflight", 0);
+                    ci.polling = (Boolean) cj.get("polling");
+                    ci.totalCounter = cj.getLong("totalCounter");
+                    ci.delay = cj.getLong("delay");
+                    ci.period = cj.getLong("period");
+                    JsonObject cStats = (JsonObject) cj.get("statistics");
+                    if (cStats != null) {
+                        Object last = cStats.get("lastCreatedExchangeTimestamp");
+                        if (last != null) {
+                            ci.sinceLastStarted = TimeUtils.printSince(Long.parseLong(last.toString()));
+                        }
+                        last = cStats.get("lastCompletedExchangeTimestamp");
+                        if (last != null) {
+                            ci.sinceLastCompleted = TimeUtils.printSince(Long.parseLong(last.toString()));
+                        }
+                        last = cStats.get("lastFailedExchangeTimestamp");
+                        if (last != null) {
+                            ci.sinceLastFailed = TimeUtils.printSince(Long.parseLong(last.toString()));
+                        }
+                    }
+                    info.consumers.add(ci);
                 }
             }
         }
@@ -3669,6 +3893,7 @@ public class CamelMonitor extends CamelCommand {
         boolean vanishing;
         long vanishStart;
         final List<RouteInfo> routes = new ArrayList<>();
+        final List<ConsumerInfo> consumers = new ArrayList<>();
         final List<HealthCheckInfo> healthChecks = new ArrayList<>();
         final List<EndpointInfo> endpoints = new ArrayList<>();
     }
@@ -3711,6 +3936,22 @@ public class CamelMonitor extends CamelCommand {
         boolean readiness;
         boolean liveness;
         String message;
+    }
+
+    static class ConsumerInfo {
+        String id;
+        String uri;
+        String state;
+        String className;
+        boolean scheduled;
+        int inflight;
+        Boolean polling;
+        Long totalCounter;
+        Long delay;
+        Long period;
+        String sinceLastStarted;
+        String sinceLastCompleted;
+        String sinceLastFailed;
     }
 
     static class EndpointInfo {
