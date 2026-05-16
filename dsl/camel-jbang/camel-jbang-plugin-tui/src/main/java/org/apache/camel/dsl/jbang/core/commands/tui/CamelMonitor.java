@@ -122,7 +122,7 @@ public class CamelMonitor extends CamelCommand {
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "status", "total", "fail" };
 
     // Route sort columns
-    private static final String[] ROUTE_SORT_COLUMNS = { "total", "failed", "name", "status" };
+    private static final String[] ROUTE_SORT_COLUMNS = { "name", "group", "status", "total", "failed" };
 
     // Consumer sort columns (order matches table column order)
     private static final String[] CONSUMER_SORT_COLUMNS = { "id", "status", "type", "inflight", "total", "uri" };
@@ -169,7 +169,7 @@ public class CamelMonitor extends CamelCommand {
 
     // Route sort state
     private String routeSort = "name";
-    private int routeSortIndex = 2;
+    private int routeSortIndex = 0;
 
     // Consumer sort state (default: id = index 0)
     private String consumerSort = "id";
@@ -1165,10 +1165,11 @@ public class CamelMonitor extends CamelCommand {
 
             routeRows.add(Row.from(
                     Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(route.group != null ? route.group : "", Style.EMPTY.dim())),
                     Cell.from(route.from != null ? route.from : ""),
                     Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                     Cell.from(route.uptime != null ? route.uptime : ""),
-                    Cell.from(route.coverage != null ? route.coverage : ""),
+                    rightCell(route.coverage != null ? route.coverage : "", 6),
                     rightCell(route.throughput != null ? route.throughput : "", 8),
                     rightCell(String.valueOf(route.total), 8),
                     rightCell(String.valueOf(route.failed), 6, failStyle),
@@ -1183,10 +1184,11 @@ public class CamelMonitor extends CamelCommand {
                 .rows(routeRows)
                 .header(Row.from(
                         Cell.from(Span.styled(routeSortLabel("ROUTE", "name"), routeSortStyle("name"))),
+                        Cell.from(Span.styled(routeSortLabel("GROUP", "group"), routeSortStyle("group"))),
                         Cell.from(Span.styled("FROM", Style.EMPTY.bold())),
                         Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
                         Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("COVER", Style.EMPTY.bold())),
+                        rightCell("COVER", 6, Style.EMPTY.bold()),
                         rightCell("MSG/S", 8, Style.EMPTY.bold()),
                         rightCell(routeSortLabel("TOTAL", "total"), 8, routeSortStyle("total")),
                         rightCell(routeSortLabel("FAIL", "failed"), 6, routeSortStyle("failed")),
@@ -1195,6 +1197,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(12),
+                        Constraint.length(14),
                         Constraint.fill(),
                         Constraint.length(10),
                         Constraint.length(8),
@@ -1277,6 +1280,11 @@ public class CamelMonitor extends CamelCommand {
                 String sa = a.state != null ? a.state : "";
                 String sb2 = b.state != null ? b.state : "";
                 yield sa.compareToIgnoreCase(sb2);
+            }
+            case "group" -> {
+                String ga = a.group != null ? a.group : "";
+                String gb = b.group != null ? b.group : "";
+                yield ga.compareToIgnoreCase(gb);
             }
             default -> 0;
         };
@@ -3862,6 +3870,7 @@ public class CamelMonitor extends CamelCommand {
                 JsonObject rj = (JsonObject) r;
                 RouteInfo ri = new RouteInfo();
                 ri.routeId = rj.getString("routeId");
+                ri.group = rj.getString("group");
                 ri.from = rj.getString("from");
                 ri.state = rj.getString("state");
                 ri.uptime = rj.getString("uptime");
@@ -4180,6 +4189,7 @@ public class CamelMonitor extends CamelCommand {
 
     static class RouteInfo {
         String routeId;
+        String group;
         String from;
         String state;
         String uptime;
