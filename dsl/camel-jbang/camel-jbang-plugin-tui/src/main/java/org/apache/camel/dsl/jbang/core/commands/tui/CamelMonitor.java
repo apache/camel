@@ -232,6 +232,7 @@ public class CamelMonitor extends CamelCommand {
     private String selectedPid;
 
     // Diagram state
+    private boolean chartAllIntegrations = true;
     private boolean showDiagram;
     private boolean diagramTextMode;
     private boolean diagramMetrics = true;
@@ -457,6 +458,11 @@ public class CamelMonitor extends CamelCommand {
             if (tab == TAB_OVERVIEW && ke.isCharIgnoreCase('s')) {
                 overviewSortIndex = (overviewSortIndex + 1) % OVERVIEW_SORT_COLUMNS.length;
                 overviewSort = OVERVIEW_SORT_COLUMNS[overviewSortIndex];
+                return true;
+            }
+            // Overview tab: toggle chart between all integrations and selected only
+            if (tab == TAB_OVERVIEW && ke.isCharIgnoreCase('a')) {
+                chartAllIntegrations = !chartAllIntegrations;
                 return true;
             }
 
@@ -1072,20 +1078,25 @@ public class CamelMonitor extends CamelCommand {
             int innerBarCols = Math.max(2, barChartArea.width() - 2); // minus block borders
             int renderPoints = Math.min(MAX_SPARKLINE_POINTS, innerBarCols / 2);
 
-            // Merge throughput histories across all PIDs
+            // Merge throughput histories: all PIDs or selected only
             long[] mergedTotal = new long[renderPoints];
             long[] mergedFailed = new long[renderPoints];
+            String chartPid = (!chartAllIntegrations && selectedPid != null) ? selectedPid : null;
             for (int i = 0; i < renderPoints; i++) {
-                for (LinkedList<Long> hist : throughputHistory.values()) {
-                    int idx = hist.size() - renderPoints + i;
-                    if (idx >= 0) {
-                        mergedTotal[i] += hist.get(idx);
+                for (Map.Entry<String, LinkedList<Long>> e : throughputHistory.entrySet()) {
+                    if (chartPid == null || chartPid.equals(e.getKey())) {
+                        int idx = e.getValue().size() - renderPoints + i;
+                        if (idx >= 0) {
+                            mergedTotal[i] += e.getValue().get(idx);
+                        }
                     }
                 }
-                for (LinkedList<Long> hist : failedHistory.values()) {
-                    int idx = hist.size() - renderPoints + i;
-                    if (idx >= 0) {
-                        mergedFailed[i] += hist.get(idx);
+                for (Map.Entry<String, LinkedList<Long>> e : failedHistory.entrySet()) {
+                    if (chartPid == null || chartPid.equals(e.getKey())) {
+                        int idx = e.getValue().size() - renderPoints + i;
+                        if (idx >= 0) {
+                            mergedFailed[i] += e.getValue().get(idx);
+                        }
                     }
                 }
             }
@@ -1099,12 +1110,26 @@ public class CamelMonitor extends CamelCommand {
             long curOk = Math.max(0, curTp - curFailed);
 
             // Styled legend in chart title
-            Line titleLine = Line.from(
-                    Span.raw(String.format(" Throughput: %d msg/s  ", curTp)),
-                    Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
-                    Span.raw(String.format(" ok:%d  ", curOk)),
-                    Span.styled("■", Style.EMPTY.fg(Color.RED)),
-                    Span.raw(String.format(" fail:%d ", curFailed)));
+            Line titleLine;
+            if (!chartAllIntegrations && selectedPid != null) {
+                IntegrationInfo chartSel = findSelectedIntegration();
+                String chartName = chartSel != null ? TuiHelper.truncate(chartSel.name, 12) : selectedPid;
+                titleLine = Line.from(
+                        Span.raw(" ["),
+                        Span.styled(chartName, Style.EMPTY.fg(Color.YELLOW)),
+                        Span.raw(String.format("] Throughput: %d msg/s  ", curTp)),
+                        Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
+                        Span.raw(String.format(" ok:%d  ", curOk)),
+                        Span.styled("■", Style.EMPTY.fg(Color.RED)),
+                        Span.raw(String.format(" fail:%d ", curFailed)));
+            } else {
+                titleLine = Line.from(
+                        Span.raw(String.format(" [All] Throughput: %d msg/s  ", curTp)),
+                        Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
+                        Span.raw(String.format(" ok:%d  ", curOk)),
+                        Span.styled("■", Style.EMPTY.fg(Color.RED)),
+                        Span.raw(String.format(" fail:%d ", curFailed)));
+            }
 
             // Build bar groups (ok=green, failed=red), no bar value labels
             List<BarGroup> groups = new ArrayList<>();
@@ -3220,6 +3245,7 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "q", "quit");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
+            hint(spans, "a", "chart " + (chartAllIntegrations ? "[all]" : "[single]"));
             hint(spans, "Enter", "details");
             if (selectedPid != null) {
                 hint(spans, "Esc", "unselect");
