@@ -104,7 +104,7 @@ public class CamelMonitor extends CamelCommand {
     private static final long VANISH_DURATION_MS = 6000;
     private static final long DEFAULT_REFRESH_MS = 100;
     private static final int MAX_SPARKLINE_POINTS = 60;
-    private static final int MAX_LOG_LINES = 200;
+    private static final int MAX_LOG_LINES = 5000;
     private static final int MAX_TRACES = 200;
     private static final int NUM_TABS = 7;
 
@@ -1984,7 +1984,7 @@ public class CamelMonitor extends CamelCommand {
         try (RandomAccessFile raf = new RandomAccessFile(logFile.toFile(), "r")) {
             long length = raf.length();
             // Read last ~64KB to get recent lines
-            long startPos = Math.max(0, length - 64 * 1024);
+            long startPos = Math.max(0, length - 1024 * 1024);
             raf.seek(startPos);
             if (startPos > 0) {
                 raf.readLine(); // skip partial line
