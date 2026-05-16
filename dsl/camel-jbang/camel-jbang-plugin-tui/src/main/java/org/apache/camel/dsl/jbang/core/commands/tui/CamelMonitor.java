@@ -1004,8 +1004,9 @@ public class CamelMonitor extends CamelCommand {
 
         // Split green/red throughput bar chart
         if (hasSparkline && chunks.size() > 1) {
-            // Render last 30 ticks as pairs of bars (ok=green, failed=red) to keep ~60 columns
-            int renderPoints = Math.min(30, MAX_SPARKLINE_POINTS);
+            // Render last 20 ticks as pairs of bars (ok=green, failed=red); barWidth=2 so
+            // double-digit values fit: 20 ticks × 2 bars × width 2 = ~80 columns
+            int renderPoints = Math.min(20, MAX_SPARKLINE_POINTS);
             long[] mergedTotal = new long[renderPoints];
             long[] mergedFailed = new long[renderPoints];
             for (int i = 0; i < renderPoints; i++) {
@@ -1037,14 +1038,14 @@ public class CamelMonitor extends CamelCommand {
                 long failed = Math.min(mergedFailed[i], mergedTotal[i]);
                 long ok = Math.max(0, mergedTotal[i] - failed);
                 groups.add(BarGroup.of(
-                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.GREEN)).build(),
-                        Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
+                        Bar.builder().value(ok).style(Style.EMPTY.fg(Color.GREEN)).build(),
+                        Bar.builder().value(failed).style(Style.EMPTY.fg(Color.RED)).build()));
             }
 
             BarChart barChart = BarChart.builder()
                     .data(groups)
                     .max(maxTp > 0 ? maxTp + 2 : 2)
-                    .barWidth(1)
+                    .barWidth(2)
                     .barGap(0)
                     .groupGap(0)
                     .block(Block.builder().borderType(BorderType.ROUNDED).title(chartTitle).build())
