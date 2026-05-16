@@ -926,7 +926,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled(info.name != null ? info.name : "", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("\u2716 Stopped", Style.EMPTY.fg(Color.RED).dim())),
+                        Cell.from(Span.styled("\u2716 Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
                         Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
@@ -938,11 +938,11 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 Style statusStyle = switch (extractState(info.state)) {
                     case "Started", "Running" -> Style.EMPTY.fg(Color.GREEN);
-                    case "Stopped" -> Style.EMPTY.fg(Color.RED);
+                    case "Stopped" -> Style.EMPTY.fg(Color.LIGHT_RED);
                     default -> Style.EMPTY.fg(Color.YELLOW);
                 };
 
-                Style failStyle = info.failed > 0 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY;
+                Style failStyle = info.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
 
                 String sinceLastDisplay = formatSinceLast(info);
 
@@ -1053,7 +1053,7 @@ public class CamelMonitor extends CamelCommand {
                     Span.raw(String.format(" Throughput: %d msg/s  ", curTp)),
                     Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
                     Span.raw(String.format(" ok:%d  ", curOk)),
-                    Span.styled("■", Style.EMPTY.fg(Color.RED)),
+                    Span.styled("■", Style.EMPTY.fg(Color.LIGHT_RED)),
                     Span.raw(String.format(" fail:%d ", curFailed)));
 
             // Build bar groups (ok=green, failed=red), no bar value labels
@@ -1063,7 +1063,7 @@ public class CamelMonitor extends CamelCommand {
                 long ok = Math.max(0, mergedTotal[i] - failed);
                 groups.add(BarGroup.of(
                         Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.GREEN)).build(),
-                        Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
+                        Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.LIGHT_RED)).build()));
             }
 
             BarChart barChart = BarChart.builder()
@@ -1155,10 +1155,10 @@ public class CamelMonitor extends CamelCommand {
         for (RouteInfo route : sortedRoutes) {
             Style stateStyle = "Started".equals(route.state)
                     ? Style.EMPTY.fg(Color.GREEN)
-                    : Style.EMPTY.fg(Color.RED);
+                    : Style.EMPTY.fg(Color.LIGHT_RED);
 
             Style failStyle = route.failed > 0
-                    ? Style.EMPTY.fg(Color.RED).bold()
+                    ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
                     : Style.EMPTY;
 
             String sinceLastRoute = formatSinceLastRoute(route);
@@ -1409,10 +1409,10 @@ public class CamelMonitor extends CamelCommand {
             HealthCheckInfo hc = consumerHealthCheck(info, ci);
             boolean healthDown = hc != null && "DOWN".equals(hc.state);
             Style statusStyle = healthDown
-                    ? Style.EMPTY.fg(Color.RED)
+                    ? Style.EMPTY.fg(Color.LIGHT_RED)
                     : ("Started".equals(ci.state) || "Polling".equals(status)
                             ? Style.EMPTY.fg(Color.GREEN)
-                            : Style.EMPTY.fg(Color.RED));
+                            : Style.EMPTY.fg(Color.LIGHT_RED));
             String statusText = healthDown ? "⚠ " + status : status;
             String type = consumerType(ci);
             String period = consumerPeriod(ci);
@@ -1429,7 +1429,7 @@ public class CamelMonitor extends CamelCommand {
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     rightCell(period, 10),
                     Cell.from(sinceLast),
-                    Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.RED) : Style.EMPTY))));
+                    Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
         }
 
         if (rows.isEmpty()) {
@@ -1516,14 +1516,14 @@ public class CamelMonitor extends CamelCommand {
         List<Row> rows = new ArrayList<>();
 
         // Synthetic top row representing the route itself
-        Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.CYAN);
+        Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
         rows.add(Row.from(
                 Cell.from("   route"),
                 Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
                 Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                 rightCell(String.valueOf(route.total), 8),
                 rightCell(String.valueOf(route.failed), 6,
-                        route.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY),
+                        route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
                 Cell.from(""),
                 rightCell(route.total > 0
                         ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
@@ -1532,7 +1532,7 @@ public class CamelMonitor extends CamelCommand {
 
         for (ProcessorInfo proc : route.processors) {
             String indent = "  ".repeat(proc.level);
-            Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.CYAN);
+            Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
 
             rows.add(Row.from(
                     Cell.from("   " + (proc.processor != null ? proc.processor : "")),
@@ -1540,7 +1540,7 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                     rightCell(String.valueOf(proc.total), 8),
                     rightCell(String.valueOf(proc.failed), 6,
-                            proc.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY),
+                            proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
                     Cell.from(""),
                     rightCell(proc.total > 0
                             ? proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime
@@ -1593,9 +1593,9 @@ public class CamelMonitor extends CamelCommand {
         if (route != null) {
             Style stateStyle = "Started".equals(route.state)
                     ? Style.EMPTY.fg(Color.GREEN)
-                    : Style.EMPTY.fg(Color.RED);
+                    : Style.EMPTY.fg(Color.LIGHT_RED);
             Style failStyle = route.failed > 0
-                    ? Style.EMPTY.fg(Color.RED).bold()
+                    ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
                     : Style.EMPTY;
             rows.add(Row.from(
                     Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
@@ -1849,7 +1849,7 @@ public class CamelMonitor extends CamelCommand {
                     spans.add(Span.styled(text.substring(pos, cr[0]), Style.EMPTY.fg(defaultColor)));
                 }
                 int counterEnd = Math.min(cr[1], to);
-                Color counterColor = cr[2] == 1 ? Color.GREEN : Color.RED;
+                Color counterColor = cr[2] == 1 ? Color.GREEN : Color.LIGHT_RED;
                 spans.add(Span.styled(text.substring(cr[0], counterEnd), Style.EMPTY.fg(counterColor).bold()));
                 pos = counterEnd;
             } else {
@@ -2133,7 +2133,7 @@ public class CamelMonitor extends CamelCommand {
         for (CircuitBreakerInfo cb : sorted) {
             Style stateStyle = switch (cb.state != null ? cb.state.toLowerCase() : "") {
                 case "closed" -> Style.EMPTY.fg(Color.GREEN);
-                case "open", "forced_open" -> Style.EMPTY.fg(Color.RED);
+                case "open", "forced_open" -> Style.EMPTY.fg(Color.LIGHT_RED);
                 default -> Style.EMPTY.fg(Color.YELLOW); // half_open / half opened / unknown
             };
             String state = cb.state != null ? cb.state : "";
@@ -2238,7 +2238,7 @@ public class CamelMonitor extends CamelCommand {
                 stateStyle = Style.EMPTY.fg(Color.GREEN);
                 icon = "\u2714 ";
             } else if ("DOWN".equals(hc.state)) {
-                stateStyle = Style.EMPTY.fg(Color.RED);
+                stateStyle = Style.EMPTY.fg(Color.LIGHT_RED);
                 icon = "\u2716 ";
             } else {
                 stateStyle = Style.EMPTY.fg(Color.YELLOW);
@@ -2602,7 +2602,7 @@ public class CamelMonitor extends CamelCommand {
         for (ExchangeSummary s : summaries) {
             Style statusStyle = switch (s.status) {
                 case "Done" -> Style.EMPTY.fg(Color.GREEN);
-                case "Failed" -> Style.EMPTY.fg(Color.RED);
+                case "Failed" -> Style.EMPTY.fg(Color.LIGHT_RED);
                 case "Processing" -> Style.EMPTY.fg(Color.YELLOW);
                 default -> Style.EMPTY;
             };
@@ -2838,7 +2838,7 @@ public class CamelMonitor extends CamelCommand {
         if (failed) {
             lines.add(Line.from(
                     Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("Failed", Style.EMPTY.fg(Color.RED).bold())));
+                    Span.styled("Failed", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
         }
         lines.add(Line.from(Span.raw("")));
     }
@@ -2892,7 +2892,7 @@ public class CamelMonitor extends CamelCommand {
         if (exception == null) {
             return;
         }
-        lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.RED).bold())));
+        lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
         for (String l : exception.split("\n", -1)) {
             lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(l))));
         }
@@ -2997,9 +2997,9 @@ public class CamelMonitor extends CamelCommand {
         if (first) {
             dirStyle = Style.EMPTY.fg(Color.GREEN);
         } else if (last) {
-            dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+            dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
         } else {
-            dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY;
+            dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY;
         }
         String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
         return Row.from(
@@ -3058,7 +3058,7 @@ public class CamelMonitor extends CamelCommand {
         spans.add(Span.raw(" History of last completed ("));
         boolean failed = last.failed;
         spans.add(Span.styled("status:" + (failed ? "failed" : "success"),
-                failed ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Color.GREEN).bold()));
+                failed ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.GREEN).bold()));
         if (last.elapsed >= 0) {
             spans.add(Span.raw(" elapsed:" + TimeUtils.printDuration(last.elapsed, true)));
         }
@@ -3217,7 +3217,7 @@ public class CamelMonitor extends CamelCommand {
         if (open > 0) {
             return Line.from(
                     Span.raw(label),
-                    Span.styled("(" + open + " OPEN)", Style.EMPTY.fg(Color.RED).bold()),
+                    Span.styled("(" + open + " OPEN)", Style.EMPTY.fg(Color.LIGHT_RED).bold()),
                     Span.raw(" "));
         }
         return badge(label, total);
@@ -3227,7 +3227,7 @@ public class CamelMonitor extends CamelCommand {
         if (down > 0) {
             return Line.from(
                     Span.raw(label),
-                    Span.styled("(" + down + " DOWN)", Style.EMPTY.fg(Color.RED).bold()),
+                    Span.styled("(" + down + " DOWN)", Style.EMPTY.fg(Color.LIGHT_RED).bold()),
                     Span.raw(" "));
         }
         return badge(label, total);
