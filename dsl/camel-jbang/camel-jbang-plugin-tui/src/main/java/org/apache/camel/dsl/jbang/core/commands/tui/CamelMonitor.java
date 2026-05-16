@@ -105,7 +105,7 @@ public class CamelMonitor extends CamelCommand {
     private static final int MAX_SPARKLINE_POINTS = 60;
     private static final int MAX_LOG_LINES = 5000;
     private static final int MAX_TRACES = 200;
-    private static final int NUM_TABS = 8;
+    private static final int NUM_TABS = 9;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
@@ -113,21 +113,25 @@ public class CamelMonitor extends CamelCommand {
     private static final int TAB_ROUTES = 2;
     private static final int TAB_CONSUMERS = 3;
     private static final int TAB_ENDPOINTS = 4;
-    private static final int TAB_HEALTH = 5;
-    private static final int TAB_HISTORY = 6;
-    private static final int TAB_TRACE = 7;
+    private static final int TAB_CIRCUIT_BREAKER = 5;
+    private static final int TAB_HEALTH = 6;
+    private static final int TAB_HISTORY = 7;
+    private static final int TAB_TRACE = 8;
 
     // Overview sort columns
     private static final String[] OVERVIEW_SORT_COLUMNS = { "pid", "name", "status", "total", "fail" };
 
     // Route sort columns
-    private static final String[] ROUTE_SORT_COLUMNS = { "total", "failed", "name", "status" };
+    private static final String[] ROUTE_SORT_COLUMNS = { "name", "group", "status", "total", "failed" };
 
     // Consumer sort columns (order matches table column order)
     private static final String[] CONSUMER_SORT_COLUMNS = { "id", "status", "type", "inflight", "total", "uri" };
 
     // Endpoint sort columns (order matches table column order)
     private static final String[] ENDPOINT_SORT_COLUMNS = { "component", "route", "dir", "total", "uri" };
+
+    // Circuit breaker sort columns (order matches table column order)
+    private static final String[] CB_SORT_COLUMNS = { "route", "id", "component", "state" };
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -145,13 +149,16 @@ public class CamelMonitor extends CamelCommand {
     private final TableState consumerTableState = new TableState();
     private final TableState healthTableState = new TableState();
     private final TableState endpointTableState = new TableState();
+    private final TableState cbTableState = new TableState();
     private final TableState processorTableState = new TableState();
     private final TableState routeHeaderTableState = new TableState();
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
 
     // Sparkline: throughput history per PID (one point per second)
     private final Map<String, LinkedList<Long>> throughputHistory = new ConcurrentHashMap<>();
-    // Sliding window of [timestamp, exchangesTotal] samples for smoothing
+    // Sparkline: failed throughput history per PID (one point per second)
+    private final Map<String, LinkedList<Long>> failedHistory = new ConcurrentHashMap<>();
+    // Sliding window of [timestamp, exchangesTotal, exchangesFailed] samples for smoothing
     private final Map<String, LinkedList<long[]>> throughputSamples = new ConcurrentHashMap<>();
     // Track last time a sparkline point was recorded
     private final Map<String, Long> previousExchangesTime = new ConcurrentHashMap<>();
@@ -162,7 +169,7 @@ public class CamelMonitor extends CamelCommand {
 
     // Route sort state
     private String routeSort = "name";
-    private int routeSortIndex = 2;
+    private int routeSortIndex = 0;
 
     // Consumer sort state (default: id = index 0)
     private String consumerSort = "id";
@@ -174,6 +181,10 @@ public class CamelMonitor extends CamelCommand {
 
     // Endpoint filter state
     private boolean showOnlyRemote;
+
+    // Circuit breaker sort state (default: route = index 0)
+    private String cbSort = "route";
+    private int cbSortIndex = 0;
 
     // Health filter state
     private boolean showOnlyDown;
@@ -328,12 +339,15 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_ENDPOINTS);
             }
             if (ke.isChar('6')) {
-                return handleTabKey(TAB_HEALTH);
+                return handleTabKey(TAB_CIRCUIT_BREAKER);
             }
             if (ke.isChar('7')) {
-                return handleTabKey(TAB_HISTORY);
+                return handleTabKey(TAB_HEALTH);
             }
             if (ke.isChar('8')) {
+                return handleTabKey(TAB_HISTORY);
+            }
+            if (ke.isChar('9')) {
                 return handleTabKey(TAB_TRACE);
             }
 
@@ -450,6 +464,13 @@ public class CamelMonitor extends CamelCommand {
             if (tab == TAB_CONSUMERS && ke.isCharIgnoreCase('s')) {
                 consumerSortIndex = (consumerSortIndex + 1) % CONSUMER_SORT_COLUMNS.length;
                 consumerSort = CONSUMER_SORT_COLUMNS[consumerSortIndex];
+                return true;
+            }
+
+            // Circuit breaker tab: sort
+            if (tab == TAB_CIRCUIT_BREAKER && ke.isCharIgnoreCase('s')) {
+                cbSortIndex = (cbSortIndex + 1) % CB_SORT_COLUMNS.length;
+                cbSort = CB_SORT_COLUMNS[cbSortIndex];
                 return true;
             }
 
@@ -704,6 +725,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_CONSUMERS -> consumerTableState.selectPrevious();
             case TAB_HEALTH -> healthTableState.selectPrevious();
             case TAB_ENDPOINTS -> endpointTableState.selectPrevious();
+            case TAB_CIRCUIT_BREAKER -> cbTableState.selectPrevious();
             case TAB_LOG -> {
                 logFollowMode = false;
                 logScroll = Math.max(0, logScroll - 1);
@@ -742,6 +764,10 @@ public class CamelMonitor extends CamelCommand {
             case TAB_ENDPOINTS -> {
                 IntegrationInfo info = findSelectedIntegration();
                 endpointTableState.selectNext(info != null ? info.endpoints.size() : 0);
+            }
+            case TAB_CIRCUIT_BREAKER -> {
+                IntegrationInfo info = findSelectedIntegration();
+                cbTableState.selectNext(info != null ? info.circuitBreakers.size() : 0);
             }
             case TAB_LOG -> logScroll++;
             case TAB_TRACE -> {
@@ -817,6 +843,13 @@ public class CamelMonitor extends CamelCommand {
         int routeCount = hasSelection ? sel.routes.size() : 0;
         int consumerCount = hasSelection ? sel.consumers.size() : 0;
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
+        int cbCount = hasSelection ? sel.circuitBreakers.size() : 0;
+        long cbOpenCount = hasSelection
+                ? sel.circuitBreakers.stream()
+                        .filter(cb -> cb.state != null && (cb.state.equalsIgnoreCase("open")
+                                || cb.state.equalsIgnoreCase("forced_open")))
+                        .count()
+                : 0;
         int healthCount = hasSelection ? sel.healthChecks.size() : 0;
         long healthDownCount = hasSelection
                 ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
@@ -830,12 +863,13 @@ public class CamelMonitor extends CamelCommand {
                         badge(" 3 Routes ", routeCount),
                         badge(" 4 Consumers ", consumerCount),
                         badge(" 5 Endpoints ", endpointCount),
-                        badgeHealth(" 6 Health ", healthCount, healthDownCount),
-                        badge(" 7 History ", historyCount),
+                        badgeCb(" 6 Circuit Breaker ", cbCount, cbOpenCount),
+                        badgeHealth(" 7 Health ", healthCount, healthDownCount),
+                        badge(" 8 History ", historyCount),
                         hasTraces
-                                ? Line.from(Span.raw(" 8 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
+                                ? Line.from(Span.raw(" 9 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
                                         Span.raw(" "))
-                                : Line.from(" 8 Trace "))
+                                : Line.from(" 9 Trace "))
                 .highlightStyle(Style.EMPTY.fg(Color.rgb(0xF6, 0x91, 0x23)).bold())
                 .divider(Span.styled(" | ", Style.EMPTY.dim()))
                 .build();
@@ -852,8 +886,9 @@ public class CamelMonitor extends CamelCommand {
             case TAB_OVERVIEW -> renderOverview(frame, area);
             case TAB_ROUTES -> renderRoutes(frame, area);
             case TAB_CONSUMERS -> renderConsumers(frame, area);
-            case TAB_HEALTH -> renderHealth(frame, area);
             case TAB_ENDPOINTS -> renderEndpoints(frame, area);
+            case TAB_CIRCUIT_BREAKER -> renderCircuitBreaker(frame, area);
+            case TAB_HEALTH -> renderHealth(frame, area);
             case TAB_LOG -> renderLog(frame, area);
             case TAB_TRACE -> renderTrace(frame, area);
             case TAB_HISTORY -> renderHistory(frame, area);
@@ -866,12 +901,12 @@ public class CamelMonitor extends CamelCommand {
         List<IntegrationInfo> infos = new ArrayList<>(data.get());
         infos.sort(this::sortOverview);
 
-        // Split: table (fill) + sparkline (height 8) if we have data
+        // Split: table (fill) + chart (14 rows: 13 chart + 1 x-axis) if we have data
         boolean hasSparkline = !throughputHistory.isEmpty();
         List<Rect> chunks;
         if (hasSparkline) {
             chunks = Layout.vertical()
-                    .constraints(Constraint.fill(), Constraint.length(13))
+                    .constraints(Constraint.fill(), Constraint.length(14))
                     .split(area);
         } else {
             chunks = List.of(area);
@@ -891,7 +926,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled(info.name != null ? info.name : "", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
-                        Cell.from(Span.styled("\u2716 Stopped", Style.EMPTY.fg(Color.RED).dim())),
+                        Cell.from(Span.styled("\u2716 Stopped", Style.EMPTY.fg(Color.LIGHT_RED).dim())),
                         Cell.from(Span.styled(info.ago != null ? info.ago : "", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
                         Cell.from(Span.styled("", dimStyle)),
@@ -903,11 +938,11 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 Style statusStyle = switch (extractState(info.state)) {
                     case "Started", "Running" -> Style.EMPTY.fg(Color.GREEN);
-                    case "Stopped" -> Style.EMPTY.fg(Color.RED);
+                    case "Stopped" -> Style.EMPTY.fg(Color.LIGHT_RED);
                     default -> Style.EMPTY.fg(Color.YELLOW);
                 };
 
-                Style failStyle = info.failed > 0 ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY;
+                Style failStyle = info.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY;
 
                 String sinceLastDisplay = formatSinceLast(info);
 
@@ -915,10 +950,10 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(info.pid),
                         Cell.from(Span.styled(info.name != null ? info.name : "", Style.EMPTY.fg(Color.CYAN))),
                         Cell.from(info.camelVersion != null ? info.camelVersion : ""),
-                        Cell.from(info.ready != null ? info.ready : ""),
+                        centerCell(info.ready != null ? info.ready : "", 5),
                         Cell.from(Span.styled(extractState(info.state), statusStyle)),
                         Cell.from(info.ago != null ? info.ago : ""),
-                        Cell.from(info.routeStarted + "/" + info.routeTotal),
+                        rightCell(info.routeStarted + "/" + info.routeTotal, 7),
                         rightCell(info.throughput != null ? info.throughput : "", 8),
                         rightCell(String.valueOf(info.exchangesTotal), 8),
                         rightCell(String.valueOf(info.failed), 6, failStyle),
@@ -932,10 +967,10 @@ public class CamelMonitor extends CamelCommand {
                 Cell.from(Span.styled(overviewSortLabel("PID", "pid"), overviewSortStyle("pid"))),
                 Cell.from(Span.styled(overviewSortLabel("NAME", "name"), overviewSortStyle("name"))),
                 Cell.from(Span.styled("VERSION", Style.EMPTY.bold())),
-                Cell.from(Span.styled("READY", Style.EMPTY.bold())),
+                centerCell("READY", 5, Style.EMPTY.bold()),
                 Cell.from(Span.styled(overviewSortLabel("STATUS", "status"), overviewSortStyle("status"))),
                 Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
-                Cell.from(Span.styled("ROUTE", Style.EMPTY.bold())),
+                rightCell("ROUTE", 7, Style.EMPTY.bold()),
                 rightCell("MSG/S", 8, Style.EMPTY.bold()),
                 rightCell(overviewSortLabel("TOTAL", "total"), 8, overviewSortStyle("total")),
                 rightCell(overviewSortLabel("FAIL", "fail"), 6, overviewSortStyle("fail")),
@@ -967,28 +1002,68 @@ public class CamelMonitor extends CamelCommand {
 
         frame.renderStatefulWidget(table, chunks.get(0), overviewTableState);
 
-        // Sparkline for throughput
+        // Split green/red throughput bar chart with Y and X axes
         if (hasSparkline && chunks.size() > 1) {
-            // Merge all throughput histories for overview chart
-            LinkedList<Long> merged = new LinkedList<>();
-            for (int i = 0; i < MAX_SPARKLINE_POINTS; i++) {
-                long sum = 0;
+            Rect chartTotalArea = chunks.get(1);
+
+            // Split chart area: chart rows (13) + x-axis label row (1)
+            List<Rect> vChunks = Layout.vertical()
+                    .constraints(Constraint.fill(), Constraint.length(1))
+                    .split(chartTotalArea);
+
+            // Split chart rows: y-axis labels (4 cols) + bar chart (fill)
+            List<Rect> hChunks = Layout.horizontal()
+                    .constraints(Constraint.length(4), Constraint.fill())
+                    .split(vChunks.get(0));
+
+            Rect barChartArea = hChunks.get(1);
+
+            // Compute how many ticks fit: each tick = 2 bars × barWidth=1 = 2 cols
+            int innerBarCols = Math.max(2, barChartArea.width() - 2); // minus block borders
+            int renderPoints = Math.min(MAX_SPARKLINE_POINTS, innerBarCols / 2);
+
+            // Merge throughput histories across all PIDs
+            long[] mergedTotal = new long[renderPoints];
+            long[] mergedFailed = new long[renderPoints];
+            for (int i = 0; i < renderPoints; i++) {
                 for (LinkedList<Long> hist : throughputHistory.values()) {
-                    if (i < hist.size()) {
-                        sum += hist.get(hist.size() - 1 - i);
+                    int idx = hist.size() - renderPoints + i;
+                    if (idx >= 0) {
+                        mergedTotal[i] += hist.get(idx);
                     }
                 }
-                merged.addFirst(sum);
+                for (LinkedList<Long> hist : failedHistory.values()) {
+                    int idx = hist.size() - renderPoints + i;
+                    if (idx >= 0) {
+                        mergedFailed[i] += hist.get(idx);
+                    }
+                }
             }
 
-            // Compute stats for title display
-            long maxTp = merged.stream().mapToLong(Long::longValue).max().orElse(0);
-            long curTp = merged.isEmpty() ? 0 : merged.get(merged.size() - 1);
-            String chartTitle = String.format(" Throughput: %d msg/s (peak: %d) ", curTp, maxTp);
+            long maxTp = 0;
+            for (long v : mergedTotal) {
+                maxTp = Math.max(maxTp, v);
+            }
+            long curTp = mergedTotal[renderPoints - 1];
+            long curFailed = mergedFailed[renderPoints - 1];
+            long curOk = Math.max(0, curTp - curFailed);
 
+            // Styled legend in chart title
+            Line titleLine = Line.from(
+                    Span.raw(String.format(" Throughput: %d msg/s  ", curTp)),
+                    Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
+                    Span.raw(String.format(" ok:%d  ", curOk)),
+                    Span.styled("■", Style.EMPTY.fg(Color.RED)),
+                    Span.raw(String.format(" fail:%d ", curFailed)));
+
+            // Build bar groups (ok=green, failed=red), no bar value labels
             List<BarGroup> groups = new ArrayList<>();
-            for (Long value : merged) {
-                groups.add(BarGroup.of(Bar.of(value)));
+            for (int i = 0; i < renderPoints; i++) {
+                long failed = Math.min(mergedFailed[i], mergedTotal[i]);
+                long ok = Math.max(0, mergedTotal[i] - failed);
+                groups.add(BarGroup.of(
+                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.GREEN)).build(),
+                        Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
             }
 
             BarChart barChart = BarChart.builder()
@@ -996,11 +1071,53 @@ public class CamelMonitor extends CamelCommand {
                     .max(maxTp > 0 ? maxTp + 2 : 2)
                     .barWidth(1)
                     .barGap(0)
-                    .barStyle(Style.EMPTY.fg(Color.GREEN))
-                    .block(Block.builder().borderType(BorderType.ROUNDED).title(chartTitle).build())
+                    .groupGap(0)
+                    .block(Block.builder().borderType(BorderType.ROUNDED)
+                            .title(Title.from(titleLine)).build())
                     .build();
 
-            frame.renderWidget(barChart, chunks.get(1));
+            frame.renderWidget(barChart, barChartArea);
+
+            // Y-axis: scale labels aligned with bar chart inner rows
+            int barRows = vChunks.get(0).height() - 2; // minus top + bottom border
+            List<Line> yLines = new ArrayList<>();
+            Style dimStyle = Style.EMPTY.dim();
+            for (int row = 0; row < vChunks.get(0).height(); row++) {
+                int barRow = row - 1; // bar area starts after top border
+                if (barRow == 0) {
+                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp), dimStyle)));
+                } else if (barRows > 4 && barRow == barRows / 2) {
+                    yLines.add(Line.from(Span.styled(String.format("%3d", maxTp / 2), dimStyle)));
+                } else if (barRow == barRows - 1) {
+                    yLines.add(Line.from(Span.styled("  0", dimStyle)));
+                } else {
+                    yLines.add(Line.from(""));
+                }
+            }
+            frame.renderWidget(Paragraph.builder().text(Text.from(yLines)).build(), hChunks.get(0));
+
+            // X-axis: time labels drawn into the bottom row
+            if (!vChunks.get(1).isEmpty()) {
+                int barInnerStartX = barChartArea.x() + 1; // inside left border
+                int xAxisY = vChunks.get(1).y();
+                // Markers at: oldest, 1/4, 1/2, 3/4, newest
+                int[][] markerIndices = {
+                        { 0, renderPoints },
+                        { renderPoints / 4, renderPoints - renderPoints / 4 },
+                        { renderPoints / 2, renderPoints / 2 },
+                        { 3 * renderPoints / 4, renderPoints / 4 },
+                        { renderPoints - 1, 0 }
+                };
+                for (int[] m : markerIndices) {
+                    int groupIdx = m[0];
+                    int secsAgo = m[1];
+                    String label = secsAgo == 0 ? "now" : "-" + secsAgo + "s";
+                    int markerX = barInnerStartX + groupIdx * 2;
+                    if (markerX + label.length() <= barChartArea.right()) {
+                        frame.buffer().setString(markerX, xAxisY, label, dimStyle);
+                    }
+                }
+            }
         }
     }
 
@@ -1038,20 +1155,21 @@ public class CamelMonitor extends CamelCommand {
         for (RouteInfo route : sortedRoutes) {
             Style stateStyle = "Started".equals(route.state)
                     ? Style.EMPTY.fg(Color.GREEN)
-                    : Style.EMPTY.fg(Color.RED);
+                    : Style.EMPTY.fg(Color.LIGHT_RED);
 
             Style failStyle = route.failed > 0
-                    ? Style.EMPTY.fg(Color.RED).bold()
+                    ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
                     : Style.EMPTY;
 
             String sinceLastRoute = formatSinceLastRoute(route);
 
             routeRows.add(Row.from(
                     Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(Span.styled(route.group != null ? route.group : "", Style.EMPTY.dim())),
                     Cell.from(route.from != null ? route.from : ""),
                     Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
                     Cell.from(route.uptime != null ? route.uptime : ""),
-                    Cell.from(route.coverage != null ? route.coverage : ""),
+                    rightCell(route.coverage != null ? route.coverage : "", 6),
                     rightCell(route.throughput != null ? route.throughput : "", 8),
                     rightCell(String.valueOf(route.total), 8),
                     rightCell(String.valueOf(route.failed), 6, failStyle),
@@ -1066,10 +1184,11 @@ public class CamelMonitor extends CamelCommand {
                 .rows(routeRows)
                 .header(Row.from(
                         Cell.from(Span.styled(routeSortLabel("ROUTE", "name"), routeSortStyle("name"))),
+                        Cell.from(Span.styled(routeSortLabel("GROUP", "group"), routeSortStyle("group"))),
                         Cell.from(Span.styled("FROM", Style.EMPTY.bold())),
                         Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
                         Cell.from(Span.styled("AGE", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("COVER", Style.EMPTY.bold())),
+                        rightCell("COVER", 6, Style.EMPTY.bold()),
                         rightCell("MSG/S", 8, Style.EMPTY.bold()),
                         rightCell(routeSortLabel("TOTAL", "total"), 8, routeSortStyle("total")),
                         rightCell(routeSortLabel("FAIL", "failed"), 6, routeSortStyle("failed")),
@@ -1078,6 +1197,7 @@ public class CamelMonitor extends CamelCommand {
                         Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold()))))
                 .widths(
                         Constraint.length(12),
+                        Constraint.length(14),
                         Constraint.fill(),
                         Constraint.length(10),
                         Constraint.length(8),
@@ -1160,6 +1280,11 @@ public class CamelMonitor extends CamelCommand {
                 String sa = a.state != null ? a.state : "";
                 String sb2 = b.state != null ? b.state : "";
                 yield sa.compareToIgnoreCase(sb2);
+            }
+            case "group" -> {
+                String ga = a.group != null ? a.group : "";
+                String gb = b.group != null ? b.group : "";
+                yield ga.compareToIgnoreCase(gb);
             }
             default -> 0;
         };
@@ -1284,10 +1409,10 @@ public class CamelMonitor extends CamelCommand {
             HealthCheckInfo hc = consumerHealthCheck(info, ci);
             boolean healthDown = hc != null && "DOWN".equals(hc.state);
             Style statusStyle = healthDown
-                    ? Style.EMPTY.fg(Color.RED)
+                    ? Style.EMPTY.fg(Color.LIGHT_RED)
                     : ("Started".equals(ci.state) || "Polling".equals(status)
                             ? Style.EMPTY.fg(Color.GREEN)
-                            : Style.EMPTY.fg(Color.RED));
+                            : Style.EMPTY.fg(Color.LIGHT_RED));
             String statusText = healthDown ? "⚠ " + status : status;
             String type = consumerType(ci);
             String period = consumerPeriod(ci);
@@ -1304,7 +1429,7 @@ public class CamelMonitor extends CamelCommand {
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
                     rightCell(period, 10),
                     Cell.from(sinceLast),
-                    Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.RED) : Style.EMPTY))));
+                    Cell.from(Span.styled(uri, healthDown ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY))));
         }
 
         if (rows.isEmpty()) {
@@ -1391,14 +1516,14 @@ public class CamelMonitor extends CamelCommand {
         List<Row> rows = new ArrayList<>();
 
         // Synthetic top row representing the route itself
-        Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.CYAN);
+        Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
         rows.add(Row.from(
                 Cell.from("   route"),
                 Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
                 Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                 rightCell(String.valueOf(route.total), 8),
                 rightCell(String.valueOf(route.failed), 6,
-                        route.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY),
+                        route.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
                 Cell.from(""),
                 rightCell(route.total > 0
                         ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
@@ -1407,7 +1532,7 @@ public class CamelMonitor extends CamelCommand {
 
         for (ProcessorInfo proc : route.processors) {
             String indent = "  ".repeat(proc.level);
-            Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.CYAN);
+            Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.CYAN);
 
             rows.add(Row.from(
                     Cell.from("   " + (proc.processor != null ? proc.processor : "")),
@@ -1415,7 +1540,7 @@ public class CamelMonitor extends CamelCommand {
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                     rightCell(String.valueOf(proc.total), 8),
                     rightCell(String.valueOf(proc.failed), 6,
-                            proc.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY),
+                            proc.failed > 0 ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY),
                     Cell.from(""),
                     rightCell(proc.total > 0
                             ? proc.minTime + "/" + proc.maxTime + "/" + proc.meanTime
@@ -1468,9 +1593,9 @@ public class CamelMonitor extends CamelCommand {
         if (route != null) {
             Style stateStyle = "Started".equals(route.state)
                     ? Style.EMPTY.fg(Color.GREEN)
-                    : Style.EMPTY.fg(Color.RED);
+                    : Style.EMPTY.fg(Color.LIGHT_RED);
             Style failStyle = route.failed > 0
-                    ? Style.EMPTY.fg(Color.RED).bold()
+                    ? Style.EMPTY.fg(Color.LIGHT_RED).bold()
                     : Style.EMPTY;
             rows.add(Row.from(
                     Cell.from(Span.styled(route.routeId != null ? route.routeId : "", Style.EMPTY.fg(Color.CYAN))),
@@ -1724,7 +1849,7 @@ public class CamelMonitor extends CamelCommand {
                     spans.add(Span.styled(text.substring(pos, cr[0]), Style.EMPTY.fg(defaultColor)));
                 }
                 int counterEnd = Math.min(cr[1], to);
-                Color counterColor = cr[2] == 1 ? Color.GREEN : Color.RED;
+                Color counterColor = cr[2] == 1 ? Color.GREEN : Color.LIGHT_RED;
                 spans.add(Span.styled(text.substring(cr[0], counterEnd), Style.EMPTY.fg(counterColor).bold()));
                 pos = counterEnd;
             } else {
@@ -1992,6 +2117,108 @@ public class CamelMonitor extends CamelCommand {
         return null;
     }
 
+    // ---- Tab 5: Circuit Breaker ----
+
+    private void renderCircuitBreaker(Frame frame, Rect area) {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info == null) {
+            renderNoSelection(frame, area);
+            return;
+        }
+
+        List<CircuitBreakerInfo> sorted = new ArrayList<>(info.circuitBreakers);
+        sorted.sort(this::sortCircuitBreaker);
+
+        List<Row> rows = new ArrayList<>();
+        for (CircuitBreakerInfo cb : sorted) {
+            Style stateStyle = switch (cb.state != null ? cb.state.toLowerCase() : "") {
+                case "closed" -> Style.EMPTY.fg(Color.GREEN);
+                case "open", "forced_open" -> Style.EMPTY.fg(Color.LIGHT_RED);
+                default -> Style.EMPTY.fg(Color.YELLOW); // half_open / half opened / unknown
+            };
+            String state = cb.state != null ? cb.state : "";
+            String pending = cb.bufferedCalls > 0 ? String.valueOf(cb.bufferedCalls) : "";
+            String success = cb.successfulCalls > 0 ? String.valueOf(cb.successfulCalls) : "";
+            String failed = cb.failedCalls > 0 ? String.valueOf(cb.failedCalls) : "";
+            String reject = cb.notPermittedCalls > 0 ? String.valueOf(cb.notPermittedCalls) : "";
+            String rate = cb.failureRate >= 0 ? String.format("%.0f%%", cb.failureRate) : "";
+
+            rows.add(Row.from(
+                    Cell.from(Span.styled(cb.routeId != null ? cb.routeId : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(cb.id != null ? cb.id : ""),
+                    Cell.from(cb.component != null ? cb.component : ""),
+                    Cell.from(Span.styled(state, stateStyle)),
+                    rightCell(pending, 8),
+                    rightCell(success, 8),
+                    rightCell(failed, 8),
+                    rightCell(rate, 6),
+                    rightCell(reject, 8)));
+        }
+
+        if (rows.isEmpty()) {
+            rows.add(Row.from(
+                    Cell.from(Span.styled("No circuit breakers", Style.EMPTY.dim())),
+                    Cell.from(""), Cell.from(""), Cell.from(""),
+                    Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""), Cell.from("")));
+        }
+
+        Table table = Table.builder()
+                .rows(rows)
+                .header(Row.from(
+                        Cell.from(Span.styled(cbSortLabel("ROUTE", "route"), cbSortStyle("route"))),
+                        Cell.from(Span.styled(cbSortLabel("ID", "id"), cbSortStyle("id"))),
+                        Cell.from(Span.styled(cbSortLabel("COMPONENT", "component"), cbSortStyle("component"))),
+                        Cell.from(Span.styled(cbSortLabel("STATE", "state"), cbSortStyle("state"))),
+                        rightCell("PENDING", 8, Style.EMPTY.bold()),
+                        rightCell("SUCCESS", 8, Style.EMPTY.bold()),
+                        rightCell("FAIL", 8, Style.EMPTY.bold()),
+                        rightCell("RATE%", 6, Style.EMPTY.bold()),
+                        rightCell("REJECT", 8, Style.EMPTY.bold())))
+                .widths(
+                        Constraint.length(20),
+                        Constraint.length(20),
+                        Constraint.length(16),
+                        Constraint.length(12),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(8),
+                        Constraint.length(6),
+                        Constraint.fill())
+                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
+                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Circuit Breaker ").build())
+                .build();
+
+        frame.renderStatefulWidget(table, area, cbTableState);
+    }
+
+    private String cbSortLabel(String label, String column) {
+        return cbSort.equals(column) ? label + " ▴" : label;
+    }
+
+    private Style cbSortStyle(String column) {
+        return cbSort.equals(column) ? Style.EMPTY.fg(Color.YELLOW).bold() : Style.EMPTY.bold();
+    }
+
+    private int sortCircuitBreaker(CircuitBreakerInfo a, CircuitBreakerInfo b) {
+        return switch (cbSort) {
+            case "id" -> compareStr(a.id, b.id);
+            case "component" -> compareStr(a.component, b.component);
+            case "state" -> compareStr(a.state, b.state);
+            default -> compareStr(a.routeId, b.routeId); // "route"
+        };
+    }
+
+    private static int compareStr(String a, String b) {
+        if (a == null && b == null)
+            return 0;
+        if (a == null)
+            return 1;
+        if (b == null)
+            return -1;
+        return a.compareToIgnoreCase(b);
+    }
+
     // ---- Tab 3: Health ----
 
     private void renderHealth(Frame frame, Rect area) {
@@ -2011,7 +2238,7 @@ public class CamelMonitor extends CamelCommand {
                 stateStyle = Style.EMPTY.fg(Color.GREEN);
                 icon = "\u2714 ";
             } else if ("DOWN".equals(hc.state)) {
-                stateStyle = Style.EMPTY.fg(Color.RED);
+                stateStyle = Style.EMPTY.fg(Color.LIGHT_RED);
                 icon = "\u2716 ";
             } else {
                 stateStyle = Style.EMPTY.fg(Color.YELLOW);
@@ -2375,7 +2602,7 @@ public class CamelMonitor extends CamelCommand {
         for (ExchangeSummary s : summaries) {
             Style statusStyle = switch (s.status) {
                 case "Done" -> Style.EMPTY.fg(Color.GREEN);
-                case "Failed" -> Style.EMPTY.fg(Color.RED);
+                case "Failed" -> Style.EMPTY.fg(Color.LIGHT_RED);
                 case "Processing" -> Style.EMPTY.fg(Color.YELLOW);
                 default -> Style.EMPTY;
             };
@@ -2611,7 +2838,7 @@ public class CamelMonitor extends CamelCommand {
         if (failed) {
             lines.add(Line.from(
                     Span.styled(" Status:   ", Style.EMPTY.fg(Color.YELLOW).bold()),
-                    Span.styled("Failed", Style.EMPTY.fg(Color.RED).bold())));
+                    Span.styled("Failed", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
         }
         lines.add(Line.from(Span.raw("")));
     }
@@ -2665,7 +2892,7 @@ public class CamelMonitor extends CamelCommand {
         if (exception == null) {
             return;
         }
-        lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.RED).bold())));
+        lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.LIGHT_RED).bold())));
         for (String l : exception.split("\n", -1)) {
             lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(l))));
         }
@@ -2770,9 +2997,9 @@ public class CamelMonitor extends CamelCommand {
         if (first) {
             dirStyle = Style.EMPTY.fg(Color.GREEN);
         } else if (last) {
-            dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
+            dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY.fg(Color.GREEN);
         } else {
-            dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY;
+            dirStyle = failed ? Style.EMPTY.fg(Color.LIGHT_RED) : Style.EMPTY;
         }
         String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
         return Row.from(
@@ -2831,7 +3058,7 @@ public class CamelMonitor extends CamelCommand {
         spans.add(Span.raw(" History of last completed ("));
         boolean failed = last.failed;
         spans.add(Span.styled("status:" + (failed ? "failed" : "success"),
-                failed ? Style.EMPTY.fg(Color.RED).bold() : Style.EMPTY.fg(Color.GREEN).bold()));
+                failed ? Style.EMPTY.fg(Color.LIGHT_RED).bold() : Style.EMPTY.fg(Color.GREEN).bold()));
         if (last.elapsed >= 0) {
             spans.add(Span.raw(" elapsed:" + TimeUtils.printDuration(last.elapsed, true)));
         }
@@ -2869,7 +3096,7 @@ public class CamelMonitor extends CamelCommand {
             if (selectedPid != null) {
                 hint(spans, "Esc", "unselect");
             }
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_ROUTES && showDiagram) {
             String closeKey = diagramTextMode ? "D" : "d";
             hint(spans, closeKey + "/Esc", "close");
@@ -2888,23 +3115,28 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "s", "sort");
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_CONSUMERS) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_ENDPOINTS) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "r", "remote" + (showOnlyRemote ? " [on]" : " [off]"));
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
+        } else if (tab == TAB_CIRCUIT_BREAKER) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "s", "sort");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "d", "toggle DOWN");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         } else if (tab == TAB_LOG) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "scroll");
@@ -2949,7 +3181,7 @@ public class CamelMonitor extends CamelCommand {
         } else {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
-            hint(spans, "1-8", "tabs");
+            hint(spans, "1-9", "tabs");
         }
 
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
@@ -2981,11 +3213,21 @@ public class CamelMonitor extends CamelCommand {
         return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
     }
 
+    private static Line badgeCb(String label, long total, long open) {
+        if (open > 0) {
+            return Line.from(
+                    Span.raw(label),
+                    Span.styled("(" + open + " OPEN)", Style.EMPTY.fg(Color.LIGHT_RED).bold()),
+                    Span.raw(" "));
+        }
+        return badge(label, total);
+    }
+
     private static Line badgeHealth(String label, long total, long down) {
         if (down > 0) {
             return Line.from(
                     Span.raw(label),
-                    Span.styled("(" + down + " DOWN)", Style.EMPTY.fg(Color.RED).bold()),
+                    Span.styled("(" + down + " DOWN)", Style.EMPTY.fg(Color.LIGHT_RED).bold()),
                     Span.raw(" "));
         }
         return badge(label, total);
@@ -3069,6 +3311,7 @@ public class CamelMonitor extends CamelCommand {
                 if (now - entry.getValue().startTime > VANISH_DURATION_MS) {
                     it.remove();
                     throughputHistory.remove(entry.getKey());
+                    failedHistory.remove(entry.getKey());
                 } else if (!livePids.contains(entry.getKey())) {
                     IntegrationInfo ghost = entry.getValue().info;
                     ghost.vanishing = true;
@@ -3099,13 +3342,14 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void updateThroughputHistory(IntegrationInfo info) {
-        // Track exchangesTotal over a 1-second sliding window for stable throughput
+        // Track exchangesTotal and exchangesFailed over a 1-second sliding window
         long currentTotal = info.exchangesTotal;
+        long currentFailed = info.failed;
         long now = System.currentTimeMillis();
 
         String pid = info.pid;
         LinkedList<long[]> samples = throughputSamples.computeIfAbsent(pid, k -> new LinkedList<>());
-        samples.add(new long[] { now, currentTotal });
+        samples.add(new long[] { now, currentTotal, currentFailed });
 
         // Remove samples older than 1 second
         while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
@@ -3116,18 +3360,25 @@ public class CamelMonitor extends CamelCommand {
         if (samples.size() >= 2) {
             long[] oldest = samples.get(0);
             long[] newest = samples.get(samples.size() - 1);
-            long deltaExchanges = newest[1] - oldest[1];
+            long deltaTotal = newest[1] - oldest[1];
+            long deltaFailed = newest[2] - oldest[2];
             long deltaTimeMs = newest[0] - oldest[0];
-            long tp = deltaTimeMs > 0 ? (deltaExchanges * 1000) / deltaTimeMs : 0;
+            long tp = deltaTimeMs > 0 ? (deltaTotal * 1000) / deltaTimeMs : 0;
+            long fp = deltaTimeMs > 0 ? (deltaFailed * 1000) / deltaTimeMs : 0;
 
-            LinkedList<Long> hist = throughputHistory.computeIfAbsent(pid, k -> new LinkedList<>());
             // Only add one point per second to keep the sparkline meaningful
             Long lastTime = previousExchangesTime.get(pid);
             if (lastTime == null || now - lastTime >= 1000) {
                 previousExchangesTime.put(pid, now);
+                LinkedList<Long> hist = throughputHistory.computeIfAbsent(pid, k -> new LinkedList<>());
                 hist.add(tp);
                 while (hist.size() > MAX_SPARKLINE_POINTS) {
                     hist.remove(0);
+                }
+                LinkedList<Long> fhist = failedHistory.computeIfAbsent(pid, k -> new LinkedList<>());
+                fhist.add(fp);
+                while (fhist.size() > MAX_SPARKLINE_POINTS) {
+                    fhist.remove(0);
                 }
             }
         }
@@ -3619,6 +3870,7 @@ public class CamelMonitor extends CamelCommand {
                 JsonObject rj = (JsonObject) r;
                 RouteInfo ri = new RouteInfo();
                 ri.routeId = rj.getString("routeId");
+                ri.group = rj.getString("group");
                 ri.from = rj.getString("from");
                 ri.state = rj.getString("state");
                 ri.uptime = rj.getString("uptime");
@@ -3630,9 +3882,9 @@ public class CamelMonitor extends CamelCommand {
                     ri.total = objToLong(rs.get("exchangesTotal"));
                     ri.failed = objToLong(rs.get("exchangesFailed"));
                     ri.inflight = objToLong(rs.get("exchangesInflight"));
-                    ri.meanTime = objToLong(rs.get("meanProcessingTime"));
-                    ri.minTime = objToLong(rs.get("minProcessingTime"));
-                    ri.maxTime = objToLong(rs.get("maxProcessingTime"));
+                    ri.meanTime = Math.max(0, objToLong(rs.get("meanProcessingTime")));
+                    ri.minTime = Math.max(0, objToLong(rs.get("minProcessingTime")));
+                    ri.maxTime = Math.max(0, objToLong(rs.get("maxProcessingTime")));
                     long tsStarted = objToLong(rs.get("lastCreatedExchangeTimestamp"));
                     if (tsStarted > 0) {
                         ri.sinceLastStarted = TimeUtils.printSince(tsStarted);
@@ -3661,9 +3913,9 @@ public class CamelMonitor extends CamelCommand {
                         if (ps != null) {
                             pi.total = objToLong(ps.get("exchangesTotal"));
                             pi.failed = objToLong(ps.get("exchangesFailed"));
-                            pi.meanTime = objToLong(ps.get("meanProcessingTime"));
-                            pi.minTime = objToLong(ps.get("minProcessingTime"));
-                            pi.maxTime = objToLong(ps.get("maxProcessingTime"));
+                            pi.meanTime = Math.max(0, objToLong(ps.get("meanProcessingTime")));
+                            pi.minTime = Math.max(0, objToLong(ps.get("minProcessingTime")));
+                            pi.maxTime = Math.max(0, objToLong(ps.get("maxProcessingTime")));
                             pi.lastTime = objToLong(ps.get("lastProcessingTime"));
                         }
 
@@ -3766,7 +4018,43 @@ public class CamelMonitor extends CamelCommand {
             }
         }
 
+        // Parse circuit breakers: resilience4j, fault-tolerance, core
+        parseCbSection(root, "resilience4j", info);
+        parseCbSection(root, "fault-tolerance", info);
+        parseCbSection(root, "circuit-breaker", info);
+
         return info;
+    }
+
+    private static void parseCbSection(JsonObject root, String key, IntegrationInfo info) {
+        JsonObject section = (JsonObject) root.get(key);
+        if (section == null) {
+            return;
+        }
+        JsonArray breakers = (JsonArray) section.get("circuitBreakers");
+        if (breakers == null) {
+            return;
+        }
+        String component = switch (key) {
+            case "resilience4j" -> "resilience4j";
+            case "fault-tolerance" -> "fault-tolerance";
+            default -> "core";
+        };
+        for (Object b : breakers) {
+            JsonObject bj = (JsonObject) b;
+            CircuitBreakerInfo cb = new CircuitBreakerInfo();
+            cb.component = component;
+            cb.routeId = bj.getString("routeId");
+            cb.id = bj.getString("id");
+            cb.state = bj.getString("state");
+            cb.bufferedCalls = bj.getIntegerOrDefault("bufferedCalls", 0);
+            cb.successfulCalls = TuiHelper.objToLong(bj.get("successfulCalls"));
+            cb.failedCalls = TuiHelper.objToLong(bj.get("failedCalls"));
+            cb.notPermittedCalls = TuiHelper.objToLong(bj.get("notPermittedCalls"));
+            Object fr = bj.get("failureRate");
+            cb.failureRate = fr instanceof Number n ? n.doubleValue() : -1;
+            info.circuitBreakers.add(cb);
+        }
     }
 
     // ---- Helpers ----
@@ -3896,10 +4184,12 @@ public class CamelMonitor extends CamelCommand {
         final List<ConsumerInfo> consumers = new ArrayList<>();
         final List<HealthCheckInfo> healthChecks = new ArrayList<>();
         final List<EndpointInfo> endpoints = new ArrayList<>();
+        final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
     }
 
     static class RouteInfo {
         String routeId;
+        String group;
         String from;
         String state;
         String uptime;
@@ -3962,6 +4252,18 @@ public class CamelMonitor extends CamelCommand {
         long hits;
         boolean stub;
         boolean remote;
+    }
+
+    static class CircuitBreakerInfo {
+        String routeId;
+        String id;
+        String component; // "resilience4j", "fault-tolerance", "core"
+        String state;
+        int bufferedCalls;
+        long successfulCalls;
+        long failedCalls;
+        long notPermittedCalls;
+        double failureRate; // -1 means not available
     }
 
     static class TraceEntry {
