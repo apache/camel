@@ -1926,6 +1926,17 @@ public class CamelMonitor extends CamelCommand {
         }
         logScroll = Math.min(logScroll, Math.max(0, contentHeight - visibleHeight));
 
+        // Cap horizontal scroll at the longest line width minus visible width
+        if (!logWordWrap) {
+            int visibleWidth = Math.max(1, inner.width() - 1);
+            int maxLineWidth = 0;
+            for (LogEntry entry : entries) {
+                String stripped = TuiHelper.stripAnsi(entry.raw != null ? entry.raw : "");
+                maxLineWidth = Math.max(maxLineWidth, CharWidth.of(stripped));
+            }
+            logHScroll = Math.min(logHScroll, Math.max(0, maxLineWidth - visibleWidth));
+        }
+
         int hSkip = logWordWrap ? 0 : logHScroll;
         List<Line> lines = new ArrayList<>();
         for (LogEntry entry : entries) {
@@ -2211,8 +2222,10 @@ public class CamelMonitor extends CamelCommand {
         addExceptionLines(lines, entry.exception);
 
         int[] scroll = { traceDetailScroll };
-        renderDetailPanel(frame, area, lines, traceWordWrap, traceDetailHScroll, scroll, traceDetailScrollState);
+        int[] hScroll = { traceDetailHScroll };
+        renderDetailPanel(frame, area, lines, traceWordWrap, hScroll, scroll, traceDetailScrollState);
         traceDetailScroll = scroll[0];
+        traceDetailHScroll = hScroll[0];
     }
 
     private List<String> getTraceExchangeIds() {
@@ -2315,8 +2328,10 @@ public class CamelMonitor extends CamelCommand {
         addExceptionLines(lines, entry.exception);
 
         int[] scroll = { historyDetailScroll };
-        renderDetailPanel(frame, area, lines, historyWordWrap, historyDetailHScroll, scroll, historyDetailScrollState);
+        int[] hScroll = { historyDetailHScroll };
+        renderDetailPanel(frame, area, lines, historyWordWrap, hScroll, scroll, historyDetailScrollState);
         historyDetailScroll = scroll[0];
+        historyDetailHScroll = hScroll[0];
     }
 
     private static void addExchangeInfoLines(
@@ -2405,19 +2420,19 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderDetailPanel(
             Frame frame, Rect area, List<Line> lines,
-            boolean wordWrap, int hSkip, int[] scroll, ScrollbarState scrollState) {
+            boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState) {
         Block block = Block.builder().borderType(BorderType.ROUNDED).build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
         int visibleHeight = Math.max(1, inner.height());
+        int visibleWidth = Math.max(1, inner.width() - 1); // -1 for scrollbar column
         int contentHeight;
         if (wordWrap) {
-            int width = Math.max(1, inner.width() - 1);
             contentHeight = 0;
             for (Line l : lines) {
                 int w = l.width();
-                contentHeight += Math.max(1, (w + width - 1) / width);
+                contentHeight += Math.max(1, (w + visibleWidth - 1) / visibleWidth);
             }
         } else {
             contentHeight = lines.size();
@@ -2427,11 +2442,17 @@ public class CamelMonitor extends CamelCommand {
             scroll[0] = maxScroll;
         }
 
+        // Cap horizontal scroll so it can't go past the longest line
+        if (!wordWrap) {
+            int maxLineWidth = lines.stream().mapToInt(Line::width).max().orElse(0);
+            hScroll[0] = Math.min(hScroll[0], Math.max(0, maxLineWidth - visibleWidth));
+        }
+
         List<Rect> hChunks = Layout.horizontal()
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(inner);
 
-        List<Line> visibleLines = (!wordWrap && hSkip > 0) ? applyHSkip(lines, hSkip) : lines;
+        List<Line> visibleLines = (!wordWrap && hScroll[0] > 0) ? applyHSkip(lines, hScroll[0]) : lines;
         Paragraph detail = Paragraph.builder()
                 .text(Text.from(visibleLines))
                 .overflow(wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
