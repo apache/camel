@@ -154,7 +154,7 @@ final class TuiHelper {
             if (ch == '\r') {
                 // skip
             } else if (ch == '\t') {
-                sb.append("  "); // two spaces preserves indentation without tab-stop jumps
+                sb.append("        "); // 8 spaces matches default terminal tab stop width
             } else {
                 sb.append(ch);
             }
@@ -192,7 +192,7 @@ final class TuiHelper {
             } else if (ch == '\r') {
                 i++;
             } else if (ch == '\t') {
-                sb.append("  "); // two spaces -- preserves stack-trace indentation without tab-stop jumps
+                sb.append("        "); // 8 spaces matches default terminal tab stop width
                 i++;
             } else {
                 sb.append(ch);

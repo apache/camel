@@ -1957,6 +1957,9 @@ public class CamelMonitor extends CamelCommand {
             String[] rawLines = content.split("\n", -1);
             int start = Math.max(0, rawLines.length - MAX_LOG_LINES);
             for (int i = start; i < rawLines.length; i++) {
+                // TODO: remove fixControlChars workaround once TamboUI ships a release that
+                // sanitises C0 control chars in Buffer.setString (fix contributed in PR #345).
+                // Until then, \t must be replaced locally or it corrupts the terminal render.
                 String line = TuiHelper.fixControlChars(rawLines[i]);
                 if (!line.isEmpty()) {
                     target.add(line);
