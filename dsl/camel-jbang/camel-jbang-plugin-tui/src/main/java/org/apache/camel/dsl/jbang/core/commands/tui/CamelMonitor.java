@@ -843,7 +843,11 @@ public class CamelMonitor extends CamelCommand {
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
         int cbCount = hasSelection ? sel.circuitBreakers.size() : 0;
         long cbOpenCount = hasSelection
-                ? sel.circuitBreakers.stream().filter(cb -> "OPEN".equals(cb.state)).count() : 0;
+                ? sel.circuitBreakers.stream()
+                        .filter(cb -> cb.state != null && (cb.state.equalsIgnoreCase("open")
+                                || cb.state.equalsIgnoreCase("forced_open")))
+                        .count()
+                : 0;
         int healthCount = hasSelection ? sel.healthChecks.size() : 0;
         long healthDownCount = hasSelection
                 ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
