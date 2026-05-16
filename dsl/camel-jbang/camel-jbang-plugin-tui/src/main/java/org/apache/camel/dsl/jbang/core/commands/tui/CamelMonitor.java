@@ -1037,8 +1037,8 @@ public class CamelMonitor extends CamelCommand {
                 long failed = Math.min(mergedFailed[i], mergedTotal[i]);
                 long ok = Math.max(0, mergedTotal[i] - failed);
                 groups.add(BarGroup.of(
-                        Bar.builder().value(ok).style(Style.EMPTY.fg(Color.GREEN)).build(),
-                        Bar.builder().value(failed).style(Style.EMPTY.fg(Color.RED)).build()));
+                        Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.GREEN)).build(),
+                        Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
             }
 
             BarChart barChart = BarChart.builder()
