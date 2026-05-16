@@ -104,14 +104,14 @@ public class CamelMonitor extends CamelCommand {
     private static final long VANISH_DURATION_MS = 6000;
     private static final long DEFAULT_REFRESH_MS = 100;
     private static final int MAX_SPARKLINE_POINTS = 60;
-    private static final int MAX_LOG_LINES = 200;
+    private static final int MAX_LOG_LINES = 5000;
     private static final int MAX_TRACES = 200;
     private static final int NUM_TABS = 7;
 
     // Tab indices
     private static final int TAB_OVERVIEW = 0;
-    private static final int TAB_ROUTES = 1;
-    private static final int TAB_LOG = 2;
+    private static final int TAB_LOG = 1;
+    private static final int TAB_ROUTES = 2;
     private static final int TAB_ENDPOINTS = 3;
     private static final int TAB_HEALTH = 4;
     private static final int TAB_HISTORY = 5;
@@ -122,6 +122,9 @@ public class CamelMonitor extends CamelCommand {
 
     // Route sort columns
     private static final String[] ROUTE_SORT_COLUMNS = { "total", "failed", "name", "status" };
+
+    // Endpoint sort columns (order matches table column order)
+    private static final String[] ENDPOINT_SORT_COLUMNS = { "component", "route", "dir", "total", "uri" };
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -157,19 +160,24 @@ public class CamelMonitor extends CamelCommand {
     private String routeSort = "name";
     private int routeSortIndex = 2;
 
+    // Endpoint sort state (default: route = index 1)
+    private String endpointSort = "route";
+    private int endpointSortIndex = 1;
+
+    // Endpoint filter state
+    private boolean showOnlyRemote;
+
     // Health filter state
     private boolean showOnlyDown;
 
     // Log state
     private List<String> logLines = new ArrayList<>();
     private volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
-    private final TableState logTableState = new TableState();
+    private int logScroll;
+    private final ScrollbarState logScrollState = new ScrollbarState();
     private boolean logFollowMode = true;
-    private boolean showLogTrace = true;
-    private boolean showLogDebug = true;
-    private boolean showLogInfo = true;
-    private boolean showLogWarn = true;
-    private boolean showLogError = true;
+    private boolean logWordWrap = true;
+    private int logHScroll;
 
     // Trace state
     private final AtomicReference<List<TraceEntry>> traces = new AtomicReference<>(Collections.emptyList());
@@ -186,8 +194,9 @@ public class CamelMonitor extends CamelCommand {
     private boolean showTraceVariables;
     private boolean showTraceHeaders = true;
     private boolean showTraceBody = true;
-    private boolean traceWordWrap;
+    private boolean traceWordWrap = true;
     private int traceDetailScroll;
+    private int traceDetailHScroll;
 
     // History state
     private volatile List<HistoryEntry> historyEntries = Collections.emptyList();
@@ -196,8 +205,9 @@ public class CamelMonitor extends CamelCommand {
     private boolean showHistoryVariables;
     private boolean showHistoryHeaders = true;
     private boolean showHistoryBody = true;
-    private boolean historyWordWrap;
+    private boolean historyWordWrap = true;
     private int historyDetailScroll;
+    private int historyDetailHScroll;
 
     // Selected integration for detail views
     private String selectedPid;
@@ -280,7 +290,6 @@ public class CamelMonitor extends CamelCommand {
                 }
                 if (tabsState.selected() != TAB_OVERVIEW) {
                     tabsState.select(TAB_OVERVIEW);
-                    selectedPid = null;
                     return true;
                 }
                 if (selectedPid != null) {
@@ -299,10 +308,10 @@ public class CamelMonitor extends CamelCommand {
                 return handleTabKey(TAB_OVERVIEW);
             }
             if (ke.isChar('2')) {
-                return handleTabKey(TAB_ROUTES);
+                return handleTabKey(TAB_LOG);
             }
             if (ke.isChar('3')) {
-                return handleTabKey(TAB_LOG);
+                return handleTabKey(TAB_ROUTES);
             }
             if (ke.isChar('4')) {
                 return handleTabKey(TAB_ENDPOINTS);
@@ -352,9 +361,7 @@ public class CamelMonitor extends CamelCommand {
                     diagramScroll = Math.max(0, diagramScroll - 20);
                 } else if (tab == TAB_LOG) {
                     logFollowMode = false;
-                    for (int i = 0; i < 20; i++) {
-                        logTableState.selectPrevious();
-                    }
+                    logScroll = Math.max(0, logScroll - 20);
                 } else if (tab == TAB_HISTORY) {
                     historyDetailScroll = Math.max(0, historyDetailScroll - 5);
                 } else if (tab == TAB_TRACE && traceDetailView) {
@@ -366,9 +373,7 @@ public class CamelMonitor extends CamelCommand {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScroll += 20;
                 } else if (tab == TAB_LOG) {
-                    for (int i = 0; i < 20; i++) {
-                        logTableState.selectNext(filteredLogEntries.size());
-                    }
+                    logScroll += 20;
                 } else if (tab == TAB_HISTORY) {
                     historyDetailScroll += 5;
                 } else if (tab == TAB_TRACE && traceDetailView) {
@@ -380,11 +385,23 @@ public class CamelMonitor extends CamelCommand {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScrollX = Math.max(0, diagramScrollX - 1);
                     return true;
+                } else if (tab == TAB_TRACE && traceDetailView && !traceWordWrap) {
+                    traceDetailHScroll = Math.max(0, traceDetailHScroll - 4);
+                    return true;
+                } else if (tab == TAB_HISTORY && !historyWordWrap) {
+                    historyDetailHScroll = Math.max(0, historyDetailHScroll - 4);
+                    return true;
                 }
             }
             if (ke.isRight()) {
                 if (showDiagram && tab == TAB_ROUTES) {
                     diagramScrollX++;
+                    return true;
+                } else if (tab == TAB_TRACE && traceDetailView && !traceWordWrap) {
+                    traceDetailHScroll += 4;
+                    return true;
+                } else if (tab == TAB_HISTORY && !historyWordWrap) {
+                    historyDetailHScroll += 4;
                     return true;
                 }
             }
@@ -406,7 +423,7 @@ public class CamelMonitor extends CamelCommand {
             if (ke.isConfirm() && tab == TAB_OVERVIEW) {
                 selectCurrentIntegration();
                 if (selectedPid != null) {
-                    tabsState.select(TAB_ROUTES);
+                    tabsState.select(TAB_LOG);
                 }
                 return true;
             }
@@ -415,6 +432,17 @@ public class CamelMonitor extends CamelCommand {
             if (tab == TAB_OVERVIEW && ke.isCharIgnoreCase('s')) {
                 overviewSortIndex = (overviewSortIndex + 1) % OVERVIEW_SORT_COLUMNS.length;
                 overviewSort = OVERVIEW_SORT_COLUMNS[overviewSortIndex];
+                return true;
+            }
+
+            // Endpoints tab: sort and filter
+            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('s')) {
+                endpointSortIndex = (endpointSortIndex + 1) % ENDPOINT_SORT_COLUMNS.length;
+                endpointSort = ENDPOINT_SORT_COLUMNS[endpointSortIndex];
+                return true;
+            }
+            if (tab == TAB_ENDPOINTS && ke.isCharIgnoreCase('r')) {
+                showOnlyRemote = !showOnlyRemote;
                 return true;
             }
 
@@ -465,40 +493,33 @@ public class CamelMonitor extends CamelCommand {
                 return true;
             }
 
-            // Log tab: level filters and follow mode
+            // Log tab: follow mode, word wrap, horizontal scroll
             if (tab == TAB_LOG) {
-                if (ke.isCharIgnoreCase('t')) {
-                    showLogTrace = !showLogTrace;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('d')) {
-                    showLogDebug = !showLogDebug;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('i')) {
-                    showLogInfo = !showLogInfo;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('w')) {
-                    showLogWarn = !showLogWarn;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
-                if (ke.isCharIgnoreCase('e')) {
-                    showLogError = !showLogError;
-                    filteredLogEntries = applyLogFilters(logLines);
-                    return true;
-                }
                 if (ke.isCharIgnoreCase('f')) {
                     logFollowMode = !logFollowMode;
                     return true;
                 }
+                if (ke.isCharIgnoreCase('w')) {
+                    logWordWrap = !logWordWrap;
+                    logHScroll = 0;
+                    return true;
+                }
+                if (!logWordWrap) {
+                    if (ke.isLeft()) {
+                        logFollowMode = false;
+                        logHScroll = Math.max(0, logHScroll - 4);
+                        return true;
+                    }
+                    if (ke.isRight()) {
+                        logFollowMode = false;
+                        logHScroll += 4;
+                        return true;
+                    }
+                }
                 if (ke.isHome()) {
                     logFollowMode = false;
-                    logTableState.select(0);
+                    logScroll = 0;
+                    logHScroll = 0;
                     return true;
                 }
                 if (ke.isEnd()) {
@@ -535,6 +556,7 @@ public class CamelMonitor extends CamelCommand {
                     if (ke.isCharIgnoreCase('w')) {
                         traceWordWrap = !traceWordWrap;
                         traceDetailScroll = 0;
+                        traceDetailHScroll = 0;
                         return true;
                     }
                 } else {
@@ -585,6 +607,7 @@ public class CamelMonitor extends CamelCommand {
                 if (ke.isCharIgnoreCase('w')) {
                     historyWordWrap = !historyWordWrap;
                     historyDetailScroll = 0;
+                    historyDetailHScroll = 0;
                     return true;
                 }
                 if (ke.isKey(KeyCode.F5)) {
@@ -614,8 +637,6 @@ public class CamelMonitor extends CamelCommand {
     private boolean handleTabKey(int tab) {
         if (tab != TAB_OVERVIEW) {
             selectCurrentIntegration();
-        } else {
-            selectedPid = null;
         }
         if (tab == TAB_HISTORY && selectedPid != null) {
             refreshHistoryData(List.of(Long.parseLong(selectedPid)));
@@ -666,7 +687,7 @@ public class CamelMonitor extends CamelCommand {
             case TAB_ENDPOINTS -> endpointTableState.selectPrevious();
             case TAB_LOG -> {
                 logFollowMode = false;
-                logTableState.selectPrevious();
+                logScroll = Math.max(0, logScroll - 1);
             }
             case TAB_TRACE -> {
                 if (traceDetailView) {
@@ -699,7 +720,7 @@ public class CamelMonitor extends CamelCommand {
                 IntegrationInfo info = findSelectedIntegration();
                 endpointTableState.selectNext(info != null ? info.endpoints.size() : 0);
             }
-            case TAB_LOG -> logTableState.selectNext(filteredLogEntries.size());
+            case TAB_LOG -> logScroll++;
             case TAB_TRACE -> {
                 if (traceDetailView) {
                     List<TraceEntry> steps = getTraceSteps(traceSelectedExchangeId);
@@ -771,7 +792,6 @@ public class CamelMonitor extends CamelCommand {
         IntegrationInfo sel = findSelectedIntegration();
         boolean hasSelection = selectedPid != null && sel != null;
         int routeCount = hasSelection ? sel.routes.size() : 0;
-        int logCount = hasSelection ? filteredLogEntries.size() : 0;
         int endpointCount = hasSelection ? sel.endpoints.size() : 0;
         int healthCount = hasSelection ? sel.healthChecks.size() : 0;
         int historyCount = hasSelection ? historyEntries.size() : 0;
@@ -780,8 +800,8 @@ public class CamelMonitor extends CamelCommand {
         Tabs tabs = Tabs.builder()
                 .titles(
                         badge(" 1 Overview ", activeCount),
-                        badge(" 2 Routes ", routeCount),
-                        badge(" 3 Log ", logCount),
+                        Line.from(" 2 Log "),
+                        badge(" 3 Routes ", routeCount),
                         badge(" 4 Endpoints ", endpointCount),
                         badge(" 5 Health ", healthCount),
                         badge(" 6 History ", historyCount),
@@ -797,6 +817,10 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderContent(Frame frame, Rect area) {
+        // Clear the content area before rendering the active tab. Without this, styled cells
+        // from the previous tab (e.g. RED error text in the log detail) can bleed through when
+        // switching tabs if TamboUI's buffer diff does not reset every cell in the region.
+        frame.buffer().clear(area);
         switch (tabsState.selected()) {
             case TAB_OVERVIEW -> renderOverview(frame, area);
             case TAB_ROUTES -> renderRoutes(frame, area);
@@ -1129,6 +1153,40 @@ public class CamelMonitor extends CamelCommand {
         return sortStyle(column, routeSort);
     }
 
+    private String endpointSortLabel(String label, String column) {
+        return sortLabel(label, column, endpointSort);
+    }
+
+    private Style endpointSortStyle(String column) {
+        return sortStyle(column, endpointSort);
+    }
+
+    private int sortEndpoint(EndpointInfo a, EndpointInfo b) {
+        return switch (endpointSort) {
+            case "component" -> {
+                String ca = a.component != null ? a.component : "";
+                String cb = b.component != null ? b.component : "";
+                yield ca.compareToIgnoreCase(cb);
+            }
+            case "dir" -> {
+                String da = a.direction != null ? a.direction : "";
+                String db = b.direction != null ? b.direction : "";
+                yield da.compareToIgnoreCase(db);
+            }
+            case "total" -> Long.compare(b.hits, a.hits);
+            case "uri" -> {
+                String ua = a.uri != null ? a.uri : "";
+                String ub = b.uri != null ? b.uri : "";
+                yield ua.compareToIgnoreCase(ub);
+            }
+            default -> { // "route"
+                String ra = a.routeId != null ? a.routeId : "";
+                String rb = b.routeId != null ? b.routeId : "";
+                yield ra.compareToIgnoreCase(rb);
+            }
+        };
+    }
+
     private static String sortLabel(String label, String column, String currentSort) {
         return currentSort.equals(column) ? label + "▼" : label;
     }
@@ -1141,13 +1199,29 @@ public class CamelMonitor extends CamelCommand {
 
     private void renderProcessors(Frame frame, Rect area, RouteInfo route) {
         List<Row> rows = new ArrayList<>();
+
+        // Synthetic top row representing the route itself
+        Style routeStyle = route.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.CYAN);
+        rows.add(Row.from(
+                Cell.from("   route"),
+                Cell.from(Span.styled(route.from != null ? route.from : route.routeId, routeStyle)),
+                Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
+                rightCell(String.valueOf(route.total), 8),
+                rightCell(String.valueOf(route.failed), 6,
+                        route.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY),
+                Cell.from(""),
+                rightCell(route.total > 0
+                        ? route.minTime + "/" + route.maxTime + "/" + route.meanTime
+                        : "", 14),
+                Cell.from("")));
+
         for (ProcessorInfo proc : route.processors) {
             String indent = "  ".repeat(proc.level);
             Style nameStyle = proc.failed > 0 ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.CYAN);
 
             rows.add(Row.from(
+                    Cell.from("   " + (proc.processor != null ? proc.processor : "")),
                     Cell.from(Span.styled(indent + (proc.id != null ? proc.id : ""), nameStyle)),
-                    Cell.from(proc.processor != null ? proc.processor : ""),
                     Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                     rightCell(String.valueOf(proc.total), 8),
                     rightCell(String.valueOf(proc.failed), 6,
@@ -1162,8 +1236,8 @@ public class CamelMonitor extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
+                        Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
                         Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("TYPE", Style.EMPTY.bold())),
                         Cell.from(""), Cell.from(""), Cell.from(""), Cell.from(""),
                         rightCell("TOTAL", 8, Style.EMPTY.bold()),
                         rightCell("FAIL", 6, Style.EMPTY.bold()),
@@ -1171,7 +1245,7 @@ public class CamelMonitor extends CamelCommand {
                         rightCell("MIN/MAX/MEAN", 14, Style.EMPTY.bold()),
                         Cell.from("")))
                 .widths(
-                        Constraint.length(12),
+                        Constraint.length(20),
                         Constraint.fill(),
                         Constraint.length(10),
                         Constraint.length(8),
@@ -1843,8 +1917,14 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
+        List<EndpointInfo> sortedEndpoints = new ArrayList<>(info.endpoints);
+        if (showOnlyRemote) {
+            sortedEndpoints.removeIf(ep -> !ep.remote);
+        }
+        sortedEndpoints.sort(this::sortEndpoint);
+
         List<Row> rows = new ArrayList<>();
-        for (EndpointInfo ep : info.endpoints) {
+        for (EndpointInfo ep : sortedEndpoints) {
             String dir = ep.direction != null ? ep.direction : "";
             Style dirStyle = switch (dir) {
                 case "in" -> Style.EMPTY.fg(Color.GREEN);
@@ -1859,15 +1939,21 @@ public class CamelMonitor extends CamelCommand {
 
             rows.add(Row.from(
                     Cell.from(Span.styled(ep.component != null ? ep.component : "", Style.EMPTY.fg(Color.CYAN))),
+                    Cell.from(ep.routeId != null ? ep.routeId : ""),
                     Cell.from(Span.styled(arrow + dir, dirStyle)),
-                    Cell.from(ep.uri != null ? ep.uri : ""),
-                    Cell.from(ep.routeId != null ? ep.routeId : "")));
+                    rightCell(ep.hits > 0 ? String.valueOf(ep.hits) : "", 8),
+                    centerCell(ep.stub ? "x" : "", 6),
+                    centerCell(ep.remote ? "x" : "", 8),
+                    Cell.from(ep.uri != null ? ep.uri : "")));
         }
 
         if (rows.isEmpty()) {
             rows.add(Row.from(
-                    Cell.from(""),
                     Cell.from(Span.styled("No endpoints", Style.EMPTY.dim())),
+                    Cell.from(""),
+                    Cell.from(""),
+                    Cell.from(""),
+                    Cell.from(""),
                     Cell.from(""),
                     Cell.from("")));
         }
@@ -1875,19 +1961,25 @@ public class CamelMonitor extends CamelCommand {
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
-                        Cell.from(Span.styled("COMPONENT", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("DIR", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("URI", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("ROUTE", Style.EMPTY.bold()))))
+                        Cell.from(Span.styled(endpointSortLabel("COMPONENT", "component"), endpointSortStyle("component"))),
+                        Cell.from(Span.styled(endpointSortLabel("ROUTE", "route"), endpointSortStyle("route"))),
+                        Cell.from(Span.styled(endpointSortLabel("DIR", "dir"), endpointSortStyle("dir"))),
+                        rightCell(endpointSortLabel("TOTAL", "total"), 8, endpointSortStyle("total")),
+                        centerCell("STUB", 6, Style.EMPTY.bold()),
+                        centerCell("REMOTE", 8, Style.EMPTY.bold()),
+                        Cell.from(Span.styled(endpointSortLabel("URI", "uri"), endpointSortStyle("uri")))))
                 .widths(
                         Constraint.length(15),
+                        Constraint.length(20),
                         Constraint.length(8),
-                        Constraint.fill(),
-                        Constraint.length(20))
+                        Constraint.length(8),
+                        Constraint.length(6),
+                        Constraint.length(8),
+                        Constraint.fill())
                 .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Endpoints ").build())
+                        .title(" Endpoints sort:" + endpointSort + (showOnlyRemote ? " remote" : "") + " ").build())
                 .build();
 
         frame.renderStatefulWidget(table, area, endpointTableState);
@@ -1902,99 +1994,58 @@ public class CamelMonitor extends CamelCommand {
             return;
         }
 
-        // Log data is refreshed in refreshData() tick handler
+        List<LogEntry> entries = filteredLogEntries;
+        int contentHeight = entries.size();
 
-        // Auto-follow: select last entry
-        if (logFollowMode && !filteredLogEntries.isEmpty()) {
-            logTableState.select(filteredLogEntries.size() - 1);
-        }
-
-        // Split: log table (60%) + detail (40%)
-        List<Rect> chunks = Layout.vertical()
-                .constraints(Constraint.percentage(60), Constraint.fill())
-                .split(area);
-
-        // Log table
-        List<Row> rows = new ArrayList<>();
-        for (LogEntry entry : filteredLogEntries) {
-            Style levelStyle = colorStyleForLevel(entry.level);
-            rows.add(Row.from(
-                    Cell.from(Span.styled(entry.time, Style.EMPTY.dim())),
-                    Cell.from(Span.styled(entry.level, levelStyle)),
-                    Cell.from(Span.styled(entry.logger != null ? entry.logger : "", Style.EMPTY.fg(Color.CYAN))),
-                    Cell.from(Span.styled(entry.message, levelStyle))));
-        }
-
-        String levelTitle = buildLevelFilterTitle();
-        Table logTable = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("TIME", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("LEVEL", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("LOGGER", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("MESSAGE", Style.EMPTY.bold()))))
-                .widths(
-                        Constraint.length(12),
-                        Constraint.length(6),
-                        Constraint.length(20),
-                        Constraint.fill())
-                .highlightStyle(Style.EMPTY.fg(Color.WHITE).bold().onBlue())
-                .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED)
-                        .title(" Log " + levelTitle).build())
+        Block block = Block.builder()
+                .borderType(BorderType.ROUNDED)
+                .title(" Log ")
                 .build();
+        frame.renderWidget(block, area);
 
-        frame.renderStatefulWidget(logTable, chunks.get(0), logTableState);
+        Rect inner = block.inner(area);
+        int visibleHeight = Math.max(1, inner.height());
 
-        // Detail panel for selected log entry
-        renderLogDetail(frame, chunks.get(1));
-    }
-
-    private void renderLogDetail(Frame frame, Rect area) {
-        Integer sel = logTableState.selected();
-        if (sel == null || sel < 0 || sel >= filteredLogEntries.size()) {
-            frame.renderWidget(
-                    Paragraph.builder()
-                            .text(Text.from(Line.from(
-                                    Span.styled(" Select a log entry", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED)
-                                    .title(" Detail ").build())
-                            .build(),
-                    area);
-            return;
-        }
-
-        LogEntry entry = filteredLogEntries.get(sel);
-        frame.renderWidget(
-                Paragraph.builder()
-                        .text(Text.from(Line.from(Span.styled(entry.raw, colorStyleForLevel(entry.level)))))
-                        .overflow(Overflow.WRAP_WORD)
-                        .block(Block.builder().borderType(BorderType.ROUNDED)
-                                .title(" " + entry.time + " " + entry.level + " ").build())
-                        .build(),
-                area);
-    }
-
-    private Style colorStyleForLevel(String level) {
-        return switch (level) {
-            case "ERROR", "FATAL" -> Style.EMPTY.fg(Color.RED);
-            case "WARN" -> Style.EMPTY.fg(Color.YELLOW);
-            case "DEBUG", "TRACE" -> Style.EMPTY.dim();
-            default -> Style.EMPTY;
-        };
-    }
-
-    private String buildLevelFilterTitle() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(showLogTrace ? "[T] " : "[t] ");
-        sb.append(showLogDebug ? "[D] " : "[d] ");
-        sb.append(showLogInfo ? "[I] " : "[i] ");
-        sb.append(showLogWarn ? "[W] " : "[w] ");
-        sb.append(showLogError ? "[E] " : "[e] ");
         if (logFollowMode) {
-            sb.append("[FOLLOW]");
+            logScroll = Math.max(0, contentHeight - visibleHeight);
         }
-        return sb.toString();
+        logScroll = Math.min(logScroll, Math.max(0, contentHeight - visibleHeight));
+
+        // Cap horizontal scroll at the longest line width minus visible width
+        if (!logWordWrap) {
+            int visibleWidth = Math.max(1, inner.width() - 1);
+            int maxLineWidth = 0;
+            for (LogEntry entry : entries) {
+                String stripped = TuiHelper.stripAnsi(entry.raw != null ? entry.raw : "");
+                maxLineWidth = Math.max(maxLineWidth, CharWidth.of(stripped));
+            }
+            logHScroll = Math.min(logHScroll, Math.max(0, maxLineWidth - visibleWidth));
+        }
+
+        int hSkip = logWordWrap ? 0 : logHScroll;
+        List<Line> lines = new ArrayList<>();
+        for (LogEntry entry : entries) {
+            lines.add(TuiHelper.ansiToLine(entry.raw != null ? entry.raw : "", hSkip));
+        }
+
+        List<Rect> hChunks = Layout.horizontal()
+                .constraints(Constraint.fill(), Constraint.length(1))
+                .split(inner);
+
+        Overflow overflow = logWordWrap ? Overflow.WRAP_WORD : Overflow.CLIP;
+        Paragraph para = Paragraph.builder()
+                .text(Text.from(lines))
+                .overflow(overflow)
+                .scroll(logScroll)
+                .build();
+        frame.renderWidget(para, hChunks.get(0));
+
+        if (contentHeight > visibleHeight) {
+            logScrollState.contentLength(contentHeight);
+            logScrollState.viewportContentLength(visibleHeight);
+            logScrollState.position(logScroll);
+            frame.renderStatefulWidget(Scrollbar.builder().build(), hChunks.get(1), logScrollState);
+        }
     }
 
     private void readLogFile(String pid, List<String> target) {
@@ -2006,7 +2057,7 @@ public class CamelMonitor extends CamelCommand {
         try (RandomAccessFile raf = new RandomAccessFile(logFile.toFile(), "r")) {
             long length = raf.length();
             // Read last ~64KB to get recent lines
-            long startPos = Math.max(0, length - 64 * 1024);
+            long startPos = Math.max(0, length - 1024 * 1024);
             raf.seek(startPos);
             if (startPos > 0) {
                 raf.readLine(); // skip partial line
@@ -2018,7 +2069,10 @@ public class CamelMonitor extends CamelCommand {
             String[] rawLines = content.split("\n", -1);
             int start = Math.max(0, rawLines.length - MAX_LOG_LINES);
             for (int i = start; i < rawLines.length; i++) {
-                String line = rawLines[i].replaceAll("\u001B\\[[;\\d]*m", "");
+                // TODO: remove fixControlChars workaround once TamboUI ships a release that
+                // sanitises C0 control chars in Buffer.setString (fix contributed in PR #345).
+                // Until then, \t must be replaced locally or it corrupts the terminal render.
+                String line = TuiHelper.fixControlChars(rawLines[i]);
                 if (!line.isEmpty()) {
                     target.add(line);
                 }
@@ -2031,11 +2085,7 @@ public class CamelMonitor extends CamelCommand {
     private List<LogEntry> applyLogFilters(List<String> lines) {
         List<LogEntry> result = new ArrayList<>();
         for (String line : lines) {
-            LogEntry entry = parseLogLine(line);
-            if (!matchesLogLevelFilter(entry.level)) {
-                continue;
-            }
-            result.add(entry);
+            result.add(parseLogLine(line));
         }
         return result;
     }
@@ -2054,7 +2104,8 @@ public class CamelMonitor extends CamelCommand {
         LogEntry entry = new LogEntry();
         entry.raw = line;
         try {
-            Matcher m = LOG_PATTERN.matcher(line);
+            String plain = TuiHelper.stripAnsi(line);
+            Matcher m = LOG_PATTERN.matcher(plain);
             if (m.matches()) {
                 entry.time = m.group(2); // HH:mm:ss.SSS...
                 // Truncate time to 12 chars (HH:mm:ss.SSS)
@@ -2072,24 +2123,14 @@ public class CamelMonitor extends CamelCommand {
             } else {
                 entry.time = "";
                 entry.level = "INFO";
-                entry.message = line;
+                entry.message = plain;
             }
         } catch (Exception e) {
             entry.time = "";
             entry.level = "INFO";
-            entry.message = line;
+            entry.message = TuiHelper.stripAnsi(line);
         }
         return entry;
-    }
-
-    private boolean matchesLogLevelFilter(String level) {
-        return switch (level) {
-            case "ERROR", "FATAL" -> showLogError;
-            case "WARN" -> showLogWarn;
-            case "DEBUG" -> showLogDebug;
-            case "TRACE" -> showLogTrace;
-            default -> showLogInfo;
-        };
     }
 
     // ---- Tab 6: Trace ----
@@ -2263,10 +2304,13 @@ public class CamelMonitor extends CamelCommand {
         if (showTraceBody) {
             addBodyLines(lines, entry.body, entry.bodyType);
         }
+        addExceptionLines(lines, entry.exception);
 
         int[] scroll = { traceDetailScroll };
-        renderDetailPanel(frame, area, lines, traceWordWrap, scroll, traceDetailScrollState);
+        int[] hScroll = { traceDetailHScroll };
+        renderDetailPanel(frame, area, lines, traceWordWrap, hScroll, scroll, traceDetailScrollState);
         traceDetailScroll = scroll[0];
+        traceDetailHScroll = hScroll[0];
     }
 
     private List<String> getTraceExchangeIds() {
@@ -2366,14 +2410,13 @@ public class CamelMonitor extends CamelCommand {
         if (showHistoryBody) {
             addBodyLines(lines, entry.body, entry.bodyType);
         }
-        if (entry.exception != null) {
-            lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.RED).bold())));
-            lines.add(Line.from(Span.raw("   " + entry.exception)));
-        }
+        addExceptionLines(lines, entry.exception);
 
         int[] scroll = { historyDetailScroll };
-        renderDetailPanel(frame, area, lines, historyWordWrap, scroll, historyDetailScrollState);
+        int[] hScroll = { historyDetailHScroll };
+        renderDetailPanel(frame, area, lines, historyWordWrap, hScroll, scroll, historyDetailScrollState);
         historyDetailScroll = scroll[0];
+        historyDetailHScroll = hScroll[0];
     }
 
     private static void addExchangeInfoLines(
@@ -2416,7 +2459,7 @@ public class CamelMonitor extends CamelCommand {
             String typeLabel;
             if (type != null) {
                 String t = "(" + type + ")";
-                t = truncate(t, 20);
+                t = TuiHelper.truncateStart(t, 20);
                 typeLabel = String.format("%-20s ", t);
             } else {
                 typeLabel = String.format("%-21s", "");
@@ -2449,21 +2492,32 @@ public class CamelMonitor extends CamelCommand {
         lines.add(Line.from(Span.raw("")));
     }
 
+    private static void addExceptionLines(List<Line> lines, String exception) {
+        if (exception == null) {
+            return;
+        }
+        lines.add(Line.from(Span.styled(" Exception:", Style.EMPTY.fg(Color.RED).bold())));
+        for (String l : exception.split("\n", -1)) {
+            lines.add(Line.from(Span.raw("   " + TuiHelper.fixControlChars(l))));
+        }
+        lines.add(Line.from(Span.raw("")));
+    }
+
     private void renderDetailPanel(
             Frame frame, Rect area, List<Line> lines,
-            boolean wordWrap, int[] scroll, ScrollbarState scrollState) {
+            boolean wordWrap, int[] hScroll, int[] scroll, ScrollbarState scrollState) {
         Block block = Block.builder().borderType(BorderType.ROUNDED).build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
         int visibleHeight = Math.max(1, inner.height());
+        int visibleWidth = Math.max(1, inner.width() - 1); // -1 for scrollbar column
         int contentHeight;
         if (wordWrap) {
-            int width = Math.max(1, inner.width() - 1);
             contentHeight = 0;
             for (Line l : lines) {
                 int w = l.width();
-                contentHeight += Math.max(1, (w + width - 1) / width);
+                contentHeight += Math.max(1, (w + visibleWidth - 1) / visibleWidth);
             }
         } else {
             contentHeight = lines.size();
@@ -2473,12 +2527,19 @@ public class CamelMonitor extends CamelCommand {
             scroll[0] = maxScroll;
         }
 
+        // Cap horizontal scroll so it can't go past the longest line
+        if (!wordWrap) {
+            int maxLineWidth = lines.stream().mapToInt(Line::width).max().orElse(0);
+            hScroll[0] = Math.min(hScroll[0], Math.max(0, maxLineWidth - visibleWidth));
+        }
+
         List<Rect> hChunks = Layout.horizontal()
                 .constraints(Constraint.fill(), Constraint.length(1))
                 .split(inner);
 
+        List<Line> visibleLines = (!wordWrap && hScroll[0] > 0) ? applyHSkip(lines, hScroll[0]) : lines;
         Paragraph detail = Paragraph.builder()
-                .text(Text.from(lines))
+                .text(Text.from(visibleLines))
                 .overflow(wordWrap ? Overflow.WRAP_WORD : Overflow.CLIP)
                 .scroll(scroll[0])
                 .build();
@@ -2494,6 +2555,45 @@ public class CamelMonitor extends CamelCommand {
         }
     }
 
+    private static List<Line> applyHSkip(List<Line> lines, int hSkip) {
+        List<Line> result = new ArrayList<>(lines.size());
+        for (Line line : lines) {
+            result.add(hSkipLine(line, hSkip));
+        }
+        return result;
+    }
+
+    private static Line hSkipLine(Line line, int hSkip) {
+        List<Span> result = new ArrayList<>();
+        int skip = hSkip;
+        for (Span span : line.spans()) {
+            if (skip <= 0) {
+                result.add(span);
+                continue;
+            }
+            String text = span.content();
+            int spanWidth = CharWidth.of(text);
+            if (spanWidth <= skip) {
+                skip -= spanWidth;
+            } else {
+                // Partial skip: advance char-by-char until skip columns consumed
+                int i = 0;
+                int consumed = 0;
+                while (i < text.length() && consumed < skip) {
+                    int cp = text.codePointAt(i);
+                    consumed += CharWidth.of(cp);
+                    i += Character.charCount(cp);
+                }
+                skip = 0;
+                String remaining = text.substring(i);
+                if (!remaining.isEmpty()) {
+                    result.add(Span.styled(remaining, span.style()));
+                }
+            }
+        }
+        return Line.from(result);
+    }
+
     private static Row buildStepRow(
             String direction, boolean first, boolean last, boolean failed,
             String timestamp, String routeId, String nodeId, String processor, long elapsed) {
@@ -2503,7 +2603,7 @@ public class CamelMonitor extends CamelCommand {
         } else if (last) {
             dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY.fg(Color.GREEN);
         } else {
-            dirStyle = Style.EMPTY;
+            dirStyle = failed ? Style.EMPTY.fg(Color.RED) : Style.EMPTY;
         }
         String elapsedStr = elapsed >= 0 ? elapsed + "ms" : "";
         return Row.from(
@@ -2597,6 +2697,9 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "Enter", "details");
+            if (selectedPid != null) {
+                hint(spans, "Esc", "unselect");
+            }
             hint(spans, "1-7", "tabs");
         } else if (tab == TAB_ROUTES && showDiagram) {
             String closeKey = diagramTextMode ? "D" : "d";
@@ -2617,6 +2720,12 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "d", "diagram");
             hint(spans, "D", "text diagram");
             hint(spans, "1-7", "tabs");
+        } else if (tab == TAB_ENDPOINTS) {
+            hint(spans, "Esc", "back");
+            hint(spans, "\u2191\u2193", "navigate");
+            hint(spans, "s", "sort");
+            hint(spans, "r", "remote" + (showOnlyRemote ? " [on]" : " [off]"));
+            hint(spans, "1-7", "tabs");
         } else if (tab == TAB_HEALTH) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
@@ -2627,12 +2736,18 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "\u2191\u2193", "scroll");
             hint(spans, "PgUp/PgDn", "page");
             hint(spans, "Home/End", "top/end");
-            hint(spans, "t/d/i/w/e", "levels");
-            hintLast(spans, "f", "follow");
+            hint(spans, "w", "wrap" + (logWordWrap ? " [on]" : " [off]"));
+            if (!logWordWrap) {
+                hint(spans, "\u2190\u2192", "h-scroll");
+            }
+            hintLast(spans, "f", "follow" + (logFollowMode ? " [on]" : " [off]"));
         } else if (tab == TAB_TRACE && traceDetailView) {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "PgUp/PgDn", "scroll detail");
+            if (!traceWordWrap) {
+                hint(spans, "\u2190\u2192", "h-scroll");
+            }
             hint(spans, "p", "properties" + (showTraceProperties ? " [on]" : " [off]"));
             hint(spans, "v", "variables" + (showTraceVariables ? " [on]" : " [off]"));
             hint(spans, "h", "headers" + (showTraceHeaders ? " [on]" : " [off]"));
@@ -2648,6 +2763,9 @@ public class CamelMonitor extends CamelCommand {
             hint(spans, "Esc", "back");
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "PgUp/PgDn", "scroll detail");
+            if (!historyWordWrap) {
+                hint(spans, "\u2190\u2192", "h-scroll");
+            }
             hint(spans, "p", "properties" + (showHistoryProperties ? " [on]" : " [off]"));
             hint(spans, "v", "variables" + (showHistoryVariables ? " [on]" : " [off]"));
             hint(spans, "h", "headers" + (showHistoryHeaders ? " [on]" : " [off]"));
@@ -2673,6 +2791,20 @@ public class CamelMonitor extends CamelCommand {
 
     private static Cell rightCell(String text, int width, Style style) {
         return Cell.from(Span.styled(String.format("%" + width + "s", text), style));
+    }
+
+    private static Cell centerCell(String text, int width) {
+        int len = text.length();
+        int padding = Math.max(0, width - len);
+        int leftPad = padding / 2;
+        return Cell.from(" ".repeat(leftPad) + text);
+    }
+
+    private static Cell centerCell(String text, int width, Style style) {
+        int len = text.length();
+        int padding = Math.max(0, width - len);
+        int leftPad = padding / 2;
+        return Cell.from(Span.styled(" ".repeat(leftPad) + text, style));
     }
 
     private static Line badge(String label, long count) {
@@ -3000,6 +3132,17 @@ public class CamelMonitor extends CamelCommand {
             entry.exchangeVariableTypes = md.exchangeVariableTypes();
         }
 
+        // Exception (message + full stacktrace)
+        Object excObj = json.get("exception");
+        if (excObj instanceof JsonObject excJson) {
+            String msg = excJson.getString("message");
+            entry.exception = msg != null ? Jsoner.unescape(msg) : null;
+            String st = excJson.getString("stackTrace");
+            if (st != null && !st.isEmpty()) {
+                entry.exception = entry.exception + "\n" + Jsoner.unescape(st);
+            }
+        }
+
         return entry;
     }
 
@@ -3107,10 +3250,15 @@ public class CamelMonitor extends CamelCommand {
             entry.exchangeVariableTypes = md.exchangeVariableTypes();
         }
 
-        // Exception
+        // Exception (message + full stacktrace)
         Object excObj = json.get("exception");
         if (excObj instanceof JsonObject excJson) {
-            entry.exception = excJson.getString("message");
+            String msg = excJson.getString("message");
+            entry.exception = msg != null ? Jsoner.unescape(msg) : null;
+            String st = excJson.getString("stackTrace");
+            if (st != null && !st.isEmpty()) {
+                entry.exception = entry.exception + "\n" + Jsoner.unescape(st);
+            }
         }
 
         return entry;
@@ -3381,6 +3529,9 @@ public class CamelMonitor extends CamelCommand {
                     ep.uri = ej.getString("uri");
                     ep.direction = ej.getString("direction");
                     ep.routeId = ej.getString("routeId");
+                    ep.hits = TuiHelper.objToLong(ej.get("hits"));
+                    ep.stub = Boolean.TRUE.equals(ej.get("stub"));
+                    ep.remote = !Boolean.FALSE.equals(ej.get("remote"));
                     // Extract component from URI (e.g., "timer://tick" -> "timer")
                     if (ep.uri != null) {
                         int idx = ep.uri.indexOf(':');
@@ -3567,6 +3718,9 @@ public class CamelMonitor extends CamelCommand {
         String component;
         String direction;
         String routeId;
+        long hits;
+        boolean stub;
+        boolean remote;
     }
 
     static class TraceEntry {
@@ -3598,6 +3752,7 @@ public class CamelMonitor extends CamelCommand {
         Map<String, String> exchangePropertyTypes;
         Map<String, Object> exchangeVariables;
         Map<String, String> exchangeVariableTypes;
+        String exception;
     }
 
     static class LogEntry {
