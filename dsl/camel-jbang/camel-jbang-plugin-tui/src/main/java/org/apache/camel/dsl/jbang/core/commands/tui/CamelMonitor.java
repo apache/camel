@@ -1053,7 +1053,7 @@ public class CamelMonitor extends CamelCommand {
                     Span.raw(String.format(" Throughput: %d msg/s  ", curTp)),
                     Span.styled("■", Style.EMPTY.fg(Color.GREEN)),
                     Span.raw(String.format(" ok:%d  ", curOk)),
-                    Span.styled("■", Style.EMPTY.fg(Color.LIGHT_RED)),
+                    Span.styled("■", Style.EMPTY.fg(Color.RED)),
                     Span.raw(String.format(" fail:%d ", curFailed)));
 
             // Build bar groups (ok=green, failed=red), no bar value labels
@@ -1063,7 +1063,7 @@ public class CamelMonitor extends CamelCommand {
                 long ok = Math.max(0, mergedTotal[i] - failed);
                 groups.add(BarGroup.of(
                         Bar.builder().value(ok).textValue("").style(Style.EMPTY.fg(Color.GREEN)).build(),
-                        Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.LIGHT_RED)).build()));
+                        Bar.builder().value(failed).textValue("").style(Style.EMPTY.fg(Color.RED)).build()));
             }
 
             BarChart barChart = BarChart.builder()
