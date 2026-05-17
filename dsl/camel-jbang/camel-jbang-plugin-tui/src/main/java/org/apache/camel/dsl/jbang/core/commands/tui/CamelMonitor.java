@@ -21,6 +21,7 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -181,6 +183,11 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LinkedList<Long>> endpointRemoteOutHistory = new ConcurrentHashMap<>();
     private final Map<String, LinkedList<long[]>> endpointRemoteSamples = new ConcurrentHashMap<>();
     private final Map<String, Long> previousEndpointRemoteTime = new ConcurrentHashMap<>();
+
+    // Load averages (EWMA) — CPU% and inflight exchanges, per PID
+    private final Map<String, LoadAvg> cpuLoadAvg = new ConcurrentHashMap<>();
+    private final Map<String, LoadAvg> inflightLoadAvg = new ConcurrentHashMap<>();
+    private final Map<String, long[]> prevCpuSample = new ConcurrentHashMap<>();
 
     // Overview sort state
     private String overviewSort = "name";
@@ -1455,6 +1462,22 @@ public class CamelMonitor extends CamelCommand {
                 lines.add(Line.from(
                         Span.styled("Thds: ", dim),
                         Span.raw(sel.threadCount + " / " + sel.peakThreadCount)));
+            }
+            LoadAvg cpu = cpuLoadAvg.get(sel.pid);
+            LoadAvg infl = inflightLoadAvg.get(sel.pid);
+            if (cpu != null || infl != null) {
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(Span.styled("Load (1m/5m/15m):", dim)));
+                if (cpu != null) {
+                    lines.add(Line.from(
+                            Span.styled("CPU:  ", dim),
+                            Span.raw(cpu.format("%.1f / %.1f / %.1f %%"))));
+                }
+                if (infl != null) {
+                    lines.add(Line.from(
+                            Span.styled("Infl: ", dim),
+                            Span.raw(infl.format("%.1f / %.1f / %.1f"))));
+                }
             }
         } else {
             lines.add(Line.from(Span.raw("-")));
@@ -4110,6 +4133,7 @@ public class CamelMonitor extends CamelCommand {
                                 infos.add(info);
                                 updateThroughputHistory(info);
                                 updateEndpointHistory(info);
+                                updateLoadMetrics(ph, info);
                             }
                         }
                     });
@@ -4140,6 +4164,9 @@ public class CamelMonitor extends CamelCommand {
                     endpointRemoteOutHistory.remove(entry.getKey());
                     endpointRemoteSamples.remove(entry.getKey());
                     previousEndpointRemoteTime.remove(entry.getKey());
+                    cpuLoadAvg.remove(entry.getKey());
+                    inflightLoadAvg.remove(entry.getKey());
+                    prevCpuSample.remove(entry.getKey());
                 } else if (!livePids.contains(entry.getKey())) {
                     IntegrationInfo ghost = entry.getValue().info;
                     ghost.vanishing = true;
@@ -4311,6 +4338,30 @@ public class CamelMonitor extends CamelCommand {
         }
 
         traces.set(allTraces);
+    }
+
+    private void updateLoadMetrics(ProcessHandle ph, IntegrationInfo info) {
+        String pid = info.pid;
+
+        // Inflight EWMA — feed current inflight count directly
+        inflightLoadAvg.computeIfAbsent(pid, k -> new LoadAvg()).update(info.inflight);
+
+        // CPU EWMA — compute % from ProcessHandle CPU duration delta
+        Optional<Duration> durOpt = ph.info().totalCpuDuration();
+        if (durOpt.isPresent()) {
+            long cpuNanos = durOpt.get().toNanos();
+            long wallMs = System.currentTimeMillis();
+            long[] prev = prevCpuSample.get(pid);
+            if (prev != null) {
+                long deltaCpuNanos = cpuNanos - prev[0];
+                long deltaWallNanos = (wallMs - prev[1]) * 1_000_000L;
+                if (deltaWallNanos > 0) {
+                    double cpuPct = (double) deltaCpuNanos / deltaWallNanos * 100.0;
+                    cpuLoadAvg.computeIfAbsent(pid, k -> new LoadAvg()).update(Math.max(0, cpuPct));
+                }
+            }
+            prevCpuSample.put(pid, new long[] { cpuNanos, wallMs });
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -5068,6 +5119,28 @@ public class CamelMonitor extends CamelCommand {
 
     private static long objToLong(Object o) {
         return TuiHelper.objToLong(o);
+    }
+
+    // ---- Load Average ----
+
+    private static class LoadAvg {
+        private static final double EXP_1 = Math.exp(-1 / 60.0);
+        private static final double EXP_5 = Math.exp(-1 / (60.0 * 5.0));
+        private static final double EXP_15 = Math.exp(-1 / (60.0 * 15.0));
+
+        private double load1 = Double.NaN;
+        private double load5 = Double.NaN;
+        private double load15 = Double.NaN;
+
+        synchronized void update(double value) {
+            load1 = Double.isNaN(load1) ? value : value + EXP_1 * (load1 - value);
+            load5 = Double.isNaN(load5) ? value : value + EXP_5 * (load5 - value);
+            load15 = Double.isNaN(load15) ? value : value + EXP_15 * (load15 - value);
+        }
+
+        synchronized String format(String fmt) {
+            return Double.isNaN(load1) ? "-" : String.format(fmt, load1, load5, load15);
+        }
     }
 
     // ---- Data Classes ----
