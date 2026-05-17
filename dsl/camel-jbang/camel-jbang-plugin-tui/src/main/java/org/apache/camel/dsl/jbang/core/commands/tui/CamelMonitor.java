@@ -108,6 +108,7 @@ public class CamelMonitor extends CamelCommand {
     private static final long VANISH_DURATION_MS = 6000;
     private static final long DEFAULT_REFRESH_MS = 100;
     private static final int MAX_SPARKLINE_POINTS = 60;
+    private static final int MAX_ENDPOINT_CHART_POINTS = 60;
     private static final int MAX_LOG_LINES = 3000;
     private static final int MAX_TRACES = 200;
     private static final int NUM_TABS = 9;
@@ -167,6 +168,12 @@ public class CamelMonitor extends CamelCommand {
     private final Map<String, LinkedList<long[]>> throughputSamples = new ConcurrentHashMap<>();
     // Track last time a sparkline point was recorded
     private final Map<String, Long> previousExchangesTime = new ConcurrentHashMap<>();
+
+    // Endpoint in/out sliding window history per PID (one point per second, 20 points)
+    private final Map<String, LinkedList<Long>> endpointInHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<Long>> endpointOutHistory = new ConcurrentHashMap<>();
+    private final Map<String, LinkedList<long[]>> endpointSamples = new ConcurrentHashMap<>();
+    private final Map<String, Long> previousEndpointTime = new ConcurrentHashMap<>();
 
     // Overview sort state
     private String overviewSort = "name";
@@ -2966,7 +2973,111 @@ public class CamelMonitor extends CamelCommand {
                         .title(" Endpoints sort:" + endpointSort + (showOnlyRemote ? " remote" : "") + " ").build())
                 .build();
 
-        frame.renderStatefulWidget(table, area, endpointTableState);
+        List<Rect> chunks = Layout.vertical()
+                .constraints(Constraint.fill(), Constraint.length(12))
+                .split(area);
+
+        frame.renderStatefulWidget(table, chunks.get(0), endpointTableState);
+
+        long inTotal = info.endpoints.stream()
+                .filter(ep -> "in".equals(ep.direction))
+                .mapToLong(ep -> ep.hits)
+                .sum();
+        long outTotal = info.endpoints.stream()
+                .filter(ep -> "out".equals(ep.direction))
+                .mapToLong(ep -> ep.hits)
+                .sum();
+        renderEndpointFlow(frame, chunks.get(1), inTotal, outTotal, info.name, info.pid);
+    }
+
+    private void renderEndpointFlow(Frame frame, Rect area, long inTotal, long outTotal, String name, String pid) {
+        List<Rect> hSplit = Layout.horizontal()
+                .constraints(Constraint.length(38), Constraint.fill())
+                .split(area);
+
+        // --- Left: ASCII flow diagram ---
+        int w = Math.max(10, hSplit.get(0).width() - 2);
+
+        String label = name != null ? name : "INTEGRATION";
+        if (CharWidth.of(label) > 20) {
+            label = CharWidth.truncateWithEllipsis(label, 20, CharWidth.TruncatePosition.END);
+        }
+        String box = "[ " + label + " ]";
+        int boxLen = CharWidth.of(box);
+
+        int sideLen = Math.max(4, (w - boxLen - 2) / 2);
+        String arm = "─".repeat(Math.max(1, sideLen - 1));
+        String arrowStr = arm + "►";
+
+        String inStr = String.valueOf(inTotal);
+        String outStr = String.valueOf(outTotal);
+
+        int inPad = Math.max(0, sideLen - inStr.length());
+        int centerGap = boxLen + 2;
+        int outPad = Math.max(0, sideLen - outStr.length());
+
+        Style inStyle = Style.EMPTY.fg(Color.GREEN);
+        Style outStyle = Style.EMPTY.fg(Color.BLUE);
+        Style dimStyle = Style.EMPTY.dim();
+
+        List<Line> flowLines = new ArrayList<>();
+        flowLines.add(Line.from(
+                Span.styled(" ".repeat(inPad) + inStr, inTotal > 0 ? inStyle : dimStyle),
+                Span.raw(" ".repeat(centerGap)),
+                Span.styled(outStr + " ".repeat(outPad), outTotal > 0 ? outStyle : dimStyle)));
+        flowLines.add(Line.from(
+                Span.styled(arrowStr, inTotal > 0 ? inStyle : dimStyle),
+                Span.raw(" "),
+                Span.styled(box, Style.EMPTY.fg(Color.CYAN).bold()),
+                Span.raw(" "),
+                Span.styled(arrowStr, outTotal > 0 ? outStyle : dimStyle)));
+        flowLines.add(Line.from(
+                Span.styled(" ".repeat(inPad) + "in", inTotal > 0 ? inStyle.dim() : dimStyle),
+                Span.raw(" ".repeat(centerGap)),
+                Span.styled("out" + " ".repeat(Math.max(0, outPad - 2)), outTotal > 0 ? outStyle.dim() : dimStyle)));
+
+        frame.renderWidget(Paragraph.builder()
+                .text(Text.from(flowLines))
+                .block(Block.builder().borderType(BorderType.ROUNDED).title(" Flow ").build())
+                .build(), hSplit.get(0));
+
+        // --- Right: 60-second sliding window chart (in=green up, out=blue down) ---
+        LinkedList<Long> inHist = endpointInHistory.getOrDefault(pid, new LinkedList<>());
+        LinkedList<Long> outHist = endpointOutHistory.getOrDefault(pid, new LinkedList<>());
+
+        int renderPoints = MAX_ENDPOINT_CHART_POINTS;
+        long[] inArr = new long[renderPoints];
+        long[] outArr = new long[renderPoints];
+        for (int i = 0; i < renderPoints; i++) {
+            int idx = inHist.size() - renderPoints + i;
+            if (idx >= 0) {
+                inArr[i] = inHist.get(idx);
+            }
+            idx = outHist.size() - renderPoints + i;
+            if (idx >= 0) {
+                outArr[i] = outHist.get(idx);
+            }
+        }
+        long curIn = inArr[renderPoints - 1];
+        long curOut = outArr[renderPoints - 1];
+
+        Line chartTitle = Line.from(
+                Span.styled("▬", Style.EMPTY.fg(Color.GREEN)),
+                Span.raw(String.format(" in:%-4d ", curIn)),
+                Span.styled("▬", Style.EMPTY.fg(Color.BLUE)),
+                Span.raw(String.format(" out:%-4d msg/s", curOut)));
+
+        Rect rightArea = hSplit.get(1);
+        frame.renderWidget(MirroredSparkline.builder()
+                .topData(inArr)
+                .bottomData(outArr)
+                .topStyle(Style.EMPTY.fg(Color.GREEN))
+                .bottomStyle(Style.EMPTY.fg(Color.BLUE))
+                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
+                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
+                .block(Block.builder().borderType(BorderType.ROUNDED)
+                        .title(Title.from(chartTitle)).build())
+                .build(), rightArea);
     }
 
     // ---- Tab 5: Log ----
@@ -3985,6 +4096,7 @@ public class CamelMonitor extends CamelCommand {
                             if (info != null) {
                                 infos.add(info);
                                 updateThroughputHistory(info);
+                                updateEndpointHistory(info);
                             }
                         }
                     });
@@ -4007,6 +4119,10 @@ public class CamelMonitor extends CamelCommand {
                     it.remove();
                     throughputHistory.remove(entry.getKey());
                     failedHistory.remove(entry.getKey());
+                    endpointInHistory.remove(entry.getKey());
+                    endpointOutHistory.remove(entry.getKey());
+                    endpointSamples.remove(entry.getKey());
+                    previousEndpointTime.remove(entry.getKey());
                 } else if (!livePids.contains(entry.getKey())) {
                     IntegrationInfo ghost = entry.getValue().info;
                     ghost.vanishing = true;
@@ -4089,6 +4205,49 @@ public class CamelMonitor extends CamelCommand {
                 fhist.add(fp);
                 while (fhist.size() > MAX_SPARKLINE_POINTS) {
                     fhist.remove(0);
+                }
+            }
+        }
+    }
+
+    private void updateEndpointHistory(IntegrationInfo info) {
+        long inTotal = info.endpoints.stream()
+                .filter(ep -> "in".equals(ep.direction))
+                .mapToLong(ep -> ep.hits)
+                .sum();
+        long outTotal = info.endpoints.stream()
+                .filter(ep -> "out".equals(ep.direction))
+                .mapToLong(ep -> ep.hits)
+                .sum();
+
+        long now = System.currentTimeMillis();
+        String pid = info.pid;
+        LinkedList<long[]> samples = endpointSamples.computeIfAbsent(pid, k -> new LinkedList<>());
+        samples.add(new long[] { now, inTotal, outTotal });
+
+        while (!samples.isEmpty() && now - samples.get(0)[0] > 1000) {
+            samples.remove(0);
+        }
+
+        if (samples.size() >= 2) {
+            long[] oldest = samples.get(0);
+            long[] newest = samples.get(samples.size() - 1);
+            long deltaMs = newest[0] - oldest[0];
+            long inRate = deltaMs > 0 ? (newest[1] - oldest[1]) * 1000 / deltaMs : 0;
+            long outRate = deltaMs > 0 ? (newest[2] - oldest[2]) * 1000 / deltaMs : 0;
+
+            Long lastTime = previousEndpointTime.get(pid);
+            if (lastTime == null || now - lastTime >= 1000) {
+                previousEndpointTime.put(pid, now);
+                LinkedList<Long> inHist = endpointInHistory.computeIfAbsent(pid, k -> new LinkedList<>());
+                inHist.add(Math.max(0, inRate));
+                while (inHist.size() > MAX_ENDPOINT_CHART_POINTS) {
+                    inHist.remove(0);
+                }
+                LinkedList<Long> outHist = endpointOutHistory.computeIfAbsent(pid, k -> new LinkedList<>());
+                outHist.add(Math.max(0, outRate));
+                while (outHist.size() > MAX_ENDPOINT_CHART_POINTS) {
+                    outHist.remove(0);
                 }
             }
         }
