@@ -1069,13 +1069,16 @@ public class CamelMonitor extends CamelCommand {
         Tabs tabs = Tabs.builder()
                 .titles(
                         badge(" 1 Overview ", activeCount),
-                        Line.from(" 2 Log "),
+                        filteredLogEntries.isEmpty()
+                                ? Line.from(" 2 Log ")
+                                : Line.from(Span.raw(" 2 Log "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
+                                        Span.raw(" ")),
                         badge(" 3 Routes ", routeCount),
                         badge(" 4 Consumers ", consumerCount),
                         badge(" 5 Endpoints ", endpointCount),
                         badgeCb(" 6 Circuit Breaker ", cbCount, cbOpenCount),
                         badgeHealth(" 7 Health ", healthCount, healthDownCount),
-                        badge(" 8 History ", historyCount),
+                        badge(" 8 Last ", historyCount),
                         hasTraces
                                 ? Line.from(Span.raw(" 9 Trace "), Span.styled("(*)", Style.EMPTY.fg(Color.YELLOW).bold()),
                                         Span.raw(" "))
@@ -1379,7 +1382,7 @@ public class CamelMonitor extends CamelCommand {
             // Identity
             if (sel.platform != null) {
                 String plat = sel.platformVersion != null
-                        ? sel.platform + "/" + sel.platformVersion
+                        ? sel.platform + " v" + sel.platformVersion
                         : sel.platform;
                 lines.add(Line.from(
                         Span.styled("Runtime: ", dim),
@@ -4529,6 +4532,15 @@ public class CamelMonitor extends CamelCommand {
         JsonObject runtime = (JsonObject) root.get("runtime");
         info.platform = runtime != null ? runtime.getString("platform") : null;
         info.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
+        if ("Camel".equals(info.platform)) {
+            String cl = ph.info().commandLine().orElse("");
+            if (cl.contains("main.CamelJBang run")) {
+                info.platform = "JBang";
+                if (info.platformVersion == null) {
+                    info.platformVersion = VersionHelper.getJBangVersion();
+                }
+            }
+        }
         info.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
         info.javaVendor = runtime != null ? runtime.getString("javaVendor") : null;
         info.javaVmName = runtime != null ? runtime.getString("javaVmName") : null;
