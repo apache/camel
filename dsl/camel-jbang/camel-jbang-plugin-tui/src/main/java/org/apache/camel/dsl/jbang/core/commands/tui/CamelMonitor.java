@@ -3041,7 +3041,7 @@ public class CamelMonitor extends CamelCommand {
                 .block(Block.builder().borderType(BorderType.ROUNDED).title(" Flow ").build())
                 .build(), hSplit.get(0));
 
-        // --- Right: sliding window waveform chart (in=green, out=blue, 20 seconds) ---
+        // --- Right: 60-second sliding window chart (in=green up, out=blue down) ---
         LinkedList<Long> inHist = endpointInHistory.getOrDefault(pid, new LinkedList<>());
         LinkedList<Long> outHist = endpointOutHistory.getOrDefault(pid, new LinkedList<>());
 
@@ -3058,115 +3058,8 @@ public class CamelMonitor extends CamelCommand {
                 outArr[i] = outHist.get(idx);
             }
         }
-
-        long maxRate = 1;
-        for (int i = 0; i < renderPoints; i++) {
-            maxRate = Math.max(maxRate, Math.max(inArr[i], outArr[i]));
-        }
         long curIn = inArr[renderPoints - 1];
         long curOut = outArr[renderPoints - 1];
-
-        // Custom mirrored bar chart: in grows up from centre, out grows down — macOS Activity Monitor style
-        Rect rightArea = hSplit.get(1);
-        int innerH = Math.max(3, rightArea.height() - 2);
-        int innerW = Math.max(1, rightArea.width() - 2);
-        // Reserve last row for x-axis labels
-        int chartBodyRows = Math.max(2, innerH - 1);
-        int halfH = Math.max(1, (chartBodyRows - 1) / 2);
-        int centerRow = halfH;
-        int yLabelW = 4; // fixed width to avoid layout jitter
-        int chartW = Math.max(1, innerW - yLabelW);
-        int ticks = Math.min(renderPoints, chartW);
-
-        // Sub-pixel block characters: index 0=space, 1=▁ … 8=█
-        String[] BARS = { " ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█" };
-
-        List<Line> chartLines = new ArrayList<>();
-        for (int r = 0; r < chartBodyRows; r++) {
-            List<Span> rowSpans = new ArrayList<>();
-
-            // Y-axis label column (fixed 4 chars, dimmed)
-            String yLabel;
-            if (r == 0) {
-                yLabel = maxRate > 9999 ? "999+" : String.format("%4d", maxRate);
-            } else if (r == centerRow) {
-                yLabel = "   0";
-            } else if (r == chartBodyRows - 1) {
-                yLabel = maxRate > 9999 ? "999+" : String.format("%4d", maxRate);
-            } else {
-                yLabel = "    ";
-            }
-            rowSpans.add(Span.styled(yLabel, Style.EMPTY.dim()));
-
-            for (int t = 0; t < ticks; t++) {
-                int dataIdx = renderPoints - ticks + t;
-                long inVal = dataIdx >= 0 ? inArr[dataIdx] : 0;
-                long outVal = dataIdx >= 0 ? outArr[dataIdx] : 0;
-
-                if (r < centerRow) {
-                    // In section: bar grows upward from centre (row centerRow-1) toward row 0
-                    int rowOffset = centerRow - 1 - r; // 0 = nearest centre, halfH-1 = top
-                    long barPx = inVal * halfH * 8 / maxRate;
-                    long threshold = (long) rowOffset * 8;
-                    String ch;
-                    if (barPx >= threshold + 8) {
-                        ch = "█";
-                    } else if (barPx > threshold) {
-                        ch = BARS[(int) (barPx - threshold)];
-                    } else {
-                        ch = " ";
-                    }
-                    rowSpans.add(Span.styled(ch, Style.EMPTY.fg(Color.GREEN)));
-                } else if (r == centerRow) {
-                    // Centre separator
-                    rowSpans.add(Span.styled("─", Style.EMPTY.dim()));
-                } else {
-                    // Out section: bar grows downward from centre (row centerRow+1) toward row chartBodyRows-1
-                    int rowOffset = r - centerRow - 1; // 0 = nearest centre, halfH-1 = bottom
-                    long barPx = outVal * halfH * 8 / maxRate;
-                    long threshold = (long) rowOffset * 8;
-                    String ch;
-                    if (barPx >= threshold + 8) {
-                        ch = "█";
-                    } else if (barPx > threshold) {
-                        ch = BARS[(int) (barPx - threshold)];
-                    } else {
-                        ch = " ";
-                    }
-                    rowSpans.add(Span.styled(ch, Style.EMPTY.fg(Color.BLUE)));
-                }
-            }
-            chartLines.add(Line.from(rowSpans));
-        }
-
-        // X-axis label row: markers at -60s, -45s, -30s, -15s, now
-        char[] xChars = new char[chartW];
-        for (int i = 0; i < chartW; i++) {
-            xChars[i] = ' ';
-        }
-        int[][] xMarkers = {
-                { 0, ticks },
-                { ticks / 4, ticks - ticks / 4 },
-                { ticks / 2, ticks / 2 },
-                { 3 * ticks / 4, ticks / 4 },
-                { ticks - 1, 0 }
-        };
-        for (int[] m : xMarkers) {
-            int col = m[0];
-            int secsAgo = m[1];
-            if (col >= chartW) {
-                continue;
-            }
-            String lbl = secsAgo == 0 ? "now" : "-" + secsAgo + "s";
-            int start = secsAgo == 0 ? Math.max(0, col - lbl.length() + 1) : col;
-            for (int k = 0; k < lbl.length() && start + k < chartW; k++) {
-                xChars[start + k] = lbl.charAt(k);
-            }
-        }
-        List<Span> xSpans = new ArrayList<>();
-        xSpans.add(Span.raw(" ".repeat(yLabelW)));
-        xSpans.add(Span.styled(new String(xChars), Style.EMPTY.dim()));
-        chartLines.add(Line.from(xSpans));
 
         Line chartTitle = Line.from(
                 Span.styled("▬", Style.EMPTY.fg(Color.GREEN)),
@@ -3174,8 +3067,14 @@ public class CamelMonitor extends CamelCommand {
                 Span.styled("▬", Style.EMPTY.fg(Color.BLUE)),
                 Span.raw(String.format(" out:%-4d msg/s", curOut)));
 
-        frame.renderWidget(Paragraph.builder()
-                .text(Text.from(chartLines))
+        Rect rightArea = hSplit.get(1);
+        frame.renderWidget(MirroredSparkline.builder()
+                .topData(inArr)
+                .bottomData(outArr)
+                .topStyle(Style.EMPTY.fg(Color.GREEN))
+                .bottomStyle(Style.EMPTY.fg(Color.BLUE))
+                .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
+                        "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED)
                         .title(Title.from(chartTitle)).build())
                 .build(), rightArea);
