@@ -141,7 +141,7 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         }
     }
 
-    private void runGroup(Path base, Path root, DocGroup group) throws IOException {
+    private void runGroup(Path base, Path root, DocGroup group) throws IOException, MojoFailureException {
         // Both includes and destinations are repo-root-relative; resolve against root for consistency.
         if (group.asciidoc != null && !group.asciidoc.includes().isEmpty()) {
             Path dest = root.resolve(group.asciidoc.destination()).normalize();
@@ -211,26 +211,101 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
     /**
      * Walk the spec's includes/excludes under {@code root}, optionally JSON-filter, then create one relative symlink
      * per match at {@code destination/<basename>}.
+     *
+     * <p>
+     * If two distinct sources flatten to the same {@code destination/<basename>} they are passed through
+     * {@link #disambiguate(Path, List)} so the build fails loudly rather than silently overwriting the first symlink
+     * with the second (the bug behind CAMEL-23531).
      */
-    private void createSymlinks(Path root, KindSpec spec, Path destination) throws IOException {
+    private void createSymlinks(Path root, KindSpec spec, Path destination) throws IOException, MojoFailureException {
         Files.createDirectories(destination);
-        // Track unique destination paths so the log surfaces basename collisions: if two distinct sources
-        // flatten to the same `dest/<basename>`, the second `createRelativeSymlink` overwrites the first
-        // and only one symlink remains on disk. The "(from N sources)" suffix is the signal.
-        Set<Path> uniqueLinks = new LinkedHashSet<>();
-        int sources = 0;
         String jsonRootKey = spec.jsonRootKey();
+
+        // Group matches by their default destination basename so we can detect and resolve collisions
+        // before any symlink is written.
+        Map<String, List<Path>> bySrcName = new LinkedHashMap<>();
         for (Path src : walk(root, spec.includes(), spec.excludes())) {
             if (jsonRootKey != null && !matchesJsonFilter(src, jsonRootKey)) {
                 continue;
             }
-            Path link = destination.resolve(src.getFileName().toString());
-            createRelativeSymlink(link, src);
-            uniqueLinks.add(link);
-            sources++;
+            bySrcName.computeIfAbsent(src.getFileName().toString(), k -> new ArrayList<>()).add(src);
+        }
+
+        Set<Path> uniqueLinks = new LinkedHashSet<>();
+        int sources = 0;
+        for (Map.Entry<String, List<Path>> entry : bySrcName.entrySet()) {
+            List<Path> srcs = entry.getValue();
+            List<String> linkNames = srcs.size() == 1
+                    ? List.of(entry.getKey())
+                    : disambiguate(destination, srcs);
+            for (int i = 0; i < srcs.size(); i++) {
+                Path link = destination.resolve(linkNames.get(i));
+                createRelativeSymlink(link, srcs.get(i));
+                uniqueLinks.add(link);
+                sources++;
+            }
         }
         getLog().info("  → linked " + countSuffix(uniqueLinks.size(), sources, "files") + " to "
                       + relativize(destination));
+    }
+
+    /**
+     * Resolve a basename collision by inserting a per-source discriminator before the file extension.
+     *
+     * <p>
+     * The only known collisions are the Jackson 2.x / 3.x dataformat pairs (CAMEL-23531): both lines register the same
+     * dataformat {@code name} for DSL drop-in compatibility, so their generated descriptors share a basename (e.g.
+     * {@code jackson.json}). We disambiguate by appending {@code 2} or {@code 3} based on the artifact directory the
+     * source lives in (see {@link PackageDataFormatMojo#jacksonFamilySuffix(String)}).
+     *
+     * <p>
+     * Any future collision that doesn't match this rule fails the build rather than silently overwriting one of the
+     * sources.
+     */
+    static List<String> disambiguate(Path destination, List<Path> srcs) throws MojoFailureException {
+        String baseName = srcs.get(0).getFileName().toString();
+        int dot = baseName.lastIndexOf('.');
+        String stem = dot < 0 ? baseName : baseName.substring(0, dot);
+        String ext = dot < 0 ? "" : baseName.substring(dot);
+
+        List<String> names = new ArrayList<>(srcs.size());
+        Set<String> seen = new LinkedHashSet<>();
+        for (Path src : srcs) {
+            String artifact = artifactDirName(src);
+            if (artifact == null || !artifact.contains("jackson")) {
+                throw new MojoFailureException(collisionMessage(destination, baseName, srcs));
+            }
+            String name = stem + PackageDataFormatMojo.jacksonFamilySuffix(artifact) + ext;
+            if (!seen.add(name)) {
+                throw new MojoFailureException(collisionMessage(destination, baseName, srcs));
+            }
+            names.add(name);
+        }
+        return names;
+    }
+
+    /**
+     * Returns the artifact directory name (the segment immediately under {@code components/}) for the given source
+     * path, or {@code null} if the path doesn't live under {@code components/}.
+     */
+    private static String artifactDirName(Path src) {
+        for (int i = 0; i < src.getNameCount() - 1; i++) {
+            if ("components".equals(src.getName(i).toString())) {
+                return src.getName(i + 1).toString();
+            }
+        }
+        return null;
+    }
+
+    private static String collisionMessage(Path destination, String baseName, List<Path> srcs) {
+        StringBuilder sb = new StringBuilder("Doc symlink collision: ").append(srcs.size())
+                .append(" sources flatten to ").append(destination).append('/').append(baseName).append(":\n");
+        for (Path s : srcs) {
+            sb.append("  - ").append(s).append('\n');
+        }
+        sb.append("Resolve by giving the sources distinct basenames or by extending "
+                  + "PrepareDocSymlinksMojo.disambiguate() with a rule that produces unique destination names.");
+        return sb.toString();
     }
 
     // ----- example symlinks (preserves repo-relative directory hierarchy) -------------------------------------------
