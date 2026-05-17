@@ -21,6 +21,10 @@ import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.functions.CollateFunctionFactory;
+import org.apache.camel.language.simple.functions.JoinFunctionFactory;
+import org.apache.camel.language.simple.functions.RandomFunctionFactory;
+import org.apache.camel.language.simple.functions.SkipFunctionFactory;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.support.ResolverHelper;
 
@@ -39,6 +43,17 @@ import static org.apache.camel.language.simple.ast.SimpleFunctionExpression.ifSt
  */
 public final class SimpleFunctionDispatcher {
 
+    /**
+     * Built-in factories shipped by camel-core-languages itself. Iterated before {@link #EXPRESSION_ENTRIES}, matching
+     * the original priority of these functions inside {@code SimpleFunctionExpression}. Each factory returns
+     * {@code null} for inputs it does not recognise, so no gating predicate is needed.
+     */
+    private static final List<SimpleLanguageFunctionFactory> BUILT_INS = List.of(
+            new RandomFunctionFactory(),
+            new SkipFunctionFactory(),
+            new CollateFunctionFactory(),
+            new JoinFunctionFactory());
+
     private static final List<Entry> EXPRESSION_ENTRIES = List.of(
             new Entry("camel-attachments", SimpleFunctionDispatcher::isAttachmentFunction),
             new Entry("camel-base64", SimpleFunctionDispatcher::isBase64Function),
@@ -56,6 +71,12 @@ public final class SimpleFunctionDispatcher {
     }
 
     public static Expression tryCreate(CamelContext camelContext, String function, int index) {
+        for (SimpleLanguageFunctionFactory factory : BUILT_INS) {
+            Expression answer = factory.createFunction(camelContext, function, index);
+            if (answer != null) {
+                return answer;
+            }
+        }
         for (Entry entry : EXPRESSION_ENTRIES) {
             if (!entry.claims.test(function)) {
                 continue;
@@ -70,6 +91,13 @@ public final class SimpleFunctionDispatcher {
     }
 
     public static String tryCreateCode(CamelContext camelContext, String function, int index) {
+        for (SimpleLanguageFunctionFactory factory : BUILT_INS) {
+            @SuppressWarnings("deprecation")
+            String code = factory.createCode(camelContext, function, index);
+            if (code != null) {
+                return code;
+            }
+        }
         for (Entry entry : CODE_ENTRIES) {
             if (!entry.claims.test(function)) {
                 continue;
