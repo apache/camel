@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExceptionHelper;
@@ -90,6 +91,8 @@ public class ContextDevConsole extends AbstractDevConsole {
                     sb.append(String.format("%n    Idle Since: %s", ""));
                 }
                 sb.append(String.format("%n    Reloaded: %s/%s", reloaded, reloadedFailed));
+                boolean devMode = getCamelContext().hasService(ResourceReloadStrategy.class) != null;
+                sb.append(String.format("%n    Dev Mode: %s", devMode));
                 sb.append(String.format("%n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
                 sb.append(String.format("%n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
                 sb.append(String.format("%n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
@@ -133,6 +136,7 @@ public class ContextDevConsole extends AbstractDevConsole {
         root.put("state", getCamelContext().getStatus().name());
         root.put("phase", getCamelContext().getCamelContextExtension().getStatusPhase());
         root.put("uptime", getCamelContext().getUptime().toMillis());
+        root.put("devMode", getCamelContext().hasService(ResourceReloadStrategy.class) != null);
 
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
