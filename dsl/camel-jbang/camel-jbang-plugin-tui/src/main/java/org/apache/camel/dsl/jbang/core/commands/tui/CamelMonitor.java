@@ -3896,6 +3896,9 @@ public class CamelMonitor extends CamelCommand {
 
         if (tab == TAB_OVERVIEW) {
             hint(spans, "q", "quit");
+            if (selectedPid != null) {
+                hint(spans, "Esc", "unselect");
+            }
             hint(spans, "\u2191\u2193", "navigate");
             hint(spans, "s", "sort");
             hint(spans, "a", "chart " + switch (chartMode) {
@@ -3909,7 +3912,6 @@ public class CamelMonitor extends CamelCommand {
                 if (selInfo != null) {
                     hint(spans, "p", selInfo.routeStarted > 0 ? "stop" : "start");
                 }
-                hint(spans, "Esc", "unselect");
             }
             hint(spans, "1-9", "tabs");
         } else if (tab == TAB_ROUTES && showSource) {
